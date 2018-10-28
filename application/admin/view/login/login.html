@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="/static/layui/css/layui.css">
-    <link rel="stylesheet" href="/static/style/common.css">
+    <link rel="stylesheet" href="/static/css/common.css">
 </head>
 
 <body>
@@ -21,7 +21,7 @@
         </div>
         <div class="layui-row padding-vertical">
             <div class="layui-col-xs12 layui-col-sm12 layui-col-md4 layui-col-md-offset4">
-                <form class="layui-form text-center" method="post">
+                <form class="layui-form text-center">
                     <div class="layui-form-item">
                         <input type="text" name="username" lay-verify="required" placeholder="请输入账号" class="layui-input" maxlength="30">
                     </div>
@@ -35,11 +35,12 @@
                             </div>
                             <div class="layui-col-xs5">
                                 <div class="padding-left-sm">
-                                    <img class="login-verify" src="{:captcha_src()}" onclick="this.src=this.src+'?'" alt="验证码" title="点击刷新">
+                                    <img class="login-verify" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}'" alt="验证码" title="点击刷新">
             					</div>
                             </div>
                         </div>
                     </div>
+                    <input class="device" type="hidden" name="device" value="undefined">
                     <div class="layui-form-item">
                         <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login">登录</button>
                     </div>
@@ -53,14 +54,16 @@
     layui.use(['form','layer'], function() {
         var form = layui.form;
         var layer = layui.layer;
+        var device = JSON.stringify(layui.device());console.log(device);
+        $('.device').val(device);
         // 监听提交
         form.on('submit(login)', function(data){
             var load = layer.load();
-            var data = JSON.stringify(data.field);
+            var data = data.field;
             $.ajax({
                 data:data,
                 type:"POST",
-                url:"loginadmin",
+                url:"yyladmin",
                 success:function(res){
                     layer.close(load);
                     if (res.rescode == 1) {

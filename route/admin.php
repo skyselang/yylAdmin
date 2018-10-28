@@ -9,5 +9,5 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-Route::get('loginadmin', 'admin/login/login');
-Route::post('loginadmin', 'admin/login/verification');
+Route::get('yyladmin', 'admin/login/login');
+Route::post('yyladmin', 'admin/login/verification');
