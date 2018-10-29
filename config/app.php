@@ -21,7 +21,7 @@ return [
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace
-    'app_trace'              => false,
+    'app_trace'              => true,
     // 是否支持多模块
     'app_multi_module'       => true,
     // 入口自动绑定模块
@@ -130,8 +130,12 @@ return [
     'route_cache_option'     => [],
 
     // 默认跳转页面对应的模板文件
-    'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
-    'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
+    // 'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
+    // 'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
+    //默认错误跳转对应的模板文件
+    'dispatch_error_tmpl' => '/tpl/dispatch_jump',
+    //默认成功跳转对应的模板文件
+    'dispatch_success_tmpl' => '/tpl/dispatch_jump',
 
     // 异常页面的模板文件
     'exception_tmpl'         => Env::get('think_path') . 'tpl/think_exception.tpl',

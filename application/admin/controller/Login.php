@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use think\Controller;
+use app\admin\model\Admin;
 
 class Login extends Controller
 {
@@ -39,7 +40,11 @@ class Login extends Controller
 			$res['rescode'] = -1; 
 			$res['message'] = '验证码错误！';
 		} else {
-			
+			$admin = new Admin();
+			dump($admin);die;
+			$where['username'] = $username;
+			$where['password'] = md5($password);
+			$admin = Db::name('admin')->where($where)->find();
 			if ($admin) {
 				$where['username'] = $username;
 				$where['password'] = $password;
@@ -56,12 +61,12 @@ class Login extends Controller
 	}
 
 	/**
-	 * 退出系统并跳转到登录页面
+	 * 退出系统
 	 * @return
 	 */
 	public function loginout()
 	{
 		session(null);
-		$this->success('退出成功！',url('login/login'));
+		$this->success('退出成功！',url('admin/login/login'));
 	}
 }

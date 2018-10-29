@@ -41,7 +41,7 @@
                         <dd><a href="">安全设置</a></dd>
                     </dl>
                 </li>
-                <li class="layui-nav-item"><a href="{:url('login/loginout')}" title="退出系统">退出</a></li>
+                <li class="layui-nav-item"><a href="{:url('admin/login/loginout')}" title="退出系统">退出</a></li>
             </ul>
         </div>
         <div class="layui-side layui-bg-black">
@@ -49,21 +49,21 @@
                 <!-- 左侧导航区域 -->
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all" lay-filter="test">
                     <li class="layui-nav-item">
-                        <a href="{:url('index/index')}"><i class="layui-icon layui-icon-home padding-right"></i>首页</a>
+                        <a href="{:url('admin/index/index')}"><i class="layui-icon layui-icon-home padding-right"></i>首页</a>
                     </li>
                     <li class="layui-nav-item">
                         <a class="" href="javascript:;"><i class="layui-icon layui-icon-list padding-right"></i>新闻</a>
                         <dl class="layui-nav-child">
-                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-list padding-right"></i>分类</a></dd>
-                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-list padding-right"></i>列表</a></dd>
-                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-list padding-right"></i>评论</a></dd>
+                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-list padding-horizontal"></i>分类</a></dd>
+                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-list padding-horizontal"></i>列表</a></dd>
+                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-list padding-horizontal"></i>评论</a></dd>
                         </dl>
                     </li>
                     <li class="layui-nav-item">
                         <a href="javascript:;"><i class="layui-icon layui-icon-user padding-right"></i>会员</a>
                         <dl class="layui-nav-child">
-                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-user padding-right"></i>等级</a></dd>
-                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-user padding-right"></i>列表</a></dd>
+                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-user padding-horizontal"></i>等级</a></dd>
+                            <dd><a href="javascript:;"><i class="layui-icon layui-icon-user padding-horizontal"></i>列表</a></dd>
                         </dl>
                     </li>
                     <li class="layui-nav-item"><a href=""><i class="layui-icon layui-icon-set-sm padding-right"></i>设置</a></li>
@@ -72,12 +72,12 @@
         </div>
         <div class="layui-body">
             <!-- 内容主体区域 -->
-            <div style="padding: 14px;">
+            <div class="padding">
                 <span class="layui-breadcrumb">
-                    <a href="">首页</a>
+                    <a href="{:url('admin/index/index')}">首页</a>
                 </span>
                 <hr>
-                <div style="padding: 14px; background-color: #F2F2F2;">
+                <div class="layui-bg-gray padding">
                     <div class="layui-row layui-col-space15">
                         <div class="layui-col-md6">
                             <div class="layui-card">

@@ -14,8 +14,8 @@
 <body>
     <div class="layui-container">
         <div class="layui-row padding-vertical">
-            <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 padding-vertical" style="text-align: center;">
-                <image class="padding-vertical" src="/static/image/logo.png"></image>
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 padding-vertical layui-clear text-center">
+                <image class="padding-vertical" src="/static/img/logo.png"></image>
                 <p class="padding-vertical">{:config('app.app_name')}</p>
             </div>
         </div>
@@ -40,7 +40,7 @@
                             </div>
                         </div>
                     </div>
-                    <input class="device" type="hidden" name="device" value="undefined">
+                    <input class="device" type="hidden" name="device" value="0">
                     <div class="layui-form-item">
                         <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login">登录</button>
                     </div>
@@ -54,7 +54,7 @@
     layui.use(['form','layer'], function() {
         var form = layui.form;
         var layer = layui.layer;
-        var device = JSON.stringify(layui.device());console.log(device);
+        var device = JSON.stringify(layui.device());
         $('.device').val(device);
         // 监听提交
         form.on('submit(login)', function(data){
@@ -63,7 +63,7 @@
             $.ajax({
                 data:data,
                 type:"POST",
-                url:"yyladmin",
+                url:"{:url('admin/login/login')}",
                 success:function(res){
                     layer.close(load);
                     if (res.rescode == 1) {
