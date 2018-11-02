@@ -1,9 +1,9 @@
 <?php
-
 namespace app\admin\controller;
 
 use think\Controller;
-use app\admin\model\Admin;
+use think\Db;
+use think\facade\Session;
 
 class Login extends Controller
 {
@@ -13,7 +13,7 @@ class Login extends Controller
 	 */
 	public function login()
 	{
-		return $this->fetch();	
+		return $this->fetch();
 	}
 
 	/**
@@ -40,17 +40,24 @@ class Login extends Controller
 			$res['rescode'] = -1; 
 			$res['message'] = '验证码错误！';
 		} else {
-			$admin = new Admin();
-			dump($admin);die;
-			$where['username'] = $username;
-			$where['password'] = md5($password);
-			$admin = Db::name('admin')->where($where)->find();
+			$password = md5($password);
+
+			$admin = Db::name('admin')
+					->where('username',$username)
+					->where('password',$password)
+					->find();
+
 			if ($admin) {
-				$where['username'] = $username;
-				$where['password'] = $password;
+				$admin_id = $admin['admin_id'];
+				$login_ip = $this->request->ip();
+				$this->updateLogin($admin_id, $login_ip, $device);
+
+				Session::set('admin_id',$admin_id);
+				Session::set('nickname',$admin['nickname']);
 
 				$res['rescode'] = 1;
 				$res['message'] = '登录成功！';
+				$res['indexurl'] = url('admin/index/index');
 			} else {
 				$res['rescode'] = -1; 
 				$res['message'] = '账号或密码错误！';
@@ -59,14 +66,32 @@ class Login extends Controller
 
 		return json($res);
 	}
+	/**
+	 * 更新登录信息
+	 * @param  string  $admin_id 账号id
+	 * @param  string  $login_ip 登录ip
+	 * @param  integer $device   登录环境
+	 * @return null            
+	 */
+	public function updateLogin($admin_id = '', $login_ip = '0.0.0.0', $device = 0)
+	{
+		if ($admin_id) {
+			$data['login_ip'] = $login_ip;
+			$data['device'] = $device;
+			$data['update_time'] = time();
+			$save = Db::name('admin')
+				->where('admin_id',$admin_id)
+				->update($data);
+		}
+	}
 
 	/**
 	 * 退出系统
 	 * @return
 	 */
 	public function loginout()
-	{
-		session(null);
-		$this->success('退出成功！',url('admin/login/login'));
+	{	
+		Session::clear();
+		$this->redirect(url('admin/login/login'));
 	}
 }

@@ -48,15 +48,14 @@
             </div>
         </div>
     </div>
-    <script src="/static/layui/layui.js"></script>
     <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
     <script>
     layui.use(['form','layer'], function() {
         var form = layui.form;
         var layer = layui.layer;
         var device = JSON.stringify(layui.device());
         $('.device').val(device);
-        // 监听提交
         form.on('submit(login)', function(data){
             var load = layer.load();
             var data = data.field;
@@ -68,6 +67,10 @@
                     layer.close(load);
                     if (res.rescode == 1) {
                         layer.msg(res.message);
+                        layer.msg('正在跳转...', {icon: 16,shade: 0.1});
+                        setTimeout(function(){
+                            location.href = res.indexurl;
+                        }, 1000);
                     } else {
                         layer.msg(res.message);
                     }

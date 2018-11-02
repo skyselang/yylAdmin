@@ -16,6 +16,8 @@
 return [
     // 应用名称
     'app_name'               => 'yylAdmin',
+    // 应用版本
+    'app_version'            => 'v1.0.0',
     // 应用地址
     'app_host'               => '',
     // 应用调试模式
