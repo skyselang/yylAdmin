@@ -9,10 +9,16 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+// 绑定admin子域名到admin模块
+Route::domain('admin', 'admin');
+
 // login
-Route::get('loginadmin', 'admin/login/login');
-Route::post('loginadmin', 'admin/login/verification');
+Route::get('login', 'admin/login/login');
+Route::post('login', 'admin/login/check');
 Route::get('loginout','admin/login/loginout');
 
 // index
 Route::get('index', 'admin/index/index');
+
+// news
+Route::get('news', 'admin/news/index');

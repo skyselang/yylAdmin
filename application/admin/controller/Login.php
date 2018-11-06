@@ -20,7 +20,7 @@ class Login extends Controller
 	 * 登录验证
 	 * @return json 验证结果
 	 */
-	public function verification()
+	public function check()
 	{
 		$username = $this->request->param('username/s');
 		$password = $this->request->param('password/s');
@@ -40,11 +40,11 @@ class Login extends Controller
 			$res['rescode'] = -1; 
 			$res['message'] = '验证码错误！';
 		} else {
-			$password = md5($password);
+			$where['username'] = $username;
+			$where['password'] = md5($password);
 
 			$admin = Db::name('admin')
-					->where('username',$username)
-					->where('password',$password)
+					->where($where)
 					->find();
 
 			if ($admin) {
@@ -91,7 +91,7 @@ class Login extends Controller
 	 */
 	public function loginout()
 	{	
-		Session::clear();
+		Session::clear();//清空session
 		$this->redirect(url('admin/login/login'));
 	}
 }

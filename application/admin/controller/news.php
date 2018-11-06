@@ -4,8 +4,9 @@ namespace app\admin\controller;
 
 use think\Controller;
 use think\Request;
+use think\Db;
 
-class news extends Controller
+class News extends Common
 {
     /**
      * 显示资源列表
@@ -14,7 +15,10 @@ class news extends Controller
      */
     public function index()
     {
-        //
+        // $list = Db::name('news')->select();
+        $this->assign('news','itemed');
+        $this->assign('newsd','this');
+        return $this->fetch();
     }
 
     /**
