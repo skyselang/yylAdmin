@@ -19,6 +19,7 @@ Route::get('loginout','admin/login/loginout');
 
 // index
 Route::get('index', 'admin/index/index');
+Route::get('console', 'admin/index/console');
 
 // news
 Route::get('news', 'admin/news/index');
