@@ -89,7 +89,7 @@ class Login extends Controller
 	 * 退出系统
 	 * @return
 	 */
-	public function loginout()
+	public function exit()
 	{	
 		Session::clear();//清空session
 		$this->redirect(url('admin/login/login'));

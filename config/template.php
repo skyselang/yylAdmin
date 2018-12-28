@@ -37,6 +37,10 @@ return [
         '__CSS__'   => '/static/css',
         '__IMG__'   => '/static/img',
         '__JS__'    => '/static/js',
-        '__LAYUI__' => '/static/layui'
+        '__LAYUI__' => '/static/layui',
+        '__NET__'=> '/static/network',
+        '__UNI__'=> '/static/universally',
+        '__BLOG__'=> '/static/blog',
+        '__MALL__'=> '/static/mall'
     ]
 ];

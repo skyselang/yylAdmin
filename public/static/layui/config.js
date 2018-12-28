@@ -1,12 +1,4 @@
-/**
-
- @Name：layuiAdmin iframe版全局配置
- @Author：贤心
- @Site：http://www.layui.com/admin/
- @License：LPPL（layui付费产品协议）
-    
- */
- 
+// yylAdmin iframe版全局配置  
 layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
   exports('setter', {
     container: 'LAY_app' //容器ID
@@ -16,8 +8,8 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     ,engine: '.html' //视图文件后缀名
     ,pageTabs: true //是否开启页面选项卡功能。iframe版推荐开启
     
-    ,name: 'layuiAdmin'
-    ,tableName: 'layuiAdmin' //本地存储表名
+    ,name: 'yylAdmin'
+    ,tableName: 'yylAdmin' //本地存储表名
     ,MOD_NAME: 'admin' //模块事件名
     
     ,debug: true //是否开启调试模式。如开启，接口异常时会抛出异常 URL 等信息

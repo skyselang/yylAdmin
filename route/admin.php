@@ -9,17 +9,12 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-// 绑定admin子域名到admin模块
-Route::domain('admin', 'admin');
-
 // login
-Route::get('login', 'admin/login/login');
-Route::post('login', 'admin/login/check');
-Route::get('loginout','admin/login/loginout');
+Route::get('admin/login', 'admin/login/login');
+Route::post('admin/login', 'admin/login/check');
+Route::get('admin/exit','admin/login/exit');
 
 // index
-Route::get('index', 'admin/index/index');
-Route::get('console', 'admin/index/console');
+Route::get('admin/', 'admin/index/index');
+Route::get('admin/indexs', 'admin/index/indexs');
 
-// news
-Route::get('news', 'admin/news/index');
