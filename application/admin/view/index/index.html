@@ -83,6 +83,21 @@
                             </a>
                         </li>
                         <li data-name="user" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="组件" lay-direction="2">
+                                <i class="layui-icon layui-icon-user"></i>
+                                <cite>组件</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd class="layui-nav-itemed">
+                                    <a href="javascript:;">上传</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a lay-href="{:url('admin/upload/one')}">图片上传</a></dd>
+                                        <dd><a lay-href="{:url('admin/upload/more')}">多图上传</a></dd>
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li data-name="user" class="layui-nav-item">
                             <a href="javascript:;" lay-tips="用户" lay-direction="2">
                                 <i class="layui-icon layui-icon-user"></i>
                                 <cite>用户</cite>

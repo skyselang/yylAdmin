@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>upload-image</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="git:https://github.com/skyselang">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+</head>
+
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo">upload</div>
+            <ul class="layui-nav layui-layout-left">
+            </ul>
+            <ul class="layui-nav layui-layout-right">
+            </ul>
+        </div>
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a href="{:url('image')}">image upload</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="layui-body layui-row">
+            <div class="layui-col-md12" style="padding: 12px">
+                <form class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">image upload</label>
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn" id="upload-btn">
+                                <i class="layui-icon">&#xe67c;</i>上传图片
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="layui-footer">
+        </div>
+    </div>
+    <script src="/static/layui/layui.js"></script>
+    <script>
+    layui.use(['layer','element', 'form', 'upload'], function() {
+
+        var element = layui.element;
+        var form = layui.form;
+        var upload = layui.upload;
+
+        // 上传文件
+        upload.render({
+            elem: '#upload-btn' //绑定元素
+            ,url: '{:url("upload/Upload/upload")}' //上传接口
+            ,done: function(res){
+                //上传完毕回调
+            }
+            ,error: function(){
+                layer.msg('上传出错！');
+            }
+        });
+
+    });
+    </script>
+</body>
+
+</html>
