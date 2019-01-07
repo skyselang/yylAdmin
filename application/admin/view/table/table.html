@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>表格</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__LAYUI__/layui/css/layui.css">
+    <link rel="stylesheet" href="__LAYUI__/style/admin.css">
+    <link rel="stylesheet" href="__CSS__/yyladmin.css">
+</head>
+
+<body>
+
+    <div class="layui-row">
+        <div class="layui-card">
+            <!-- 搜索 -->
+            <form class="layui-form">
+                <div class="more-div layui-hide">
+                    <div class="layui-form-item">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">日期类型</label>
+                            <div class="layui-input-block">
+                                <select name="time_type">
+                                    <option value="create_time">发布时间</option>
+                                    <option value="update_time">修改时间</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">日期选择</label>
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" name="time_date" id="create-time" placeholder="选择日期">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-block">
+                            <select name="type">
+                                <option value="">请选择</option>
+                                <option value="1">图文</option>
+                                <option value="2">链接</option>
+                                <option value="3">图集</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-block">
+                            <select name="is_frame">
+                                <option value="">请选择</option>
+                                <option value="1">上架</option>
+                                <option value="-1">下架</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <select name="field">
+                        <option value="title">标题</option>
+                        <option value="author">作者</option>
+                        <option value="keywords">关键词</option>
+                    </select>
+                </div>
+
+                <div class="layui-inline">
+                    <input class="layui-input" name="field_val" autocomplete="off">
+                </div>
+
+                <div class="layui-inline">
+                    <a href="javascript:;" class="layui-btn layui-btn-primary more-btn" title="点击选择更多搜索条件">更多</a>
+                    <button class="layui-btn" lay-submit lay-filter="search-btn">搜索</button>
+                    <button class="layui-btn layui-btn-primary reload-btn">重置</button>
+                    <button class="layui-btn layui-btn-primary layui-hide reset-btn" type="reset">重置</button>
+                </div>
+            </form>
+            <!-- 表格工具栏 -->
+            <script type="text/html" id="table-toolbar">
+                <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="dele">删除</button>
+                <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+            </script>
+            <!-- 表格 -->
+            <table class="layui-hide" id="table" lay-filter="table"></table>
+            <!-- 状态 -->
+            <script type="text/html" id="frame">
+                <input type="checkbox" value="{{ d.id }}|{{ d.is_frame }}" lay-filter="frame" lay-skin="switch" {{ d.is_frame != 1 ? '' : 'checked' }}>
+            </script>
+            <!-- 表格操作栏 -->
+            <script type="text/html" id="table-operate">
+                <div class="layui-btn-group">
+                    <a class="layui-btn layui-btn-sm" lay-event="detail">查看</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="dele">删除</a>
+                </div>
+            </script>
+        </div>
+    </div>
+ 
+    <script src="__LAYUI__/layui/layui.js"></script>
+    <script>
+    layui.use(['form', 'layer', 'table', 'laydate'], function() {
+
+        var $ = layui.$; //jquery
+        var form = layui.form; //表单
+        var layer = layui.layer; //弹出层
+        var table = layui.table; //表格
+        var laydate = layui.laydate; //日期
+
+        // 日期
+        laydate.render({
+            elem: '#create-time', //指定元素
+            range: true,
+            done: function(value, date, endDate){}
+        });
+
+        // 更多
+        $('.more-btn').click(function(){
+            var content = $('.more-div');
+            content.removeClass('layui-hide');
+            layer.open({
+                type: 1,
+                btn: '确认',
+                offset: '40px',
+                title: '更多搜索条件',
+                content: content,
+                yes: function(index, layero){
+                    content.addClass('layui-hide');
+                    layer.close(index);
+                },
+                cancel: function(){
+                    content.addClass('layui-hide'); 
+                }
+            });
+        });
+
+        // 搜索
+        form.on('submit(search-btn)', function(data){
+            var load = layer.msg('正在搜索...', {icon: 16, shade: 0.3});
+            //表格重载
+            table.reload('table', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: data.field //搜索条件
+            });
+            layer.close(load);
+            return false; //阻止表单跳转
+        });
+
+        // 重置
+        $('.reload-btn').click(function(){
+            var load = layer.msg('正在重置...', {icon: 16, shade: 0.3});
+            //重置表单
+            $('.reset-btn').trigger('click');
+            //表格重载
+            table.reload('table', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: '' //清空搜索条件
+            });
+            layer.close(load);
+            return false; //阻止表单跳转
+        });
+
+        // 排序
+        table.on('sort(table)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var load = layer.msg('正在排序...', {icon: 16, shade: 0.3});
+            table.reload('table', {
+                initSort: obj, //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                    order_field: obj.field, //排序字段
+                    order_type: obj.type //排序方式
+                }
+            });
+            layer.close(load);
+        });
+
+        // 方法渲染表格
+        table.render({
+            elem: '#table' //表格容器id
+            ,title:'头条列表' //导出文件名
+            ,url: '{:url()}' //数据接口
+            ,page: true //开启分页
+            ,limit: 20 //每页显示的条数
+            ,height: 'full-50' //高度最大适应
+            ,limits: [10,20,30,40,50,60,70,80,90,100,150,200,250,300] //每页条数的选择项
+            ,cellMinWidth: 120 //全局定义常规单元格的最小宽度
+            ,toolbar: '#table-toolbar' //开启表格头部工具栏区域
+            ,autoSort: false //禁用前端自动排序
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度
+            ,cols: [[ //表头
+                {type: 'checkbox', fixed: 'left'}
+                ,{field: 'id', title: 'ID', sort: true, width: 70}
+                ,{field: 'title', title: '标题', edit: 'text'}
+                ,{field: 'author', title: '作者', width: 70, edit: 'text'}
+                ,{field: 'keywords', title: '关键词', hide: true, edit: 'text'}
+                ,{field: 'type', title: '类型', width: 70, sort: true}
+                ,{field: 'look', title: '浏览', sort: true, width: 70, edit: 'text'}
+                ,{field: 'sort', title: '排序', sort: true, width: 70, edit: 'text'}
+                ,{field: 'create_time', title: '发布时间', sort: true, width: 160, edit: 'text'}
+                ,{field: 'update_time', title: '修改时间', sort: true, width: 160, hide: true, edit: 'text'}
+                ,{field: 'is_frame', title: '状态', toolbar: '#frame', sort: true, width: 90}
+                ,{title: '操作', toolbar: '#table-operate', width: 166}
+            ]]
+        });
+
+    });
+    </script>
+</body>
+
+</html>

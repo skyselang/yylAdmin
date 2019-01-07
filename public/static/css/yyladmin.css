@@ -1,3 +1,19 @@
-.text-center{text-align: center;}
+/**
+ * yylAdmin CSS
+ */
+
+/*边距*/
+.yyl-padding-vertical8{padding:8px 0;}
+.yyl-padding-vertical12{padding:12px 0;}
+.yyl-padding-vertical16{padding:16px 0;}
+/*背景色*/
+.yyl-bg-white{background-color: #fff;}
+/*文字对齐*/
+.yyl-text-center{text-align: center;}
+
+/**
+ * pages
+ */
+
+/*login*/
 .login-verify{height: 38px;}
-.padding-vertical{padding:16px 0;}

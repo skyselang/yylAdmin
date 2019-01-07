@@ -28,17 +28,17 @@ class Login extends Controller
 		$device = $this->request->param('device/s');
 
 		if ($username == '' || $username == null || $username == 'undefined') {
-			$res['rescode'] = -1;
-			$res['message'] = '请输入账号！';
+			$res['code'] = -1;
+			$res['msg'] = '请输入账号！';
 		} elseif ($password == '' || $password == null || $password == 'undefined') {
-			$res['rescode'] = -1;
-			$res['message'] = '请输入密码！';
+			$res['code'] = -1;
+			$res['msg'] = '请输入密码！';
 		} elseif ($verify == '' || $verify == null || $verify == 'undefined') {
-			$res['rescode'] = -1;
-			$res['message'] = '请输入验证码！';
+			$res['code'] = -1;
+			$res['msg'] = '请输入验证码！';
 		} elseif (!captcha_check($verify)) {
-			$res['rescode'] = -1; 
-			$res['message'] = '验证码错误！';
+			$res['code'] = -1; 
+			$res['msg'] = '验证码错误！';
 		} else {
 			$where['username'] = $username;
 			$where['password'] = md5($password);
@@ -50,17 +50,17 @@ class Login extends Controller
 			if ($admin) {
 				$admin_id = $admin['admin_id'];
 				$login_ip = $this->request->ip();
-				$this->updateLogin($admin_id, $login_ip, $device);
+				$this->update($admin_id, $login_ip, $device);
 
 				Session::set('admin_id',$admin_id);
 				Session::set('nickname',$admin['nickname']);
 
-				$res['rescode'] = 1;
-				$res['message'] = '登录成功！';
-				$res['indexurl'] = url('admin/index/index');
+				$res['code'] = 0;
+				$res['msg'] = '登录成功！';
+				$res['url'] = url('admin/index/index');
 			} else {
-				$res['rescode'] = -1; 
-				$res['message'] = '账号或密码错误！';
+				$res['code'] = 1; 
+				$res['msg'] = '账号或密码错误！';
 			}
 		}
 
@@ -73,15 +73,19 @@ class Login extends Controller
 	 * @param  integer $device   登录环境
 	 * @return null            
 	 */
-	public function updateLogin($admin_id = '', $login_ip = '0.0.0.0', $device = 0)
+	public function update($admin_id = '', $login_ip = '0.0.0.0', $device = 0)
 	{
 		if ($admin_id) {
 			$data['login_ip'] = $login_ip;
 			$data['device'] = $device;
 			$data['update_time'] = time();
-			$save = Db::name('admin')
+			$update = Db::name('admin')
 				->where('admin_id',$admin_id)
 				->update($data);
+
+			$login_num = Db::name('admin')
+				->where('admin_id', $admin_id)
+				->setInc('login_num');
 		}
 	}
 
@@ -92,6 +96,6 @@ class Login extends Controller
 	public function exit()
 	{	
 		Session::clear();//清空session
-		$this->redirect(url('admin/login/login'));
+		$this->redirect('admin/login/login');
 	}
 }

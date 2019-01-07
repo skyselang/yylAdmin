@@ -12,6 +12,7 @@ class Upload extends Common
     	$imageList = Db::name('image')->select();
     	
     	$this->assign('imageList',$imageList);
+
     	return $this->fetch();
     }
 
@@ -20,6 +21,7 @@ class Upload extends Common
         $imageList = Db::name('image')->select();
         
         $this->assign('imageList',$imageList);
+
     	return $this->fetch();
     }
 
@@ -31,8 +33,8 @@ class Upload extends Common
         // 获取表单上传文件 
         $file = request()->file('file');
 
-        // 移动到/static/upload/目录下
-        $info = $file->move( './static/upload/');
+        // 移动到/static/upload/images/目录下
+        $info = $file->move( './static/upload/images/');
 
         // 上传成功
         if ($info) {
@@ -42,7 +44,7 @@ class Upload extends Common
             $name = $nameArr[0];
 
             // 文件路径处理，替换反斜杠
-            $src = '/static/upload/'.str_replace('\\', '/', $info->getSaveName());
+            $src = '/static/upload/images/'.str_replace('\\', '/', $info->getSaveName());
 
             // 上传文件信息
             $res['code'] = 0;
