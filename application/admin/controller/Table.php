@@ -11,8 +11,6 @@ class Table extends Common
     public function table()
     {
         if ($this->request->isAJAX()) {
-            
-        
             // 分页
             $page = $this->request->param('page/s');
             $limit = $this->request->param('limit/s');
@@ -25,29 +23,29 @@ class Table extends Common
             $time_type = $this->request->param('time_type/s');//日期类型
             $time_date = $this->request->param('time_date/s');//日期选择
             if ($type) {
-                $where['type'] = $type;
+                $where[] = ['type', '=', $type];
             }
             if ($is_frame) {
-                $where['is_frame'] = $is_frame;
+                $where[] = ['is_frame', '=', $is_frame];
             }
             if ($field_val) {
-                $where[$field] = array('like',"%".$field_val."%");
+                $where[] = [$field, 'like' ,'%'.$field_val.'%'];
             }
             if ($time_date) {
                 $time_date = explode(' - ', $time_date);
                 $start_time = strtotime($time_date[0].' 00:00:00');
                 $end_time   = strtotime($time_date[1].' 23:59:59');
-                $where[$time_type] = array(array('egt',$start_time),array('elt',$end_time));
+                $where[] = [$time_type, ['>=', $start_time], ['<=', $end_time], 'and'];
             }
-            $where['is_dele'] = 1;//1正常-1删除
+            $where[] = ['is_dele', '=', 1];//1正常-1删除
 
             // 排序
             $order_field = $this->request->param('order_field/s'); // 排序字段
             $order_type = $this->request->param('order_type/s'); // 排序方式
             if ($order_type) {
-                $order = "{$order_field} {$order_type}";
+                $order = [$order_field=>$order_type];
             } else {
-                $order = 'sort desc,id desc';
+                $order = ['sort'=>'desc','id'=>'desc'];
             }
 
             $table = Db::name('news');

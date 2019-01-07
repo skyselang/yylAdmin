@@ -35,7 +35,7 @@
                             </div>
                             <div class="layui-col-xs5">
                                 <div class="padding-left-sm">
-                                    <img class="login-verify" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}'" alt="验证码" title="点击刷新">
+                                    <img class="login-verify" src="{:captcha_src()}" alt="验证码" title="点击刷新">
             					</div>
                             </div>
                         </div>
@@ -57,7 +57,14 @@
         
         var device = JSON.stringify(layui.device());
         $('.device').val(device);
-         
+
+        // verify
+        $('.login-verify').click(function(){
+            var id = Math.floor(Math.random()*100);
+            var src = '{:captcha_src()}' + '?id=' + id;
+            $(this).attr('src', src);
+        })
+
         // login submit
         form.on('submit(login)', function(data){
             var load = layer.load();

@@ -66,7 +66,6 @@
         var form = layui.form; //表单
         var layer = layui.layer; //弹出层
         var upload = layui.upload; //上传文件
-        var element = layui.element; //元素操作
 
         // 图片上传
         var uploadInst = upload.render({
@@ -79,7 +78,7 @@
             before: function(obj) {
                 // 预读本地文件，不支持ie8
                 // obj.preview(function(index, file, result){
-                //     $('#upload-div').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="height:120px;margin:0 10px 10px 0">')
+                //     $('#upload-div').append('<img src="'+ result +'" title="'+ file.name +'" class="layui-upload-img" style="height:120px;margin:0 10px 10px 0">')
                 // });
             },
             done: function(res) {
@@ -87,7 +86,7 @@
                 if (res.code == 0) {
                     $('#upload-div').append('<div class="layui-col-xs3 layui-col-sm3 layui-col-md3 layui-col-lg3">\
                         <button type="button" class="layui-btn layui-btn-primary layui-btn-sm upload-dele-btn" style="position: absolute;top: 0;opacity: 0.7">删除</button>\
-                        <img src="'+ res.src +'" alt="'+ res.name +'" style="height:120px;margin:0 10px 10px 0">\
+                        <img src="'+ res.src +'" title="'+ res.name +'" style="height:120px;margin:0 10px 10px 0">\
                         </div>\
                     ');
                 } else {

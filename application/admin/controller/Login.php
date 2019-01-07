@@ -28,16 +28,16 @@ class Login extends Controller
 		$device = $this->request->param('device/s');
 
 		if ($username == '' || $username == null || $username == 'undefined') {
-			$res['code'] = -1;
+			$res['code'] = 1;
 			$res['msg'] = '请输入账号！';
 		} elseif ($password == '' || $password == null || $password == 'undefined') {
-			$res['code'] = -1;
+			$res['code'] = 1;
 			$res['msg'] = '请输入密码！';
 		} elseif ($verify == '' || $verify == null || $verify == 'undefined') {
-			$res['code'] = -1;
+			$res['code'] = 1;
 			$res['msg'] = '请输入验证码！';
 		} elseif (!captcha_check($verify)) {
-			$res['code'] = -1; 
+			$res['code'] = 1; 
 			$res['msg'] = '验证码错误！';
 		} else {
 			$where['username'] = $username;
