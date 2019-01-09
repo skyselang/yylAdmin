@@ -2,7 +2,7 @@
  * yylAdmin CSS
  */
 /*宽度*/
-.yyl-width100{width: 100px}
+.yyl-width100{width: 100px !important}
 /*边距*/
 .yyl-padding-vertical8{padding:8px 0;}
 .yyl-padding-vertical12{padding:12px 0;}

@@ -22,7 +22,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">日期类型</label>
                             <div class="layui-input-inline">
-                                <select name="time_type">
+                                <select name="date_type">
                                     <option value="create_time">发布时间</option>
                                     <option value="update_time">修改时间</option>
                                 </select>
@@ -41,14 +41,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">日期选择</label>
-                            <div class="layui-input-inline">
-                                <input type="text" class="layui-input" name="time_date" id="create-time" placeholder="选择日期">
-                            </div>
-                        </div>
-                    </div> -->
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">类型</label>
@@ -92,18 +84,22 @@
                     <button class="layui-btn layui-btn-primary layui-hide reset-btn" type="reset">重置</button>
                 </div>
             </form>
-            <!-- 表格工具栏 -->
+            <!-- 工具栏 -->
             <script type="text/html" id="table-toolbar">
                 <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="dele">删除</button>
                 <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
             </script>
             <!-- 表格 -->
             <table class="layui-hide" id="table" lay-filter="table"></table>
+            <!-- 图片 -->
+            <script type="text/html" id="image">
+                {{# if(d.image){ }}<img src="{{d.image}}" height="100%" title="点击看原图" lay-event="image">{{# } }}
+            </script>
             <!-- 状态 -->
             <script type="text/html" id="frame">
                 <input type="checkbox" value="{{ d.id }}|{{ d.is_frame }}" lay-filter="frame" lay-skin="switch" {{ d.is_frame != 1 ? '' : 'checked' }}>
             </script>
-            <!-- 表格操作栏 -->
+            <!-- 操作栏 -->
             <script type="text/html" id="table-operate">
                 <div class="layui-btn-group">
                     <a class="layui-btn layui-btn-sm" lay-event="detail">查看</a>
@@ -124,12 +120,8 @@
         var laydate = layui.laydate; //日期
 
         // 日期
-        laydate.render({
-            elem: '#start-date',
-        });
-        laydate.render({
-            elem: '#end-date',
-        });
+        laydate.render({elem: '#start-date'});
+        laydate.render({elem: '#end-date'});
 
         // 更多
         $('.more-btn').click(function() {
@@ -141,11 +133,7 @@
                 offset: '40px',
                 title: '更多搜索条件',
                 content: content,
-                yes: function(index, layero) {
-                    content.addClass('layui-hide');
-                    layer.close(index);
-                },
-                cancel: function() {
+                end: function(){
                     content.addClass('layui-hide');
                 }
             });
@@ -154,7 +142,6 @@
         // 搜索
         form.on('submit(search-btn)', function(data) {
             var load = layer.msg('正在搜索...', { icon: 16, shade: 0.3 });
-            //表格重载
             table.reload('table', {
                 page: {
                     curr: 1 //重新从第 1 页开始
@@ -168,9 +155,7 @@
         // 重置
         $('.reload-btn').click(function() {
             var load = layer.msg('正在重置...', { icon: 16, shade: 0.3 });
-            //重置表单
-            $('.reset-btn').trigger('click');
-            //表格重载
+            $('.reset-btn').trigger('click');//重置表单
             table.reload('table', {
                 page: {
                     curr: 1 //重新从第 1 页开始
@@ -194,35 +179,50 @@
             layer.close(load);
         });
 
+        // 工具事件
+        table.on('tool(table)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var title = obj.data.title;
+            if (layEvent === 'image') { //图片
+                var image = obj.data.image;
+                layer.open({
+                    type: 1,
+                    btn: '确认',
+                    title: title,
+                    content: '<img src="'+image+'">'
+                });
+            }
+        });
+
         // 渲染表格
         table.render({
-            elem: '#table' //表格容器id
-                ,
-            title: '头条列表' //导出文件名
-                ,
-            url: '{:url()}' //数据接口
-                ,
-            page: true //开启分页
-                ,
-            limit: 20 //每页显示的条数
-                ,
-            height: 'full-50' //高度最大适应
-                ,
-            limits: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 400, 500] //每页条数的选择项
-                ,
-            cellMinWidth: 120 //全局定义常规单元格的最小宽度
-                ,
-            toolbar: '#table-toolbar' //开启表格头部工具栏区域
-                ,
-            autoSort: false //禁用前端自动排序
-                ,
-            cellMinWidth: 80 //全局定义常规单元格的最小宽度
-                ,
-            cols: [
-                [ //表头
-                    { type: 'checkbox', fixed: 'left' }, { field: 'id', title: 'ID', sort: true, width: 70 }, { field: 'title', title: '标题', edit: 'text' }, { field: 'author', title: '作者', width: 70, edit: 'text' }, { field: 'keywords', title: '关键词', hide: true, edit: 'text' }, { field: 'type', title: '类型', width: 70, sort: true }, { field: 'look', title: '浏览', sort: true, width: 70, edit: 'text' }, { field: 'sort', title: '排序', sort: true, width: 70, edit: 'text' }, { field: 'create_time', title: '发布时间', sort: true, width: 160, edit: 'text' }, { field: 'update_time', title: '修改时间', sort: true, width: 160, hide: true, edit: 'text' }, { field: 'is_frame', title: '状态', toolbar: '#frame', sort: true, width: 90 }, { title: '操作', toolbar: '#table-operate', width: 166 }
-                ]
-            ]
+            elem: '#table', //表格容器id
+            title: 'table', //导出文件名
+            url: '{:url()}', //数据接口
+            page: true, //开启分页 
+            limit: 20, //每页显示的条数 
+            height: 'full-50', //高度最大适应
+            limits: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 400, 500], //每页条数的选择项
+            cellMinWidth: 100, //全局定义常规单元格的最小宽度
+            toolbar: '#table-toolbar', //开启表格头部工具栏区域
+            autoSort: false, //禁用前端自动排序
+            cols: [[ //表头
+                {type: 'checkbox', fixed: 'left' }, 
+                {field: 'id', title: 'ID', sort: true, width: 80 },
+                {field: 'image', title: '图片', toolbar: '#image', width: 100 },
+                {field: 'title', title: '标题', edit: 'text' }, 
+                {field: 'author', title: '作者', width: 70, edit: 'text' }, 
+                {field: 'keywords', title: '关键词', hide: true, edit: 'text' },
+                {field: 'description', title: '描述', hide: true, edit: 'text' }, 
+                {field: 'type', title: '类型', width: 70, sort: true }, 
+                {field: 'look', title: '浏览', sort: true, width: 70, edit: 'text' }, 
+                {field: 'sort', title: '排序', sort: true, width: 70, edit: 'text' }, 
+                {field: 'create_time', title: '发布时间', sort: true, width: 160, edit: 'text' }, 
+                {field: 'update_time', title: '修改时间', sort: true, width: 160, hide: true, edit: 'text' }, 
+                {field: 'is_frame', title: '状态', toolbar: '#frame', sort: true, width: 90 }, 
+                {field: 'table-operate', title: '操作', toolbar: '#table-operate', width: 166 }
+            ]]
         });
 
     });
