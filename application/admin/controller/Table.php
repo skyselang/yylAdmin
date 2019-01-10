@@ -92,6 +92,13 @@ class Table extends Common
 
     public function dele()
     {
-        return $this->fetch();
+        if ($this->request->isAJAX()) {
+            sleep(5);
+
+            $res['code'] = 0;
+            $res['msg'] = '删除成功！';
+
+            return json($res);
+        }
     }
 }

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="__LAYUI__/layui/css/layui.css">
     <link rel="stylesheet" href="__LAYUI__/style/admin.css">
-    <link rel="stylesheet" href="__CSS__/yyladmin.css">
+    <link rel="stylesheet" href="__CSS__/yylcss.css">
 </head>
 
 <body>
@@ -85,8 +85,8 @@
                 </div>
             </form>
             <!-- 工具栏 -->
-            <script type="text/html" id="table-toolbar">
-                <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="dele">删除</button>
+            <script type="text/html" id="toolbar">
+                <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deles">删除</button>
                 <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
             </script>
             <!-- 表格 -->
@@ -100,7 +100,7 @@
                 <input type="checkbox" value="{{ d.id }}|{{ d.is_frame }}" lay-filter="frame" lay-skin="switch" {{ d.is_frame != 1 ? '' : 'checked' }}>
             </script>
             <!-- 操作栏 -->
-            <script type="text/html" id="table-operate">
+            <script type="text/html" id="operate">
                 <div class="layui-btn-group">
                     <a class="layui-btn layui-btn-sm" lay-event="detail">查看</a>
                     <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">编辑</a>
@@ -179,11 +179,37 @@
             layer.close(load);
         });
 
+        // 工具栏事件(删除、添加)
+        table.on('toolbar(table)', function(obj){
+            var layEvent = obj.event;
+            if (layEvent === 'deles') {
+                var data = table.checkStatus('table').data;
+                dele(data);
+            }
+            if (layEvent === 'add') {
+                layer.open({
+                    type: 2,
+                    title: '添加',
+                    content: '{:url("add")}',
+                    area: ['100%','100%'],
+                    shade: 0,
+                    maxmin: true,
+                    move: false,
+                    success: function(){
+                        layer.tips('最小化、最大化、关闭', '.layui-layer-setwin', {tips: [3, '#c2c2c2']});
+                    }
+                })
+            }
+        });
+
         // 工具事件
         table.on('tool(table)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var title = obj.data.title;
+            
+            
+
             if (layEvent === 'image') { //图片
                 var image = obj.data.image;
                 layer.open({
@@ -193,7 +219,54 @@
                     content: '<img src="'+image+'">'
                 });
             }
+
+            if (layEvent === 'dele') {
+                var datas = [data];
+                dele(datas);
+            }
         });
+
+        // 删除
+        function dele(data){console.log(data)
+            var length = data.length;
+            if (length > 0) {
+                var content = '确定要删除这'+length+'条数据吗？';
+                var id_str = '';
+                for (var i = 0; i < length; i++) {
+                    id_str +=',' + data[i]["id"];
+                }
+                var id = id_str.substring(1);//去掉第一个字符
+                layer.confirm(content,{icon: 3, title:'提示'},
+                    function(index){
+                        layer.close(index);
+                        var load = layer.open({type: 3,icon: 2});
+                        $.ajax({
+                            type: 'post',
+                            url: '{:url("dele")}',
+                            data: {id: id},
+                            success: function(res){
+                                if (res.code == 0) {
+                                    table.reload('table');//重载表格
+                                }
+                                layer.close(load);
+                                layer.msg(res.msg);
+                            },
+                            error: function(res){
+                                layer.close(load);
+                                layer.msg('网络错误！');
+                            }
+                        });
+                    }
+                );
+            } else {
+                layer.open({
+                    type: 0,
+                    title: '提示',
+                    content: '请选择需要删除的数据！',
+                    icon: 5
+                });
+            }           
+        }
 
         // 渲染表格
         table.render({
@@ -205,7 +278,7 @@
             height: 'full-50', //高度最大适应
             limits: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 400, 500], //每页条数的选择项
             cellMinWidth: 100, //全局定义常规单元格的最小宽度
-            toolbar: '#table-toolbar', //开启表格头部工具栏区域
+            toolbar: '#toolbar', //开启表格头部工具栏区域
             autoSort: false, //禁用前端自动排序
             cols: [[ //表头
                 {type: 'checkbox', fixed: 'left' }, 
@@ -221,7 +294,7 @@
                 {field: 'create_time', title: '发布时间', sort: true, width: 160, edit: 'text' }, 
                 {field: 'update_time', title: '修改时间', sort: true, width: 160, hide: true, edit: 'text' }, 
                 {field: 'is_frame', title: '状态', toolbar: '#frame', sort: true, width: 90 }, 
-                {field: 'table-operate', title: '操作', toolbar: '#table-operate', width: 166 }
+                {field: 'operate', title: '操作', toolbar: '#operate', width: 166 }
             ]]
         });
 
