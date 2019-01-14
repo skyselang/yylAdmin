@@ -208,9 +208,8 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var title = obj.data.title;
             
-            
-
-            if (layEvent === 'image') { //图片
+            // 图片
+            if (layEvent === 'image') {
                 var image = obj.data.image;
                 layer.open({
                     type: 1,
@@ -220,6 +219,7 @@
                 });
             }
 
+            // 删除
             if (layEvent === 'dele') {
                 var datas = [data];
                 dele(datas);
