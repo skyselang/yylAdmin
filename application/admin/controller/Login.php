@@ -1,4 +1,5 @@
 <?php
+
 namespace app\admin\controller;
 
 use think\Controller;
@@ -44,8 +45,8 @@ class Login extends Controller
 			$where['password'] = md5($password);
 
 			$admin = Db::name('admin')
-					->where($where)
-					->find();
+				->where($where)
+				->find();
 
 			if ($admin) {
 				$admin_id = $admin['admin_id'];
@@ -66,6 +67,7 @@ class Login extends Controller
 
 		return json($res);
 	}
+
 	/**
 	 * 更新登录信息
 	 * @param  string  $admin_id 账号id
@@ -78,7 +80,7 @@ class Login extends Controller
 		if ($admin_id) {
 			$data['login_ip'] = $login_ip;
 			$data['device'] = $device;
-			$data['update_time'] = time();
+			$data['login_time'] = time();
 			$update = Db::name('admin')
 				->where('admin_id',$admin_id)
 				->update($data);
@@ -95,7 +97,17 @@ class Login extends Controller
 	 */
 	public function exit()
 	{	
-		Session::clear();//清空session
-		$this->redirect('admin/login/login');
+		$admin_id = Session::get('admin_id');
+
+		if ($admin_id) {
+			$data['exit_time'] = time();
+
+			$exit_time = Db::name('admin')
+				->where('admin_id', $admin_id)
+				->update($data);
+		}
+
+		Session::clear();//清除session（当前作用域）
+    	echo "<script>parent.location.href='".url('admin/login/login')."'</script>";//js父级页面跳转
 	}
 }

@@ -135,8 +135,8 @@
                                 <dd class="layui-nav-itemed">
                                     <a href="javascript:;">我的设置</a>
                                     <dl class="layui-nav-child">
-                                        <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-                                        <dd><a lay-href="set/user/password.html">修改密码</a></dd>
+                                        <dd><a lay-href="{:url('admin/admin/info')}">基本资料</a></dd>
+                                        <dd><a lay-href="{:url('admin/admin/password')}">修改密码</a></dd>
                                     </dl>
                                 </dd>
                             </dl>
@@ -191,7 +191,7 @@
             layer.confirm('您确定要退出系统吗？', 
                 {icon: 3, title:'提示'},
                 function(){
-                    window.location.href = "{:url('login/exit')}"
+                    window.location.href = "{:url('admin/login/exit')}"
                 }
             )
         })
