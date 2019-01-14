@@ -11,7 +11,7 @@
  Target Server Version : 50553
  File Encoding         : 65001
 
- Date: 07/01/2019 17:58:36
+ Date: 14/01/2019 17:02:03
 */
 
 SET NAMES utf8mb4;
@@ -24,20 +24,23 @@ DROP TABLE IF EXISTS `ya_admin`;
 CREATE TABLE `ya_admin`  (
   `admin_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `nickname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin' COMMENT '昵称',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
   `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '账号',
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '密码',
   `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0.0.0.0' COMMENT '登录ip',
   `login_num` int(11) NULL DEFAULT 0 COMMENT '登录次数',
   `device` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '登录设备',
+  `login_time` int(11) NULL DEFAULT 0 COMMENT '登录时间',
   `create_time` int(11) NULL DEFAULT 0 COMMENT '添加时间',
   `update_time` int(11) NULL DEFAULT 0 COMMENT '修改时间',
+  `exit_time` int(11) NULL DEFAULT 0 COMMENT '退出时间',
   PRIMARY KEY (`admin_id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_admin
 -- ----------------------------
-INSERT INTO `ya_admin` VALUES (1, 'yylAdmin', 'yyladmin', '0827df0fd834daa31e9aec7396379033', '127.0.0.1', 4, '{\"os\":\"windows\",\"ie\":false,\"weixin\":false,\"android\":false,\"ios\":false}', 0, 1546848034);
+INSERT INTO `ya_admin` VALUES (1, 'yylAdmin', 'yyladmin@qq.com', 'yyladmin', '0827df0fd834daa31e9aec7396379033', '127.0.0.1', 40, '{\"os\":\"windows\",\"ie\":false,\"weixin\":false,\"android\":false,\"ios\":false}', 0, 1547455813, 1547452748, 1547452728);
 
 -- ----------------------------
 -- Table structure for ya_image
@@ -49,7 +52,22 @@ CREATE TABLE `ya_image`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `create_time` int(11) NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 295 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 306 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ya_image
+-- ----------------------------
+INSERT INTO `ya_image` VALUES (305, '/static/upload/images/20190110/b1fd93d8fc34dda0a914d9dd5fe12ec7.jpg', 'QQ浏览器截图20190108091235', 1547083631);
+INSERT INTO `ya_image` VALUES (304, '/static/upload/images/20190110/1e50c4ee59ae28a8faf6d40cdfa15474.jpg', 'QQ浏览器截图20190109093229', 1547083631);
+INSERT INTO `ya_image` VALUES (303, '/static/upload/images/20190110/16e3c426c33fb446c11401378eb18c1b.jpg', 'QQ浏览器截图20190109093420', 1547083631);
+INSERT INTO `ya_image` VALUES (302, '/static/upload/images/20190110/9f8e292b509d42c957cd9aa2e16fec10.png', 'QQ浏览器截图20190102141305', 1547083617);
+INSERT INTO `ya_image` VALUES (301, '/static/upload/images/20190110/6f03891ee518e726f54302842c7ce183.png', 'QQ浏览器截图20190103093138', 1547083617);
+INSERT INTO `ya_image` VALUES (300, '/static/upload/images/20190110/5673d0104732c3a15539c3389d977799.jpg', 'QQ浏览器截图20190107091905', 1547083617);
+INSERT INTO `ya_image` VALUES (299, '/static/upload/images/20190110/0ab6c678312352e21e783f63e2af1e42.jpg', 'QQ浏览器截图20190104093151', 1547083617);
+INSERT INTO `ya_image` VALUES (298, '/static/upload/images/20190110/b7ede0c43044b830b7070929013f12e2.jpg', 'QQ浏览器截图20190103093340', 1547083617);
+INSERT INTO `ya_image` VALUES (297, '/static/upload/images/20190110/16f2fd843aa71934a550ae0b14033f39.jpg', 'QQ浏览器截图20190108091235', 1547083617);
+INSERT INTO `ya_image` VALUES (296, '/static/upload/images/20190110/68e6cdd010f88e7df35504e72d261627.jpg', 'QQ浏览器截图20190109093229', 1547083616);
+INSERT INTO `ya_image` VALUES (295, '/static/upload/images/20190110/3b702c9c59f62778535e94fad8863032.jpg', 'QQ浏览器截图20190109093420', 1547083616);
 
 -- ----------------------------
 -- Table structure for ya_news
