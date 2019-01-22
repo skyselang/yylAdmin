@@ -79,15 +79,15 @@
                 </div>
                 <div class="layui-inline">
                     <a href="javascript:;" class="layui-btn layui-btn-primary more-btn" title="点击选择更多搜索条件">更多</a>
-                    <button class="layui-btn" lay-submit lay-filter="search-btn">搜索</button>
-                    <button class="layui-btn layui-btn-primary reload-btn">重置</button>
+                    <button class="layui-btn" lay-submit lay-filter="search-btn" title="按填写和更多的条件搜索">搜索</button>
+                    <button class="layui-btn layui-btn-primary reload-btn" title="刷新页面和重置搜索条件">重置</button>
                     <button class="layui-btn layui-btn-primary layui-hide reset-btn" type="reset">重置</button>
                 </div>
             </form>
             <!-- 工具栏 -->
             <script type="text/html" id="toolbar">
-                <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deles">删除</button>
-                <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deles" title="删除所选记录">删除</button>
+                <button class="layui-btn layui-btn-sm" lay-event="add" title="添加新记录">添加</button>
             </script>
             <!-- 表格 -->
             <table class="layui-hide" id="table" lay-filter="table"></table>
@@ -191,7 +191,7 @@
                     type: 2,
                     title: '添加',
                     content: '{:url("add")}',
-                    area: ['100%','100%'],
+                    area: ['98%','96%'],
                     shade: 0,
                     maxmin: true,
                     move: false,
@@ -202,7 +202,28 @@
             }
         });
 
-        // 工具事件
+        // 单元格编辑
+        table.on('edit(table)', function(obj){
+            var load = layer.open({type: 3,icon: 2,content: '正在修改'});
+            var id = obj.data.id; //得到所在行id
+            var field = obj.field; //得到字段
+            var value = obj.value; //得到修改后的值
+            $.ajax({
+                type: 'post',
+                url: '{:url("edit")}',
+                data: {id: id, field: field, value: value},
+                success: function(res){
+                    layer.close(load);
+                    layer.msg(res.msg);
+                },
+                error: function(){
+                    layer.close(load);
+                    layer.msg('网络错误！');
+                }
+            })
+        });
+
+        // 工具条事件
         table.on('tool(table)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
@@ -227,7 +248,7 @@
         });
 
         // 删除
-        function dele(data){console.log(data)
+        function dele(data){
             var length = data.length;
             if (length > 0) {
                 var content = '确定要删除这'+length+'条数据吗？';
@@ -239,7 +260,7 @@
                 layer.confirm(content,{icon: 3, title:'提示'},
                     function(index){
                         layer.close(index);
-                        var load = layer.open({type: 3,icon: 2});
+                        var load = layer.open({type: 3,icon: 2, content: '正在删除'});
                         $.ajax({
                             type: 'post',
                             url: '{:url("dele")}',
@@ -281,20 +302,20 @@
             toolbar: '#toolbar', //开启表格头部工具栏区域
             autoSort: false, //禁用前端自动排序
             cols: [[ //表头
-                {type: 'checkbox', fixed: 'left' }, 
-                {field: 'id', title: 'ID', sort: true, width: 80 },
-                {field: 'image', title: '图片', toolbar: '#image', width: 100 },
+                {type: 'checkbox', fixed: 'left'}, 
+                {field: 'id', title: 'ID', sort: true, width: 80},
+                {field: 'image', title: '图片', toolbar: '#image', width: 100},
                 {field: 'title', title: '标题', edit: 'text' }, 
-                {field: 'author', title: '作者', width: 70, edit: 'text' }, 
-                {field: 'keywords', title: '关键词', hide: true, edit: 'text' },
-                {field: 'description', title: '描述', hide: true, edit: 'text' }, 
-                {field: 'type', title: '类型', width: 70, sort: true }, 
-                {field: 'look', title: '浏览', sort: true, width: 70, edit: 'text' }, 
-                {field: 'sort', title: '排序', sort: true, width: 70, edit: 'text' }, 
-                {field: 'create_time', title: '发布时间', sort: true, width: 160, edit: 'text' }, 
-                {field: 'update_time', title: '修改时间', sort: true, width: 160, hide: true, edit: 'text' }, 
-                {field: 'is_frame', title: '状态', toolbar: '#frame', sort: true, width: 90 }, 
-                {field: 'operate', title: '操作', toolbar: '#operate', width: 166 }
+                {field: 'author', title: '作者', width: 70, edit: 'text'}, 
+                {field: 'keywords', title: '关键词', hide: true, edit: 'text'},
+                {field: 'description', title: '描述', hide: true, edit: 'text'}, 
+                {field: 'type', title: '类型', sort: true, width: 70}, 
+                {field: 'look', title: '浏览', sort: true, width: 70, edit: 'text'}, 
+                {field: 'sort', title: '排序', sort: true, width: 70, edit: 'text'}, 
+                {field: 'create_time', title: '发布时间', sort: true, width: 160}, 
+                {field: 'update_time', title: '修改时间', sort: true, width: 160, hide: true}, 
+                {field: 'is_frame', title: '状态', toolbar: '#frame', sort: true, width: 90}, 
+                {field: 'operate', title: '操作', toolbar: '#operate', width: 166}
             ]]
         });
 
