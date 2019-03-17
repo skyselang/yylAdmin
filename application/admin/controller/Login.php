@@ -12,6 +12,14 @@ class Login extends Controller
 	 * 登录页面
 	 * @return
 	 */
+	public function index()
+	{
+		$this->redirect('admin/login/login');
+	}
+	/**
+	 * 登录页面
+	 * @return
+	 */
 	public function login()
 	{
 		return $this->fetch();

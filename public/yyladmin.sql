@@ -11,7 +11,7 @@
  Target Server Version : 50553
  File Encoding         : 65001
 
- Date: 14/03/2019 16:01:41
+ Date: 17/03/2019 21:08:34
 */
 
 SET NAMES utf8mb4;
@@ -34,13 +34,15 @@ CREATE TABLE `ya_admin`  (
   `create_time` int(11) NULL DEFAULT 0 COMMENT '添加时间',
   `update_time` int(11) NULL DEFAULT 0 COMMENT '修改时间',
   `exit_time` int(11) NULL DEFAULT 0 COMMENT '退出时间',
-  PRIMARY KEY (`admin_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`admin_id`) USING BTREE,
+  INDEX `admin_id`(`admin_id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_admin
 -- ----------------------------
-INSERT INTO `ya_admin` VALUES (1, 'yylAdmin', 'yyladmin@qq.com', 'yyladmin', '0827df0fd834daa31e9aec7396379033', '127.0.0.1', 49, '{\"os\":\"windows\",\"ie\":false,\"weixin\":false,\"android\":false,\"ios\":false}', 1551854478, 1547466628, 1547467941, 1547467960);
+INSERT INTO `ya_admin` VALUES (1, 'yylAdmin', 'yyladmin@qq.com', 'yyladmin', '0827df0fd834daa31e9aec7396379033', '127.0.0.1', 57, '{\"os\":\"windows\",\"ie\":false,\"weixin\":false,\"android\":false,\"ios\":false}', 1552827700, 1547466628, 1547467941, 1552827693);
+INSERT INTO `ya_admin` VALUES (2, 'test', NULL, '0', '0', '0.0.0.0', 0, '0', 0, 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for ya_image
@@ -51,28 +53,29 @@ CREATE TABLE `ya_image`  (
   `src` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `create_time` int(11) NULL DEFAULT 0,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 338 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `id`(`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 338 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '图片' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_image
 -- ----------------------------
-INSERT INTO `ya_image` VALUES (329, '/static/upload/images/20190128/e349327fb720defc0f7a5988d75da602.jpg', 'bba1cd11728b4710abd9605bcecec3fdfd0323b6', 1548673487);
-INSERT INTO `ya_image` VALUES (330, '/static/upload/images/20190128/3f5873881c585b6dbd46b5068442b7d3.jpg', 'f3d3572c11dfa9ec53b720856fd0f703908fc183', 1548673487);
-INSERT INTO `ya_image` VALUES (331, '/static/upload/images/20190128/46e886dd4e8ace1205f436118c88b73a.png', 'QQ浏览器截图20181021155610', 1548673487);
-INSERT INTO `ya_image` VALUES (332, '/static/upload/images/20190128/8df53ce93000002097f3df08fa09d9e7.png', 'QQ浏览器截图20181021155642', 1548673487);
-INSERT INTO `ya_image` VALUES (333, '/static/upload/images/20190128/7e687e43066b0a543a4aeb2b4f55b563.png', 'QQ浏览器截图20181021155704', 1548673487);
-INSERT INTO `ya_image` VALUES (334, '/static/upload/images/20190128/f25d2596202ad7965e67bbde444b303f.png', 'QQ浏览器截图20181021155803', 1548673487);
-INSERT INTO `ya_image` VALUES (335, '/static/upload/images/20190128/f60a5f70555a3a2333b488d1ef00d18c.png', 'QQ浏览器截图20181226230342', 1548673487);
-INSERT INTO `ya_image` VALUES (336, '/static/upload/images/20190128/2511487b34381bd8cbbe99eff5c42254.jpg', 'QQ浏览器截图20181226230342_看图王(1)', 1548673487);
-INSERT INTO `ya_image` VALUES (323, '/static/upload/images/20190128/ccabdcbe5bf345b6593e4c8185c14795.jpg', '10dfa9ec8a13632708b143a09c8fa0ec09fac7c1', 1548673486);
-INSERT INTO `ya_image` VALUES (322, '/static/upload/images/20190128/d39fe20a19c724d2c34b9c77a27cd789.jpg', '3b292df5e0fe9925a8a324c539a85edf8cb171f3', 1548673477);
-INSERT INTO `ya_image` VALUES (328, '/static/upload/images/20190128/f70c2a64df8062bb82a1cd83b560fd84.jpg', 'adaf2edda3cc7cd9ebe507433401213fb90e915b', 1548673487);
-INSERT INTO `ya_image` VALUES (327, '/static/upload/images/20190128/dc9f8d068a2c281092eb93af9f98fb13.jpg', 'a8773912b31bb05114a597be3b7adab44bede0a7', 1548673487);
-INSERT INTO `ya_image` VALUES (326, '/static/upload/images/20190128/efb450458632ec6bde62f3a21bcae909.jpg', 'a9d3fd1f4134970ab5a306bd98cad1c8a6865d4b', 1548673487);
-INSERT INTO `ya_image` VALUES (325, '/static/upload/images/20190128/5d7afafee92ed58a38ad3229d0daed99.jpg', '21a4462309f79052101fdaaf01f3d7ca7bcbd51b', 1548673487);
-INSERT INTO `ya_image` VALUES (324, '/static/upload/images/20190128/733b727c115be5091ce90e9a230acbe1.jpg', '3b292df5e0fe9925a8a324c539a85edf8cb171f3', 1548673487);
-INSERT INTO `ya_image` VALUES (337, '/static/upload/images/20190128/a50bfc83d9e85355e96d2354a061226d.jpg', 'QQ浏览器截图20181226230342_看图王', 1548673488);
+INSERT INTO `ya_image` VALUES (329, '/upload/images/20190128/e349327fb720defc0f7a5988d75da602.jpg', 'bba1cd11728b4710abd9605bcecec3fdfd0323b6', 1548673487);
+INSERT INTO `ya_image` VALUES (330, '/upload/images/20190128/3f5873881c585b6dbd46b5068442b7d3.jpg', 'f3d3572c11dfa9ec53b720856fd0f703908fc183', 1548673487);
+INSERT INTO `ya_image` VALUES (331, '/upload/images/20190128/46e886dd4e8ace1205f436118c88b73a.png', 'QQ浏览器截图20181021155610', 1548673487);
+INSERT INTO `ya_image` VALUES (332, '/upload/images/20190128/8df53ce93000002097f3df08fa09d9e7.png', 'QQ浏览器截图20181021155642', 1548673487);
+INSERT INTO `ya_image` VALUES (333, '/upload/images/20190128/7e687e43066b0a543a4aeb2b4f55b563.png', 'QQ浏览器截图20181021155704', 1548673487);
+INSERT INTO `ya_image` VALUES (334, '/upload/images/20190128/f25d2596202ad7965e67bbde444b303f.png', 'QQ浏览器截图20181021155803', 1548673487);
+INSERT INTO `ya_image` VALUES (335, '/upload/images/20190128/f60a5f70555a3a2333b488d1ef00d18c.png', 'QQ浏览器截图20181226230342', 1548673487);
+INSERT INTO `ya_image` VALUES (336, '/upload/images/20190128/2511487b34381bd8cbbe99eff5c42254.jpg', 'QQ浏览器截图20181226230342_看图王(1)', 1548673487);
+INSERT INTO `ya_image` VALUES (323, '/upload/images/20190128/ccabdcbe5bf345b6593e4c8185c14795.jpg', '10dfa9ec8a13632708b143a09c8fa0ec09fac7c1', 1548673486);
+INSERT INTO `ya_image` VALUES (322, '/upload/images/20190128/d39fe20a19c724d2c34b9c77a27cd789.jpg', '3b292df5e0fe9925a8a324c539a85edf8cb171f3', 1548673477);
+INSERT INTO `ya_image` VALUES (328, '/upload/images/20190128/f70c2a64df8062bb82a1cd83b560fd84.jpg', 'adaf2edda3cc7cd9ebe507433401213fb90e915b', 1548673487);
+INSERT INTO `ya_image` VALUES (327, '/upload/images/20190128/dc9f8d068a2c281092eb93af9f98fb13.jpg', 'a8773912b31bb05114a597be3b7adab44bede0a7', 1548673487);
+INSERT INTO `ya_image` VALUES (326, '/upload/images/20190128/efb450458632ec6bde62f3a21bcae909.jpg', 'a9d3fd1f4134970ab5a306bd98cad1c8a6865d4b', 1548673487);
+INSERT INTO `ya_image` VALUES (325, '/upload/images/20190128/5d7afafee92ed58a38ad3229d0daed99.jpg', '21a4462309f79052101fdaaf01f3d7ca7bcbd51b', 1548673487);
+INSERT INTO `ya_image` VALUES (324, '/upload/images/20190128/733b727c115be5091ce90e9a230acbe1.jpg', '3b292df5e0fe9925a8a324c539a85edf8cb171f3', 1548673487);
+INSERT INTO `ya_image` VALUES (337, '/upload/images/20190128/a50bfc83d9e85355e96d2354a061226d.jpg', 'QQ浏览器截图20181226230342_看图王', 1548673488);
 
 -- ----------------------------
 -- Table structure for ya_news
@@ -99,8 +102,9 @@ CREATE TABLE `ya_news`  (
   `delete_time` int(11) NULL DEFAULT 0 COMMENT '删除时间',
   `update_time` int(11) NULL DEFAULT 0 COMMENT '修改时间',
   `create_time` int(11) NULL DEFAULT 0 COMMENT '添加时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 262 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '头条新闻' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `id`(`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 262 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_news

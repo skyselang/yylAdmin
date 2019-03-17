@@ -16,7 +16,7 @@ Route::group('admin', function(){
 	Route::get('exit','admin/login/exit');
 	// index
 	Route::get('/', 'admin/index/index');
-	Route::get('console', 'admin/index/console');
+	Route::get('indexs', 'admin/index/indexs');
 });
 
 

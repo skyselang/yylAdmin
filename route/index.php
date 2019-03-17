@@ -10,10 +10,5 @@
 // +----------------------------------------------------------------------
 
 // index
-Route::rule('about', 'about');
-Route::rule('case', 'case');
-Route::rule('index', 'index');
-Route::rule('news', 'news');
-Route::rule('newsDetail', 'newsDetail');
-Route::rule('product', 'product');
+Route::rule('index/index', 'index/index/index');
 

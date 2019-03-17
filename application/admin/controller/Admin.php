@@ -8,6 +8,10 @@ use think\facade\Session;
 
 class Admin extends Common
 {
+    /**
+     * 修改资料
+     * @return json
+     */
     public function info()
     {
     	$admin_id = Session::get('admin_id');
@@ -20,7 +24,6 @@ class Admin extends Common
     		$this->error('登录信息获取失败，请重新登录！');
     	}
 
-    	// 修改资料
     	$is_ajax = $this->request->isAjax();
     	if ($is_ajax) {
             $admin_id = Session::get('admin_id');
@@ -64,9 +67,12 @@ class Admin extends Common
     	return $this->fetch();
     }
 
+    /**
+     * 修改密码
+     * @return json 
+     */
     public function pwd()
     {
-        // 修改密码
         $is_ajax = $this->request->isAjax();
         if ($is_ajax) {
             $admin_id = Session::get('admin_id');
