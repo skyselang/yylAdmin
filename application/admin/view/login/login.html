@@ -81,6 +81,7 @@
                             location.href = res.url;
                         }, 1000);
                     } else {
+                        $('.login-verify').trigger('click');
                         layer.msg(res.msg);
                     }
                     return false;
