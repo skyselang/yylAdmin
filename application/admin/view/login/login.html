@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{:config('app.app_name')}_login</title>
+    <title>{:config('app.app_name')}_登录</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,13 +12,13 @@
 
 <body>
     <div class="layui-container">
-        <div class="layui-row yyl-padding-vertical16">
+        <div class="layui-row " style="margin: 2rem 0">
             <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 layui-clear" style="text-align: center;margin: 2rem 0">
-                <image class="yyl-padding-vertical16" src="__IMG__/logo.png"></image>
+                <image class="" style="margin: 2rem 0" src="__IMG__/logo.png"></image>
                 <h2>{:config('app.app_name')}</h2>
             </div>
         </div>
-        <div class="layui-row yyl-padding-vertical16">
+        <div class="layui-row " style="margin: 2rem 0">
             <div class="layui-col-xs12 layui-col-sm12 layui-col-md4 layui-col-md-offset4">
                 <form class="layui-form yyl-text-center">
                     <div class="layui-form-item">
@@ -27,6 +27,7 @@
                     <div class="layui-form-item">
                         <input type="password" name="password" lay-verify="required" placeholder="请输入密码" class="layui-input" maxlength="30">
                     </div>
+                    {if $is_verify}
                     <div class="layui-form-item">
                         <div class="layui-row">
                             <div class="layui-col-xs7">
@@ -35,10 +36,11 @@
                             <div class="layui-col-xs5">
                                 <div class="padding-left-sm">
                                     <img class="login-verify" src="{:captcha_src()}" height="50" alt="验证码" title="点击刷新">
-            					</div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {/if}
                     <input class="device" type="hidden" name="device" value="0">
                     <div class="layui-form-item">
                         <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login">登录</button>
@@ -63,6 +65,9 @@
             var src = '{:captcha_src()}' + '?vid=' + id;
             $(this).attr('src', src);
         })
+        function verify(){
+            $('.login-verify').trigger('click');
+        }
 
         // login
         form.on('submit(login)', function(data){
@@ -71,7 +76,7 @@
             $.ajax({
                 data:data,
                 type:"POST",
-                url:"{:url('admin/login/login')}",
+                url:"{:url('check')}",
                 success:function(res){
                     layer.close(load);
                     if (res.code == 0) {
@@ -81,7 +86,7 @@
                             location.href = res.url;
                         }, 1000);
                     } else {
-                        $('.login-verify').trigger('click');
+                        verify();
                         layer.msg(res.msg);
                     }
                     return false;

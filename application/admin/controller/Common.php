@@ -23,7 +23,7 @@ class Common extends Controller
     	if ($is_login) {
     		# code...
     	} else {
-            action('admin/login/exit');
+            action('login/sysexit');
     	}
     }
 }

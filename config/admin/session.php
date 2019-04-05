@@ -24,5 +24,5 @@ return [
     // 是否自动开启 SESSION
     'auto_start'     => true,
     // session过期时间
-    'expire' => 5*60,
+    'expire' => 10*60,
 ];

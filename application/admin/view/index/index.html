@@ -54,8 +54,8 @@
                             <cite>{:session('nickname')}</cite>
                         </a>
                         <dl class="layui-nav-child">
-                            <dd><a lay-href="{:url('admin/admin/info')}">基本资料</a></dd>
-                            <dd><a lay-href="{:url('admin/admin/pwd')}">修改密码</a></dd>
+                            <dd><a lay-href="{:url('admin/info')}">基本资料</a></dd>
+                            <dd><a lay-href="{:url('admin/pwd')}">修改密码</a></dd>
                             <hr>
                             <dd class="yyl-exit"><a href="javascript:;">退出系统</a></dd>
                         </dl>
@@ -68,12 +68,12 @@
             <!-- 侧边菜单 -->
             <div class="layui-side layui-side-menu">
                 <div class="layui-side-scroll">
-                    <div class="layui-logo" lay-href="{:url('admin/index/indexs')}">
+                    <div class="layui-logo" lay-href="{:url('index/indexs')}">
                         <span>{:config('app.app_name')}</span>
                     </div>
                     <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
                         <li data-name="" class="layui-nav-item layui-nav-itemed">
-                            <a lay-href="{:url('admin/index/indexs')}"  lay-tips="首页" lay-direction="2">
+                            <a lay-href="{:url('index/indexs')}"  lay-tips="首页" lay-direction="2">
                                 <i class="layui-icon layui-icon-home"></i>
                                 <cite>首页</cite>
                             </a>
@@ -87,14 +87,14 @@
                                 <dd class="layui-nav-itemed">
                                     <a href="javascript:;">上传</a>
                                     <dl class="layui-nav-child">
-                                        <dd><a lay-href="{:url('admin/upload/one')}">图片上传</a></dd>
-                                        <dd><a lay-href="{:url('admin/upload/more')}">多图上传</a></dd>
+                                        <dd><a lay-href="{:url('upload/one')}">图片上传</a></dd>
+                                        <dd><a lay-href="{:url('upload/more')}">多图上传</a></dd>
                                     </dl>
                                 </dd>
                             </dl>
                             <dl class="layui-nav-child">
                                 <dd>
-                                    <a lay-href="{:url('admin/table/table')}">表格</a>
+                                    <a lay-href="{:url('table/table')}">表格</a>
                                 </dd>
                             </dl>
                         </li>
@@ -105,7 +105,7 @@
                             </a>
                             <dl class="layui-nav-child">
                                 <dd>
-                                    <a lay-href="{:url('admin/table/table')}">管理员</a>
+                                    <a lay-href="{:url('table/table')}">管理员</a>
                                 </dd>
                             </dl>
                         </li>
@@ -125,8 +125,8 @@
                                 <dd class="layui-nav-itemed">
                                     <a href="javascript:;">我的设置</a>
                                     <dl class="layui-nav-child">
-                                        <dd><a lay-href="{:url('admin/admin/info')}">基本资料</a></dd>
-                                        <dd><a lay-href="{:url('admin/admin/pwd')}">修改密码</a></dd>
+                                        <dd><a lay-href="{:url('admin/info')}">基本资料</a></dd>
+                                        <dd><a lay-href="{:url('admin/pwd')}">修改密码</a></dd>
                                     </dl>
                                 </dd>
                             </dl>
@@ -152,7 +152,7 @@
                 </div>
                 <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                     <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                        <li lay-id="{:url('admin/index/indexs')}" lay-attr="{:url('admin/index/indexs')}" class="layui-this">
+                        <li lay-id="{:url('index/indexs')}" lay-attr="{:url('index/indexs')}" class="layui-this">
                             <i class="layui-icon layui-icon-home"></i>
                         </li>
                     </ul>
@@ -161,7 +161,7 @@
             <!-- 主体内容 -->
             <div class="layui-body" id="LAY_app_body">
                 <div class="layadmin-tabsbody-item layui-show">
-                    <iframe src="{:url('admin/index/indexs')}" frameborder="0" class="layadmin-iframe"></iframe>
+                    <iframe src="{:url('index/indexs')}" frameborder="0" class="layadmin-iframe"></iframe>
                 </div>
             </div>
             <!-- 辅助元素，一般用于移动设备下遮罩 -->
@@ -176,12 +176,12 @@
         var $ = layui.$;
         var layer = layui.layer;
 
-        // exit
+        // exit system
         $('.yyl-exit').click(function(){
             layer.confirm('您确定要退出系统吗？', 
                 {icon: 3, title:'提示'},
                 function(){
-                    window.location.href = "{:url('admin/login/exit')}"
+                    window.location.href = "{:url('login/sysexit')}"
                 }
             )
         })

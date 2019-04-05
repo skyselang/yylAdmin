@@ -9,16 +9,9 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-Route::group('admin', function(){
-	// login
-	Route::get('login', 'admin/login/login');
-	Route::post('login', 'admin/login/check');
-	Route::get('exit','admin/login/exit');
-	// index
-	Route::get('/', 'admin/index/index');
-	Route::get('indexs', 'admin/index/indexs');
-});
-
+// admin
+Route::rule('admin/login', 'admin/login/login');
+Route::rule('admin/index', 'admin/index/index');
 
 
 
