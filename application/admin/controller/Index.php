@@ -13,7 +13,7 @@ class Index extends Common
         return $this->fetch();
     }
     
-    public function indexs()
+    public function console()
     {
         return $this->fetch();
     }
