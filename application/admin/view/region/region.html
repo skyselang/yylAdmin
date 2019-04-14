@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>地区</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__LAYUI__/layui/css/layui.css">
+    <link rel="stylesheet" href="__LAYUI__/style/admin.css">
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <a class="layui-btn" onclick="add(null);">添加</a>
+                        <a class="layui-btn" onclick="reload()">刷新</a>
+                        <a class="layui-btn" onclick="openAll();">展开或折叠全部</a>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
+                        <script type="text/html" id="operate">
+                            <a class="layui-btn layui-btn-sm" lay-event="add">添加</a>
+                            <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+                            <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">删除</a>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- JavaScript -->
+    <script src="__LAYUI__/layui/layui.js"></script>
+    <script>
+        var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+        layui.config({base: '__LAYUI__/'});
+        layui.extend({treeGrid:'modules/treeGrid'});
+        layui.use(['jquery','treeGrid','layer'], function(){
+            var $ = layui.jquery;
+            treeGrid = layui.treeGrid;
+            layer = layui.layer;
+            ptable = treeGrid.render({
+                id:tableId
+                ,elem: '#'+tableId
+                ,url:'{:url()}'
+                ,idField:'region_id'//必須字段
+                ,treeId:'region_id'//树形id字段名称
+                ,treeUpId:'region_pid'//树形父id字段名称
+                ,treeShowName:'region_name'//以树形式显示的字段
+                ,isFilter:false
+                ,iconOpen:true//是否显示图标【默认显示】
+                ,isOpenDefault:false//节点默认是展开还是折叠【默认展开】
+                ,loading:true
+                ,method:'post'
+                ,isPage:false
+                ,height: 'full-100'
+                ,cols: [[
+                     {type:'numbers'}
+                    ,{field:'region_name', title: '地区名称'}
+                    ,{field:'region_id', title: '地区ID',width:100}
+                    ,{field:'region_pid', title: '上级ID',width:100}
+                    ,{field:'region_sort', title: '地区排序',width:100}
+                    ,{field:'operate', title: '操作',width:200, toolbar: '#operate' }
+                ]]
+                ,parseData:function (res) {
+                //数据加载后回调
+                    return res;
+                }
+                ,onClickRow:function (index, o) {
+                    //console.log(index,o,"单击！");
+                    //msg("单击！,按F12，在控制台查看详细参数！");
+                }
+                ,onDblClickRow:function (index, o) {
+                    //console.log(index,o,"双击");
+                    //msg("双击！,按F12，在控制台查看详细参数！");
+                }
+                ,onCheck:function (obj,checked,isAll) {
+                //复选事件
+                    //console.log(obj,checked,isAll,"复选");
+                    //msg("复选,按F12，在控制台查看详细参数！");
+                }
+                ,onRadio:function (obj) {
+                //单选事件
+                    //console.log(obj,"单选");
+                    //msg("单选,按F12，在控制台查看详细参数！");
+                }
+            });
+
+            treeGrid.on('tool('+tableId+')',function (obj) {
+                if (obj.event === 'del'){
+                    //删除行
+                    del(obj);
+                } else if (obj.event === 'add'){
+                    //添加行
+                    add(obj);
+                } else if (obj.event === 'edit') {
+                    edit(obj);
+                }
+            });
+
+            function del(obj) {
+                layer.confirm("你确定删除地区吗？如果存在下级地区则一起删除，此操作不能撤销！", {icon: 3, title:'提示'},
+                    function(index){
+                        $.ajax({
+                            url: '{:url("region_dele")}',
+                            data: {region_id:obj.data.region_id},
+                            success: function(res){
+                                if (res.code == 0) {
+                                    obj.del();
+                                }
+                                layer.msg(res.msg);
+                            }
+                        })
+                        layer.close(index);
+                    },function (index) {
+                        //取消回调
+                        layer.close(index);
+                    }
+                );
+            };
+
+            // 编辑
+            function edit(pObj) {
+                var region_id = pObj.data.region_id;
+                layer.open({
+                    type: 2,
+                    title: '编辑',
+                    content: '{:url("region_edit")}?region_id=' + region_id,
+                    area: ['60%','50%'],
+                    maxmin: true
+                })
+            }
+
+        });
+
+        
+
+        //添加
+        function add(pObj) {
+            var pdata = pObj ? pObj.data : null;
+            var region_id = pObj ? pObj.data.region_id : 0;
+            var lay_table_index = pdata?pdata[treeGrid.config.indexName]+1:0;
+            layer.open({
+                type: 2,
+                title: '添加',
+                content: '{:url("region_add")}',
+                area: ['60%','50%'],
+                maxmin: true,
+                success: function(layero, index){
+                    var body = layer.getChildFrame('body', index);//获取弹出层的body
+                    body.find('#region_pid').val(region_id);//赋值
+                    body.find('#lay_table_index').val(lay_table_index);//赋值
+                },
+                end: function() {
+                    // var pdata=pObj?pObj.data:null;
+                    // var param={};
+                    // param.name='123131';
+                    // param.id=localStorage.getItem('region_id');
+                    // param.pId=pdata?pdata.id:0;
+                    // param.sort=localStorage.getItem('region_sort');
+                    // treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
+                }
+            })
+        }
+
+        function print() {
+            //console.log(treeGrid.cache[tableId]);
+            //msg("对象已打印，按F12，在控制台查看！");
+        }
+
+        function msg(msg) {
+            var loadIndex=layer.msg(msg, {
+                time:3000
+                ,offset: 'b'//顶部
+                ,shade: 0
+            });
+        }
+        
+        function openorclose() {
+            var map=treeGrid.getDataMap(tableId);
+            var o= map['102'];
+            treeGrid.treeNodeOpen(tableId,o,!o[treeGrid.config.cols.isOpen]);
+        }
+
+
+        function openAll() {
+            var treedata=treeGrid.getDataTreeList(tableId);
+            treeGrid.treeOpenAll(tableId,!treedata[0][treeGrid.config.cols.isOpen]);
+        }
+
+        function getCheckData() {
+            var checkStatus = treeGrid.checkStatus(tableId)
+                ,data = checkStatus.data;
+            layer.alert(JSON.stringify(data));
+        }
+        function radioStatus() {
+            var data = treeGrid.radioStatus(tableId)
+            layer.alert(JSON.stringify(data));
+        }
+        function getCheckLength() {
+            var checkStatus = treeGrid.checkStatus(tableId)
+                ,data = checkStatus.data;
+            layer.msg('选中了：'+ data.length + ' 个');
+        }
+
+        function reload() {
+            treeGrid.reload(tableId,{
+                page:{
+                    curr:1
+                }
+            });
+        }
+        function query() {
+            treeGrid.query(tableId,{
+                where:{
+                    name:'sdfsdfsdf'
+                }
+            });
+        }
+        
+        function test() {
+            console.log(treeGrid.cache[tableId],treeGrid.getClass(tableId));
+
+
+            /*var map=treeGrid.getDataMap(tableId);
+            var o= map['102'];
+            o.name="更新";
+            treeGrid.updateRow(tableId,o);*/
+        }
+</script>
+    
+</body>
+
+</html>

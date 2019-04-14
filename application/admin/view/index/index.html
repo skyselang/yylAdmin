@@ -57,7 +57,7 @@
                             <dd><a lay-href="{:url('admin/info')}">基本资料</a></dd>
                             <dd><a lay-href="{:url('admin/pwd')}">修改密码</a></dd>
                             <hr>
-                            <dd class="yyl-exit"><a href="javascript:;">退出系统</a></dd>
+                            <dd class="yyl-sysexit"><a href="javascript:;">退出系统</a></dd>
                         </dl>
                     </li>
                     <li class="layui-nav-item" lay-unselect>
@@ -95,6 +95,9 @@
                             <dl class="layui-nav-child">
                                 <dd>
                                     <a lay-href="{:url('table/table')}">表格</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="{:url('Region/region')}">树形表格</a>
                                 </dd>
                             </dl>
                         </li>
@@ -177,7 +180,7 @@
         var layer = layui.layer;
 
         // exit system
-        $('.yyl-exit').click(function(){
+        $('.yyl-sysexit').click(function(){
             layer.confirm('您确定要退出系统吗？', 
                 {icon: 3, title:'提示'},
                 function(){

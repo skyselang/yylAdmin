@@ -6,22 +6,27 @@ use think\Controller;
 use think\Db;
 use think\facade\Config;
 use think\facade\Session;
+use think\facade\Request;
 
 class Login extends Controller {
 	/**
 	 * 登录页面
 	 * @return
 	 */
-	public function index() {
+	public function index() 
+	{
 		$this->redirect('admin/login/login');
 	}
 	/**
 	 * 登录页面
 	 * @return
 	 */
-	public function login() {
+	public function login() 
+	{
 		$is_verify = config::get('app.is_verify');
+
 		$this->assign('is_verify', $is_verify);
+
 		return $this->fetch();
 	}
 
@@ -31,49 +36,49 @@ class Login extends Controller {
 	 */
 	public function check() 
 	{
-		$res['code'] = 1;
+		if (request::isAjax()) {
+			$res['code'] = 1;
 
-		$is_verify = config::get('app.is_verify'); //是否开启验证码
-		$username = $this->request->param('username/s');
-		$password = $this->request->param('password/s');
-		$verify = $this->request->param('verify/s');
-		$device = $this->request->param('device/s');
-		$login_ip = $this->request->ip();
+			$is_verify = config::get('app.is_verify'); //是否开启验证码
+			$username = request::param('username');
+			$password = request::param('password');
+			$verify = request::param('verify');
+			$device = request::param('device');
+			$login_ip = request::ip();
 
-		if ($username == '' || $username == null || $username == 'undefined') {
-			$res['msg'] = '请输入账号！';
-		} elseif ($password == '' || $password == null || $password == 'undefined') {
-			$res['msg'] = '请输入密码！';
-		} elseif (($is_verify) && ($verify == '' || $verify == null || $verify == 'undefined')) {
-			$res['msg'] = '请输入验证码！';
-		} elseif (!captcha_check($verify) && $is_verify) {
-			$res['msg'] = '验证码错误！';
-		} else {
-			$where['username'] = $username;
-			$where['password'] = md5($password);
-
-			$admin = Db::name('admin')
-				->where($where)
-				->find();
-
-			if ($admin) {
-				$admin_id = $admin['admin_id'];
-
-				Session::set('admin_id', $admin_id);
-				Session::set('username', $admin['username']);
-				Session::set('nickname', $admin['nickname']);
-
-				$this->update($admin_id, $login_ip, $device);
-
-				$res['code'] = 0;
-				$res['msg'] = '登录成功！';
-				$res['url'] = url('admin/index/index');
+			if (empty($username)) {
+				$res['msg'] = '请输入账号！';
+			} elseif (empty($password)) {
+				$res['msg'] = '请输入密码！';
+			} elseif (($is_verify) && (empty($verify))) {
+				$res['msg'] = '请输入验证码！';
+			} elseif (!captcha_check($verify) && $is_verify) {
+				$res['msg'] = '验证码错误！';
 			} else {
-				$res['msg'] = '账号或密码错误！';
-			}
-		}
+				$where['username'] = $username;
+				$where['password'] = md5($password);
 
-		return json($res);
+				$admin = Db::name('admin')->where($where)->find();
+
+				if ($admin) {
+					$admin_id = $admin['admin_id'];
+
+					Session::set('admin_id', $admin_id);
+					Session::set('username', $admin['username']);
+					Session::set('nickname', $admin['nickname']);
+
+					$this->update($admin_id, $login_ip, $device);
+
+					$res['code'] = 0;
+					$res['msg'] = '登录成功！';
+					$res['url'] = url('admin/index/index');
+				} else {
+					$res['msg'] = '账号或密码错误！';
+				}
+			}
+
+			return json($res);
+		}
 	}
 
 	/**
@@ -97,7 +102,7 @@ class Login extends Controller {
 	}
 
 	/**
-	 * 退出系统
+	 * 退出系统并清除session
 	 * @return
 	 */
 	public function sysexit() {
