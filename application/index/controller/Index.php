@@ -8,7 +8,8 @@ class Index extends Controller
 
     public function index()
     {
-        $this->redirect('admin/index/index');
+    	echo "string";
+        $this->redirect('admin/login/login');
     }
 
 }
