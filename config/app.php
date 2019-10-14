@@ -103,7 +103,7 @@ return [
     // 合并路由规则
     'route_rule_merge'       => false,
     // 路由是否完全匹配
-    'route_complete_match'   => true,
+    'route_complete_match'   => false,
     // 使用注解路由
     'route_annotation'       => false,
     // 域名根，如thinkphp.cn
@@ -132,12 +132,8 @@ return [
     'route_cache_option'     => [],
 
     // 默认跳转页面对应的模板文件
-    // 'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
-    // 'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
-    //默认错误跳转对应的模板文件
-    'dispatch_error_tmpl' => '/tpl/dispatch_jump',
-    //默认成功跳转对应的模板文件
-    'dispatch_success_tmpl' => '/tpl/dispatch_jump',
+    'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
+    'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
 
     // 异常页面的模板文件
     'exception_tmpl'         => Env::get('think_path') . 'tpl/think_exception.tpl',

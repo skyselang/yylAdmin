@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc9a61c85c0b9769ad8ded26f466970eb
+class ComposerStaticInit317c6a47da953665501a1734d6a3202c
 {
     public static $files = array (
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
@@ -20,10 +20,6 @@ class ComposerStaticInitc9a61c85c0b9769ad8ded26f466970eb
         'a' => 
         array (
             'app\\' => 4,
-        ),
-        'F' => 
-        array (
-            'Firebase\\JWT\\' => 13,
         ),
     );
 
@@ -44,17 +40,13 @@ class ComposerStaticInitc9a61c85c0b9769ad8ded26f466970eb
         array (
             0 => __DIR__ . '/../..' . '/application',
         ),
-        'Firebase\\JWT\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
-        ),
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc9a61c85c0b9769ad8ded26f466970eb::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc9a61c85c0b9769ad8ded26f466970eb::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit317c6a47da953665501a1734d6a3202c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit317c6a47da953665501a1734d6a3202c::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }
