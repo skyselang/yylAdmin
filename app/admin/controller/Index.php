@@ -1,12 +1,19 @@
 <?php
-declare (strict_types = 1);
+
+declare(strict_types=1);
 
 namespace app\admin\controller;
+
+use think\facade\View;
 
 class Index
 {
     public function index()
     {
-        return '您好！这是一个admin示例应用';
+        return View::fetch();
+    }
+    public function indexs()
+    {
+        return View::fetch();
     }
 }
