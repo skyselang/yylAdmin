@@ -7,11 +7,10 @@ namespace app\admin\controller;
 use think\Request;
 use think\facade\View;
 
-class Login extends Base
+class Login
 {
     public function login()
     {
-        echo 'login';
         return View::fetch();
     }
 }
