@@ -9,7 +9,7 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 
-namespace think\console\command;
+namespace think\app\command;
 
 use think\console\Command;
 use think\console\Input;
@@ -18,7 +18,6 @@ use think\console\Output;
 
 class Build extends Command
 {
-
     /**
      * 应用基础目录
      * @var string
@@ -31,48 +30,49 @@ class Build extends Command
     protected function configure()
     {
         $this->setName('build')
-            ->addArgument('dir', Argument::OPTIONAL, 'dir name .')
-            ->setDescription('Build Application Dirs');
+            ->addArgument('app', Argument::OPTIONAL, 'app name .')
+            ->setDescription('Build App Dirs');
     }
 
     protected function execute(Input $input, Output $output)
     {
         $this->basePath = $this->app->getBasePath();
-        $dir            = $input->getArgument('dir') ?: '';
+        $app            = $input->getArgument('app') ?: '';
 
-        $list = include $this->basePath . 'build.php';
-
-        if (empty($list)) {
-            $output->writeln("Build file Is Empty");
-            return;
+        if (is_file($this->basePath . 'build.php')) {
+            $list = include $this->basePath . 'build.php';
+        } else {
+            $list = [
+                '__dir__' => ['controller', 'model', 'view'],
+            ];
         }
 
-        $this->buildApp($dir, $list);
-        $output->writeln("Successed");
+        $this->buildApp($app, $list);
+        $output->writeln("<info>Successed</info>");
 
     }
 
     /**
      * 创建应用
      * @access protected
-     * @param  string $dir  目录名
+     * @param  string $app  应用名
      * @param  array  $list 目录结构
      * @return void
      */
-    protected function buildApp(string $dir, array $list = []): void
+    protected function buildApp(string $app, array $list = []): void
     {
-        if (!is_dir($this->basePath . $dir)) {
+        if (!is_dir($this->basePath . $app)) {
             // 创建应用目录
-            mkdir($this->basePath . $dir);
+            mkdir($this->basePath . $app);
         }
 
-        $appPath   = $this->basePath . ($dir ? $dir . DIRECTORY_SEPARATOR : '');
-        $namespace = 'app' . ($dir ? '\\' . $dir : '');
+        $appPath   = $this->basePath . ($app ? $app . DIRECTORY_SEPARATOR : '');
+        $namespace = 'app' . ($app ? '\\' . $app : '');
 
         // 创建配置文件和公共文件
-        $this->buildCommon($dir);
+        $this->buildCommon($app);
         // 创建模块的默认页面
-        $this->buildHello($dir, $namespace);
+        $this->buildHello($app, $namespace);
 
         foreach ($list as $path => $file) {
             if ('__dir__' == $path) {
@@ -126,18 +126,18 @@ class Build extends Command
     /**
      * 创建应用的欢迎页面
      * @access protected
-     * @param  string $dir 目录
+     * @param  string $app 目录
      * @param  string $namespace 类库命名空间
      * @return void
      */
-    protected function buildHello(string $dir, string $namespace): void
+    protected function buildHello(string $app, string $namespace): void
     {
         $suffix   = $this->app->config->get('route.controller_suffix') ? 'Controller' : '';
-        $filename = $this->basePath . ($dir ? $dir . DIRECTORY_SEPARATOR : '') . 'controller' . DIRECTORY_SEPARATOR . 'Index' . $suffix . '.php';
+        $filename = $this->basePath . ($app ? $app . DIRECTORY_SEPARATOR : '') . 'controller' . DIRECTORY_SEPARATOR . 'Index' . $suffix . '.php';
 
         if (!is_file($filename)) {
-            $content = file_get_contents($this->app->getThinkPath() . 'tpl' . DIRECTORY_SEPARATOR . 'default_index.tpl');
-            $content = str_replace(['{%name%}', '{%app%}', '{%layer%}', '{%suffix%}'], [$dir, $namespace, 'controller', $suffix], $content);
+            $content = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'controller.stub');
+            $content = str_replace(['{%name%}', '{%app%}', '{%layer%}', '{%suffix%}'], [$app, $namespace, 'controller', $suffix], $content);
             $this->checkDirBuild(dirname($filename));
 
             file_put_contents($filename, $content);
@@ -147,12 +147,12 @@ class Build extends Command
     /**
      * 创建应用的公共文件
      * @access protected
-     * @param  string $dir 目录
+     * @param  string $app 目录
      * @return void
      */
-    protected function buildCommon(string $dir): void
+    protected function buildCommon(string $app): void
     {
-        $appPath = $this->basePath . ($dir ? $dir . DIRECTORY_SEPARATOR : '');
+        $appPath = $this->basePath . ($app ? $app . DIRECTORY_SEPARATOR : '');
 
         if (!is_file($appPath . 'common.php')) {
             file_put_contents($appPath . 'common.php', "<?php" . PHP_EOL . "// 这是系统自动生成的公共文件" . PHP_EOL);

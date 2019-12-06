@@ -65,7 +65,7 @@ class Console
             '缓存信息' => $app->cache->getReadTimes() . ' reads,' . $app->cache->getWriteTimes() . ' writes',
         ];
 
-        if ($app->session->getId(false)) {
+        if (isset($app->session)) {
             $base['会话信息'] = 'SESSION_ID=' . $app->session->getId();
         }
 
@@ -100,7 +100,7 @@ class Console
         //输出到控制台
         $lines = '';
         foreach ($trace as $type => $msg) {
-            $lines .= $this->console($type, $msg);
+            $lines .= $this->console($type, empty($msg) ? [] : $msg);
         }
         $js = <<<JS
 

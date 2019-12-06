@@ -282,18 +282,6 @@ class Request
     protected $input;
 
     /**
-     * 请求缓存
-     * @var array
-     */
-    protected $cache;
-
-    /**
-     * 缓存是否检查
-     * @var bool
-     */
-    protected $isCheckCache;
-
-    /**
      * 请求安全Key
      * @var string
      */
@@ -319,15 +307,6 @@ class Request
     {
         $request = new static();
 
-        $request->server  = $_SERVER;
-        $request->env     = $app->env;
-        $request->get     = $_GET;
-        $request->post    = $_POST ?: $request->getInputData($request->input);
-        $request->put     = $request->getInputData($request->input);
-        $request->request = $_REQUEST;
-        $request->cookie  = $_COOKIE;
-        $request->file    = $_FILES ?? [];
-
         if (function_exists('apache_request_headers') && $result = apache_request_headers()) {
             $header = $result;
         } else {
@@ -348,6 +327,15 @@ class Request
         }
 
         $request->header = array_change_key_case($header);
+
+        $request->server  = $_SERVER;
+        $request->env     = $app->env;
+        $request->get     = $_GET;
+        $request->post    = $_POST ?: $request->getInputData($request->input);
+        $request->put     = $request->getInputData($request->input);
+        $request->request = $_REQUEST;
+        $request->cookie  = $_COOKIE;
+        $request->file    = $_FILES ?? [];
 
         return $request;
     }
@@ -1101,7 +1089,6 @@ class Request
 
         if (is_array($data)) {
             array_walk_recursive($data, [$this, 'filterValue'], $filter);
-            reset($data);
         } else {
             $this->filterValue($data, $name, $filter);
         }
@@ -1139,7 +1126,7 @@ class Request
         if (!empty($files)) {
 
             if (strpos($name, '.')) {
-                list($name, $sub) = explode('.', $name);
+                [$name, $sub] = explode('.', $name);
             }
 
             // 处理上传文件
@@ -1257,7 +1244,7 @@ class Request
         if ('' != $name) {
             // 解析name
             if (strpos($name, '/')) {
-                list($name, $type) = explode('/', $name);
+                [$name, $type] = explode('/', $name);
             }
 
             $data = $this->getData($data, $name);
@@ -1288,7 +1275,6 @@ class Request
 
         if (is_array($data)) {
             array_walk_recursive($data, [$this, 'filterValue'], $filter);
-            reset($data);
         } else {
             $this->filterValue($data, $name, $filter);
         }
@@ -1774,11 +1760,11 @@ class Request
     /**
      * 当前请求URL地址中的port参数
      * @access public
-     * @return string
+     * @return int
      */
-    public function port(): string
+    public function port(): int
     {
-        return $this->server('SERVER_PORT', '');
+        return (int) $this->server('SERVER_PORT', '');
     }
 
     /**
@@ -1794,11 +1780,11 @@ class Request
     /**
      * 当前请求 REMOTE_PORT
      * @access public
-     * @return string
+     * @return int
      */
-    public function remotePort(): string
+    public function remotePort(): int
     {
-        return $this->server('REMOTE_PORT', '');
+        return (int) $this->server('REMOTE_PORT', '');
     }
 
     /**
@@ -1808,11 +1794,11 @@ class Request
      */
     public function contentType(): string
     {
-        $contentType = $this->server('CONTENT_TYPE');
+        $contentType = $this->header('Content-Type');
 
         if ($contentType) {
             if (strpos($contentType, ';')) {
-                list($type) = explode(';', $contentType);
+                [$type] = explode(';', $contentType);
             } else {
                 $type = $contentType;
             }
@@ -2071,6 +2057,10 @@ class Request
     public function withInput(string $input)
     {
         $this->input = $input;
+        if (!empty($input)) {
+            $this->post = $this->getInputData($input);
+            $this->put  = $this->getInputData($input);
+        }
         return $this;
     }
 

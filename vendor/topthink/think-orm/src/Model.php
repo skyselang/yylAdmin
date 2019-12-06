@@ -86,6 +86,12 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     protected $name;
 
     /**
+     * 主键值
+     * @var string
+     */
+    protected $key;
+
+    /**
      * 数据表名称
      * @var string
      */
@@ -260,6 +266,28 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     protected function setUpdateWhere($where): void
     {
         $this->updateWhere = $where;
+    }
+
+    /**
+     * 设置当前模型的数据库连接
+     * @access public
+     * @param string $connection 数据表连接标识
+     * @return $this
+     */
+    public function setConnection(string $connection)
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    /**
+     * 获取当前模型的数据库连接标识
+     * @access public
+     * @return string
+     */
+    public function getConnection(): string
+    {
+        return $this->connection ?: '';
     }
 
     /**
@@ -575,9 +603,13 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         $db->startTrans();
 
         try {
-            $where  = $this->getWhere();
+            $this->key = null;
+            $where     = $this->getWhere();
+
             $result = $db->where($where)
                 ->strict(false)
+                ->cache(true)
+                ->setOption('key', $this->key)
                 ->field($allowFields)
                 ->update($data);
 
@@ -635,14 +667,15 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
             $result = $db->strict(false)
                 ->field($allowFields)
                 ->replace($this->replace)
-                ->insert($this->data, false, $sequence);
+                ->sequence($sequence)
+                ->insert($this->data, true);
 
             // 获取自动增长主键
-            if ($result && $insertId = $db->getLastInsID($sequence)) {
+            if ($result) {
                 $pk = $this->getPk();
 
                 if (is_string($pk) && (!isset($this->data[$pk]) || '' == $this->data[$pk])) {
-                    $this->data[$pk] = $insertId;
+                    $this->data[$pk] = $result;
                 }
             }
 
@@ -676,7 +709,8 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         $pk = $this->getPk();
 
         if (is_string($pk) && isset($this->data[$pk])) {
-            $where = [[$pk, '=', $this->data[$pk]]];
+            $where     = [[$pk, '=', $this->data[$pk]]];
+            $this->key = $this->data[$pk];
         } elseif (is_array($pk)) {
             foreach ($pk as $field) {
                 if (isset($this->data[$field])) {
@@ -948,6 +982,20 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     {
         $model = new static();
         $model->setSuffix($suffix);
+
+        return $model;
+    }
+
+    /**
+     * 切换数据库连接进行查询
+     * @access public
+     * @param string $connection 数据库连接标识
+     * @return Model
+     */
+    public static function connect(string $connection)
+    {
+        $model = new static();
+        $model->setConnection($connection);
 
         return $model;
     }

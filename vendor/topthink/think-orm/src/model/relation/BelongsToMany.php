@@ -133,7 +133,7 @@ class BelongsToMany extends Relation
 
             foreach ($model->getData() as $key => $val) {
                 if (strpos($key, '__')) {
-                    list($name, $attr) = explode('__', $key, 2);
+                    [$name, $attr] = explode('__', $key, 2);
 
                     if ('pivot' == $name) {
                         $pivot[$attr] = $val;
@@ -206,12 +206,11 @@ class BelongsToMany extends Relation
      * @access public
      * @param  int|array $listRows
      * @param  int|bool  $simple
-     * @param  array     $config
      * @return Paginator
      */
-    public function paginate($listRows = null, $simple = false, $config = []): Paginator
+    public function paginate($listRows = null, $simple = false): Paginator
     {
-        $result = $this->buildQuery()->paginate($listRows, $simple, $config);
+        $result = $this->buildQuery()->paginate($listRows, $simple);
         $this->hydratePivot($result);
 
         return $result;
@@ -327,10 +326,7 @@ class BelongsToMany extends Relation
             // 查询关联数据
             $data = $this->eagerlyManyToMany([
                 ['pivot.' . $localKey, 'in', $range],
-            ], $relation, $subRelation, $closure, $cache);
-
-            // 关联属性名
-            $attr = Str::snake($relation);
+            ], $subRelation, $closure, $cache);
 
             // 关联数据封装
             foreach ($resultSet as $result) {
@@ -338,7 +334,7 @@ class BelongsToMany extends Relation
                     $data[$result->$pk] = [];
                 }
 
-                $result->setRelation($attr, $this->resultSetBuild($data[$result->$pk], clone $this->parent));
+                $result->setRelation($relation, $this->resultSetBuild($data[$result->$pk], clone $this->parent));
             }
         }
     }
@@ -362,14 +358,14 @@ class BelongsToMany extends Relation
             // 查询管理数据
             $data = $this->eagerlyManyToMany([
                 ['pivot.' . $this->localKey, '=', $pk],
-            ], $relation, $subRelation, $closure, $cache);
+            ], $subRelation, $closure, $cache);
 
             // 关联数据封装
             if (!isset($data[$pk])) {
                 $data[$pk] = [];
             }
 
-            $result->setRelation(Str::snake($relation), $this->resultSetBuild($data[$pk], clone $this->parent));
+            $result->setRelation($relation, $this->resultSetBuild($data[$pk], clone $this->parent));
         }
     }
 
@@ -428,13 +424,12 @@ class BelongsToMany extends Relation
      * 多对多 关联模型预查询
      * @access protected
      * @param  array   $where       关联预查询条件
-     * @param  string  $relation    关联名
      * @param  array   $subRelation 子关联
      * @param  Closure $closure     闭包
      * @param  array   $cache       关联缓存
      * @return array
      */
-    protected function eagerlyManyToMany(array $where, string $relation, array $subRelation = [], Closure $closure = null, array $cache = []): array
+    protected function eagerlyManyToMany(array $where, array $subRelation = [], Closure $closure = null, array $cache = []): array
     {
         if ($closure) {
             $closure($this->getClosureType($closure));
@@ -452,7 +447,7 @@ class BelongsToMany extends Relation
             $pivot = [];
             foreach ($set->getData() as $key => $val) {
                 if (strpos($key, '__')) {
-                    list($name, $attr) = explode('__', $key, 2);
+                    [$name, $attr] = explode('__', $key, 2);
                     if ('pivot' == $name) {
                         $pivot[$attr] = $val;
                         unset($set->$key);

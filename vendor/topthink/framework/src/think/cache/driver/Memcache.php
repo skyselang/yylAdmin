@@ -64,7 +64,7 @@ class Memcache extends Driver
         foreach ($hosts as $i => $host) {
             $port = $ports[$i] ?? $ports[0];
             $this->options['timeout'] > 0 ?
-            $this->handler->addServer($host, (int) $port, $this->options['persistent'], 1, $this->options['timeout']) :
+            $this->handler->addServer($host, (int) $port, $this->options['persistent'], 1, (int) $this->options['timeout']) :
             $this->handler->addServer($host, (int) $port, $this->options['persistent'], 1);
         }
     }
@@ -138,7 +138,7 @@ class Memcache extends Driver
 
         $key = $this->getCacheKey($name);
 
-        if ($this->has($key)) {
+        if ($this->handler->get($key)) {
             return $this->handler->increment($key, $step);
         }
 

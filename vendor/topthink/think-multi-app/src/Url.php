@@ -42,6 +42,8 @@ class Url extends UrlBuild
         } elseif (0 === strpos($url, '@')) {
             // 解析到控制器
             $url = substr($url, 1);
+        } elseif ('' === $url) {
+            $url = $this->app->http->getName() . '/' . $request->controller() . '/' . $request->action();
         } else {
             // 解析到 应用/控制器/操作
             $controller = $request->controller();
@@ -180,7 +182,7 @@ class Url extends UrlBuild
             $file = str_replace('\\', '/', dirname($file));
         }
 
-        $url = rtrim($file, '/') . '/' . $url;
+        $url = rtrim($file, '/') . '/' . ltrim($url, '/');
 
         // URL后缀
         if ('/' == substr($url, -1) || '' == $url) {
@@ -200,8 +202,9 @@ class Url extends UrlBuild
                 $url .= $suffix . '?' . $vars . $anchor;
             } else {
                 foreach ($vars as $var => $val) {
+                    $val = (string) $val;
                     if ('' !== $val) {
-                        $url .= $depr . $var . $depr . urlencode((string) $val);
+                        $url .= $depr . $var . $depr . urlencode($val);
                     }
                 }
 

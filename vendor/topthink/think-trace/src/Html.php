@@ -69,7 +69,7 @@ class Html
             '缓存信息' => $app->cache->getReadTimes() . ' reads,' . $app->cache->getWriteTimes() . ' writes',
         ];
 
-        if ($app->session->getId(false)) {
+        if (isset($app->session)) {
             $base['会话信息'] = 'SESSION_ID=' . $app->session->getId();
         }
 

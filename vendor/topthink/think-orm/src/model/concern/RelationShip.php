@@ -120,7 +120,7 @@ trait RelationShip
             $value = $this->$method($value, array_merge($this->data, $data));
         }
 
-        $this->relation[$name] = $value;
+        $this->relation[$this->getRealFieldName($name)] = $value;
 
         return $this;
     }
@@ -148,7 +148,7 @@ trait RelationShip
                 $subRelation = $relation;
                 $relation    = $key;
             } elseif (strpos($relation, '.')) {
-                list($relation, $subRelation) = explode('.', $relation, 2);
+                [$relation, $subRelation] = explode('.', $relation, 2);
             }
 
             $method       = Str::camel($relation);
@@ -263,13 +263,13 @@ trait RelationShip
                 $subRelation = $relation;
                 $relation    = $key;
             } elseif (strpos($relation, '.')) {
-                list($relation, $subRelation) = explode('.', $relation, 2);
+                [$relation, $subRelation] = explode('.', $relation, 2);
 
                 $subRelation = [$subRelation];
             }
 
+            $relationName = $relation;
             $relation     = Str::camel($relation);
-            $relationName = Str::snake($relation);
 
             $relationResult = $this->$relation();
 
@@ -283,7 +283,7 @@ trait RelationShip
                 $relationCache = $cache[$relationName] ?? $cache;
             }
 
-            $relationResult->eagerlyResultSet($resultSet, $relation, $subRelation, $closure, $relationCache, $join);
+            $relationResult->eagerlyResultSet($resultSet, $relationName, $subRelation, $closure, $relationCache, $join);
         }
     }
 
@@ -312,13 +312,13 @@ trait RelationShip
                 $subRelation = $relation;
                 $relation    = $key;
             } elseif (strpos($relation, '.')) {
-                list($relation, $subRelation) = explode('.', $relation, 2);
+                [$relation, $subRelation] = explode('.', $relation, 2);
 
                 $subRelation = [$subRelation];
             }
 
+            $relationName = $relation;
             $relation     = Str::camel($relation);
-            $relationName = Str::snake($relation);
 
             $relationResult = $this->$relation();
 
@@ -332,7 +332,7 @@ trait RelationShip
                 $relationCache = $cache[$relationName] ?? [];
             }
 
-            $relationResult->eagerlyResult($result, $relation, $subRelation, $closure, $relationCache, $join);
+            $relationResult->eagerlyResult($result, $relationName, $subRelation, $closure, $relationCache, $join);
         }
     }
 
@@ -549,7 +549,7 @@ trait RelationShip
         }
 
         if (is_array($morph)) {
-            list($morphType, $foreignKey) = $morph;
+            [$morphType, $foreignKey] = $morph;
         } else {
             $morphType  = $morph . '_type';
             $foreignKey = $morph . '_id';
@@ -581,7 +581,7 @@ trait RelationShip
         $type = $type ?: get_class($this);
 
         if (is_array($morph)) {
-            list($morphType, $foreignKey) = $morph;
+            [$morphType, $foreignKey] = $morph;
         } else {
             $morphType  = $morph . '_type';
             $foreignKey = $morph . '_id';
@@ -608,7 +608,7 @@ trait RelationShip
 
         // 记录当前关联信息
         if (is_array($morph)) {
-            list($morphType, $foreignKey) = $morph;
+            [$morphType, $foreignKey] = $morph;
         } else {
             $morphType  = $morph . '_type';
             $foreignKey = $morph . '_id';

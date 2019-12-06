@@ -179,7 +179,7 @@ trait Attribute
 
     /**
      * 获取实际的字段名
-     * @access public
+     * @access protected
      * @param  string $name 字段名
      * @return string
      */
@@ -278,8 +278,8 @@ trait Attribute
 
         if (array_key_exists($fieldName, $this->data)) {
             return $this->data[$fieldName];
-        } elseif (array_key_exists($name, $this->relation)) {
-            return $this->relation[$name];
+        } elseif (array_key_exists($fieldName, $this->relation)) {
+            return $this->relation[$fieldName];
         }
 
         throw new InvalidArgumentException('property not exists:' . static::class . '->' . $name);
@@ -398,9 +398,9 @@ trait Attribute
         }
 
         if (is_array($type)) {
-            list($type, $param) = $type;
+            [$type, $param] = $type;
         } elseif (strpos($type, ':')) {
-            list($type, $param) = explode(':', $type, 2);
+            [$type, $param] = explode(':', $type, 2);
         }
 
         switch ($type) {
@@ -563,9 +563,9 @@ trait Attribute
         }
 
         if (is_array($type)) {
-            list($type, $param) = $type;
+            [$type, $param] = $type;
         } elseif (strpos($type, ':')) {
-            list($type, $param) = explode(':', $type, 2);
+            [$type, $param] = explode(':', $type, 2);
         }
 
         switch ($type) {
@@ -637,7 +637,7 @@ trait Attribute
             $name = $this->getRealFieldName($name);
 
             if (strpos($name, '.')) {
-                list($name, $key) = explode('.', $name);
+                [$name, $key] = explode('.', $name);
 
                 $this->withAttr[$name][$key] = $callback;
             } else {

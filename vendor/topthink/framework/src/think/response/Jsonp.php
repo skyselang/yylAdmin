@@ -12,6 +12,7 @@ declare (strict_types = 1);
 
 namespace think\response;
 
+use think\Cookie;
 use think\Request;
 use think\Response;
 
@@ -31,10 +32,11 @@ class Jsonp extends Response
 
     protected $request;
 
-    public function __construct(Request $request, $data = '', int $code = 200)
+    public function __construct(Cookie $cookie, Request $request, $data = '', int $code = 200)
     {
-        parent::__construct($data, $code);
+        $this->init($data, $code);
 
+        $this->cookie  = $cookie;
         $this->request = $request;
     }
 

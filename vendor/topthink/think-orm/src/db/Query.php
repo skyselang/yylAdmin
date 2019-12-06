@@ -353,12 +353,14 @@ class Query extends BaseQuery
     /**
      * 获取当前数据表的自增主键
      * @access public
-     * @return string
+     * @return string|null
      */
     public function getAutoInc()
     {
-        if (empty($this->autoinc)) {
-            $this->autoinc = $this->connection->getAutoInc($this->getTable());
+        $tableName = $this->getTable();
+
+        if (empty($this->autoinc) && $tableName) {
+            $this->autoinc = $this->connection->getAutoInc($tableName);
         }
 
         return $this->autoinc;
@@ -460,7 +462,7 @@ class Query extends BaseQuery
             $query = $this->options($options)->limit($count);
 
             if (strpos($column, '.')) {
-                list($alias, $key) = explode('.', $column);
+                [$alias, $key] = explode('.', $column);
             } else {
                 $key = $column;
             }
