@@ -1,4 +1,4 @@
-基于thinkphp6.0和layui2.5.5的php后台模板
+基于thinkphp6.0和layui2.5的php后台模板
 
 需要掌握thinkphp和layui
 
