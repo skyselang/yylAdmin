@@ -353,14 +353,12 @@ class Query extends BaseQuery
     /**
      * 获取当前数据表的自增主键
      * @access public
-     * @return string|null
+     * @return string
      */
     public function getAutoInc()
     {
-        $tableName = $this->getTable();
-
-        if (empty($this->autoinc) && $tableName) {
-            $this->autoinc = $this->connection->getAutoInc($tableName);
+        if (empty($this->autoinc)) {
+            $this->autoinc = $this->connection->getAutoInc($this->getTable());
         }
 
         return $this->autoinc;

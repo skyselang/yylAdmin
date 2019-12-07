@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98240756544672cb8ae2fe0d965349bd",
+    "content-hash": "e042aa44f0428c2c539731651ec0e8bd",
     "packages": [
         {
             "name": "league/flysystem",
@@ -432,16 +432,16 @@
         },
         {
             "name": "topthink/framework",
-            "version": "6.0.x-dev",
+            "version": "v6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "d6daec257a94a901b20b0abba454588c7b67162d"
+                "reference": "79c555aab0313d1a33ddcdb3c395f2c47f37f597"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/d6daec257a94a901b20b0abba454588c7b67162d",
-                "reference": "d6daec257a94a901b20b0abba454588c7b67162d",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/79c555aab0313d1a33ddcdb3c395f2c47f37f597",
+                "reference": "79c555aab0313d1a33ddcdb3c395f2c47f37f597",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -496,7 +496,7 @@
                 "orm",
                 "thinkphp"
             ],
-            "time": "2019-12-04T02:49:23+00:00"
+            "time": "2019-10-23T23:28:43+00:00"
         },
         {
             "name": "topthink/think-captcha",
@@ -650,16 +650,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "2.0.x-dev",
+            "version": "v2.0.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "465b0dafc99f0a2d17034895bae398c4e0048241"
+                "reference": "ff5f112f5559497222f2716385b5a709ab82741b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/465b0dafc99f0a2d17034895bae398c4e0048241",
-                "reference": "465b0dafc99f0a2d17034895bae398c4e0048241",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/ff5f112f5559497222f2716385b5a709ab82741b",
+                "reference": "ff5f112f5559497222f2716385b5a709ab82741b",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -697,7 +697,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2019-11-30T14:14:07+00:00"
+            "time": "2019-11-17T07:53:45+00:00"
         },
         {
             "name": "topthink/think-template",
@@ -1051,10 +1051,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "topthink/framework": 20,
-        "topthink/think-orm": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

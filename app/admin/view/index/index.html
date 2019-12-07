@@ -6,10 +6,9 @@
     <title>layuiAdmin std - 通用后台管理模板系统（iframe标准版）</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="__LAYUI__/layui/css/layui.css" media="all">
-    <link rel="stylesheet" href="__LAYUI__/style/admin.css" media="all">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
 </head>
 
 <body class="layui-layout-body">
@@ -34,8 +33,8 @@
                         </a>
                     </li>
                     <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                        <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search"
-                            layadmin-event="serach" lay-action="template/search3f0e.html?keywords=">
+                        <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach"
+                            lay-action="template/search3f0e.html?keywords=">
                     </li>
                 </ul>
                 <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
@@ -74,12 +73,10 @@
                         </dl>
                     </li>
                     <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                        <a href="javascript:;" layadmin-event="about"><i
-                                class="layui-icon layui-icon-more-vertical"></i></a>
+                        <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
                     </li>
                     <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
-                        <a href="javascript:;" layadmin-event="more"><i
-                                class="layui-icon layui-icon-more-vertical"></i></a>
+                        <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
                     </li>
                 </ul>
             </div>
@@ -89,8 +86,7 @@
                     <div class="layui-logo" lay-href="home/console.html">
                         <span>layuiAdmin</span>
                     </div>
-                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
-                        lay-filter="layadmin-system-side-menu">
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
                         <li data-name="home" class="layui-nav-item layui-nav-itemed">
                             <a href="javascript:;" lay-tips="主页" lay-direction="2">
                                 <i class="layui-icon layui-icon-home"></i>
@@ -119,8 +115,7 @@
                                     <dl class="layui-nav-child">
                                         <dd data-name="list"><a lay-href="component/grid/list.html">等比例列表排列</a></dd>
                                         <dd data-name="mobile"><a lay-href="component/grid/mobile.html">按移动端排列</a></dd>
-                                        <dd data-name="mobile-pc"><a
-                                                lay-href="component/grid/mobile-pc.html">移动桌面端组合</a></dd>
+                                        <dd data-name="mobile-pc"><a lay-href="component/grid/mobile-pc.html">移动桌面端组合</a></dd>
                                         <dd data-name="all"><a lay-href="component/grid/all.html">全端复杂组合</a></dd>
                                         <dd data-name="stack"><a lay-href="component/grid/stack.html">低于桌面堆叠排列</a></dd>
                                         <dd data-name="speed-dial"><a lay-href="component/grid/speed-dial.html">九宫格</a>
@@ -168,8 +163,7 @@
                                             <a lay-href="component/layer/list.html" lay-text="layer 功能演示">功能演示</a>
                                         </dd>
                                         <dd data-name="special-demo">
-                                            <a lay-href="component/layer/special-demo.html"
-                                                lay-text="layer 特殊示例">特殊示例</a>
+                                            <a lay-href="component/layer/special-demo.html" lay-text="layer 特殊示例">特殊示例</a>
                                         </dd>
                                         <dd data-name="theme">
                                             <a lay-href="component/layer/theme.html" lay-text="layer 风格定制">风格定制</a>
@@ -180,19 +174,16 @@
                                     <a href="javascript:;">日期时间</a>
                                     <dl class="layui-nav-child">
                                         <dd data-name="demo1">
-                                            <a lay-href="component/laydate/demo1.html"
-                                                lay-text="layDate 功能演示一">功能演示一</a>
+                                            <a lay-href="component/laydate/demo1.html" lay-text="layDate 功能演示一">功能演示一</a>
                                         </dd>
                                         <dd data-name="demo2">
-                                            <a lay-href="component/laydate/demo2.html"
-                                                lay-text="layDate 功能演示二">功能演示二</a>
+                                            <a lay-href="component/laydate/demo2.html" lay-text="layDate 功能演示二">功能演示二</a>
                                         </dd>
                                         <dd data-name="theme">
                                             <a lay-href="component/laydate/theme.html" lay-text="layDate 设定主题">设定主题</a>
                                         </dd>
                                         <dd data-name="special-demo">
-                                            <a lay-href="component/laydate/special-demo.html"
-                                                lay-text="layDate 特殊示例">特殊示例</a>
+                                            <a lay-href="component/laydate/special-demo.html" lay-text="layDate 特殊示例">特殊示例</a>
                                         </dd>
                                     </dl>
                                 </dd>
@@ -274,12 +265,10 @@
                                     <a href="javascript:;">分页</a>
                                     <dl class="layui-nav-child">
                                         <dd data-name="demo1">
-                                            <a lay-href="component/laypage/demo1.html"
-                                                lay-text="layPage 功能演示一">功能演示一</a>
+                                            <a lay-href="component/laypage/demo1.html" lay-text="layPage 功能演示一">功能演示一</a>
                                         </dd>
                                         <dd data-name="demo2">
-                                            <a lay-href="component/laypage/demo2.html"
-                                                lay-text="layPage 功能演示二">功能演示二</a>
+                                            <a lay-href="component/laypage/demo2.html" lay-text="layPage 功能演示二">功能演示二</a>
                                         </dd>
                                     </dl>
                                 </dd>
@@ -427,8 +416,7 @@
                             </dl>
                         </li>
                         <li data-name="get" class="layui-nav-item">
-                            <a href="javascript:;" lay-href="//www.layui.com/admin/#get" lay-tips="授权"
-                                lay-direction="2">
+                            <a href="javascript:;" lay-href="//www.layui.com/admin/#get" lay-tips="授权" lay-direction="2">
                                 <i class="layui-icon layui-icon-auz"></i>
                                 <cite>授权</cite>
                             </a>
@@ -454,25 +442,24 @@
                 </div>
                 <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                     <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                        <li lay-id="home/console.html" lay-attr="home/console.html" class="layui-this"><i
-                                class="layui-icon layui-icon-home"></i></li>
+                        <li lay-id="home/console.html" lay-attr="home/console.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
                     </ul>
                 </div>
             </div>
             <!-- 主体内容 -->
             <div class="layui-body" id="LAY_app_body">
                 <div class="layadmin-tabsbody-item layui-show">
-                    <iframe src="{:url('admin/index/indexs')}" frameborder="0" class="layadmin-iframe"></iframe>
+                    <iframe src="{:url('index/console')}" frameborder="0" class="layadmin-iframe"></iframe>
                 </div>
             </div>
             <!-- 辅助元素，一般用于移动设备下遮罩 -->
             <div class="layadmin-body-shade" layadmin-event="shade"></div>
         </div>
     </div>
-    <script src="__LAYUI__/layui/layui.js"></script>
+    <script src="/static/layui/layui/layui.js"></script>
     <script>
         layui.config({
-            base: '__LAYUI__/' //静态资源所在路径
+            base: '/static/layui/' //静态资源所在路径
         }).extend({
             index: 'lib/index' //主入口模块
         }).use('index');

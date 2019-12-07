@@ -12,7 +12,8 @@ class Index
     {
         return View::fetch();
     }
-    public function indexs()
+
+    public function console()
     {
         return View::fetch();
     }

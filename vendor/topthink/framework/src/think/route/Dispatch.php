@@ -167,7 +167,7 @@ abstract class Dispatch
                 $fields = explode('&', $key);
 
                 if (is_array($val)) {
-                    [$model, $exception] = $val;
+                    list($model, $exception) = $val;
                 } else {
                     $model     = $val;
                     $exception = true;
@@ -206,7 +206,7 @@ abstract class Dispatch
      */
     protected function autoValidate(array $option): void
     {
-        [$validate, $scene, $message, $batch] = $option;
+        list($validate, $scene, $message, $batch) = $option;
 
         if (is_array($validate)) {
             // 指定验证规则

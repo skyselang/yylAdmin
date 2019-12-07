@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace app\admin\controller;
 
-use think\Request;
 use think\facade\View;
 
 class Login

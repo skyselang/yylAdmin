@@ -7,6 +7,6 @@ class Index
 {
     public function index()
     {
-        return '您好！这是一个index示例应用';
+        return '您好！这是一个[index]示例应用';
     }
 }
