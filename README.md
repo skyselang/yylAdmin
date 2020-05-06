@@ -2,17 +2,22 @@ yylAdmin
 
 ## 简介
 
-[yylAdmin](https://github.com/skyselang/yylAdmin) 是一个极简后台管理系统，前后端分离，由[yyl-admin-php](https://github.com/skyselang/yyl-admin-php)和[yyl-admin-vue](https://github.com/skyselang/yyl-admin-vue)组成。
+[yylAdmin](https://github.com/skyselang/yyl-admin) 是一个极简后台管理系统，前后端分离，后端采用ThinkPHP，前端采用Element；项目由[yyl-admin-php](https://github.com/skyselang/yyl-admin-php)和[yyl-admin-vue](https://github.com/skyselang/yyl-admin-vue)组成。
 
+## 要求
+
+- PHP >= 7.1
+- MySQL >= 5.6
+- Redis
 
 ## 准备
 
-[Git](https://git-scm.com/) 
-[Node](https://nodejs.org/zh-cn/) 
-[Composer](https://www.phpcomposer.com/) 
-[ThinkPHP](https://www.kancloud.cn/manual/thinkphp6_0/1037479) 
-[Element](https://element.eleme.cn/#/zh-CN/component/installation) 
-[PhpStudy](https://www.xp.cn/) 
+- [Git](https://git-scm.com/) 
+- [Node](https://nodejs.org/zh-cn/) 
+- [Composer](https://www.phpcomposer.com/) 
+- [ThinkPHP](https://www.kancloud.cn/manual/thinkphp6_0/1037479) 
+- [Element](https://element.eleme.cn/#/zh-CN/component/installation) 
+- [PhpStudy](https://www.xp.cn/) 
 
 ## 开发
 
@@ -80,3 +85,5 @@ npm run lint
 # 代码格式检查并自动修复
 npm run lint -- --fix
 ```
+
+<img width="100%" src="yyladmin.jpg">
