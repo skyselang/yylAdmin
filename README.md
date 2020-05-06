@@ -86,4 +86,4 @@ npm run lint
 npm run lint -- --fix
 ```
 
-<img width="100%" src="yyladmin.jpg">
+<img width="100%" src="./public/static/img/yyladmin.jpg">
