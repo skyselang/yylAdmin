@@ -7,6 +7,7 @@
 
 namespace app\admin\service;
 
+use app\admin\cache\AdminMenuCache;
 use think\facade\Db;
 
 class AdminMenuService
@@ -73,6 +74,8 @@ class AdminMenuService
 
         $param['admin_menu_id'] = $admin_menu_id;
 
+        AdminMenuCache::del();
+
         return $param;
     }
 
@@ -112,6 +115,8 @@ class AdminMenuService
 
         $param['admin_menu_id'] = $admin_menu_id;
 
+        AdminMenuCache::del();
+
         return $param;
     }
 
@@ -140,6 +145,8 @@ class AdminMenuService
         if (empty($update)) {
             error();
         }
+
+        AdminMenuCache::del();
 
         return $admin_menu_ids;
     }
@@ -183,6 +190,8 @@ class AdminMenuService
             error();
         }
 
+        AdminMenuCache::del();
+
         return $param;
     }
 
@@ -205,6 +214,8 @@ class AdminMenuService
         if (empty($update)) {
             error();
         }
+
+        AdminMenuCache::del();
 
         return $param;
     }

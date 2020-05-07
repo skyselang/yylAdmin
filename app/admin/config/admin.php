@@ -27,4 +27,6 @@ return [
         'admin/AdminLogin/logout',
         'admin/AdminUser/userInfo',
     ],
+    // 是否开启日志
+    'is_admin_log' => true,
 ];

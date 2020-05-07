@@ -7,4 +7,6 @@ return [
     \app\admin\middleware\AdminTokenVerify::class,
     // 权限验证
     \app\admin\middleware\AdminRuleVerify::class,
+    // 操作日志
+    \app\admin\middleware\AdminLog::class,
 ];

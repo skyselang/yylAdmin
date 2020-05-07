@@ -7,6 +7,7 @@
 
 namespace app\admin\middleware;
 
+use app\admin\cache\AdminMenuCache;
 use Closure;
 use think\Request;
 use think\Response;
@@ -24,11 +25,9 @@ class AdminRuleVerify
      */
     public function handle($request, Closure $next)
     {
-        $app_name = app('http')->getName();
-        $pathinfo = $request->pathinfo();
-        $rule_url = $app_name . '/' . $pathinfo;
-        $rule_white_list = Config::get('admin.rule_white_list');
+        $rule_url = app('http')->getName() . '/' . $request->pathinfo();
 
+        $rule_white_list = Config::get('admin.rule_white_list');
         if (!in_array($rule_url, $rule_white_list)) {
             $admin_user_id = $request->header('Admin-User-Id', '');
             $super_admin = Config::get('admin.super_admin');
@@ -45,6 +44,13 @@ class AdminRuleVerify
                 if (!in_array($rule_url, $admin_user['roles'])) {
                     return error('你没有权限操作', '', ['rule_url' => $rule_url]);
                 }
+            }
+
+            $admin_menu = AdminMenuCache::get();
+            $menu_url = array_column($admin_menu, 'menu_url');
+            $login_url = Config::get('admin.login_url');
+            if (!in_array($rule_url, $menu_url) && $rule_url != $login_url) {
+                return error('接口地址错误', 404, ['err_url' => $rule_url]);
             }
         }
 
