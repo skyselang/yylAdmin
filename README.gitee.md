@@ -1,10 +1,10 @@
 <h1 align="center">yylAdmin</h1>
 
-Github | [码云](./README.gitee.md)
+[Github](./README.md) | 码云
 
 ## 简介
 
-[yylAdmin](https://github.com/skyselang/yyl-admin) 是一个极简后台管理系统，前后端分离，后端采用ThinkPHP，前端采用Element；项目由[yyl-admin-php](https://github.com/skyselang/yyl-admin-php)和[yyl-admin-vue](https://github.com/skyselang/yyl-admin-vue)组成。
+[yylAdmin](https://gitee.com/skyselang/yyl-admin) 是一个极简后台管理系统，前后端分离，后端采用ThinkPHP，前端采用Element；项目由[yyl-admin-php](https://gitee.com/skyselang/yyl-admin-php)和[yyl-admin-vue](https://gitee.com/skyselang/yyl-admin-vue)组成。
 
 ## 要求
 
@@ -26,7 +26,7 @@ Github | [码云](./README.gitee.md)
 php
 ```bash
 # 克隆项目
-git clone https://github.com/skyselang/yyl-admin-php.git
+git clone https://gitee.com/skyselang/yyl-admin-php.git
 
 # 进入项目目录
 cd yyl-admin-php
@@ -42,7 +42,7 @@ composer config repo.packagist composer https://packagist.phpcomposer.com
 vue
 ```bash
 # 克隆项目
-git clone https://github.com/skyselang/yyl-admin-vue.git
+git clone https://gitee.com/skyselang/yyl-admin-vue.git
 
 # 进入项目目录
 cd yyl-admin-vue
