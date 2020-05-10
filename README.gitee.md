@@ -1,6 +1,6 @@
 <h1 align="center">yylAdmin</h1>
 
-[Github](./README.md) | 码云
+[Github](https://github.com/skyselang/yyl-admin-php) | 码云
 
 ## 简介
 
