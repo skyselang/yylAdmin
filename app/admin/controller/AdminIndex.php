@@ -17,6 +17,7 @@ class AdminIndex
      */
     public function index()
     {
+        
         return success();
     }
 }

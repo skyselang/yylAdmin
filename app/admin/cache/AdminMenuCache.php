@@ -39,10 +39,10 @@ class AdminMenuCache
     }
 
     /**
-     * 设置缓存
+     * 缓存设置
      *
      * @param integer $admin_menu_id 菜单id
-     * @return boolean
+     * @return array
      */
     public static function set($admin_menu_id = 0)
     {
@@ -64,7 +64,7 @@ class AdminMenuCache
     }
 
     /**
-     * 获取缓存
+     * 缓存获取
      *
      * @param integer $admin_menu_id 菜单id
      * @return array
@@ -80,7 +80,7 @@ class AdminMenuCache
     }
 
     /**
-     * 删除缓存
+     * 缓存删除
      *
      * @param integer $admin_menu_id 菜单id
      * @return bool

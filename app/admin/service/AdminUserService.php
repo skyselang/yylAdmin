@@ -25,7 +25,7 @@ class AdminUserService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
     {
         if (empty($field)) {
-            $field = 'admin_user_id,admin_rule_ids,username,nickname,remark,sort,is_prohibit,is_super_admin,login_num,login_ip,login_time,insert_time,update_time';
+            $field = 'admin_user_id,admin_rule_ids,username,nickname,email,remark,sort,is_prohibit,is_super_admin,login_num,login_ip,login_time,insert_time,update_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -115,7 +115,7 @@ class AdminUserService
             ->where('admin_user_id', '<>', $admin_user_id)
             ->where('is_delete', 0)
             ->find();
-            
+
         if ($admin_user) {
             error('账号已存在');
         }
@@ -184,65 +184,12 @@ class AdminUserService
     }
 
     /**
-     * 用户个人中心
-     *
-     * @param array $param 用户信息
-     * @return array
-     */
-    public static function center($param)
-    {
-        $admin_user_id = $param['admin_user_id'];
-        $username = $param['username'];
-        $nickname = $param['nickname'];
-        $password = $param['password'];
-        $passwords = $param['passwords'];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('username', $username)
-            ->where('admin_user_id', '<>', $admin_user_id)
-            ->where('is_delete', 0)
-            ->find();
-        if ($admin_user) {
-            error('账号已存在');
-        }
-
-        $data['username'] = $username;
-        $data['nickname'] = $nickname;
-
-        if ($password) {
-            $admin_user = Db::name('admin_user')
-                ->field('admin_user_id,password')
-                ->where('is_delete', 0)
-                ->find();
-            if (md5($password) == $admin_user['password']) {
-                $data['password'] = md5($passwords);
-            } else {
-                error('原密码错误');
-            }
-        }
-
-        $data['update_time'] = date('Y-m-d H:i:s');
-        $update = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
-            ->update($data);
-
-        if (empty($update)) {
-            error();
-        }
-
-        AdminUserCache::del($admin_user_id);
-
-        return $param;
-    }
-
-    /**
      * 用户密码重置
      *
      * @param array $param 用户信息
      * @return array
      */
-    public static function repwd($param)
+    public static function pwd($param)
     {
         $admin_user_id = $param['admin_user_id'];
         $password = $param['password'];

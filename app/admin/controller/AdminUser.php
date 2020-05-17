@@ -61,6 +61,7 @@ class AdminUser
                 'username' => '',
                 'nickname' => '',
                 'password' => '',
+                'email'    => '',
                 'remark'   => '',
                 'sort'     => 200,
             ]
@@ -85,6 +86,7 @@ class AdminUser
             'admin_user_id' => '',
             'username'      => '',
             'nickname'      => '',
+            'email'         => '',
             'remark'        => '',
             'sort'          => 200,
         ]);
@@ -131,62 +133,21 @@ class AdminUser
     }
 
     /**
-     * 用户个人中心
-     *
-     * @method GET|POST
-     * @return json
-     */
-    public function userCenter()
-    {
-        if (Request::isGet()) {
-            $admin_user_id = Request::param('admin_user_id/d', '');
-
-            validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
-
-            $data = AdminUserService::info($admin_user_id);
-
-            return success($data);
-        }
-
-        if (Request::isPost()) {
-            $param = Request::only([
-                'admin_user_id' => '',
-                'username'      => '',
-                'nickname'      => '',
-                'password'      => '',
-                'passwords'     => '',
-            ]);
-
-            if ($param['password']) {
-                validate(AdminUserValidate::class)->scene('user_center2')->check($param);
-            } else {
-                validate(AdminUserValidate::class)->scene('user_center1')->check($param);
-            }
-
-            $data = AdminUserService::center($param);
-
-            return success($data);
-        }
-
-        error('请求类型错误');
-    }
-
-    /**
      * 用户密码重置
      *
      * @method POST
      * @return json
      */
-    public function userRepwd()
+    public function userPwd()
     {
         $param = Request::only([
             'admin_user_id' => '',
             'password'      => '',
         ]);
 
-        validate(AdminUserValidate::class)->scene('user_repwd')->check($param);
+        validate(AdminUserValidate::class)->scene('user_pwd')->check($param);
 
-        $data = AdminUserService::repwd($param);
+        $data = AdminUserService::pwd($param);
 
         return success($data);
     }

@@ -19,6 +19,10 @@ return [
         // 过期时间
         'exp' => time() + 1 * 24 * 60 * 60,
     ],
+    // token key
+    'token_key' => 'AdminToken',
+    // admin_user_id key
+    'admin_user_id_key' => 'AdminUserId',
     // 登录地址
     'login_url' => 'admin/AdminLogin/login',
     // 权限白名单
@@ -27,6 +31,6 @@ return [
         'admin/AdminLogin/logout',
         'admin/AdminUser/userInfo',
     ],
-    // 是否开启日志
+    // 是否记录日志
     'is_admin_log' => true,
 ];

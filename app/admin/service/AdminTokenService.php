@@ -13,9 +13,9 @@ use think\facade\Config;
 class AdminTokenService
 {
     /**
-     * 生成token
+     * token生成
      * 
-     * @param  array  $admin_user
+     * @param array $admin_user
      * @return string
      */
     public static function create($admin_user = [])
@@ -41,10 +41,10 @@ class AdminTokenService
     }
 
     /**
-     * 验证token
+     * token验证
      *
-     * @param  string  $token
-     * @param  integer $admin_user_id
+     * @param string $token
+     * @param integer $admin_user_id
      * @return json
      */
     public static function verify($token, $admin_user_id = '')
@@ -55,11 +55,11 @@ class AdminTokenService
             if (!super_admin($admin_user_id)) {
                 $token_admin_user_id = $decoded->data->admin_user_id;
                 if ($admin_user_id != $token_admin_user_id) {
-                    error('Token：请求admin_user_id与登录admin_user_id不一致');
+                    return error('Token：请求admin_user_id与登录admin_user_id不一致');
                 }
             }
         } catch (\Exception $e) {
-            error('Token：' . $e->getMessage(), 401);
+            return error('Token：' . $e->getMessage(), 401);
         }
     }
 }

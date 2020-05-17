@@ -13,7 +13,6 @@ use think\Response;
 use think\facade\Config;
 use app\admin\service\AdminTokenService;
 
-
 class AdminTokenVerify
 {
     /**
@@ -31,18 +30,20 @@ class AdminTokenVerify
         $login_url = Config::get('admin.login_url');
 
         if ($rule_url != $login_url) {
-            $admin_token = $request->header('Admin-Token', '');
+
+            $token_key = Config::get('admin.token_key');
+            $admin_token = $request->header($token_key, '');
             if (empty($admin_token)) {
-                error('Admin-Token must');
+                return error('AdminToken must');
             }
 
-            $admin_user_id = $request->header('Admin-User-Id', '');
+            $admin_user_id_key = Config::get('admin.admin_user_id_key');
+            $admin_user_id = $request->header($admin_user_id_key, '');
             if (empty($admin_user_id)) {
-                error('Admin-User-Id must');
+                return error('AdminUserId must');
             }
 
-            $AdminTokenService = new AdminTokenService;
-            $AdminTokenService->verify($admin_token, $admin_user_id);
+            AdminTokenService::verify($admin_token, $admin_user_id);
         }
 
         return $next($request);

@@ -7,6 +7,7 @@
 
 namespace app\admin\service;
 
+use think\facade\Config;
 use think\facade\Db;
 
 class AdminLogService
@@ -86,6 +87,17 @@ class AdminLogService
         $data['list'] = $list;
 
         return $data;
+    }
+
+    /**
+     * 日志添加
+     *
+     * @param array $admin_log 日志数据
+     * @return void
+     */
+    public static function add($admin_log = [])
+    {
+        Db::name('admin_log')->strict(false)->insert($admin_log);
     }
 
     /**

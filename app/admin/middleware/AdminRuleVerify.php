@@ -28,13 +28,17 @@ class AdminRuleVerify
         $rule_url = app('http')->getName() . '/' . $request->pathinfo();
 
         $rule_white_list = Config::get('admin.rule_white_list');
+
         if (!in_array($rule_url, $rule_white_list)) {
-            $admin_user_id = $request->header('Admin-User-Id', '');
+
+            $admin_user_id_key = Config::get('admin.admin_user_id_key');
+            $admin_user_id = $request->header($admin_user_id_key, '');
             $super_admin = Config::get('admin.super_admin');
+
             if (!in_array($admin_user_id, $super_admin)) {
                 $admin_user = AdminUserCache::get($admin_user_id);
                 if (empty($admin_user)) {
-                    return error('登录失效，请重新登录', 401);
+                    return error('登录已失效，请重新登录', 401);
                 }
 
                 if ($admin_user['is_prohibit'] == 1) {
@@ -42,13 +46,14 @@ class AdminRuleVerify
                 }
 
                 if (!in_array($rule_url, $admin_user['roles'])) {
-                    return error('你没有权限操作', '', ['rule_url' => $rule_url]);
+                    return error('你没有权限操作', 403, ['rule_url' => $rule_url]);
                 }
             }
 
             $admin_menu = AdminMenuCache::get();
             $menu_url = array_column($admin_menu, 'menu_url');
             $login_url = Config::get('admin.login_url');
+
             if (!in_array($rule_url, $menu_url) && $rule_url != $login_url) {
                 return error('接口地址错误', 404, ['err_url' => $rule_url]);
             }

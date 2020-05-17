@@ -101,12 +101,12 @@ class AdminToolService
      */
     public static function qrcode($qrcode_str)
     {
-        $qrcode_path = '/qrcode/qrcode.png';
+        $qrcode_path = '/storage/qrcode/qrcode.png';
         $qrCode = new QrCode($qrcode_str);
         $qrCode->writeFile('.' . $qrcode_path);
 
         $qrcode_url = file_url($qrcode_path);
-        $data['qrcode_url'] = $qrcode_url . '?r=' . mt_rand(100, 999);
+        $data['qrcode_url'] = $qrcode_url . '?t=' . date('YmdHis');
 
         return $data;
     }

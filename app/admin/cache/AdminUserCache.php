@@ -40,15 +40,15 @@ class AdminUserCache
     }
 
     /**
-     * 设置缓存
+     * 缓存设置
      *
      * @param integer $admin_user_id 用户id
-     * @return boolean
+     * @return array
      */
     public static function set($admin_user_id)
     {
         if (empty($admin_user_id)) {
-            return false;
+            return [];
         }
 
         $admin_user = Db::name('admin_user')
@@ -57,7 +57,7 @@ class AdminUserCache
             ->find();
 
         if (empty($admin_user)) {
-            return false;
+            return [];
         }
 
         unset($admin_user['password']);
@@ -112,7 +112,7 @@ class AdminUserCache
     }
 
     /**
-     * 获取缓存
+     * 缓存获取
      *
      * @param integer $admin_user_id 用户id
      * @return array
@@ -128,7 +128,7 @@ class AdminUserCache
     }
 
     /**
-     * 删除缓存
+     * 缓存删除
      *
      * @param integer $admin_user_id 用户id
      * @return bool
