@@ -27,11 +27,11 @@ function success($data = null, $msg = '操作成功', $code = 200)
  * @param array   $data 返回数据
  * @return json
  */
-function error($msg = '操作失败', $code = 400, $data = null)
+function error($msg = '操作失败', $code = 400, $error = null)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
-    $res['data'] = $data;
+    $res['error'] = $error;
     print_r(json_encode($res));
     exit;
 }
