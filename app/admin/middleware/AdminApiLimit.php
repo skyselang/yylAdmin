@@ -36,7 +36,7 @@ class AdminApiLimit
                 $limit = AdminApiLimitCache::get($admin_user_id, $admin_menu_url);
                 if ($limit) {
                     if ($limit >= $number) {
-                        return error('你的操作过于频繁', 400, '接口访问频率限制：' . $number . '次/' . $expire . '秒');
+                        return error('你的操作过于频繁', '接口访问频率限制：' . $number . '次/' . $expire . '秒');
                     } else {
                         AdminApiLimitCache::inc($admin_user_id, $admin_menu_url);
                     }

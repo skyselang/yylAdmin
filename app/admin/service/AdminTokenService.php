@@ -55,13 +55,11 @@ class AdminTokenService
             if (!super_admin($admin_user_id)) {
                 $token_admin_user_id = $decoded->data->admin_user_id;
                 if ($admin_user_id != $token_admin_user_id) {
-                    $error_msg = '账号信息错误，请重新登录';
-                    $error_data['desc'] = 'Token：请求头部admin_user_id与登录admin_user_id不一致';
-                    return error($error_msg, 401, $error_data);
+                    return error('账号信息错误，请重新登录', 'Token：请求头部adminUserId与登录admin_user_id不一致', 401);
                 }
             }
         } catch (\Exception $e) {
-            return error('Token：' . $e->getMessage(), 401);
+            return error('Token验证失败，请重新登录', 'Token：' . $e->getMessage(), 401);
         }
     }
 }

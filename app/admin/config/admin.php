@@ -35,7 +35,7 @@ return [
     'is_admin_log' => true,
     // 接口访问频率限制（次数/时间）
     'api_limit' => [
-        'number' => 1, //次数,0不限制
+        'number' => 2, //次数,0不限制
         'expire' => 1, //时间,单位秒
     ],
 ];

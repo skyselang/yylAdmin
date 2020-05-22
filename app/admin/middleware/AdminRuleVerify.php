@@ -38,15 +38,15 @@ class AdminRuleVerify
             if (!in_array($admin_user_id, $super_admin)) {
                 $admin_user = AdminUserCache::get($admin_user_id);
                 if (empty($admin_user)) {
-                    return error('登录已失效，请重新登录', 401);
+                    return error('登录已失效，请重新登录', '', 401);
                 }
 
                 if ($admin_user['is_prohibit'] == 1) {
-                    return error('账号已被禁用', 401);
+                    return error('账号已被禁用', '请联系管理员', 401);
                 }
 
                 if (!in_array($rule_url, $admin_user['roles'])) {
-                    return error('你没有权限操作', 403, ['rule_url' => $rule_url]);
+                    return error('你没有权限操作', '未授权：' . $rule_url, 403);
                 }
             }
 
@@ -55,7 +55,7 @@ class AdminRuleVerify
             $login_url = Config::get('admin.login_url');
 
             if (!in_array($rule_url, $menu_url) && $rule_url != $login_url) {
-                return error('接口地址错误', 404, ['err_url' => $rule_url]);
+                return error('接口地址错误', '不存在或未授权：' . $rule_url, 404);
             }
         }
 
