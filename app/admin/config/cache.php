@@ -27,7 +27,7 @@ return [
             // 驱动方式
             'type'       => 'redis',
             // 缓存前缀
-            'prefix'     => '',
+            'prefix'     => 'yylAdmin:',
             // 缓存有效期 0表示永久缓存
             'expire'     => 0,
             // 序列化机制 例如 ['serialize', 'unserialize']

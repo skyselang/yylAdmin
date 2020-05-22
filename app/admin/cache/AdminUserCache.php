@@ -21,7 +21,7 @@ class AdminUserCache
      */
     public static function key($admin_user_id)
     {
-        return 'admin_user_id:' . $admin_user_id;
+        return 'adminUser:' . $admin_user_id;
     }
 
     /**

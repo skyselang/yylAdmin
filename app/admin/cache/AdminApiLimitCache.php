@@ -20,7 +20,9 @@ class AdminApiLimitCache
      */
     public static function key($admin_user_id, $admin_menu_url)
     {
-        $key = 'admin_api_limit:' . $admin_user_id . ':' . $admin_menu_url;
+        $admin_menu_url = str_replace('/', '', $admin_menu_url);
+
+        $key = 'adminApiLimit:' . $admin_user_id . ':' . $admin_menu_url;
 
         return $key;
     }

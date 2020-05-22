@@ -20,7 +20,7 @@ class AdminMenuCache
      */
     public static function key($admin_menu_id = 0)
     {
-        return 'admin_menu_id:' . $admin_menu_id;
+        return 'adminMenu:' . $admin_menu_id;
     }
 
     /**
