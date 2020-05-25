@@ -5,6 +5,9 @@ Github | [码云](https://gitee.com/skyselang/yyl-admin-php)
 ## 简介
 
 [yylAdmin](https://github.com/skyselang/yyl-admin) 是一个极简后台管理系统，前后端分离，后端采用ThinkPHP，前端采用Element；项目由[yyl-admin-php](https://github.com/skyselang/yyl-admin-php)和[yyl-admin-vue](https://github.com/skyselang/yyl-admin-vue)组成。
+- [yylAdmin](https://github.com/skyselang/yyl-admin)
+- [yyl-admin-php](https://github.com/skyselang/yyl-admin-php)
+- [yyl-admin-vue](https://github.com/skyselang/yyl-admin-vue)
 
 ## 要求
 
@@ -38,6 +41,8 @@ composer install
 composer config repo.packagist composer https://packagist.phpcomposer.com
 
 # 配置环境（PhpStudy）
+
+# 导入数据库
 ```
 vue
 ```bash
