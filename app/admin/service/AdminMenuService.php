@@ -2,7 +2,7 @@
 /*
  * @Description  : 菜单管理
  * @Author       : skyselang 215817969@qq.com
- * @Date         : 2020-03-30 17:35:20
+ * @Date         : 2020-03-30
  */
 
 namespace app\admin\service;

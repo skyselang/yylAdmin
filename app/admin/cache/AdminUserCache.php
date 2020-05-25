@@ -21,22 +21,24 @@ class AdminUserCache
      */
     public static function key($admin_user_id)
     {
-        return 'adminUser:' . $admin_user_id;
+        $key = 'adminUser:' . $admin_user_id;
+
+        return $key;
     }
 
     /**
      * 缓存有效时间
      *
-     * @param integer $exp 有效时间
+     * @param integer $expire 有效时间
      * @return integer
      */
-    public static function exp($exp = '')
+    public static function exp($expire = 0)
     {
-        if ($exp) {
-            return $exp;
+        if (empty($expire)) {
+            $expire = 1 * 24 * 60 * 60;
         }
 
-        return 1 * 24 * 60 * 60;
+        return $expire;
     }
 
     /**
@@ -103,10 +105,14 @@ class AdminUserCache
                 ->column('menu_url');
         }
 
+        sort($admin_menu);
         $admin_user['admin_token'] = AdminTokenService::create($admin_user);
         $admin_user['roles'] = $admin_menu;
 
-        Cache::set(self::key($admin_user_id), $admin_user, self::exp());
+        $key = self::key($admin_user_id);
+        $val = $admin_user;
+        $exp = self::exp();
+        Cache::set($key, $val, $exp);
 
         return $admin_user;
     }
@@ -119,12 +125,13 @@ class AdminUserCache
      */
     public static function get($admin_user_id)
     {
-        $admin_user =  Cache::get(self::key($admin_user_id));
-        if ($admin_user) {
-            return $admin_user;
+        $key = self::key($admin_user_id);
+        $admin_user =  Cache::get($key);
+        if (empty($admin_user)) {
+            $admin_user = self::set($admin_user_id);
         }
 
-        return self::set($admin_user_id);
+        return $admin_user;
     }
 
     /**
@@ -135,6 +142,9 @@ class AdminUserCache
      */
     public static function del($admin_user_id)
     {
-        return Cache::delete(self::key($admin_user_id));
+        $key = self::key($admin_user_id);
+        $res = Cache::delete($key);
+
+        return $res;
     }
 }

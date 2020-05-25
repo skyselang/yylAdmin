@@ -129,7 +129,7 @@ class AdminUsersService
         }
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('user', $avatar, function () use ($admin_user_id) {
+            ->putFile('adminuser', $avatar, function () use ($admin_user_id) {
                 return $admin_user_id . '/avatar';
             });
 

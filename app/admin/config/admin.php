@@ -2,7 +2,7 @@
 /*
  * @Description  : 后台配置
  * @Author       : skyselang 215817969@qq.com
- * @Date         : 2020-03-30 16:12:34
+ * @Date         : 2020-03-30
  */
 
 return [

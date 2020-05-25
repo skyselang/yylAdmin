@@ -21,7 +21,6 @@ class AdminApiLimitCache
     public static function key($admin_user_id, $admin_menu_url)
     {
         $admin_menu_url = str_replace('/', '', $admin_menu_url);
-
         $key = 'adminApiLimit:' . $admin_user_id . ':' . $admin_menu_url;
 
         return $key;
@@ -33,8 +32,12 @@ class AdminApiLimitCache
      * @param integer $expire 有效时间
      * @return integer
      */
-    public static function exp($expire)
+    public static function exp($expire = 0)
     {
+        if (empty($expire)) {
+            $expire = 30 * 24 * 60 * 60;
+        }
+
         return $expire;
     }
 
@@ -51,7 +54,6 @@ class AdminApiLimitCache
         $key = self::key($admin_user_id, $admin_menu_url);
         $val = 1;
         $exp = self::exp($expire);
-
         $res = Cache::set($key, $val, $exp);
 
         return $res;
@@ -67,7 +69,6 @@ class AdminApiLimitCache
     public static function get($admin_user_id, $admin_menu_url)
     {
         $key = self::key($admin_user_id, $admin_menu_url);
-
         $res =  Cache::get($key);
 
         return $res;
@@ -83,7 +84,6 @@ class AdminApiLimitCache
     public static function del($admin_user_id, $admin_menu_url)
     {
         $key = self::key($admin_user_id, $admin_menu_url);
-
         $res = Cache::delete($key);
 
         return $res;
@@ -99,7 +99,6 @@ class AdminApiLimitCache
     public static function inc($admin_user_id, $admin_menu_url)
     {
         $key = self::key($admin_user_id, $admin_menu_url);
-
         $res = Cache::inc($key);
 
         return $res;

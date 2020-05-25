@@ -20,22 +20,24 @@ class AdminMenuCache
      */
     public static function key($admin_menu_id = 0)
     {
-        return 'adminMenu:' . $admin_menu_id;
+        $key = 'adminMenu:' . $admin_menu_id;
+
+        return $key;
     }
 
     /**
      * 缓存有效时间
      *
-     * @param integer $exp 有效时间
+     * @param integer $expire 有效时间
      * @return integer
      */
-    public static function exp($exp = 0)
+    public static function exp($expire = 0)
     {
-        if ($exp) {
-            return $exp;
+        if (empty($expire)) {
+            $expire = 30 * 24 * 60 * 60;
         }
 
-        return 30 * 24 * 60 * 60;
+        return $expire;
     }
 
     /**
@@ -46,7 +48,7 @@ class AdminMenuCache
      */
     public static function set($admin_menu_id = 0)
     {
-        if ($admin_menu_id == 0) {
+        if (empty($admin_menu_id)) {
             $admin_menu = Db::name('admin_menu')
                 ->where('is_delete', 0)
                 ->select()
@@ -58,7 +60,10 @@ class AdminMenuCache
                 ->find();
         }
 
-        Cache::set(self::key($admin_menu_id), $admin_menu, self::exp());
+        $key = self::key($admin_menu_id);
+        $val = $admin_menu;
+        $exp = self::exp();
+        Cache::set($key, $val, $exp);
 
         return $admin_menu;
     }
@@ -71,12 +76,13 @@ class AdminMenuCache
      */
     public static function get($admin_menu_id = 0)
     {
-        $admin_user =  Cache::get(self::key($admin_menu_id));
-        if ($admin_user) {
-            return $admin_user;
+        $key = self::key($admin_menu_id);
+        $admin_menu =  Cache::get($key);
+        if (empty($admin_menu)) {
+            $admin_menu = self::set($admin_menu_id);
         }
 
-        return self::set($admin_menu_id);
+        return $admin_menu;
     }
 
     /**
@@ -87,6 +93,9 @@ class AdminMenuCache
      */
     public static function del($admin_menu_id = 0)
     {
-        return Cache::delete(self::key($admin_menu_id));
+        $key = self::key($admin_menu_id);
+        $res = Cache::delete($key);
+
+        return $res;
     }
 }

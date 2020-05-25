@@ -7,7 +7,6 @@
 
 namespace app\admin\service;
 
-use think\facade\Config;
 use think\facade\Db;
 
 class AdminLogService
