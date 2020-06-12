@@ -1,13 +1,12 @@
 <h1 align="center">yylAdmin</h1>
 
-Github | [码云](https://gitee.com/skyselang/yyl-admin-php)
+Github | [码云](https://gitee.com/skyselang/yylAdmin)
 
 ## 简介
 
-[yylAdmin](https://github.com/skyselang/yyl-admin) 是一个极简后台管理系统，前后端分离，后端采用ThinkPHP，前端采用Element；项目由[yyl-admin-php](https://github.com/skyselang/yyl-admin-php)和[yyl-admin-vue](https://github.com/skyselang/yyl-admin-vue)组成。
-- [yylAdmin](https://github.com/skyselang/yyl-admin)
-- [yyl-admin-php](https://github.com/skyselang/yyl-admin-php)
-- [yyl-admin-vue](https://github.com/skyselang/yyl-admin-vue)
+[yylAdmin](https://github.com/skyselang/yylAdmin) 是一个极简后台管理系统，前后端分离，后端采用ThinkPHP，前端采用Element；项目由[yylAdmin](https://github.com/skyselang/yylAdmin)和[yylAdminWeb](https://github.com/skyselang/yylAdminWeb)组成。
+- [yylAdmin](https://github.com/skyselang/yylAdmin)
+- [yylAdminWeb](https://github.com/skyselang/yylAdminWeb)
 
 ## 要求
 
@@ -26,13 +25,13 @@ Github | [码云](https://gitee.com/skyselang/yyl-admin-php)
 
 ## 开发
 
-php
+PHP部分
 ```bash
 # 克隆项目
-git clone https://github.com/skyselang/yyl-admin-php.git
+git clone https://github.com/skyselang/yylAdmin.git
 
 # 进入项目目录
-cd yyl-admin-php
+cd yylAdmin
 
 # 安装依赖
 composer install
@@ -44,13 +43,13 @@ composer config repo.packagist composer https://packagist.phpcomposer.com
 
 # 导入数据库
 ```
-vue
+WEB部分
 ```bash
 # 克隆项目
-git clone https://github.com/skyselang/yyl-admin-vue.git
+git clone https://github.com/skyselang/yylAdminWeb.git
 
 # 进入项目目录
-cd yyl-admin-vue
+cd yylAdminWeb
 
 # 安装依赖
 npm install
