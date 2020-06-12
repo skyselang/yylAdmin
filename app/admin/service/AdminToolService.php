@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 实用工具
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-29
  */
 
@@ -34,14 +34,14 @@ class AdminToolService
         $original_str = str_shuffle($original_str);
 
         $random_str = '';
-        $str_len = strlen($original_str) - 1;
+        $str_len    = strlen($original_str) - 1;
         for ($i = 0; $i < $random_len; $i++) {
             $random_str .= $original_str[mt_rand(0, $str_len)];
         }
 
         $data['original_str'] = $original_str;
-        $data['random_len'] = $random_len;
-        $data['random_str'] = $random_str;
+        $data['random_len']   = $random_len;
+        $data['random_str']   = $random_str;
 
         return $data;
     }
@@ -58,18 +58,18 @@ class AdminToolService
         $date = date('Y-m-d H:i:s', $time);
 
         if ($param['from_datetime']) {
-            $param['to_timestamp'] = strtotime($param['from_datetime']);
+            $param['to_timestamp']  = strtotime($param['from_datetime']);
             $param['from_datetime'] = date('Y-m-d H:i:s', $param['to_timestamp']);
         } else {
-            $param['to_timestamp'] = strtotime($date);
+            $param['to_timestamp']  = strtotime($date);
             $param['from_datetime'] = date('Y-m-d H:i:s', $time);
         }
 
         if ($param['from_timestamp']) {
-            $param['to_datetime'] = date('Y-m-d H:i:s', $param['from_timestamp']);
+            $param['to_datetime']    = date('Y-m-d H:i:s', $param['from_timestamp']);
             $param['from_timestamp'] = strtotime($param['to_datetime']);
         } else {
-            $param['to_datetime'] = date('Y-m-d H:i:s', $time);
+            $param['to_datetime']    = date('Y-m-d H:i:s', $time);
             $param['from_timestamp'] = strtotime($date);
         }
 

@@ -1,15 +1,15 @@
 <?php
 /*
  * @Description  : 登录|退出
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
  */
 
 namespace app\admin\service;
 
-use app\admin\cache\AdminUserCache;
 use think\facade\Db;
 use think\facade\Request;
+use app\cache\AdminUserCache;
 
 class AdminLoginService
 {
@@ -36,23 +36,23 @@ class AdminLoginService
             error('账号已被禁用');
         }
 
-        $update['login_ip'] = $param['login_ip'];
+        $update['login_ip']   = $param['login_ip'];
         $update['login_time'] = date('Y-m-d H:i:s');
-        $update['login_num'] = $admin_user['login_num'] + 1;
+        $update['login_num']  = $admin_user['login_num'] + 1;
         Db::name('admin_user')->where('admin_user_id', $admin_user['admin_user_id'])->update($update);
 
         AdminUserCache::del($admin_user['admin_user_id']);
         $admin_user = AdminUserCache::get($admin_user['admin_user_id']);
 
         $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['admin_token'] = $admin_user['admin_token'];
+        $data['admin_token']   = $admin_user['admin_token'];
 
-        $admin_log['admin_user_id'] = $admin_user['admin_user_id'];
-        $admin_log['menu_url'] = app('http')->getName() . '/' . Request::pathinfo();
-        $admin_log['request_method'] =  Request::method();
-        $admin_log['request_ip'] = Request::ip();
-        $admin_log['request_param'] = serialize([]);
-        $admin_log['insert_time'] = date('Y-m-d H:i:s');
+        $admin_log['admin_user_id']  = $admin_user['admin_user_id'];
+        $admin_log['menu_url']       = app('http')->getName() . '/' . Request::pathinfo();
+        $admin_log['request_method'] = Request::method();
+        $admin_log['request_ip']     = Request::ip();
+        $admin_log['request_param']  = serialize([]);
+        $admin_log['insert_time']    = date('Y-m-d H:i:s');
         AdminLogService::add($admin_log);
 
         return $data;

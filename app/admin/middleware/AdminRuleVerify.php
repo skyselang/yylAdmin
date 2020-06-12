@@ -1,18 +1,18 @@
 <?php
 /*
  * @Description  : 权限验证中间件
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-25
  */
 
 namespace app\admin\middleware;
 
-use app\admin\cache\AdminMenuCache;
 use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
-use app\admin\cache\AdminUserCache;
+use app\cache\AdminUserCache;
+use app\cache\AdminMenuCache;
 
 class AdminRuleVerify
 {
@@ -25,15 +25,13 @@ class AdminRuleVerify
      */
     public function handle($request, Closure $next)
     {
-        $rule_url = app('http')->getName() . '/' . $request->pathinfo();
-
+        $rule_url        = app('http')->getName() . '/' . $request->pathinfo();
         $rule_white_list = Config::get('admin.rule_white_list');
 
         if (!in_array($rule_url, $rule_white_list)) {
-
             $admin_user_id_key = Config::get('admin.admin_user_id_key');
-            $admin_user_id = $request->header($admin_user_id_key, '');
-            $super_admin = Config::get('admin.super_admin');
+            $admin_user_id     = $request->header($admin_user_id_key, '');
+            $super_admin       = Config::get('admin.super_admin');
 
             if (!in_array($admin_user_id, $super_admin)) {
                 $admin_user = AdminUserCache::get($admin_user_id);
@@ -51,8 +49,8 @@ class AdminRuleVerify
             }
 
             $admin_menu = AdminMenuCache::get();
-            $menu_url = array_column($admin_menu, 'menu_url');
-            $login_url = Config::get('admin.login_url');
+            $menu_url   = array_column($admin_menu, 'menu_url');
+            $login_url  = Config::get('admin.login_url');
 
             if (!in_array($rule_url, $menu_url) && $rule_url != $login_url) {
                 return error('接口地址错误', '不存在或未授权：' . $rule_url, 404);

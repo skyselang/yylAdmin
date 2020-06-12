@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 菜单管理
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
  */
 
@@ -119,10 +119,10 @@ class AdminMenu
     public function menuProhibit()
     {
         $admin_menu_id = Request::param('admin_menu_id/d', '');
-        $is_prohibit = Request::param('is_prohibit/s', 0);
+        $is_prohibit   = Request::param('is_prohibit/s', 0);
 
         $param['admin_menu_id'] = $admin_menu_id;
-        $param['is_prohibit'] = $is_prohibit;
+        $param['is_prohibit']   = $is_prohibit;
 
         validate(AdminMenuValidate::class)->scene('admin_menu_id')->check(['admin_menu_id' => $admin_menu_id]);
 
@@ -140,10 +140,10 @@ class AdminMenu
     public function menuUnauth()
     {
         $admin_menu_id = Request::param('admin_menu_id/d', '');
-        $is_unauth = Request::param('is_unauth/s', 0);
+        $is_unauth     = Request::param('is_unauth/s', 0);
 
         $param['admin_menu_id'] = $admin_menu_id;
-        $param['is_unauth'] = $is_unauth;
+        $param['is_unauth']     = $is_unauth;
 
         validate(AdminMenuValidate::class)->scene('admin_menu_id')->check(['admin_menu_id' => $admin_menu_id]);
 

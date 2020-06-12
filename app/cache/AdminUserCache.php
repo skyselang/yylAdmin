@@ -1,11 +1,11 @@
 <?php
 /*
  * @Description  : 用户缓存
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-25
  */
 
-namespace app\admin\cache;
+namespace app\cache;
 
 use think\facade\Db;
 use think\facade\Cache;
@@ -93,7 +93,7 @@ class AdminUserCache
 
             $admin_menu_ids_str = implode(',', $admin_rule);
             $admin_menu_ids_arr = explode(',', $admin_menu_ids_str);
-            $admin_menu_ids = array_unique($admin_menu_ids_arr);
+            $admin_menu_ids     = array_unique($admin_menu_ids_arr);
 
             $admin_menu = Db::name('admin_menu')
                 ->field('admin_menu_id')
@@ -107,7 +107,7 @@ class AdminUserCache
 
         sort($admin_menu);
         $admin_user['admin_token'] = AdminTokenService::create($admin_user);
-        $admin_user['roles'] = $admin_menu;
+        $admin_user['roles']       = $admin_menu;
 
         $key = self::key($admin_user_id);
         $val = $admin_user;
@@ -125,7 +125,7 @@ class AdminUserCache
      */
     public static function get($admin_user_id)
     {
-        $key = self::key($admin_user_id);
+        $key        = self::key($admin_user_id);
         $admin_user =  Cache::get($key);
         if (empty($admin_user)) {
             $admin_user = self::set($admin_user_id);

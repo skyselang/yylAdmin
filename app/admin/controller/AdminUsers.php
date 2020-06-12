@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 个人中心
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
  */
 
@@ -38,12 +38,14 @@ class AdminUsers
      */
     public function usersEdit()
     {
-        $param = Request::only([
-            'admin_user_id' => '',
-            'username'      => '',
-            'nickname'      => '',
-            'email'         => '',
-        ]);
+        $param = Request::only(
+            [
+                'admin_user_id' => '',
+                'username'      => '',
+                'nickname'      => '',
+                'email'         => '',
+            ]
+        );
 
         validate(AdminUserValidate::class)->scene('users_edit')->check($param);
 
@@ -61,11 +63,13 @@ class AdminUsers
     public function usersPwd()
     {
 
-        $param = Request::only([
-            'admin_user_id' => '',
-            'password'      => '',
-            'passwords'     => '',
-        ]);
+        $param = Request::only(
+            [
+                'admin_user_id' => '',
+                'password'      => '',
+                'passwords'     => '',
+            ]
+        );
 
         validate(AdminUserValidate::class)->scene('users_pwd')->check($param);
 
@@ -83,7 +87,7 @@ class AdminUsers
     public function usersAvatar()
     {
         $admin_user_id = Request::param('admin_user_id/d', '');
-        $avatar = Request::file('avatar_file');
+        $avatar        = Request::file('avatar_file');
 
         $param['admin_user_id'] = $admin_user_id;
         $param['avatar'] = $avatar;

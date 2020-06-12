@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 权限管理
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30 17:04:47
  */
 
@@ -58,9 +58,9 @@ class AdminRuleService
 
         $data['count'] = $count;
         $data['pages'] = $pages;
-        $data['page'] = $page;
+        $data['page']  = $page;
         $data['limit'] = $limit;
-        $data['list'] = $list;
+        $data['list']  = $list;
 
         return $data;
     }
@@ -85,7 +85,7 @@ class AdminRuleService
 
         sort($param['admin_menu_ids']);
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-        $param['insert_time'] = date('Y-m-d H:i:s');
+        $param['insert_time']    = date('Y-m-d H:i:s');
         $admin_rule_id = Db::name('admin_rule')->insertGetId($param);
 
         if (empty($admin_rule_id)) {
@@ -121,7 +121,7 @@ class AdminRuleService
         unset($param['admin_rule_id']);
         sort($param['admin_menu_ids']);
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-        $param['update_time'] = date('Y-m-d H:i:s');
+        $param['update_time']    = date('Y-m-d H:i:s');
         $update = Db::name('admin_rule')
             ->where('admin_rule_id', $admin_rule_id)
             ->update($param);
@@ -143,7 +143,7 @@ class AdminRuleService
      */
     public static function dele($admin_rule_id)
     {
-        $data['is_delete'] = 1;
+        $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_rule')
             ->where('admin_rule_id', $admin_rule_id)

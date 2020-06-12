@@ -1,11 +1,11 @@
 <?php
 /*
  * @Description  : 接口访问频率限制
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-22
  */
 
-namespace app\admin\cache;
+namespace app\cache;
 
 use think\facade\Cache;
 
@@ -14,14 +14,14 @@ class AdminApiLimitCache
     /**
      * 缓存key
      *
-     * @param integer $admin_user_id 用户id
-     * @param string $admin_menu_url 菜单url
+     * @param integer $admin_user_id  用户id
+     * @param string  $admin_menu_url 菜单url
      * @return string
      */
     public static function key($admin_user_id, $admin_menu_url)
     {
-        $admin_menu_url = str_replace('/', '', $admin_menu_url);
-        $key = 'adminApiLimit:' . $admin_user_id . ':' . $admin_menu_url;
+        $url = str_replace('/', '', $admin_menu_url);
+        $key = 'adminApiLimit:' . $admin_user_id . ':' . $url;
 
         return $key;
     }
@@ -29,7 +29,7 @@ class AdminApiLimitCache
     /**
      * 缓存有效时间
      *
-     * @param integer $expire 有效时间
+     * @param  integer  $expire 有效时间
      * @return integer
      */
     public static function exp($expire = 0)
@@ -44,9 +44,9 @@ class AdminApiLimitCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_user_id 用户id
-     * @param string $admin_menu_url 菜单url
-     * @param integer $expire 有效时间
+     * @param integer $admin_user_id  用户id
+     * @param string  $admin_menu_url 菜单url
+     * @param integer $expire         有效时间
      * @return bool
      */
     public static function set($admin_user_id, $admin_menu_url, $expire)
@@ -62,8 +62,8 @@ class AdminApiLimitCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_user_id 用户id
-     * @param string $admin_menu_url 菜单url
+     * @param integer $admin_user_id  用户id
+     * @param string  $admin_menu_url 菜单url
      * @return string
      */
     public static function get($admin_user_id, $admin_menu_url)
@@ -77,8 +77,8 @@ class AdminApiLimitCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_user_id 用户id
-     * @param string $admin_menu_url 菜单url
+     * @param integer $admin_user_id  用户id
+     * @param string  $admin_menu_url 菜单url
      * @return bool
      */
     public static function del($admin_user_id, $admin_menu_url)
@@ -92,8 +92,8 @@ class AdminApiLimitCache
     /**
      * 缓存自增
      *
-     * @param integer $admin_user_id 用户id
-     * @param string $admin_menu_url 菜单url
+     * @param integer $admin_user_id  用户id
+     * @param string  $admin_menu_url 菜单url
      * @return bool
      */
     public static function inc($admin_user_id, $admin_menu_url)

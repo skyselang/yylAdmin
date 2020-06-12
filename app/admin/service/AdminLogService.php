@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 日志管理
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
  */
 
@@ -81,9 +81,9 @@ class AdminLogService
 
         $data['count'] = $count;
         $data['pages'] = $pages;
-        $data['page'] = $page;
+        $data['page']  = $page;
         $data['limit'] = $limit;
-        $data['list'] = $list;
+        $data['list']  = $list;
 
         return $data;
     }
@@ -147,7 +147,7 @@ class AdminLogService
      */
     public static function dele($admin_log_id)
     {
-        $data['is_delete'] = 1;
+        $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_log')
             ->where('admin_log_id', $admin_log_id)

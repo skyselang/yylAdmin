@@ -1,11 +1,11 @@
 <?php
 /*
  * @Description  : 菜单缓存
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
  */
 
-namespace app\admin\cache;
+namespace app\cache;
 
 use think\facade\Db;
 use think\facade\Cache;

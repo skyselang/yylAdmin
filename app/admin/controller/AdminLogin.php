@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 登录|退出
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
  */
 

@@ -1,14 +1,14 @@
 <?php
 /*
  * @Description  : 菜单管理
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
  */
 
 namespace app\admin\service;
 
-use app\admin\cache\AdminMenuCache;
 use think\facade\Db;
+use app\cache\AdminMenuCache;
 
 class AdminMenuService
 {
@@ -42,7 +42,7 @@ class AdminMenuService
         $tree = self::toTree($admin_menu, 0);
 
         $data['count'] = count($tree);
-        $data['list'] = $tree;
+        $data['list']  = $tree;
 
         return $data;
     }
@@ -133,10 +133,10 @@ class AdminMenuService
             ->where('is_delete', 0)
             ->select();
 
-        $admin_menu_ids = self::getChildren($admin_menu, $admin_menu_id);
+        $admin_menu_ids   = self::getChildren($admin_menu, $admin_menu_id);
         $admin_menu_ids[] = (int) $admin_menu_id;
 
-        $data['is_delete'] = 1;
+        $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', 'in', $admin_menu_ids)
@@ -205,7 +205,7 @@ class AdminMenuService
     {
         $admin_menu_id = $param['admin_menu_id'];
 
-        $data['is_unauth'] = $param['is_unauth'];
+        $data['is_unauth']   = $param['is_unauth'];
         $data['update_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
@@ -234,7 +234,7 @@ class AdminMenuService
         foreach ($admin_menu as $k => $v) {
             if ($v['menu_pid'] == $admin_menu_id) {
                 $children[] = $v['admin_menu_id'];
-                $children = array_merge($children, self::getChildren($admin_menu, $v['admin_menu_id']));
+                $children   = array_merge($children, self::getChildren($admin_menu, $v['admin_menu_id']));
             }
         }
 

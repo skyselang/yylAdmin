@@ -1,15 +1,15 @@
 <?php
 /*
  * @Description  : 个人中心
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
  */
 
 namespace app\admin\service;
 
-use app\admin\cache\AdminUserCache;
 use think\facade\Db;
 use think\facade\Filesystem;
+use app\cache\AdminUserCache;
 
 class AdminUsersService
 {
@@ -24,9 +24,9 @@ class AdminUsersService
         $admin_user = AdminUserService::info($admin_user_id);
 
         $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['username'] = $admin_user['username'];
-        $data['nickname'] = $admin_user['nickname'];
-        $data['email'] = $admin_user['email'];
+        $data['username']      = $admin_user['username'];
+        $data['nickname']      = $admin_user['nickname'];
+        $data['email']         = $admin_user['email'];
 
         return $data;
     }
@@ -40,9 +40,9 @@ class AdminUsersService
     public static function edit($param)
     {
         $admin_user_id = $param['admin_user_id'];
-        $username = $param['username'];
-        $nickname = $param['nickname'];
-        $email = $param['email'];
+        $username      = $param['username'];
+        $nickname      = $param['nickname'];
+        $email         = $param['email'];
 
         $admin_user = Db::name('admin_user')
             ->field('admin_user_id')
@@ -54,9 +54,9 @@ class AdminUsersService
             error('账号已存在');
         }
 
-        $data['username'] = $username;
-        $data['nickname'] = $nickname;
-        $data['email'] = $email;
+        $data['username']    = $username;
+        $data['nickname']    = $nickname;
+        $data['email']       = $email;
         $data['update_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
@@ -80,8 +80,8 @@ class AdminUsersService
     public static function pwd($param)
     {
         $admin_user_id = $param['admin_user_id'];
-        $password = $param['password'];
-        $passwords = $param['passwords'];
+        $password      = $param['password'];
+        $passwords     = $param['passwords'];
 
         $admin_user = Db::name('admin_user')
             ->field('admin_user_id,password')
@@ -117,7 +117,7 @@ class AdminUsersService
     public static function avatar($param)
     {
         $admin_user_id = $param['admin_user_id'];
-        $avatar = $param['avatar'];
+        $avatar        = $param['avatar'];
 
         $admin_user = Db::name('admin_user')
             ->field('admin_user_id')
@@ -133,7 +133,7 @@ class AdminUsersService
                 return $admin_user_id . '/avatar';
             });
 
-        $update_avatar['avatar'] = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
+        $update_avatar['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
         $update_avatar['update_time'] = date('Y-m-d H:i:s');
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)

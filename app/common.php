@@ -1,13 +1,17 @@
 <?php
-// 公共文件
+/*
+ * @Description  : 公共文件
+ * @Author       : https://github.com/skyselang
+ * @Date         : 2020-04-16
+ */
 
 use think\facade\Config;
 
 /**
  * 成功返回
  *
- * @param array $data 返回数据
- * @param string $msg 成功码
+ * @param array   $data 返回数据
+ * @param string  $msg  成功码
  * @param integer $code 成功提示
  * @return json
  */
@@ -16,14 +20,15 @@ function success($data = null, $msg = '操作成功', $code = 200)
     $res['code'] = $code;
     $res['msg']  = $msg;
     $res['data'] = $data;
+
     return json($res);
 }
 
 /**
  * 错误返回
  *
- * @param string $msg 错误提示
- * @param array $err 错误描述
+ * @param string  $msg  错误提示
+ * @param array   $err  错误数据
  * @param integer $code 错误码
  * @return json
  */
@@ -31,8 +36,10 @@ function error($msg = '操作失败', $err = null, $code = 400)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
-    $res['err'] = $err;
+    $res['err']  = $err;
+
     print_r(json_encode($res));
+
     exit;
 }
 
@@ -52,9 +59,9 @@ function server_url()
     }
 
     $host = $_SERVER['HTTP_HOST'];
-    $server_url = $http . $host;
+    $res  = $http . $host;
 
-    return $server_url;
+    return $res;
 }
 
 /**
@@ -76,12 +83,12 @@ function file_url($file_path = '')
     $server_url = server_url();
 
     if (stripos($file_path, '/') == 0) {
-        $file_url = $server_url . $file_path;
+        $res = $server_url . $file_path;
     } else {
-        $file_url = $server_url . '/' . $file_path;
+        $res = $server_url . '/' . $file_path;
     }
 
-    return $file_url;
+    return $res;
 }
 
 /**

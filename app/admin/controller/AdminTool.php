@@ -1,14 +1,14 @@
 <?php
 /*
  * @Description  : 实用工具
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-29
  */
 
 namespace app\admin\controller;
 
-use app\admin\service\AdminToolService;
 use think\facade\Request;
+use app\admin\service\AdminToolService;
 
 class AdminTool
 {
@@ -40,12 +40,14 @@ class AdminTool
      */
     public function timestamp()
     {
-        $param = Request::only([
-            'from_datetime' => '',
-            'to_timestamp' => '',
-            'from_timestamp' => '',
-            'to_datetime' => '',
-        ]);
+        $param = Request::only(
+            [
+                'from_datetime' => '',
+                'to_timestamp' => '',
+                'from_timestamp' => '',
+                'to_datetime' => '',
+            ]
+        );
 
         if ($param['from_timestamp'] && !is_numeric($param['from_timestamp'])) {
             error('请输入正确的时间戳');

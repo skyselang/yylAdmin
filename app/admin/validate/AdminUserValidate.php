@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 用户验证器
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-24
  */
 
@@ -61,7 +61,7 @@ class AdminUserValidate extends Validate
     protected function checkEmail($value, $rule, $data = [])
     {
         $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
-        $email = $data['email'];
+        $email         = $data['email'];
 
         if ($admin_user_id) {
             $where[] = ['admin_user_id', '<>', $admin_user_id];

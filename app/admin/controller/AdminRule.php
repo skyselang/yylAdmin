@@ -1,7 +1,7 @@
 <?php
 /*
  * @Description  : 权限管理
- * @Author       : skyselang 215817969@qq.com
+ * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
  */
 
@@ -142,10 +142,10 @@ class AdminRule
     public function ruleProhibit()
     {
         $admin_rule_id = Request::param('admin_rule_id/d', '');
-        $is_prohibit = Request::param('is_prohibit/s', 0);
+        $is_prohibit   = Request::param('is_prohibit/s', 0);
 
         $param['admin_rule_id'] = $admin_rule_id;
-        $param['is_prohibit'] = $is_prohibit;
+        $param['is_prohibit']   = $is_prohibit;
 
         validate(AdminRuleValidate::class)->scene('admin_rule_id')->check(['admin_rule_id' => $admin_rule_id]);
 
