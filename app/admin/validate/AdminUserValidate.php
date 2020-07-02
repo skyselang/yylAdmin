@@ -14,7 +14,7 @@ class AdminUserValidate extends Validate
 {
     protected $rule = [
         'admin_user_id' => ['require'],
-        'username'      => ['require', 'length' => '3,64'],
+        'username'      => ['require', 'length' => '3,256'],
         'nickname'      => ['require', 'length' => '1,32'],
         'password'      => ['require', 'length' => '6,18'],
         'passwords'     => ['require', 'length' => '6,18'],
@@ -25,7 +25,7 @@ class AdminUserValidate extends Validate
     protected $message  =   [
         'admin_user_id.require' => '缺少参数admin_user_id',
         'username.require'      => '请输入账号',
-        'username.length'       => '账号长度为3至64个字符',
+        'username.length'       => '账号长度为3至256个字符',
         'nickname.require'      => '请输入昵称',
         'nickname.length'       => '昵称长度为1至32个字符',
         'password.require'      => '请输入密码',

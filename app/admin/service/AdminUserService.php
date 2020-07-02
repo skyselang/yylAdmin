@@ -144,7 +144,7 @@ class AdminUserService
      */
     public static function dele($admin_user_id)
     {
-        $data['is_delete'] = 1;
+        $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)

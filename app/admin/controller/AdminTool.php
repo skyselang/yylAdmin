@@ -42,10 +42,10 @@ class AdminTool
     {
         $param = Request::only(
             [
-                'from_datetime' => '',
-                'to_timestamp' => '',
+                'from_datetime'  => '',
+                'to_timestamp'   => '',
                 'from_timestamp' => '',
-                'to_datetime' => '',
+                'to_datetime'    => '',
             ]
         );
 

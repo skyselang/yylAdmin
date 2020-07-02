@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : api配置
+ * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
  */
@@ -11,7 +11,7 @@ return [
         // 密钥
         'key' => '2V81aWjC9k8f',
         // 签发者
-        'iss' => 'api',
+        'iss' => 'index',
         // 签发时间
         'iat' => time(),
         // 过期时间
@@ -22,15 +22,15 @@ return [
     // admin_user_id key
     'user_id_key' => 'UserId',
     // 登录地址
-    'login_url' => 'api/Login/login',
-    // api白名单
-    'api_white_list' => [
-        'api/Login/login',
+    'login_url' => 'index/Login/login',
+    // index白名单
+    'index_white_list' => [
+        'index/Login/login',
     ],
     // 是否记录日志
     'is_log' => false,
     // 接口访问频率限制（次数/时间）
-    'api_limit' => [
+    'index_limit' => [
         'number' => 2, //次数,0不限制
         'expire' => 1, //时间,单位秒
     ],
