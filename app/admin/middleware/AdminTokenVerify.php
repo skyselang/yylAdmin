@@ -24,12 +24,10 @@ class AdminTokenVerify
      */
     public function handle($request, Closure $next)
     {
-        $app_name  = app('http')->getName();
-        $pathinfo  = $request->pathinfo();
-        $rule_url  = $app_name . '/' . $pathinfo;
-        $login_url = Config::get('admin.login_url');
+        $api_url        = app('http')->getName() . '/' . $request->pathinfo();
+        $api_white_list = Config::get('admin.api_white_list');
 
-        if ($rule_url != $login_url) {
+        if (!in_array($api_url, $api_white_list)) {
             $token_key   = Config::get('admin.token_key');
             $admin_token = $request->header($token_key, '');
 

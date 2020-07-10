@@ -23,10 +23,14 @@ return [
     'token_key' => 'AdminToken',
     // admin_user_id key
     'admin_user_id_key' => 'AdminUserId',
-    // 登录地址
-    'login_url' => 'admin/AdminLogin/login',
+    // API白名单
+    'api_white_list' => [
+        'admin/AdminLogin/verify',
+        'admin/AdminLogin/login',
+    ],
     // 权限白名单
     'rule_white_list' => [
+        'admin/AdminLogin/verify',
         'admin/AdminLogin/login',
         'admin/AdminLogin/logout',
         'admin/AdminUser/userInfo',
@@ -38,4 +42,6 @@ return [
         'number' => 2, //次数,0不限制
         'expire' => 1, //时间,单位秒
     ],
+    // 是否开启验证码
+    'is_verify' => true,
 ];
