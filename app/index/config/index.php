@@ -23,14 +23,14 @@ return [
     'user_id_key' => 'UserId',
     // 登录地址
     'login_url' => 'index/Login/login',
-    // index白名单
-    'index_white_list' => [
+    // 白名单
+    'white_list' => [
         'index/Login/login',
     ],
     // 是否记录日志
     'is_log' => false,
     // 接口访问频率限制（次数/时间）
-    'index_limit' => [
+    'api_limit' => [
         'number' => 2, //次数,0不限制
         'expire' => 1, //时间,单位秒
     ],
