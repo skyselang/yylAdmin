@@ -62,7 +62,7 @@ npm run dev
 ```
 在 .env* 环境变量文件 修改接口地址
 
-浏览器访问 http://localhost:7969
+浏览器访问 http://localhost:9527
 
 账号：yyladmin，密码：123456
 
