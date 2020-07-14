@@ -24,7 +24,7 @@ class AdminLogService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
     {
         if (empty($field)) {
-            $field = 'admin_log_id,admin_user_id,menu_url,request_method,request_ip,insert_time';
+            $field = 'admin_log_id,admin_user_id,menu_url,request_method,request_ip,request_region,request_isp,insert_time';
         }
 
         $where[] = ['is_delete', '=', 0];

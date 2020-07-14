@@ -11,6 +11,7 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
+use app\cache\AdminIpInfoCache;
 use app\admin\service\AdminLogService;
 
 class AdminLog
@@ -24,8 +25,7 @@ class AdminLog
      */
     public function handle($request, Closure $next)
     {
-        $response = $next($request);
-
+        $response     = $next($request);
         $is_admin_log = Config::get('admin.is_admin_log', false);
 
         if ($is_admin_log) {
@@ -33,12 +33,18 @@ class AdminLog
             $admin_user_id     = $request->header($admin_user_id_key, '');
 
             if ($admin_user_id) {
+                $request_ip = $request->ip();
+                $ip_info    = AdminIpInfoCache::get($request_ip);
+
                 $admin_log['admin_user_id']  = $admin_user_id;
                 $admin_log['menu_url']       = app('http')->getName() . '/' . $request->pathinfo();
                 $admin_log['request_method'] = $request->method();
-                $admin_log['request_ip']     = $request->ip();
+                $admin_log['request_ip']     = $ip_info['ip'];
+                $admin_log['request_region'] = $ip_info['region'];
+                $admin_log['request_isp']    = $ip_info['isp'];
                 $admin_log['request_param']  = serialize($request->param());
                 $admin_log['insert_time']    = date('Y-m-d H:i:s');
+
                 AdminLogService::add($admin_log);
             }
         }

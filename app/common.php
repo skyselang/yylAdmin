@@ -114,3 +114,68 @@ function super_admin($admin_user_id = 0)
         return false;
     }
 }
+
+/**
+ * http get 请求
+ *
+ * @param string $url    请求地址
+ * @param array  $header 请求头部
+ *
+ * @return array
+ */
+function httpGet($url, $header = [])
+{
+    if (empty($header)) {
+        $header = [
+            "Content-type:application/json;",
+            "Accept:application/json"
+        ];
+    }
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+    $response = curl_exec($curl);
+    curl_close($curl);
+    $response = json_decode($response, true);
+
+    return $response;
+}
+
+/**
+ * http post 请求
+ *
+ * @param string $url    请求地址
+ * @param array  $param  请求参数
+ * @param array  $header 请求头部
+ *
+ * @return array
+ */
+function httpPost($url, $param = [], $header = [])
+{
+    $param  = json_encode($param);
+
+    if (empty($param)) {
+        $header = [
+            "Content-type:application/json;charset='utf-8'",
+            "Accept:application/json"
+        ];
+    }
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $param);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $response = curl_exec($curl);
+    curl_close($curl);
+    $response = json_decode($response, true);
+
+    return $response;
+}
