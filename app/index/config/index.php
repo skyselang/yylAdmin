@@ -19,10 +19,8 @@ return [
     ],
     // token key
     'token_key' => 'Token',
-    // admin_user_id key
+    // user_id key
     'user_id_key' => 'UserId',
-    // 登录地址
-    'login_url' => 'index/Login/login',
     // 白名单
     'white_list' => [
         'index/Login/login',

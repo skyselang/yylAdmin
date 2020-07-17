@@ -7,8 +7,8 @@
 
 namespace app\admin\validate;
 
-use think\facade\Db;
 use think\Validate;
+use think\facade\Db;
 
 class AdminUserValidate extends Validate
 {

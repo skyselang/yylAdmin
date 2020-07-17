@@ -7,7 +7,6 @@
 
 namespace app\cache;
 
-use think\facade\Db;
 use think\facade\Cache;
 
 class AdminMenuCache
@@ -44,45 +43,32 @@ class AdminMenuCache
      * 缓存设置
      *
      * @param integer $admin_menu_id 菜单id
-     * @return array
+     * @param array   $admin_menu    菜单信息
+     * @param integer $expire        有效时间
+     * @return array 菜单信息
      */
-    public static function set($admin_menu_id = 0)
+    public static function set($admin_menu_id = 0, $admin_menu = [], $expire = 0)
     {
-        if (empty($admin_menu_id)) {
-            $admin_menu = Db::name('admin_menu')
-                ->where('is_delete', 0)
-                ->select()
-                ->toArray();
-        } else {
-            $admin_menu = Db::name('admin_menu')
-                ->where('admin_menu_id', $admin_menu_id)
-                ->where('is_delete', 0)
-                ->find();
-        }
-
         $key = self::key($admin_menu_id);
         $val = $admin_menu;
-        $exp = self::exp();
+        $exp = $expire ?: self::exp();
         Cache::set($key, $val, $exp);
 
-        return $admin_menu;
+        return $val;
     }
 
     /**
      * 缓存获取
      *
      * @param integer $admin_menu_id 菜单id
-     * @return array
+     * @return array 菜单信息
      */
     public static function get($admin_menu_id = 0)
     {
         $key = self::key($admin_menu_id);
-        $admin_menu =  Cache::get($key);
-        if (empty($admin_menu)) {
-            $admin_menu = self::set($admin_menu_id);
-        }
+        $res = Cache::get($key);
 
-        return $admin_menu;
+        return $res;
     }
 
     /**

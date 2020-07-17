@@ -11,8 +11,8 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
-use app\cache\AdminUserCache;
-use app\cache\AdminMenuCache;
+use app\admin\service\AdminUserService;
+use app\admin\service\AdminMenuService;
 
 class AdminRuleVerify
 {
@@ -26,15 +26,18 @@ class AdminRuleVerify
     public function handle($request, Closure $next)
     {
         $rule_url        = app('http')->getName() . '/' . $request->pathinfo();
+        $api_white_list  = Config::get('admin.api_white_list');
         $rule_white_list = Config::get('admin.rule_white_list');
+        $white_list      = array_merge($rule_white_list, $api_white_list);
 
-        if (!in_array($rule_url, $rule_white_list)) {
+        if (!in_array($rule_url, $white_list)) {
             $admin_user_id_key = Config::get('admin.admin_user_id_key');
             $admin_user_id     = $request->header($admin_user_id_key, '');
             $super_admin       = Config::get('admin.super_admin');
 
             if (!in_array($admin_user_id, $super_admin)) {
-                $admin_user = AdminUserCache::get($admin_user_id);
+                $admin_user = AdminUserService::info($admin_user_id);
+                
                 if (empty($admin_user)) {
                     return error('登录已失效，请重新登录', '', 401);
                 }
@@ -48,11 +51,9 @@ class AdminRuleVerify
                 }
             }
 
-            $admin_menu = AdminMenuCache::get();
-            $menu_url   = array_column($admin_menu, 'menu_url');
-            $login_url  = Config::get('admin.login_url');
+            $menu_url = AdminMenuService::info(0);
 
-            if (!in_array($rule_url, $menu_url) && $rule_url != $login_url) {
+            if (!in_array($rule_url, $menu_url)) {
                 return error('接口地址错误', '不存在或未授权：' . $rule_url, 404);
             }
         }

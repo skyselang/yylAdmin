@@ -13,7 +13,7 @@ use think\facade\Config;
 class AdminVerifyCache
 {
     /**
-     * 验证码键
+     * 缓存key
      *
      * @param string $verify_id 验证码id
      * @return string
@@ -26,7 +26,7 @@ class AdminVerifyCache
     }
 
     /**
-     * 验证码有效时间
+     * 缓存有效时间
      *
      * @param integer $expire 有效时间
      * @return integer
@@ -41,14 +41,14 @@ class AdminVerifyCache
     }
 
     /**
-     * 验证码设置
+     * 缓存设置
      *
-     * @param integer $verify_id   验证码id
-     * @param integer $verify_code 验证码
+     * @param string  $verify_id   验证码id
+     * @param string  $verify_code 验证码
      * @param integer $expire      验证码有效时间
      * @return bool
      */
-    public static function set($verify_id = 0, $verify_code = '', $expire = 0)
+    public static function set($verify_id = '', $verify_code = '', $expire = 0)
     {
         $key = self::key($verify_id);
         $val = $verify_code;
@@ -59,26 +59,26 @@ class AdminVerifyCache
     }
 
     /**
-     * 验证码获取
+     * 缓存获取
      *
-     * @param integer $verify_id 验证码id
+     * @param string $verify_id 验证码id
      * @return string
      */
-    public static function get($verify_id = 0)
+    public static function get($verify_id = '')
     {
         $key = self::key($verify_id);
-        $val = Cache::get($key);
+        $res = Cache::get($key);
 
-        return $val;
+        return $res;
     }
 
     /**
-     * 验证码删除
+     * 缓存删除
      *
-     * @param integer $verify_id 验证码id
+     * @param string $verify_id 验证码id
      * @return bool
      */
-    public static function del($verify_id = 0)
+    public static function del($verify_id = '')
     {
         $key = self::key($verify_id);
         $res = Cache::delete($key);

@@ -8,8 +8,9 @@
 namespace app\admin\service;
 
 use think\facade\Db;
-use think\facade\Request;
+use think\facade\Config;
 use app\cache\AdminUserCache;
+use app\cache\AdminVerifyCache;
 
 class AdminLoginService
 {
@@ -21,6 +22,21 @@ class AdminLoginService
      */
     public static function login($param)
     {
+        $verify_id   = $param['verify_id'];
+        $verify_code = $param['verify_code'];
+        $is_verify   = Config::get('admin.is_verify', false);
+        if ($is_verify) {
+            if (empty($verify_code)) {
+                error('请输入验证码');
+            }
+
+            $AdminVerifyService = new AdminVerifyService();
+            $check_verify = $AdminVerifyService->check($verify_id, $verify_code);
+            if (empty($check_verify)) {
+                error('验证码错误');
+            }
+        }
+
         $field = 'admin_user_id,username,nickname,login_num,is_prohibit';
 
         $where[] = ['username', '=', $param['username']];
@@ -36,24 +52,25 @@ class AdminLoginService
             error('账号已被禁用');
         }
 
-        $update['login_ip']   = $param['login_ip'];
+        $update['login_ip']   = $param['request_ip'];
         $update['login_time'] = date('Y-m-d H:i:s');
         $update['login_num']  = $admin_user['login_num'] + 1;
         Db::name('admin_user')->where('admin_user_id', $admin_user['admin_user_id'])->update($update);
 
         AdminUserCache::del($admin_user['admin_user_id']);
-        $admin_user = AdminUserCache::get($admin_user['admin_user_id']);
+        $admin_user = AdminUserService::info($admin_user['admin_user_id']);
 
         $data['admin_user_id'] = $admin_user['admin_user_id'];
         $data['admin_token']   = $admin_user['admin_token'];
 
         $admin_log['admin_user_id']  = $admin_user['admin_user_id'];
-        $admin_log['menu_url']       = app('http')->getName() . '/' . Request::pathinfo();
-        $admin_log['request_method'] = Request::method();
-        $admin_log['request_ip']     = Request::ip();
+        $admin_log['menu_url']       = $param['menu_url'];
+        $admin_log['request_ip']     = $param['request_ip'];
+        $admin_log['request_method'] = $param['request_method'];
         $admin_log['request_param']  = serialize([]);
-        $admin_log['insert_time']    = date('Y-m-d H:i:s');
         AdminLogService::add($admin_log);
+
+        AdminVerifyCache::del($verify_id);
 
         return $data;
     }

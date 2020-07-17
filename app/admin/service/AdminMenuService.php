@@ -19,27 +19,33 @@ class AdminMenuService
      */
     public static function list()
     {
-        $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_prohibit,is_unauth,insert_time,update_time';
+        $tree = AdminMenuCache::get(-1);
 
-        $admin_menu_pid = Db::name('admin_menu')
-            ->field($field)
-            ->where('menu_pid', '=', 0)
-            ->where('is_delete', 0)
-            ->order(['admin_menu_id' => 'asc', 'menu_sort' => 'desc'])
-            ->select()
-            ->toArray();
+        if (empty($admin_menu)) {
+            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_prohibit,is_unauth,insert_time,update_time';
 
-        $admin_menu_child = Db::name('admin_menu')
-            ->field($field)
-            ->where('menu_pid', '>', 0)
-            ->where('is_delete', 0)
-            ->order(['menu_sort' => 'desc', 'admin_menu_id' => 'asc',])
-            ->select()
-            ->toArray();
+            $admin_menu_pid = Db::name('admin_menu')
+                ->field($field)
+                ->where('menu_pid', '=', 0)
+                ->where('is_delete', 0)
+                ->order(['admin_menu_id' => 'asc', 'menu_sort' => 'desc'])
+                ->select()
+                ->toArray();
 
-        $admin_menu = array_merge($admin_menu_pid, $admin_menu_child);
+            $admin_menu_child = Db::name('admin_menu')
+                ->field($field)
+                ->where('menu_pid', '>', 0)
+                ->where('is_delete', 0)
+                ->order(['menu_sort' => 'desc', 'admin_menu_id' => 'asc',])
+                ->select()
+                ->toArray();
 
-        $tree = self::toTree($admin_menu, 0);
+            $admin_menu = array_merge($admin_menu_pid, $admin_menu_child);
+
+            $tree = self::toTree($admin_menu, 0);
+
+            AdminMenuCache::set(-1, $tree);
+        }
 
         $data['count'] = count($tree);
         $data['list']  = $tree;
@@ -74,7 +80,8 @@ class AdminMenuService
 
         $param['admin_menu_id'] = $admin_menu_id;
 
-        AdminMenuCache::del();
+        AdminMenuCache::del(0);
+        AdminMenuCache::del(-1);
 
         return $param;
     }
@@ -115,7 +122,8 @@ class AdminMenuService
 
         $param['admin_menu_id'] = $admin_menu_id;
 
-        AdminMenuCache::del();
+        AdminMenuCache::del(0);
+        AdminMenuCache::del(-1);
 
         return $param;
     }
@@ -146,7 +154,8 @@ class AdminMenuService
             error();
         }
 
-        AdminMenuCache::del();
+        AdminMenuCache::del(0);
+        AdminMenuCache::del(-1);
 
         return $admin_menu_ids;
     }
@@ -159,12 +168,39 @@ class AdminMenuService
      */
     public static function info($admin_menu_id)
     {
-        $admin_menu = Db::name('admin_menu')
-            ->where('is_delete', 0)
-            ->where('admin_menu_id', $admin_menu_id)
-            ->find();
+        $admin_menu = AdminMenuCache::get($admin_menu_id);
+
         if (empty($admin_menu)) {
-            error('菜单不存在');
+            if ($admin_menu_id == 0) {
+                $where[] = ['is_delete', '=', 0];
+                $where[] = ['is_prohibit', '=', 0];
+                $where[] = ['menu_url', '<>', ''];
+
+                $where_un[] = ['is_delete', '=', 0];
+                $where_un[] = ['is_prohibit', '=', 0];
+                $where_un[] = ['menu_url', '<>', ''];
+                $where_un[] = ['is_unauth', '=', 1];
+
+                $admin_menu = Db::name('admin_menu')
+                    ->field('menu_url')
+                    ->order('menu_url', 'asc')
+                    ->whereOr([$where, $where_un])
+                    ->column('menu_url');
+            } elseif ($admin_menu_id == -1) {
+                $admin_menu = self::list();
+                $admin_menu = $admin_menu['list'];
+            } else {
+                $admin_menu = Db::name('admin_menu')
+                    ->where('is_delete', 0)
+                    ->where('admin_menu_id', $admin_menu_id)
+                    ->find();
+
+                if (empty($admin_menu)) {
+                    error('菜单不存在');
+                }
+            }
+
+            AdminMenuCache::set($admin_menu_id, $admin_menu);
         }
 
         return $admin_menu;
@@ -190,7 +226,8 @@ class AdminMenuService
             error();
         }
 
-        AdminMenuCache::del();
+        AdminMenuCache::del(0);
+        AdminMenuCache::del(-1);
 
         return $param;
     }
@@ -215,7 +252,8 @@ class AdminMenuService
             error();
         }
 
-        AdminMenuCache::del();
+        AdminMenuCache::del(0);
+        AdminMenuCache::del(-1);
 
         return $param;
     }

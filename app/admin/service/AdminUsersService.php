@@ -143,7 +143,7 @@ class AdminUsersService
             error();
         }
 
-        $admin_user = AdminUserCache::set($admin_user_id);
+        AdminUserCache::del($admin_user_id);
 
         return $admin_user;
     }

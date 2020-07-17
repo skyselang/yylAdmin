@@ -8,6 +8,7 @@
 namespace app\admin\service;
 
 use think\facade\Db;
+use app\cache\AdminLogCache;
 
 class AdminLogService
 {
@@ -96,6 +97,15 @@ class AdminLogService
      */
     public static function add($admin_log = [])
     {
+        if ($admin_log['request_ip']) {
+            $ip_info = AdminIpInfoService::info($admin_log['request_ip']);
+            $admin_log['request_city']   = $ip_info['city'];
+            $admin_log['request_region'] = $ip_info['region'];
+            $admin_log['request_isp']    = $ip_info['isp'];
+        }
+
+        $admin_log['insert_time'] = date('Y-m-d H:i:s');
+
         Db::name('admin_log')->strict(false)->insert($admin_log);
     }
 
@@ -107,33 +117,39 @@ class AdminLogService
      */
     public static function info($admin_log_id)
     {
-        $admin_log = Db::name('admin_log')
-            ->where('admin_log_id', $admin_log_id)
-            ->where('is_delete', 0)
-            ->find();
+        $admin_log = AdminLogCache::get($admin_log_id);
+
         if (empty($admin_log)) {
-            error('日志不存在');
-        }
+            $admin_log = Db::name('admin_log')
+                ->where('admin_log_id', $admin_log_id)
+                ->where('is_delete', 0)
+                ->find();
+            if (empty($admin_log)) {
+                error('日志不存在');
+            }
 
-        if ($admin_log['request_param']) {
-            $admin_log['request_param'] = unserialize($admin_log['request_param']);
-        }
+            if ($admin_log['request_param']) {
+                $admin_log['request_param'] = unserialize($admin_log['request_param']);
+            }
 
-        $admin_user = Db::name('admin_user')
-            ->field('username,nickname')
-            ->where('admin_user_id', $admin_log['admin_user_id'])
-            ->find();
-        if ($admin_user) {
-            $admin_log['username'] = $admin_user['username'];
-            $admin_log['nickname'] = $admin_user['nickname'];
-        }
+            $admin_user = Db::name('admin_user')
+                ->field('username,nickname')
+                ->where('admin_user_id', $admin_log['admin_user_id'])
+                ->find();
+            if ($admin_user) {
+                $admin_log['username'] = $admin_user['username'];
+                $admin_log['nickname'] = $admin_user['nickname'];
+            }
 
-        $admin_menu = Db::name('admin_menu')
-            ->field('menu_name')
-            ->where('menu_url', $admin_log['menu_url'])
-            ->find();
-        if ($admin_menu) {
-            $admin_log['menu_name'] = $admin_menu['menu_name'];
+            $admin_menu = Db::name('admin_menu')
+                ->field('menu_name')
+                ->where('menu_url', $admin_log['menu_url'])
+                ->find();
+            if ($admin_menu) {
+                $admin_log['menu_name'] = $admin_menu['menu_name'];
+            }
+
+            AdminLogCache::set($admin_log_id, $admin_log);
         }
 
         return $admin_log;
@@ -158,6 +174,8 @@ class AdminLogService
         }
 
         $data['admin_log_id'] = $admin_log_id;
+
+        AdminLogCache::del($admin_log_id);
 
         return $data;
     }

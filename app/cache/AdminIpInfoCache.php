@@ -8,7 +8,6 @@
 namespace app\cache;
 
 use think\facade\Cache;
-use app\admin\service\AdminIpInfoService;
 
 class AdminIpInfoCache
 {
@@ -45,14 +44,14 @@ class AdminIpInfoCache
      *
      * @param string  $ip      ip地址
      * @param array   $ip_info ip信息
-     * @param integer $exp     有效时间
-     * @return array
+     * @param integer $expire  有效时间
+     * @return array ip信息
      */
-    public static function set($ip = '', $ip_info = [], $exp = 0)
+    public static function set($ip = '', $ip_info = [], $expire = 0)
     {
         $key = self::key($ip);
-        $val = $ip_info ?: AdminIpInfoService::info($ip);
-        $exp = $exp ?: self::exp();
+        $val = $ip_info;
+        $exp = $expire ?: self::exp();
 
         Cache::set($key, $val, $exp);
 
@@ -63,18 +62,14 @@ class AdminIpInfoCache
      * 缓存获取
      *
      * @param string $ip ip地址
-     * @return array
+     * @return array ip信息
      */
     public static function get($ip = '')
     {
-        $key     = self::key($ip);
-        $ip_info = Cache::get($key);
+        $key = self::key($ip);
+        $res = Cache::get($key);
 
-        if (empty($ip_info)) {
-            $ip_info = self::set($ip);
-        }
-
-        return $ip_info;
+        return $res;
     }
 
     /**

@@ -313,4 +313,25 @@ class AdminVerifyService
         @imagecopyresampled($this->im, $bgImage, 0, 0, 0, 0, $this->imageW, $this->imageH, $width, $height);
         @imagedestroy($bgImage);
     }
+
+    /**
+     * 验证码
+     *
+     * @return array
+     */
+    public function verify()
+    {
+        $is_verify = Config::get('admin.is_verify', false);
+
+        if ($is_verify) {
+            $verify = $this->create();
+
+            $res['verify_id']  = $verify['verify_id'];
+            $res['verify_src'] = $verify['verify_src'];
+        }
+
+        $res['is_verify'] = $is_verify;
+
+        return $res;
+    }
 }

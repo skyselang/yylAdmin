@@ -9,6 +9,7 @@ namespace app\admin\service;
 
 use think\facade\Db;
 use app\cache\AdminUserCache;
+use app\admin\service\AdminTokenService;
 
 class AdminUserService
 {
@@ -64,6 +65,85 @@ class AdminUserService
         $data['list']  = $list;
 
         return $data;
+    }
+
+    /**
+     * 用户信息
+     *
+     * @param integer $admin_user_id 用户id
+     * @return array
+     */
+    public static function info($admin_user_id)
+    {
+        $admin_user = AdminUserCache::get($admin_user_id);
+
+        if (empty($admin_user)) {
+            $admin_user = Db::name('admin_user')
+                ->where('admin_user_id', $admin_user_id)
+                ->where('is_delete', 0)
+                ->find();
+
+            if (empty($admin_user)) {
+                error('用户不存在');
+            }
+
+            unset($admin_user['password']);
+            $admin_user['avatar'] = file_url($admin_user['avatar']);
+
+            if (super_admin($admin_user_id)) {
+                $admin_menu = Db::name('admin_menu')
+                    ->field('admin_menu_id')
+                    ->where('is_delete', 0)
+                    ->where('menu_url', '<>', '')
+                    ->column('menu_url');
+            } elseif ($admin_user['is_super_admin'] == 1) {
+                $admin_menu = Db::name('admin_menu')
+                    ->field('admin_menu_id')
+                    ->where('is_delete', 0)
+                    ->where('is_prohibit', 0)
+                    ->where('menu_url', '<>', '')
+                    ->column('menu_url');
+            } else {
+                $admin_rule = Db::name('admin_rule')
+                    ->field('admin_rule_id')
+                    ->where('admin_rule_id', 'in', $admin_user['admin_rule_ids'])
+                    ->where('is_delete', 0)
+                    ->where('is_prohibit', 0)
+                    ->column('admin_menu_ids');
+                foreach ($admin_rule as $k => $v) {
+                    if (empty($v)) {
+                        unset($admin_rule[$k]);
+                    }
+                }
+
+                $admin_menu_ids_str = implode(',', $admin_rule);
+                $admin_menu_ids_arr = explode(',', $admin_menu_ids_str);
+                $admin_menu_ids     = array_unique($admin_menu_ids_arr);
+
+                $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
+                $where[] = ['is_delete', '=', 0];
+                $where[] = ['is_prohibit', '=', 0];
+                $where[] = ['menu_url', '<>', ''];
+
+                $where_un[] = ['is_delete', '=', 0];
+                $where_un[] = ['is_prohibit', '=', 0];
+                $where_un[] = ['menu_url', '<>', ''];
+                $where_un[] = ['is_unauth', '=', 1];
+
+                $admin_menu = Db::name('admin_menu')
+                    ->field('menu_url')
+                    ->whereOr([$where, $where_un])
+                    ->column('menu_url');
+            }
+
+            sort($admin_menu);
+            $admin_user['admin_token'] = AdminTokenService::create($admin_user);
+            $admin_user['roles']       = $admin_menu;
+
+            AdminUserCache::set($admin_user_id, $admin_user);
+        }
+
+        return $admin_user;
     }
 
     /**
@@ -159,28 +239,6 @@ class AdminUserService
         AdminUserCache::del($admin_user_id);
 
         return $data;
-    }
-
-    /**
-     * 用户信息
-     *
-     * @param integer $admin_user_id 用户id
-     * @return array
-     */
-    public static function info($admin_user_id)
-    {
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('admin_user_id', $admin_user_id)
-            ->where('is_delete', 0)
-            ->find();
-        if (empty($admin_user)) {
-            error('用户不存在');
-        }
-
-        $admin_user = AdminUserCache::set($admin_user_id);
-
-        return $admin_user;
     }
 
     /**

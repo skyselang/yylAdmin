@@ -7,6 +7,8 @@
 
 namespace app\admin\service;
 
+use app\cache\AdminIpInfoCache;
+
 class AdminIpInfoService
 {
     /**
@@ -18,23 +20,31 @@ class AdminIpInfoService
      */
     public static function info($ip)
     {
-        $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';
-        $res = httpGet($url);
+        $ip_info = AdminIpInfoCache::get($ip);
 
-        $ip_info = [
-            'ip'     => $ip,
-            'region' => '',
-            'isp'    => '',
-        ];
+        if (empty($ip_info)) {
+            $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';
+            $res = httpGet($url);
 
-        if ($res['code'] == 0) {
-            $res_data = $res['data'];
-            $region   = $res_data['country'] . $res_data['region'] . $res_data['city'];
-            $region   = str_replace('X', '', $region);
+            $ip_info = [
+                'ip'     => $ip,
+                'city'   => '',
+                'region' => '',
+                'isp'    => '',
+            ];
 
-            $ip_info['ip']     = $ip;
-            $ip_info['region'] = $region;
-            $ip_info['isp']    = $res_data['isp'];
+            if ($res['code'] == 0) {
+                $res_data = $res['data'];
+                $region   = $res_data['country'] . $res_data['region'] . $res_data['city'];
+                $region   = str_replace('X', '', $region);
+
+                $ip_info['ip']     = $ip;
+                $ip_info['city']   = $res_data['city'];
+                $ip_info['region'] = $region;
+                $ip_info['isp']    = $res_data['isp'];
+            }
+
+            AdminIpInfoCache::set($ip, $ip_info);
         }
 
         return $ip_info;

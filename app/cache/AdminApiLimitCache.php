@@ -35,7 +35,7 @@ class AdminApiLimitCache
     public static function exp($expire = 0)
     {
         if (empty($expire)) {
-            $expire = 30 * 24 * 60 * 60;
+            $expire = 10;
         }
 
         return $expire;
@@ -54,9 +54,9 @@ class AdminApiLimitCache
         $key = self::key($admin_user_id, $admin_menu_url);
         $val = 1;
         $exp = self::exp($expire);
-        $res = Cache::set($key, $val, $exp);
+        Cache::set($key, $val, $exp);
 
-        return $res;
+        return $val;
     }
 
     /**
@@ -69,7 +69,7 @@ class AdminApiLimitCache
     public static function get($admin_user_id, $admin_menu_url)
     {
         $key = self::key($admin_user_id, $admin_menu_url);
-        $res =  Cache::get($key);
+        $res = Cache::get($key);
 
         return $res;
     }

@@ -30,8 +30,6 @@ return [
     ],
     // 权限白名单
     'rule_white_list' => [
-        'admin/AdminLogin/verify',
-        'admin/AdminLogin/login',
         'admin/AdminLogin/logout',
         'admin/AdminUser/userInfo',
     ],
@@ -39,7 +37,7 @@ return [
     'is_admin_log' => true,
     // 接口访问频率限制（次数/时间）
     'api_limit' => [
-        'number' => 2, //次数,0不限制
+        'number' => 3, //次数,0不限制
         'expire' => 1, //时间,单位秒
     ],
     // 是否开启验证码

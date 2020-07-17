@@ -1,4 +1,9 @@
 <?php
+/*
+ * @Description  : 首页
+ * @Author       : https://github.com/skyselang
+ * @Date         : 2020-05-17
+ */
 
 namespace app\index\controller;
 
