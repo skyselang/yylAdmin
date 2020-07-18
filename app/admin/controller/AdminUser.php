@@ -21,12 +21,13 @@ class AdminUser
      */
     public function userList()
     {
-        $page        = Request::param('page/d', 1);
-        $limit       = Request::param('limit/d', 10);
-        $order_field = Request::param('order_field/s ', '');
-        $order_type  = Request::param('order_type/s', '');
-        $username    = Request::param('username/s', '');
-        $nickname    = Request::param('nickname/s', '');
+        $page          = Request::param('page/d', 1);
+        $limit         = Request::param('limit/d', 10);
+        $order_field   = Request::param('order_field/s ', '');
+        $order_type    = Request::param('order_type/s', '');
+        $username      = Request::param('username/s', '');
+        $nickname      = Request::param('nickname/s', '');
+        $admin_rule_id = Request::param('admin_rule_id/s', '');
 
         $where = [];
         if ($username) {
@@ -34,6 +35,9 @@ class AdminUser
         }
         if ($nickname) {
             $where[] = ['nickname', 'like', '%' . $nickname . '%'];
+        }
+        if ($admin_rule_id) {
+            $where[] = ['admin_rule_ids', 'like', '%' . $admin_rule_id . '%'];
         }
 
         $field = '';

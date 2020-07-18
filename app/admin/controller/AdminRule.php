@@ -21,12 +21,13 @@ class AdminRule
      */
     public function ruleList()
     {
-        $page        = Request::param('page/d', 1);
-        $limit       = Request::param('limit/d', 10);
-        $order_field = Request::param('order_field/s', '');
-        $order_type  = Request::param('order_type/s', '');
-        $rule_name   = Request::param('rule_name/s', '');
-        $rule_desc   = Request::param('rule_desc/s', '');
+        $page          = Request::param('page/d', 1);
+        $limit         = Request::param('limit/d', 10);
+        $order_field   = Request::param('order_field/s', '');
+        $order_type    = Request::param('order_type/s', '');
+        $rule_name     = Request::param('rule_name/s', '');
+        $rule_desc     = Request::param('rule_desc/s', '');
+        $admin_menu_id = Request::param('admin_menu_id/s', '');
 
         $where = [];
         if ($rule_name) {
@@ -34,6 +35,9 @@ class AdminRule
         }
         if ($rule_desc) {
             $where[] = ['rule_desc', 'like', '%' . $rule_desc . '%'];
+        }
+        if ($admin_menu_id) {
+            $where[] = ['admin_menu_ids', 'like', '%' . $admin_menu_id . '%'];
         }
 
         $field = '';
