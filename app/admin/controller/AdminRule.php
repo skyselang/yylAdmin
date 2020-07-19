@@ -36,8 +36,14 @@ class AdminRule
         if ($rule_desc) {
             $where[] = ['rule_desc', 'like', '%' . $rule_desc . '%'];
         }
+        $whereOr = false;
         if ($admin_menu_id) {
-            $where[] = ['admin_menu_ids', 'like', '%' . $admin_menu_id . '%'];
+            $whereOr = true;
+            $where0 = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];
+            $where1 = [['admin_menu_ids', 'like', $admin_menu_id . ',%'], ['is_delete', '=', 0]];
+            $where2 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id . ',%'], ['is_delete', '=', 0]];
+            $where3 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id], ['is_delete', '=', 0]];
+            $where = [$where0, $where1, $where2, $where3];
         }
 
         $field = '';
@@ -47,7 +53,7 @@ class AdminRule
             $order = [$order_field => $order_type];
         }
 
-        $data = AdminRuleService::list($where, $page, $limit, $field, $order);
+        $data = AdminRuleService::list($where, $page, $limit, $field, $order, $whereOr);
 
         return success($data);
     }

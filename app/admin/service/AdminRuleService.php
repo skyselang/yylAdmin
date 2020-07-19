@@ -21,31 +21,46 @@ class AdminRuleService
      * @param array   $order 排序
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
+    public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
     {
         if (empty($field)) {
             $field = 'admin_rule_id,admin_menu_ids,rule_name,rule_desc,rule_sort,is_prohibit,insert_time,update_time';
         }
 
-        $where[] = ['is_delete', '=', 0];
-
         if (empty($order)) {
-            $order = ['rule_sort' => 'desc','admin_rule_id' => 'asc'];
+            $order = ['rule_sort' => 'desc', 'admin_rule_id' => 'asc'];
         }
 
-        $count = Db::name('admin_rule')
-            ->where($where)
-            ->count('admin_rule_id');
+        if ($whereOr) {
+            $count = Db::name('admin_rule')
+                ->whereOr($where)
+                ->count('admin_rule_id');
 
-        $list = Db::name('admin_rule')
-            ->field($field)
-            ->where($where)
-            ->page($page)
-            ->limit($limit)
-            ->order($order)
-            ->select()
-            ->toArray();
-            
+            $list = Db::name('admin_rule')
+                ->field($field)
+                ->whereOr($where)
+                ->page($page)
+                ->limit($limit)
+                ->order($order)
+                ->select()
+                ->toArray();
+        } else {
+            $where[] = ['is_delete', '=', 0];
+
+            $count = Db::name('admin_rule')
+                ->where($where)
+                ->count('admin_rule_id');
+
+            $list = Db::name('admin_rule')
+                ->field($field)
+                ->where($where)
+                ->page($page)
+                ->limit($limit)
+                ->order($order)
+                ->select()
+                ->toArray();
+        }
+
         $pages = ceil($count / $limit);
 
         foreach ($list as $k => $v) {

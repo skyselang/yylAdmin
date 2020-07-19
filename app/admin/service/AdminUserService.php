@@ -23,30 +23,45 @@ class AdminUserService
      * @param array   $order 排序
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
+    public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
     {
         if (empty($field)) {
             $field = 'admin_user_id,admin_rule_ids,username,nickname,email,remark,sort,is_prohibit,is_super_admin,login_num,login_ip,login_time,insert_time,update_time';
         }
 
-        $where[] = ['is_delete', '=', 0];
-
         if (empty($order)) {
             $order = ['sort' => 'desc', 'admin_user_id' => 'asc'];
         }
 
-        $count = Db::name('admin_user')
-            ->where($where)
-            ->count('admin_user_id');
+        if ($whereOr) {
+            $count = Db::name('admin_user')
+                ->whereOr($where)
+                ->count('admin_user_id');
 
-        $list = Db::name('admin_user')
-            ->field($field)
-            ->where($where)
-            ->page($page)
-            ->limit($limit)
-            ->order($order)
-            ->select()
-            ->toArray();
+            $list = Db::name('admin_user')
+                ->field($field)
+                ->whereOr($where)
+                ->page($page)
+                ->limit($limit)
+                ->order($order)
+                ->select()
+                ->toArray();
+        } else {
+            $where[] = ['is_delete', '=', 0];
+
+            $count = Db::name('admin_user')
+                ->where($where)
+                ->count('admin_user_id');
+
+            $list = Db::name('admin_user')
+                ->field($field)
+                ->where($where)
+                ->page($page)
+                ->limit($limit)
+                ->order($order)
+                ->select()
+                ->toArray();
+        }
 
         $pages = ceil($count / $limit);
 
@@ -92,17 +107,32 @@ class AdminUserService
 
             if (super_admin($admin_user_id)) {
                 $admin_menu = Db::name('admin_menu')
-                    ->field('admin_menu_id')
+                    ->field('admin_menu_id,menu_url')
                     ->where('is_delete', 0)
-                    ->where('menu_url', '<>', '')
-                    ->column('menu_url');
+                    ->select()
+                    ->toArray();
+
+                $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
+                $admin_menu_url = array_column($admin_menu, 'menu_url');
+                $admin_menu     = array_filter($admin_menu_url);
+
+                $admin_user['admin_menu_ids'] = $admin_menu_ids;
             } elseif ($admin_user['is_super_admin'] == 1) {
                 $admin_menu = Db::name('admin_menu')
-                    ->field('admin_menu_id')
+                    ->field('admin_menu_id,menu_url')
                     ->where('is_delete', 0)
                     ->where('is_prohibit', 0)
-                    ->where('menu_url', '<>', '')
-                    ->column('menu_url');
+                    ->select()
+                    ->toArray();
+
+                $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
+                $admin_menu_url = array_column($admin_menu, 'menu_url');
+                $admin_menu     = array_filter($admin_menu_url);
+
+                foreach ($admin_menu_ids as $k => $v) {
+                    $admin_menu_ids[$k] = (int) $v;
+                }
+                $admin_user['admin_menu_ids'] = $admin_menu_ids;
             } else {
                 $admin_rule = Db::name('admin_rule')
                     ->field('admin_rule_id')
@@ -110,15 +140,20 @@ class AdminUserService
                     ->where('is_delete', 0)
                     ->where('is_prohibit', 0)
                     ->column('admin_menu_ids');
-                foreach ($admin_rule as $k => $v) {
-                    if (empty($v)) {
-                        unset($admin_rule[$k]);
-                    }
-                }
 
-                $admin_menu_ids_str = implode(',', $admin_rule);
+                $admin_menu_ids     = $admin_rule;
+                $admin_menu_ids[]   = $admin_user['admin_menu_id'];
+                $admin_menu_ids_str = implode(',', $admin_menu_ids);
                 $admin_menu_ids_arr = explode(',', $admin_menu_ids_str);
                 $admin_menu_ids     = array_unique($admin_menu_ids_arr);
+                $admin_menu_ids     = array_filter($admin_menu_ids);
+
+                $admin_menu_ids_temp = [];
+                foreach ($admin_menu_ids as $k => $v) {
+                    $admin_menu_ids_temp[] = (int) $v;
+                }
+                $admin_menu_ids = $admin_menu_ids_temp;
+                $admin_user['admin_menu_ids'] = $admin_menu_ids;
 
                 $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
                 $where[] = ['is_delete', '=', 0];
@@ -136,9 +171,21 @@ class AdminUserService
                     ->column('menu_url');
             }
 
+            $admin_rule_ids = explode(',', $admin_user['admin_rule_ids']);
+            foreach ($admin_rule_ids as $k => $v) {
+                $admin_rule_ids[$k] = (int) $v;
+            }
+
+            $admin_menu_id = explode(',', $admin_user['admin_menu_id']);
+            foreach ($admin_menu_id as $k => $v) {
+                $admin_menu_id[$k] = (int) $v;
+            }
+
             sort($admin_menu);
-            $admin_user['admin_token'] = AdminTokenService::create($admin_user);
-            $admin_user['roles']       = $admin_menu;
+            $admin_user['admin_rule_ids'] = $admin_rule_ids;
+            $admin_user['admin_menu_id']  = $admin_menu_id;
+            $admin_user['admin_token']    = AdminTokenService::create($admin_user);
+            $admin_user['roles']          = $admin_menu;
 
             AdminUserCache::set($admin_user_id, $admin_user);
         }
@@ -279,9 +326,12 @@ class AdminUserService
     {
         $admin_user_id  = $param['admin_user_id'];
         $admin_rule_ids = $param['admin_rule_ids'];
+        $admin_menu_id  = $param['admin_menu_id'];
         sort($admin_rule_ids);
+        sort($admin_menu_id);
 
         $data['admin_rule_ids'] = implode(',', $admin_rule_ids);
+        $data['admin_menu_id']  = implode(',', $admin_menu_id);
         $data['update_time']    = date('Y-m-d H:i:s');
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)

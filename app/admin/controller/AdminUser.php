@@ -36,8 +36,14 @@ class AdminUser
         if ($nickname) {
             $where[] = ['nickname', 'like', '%' . $nickname . '%'];
         }
+        $whereOr = false;
         if ($admin_rule_id) {
-            $where[] = ['admin_rule_ids', 'like', '%' . $admin_rule_id . '%'];
+            $whereOr = true;
+            $where0 = [['admin_rule_ids', 'like', $admin_rule_id], ['is_delete', '=', 0]];
+            $where1 = [['admin_rule_ids', 'like', $admin_rule_id . ',%'], ['is_delete', '=', 0]];
+            $where2 = [['admin_rule_ids', 'like', '%,' . $admin_rule_id . ',%'], ['is_delete', '=', 0]];
+            $where3 = [['admin_rule_ids', 'like', '%,' . $admin_rule_id], ['is_delete', '=', 0]];
+            $where = [$where0, $where1, $where2, $where3];
         }
 
         $field = '';
@@ -47,7 +53,7 @@ class AdminUser
             $order = [$order_field => $order_type];
         }
 
-        $data = AdminUserService::list($where, $page, $limit, $field, $order);
+        $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
 
         return success($data);
     }
@@ -170,13 +176,32 @@ class AdminUser
     {
         $admin_user_id  = Request::param('admin_user_id/d', '');
         $admin_rule_ids = Request::param('admin_rule_ids/a', []);
+        $admin_menu_id = Request::param('admin_menu_id/a', []);
 
         $param['admin_user_id']  = $admin_user_id;
         $param['admin_rule_ids'] = $admin_rule_ids;
+        $param['admin_menu_id']  = $admin_menu_id;
 
         validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
 
         $data = AdminUserService::rule($param);
+
+        return success($data);
+    }
+
+    /**
+     * 用户权限明细
+     *
+     * @method POST
+     * @return json
+     */
+    public function userRuleInfo()
+    {
+        $admin_user_id  = Request::param('admin_user_id/d', '');
+
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+
+        $data = AdminUserService::info($admin_user_id);
 
         return success($data);
     }
