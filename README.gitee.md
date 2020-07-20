@@ -1,10 +1,10 @@
-<h1 align="center">yylAdmin</h1>
+<h1>yylAdmin</h1>
 
 [Github](https://github.com/skyselang/yylAdmin) | 码云
 
 ## 简介
 
-[yylAdmin](https://gitee.com/skyselang/yylAdmin) 是一个极简后台管理系统，前后端分离，后端采用ThinkPHP，前端采用Element；项目由[yylAdmin](https://gitee.com/skyselang/yylAdmin)和[yylAdminWeb](https://gitee.com/skyselang/yylAdminWeb)组成。
+[yylAdmin](https://gitee.com/skyselang/yylAdmin) 是一个极简后台管理系统，只有登录注销、权限管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Element2；项目由后端[yylAdmin](https://gitee.com/skyselang/yylAdmin)和前端[yylAdminWeb](https://gitee.com/skyselang/yylAdminWeb)组成。
 - [yylAdmin](https://gitee.com/skyselang/yylAdmin) 
 - [yylAdminWeb](https://gitee.com/skyselang/yylAdminWeb)
 
@@ -91,5 +91,6 @@ npm run lint
 # 代码格式检查并自动修复
 npm run lint -- --fix
 ```
+<img width="100%" src="./public/static/img/yyladmin_login.jpg">
 
 <img width="100%" src="./public/static/img/yyladmin.jpg">
