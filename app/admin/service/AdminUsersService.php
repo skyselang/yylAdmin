@@ -21,12 +21,7 @@ class AdminUsersService
      */
     public static function info($admin_user_id)
     {
-        $admin_user = AdminUserService::info($admin_user_id);
-
-        $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['username']      = $admin_user['username'];
-        $data['nickname']      = $admin_user['nickname'];
-        $data['email']         = $admin_user['email'];
+        $data = AdminUserService::info($admin_user_id);
 
         return $data;
     }
@@ -158,7 +153,7 @@ class AdminUsersService
      * @param array   $order 排序
      * @return array 
      */
-    public static function usersLog($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
+    public static function log($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
     {
         $data = AdminLogService::list($where, $page, $limit, $field, $order);
 

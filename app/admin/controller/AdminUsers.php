@@ -136,7 +136,7 @@ class AdminUsers
             $order = [$order_field => $order_type];
         }
 
-        $data = AdminUsersService::usersLog($where, $page, $limit, $field, $order);
+        $data = AdminUsersService::log($where, $page, $limit, $field, $order);
 
         return success($data);
     }

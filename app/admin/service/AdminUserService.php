@@ -10,6 +10,7 @@ namespace app\admin\service;
 use think\facade\Db;
 use app\cache\AdminUserCache;
 use app\admin\service\AdminTokenService;
+use think\facade\Config;
 
 class AdminUserService
 {
@@ -180,6 +181,11 @@ class AdminUserService
             foreach ($admin_menu_id as $k => $v) {
                 $admin_menu_id[$k] = (int) $v;
             }
+
+            $api_white_list  = Config::get('admin.api_white_list', []);
+            $rule_white_list = Config::get('admin.rule_white_list', []);
+            $white_list      = array_merge($api_white_list, $rule_white_list);
+            $admin_menu      = array_merge($admin_menu, $white_list);
 
             sort($admin_menu);
             $admin_user['admin_rule_ids'] = $admin_rule_ids;

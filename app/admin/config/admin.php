@@ -30,8 +30,12 @@ return [
     ],
     // 权限白名单
     'rule_white_list' => [
+        'admin/AdminUsers/users',
+        'admin/AdminUsers/usersInfo',
+        'admin/AdminUsers/usersLog',
+        'admin/AdminIndex/index',
+        'admin/AdminIndex/visit',
         'admin/AdminLogin/logout',
-        'admin/AdminUser/userInfo',
     ],
     // 是否记录日志
     'is_admin_log' => true,
