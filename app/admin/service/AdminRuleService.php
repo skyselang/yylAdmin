@@ -24,7 +24,7 @@ class AdminRuleService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
     {
         if (empty($field)) {
-            $field = 'admin_rule_id,admin_menu_ids,rule_name,rule_desc,rule_sort,is_prohibit,insert_time,update_time';
+            $field = 'admin_rule_id,admin_menu_ids,rule_name,rule_desc,rule_sort,is_prohibit,create_time,update_time';
         }
 
         if (empty($order)) {
@@ -100,7 +100,7 @@ class AdminRuleService
 
         sort($param['admin_menu_ids']);
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-        $param['insert_time']    = date('Y-m-d H:i:s');
+        $param['create_time']    = date('Y-m-d H:i:s');
         $admin_rule_id = Db::name('admin_rule')->insertGetId($param);
 
         if (empty($admin_rule_id)) {

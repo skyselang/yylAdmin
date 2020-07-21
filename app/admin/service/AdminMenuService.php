@@ -22,7 +22,7 @@ class AdminMenuService
         $tree = AdminMenuCache::get(-1);
 
         if (empty($admin_menu)) {
-            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_prohibit,is_unauth,insert_time,update_time';
+            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_prohibit,is_unauth,create_time,update_time';
 
             $admin_menu_pid = Db::name('admin_menu')
                 ->field($field)
@@ -71,7 +71,7 @@ class AdminMenuService
             error('菜单已存在');
         }
 
-        $param['insert_time'] = date('Y-m-d H:i:s');
+        $param['create_time'] = date('Y-m-d H:i:s');
         $admin_menu_id = Db::name('admin_menu')->insertGetId($param);
 
         if (empty($admin_menu_id)) {

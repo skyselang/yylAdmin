@@ -60,8 +60,8 @@ class AdminVisitService
             if ($date == 'total') {
                 $where[] = ['admin_log_id', '>', 0];
             } else {
-                $where[] = ['insert_time', '>=', $start_time];
-                $where[] = ['insert_time', '<=', $end_time];
+                $where[] = ['create_time', '>=', $start_time];
+                $where[] = ['create_time', '<=', $end_time];
             }
 
             $count = Db::name('admin_log')
@@ -94,8 +94,8 @@ class AdminVisitService
             foreach ($days as $k => $v) {
                 $count = 0;
                 $where = [];
-                $where[] = ['insert_time', '>=', $v . ' 00:00:00'];
-                $where[] = ['insert_time', '<=', $v . ' 23:59:59'];
+                $where[] = ['create_time', '>=', $v . ' 00:00:00'];
+                $where[] = ['create_time', '<=', $v . ' 23:59:59'];
                 $count = Db::name('admin_log')
                     ->field('admin_log_id')
                     ->where($where)

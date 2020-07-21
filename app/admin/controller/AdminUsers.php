@@ -113,7 +113,7 @@ class AdminUsers
         $order_type    = Request::param('order_type/s', '');
         $admin_user_id = Request::param('admin_user_id/d', '');
         $menu_url      = Request::param('menu_url/s', '');
-        $insert_time   = Request::param('insert_time/a', '');
+        $create_time   = Request::param('create_time/a', '');
 
         validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
 
@@ -124,9 +124,9 @@ class AdminUsers
         if ($menu_url) {
             $where[] = ['menu_url', 'like', '%' . $menu_url . '%'];
         }
-        if ($insert_time) {
-            $where[] = ['insert_time', '>=', $insert_time[0] . ' 00:00:00'];
-            $where[] = ['insert_time', '<=', $insert_time[1] . ' 23:59:59'];
+        if ($create_time) {
+            $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
+            $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
         }
 
         $field = '';

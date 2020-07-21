@@ -26,7 +26,7 @@ class AdminUserService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
     {
         if (empty($field)) {
-            $field = 'admin_user_id,admin_rule_ids,username,nickname,email,remark,sort,is_prohibit,is_super_admin,login_num,login_ip,login_time,insert_time,update_time';
+            $field = 'admin_user_id,admin_rule_ids,username,nickname,email,remark,sort,is_prohibit,is_super_admin,login_num,login_ip,login_time,create_time,update_time';
         }
 
         if (empty($order)) {
@@ -213,7 +213,7 @@ class AdminUserService
         $param['is_prohibit']    = 0;
         $param['is_super_admin'] = 0;
         $param['password']       = md5($param['password']);
-        $param['insert_time']    = date('Y-m-d H:i:s');
+        $param['create_time']    = date('Y-m-d H:i:s');
         $admin_user_id = Db::name('admin_user')->insertGetId($param);
 
         if (empty($admin_user_id)) {

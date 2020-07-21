@@ -25,7 +25,7 @@ class AdminLogService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
     {
         if (empty($field)) {
-            $field = 'admin_log_id,admin_user_id,menu_url,request_method,request_ip,request_region,request_isp,insert_time';
+            $field = 'admin_log_id,admin_user_id,menu_url,request_method,request_ip,request_region,request_isp,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -104,7 +104,7 @@ class AdminLogService
             $admin_log['request_isp']    = $ip_info['isp'];
         }
 
-        $admin_log['insert_time'] = date('Y-m-d H:i:s');
+        $admin_log['create_time'] = date('Y-m-d H:i:s');
 
         Db::name('admin_log')->strict(false)->insert($admin_log);
     }
