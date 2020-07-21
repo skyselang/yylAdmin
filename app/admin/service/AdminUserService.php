@@ -8,9 +8,9 @@
 namespace app\admin\service;
 
 use think\facade\Db;
+use think\facade\Config;
 use app\cache\AdminUserCache;
 use app\admin\service\AdminTokenService;
-use think\facade\Config;
 
 class AdminUserService
 {
