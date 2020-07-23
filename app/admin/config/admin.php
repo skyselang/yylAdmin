@@ -34,7 +34,6 @@ return [
         'admin/AdminUsers/usersInfo',
         'admin/AdminUsers/usersLog',
         'admin/AdminIndex/index',
-        'admin/AdminIndex/visit',
         'admin/AdminLogin/logout',
     ],
     // 是否记录日志
