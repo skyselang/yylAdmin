@@ -3,6 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
+ * @LastEditTime : 2020-07-28
  */
 
 namespace app\admin\controller;
@@ -90,7 +91,7 @@ class AdminUsers
         $avatar        = Request::file('avatar_file');
 
         $param['admin_user_id'] = $admin_user_id;
-        $param['avatar'] = $avatar;
+        $param['avatar']        = $avatar;
 
         validate(AdminUserValidate::class)->scene('users_avatar')->check($param);
 

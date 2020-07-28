@@ -3,6 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
+ * @LastEditTime : 2020-07-28
  */
 
 namespace app\admin\service;
@@ -17,6 +18,7 @@ class AdminUsersService
      * 个人信息
      *
      * @param integer $admin_user_id 用户id
+     * 
      * @return array
      */
     public static function info($admin_user_id)
@@ -30,6 +32,7 @@ class AdminUsersService
      * 修改信息
      *
      * @param array $param 用户信息
+     * 
      * @return array
      */
     public static function edit($param)
@@ -70,6 +73,7 @@ class AdminUsersService
      * 修改密码
      *
      * @param array $param 用户密码
+     * 
      * @return array
      */
     public static function pwd($param)
@@ -107,6 +111,7 @@ class AdminUsersService
      * 更换头像
      *
      * @param array $param 头像信息
+     * 
      * @return array
      */
     public static function avatar($param)
@@ -124,23 +129,26 @@ class AdminUsersService
         }
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('adminuser', $avatar, function () use ($admin_user_id) {
+            ->putFile('admin/user', $avatar, function () use ($admin_user_id) {
                 return $admin_user_id . '/avatar';
             });
 
-        $update_avatar['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
-        $update_avatar['update_time'] = date('Y-m-d H:i:s');
+        $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
+        $update['update_time'] = date('Y-m-d H:i:s');
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
-            ->update($update_avatar);
+            ->update($update);
 
         if (empty($res)) {
             error();
         }
 
+        $data['admin_user_id'] = $admin_user_id;
+        $data['avatar_url']    = file_url($update['avatar']);
+
         AdminUserCache::del($admin_user_id);
 
-        return $admin_user;
+        return $data;
     }
 
     /**
@@ -151,6 +159,7 @@ class AdminUsersService
      * @param integer $page  页数
      * @param integer $limit 数量
      * @param array   $order 排序
+     * 
      * @return array 
      */
     public static function log($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
