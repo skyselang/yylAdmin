@@ -42,6 +42,8 @@ composer config repo.packagist composer https://packagist.phpcomposer.com
 # 配置环境（PhpStudy）
 
 # 导入数据库
+数据库文件：public/storage/admin/sql
+
 ```
 WEB部分
 ```bash
