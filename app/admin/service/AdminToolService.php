@@ -2,7 +2,8 @@
 /*
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-04-29
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-07-28
  */
 
 namespace app\admin\service;
@@ -16,6 +17,7 @@ class AdminToolService
      *
      * @param array $random_ids
      * @param integer $random_len
+     * 
      * @return array
      */
     public static function randomStr($random_ids, $random_len)
@@ -50,6 +52,7 @@ class AdminToolService
      * 时间戳转换
      *
      * @param array $param
+     * 
      * @return array
      */
     public static function timestamp($param)
@@ -80,6 +83,7 @@ class AdminToolService
      * MD5加密
      *
      * @param string $str 字符串
+     * 
      * @return string
      */
     public static function md5Enc($str)
@@ -97,11 +101,12 @@ class AdminToolService
      * 生成二维码
      *
      * @param string $qrcode_str 文本
+     * 
      * @return string
      */
     public static function qrcode($qrcode_str)
     {
-        $qrcode_path = '/storage/admintool/qrcode.png';
+        $qrcode_path = '/storage/admin/tool/qrcode.png';
         $qrCode = new QrCode($qrcode_str);
         $qrCode->writeFile('.' . $qrcode_path);
 
