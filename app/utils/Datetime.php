@@ -3,14 +3,15 @@
  * @Description  : 日期
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
+ * @LastEditTime : 2020-07-29
  */
 
-namespace app\tool;
+namespace app\utils;
 
 class Datetime
 {
     /**
-     * 返回今日日期
+     * 今日日期
      *
      * @return string
      */
@@ -20,7 +21,7 @@ class Datetime
     }
 
     /**
-     * 返回昨日日期
+     * 昨日日期
      *
      * @return string
      */
@@ -30,7 +31,7 @@ class Datetime
     }
 
     /**
-     * 返回本周开始和结束日期
+     * 本周开始和结束日期
      *
      * @return array
      */
@@ -45,7 +46,7 @@ class Datetime
     }
 
     /**
-     * 返回本周所有日期
+     * 本周所有日期
      *
      * @return array
      */
@@ -64,7 +65,7 @@ class Datetime
     }
 
     /**
-     * 返回上周开始和结束日期
+     * 上周开始和结束日期
      *
      * @return array
      */
@@ -82,7 +83,7 @@ class Datetime
     }
 
     /**
-     * 返回上周所有日期
+     * 上周所有日期
      *
      * @return array
      */
@@ -105,7 +106,7 @@ class Datetime
     }
 
     /**
-     * 返回月份所有日期
+     * 月份所有日期
      *  
      * @param string $month 月份
      * 
@@ -134,20 +135,22 @@ class Datetime
     }
 
     /**
-     * 返回本月开始和结束日期
+     * 本月开始和结束日期
      *
      * @return array
      */
     public static function thisMonth()
     {
-        $ym = date('Y-m');
-        $t  = date('t');
+        $ym    = date('Y-m');
+        $t     = date('t');
+        $start = $ym . '-01';
+        $end   = $ym . '-' . $t;
 
-        return [$ym . '-01', $ym . '-' . $t];
+        return [$start, $end];
     }
 
     /**
-     * 返回上个月开始和结束日期
+     * 上个月开始和结束日期
      *
      * @return array
      */
@@ -162,7 +165,7 @@ class Datetime
     }
 
     /**
-     * 返回最近天数所有日期
+     * 最近天数所有日期
      *  
      * @param integer $days 天数
      * 
@@ -182,41 +185,34 @@ class Datetime
     }
 
     /**
-     * 返回今年开始和结束的日期
+     * 几年前开始和结束的日期
+     * 
+     * @param integer $year 几年
      *
      * @return array
      */
-    public static function year()
+    public static function year($year = 0)
     {
-        $y = date('Y');
+        $year  = date('Y') - $year;
+        $start = $year . '-01-01';
+        $end   = $year . '-12-31';
 
-        return [$y . '-01-01', $y . '-12-31'];
+        return [$start, $end];
     }
 
     /**
-     * 返回去年开始和结束的日期
+     * 几天前到现在/昨日结束的日期
      *
-     * @return array
-     */
-    public static function lastYear()
-    {
-        $y = date('Y') - 1;
-
-        return [$y . '-01-01', $y . '-12-31'];
-    }
-
-    /**
-     * 获取几天前零点到现在/昨日结束的日期
-     *
-     * @param int $day 天数
-     * @param bool $now 返回现在或者昨天结束日期
+     * @param integer $day 天数
+     * @param bool    $now 现在或者昨天结束日期
+     * 
      * @return array
      */
     public static function dayToNow($day = 1, $now = false)
     {
-        $end = date('Y-m-d H:i:s');
+        $end = date('Y-m-d');
         if (!$now) {
-            list($foo, $end) = self::yesterday();
+            $end = date('Y-m-d', strtotime("-1 day"));
         }
         $start = date('Y-m-d', strtotime("-{$day} day"));
 
@@ -224,10 +220,32 @@ class Datetime
     }
 
     /**
-     * 返回几天前的日期
+     * 两个日期间的所有日期
      *
-     * @param int $days
-     * @return int
+     * @param string $start 开始日期
+     * @param string $en    结束日期
+     * 
+     * @return array
+     */
+    public static function betweenDates($start = '', $end = '')
+    {
+        $dt_start = strtotime($start);
+        $dt_end   = strtotime($end);
+        $dates    = [];
+        while ($dt_start <= $dt_end) {
+            $dates[]  = date('Y-m-d', $dt_start);
+            $dt_start = strtotime('+1 day', $dt_start);
+        }
+
+        return $dates;
+    }
+
+    /**
+     * 几天前的日期
+     *
+     * @param integer $days 天数
+     * 
+     * @return integer
      */
     public static function daysAgo($days = 1)
     {
@@ -237,10 +255,11 @@ class Datetime
     }
 
     /**
-     * 返回几天后的日期
+     * 几天后的日期
      *
-     * @param int $days
-     * @return int
+     * @param integer $days 天数
+     * 
+     * @return integer
      */
     public static function daysAfter($days = 1)
     {
@@ -252,8 +271,9 @@ class Datetime
     /**
      * 天数转换成秒数
      *
-     * @param int $day
-     * @return int
+     * @param integer $day 天数
+     * 
+     * @return integer
      */
     public static function daysToSecond($day = 1)
     {
@@ -263,8 +283,9 @@ class Datetime
     /**
      * 周数转换成秒数
      *
-     * @param int $week
-     * @return int
+     * @param integer $week 周数
+     * 
+     * @return integer
      */
     public static function weekToSecond($week = 1)
     {
@@ -272,7 +293,7 @@ class Datetime
     }
 
     /**
-     * 返回日期的开始时间和结束时间
+     * 日期的开始时间和结束时间
      *
      * @param string $date 日期
      *
