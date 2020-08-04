@@ -1,14 +1,15 @@
 <?php
 /*
- * @Description  : 访问
+ * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
+ * @LastEditTime : 2020-08-04
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use app\tool\Datetime;
+use app\utils\Datetime;
 use app\cache\AdminVisitCache;
 
 class AdminVisitService
@@ -22,7 +23,8 @@ class AdminVisitService
      */
     public static function count($date = 'total')
     {
-        $count = AdminVisitCache::get($date);
+        $key   = $date;
+        $count = AdminVisitCache::get($key);
 
         if (empty($count)) {
             if ($date == 'today') {
@@ -69,7 +71,7 @@ class AdminVisitService
                 ->where($where)
                 ->count('admin_log_id');
 
-            AdminVisitCache::set($date, $count);
+            AdminVisitCache::set($key, $count);
         }
 
         return $count;
@@ -78,20 +80,31 @@ class AdminVisitService
     /**
      * date
      *
-     * @param integer $num
+     * @param array $dates
      *
      * @return array
      */
-    public static function date($num = 7)
+    public static function date($dates = [])
     {
-        $key = 'dateLately' . $num;
-        $res = AdminVisitCache::get($key);
+        if (empty($dates)) {
+            $dates[0]  = Datetime::daysAgo(31);
+            $dates[1]  = Datetime::daysAgo(1);
+            $sta_date  = $dates[0];
+            $end_date  = $dates[1];
+            $date_days = Datetime::betweenDates($sta_date, $end_date);
+        } else {
+            $sta_date  = $dates[0];
+            $end_date  = $dates[1];
+            $date_days = Datetime::betweenDates($sta_date, $end_date);
+        }
+
+        $key = 'date:' . $sta_date . '-' . $end_date;
+        $res =  AdminVisitCache::get($key);
 
         if (empty($res)) {
-            $days = Datetime::daysDate($num);
             $date = [];
             $num  = [];
-            foreach ($days as $k => $v) {
+            foreach ($date_days as $k => $v) {
                 $count = 0;
                 $where = [];
                 $where[] = ['create_time', '>=', $v . ' 00:00:00'];
@@ -101,11 +114,13 @@ class AdminVisitService
                     ->where($where)
                     ->count('admin_log_id');
                 $date[] = $v;
-                $num[] = $count;
+                $num[]  = $count;
             }
+
             $res = [];
-            $res['date'] = $date;
-            $res['num']  = $num;
+            $res['date']  = $date;
+            $res['num']   = $num;
+            $res['dates'] = $dates;
 
             AdminVisitCache::set($key, $res);
         }
@@ -116,23 +131,41 @@ class AdminVisitService
     /**
      * city
      *
-     * @param integer $num
-     *
+     * @param integer $dates
+     * @param integer $top
+     *   
      * @return array
      */
-    public static function city($num = 20)
+    public static function city($dates = [], $top = 20)
     {
-        $key = 'cityTop' . $num;
+        if (empty($dates)) {
+            $dates[0] = Datetime::daysAgo(31);
+            $dates[1] = Datetime::daysAgo(1);
+            $sta_date = $dates[0];
+            $end_date = $dates[1];
+        } else {
+            $sta_date = $dates[0];
+            $end_date = $dates[1];
+        }
+
+        $key = 'city:' . $sta_date . '-' . $end_date . ':top:' . $top;
         $res = AdminVisitCache::get($key);
 
         if (empty($res)) {
+            $sta_time = $dates[0] . ' 00:00:00';
+            $end_time = $dates[1] . ' 23:59:59';
+            $where[] = ['request_city', '<>', ''];
+            $where[] = ['create_time', '>=', $sta_time];
+            $where[] = ['create_time', '<=', $end_time];
+
             $res = Db::name('admin_log')
                 ->field('request_city as city, COUNT(admin_log_id) as num')
-                ->where('request_city', '<>', '')
+                ->where($where)
                 ->group('request_city')
                 ->order('num desc')
-                ->limit($num)
+                ->limit($top)
                 ->select();
+
             $city = [];
             $num  = [];
             foreach ($res as $k => $v) {
@@ -141,8 +174,9 @@ class AdminVisitService
             }
 
             $res = [];
-            $res['city'] = $city;
-            $res['num'] = $num;
+            $res['city']  = $city;
+            $res['num']   = $num;
+            $res['dates'] = $dates;
 
             AdminVisitCache::set($key, $res);
         }
@@ -153,23 +187,41 @@ class AdminVisitService
     /**
      * isp
      *
-     * @param integer $num
+     * @param integer $dates
+     * @param integer $top
      *
      * @return array
      */
-    public static function isp($num = 20)
+    public static function isp($dates = [], $top = 20)
     {
-        $key = 'ispTop' . $num;
+        if (empty($dates)) {
+            $dates[0] = Datetime::daysAgo(31);
+            $dates[1] = Datetime::daysAgo(1);
+            $sta_date = $dates[0];
+            $end_date = $dates[1];
+        } else {
+            $sta_date = $dates[0];
+            $end_date = $dates[1];
+        }
+
+        $key = 'isp:' . $sta_date . '-' . $end_date . ':top:' . $top;
         $res = AdminVisitCache::get($key);
 
         if (empty($res)) {
+            $sta_time = $dates[0] . ' 00:00:00';
+            $end_time = $dates[1] . ' 23:59:59';
+            $where[] = ['request_isp', '<>', ''];
+            $where[] = ['create_time', '>=', $sta_time];
+            $where[] = ['create_time', '<=', $end_time];
+
             $res = Db::name('admin_log')
                 ->field('request_isp as isp, COUNT(admin_log_id) as num')
-                ->where('request_isp', '<>', '')
+                ->where($where)
                 ->group('request_isp')
                 ->order('num desc')
-                ->limit($num)
+                ->limit($top)
                 ->select();
+
             $isp = [];
             $num = [];
             foreach ($res as $k => $v) {
@@ -178,8 +230,9 @@ class AdminVisitService
             }
 
             $res = [];
-            $res['isp'] = $isp;
-            $res['num'] = $num;
+            $res['isp']   = $isp;
+            $res['num']   = $num;
+            $res['dates'] = $dates;
 
             AdminVisitCache::set($key, $res);
         }

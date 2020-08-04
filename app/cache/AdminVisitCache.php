@@ -1,8 +1,9 @@
 <?php
 /*
- * @Description  : 访问缓存
+ * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
+ * @LastEditTime : 2020-08-04
  */
 
 namespace app\cache;
@@ -15,6 +16,7 @@ class AdminVisitCache
      * 缓存key
      *
      * @param string $date
+     * 
      * @return string
      */
     public static function key($date = '')
@@ -29,6 +31,7 @@ class AdminVisitCache
      *
      * @param integer $exp
      * @param string  $date
+     * 
      * @return integer
      */
     public static function exp($exp = 0, $date = '')
@@ -51,6 +54,7 @@ class AdminVisitCache
      * @param string  $date
      * @param integer $val 
      * @param integer $exp
+     * 
      * @return integer
      */
     public static function set($date = '', $val = 0, $exp = 0)
@@ -67,24 +71,22 @@ class AdminVisitCache
      * 缓存获取
      *
      * @param string $date
+     * 
      * @return array
      */
     public static function get($date = '')
     {
         $key = self::key($date);
-        $val = Cache::get($key);
+        $res = Cache::get($key);
 
-        if (empty($val)) {
-            $val = self::set($date);
-        }
-
-        return $val;
+        return $res;
     }
 
     /**
      * 缓存删除
      *
-     * @param string $key
+     * @param string $date
+     * 
      * @return bool
      */
     public static function del($date = '')
