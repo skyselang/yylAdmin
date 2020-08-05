@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-07-28
+ * @LastEditTime : 2020-08-05
  */
 
 namespace app\admin\service;
@@ -15,8 +15,8 @@ class AdminToolService
     /**
      * 生成随机字符
      *
-     * @param array $random_ids
-     * @param integer $random_len
+     * @param array   $random_ids 包含字符
+     * @param integer $random_len 长度
      * 
      * @return array
      */
@@ -84,7 +84,7 @@ class AdminToolService
      *
      * @param string $str 字符串
      * 
-     * @return string
+     * @return array
      */
     public static function md5Enc($str)
     {
@@ -100,18 +100,24 @@ class AdminToolService
     /**
      * 生成二维码
      *
-     * @param string $qrcode_str 文本
+     * @param string $str 文本内容
      * 
-     * @return string
+     * @return array
      */
-    public static function qrcode($qrcode_str)
+    public static function qrcode($str)
     {
-        $qrcode_path = '/storage/admin/tool/qrcode.png';
-        $qrCode = new QrCode($qrcode_str);
-        $qrCode->writeFile('.' . $qrcode_path);
+        $admin_user_id = admin_user_id();
+        $file_dir = '/storage/admin/user/' . $admin_user_id;
+        if (!file_exists('.' . $file_dir)) {
+            mkdir('.' . $file_dir);
+        }
+        $file_name = 'tool_qrcode.png';
+        $file_path = $file_dir . '/' . $file_name;
+        $QrCode = new QrCode($str);
+        $QrCode->writeFile('.' . $file_path);
 
-        $qrcode_url = file_url($qrcode_path);
-        $data['qrcode_url'] = $qrcode_url . '?t=' . date('YmdHis');
+        $qrcode_url = file_url($file_path);
+        $data['qrcode_url'] = $qrcode_url . '?r=' . mt_rand(10, 99);
 
         return $data;
     }

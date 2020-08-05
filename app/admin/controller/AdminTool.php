@@ -2,7 +2,8 @@
 /*
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-04-29
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-04
  */
 
 namespace app\admin\controller;
@@ -16,6 +17,7 @@ class AdminTool
      * 生成随机字符串密码
      *
      * @method POST
+     * 
      * @return json
      */
     public function randomStr()
@@ -36,6 +38,7 @@ class AdminTool
      * 时间戳转换
      *
      * @method POST
+     * 
      * @return json
      */
     public function timestamp()
@@ -62,11 +65,12 @@ class AdminTool
      * MD5加密
      *
      * @method POST
+     * 
      * @return json
      */
     public function md5Enc()
     {
-        $str = Request::param('str', '');
+        $str = Request::param('str/s', '');
 
         if (empty($str)) {
             error('请输入字符串');
@@ -81,18 +85,19 @@ class AdminTool
      * 生成二维码
      *
      * @method POST
+     * 
      * @return json
      */
     public function qrcode()
     {
-        $qrcode_str = Request::param('qrcode_str', '');
+        $str = Request::param('qrcode_str/s', '');
 
-        if (empty($qrcode_str)) {
-            error('请输入文本');
+        if (empty($str)) {
+            error('请输入文本内容');
         }
 
-        $data = AdminToolService::qrcode($qrcode_str);
-
+        $data = AdminToolService::qrcode($str);
+        
         return success($data);
     }
 }
