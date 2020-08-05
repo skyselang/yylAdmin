@@ -3,19 +3,22 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
+ * @LastEditTime : 2020-08-05
  */
 
 use think\facade\Config;
+use think\facade\Request;
 
 /**
  * 成功返回
  *
- * @param array   $data 返回数据
- * @param string  $msg  成功码
- * @param integer $code 成功提示
+ * @param array   $data 成功数据
+ * @param string  $msg  成功提示
+ * @param integer $code 成功码
+ * 
  * @return json
  */
-function success($data = null, $msg = '操作成功', $code = 200)
+function success($data = [], $msg = '操作成功', $code = 200)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -30,9 +33,10 @@ function success($data = null, $msg = '操作成功', $code = 200)
  * @param string  $msg  错误提示
  * @param array   $err  错误数据
  * @param integer $code 错误码
+ * 
  * @return json
  */
-function error($msg = '操作失败', $err = null, $code = 400)
+function error($msg = '操作失败', $err = [], $code = 400)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -68,6 +72,7 @@ function server_url()
  * 文件地址
  *
  * @param string $file_path 文件路径
+ * 
  * @return string
  */
 function file_url($file_path = '')
@@ -92,9 +97,23 @@ function file_url($file_path = '')
 }
 
 /**
+ * 管理员账号id
+ *
+ * @return integer
+ */
+function admin_user_id()
+{
+    $admin_user_id_key = Config::get('admin.admin_user_id_key');
+    $admin_user_id     = Request::header($admin_user_id_key, 0);
+
+    return $admin_user_id;
+}
+
+/**
  * 是否超级管理员
  *
  * @param integer $admin_user_id 用户id
+ * 
  * @return boolean
  */
 function super_admin($admin_user_id = 0)
