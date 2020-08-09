@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-04
+ * @LastEditTime : 2020-08-09
  */
 
 namespace app\admin\controller;
@@ -45,15 +45,18 @@ class AdminTool
     {
         $param = Request::only(
             [
-                'from_datetime'  => '',
-                'to_timestamp'   => '',
-                'from_timestamp' => '',
-                'to_datetime'    => '',
+                'type'      => 'time',
+                'datetime'  => '',
+                'timestamp' => '',
             ]
         );
 
-        if ($param['from_timestamp'] && !is_numeric($param['from_timestamp'])) {
-            error('请输入正确的时间戳');
+        if ($param['type'] == 'time' && !strtotime($param['datetime'])) {
+            error('请选择有效的时间');
+        }
+
+        if ($param['type'] == 'date' && $param['timestamp'] && !is_numeric($param['timestamp'])) {
+            error('请输入有效的时间戳');
         }
 
         $data = AdminToolService::timestamp($param);
@@ -90,14 +93,14 @@ class AdminTool
      */
     public function qrcode()
     {
-        $str = Request::param('qrcode_str/s', '');
+        $str = Request::param('str/s', '');
 
         if (empty($str)) {
             error('请输入文本内容');
         }
 
         $data = AdminToolService::qrcode($str);
-        
+
         return success($data);
     }
 }

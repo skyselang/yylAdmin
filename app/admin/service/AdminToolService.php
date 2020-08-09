@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-05
+ * @LastEditTime : 2020-08-09
  */
 
 namespace app\admin\service;
@@ -57,26 +57,20 @@ class AdminToolService
      */
     public static function timestamp($param)
     {
-        $time = time();
-        $date = date('Y-m-d H:i:s', $time);
+        $res['type']  = $param['type'];
+        $type = $param['type'];
 
-        if ($param['from_datetime']) {
-            $param['to_timestamp']  = strtotime($param['from_datetime']);
-            $param['from_datetime'] = date('Y-m-d H:i:s', $param['to_timestamp']);
-        } else {
-            $param['to_timestamp']  = strtotime($date);
-            $param['from_datetime'] = date('Y-m-d H:i:s', $time);
+        if ($type == 'time') {
+            $res['datetime']  = $param['datetime'];
+            $res['timestamp'] = strtotime($param['datetime']);
         }
 
-        if ($param['from_timestamp']) {
-            $param['to_datetime']    = date('Y-m-d H:i:s', $param['from_timestamp']);
-            $param['from_timestamp'] = strtotime($param['to_datetime']);
-        } else {
-            $param['to_datetime']    = date('Y-m-d H:i:s', $time);
-            $param['from_timestamp'] = strtotime($date);
+        if ($type == 'date') {
+            $res['datetime']  = date('Y-m-d H:i:s', $param['timestamp']);
+            $res['timestamp'] = $param['timestamp'];
         }
 
-        return $param;
+        return $res;
     }
 
     /**
@@ -106,7 +100,13 @@ class AdminToolService
      */
     public static function qrcode($str)
     {
+        $file_dir = '/storage/admin/user';
+        if (!file_exists('.' . $file_dir)) {
+            mkdir('.' . $file_dir);
+        }
+
         $admin_user_id = admin_user_id();
+
         $file_dir = '/storage/admin/user/' . $admin_user_id;
         if (!file_exists('.' . $file_dir)) {
             mkdir('.' . $file_dir);
@@ -117,7 +117,7 @@ class AdminToolService
         $QrCode->writeFile('.' . $file_path);
 
         $qrcode_url = file_url($file_path);
-        $data['qrcode_url'] = $qrcode_url . '?r=' . mt_rand(10, 99);
+        $data['url'] = $qrcode_url . '?r=' . mt_rand(10, 99);
 
         return $data;
     }
