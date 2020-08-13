@@ -3,6 +3,7 @@
  * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
+ * @LastEditTime : 2020-08-13
  */
 
 return [
@@ -29,7 +30,7 @@ return [
     'is_log' => false,
     // 接口访问频率限制（次数/时间）
     'api_limit' => [
-        'number' => 2, //次数,0不限制
+        'number' => 3, //次数,0不限制
         'expire' => 1, //时间,单位秒
     ],
 ];
