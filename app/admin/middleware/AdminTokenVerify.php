@@ -2,7 +2,8 @@
 /*
  * @Description  : token验证中间件
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-26
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\middleware;
