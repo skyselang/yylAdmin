@@ -1,5 +1,11 @@
 <?php
-// 全局中间件定义文件
+/*
+ * @Description  : 全局中间件定义文件
+ * @Author       : https://github.com/skyselang
+ * @Date         : 2020-04-16
+ * @LastEditTime : 2020-08-13
+ */
+
 return [
     // 全局请求缓存
     // \think\middleware\CheckRequestCache::class,
