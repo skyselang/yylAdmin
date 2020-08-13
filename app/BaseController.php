@@ -1,16 +1,19 @@
 <?php
+/*
+ * @Description  : 控制器基类
+ * @Author       : https://github.com/skyselang
+ * @Date         : 2020-04-16
+ * @LastEditTime : 2020-08-13
+ */
 
 declare(strict_types=1);
 
 namespace app;
 
 use think\App;
-use think\exception\ValidateException;
 use think\Validate;
+use think\exception\ValidateException;
 
-/**
- * 控制器基础类
- */
 abstract class BaseController
 {
     /**
