@@ -2,7 +2,8 @@
 /*
  * @Description  : 权限管理
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-30 17:04:47
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -19,6 +20,7 @@ class AdminRuleService
      * @param integer $page  页数
      * @param integer $limit 数量
      * @param array   $order 排序
+     * 
      * @return array 
      */
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
@@ -84,6 +86,7 @@ class AdminRuleService
      * 权限添加
      *
      * @param array $param 权限信息
+     * 
      * @return array
      */
     public static function add($param)
@@ -95,7 +98,7 @@ class AdminRuleService
             ->find();
 
         if ($admin_rule) {
-            error('权限已存在');
+            return error('权限已存在');
         }
 
         sort($param['admin_menu_ids']);
@@ -104,7 +107,7 @@ class AdminRuleService
         $admin_rule_id = Db::name('admin_rule')->insertGetId($param);
 
         if (empty($admin_rule_id)) {
-            error();
+            return error();
         }
 
         $param['admin_rule_id'] = $admin_rule_id;
@@ -116,6 +119,7 @@ class AdminRuleService
      * 权限修改
      *
      * @param array $param 权限信息
+     * 
      * @return array
      */
     public static function edit($param)
@@ -130,7 +134,7 @@ class AdminRuleService
             ->find();
 
         if ($admin_rule) {
-            error('权限已存在');
+            return error('权限已存在');
         }
 
         unset($param['admin_rule_id']);
@@ -142,7 +146,7 @@ class AdminRuleService
             ->update($param);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         $param['admin_rule_id'] = $admin_rule_id;
@@ -154,6 +158,7 @@ class AdminRuleService
      * 权限删除
      *
      * @param array $admin_rule_id 权限id
+     * 
      * @return array
      */
     public static function dele($admin_rule_id)
@@ -165,7 +170,7 @@ class AdminRuleService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         $data['admin_rule_id'] = $admin_rule_id;
@@ -177,6 +182,7 @@ class AdminRuleService
      * 权限信息
      *
      * @param integer $admin_rule_id 权限id
+     * 
      * @return array
      */
     public static function info($admin_rule_id = 0)
@@ -187,7 +193,7 @@ class AdminRuleService
             ->find();
 
         if (empty($admin_rule)) {
-            error('权限不存在');
+            return error('权限不存在');
         }
 
         return $admin_rule;
@@ -197,6 +203,7 @@ class AdminRuleService
      * 权限是否禁用
      *
      * @param array $param 权限信息
+     * 
      * @return array
      */
     public static function prohibit($param)
@@ -210,7 +217,7 @@ class AdminRuleService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         return $param;

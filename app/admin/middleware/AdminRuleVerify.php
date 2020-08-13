@@ -2,7 +2,8 @@
 /*
  * @Description  : 权限验证中间件
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-04-25
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\middleware;
@@ -37,7 +38,7 @@ class AdminRuleVerify
 
             if (!in_array($admin_user_id, $super_admin)) {
                 $admin_user = AdminUserService::info($admin_user_id);
-                
+
                 if (empty($admin_user)) {
                     return error('登录已失效，请重新登录', '', 401);
                 }
