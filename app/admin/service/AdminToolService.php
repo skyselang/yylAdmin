@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-09
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -13,14 +13,39 @@ use Endroid\QrCode\QrCode;
 class AdminToolService
 {
     /**
-     * 生成随机字符
+     * 字符串
      *
-     * @param array   $random_ids 包含字符
-     * @param integer $random_len 长度
+     * @param string $str 字符串
+     *
+     * @return array
+     */
+    public static function string($str)
+    {
+        $len = mb_strlen($str, 'utf-8');
+        $rev = '';
+        for ($i = $len - 1; $i >= 0; $i--) {
+            $rev = $rev . mb_substr($str, $i, 1, 'utf-8');
+        }
+
+        $data['str']   = $str;
+        $data['len']   = $len;
+        $data['lower'] = strtolower($str);
+        $data['upper'] = strtoupper($str);
+        $data['rev']   = $rev;
+        $data['md5']   = md5($str);
+
+        return $data;
+    }
+
+    /**
+     * 随机字符串
+     *
+     * @param array   $ids 包含字符
+     * @param integer $len 字符长度
      * 
      * @return array
      */
-    public static function randomStr($random_ids, $random_len)
+    public static function strran($ids, $len)
     {
         $str_arr = [
             1 => '0123456789',
@@ -29,21 +54,21 @@ class AdminToolService
             4 => '`~!@#$%^&*()-_=+\|[]{};:' . "'" . '",.<>/?',
         ];
 
-        $original_str = '';
-        foreach ($random_ids as $v) {
-            $original_str .= $str_arr[$v];
+        $ori = '';
+        foreach ($ids as $v) {
+            $ori .= $str_arr[$v];
         }
-        $original_str = str_shuffle($original_str);
+        $ori = str_shuffle($ori);
 
-        $random_str = '';
-        $str_len    = strlen($original_str) - 1;
-        for ($i = 0; $i < $random_len; $i++) {
-            $random_str .= $original_str[mt_rand(0, $str_len)];
+        $str = '';
+        $str_len    = strlen($ori) - 1;
+        for ($i = 0; $i < $len; $i++) {
+            $str .= $ori[mt_rand(0, $str_len)];
         }
 
-        $data['original_str'] = $original_str;
-        $data['random_len']   = $random_len;
-        $data['random_str']   = $random_str;
+        $data['ori'] = $ori;
+        $data['len'] = $len;
+        $data['str'] = $str;
 
         return $data;
     }
@@ -74,24 +99,6 @@ class AdminToolService
     }
 
     /**
-     * MD5加密
-     *
-     * @param string $str 字符串
-     * 
-     * @return array
-     */
-    public static function md5Enc($str)
-    {
-        $md5_16 = substr(md5($str), 8, 16);
-        $md5_32 = md5($str);
-
-        $data['md5_16'] = $md5_16;
-        $data['md5_32'] = $md5_32;
-
-        return $data;
-    }
-
-    /**
      * 生成二维码
      *
      * @param string $str 文本内容
@@ -111,6 +118,7 @@ class AdminToolService
         if (!file_exists('.' . $file_dir)) {
             mkdir('.' . $file_dir);
         }
+
         $file_name = 'tool_qrcode.png';
         $file_path = $file_dir . '/' . $file_name;
         $QrCode = new QrCode($str);

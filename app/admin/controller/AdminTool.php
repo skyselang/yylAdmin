@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-09
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\controller;
@@ -14,22 +14,22 @@ use app\admin\service\AdminToolService;
 class AdminTool
 {
     /**
-     * 生成随机字符串密码
+     * 随机字符串
      *
      * @method POST
      * 
      * @return json
      */
-    public function randomStr()
+    public function strran()
     {
-        $random_len = Request::param('random_len/d', 1);
-        $random_ids = Request::param('random_ids/a', []);
+        $len = Request::param('len/d', 1);
+        $ids = Request::param('ids/a', []);
 
-        if (empty($random_ids)) {
+        if (empty($ids)) {
             error('请选择所用字符');
         }
 
-        $data = AdminToolService::randomStr($random_ids, $random_len);
+        $data = AdminToolService::strran($ids, $len);
 
         return success($data);
     }
@@ -65,26 +65,6 @@ class AdminTool
     }
 
     /**
-     * MD5加密
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function md5Enc()
-    {
-        $str = Request::param('str/s', '');
-
-        if (empty($str)) {
-            error('请输入字符串');
-        }
-
-        $data = AdminToolService::md5Enc($str);
-
-        return success($data);
-    }
-
-    /**
      * 生成二维码
      *
      * @method POST
@@ -100,6 +80,26 @@ class AdminTool
         }
 
         $data = AdminToolService::qrcode($str);
+
+        return success($data);
+    }
+
+    /**
+     * 字符串
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function string()
+    {
+        $str = Request::param('str/s', '');
+
+        if (empty($str)) {
+            return error('请输入字符串');
+        }
+
+        $data = AdminToolService::string($str);
 
         return success($data);
     }
