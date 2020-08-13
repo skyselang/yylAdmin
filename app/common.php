@@ -3,7 +3,7 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-08-05
+ * @LastEditTime : 2020-08-13
  */
 
 use think\facade\Config;
@@ -142,7 +142,7 @@ function super_admin($admin_user_id = 0)
  *
  * @return array
  */
-function httpGet($url, $header = [])
+function http_get($url, $header = [])
 {
     if (empty($header)) {
         $header = [
@@ -173,7 +173,7 @@ function httpGet($url, $header = [])
  *
  * @return array
  */
-function httpPost($url, $param = [], $header = [])
+function http_post($url, $param = [], $header = [])
 {
     $param  = json_encode($param);
 
