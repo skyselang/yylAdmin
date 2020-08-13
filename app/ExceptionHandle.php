@@ -1,4 +1,10 @@
 <?php
+/*
+ * @Description  : 异常处理
+ * @Author       : https://github.com/skyselang
+ * @Date         : 2020-04-16
+ * @LastEditTime : 2020-08-13
+ */
 
 namespace app;
 
@@ -66,7 +72,7 @@ class ExceptionHandle extends Handle
 
         $debug = Env::get('app_debug');
         if (!$debug) {
-            error('服务器错误', 500, $e->getMessage());
+            return error('服务器错误', 500, $e->getMessage());
         }
 
         // 其他错误交给系统处理
