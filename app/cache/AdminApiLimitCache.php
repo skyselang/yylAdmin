@@ -2,7 +2,8 @@
 /*
  * @Description  : 接口访问频率限制
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-22
+ * @Date         : 2020-06-12
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\cache;
@@ -16,6 +17,7 @@ class AdminApiLimitCache
      *
      * @param integer $admin_user_id  用户id
      * @param string  $admin_menu_url 菜单url
+     * 
      * @return string
      */
     public static function key($admin_user_id, $admin_menu_url)
@@ -29,7 +31,8 @@ class AdminApiLimitCache
     /**
      * 缓存有效时间
      *
-     * @param  integer  $expire 有效时间
+     * @param integer $expire 有效时间
+     * 
      * @return integer
      */
     public static function exp($expire = 0)
@@ -47,6 +50,7 @@ class AdminApiLimitCache
      * @param integer $admin_user_id  用户id
      * @param string  $admin_menu_url 菜单url
      * @param integer $expire         有效时间
+     * 
      * @return bool
      */
     public static function set($admin_user_id, $admin_menu_url, $expire)
@@ -64,6 +68,7 @@ class AdminApiLimitCache
      *
      * @param integer $admin_user_id  用户id
      * @param string  $admin_menu_url 菜单url
+     * 
      * @return string
      */
     public static function get($admin_user_id, $admin_menu_url)
@@ -79,6 +84,7 @@ class AdminApiLimitCache
      *
      * @param integer $admin_user_id  用户id
      * @param string  $admin_menu_url 菜单url
+     * 
      * @return bool
      */
     public static function del($admin_user_id, $admin_menu_url)
@@ -94,6 +100,7 @@ class AdminApiLimitCache
      *
      * @param integer $admin_user_id  用户id
      * @param string  $admin_menu_url 菜单url
+     * 
      * @return bool
      */
     public static function inc($admin_user_id, $admin_menu_url)
