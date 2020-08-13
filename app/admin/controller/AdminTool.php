@@ -26,7 +26,7 @@ class AdminTool
         $ids = Request::param('ids/a', []);
 
         if (empty($ids)) {
-            error('请选择所用字符');
+            return error('请选择所用字符');
         }
 
         $data = AdminToolService::strran($ids, $len);
@@ -52,11 +52,11 @@ class AdminTool
         );
 
         if ($param['type'] == 'time' && !strtotime($param['datetime'])) {
-            error('请选择有效的时间');
+            return error('请选择有效的时间');
         }
 
         if ($param['type'] == 'date' && $param['timestamp'] && !is_numeric($param['timestamp'])) {
-            error('请输入有效的时间戳');
+            return error('请输入有效的时间戳');
         }
 
         $data = AdminToolService::timestamp($param);
@@ -76,7 +76,7 @@ class AdminTool
         $str = Request::param('str/s', '');
 
         if (empty($str)) {
-            error('请输入文本内容');
+            return error('请输入文本内容');
         }
 
         $data = AdminToolService::qrcode($str);
