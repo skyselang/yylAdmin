@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-07-28
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -49,7 +49,7 @@ class AdminUsersService
             ->where('is_delete', 0)
             ->find();
         if ($admin_user) {
-            error('账号已存在');
+            return error('账号已存在');
         }
 
         $data['username']    = $username;
@@ -61,7 +61,7 @@ class AdminUsersService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -90,7 +90,7 @@ class AdminUsersService
         if (md5($password) == $admin_user['password']) {
             $data['password'] = md5($passwords);
         } else {
-            error('原密码错误');
+            return error('原密码错误');
         }
 
         $data['update_time'] = date('Y-m-d H:i:s');
@@ -99,7 +99,7 @@ class AdminUsersService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -125,7 +125,7 @@ class AdminUsersService
             ->where('is_delete', 0)
             ->find();
         if (empty($admin_user)) {
-            error('用户不存在');
+            return error('用户不存在');
         }
 
         $avatar_name = Filesystem::disk('public')
@@ -140,7 +140,7 @@ class AdminUsersService
             ->update($update);
 
         if (empty($res)) {
-            error();
+            return error();
         }
 
         $data['admin_user_id'] = $admin_user_id;

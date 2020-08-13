@@ -3,7 +3,7 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-08-04
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -17,7 +17,7 @@ class AdminVisitService
     /**
      * 访问量
      *
-     * @param string $date
+     * @param string $date 日期
      *
      * @return integer
      */
@@ -80,7 +80,7 @@ class AdminVisitService
     /**
      * date
      *
-     * @param array $dates
+     * @param array $dates 日期
      *
      * @return array
      */
@@ -131,8 +131,8 @@ class AdminVisitService
     /**
      * city
      *
-     * @param integer $dates
-     * @param integer $top
+     * @param integer $dates 日期
+     * @param integer $top   top
      *   
      * @return array
      */
@@ -187,8 +187,8 @@ class AdminVisitService
     /**
      * isp
      *
-     * @param integer $dates
-     * @param integer $top
+     * @param integer $dates 日期
+     * @param integer $top   top
      *
      * @return array
      */

@@ -3,6 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -20,6 +21,7 @@ class AdminLogService
      * @param integer $page  页数
      * @param integer $limit 数量
      * @param array   $order 排序
+     * 
      * @return array 
      */
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
@@ -93,6 +95,7 @@ class AdminLogService
      * 日志添加
      *
      * @param array $admin_log 日志数据
+     * 
      * @return void
      */
     public static function add($admin_log = [])
@@ -113,6 +116,7 @@ class AdminLogService
      * 日志信息
      *
      * @param integer $admin_log_id 日志id
+     * 
      * @return array
      */
     public static function info($admin_log_id)
@@ -125,7 +129,7 @@ class AdminLogService
                 ->where('is_delete', 0)
                 ->find();
             if (empty($admin_log)) {
-                error('日志不存在');
+                return error('日志不存在');
             }
 
             if ($admin_log['request_param']) {
@@ -159,6 +163,7 @@ class AdminLogService
      * 日志删除
      *
      * @param integer $admin_log_id 日志id
+     * 
      * @return array
      */
     public static function dele($admin_log_id)
@@ -170,7 +175,7 @@ class AdminLogService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         $data['admin_log_id'] = $admin_log_id;

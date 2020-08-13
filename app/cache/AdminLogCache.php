@@ -3,6 +3,7 @@
  * @Description  : 日志缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\cache;
@@ -15,6 +16,7 @@ class AdminLogCache
      * 缓存key
      *
      * @param integer $admin_log_id 日志id
+     * 
      * @return integer
      */
     public static function key($admin_log_id = 0)
@@ -28,6 +30,7 @@ class AdminLogCache
      * 缓存有效时间
      *
      * @param integer $expire 有效时间（秒）
+     * 
      * @return integer
      */
     public static function exp($expire = 0)
@@ -45,6 +48,7 @@ class AdminLogCache
      * @param integer $admin_log_id 日志id
      * @param array   $admin_log    日志信息
      * @param integer $expire       有效时间
+     * 
      * @return array 日志信息
      */
     public static function set($admin_log_id = 0, $admin_log = [], $expire = 0)
@@ -62,6 +66,7 @@ class AdminLogCache
      * 缓存获取
      *
      * @param integer $admin_log_id 日志id
+     * 
      * @return array 日志信息
      */
     public static function get($admin_log_id = 0)
@@ -76,6 +81,7 @@ class AdminLogCache
      * 缓存删除
      *
      * @param integer $admin_log_id 日志id
+     * 
      * @return bool
      */
     public static function del($admin_log_id = 0)

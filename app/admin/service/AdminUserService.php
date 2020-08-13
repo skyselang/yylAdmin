@@ -2,7 +2,8 @@
 /*
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-30
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -22,6 +23,7 @@ class AdminUserService
      * @param integer $page  页数
      * @param integer $limit 数量
      * @param array   $order 排序
+     * 
      * @return array 
      */
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
@@ -87,6 +89,7 @@ class AdminUserService
      * 用户信息
      *
      * @param integer $admin_user_id 用户id
+     * 
      * @return array
      */
     public static function info($admin_user_id)
@@ -100,7 +103,7 @@ class AdminUserService
                 ->find();
 
             if (empty($admin_user)) {
-                error('用户不存在');
+                return error('用户不存在');
             }
 
             unset($admin_user['password']);
@@ -203,6 +206,7 @@ class AdminUserService
      * 用户添加
      *
      * @param array $param 用户信息
+     * 
      * @return array
      */
     public static function add($param)
@@ -213,7 +217,7 @@ class AdminUserService
             ->where('is_delete', 0)
             ->find();
         if ($admin_user) {
-            error('账号已存在');
+            return error('账号已存在');
         }
 
         $param['is_prohibit']    = 0;
@@ -223,7 +227,7 @@ class AdminUserService
         $admin_user_id = Db::name('admin_user')->insertGetId($param);
 
         if (empty($admin_user_id)) {
-            error();
+            return error();
         }
 
         $param['admin_user_id'] = $admin_user_id;
@@ -235,6 +239,7 @@ class AdminUserService
      * 用户修改
      *
      * @param array $param 用户信息
+     * 
      * @return array
      */
     public static function edit($param)
@@ -250,7 +255,7 @@ class AdminUserService
             ->find();
 
         if ($admin_user) {
-            error('账号已存在');
+            return error('账号已存在');
         }
 
         $param['update_time'] = date('Y-m-d H:i:s');
@@ -259,7 +264,7 @@ class AdminUserService
             ->update($param);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         $param['admin_user_id'] = $admin_user_id;
@@ -273,6 +278,7 @@ class AdminUserService
      * 用户删除
      *
      * @param integer $admin_user_id 用户id
+     * 
      * @return array
      */
     public static function dele($admin_user_id)
@@ -284,7 +290,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         $data['admin_user_id'] = $admin_user_id;
@@ -298,6 +304,7 @@ class AdminUserService
      * 用户密码重置
      *
      * @param array $param 用户信息
+     * 
      * @return array
      */
     public static function pwd($param)
@@ -312,7 +319,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         $param['admin_user_id'] = $admin_user_id;
@@ -326,6 +333,7 @@ class AdminUserService
      * 用户权限分配
      *
      * @param array $param 用户信息
+     * 
      * @return array
      */
     public static function rule($param)
@@ -344,7 +352,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -356,6 +364,7 @@ class AdminUserService
      * 用户是否禁用
      *
      * @param array $param 用户信息
+     * 
      * @return array
      */
     public static function prohibit($param)
@@ -369,7 +378,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -381,6 +390,7 @@ class AdminUserService
      * 用户是否超管
      *
      * @param array $param 用户信息
+     * 
      * @return array
      */
     public static function superAdmin($param)
@@ -394,7 +404,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminUserCache::del($admin_user_id);

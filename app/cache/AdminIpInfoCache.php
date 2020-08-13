@@ -3,6 +3,7 @@
  * @Description  : ip信息缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\cache;
@@ -15,6 +16,7 @@ class AdminIpInfoCache
      * 缓存key
      *
      * @param string $ip ip地址
+     * 
      * @return string
      */
     public static function key($ip = '')
@@ -28,6 +30,7 @@ class AdminIpInfoCache
      * 缓存有效时间
      *
      * @param integer $expire 有效时间
+     * 
      * @return integer
      */
     public static function exp($expire = 0)
@@ -45,6 +48,7 @@ class AdminIpInfoCache
      * @param string  $ip      ip地址
      * @param array   $ip_info ip信息
      * @param integer $expire  有效时间
+     * 
      * @return array ip信息
      */
     public static function set($ip = '', $ip_info = [], $expire = 0)
@@ -62,6 +66,7 @@ class AdminIpInfoCache
      * 缓存获取
      *
      * @param string $ip ip地址
+     * 
      * @return array ip信息
      */
     public static function get($ip = '')
@@ -76,6 +81,7 @@ class AdminIpInfoCache
      * 缓存删除
      *
      * @param string $ip ip地址
+     * 
      * @return bool
      */
     public static function del($ip = '')

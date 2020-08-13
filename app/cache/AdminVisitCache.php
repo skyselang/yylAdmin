@@ -3,7 +3,7 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-08-04
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\cache;
@@ -29,8 +29,8 @@ class AdminVisitCache
     /**
      * 缓存有效时间
      *
-     * @param integer $exp
-     * @param string  $date
+     * @param integer $exp  有效时间
+     * @param string  $date 日期
      * 
      * @return integer
      */
@@ -51,9 +51,9 @@ class AdminVisitCache
     /**
      * 缓存设置
      *
-     * @param string  $date
-     * @param integer $val 
-     * @param integer $exp
+     * @param string  $date 日期
+     * @param integer $val  统计信息
+     * @param integer $exp  有效时间
      * 
      * @return integer
      */
@@ -70,7 +70,7 @@ class AdminVisitCache
     /**
      * 缓存获取
      *
-     * @param string $date
+     * @param string $date 日期
      * 
      * @return array
      */
@@ -85,7 +85,7 @@ class AdminVisitCache
     /**
      * 缓存删除
      *
-     * @param string $date
+     * @param string $date 日期
      * 
      * @return bool
      */

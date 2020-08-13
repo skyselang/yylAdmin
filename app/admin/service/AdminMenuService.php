@@ -2,7 +2,8 @@
 /*
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-30
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -57,6 +58,7 @@ class AdminMenuService
      * 菜单添加
      *
      * @param array $param 菜单信息
+     * 
      * @return array
      */
     public static function add($param)
@@ -68,14 +70,14 @@ class AdminMenuService
             ->where('is_delete', 0)
             ->find();
         if ($admin_menu) {
-            error('菜单已存在');
+            return error('菜单已存在');
         }
 
         $param['create_time'] = date('Y-m-d H:i:s');
         $admin_menu_id = Db::name('admin_menu')->insertGetId($param);
 
         if (empty($admin_menu_id)) {
-            error();
+            return error();
         }
 
         $param['admin_menu_id'] = $admin_menu_id;
@@ -90,12 +92,13 @@ class AdminMenuService
      * 菜单修改
      *
      * @param array $param 菜单信息
+     * 
      * @return array
      */
     public static function edit($param)
     {
         if ($param['menu_pid'] == $param['admin_menu_id']) {
-            error('菜单父级不能等于菜单本身');
+            return error('菜单父级不能等于菜单本身');
         }
 
         $admin_menu_id = $param['admin_menu_id'];
@@ -107,7 +110,7 @@ class AdminMenuService
             ->where('admin_menu_id', '<>', $admin_menu_id)
             ->find();
         if ($admin_menu) {
-            error('菜单已存在');
+            return error('菜单已存在');
         }
 
         unset($param['admin_menu_id']);
@@ -117,7 +120,7 @@ class AdminMenuService
             ->update($param);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         $param['admin_menu_id'] = $admin_menu_id;
@@ -132,6 +135,7 @@ class AdminMenuService
      * 菜单删除
      *
      * @param integer $admin_menu_id 菜单id
+     * 
      * @return array
      */
     public static function dele($admin_menu_id)
@@ -151,7 +155,7 @@ class AdminMenuService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminMenuCache::del(0);
@@ -164,6 +168,7 @@ class AdminMenuService
      * 菜单信息
      *
      * @param integer $admin_menu_id 菜单id
+     * 
      * @return array
      */
     public static function info($admin_menu_id)
@@ -196,7 +201,7 @@ class AdminMenuService
                     ->find();
 
                 if (empty($admin_menu)) {
-                    error('菜单不存在');
+                    return error('菜单不存在');
                 }
             }
 
@@ -210,6 +215,7 @@ class AdminMenuService
      * 菜单是否禁用
      *
      * @param array $param 菜单信息
+     * 
      * @return array
      */
     public static function prohibit($param)
@@ -223,7 +229,7 @@ class AdminMenuService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminMenuCache::del(0);
@@ -236,6 +242,7 @@ class AdminMenuService
      * 菜单是否无需授权
      *
      * @param array $param 菜单信息
+     * 
      * @return array
      */
     public static function unauth($param)
@@ -249,7 +256,7 @@ class AdminMenuService
             ->update($data);
 
         if (empty($update)) {
-            error();
+            return error();
         }
 
         AdminMenuCache::del(0);
@@ -261,8 +268,9 @@ class AdminMenuService
     /**
      * 菜单所有子级获取
      *
-     * @param array $admin_menu 所有菜单
+     * @param array   $admin_menu    所有菜单
      * @param integer $admin_menu_id 菜单id
+     * 
      * @return array
      */
     public static function getChildren($admin_menu, $admin_menu_id)
@@ -282,8 +290,9 @@ class AdminMenuService
     /**
      * 菜单树形获取
      *
-     * @param array $admin_menu
-     * @param integer $menu_pid
+     * @param array   $admin_menu 所有菜单
+     * @param integer $menu_pid   菜单父级id
+     * 
      * @return array
      */
     public static function toTree($admin_menu, $menu_pid)

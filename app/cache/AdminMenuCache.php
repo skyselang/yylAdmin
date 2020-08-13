@@ -2,7 +2,8 @@
 /*
  * @Description  : 菜单缓存
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-06
+ * @Date         : 2020-06-12
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\cache;
@@ -15,6 +16,7 @@ class AdminMenuCache
      * 缓存key
      *
      * @param integer $admin_menu_id 菜单id
+     * 
      * @return string
      */
     public static function key($admin_menu_id = 0)
@@ -28,6 +30,7 @@ class AdminMenuCache
      * 缓存有效时间
      *
      * @param integer $expire 有效时间
+     * 
      * @return integer
      */
     public static function exp($expire = 0)
@@ -45,6 +48,7 @@ class AdminMenuCache
      * @param integer $admin_menu_id 菜单id
      * @param array   $admin_menu    菜单信息
      * @param integer $expire        有效时间
+     * 
      * @return array 菜单信息
      */
     public static function set($admin_menu_id = 0, $admin_menu = [], $expire = 0)
@@ -61,6 +65,7 @@ class AdminMenuCache
      * 缓存获取
      *
      * @param integer $admin_menu_id 菜单id
+     * 
      * @return array 菜单信息
      */
     public static function get($admin_menu_id = 0)
@@ -75,6 +80,7 @@ class AdminMenuCache
      * 缓存删除
      *
      * @param integer $admin_menu_id 菜单id
+     * 
      * @return bool
      */
     public static function del($admin_menu_id = 0)
