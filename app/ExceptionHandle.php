@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 异常处理
+ * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
  * @LastEditTime : 2020-08-13
@@ -18,9 +18,6 @@ use think\facade\Env;
 use think\Response;
 use Throwable;
 
-/**
- * 应用异常处理类
- */
 class ExceptionHandle extends Handle
 {
     /**
