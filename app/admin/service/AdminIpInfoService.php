@@ -3,6 +3,7 @@
  * @Description  : ip信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
+ * @LastEditTime : 2020-08-13
  */
 
 namespace app\admin\service;
@@ -24,7 +25,7 @@ class AdminIpInfoService
 
         if (empty($ip_info)) {
             $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';
-            $res = httpGet($url);
+            $res = http_get($url);
 
             $ip_info = [
                 'ip'     => $ip,
