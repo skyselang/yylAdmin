@@ -42,9 +42,7 @@ function error($msg = '操作失败', $err = [], $code = 400)
     $res['msg']  = $msg;
     $res['err']  = $err;
 
-    print_r(json_encode($res));
-
-    exit;
+    return json($res);
 }
 
 /**
