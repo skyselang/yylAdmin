@@ -4,7 +4,7 @@
 
 ## 简介
 
-[yylAdmin](https://gitee.com/skyselang/yylAdmin) 是一个极简后台管理系统，只有登录注销、权限管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Element2；项目由后端[yylAdmin](https://gitee.com/skyselang/yylAdmin)和前端[yylAdminWeb](https://gitee.com/skyselang/yylAdminWeb)组成。
+[yylAdmin](https://gitee.com/skyselang/yylAdmin) 是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Element2；项目由后端[yylAdmin](https://gitee.com/skyselang/yylAdmin)和前端[yylAdminWeb](https://gitee.com/skyselang/yylAdminWeb)组成。
 - [yylAdmin](https://gitee.com/skyselang/yylAdmin) 
 - [yylAdminWeb](https://gitee.com/skyselang/yylAdminWeb)
 
@@ -36,13 +36,13 @@ cd yylAdmin
 # 安装依赖
 composer install
 
-# 可以通过如下操作解决 composer 下载速度慢的问题
-composer config repo.packagist composer https://packagist.phpcomposer.com
+# 可以通过composer镜像解决速度慢的问题
+composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 # 配置环境（PhpStudy）
 
 # 导入数据库
-数据库文件：public/storage/admin/sql
+数据库文件：public/private/yyladmin.sql
 
 ```
 WEB部分
@@ -56,7 +56,7 @@ cd yylAdminWeb
 # 安装依赖
 npm install
 
-# 可以通过如下操作解决 npm 下载速度慢的问题
+# 可以通过npm镜像解决速度慢的问题
 npm install --registry=https://registry.npm.taobao.org
 
 # 启动服务
