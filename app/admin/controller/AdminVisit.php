@@ -3,13 +3,13 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-23
- * @LastEditTime : 2020-08-03
+ * @LastEditTime : 2020-08-14
  */
 
 namespace app\admin\controller;
 
-use app\admin\service\AdminVisitService;
 use think\facade\Request;
+use app\admin\service\AdminVisitService;
 
 class AdminVisit
 {
@@ -20,24 +20,65 @@ class AdminVisit
      *
      * @return json
      */
-    public function visit()
+    public function visitCount()
     {
-        $date_date = Request::param('date_date/a', []);
-        $city_date = Request::param('city_date/a', []);
-        $isp_date  = Request::param('isp_date/a', []);
+        $data['total']     = AdminVisitService::visitCount('total');
+        $data['today']     = AdminVisitService::visitCount('today');
+        $data['yesterday'] = AdminVisitService::visitCount('yesterday');
+        $data['thisweek']  = AdminVisitService::visitCount('thisWeek');
+        $data['lastweek']  = AdminVisitService::visitCount('lastWeek');
+        $data['thismonth'] = AdminVisitService::visitCount('thisMonth');
+        $data['lastmonth'] = AdminVisitService::visitCount('lastMonth');
 
-        $visit['total']     = AdminVisitService::count('total');
-        $visit['today']     = AdminVisitService::count('today');
-        $visit['yesterday'] = AdminVisitService::count('yesterday');
-        $visit['thisweek']  = AdminVisitService::count('thisWeek');
-        $visit['lastweek']  = AdminVisitService::count('lastWeek');
-        $visit['thismonth'] = AdminVisitService::count('thisMonth');
-        $visit['lastmonth'] = AdminVisitService::count('lastMonth');
+        return success($data);
+    }
 
-        $data['count'] = $visit;
-        $data['date']  = AdminVisitService::date($date_date);
-        $data['city']  = AdminVisitService::city($city_date, 20);
-        $data['isp']   = AdminVisitService::isp($isp_date, 20);
+    /**
+     * 日期统计
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function visitDate()
+    {
+        $date = Request::param('date/a', []);
+
+        $data = AdminVisitService::visitDate($date);
+
+        return success($data);
+    }
+
+    /**
+     * 城市统计
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function visitCity()
+    {
+        $date = Request::param('date/a', []);
+        $top  = Request::param('top/d', 20);
+
+        $data = AdminVisitService::visitCity($date, $top);
+
+        return success($data);
+    }
+
+    /**
+     * ISP统计
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function visitIsp()
+    {
+        $date = Request::param('date/a', []);
+        $top  = Request::param('top/d', 20);
+
+        $data = AdminVisitService::visitIsp($date, $top);
 
         return success($data);
     }
