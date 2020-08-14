@@ -3,7 +3,7 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-14
  */
 
 use think\facade\Config;
@@ -42,7 +42,9 @@ function error($msg = '操作失败', $err = [], $code = 400)
     $res['msg']  = $msg;
     $res['err']  = $err;
 
-    return json($res);
+    print_r(json_encode($res, true));
+
+    exit;
 }
 
 /**
