@@ -25,7 +25,7 @@
         "topthink/think-orm": "^2.0",
         "firebase/php-jwt": "^5.2",
         "topthink/think-multi-app": "^1.0",
-        "endroid/qr-code": "^3.7",
+        "endroid/qr-code": "^3.9",
         "topthink/think-captcha": "^3.0"
     },
     "require-dev": {
