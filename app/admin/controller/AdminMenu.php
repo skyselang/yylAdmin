@@ -2,7 +2,8 @@
 /*
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-30
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-15
  */
 
 namespace app\admin\controller;
@@ -17,6 +18,7 @@ class AdminMenu
      * 菜单列表
      *
      * @method GET
+     * 
      * @return json
      */
     public function menuList()
@@ -30,6 +32,7 @@ class AdminMenu
      * 菜单添加
      *
      * @method POST
+     * 
      * @return json
      */
     public function menuAdd()
@@ -55,6 +58,7 @@ class AdminMenu
      * 菜单修改
      *
      * @method POST
+     * 
      * @return json
      */
     public function menuEdit()
@@ -80,6 +84,7 @@ class AdminMenu
      * 菜单删除
      *
      * @method POST
+     * 
      * @return json
      */
     public function menuDele()
@@ -97,6 +102,7 @@ class AdminMenu
      * 菜单信息
      *
      * @method GET
+     * 
      * @return json
      */
     public function menuInfo()
@@ -114,6 +120,7 @@ class AdminMenu
      * 菜单是否禁用
      *
      * @method POST
+     * 
      * @return json
      */
     public function menuProhibit()
@@ -135,6 +142,7 @@ class AdminMenu
      * 菜单是否无需权限
      *
      * @method POST
+     * 
      * @return json
      */
     public function menuUnauth()

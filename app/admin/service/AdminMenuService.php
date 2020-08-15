@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-14
+ * @LastEditTime : 2020-08-15
  */
 
 namespace app\admin\service;
@@ -63,18 +63,27 @@ class AdminMenuService
      */
     public static function add($param)
     {
-        $admin_menu = Db::name('admin_menu')
+        $menu_name = Db::name('admin_menu')
             ->field('admin_menu_id')
-            ->where('menu_pid', $param['menu_pid'])
-            ->where('menu_name', $param['menu_name'])
-            ->where('is_delete', 0)
+            ->where('menu_pid', '=', $param['menu_pid'])
+            ->where('menu_name', '=', $param['menu_name'])
+            ->where('is_delete', '=', 0)
             ->find();
-        if ($admin_menu) {
+
+        $menu_url = Db::name('admin_menu')
+            ->field('admin_menu_id')
+            ->where('menu_url', '=', $param['menu_url'])
+            ->where('menu_url', '<>', '')
+            ->where('is_delete', '=', 0)
+            ->find();
+
+        if ($menu_name || $menu_url) {
             error('菜单已存在');
         }
 
         $param['create_time'] = date('Y-m-d H:i:s');
-        $admin_menu_id = Db::name('admin_menu')->insertGetId($param);
+        $admin_menu_id = Db::name('admin_menu')
+            ->insertGetId($param);
 
         if (empty($admin_menu_id)) {
             error();
@@ -102,14 +111,24 @@ class AdminMenuService
         }
 
         $admin_menu_id = $param['admin_menu_id'];
-        $admin_menu = Db::name('admin_menu')
+
+        $menu_name = Db::name('admin_menu')
             ->field('admin_menu_id')
-            ->where('menu_pid', $param['menu_pid'])
-            ->where('menu_name', $param['menu_name'])
-            ->where('is_delete', 0)
             ->where('admin_menu_id', '<>', $admin_menu_id)
+            ->where('menu_pid', '=', $param['menu_pid'])
+            ->where('menu_name', '=', $param['menu_name'])
+            ->where('is_delete', '=', 0)
             ->find();
-        if ($admin_menu) {
+
+        $menu_url = Db::name('admin_menu')
+            ->field('admin_menu_id')
+            ->where('admin_menu_id', '<>', $admin_menu_id)
+            ->where('menu_url', '=', $param['menu_url'])
+            ->where('menu_url', '<>', '')
+            ->where('is_delete', '=', 0)
+            ->find();
+
+        if ($menu_name || $menu_url) {
             error('菜单已存在');
         }
 
@@ -118,7 +137,6 @@ class AdminMenuService
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($param);
-
         if (empty($update)) {
             error();
         }
