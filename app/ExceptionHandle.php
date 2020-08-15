@@ -3,7 +3,7 @@
  * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-15
  */
 
 namespace app;
@@ -59,7 +59,7 @@ class ExceptionHandle extends Handle
 
         // 参数验证错误
         if ($e instanceof ValidateException) {
-            return error($e->getError());
+            error($e->getError());
         }
 
         // 请求异常
@@ -69,7 +69,7 @@ class ExceptionHandle extends Handle
 
         $debug = Env::get('app_debug');
         if (!$debug) {
-            return error('服务器错误', 500, $e->getMessage());
+            error('服务器错误', $e->getMessage(), 500);
         }
 
         // 其他错误交给系统处理
