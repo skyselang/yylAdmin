@@ -3,11 +3,12 @@
  * @Description  : token
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-14
  */
 
 namespace app\admin\service;
 
+use app\cache\AdminUserCache;
 use think\facade\Config;
 use Firebase\JWT\JWT;
 
@@ -63,11 +64,20 @@ class AdminTokenService
                 $token_admin_user_id = $decoded->data->admin_user_id;
 
                 if ($admin_user_id != $token_admin_user_id) {
-                    return error('账号信息错误，请重新登录', 'Token：请求头部AdminUserId与登录admin_user_id不一致', 401);
+                    error('账号信息错误', 'Token：登录账号和请求账号不一致', 401);
+                } else {
+                    $admin_user = AdminUserCache::get($admin_user_id);
+                    if (empty($admin_user)) {
+                        error('账号登录状态失效', 'Token：账号登录状态已过期', 401);
+                    } else {
+                        if ($token != $admin_user['admin_token']) {
+                            error('账号已在另一处登录', 'Token：账号已在另一处登录', 401);
+                        }
+                    }
                 }
             }
         } catch (\Exception $e) {
-            return error('登录状态失效，请重新登录', 'Token：' . $e->getMessage(), 401);
+            error('账号登录状态错误', 'Token：' . $e->getMessage(), 401);
         }
     }
 }

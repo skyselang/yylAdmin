@@ -3,7 +3,7 @@
  * @Description  : token验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-14
  */
 
 namespace app\admin\middleware;
@@ -25,22 +25,20 @@ class AdminTokenVerify
      */
     public function handle($request, Closure $next)
     {
-        $api_url        = app('http')->getName() . '/' . $request->pathinfo();
+        $admin_menu_url = admin_menu_url();
         $api_white_list = Config::get('admin.api_white_list');
 
-        if (!in_array($api_url, $api_white_list)) {
-            $token_key   = Config::get('admin.token_key');
-            $admin_token = $request->header($token_key, '');
+        if (!in_array($admin_menu_url, $api_white_list)) {
+            $admin_token = admin_token();
 
             if (empty($admin_token)) {
-                return error('AdminToken must');
+                error('AdminToken must');
             }
 
-            $admin_user_id_key = Config::get('admin.admin_user_id_key');
-            $admin_user_id     = $request->header($admin_user_id_key, '');
+            $admin_user_id = admin_user_id();
 
             if (empty($admin_user_id)) {
-                return error('AdminUserId must');
+                error('AdminUserId must');
             }
 
             AdminTokenService::verify($admin_token, $admin_user_id);
