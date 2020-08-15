@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-15
  */
 
 namespace app\admin\service;
@@ -82,15 +82,15 @@ class AdminToolService
      */
     public static function timestamp($param)
     {
-        $res['type']  = $param['type'];
-        $type = $param['type'];
+        $res['trantype']  = $param['trantype'];
+        $trantype = $param['trantype'];
 
-        if ($type == 'time') {
+        if ($trantype == 'time') {
             $res['datetime']  = $param['datetime'];
             $res['timestamp'] = strtotime($param['datetime']);
         }
 
-        if ($type == 'date') {
+        if ($trantype == 'date') {
             $res['datetime']  = date('Y-m-d H:i:s', $param['timestamp']);
             $res['timestamp'] = $param['timestamp'];
         }

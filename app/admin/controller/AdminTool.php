@@ -3,16 +3,36 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-15
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
 use app\admin\service\AdminToolService;
+use app\admin\validate\AdminToolValidate;
 
 class AdminTool
 {
+    /**
+     * 字符串
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function string()
+    {
+        $str = Request::param('str/s', '');
+
+        $param['string_str'] = $str;
+        validate(AdminToolValidate::class)->scene('string')->check($param);
+
+        $data = AdminToolService::string($str);
+
+        return success($data);
+    }
+
     /**
      * 随机字符串
      *
@@ -22,12 +42,12 @@ class AdminTool
      */
     public function strran()
     {
-        $len = Request::param('len/d', 1);
         $ids = Request::param('ids/a', []);
+        $len = Request::param('len/d', 0);
 
-        if (empty($ids)) {
-            return error('请选择所用字符');
-        }
+        $param['strran_ids'] = $ids;
+        $param['strran_len'] = $len;
+        validate(AdminToolValidate::class)->scene('strran')->check($param);
 
         $data = AdminToolService::strran($ids, $len);
 
@@ -45,18 +65,22 @@ class AdminTool
     {
         $param = Request::only(
             [
-                'type'      => 'time',
+                'trantype'  => 'time',
                 'datetime'  => '',
                 'timestamp' => '',
             ]
         );
 
-        if ($param['type'] == 'time' && !strtotime($param['datetime'])) {
-            return error('请选择有效的时间');
-        }
+        $param['timestamp_trantype']  = $param['trantype'];
+        $param['timestamp_datetime']  = $param['datetime'];
+        $param['timestamp_timestamp'] = $param['timestamp'];
 
-        if ($param['type'] == 'date' && $param['timestamp'] && !is_numeric($param['timestamp'])) {
-            return error('请输入有效的时间戳');
+        validate(AdminToolValidate::class)->scene('timestamp_type')->check($param);
+        if ($param['trantype'] == 'time') {
+            validate(AdminToolValidate::class)->scene('timestamp_time')->check($param);
+        }
+        if ($param['trantype'] == 'date') {
+            validate(AdminToolValidate::class)->scene('timestamp_date')->check($param);
         }
 
         $data = AdminToolService::timestamp($param);
@@ -75,31 +99,10 @@ class AdminTool
     {
         $str = Request::param('str/s', '');
 
-        if (empty($str)) {
-            return error('请输入文本内容');
-        }
+        $param['qrcode_str'] = $str;
+        validate(AdminToolValidate::class)->scene('timestamp_type')->check($param);
 
         $data = AdminToolService::qrcode($str);
-
-        return success($data);
-    }
-
-    /**
-     * 字符串
-     *
-     * @method GET
-     *
-     * @return json
-     */
-    public function string()
-    {
-        $str = Request::param('str/s', '');
-
-        if (empty($str)) {
-            return error('请输入字符串');
-        }
-
-        $data = AdminToolService::string($str);
 
         return success($data);
     }
