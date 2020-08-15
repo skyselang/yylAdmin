@@ -3,7 +3,7 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-08-14
+ * @LastEditTime : 2020-08-15
  */
 
 use think\facade\Config;
@@ -42,7 +42,7 @@ function error($msg = '操作失败', $err = [], $code = 400)
     $res['msg']  = $msg;
     $res['err']  = $err;
 
-    print_r(json_encode($res, true));
+    print_r(json_encode($res, JSON_UNESCAPED_UNICODE));
 
     exit;
 }
@@ -110,11 +110,24 @@ function admin_user_id()
 }
 
 /**
+ * 管理员账号token
+ *
+ * @return string
+ */
+function admin_token()
+{
+    $token_key   = Config::get('admin.token_key');
+    $admin_token = Request::header($token_key, '');
+
+    return $admin_token;
+}
+
+/**
  * 是否超级管理员
  *
  * @param integer $admin_user_id 用户id
  * 
- * @return boolean
+ * @return bool
  */
 function super_admin($admin_user_id = 0)
 {
@@ -132,6 +145,18 @@ function super_admin($admin_user_id = 0)
     } else {
         return false;
     }
+}
+
+/**
+ * 菜单链接
+ *
+ * @return string
+ */
+function admin_menu_url()
+{
+    $admin_men_url = app('http')->getName() . '/' . Request::pathinfo();
+
+    return $admin_men_url;
 }
 
 /**
