@@ -100,7 +100,7 @@ class AdminTool
         $str = Request::param('str/s', '');
 
         $param['qrcode_str'] = $str;
-        validate(AdminToolValidate::class)->scene('timestamp_type')->check($param);
+        validate(AdminToolValidate::class)->scene('qrcode')->check($param);
 
         $data = AdminToolService::qrcode($str);
 

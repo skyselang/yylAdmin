@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-14
  */
 
 namespace app\admin\service;
@@ -70,14 +70,14 @@ class AdminMenuService
             ->where('is_delete', 0)
             ->find();
         if ($admin_menu) {
-            return error('菜单已存在');
+            error('菜单已存在');
         }
 
         $param['create_time'] = date('Y-m-d H:i:s');
         $admin_menu_id = Db::name('admin_menu')->insertGetId($param);
 
         if (empty($admin_menu_id)) {
-            return error();
+            error();
         }
 
         $param['admin_menu_id'] = $admin_menu_id;
@@ -98,7 +98,7 @@ class AdminMenuService
     public static function edit($param)
     {
         if ($param['menu_pid'] == $param['admin_menu_id']) {
-            return error('菜单父级不能等于菜单本身');
+            error('菜单父级不能等于菜单本身');
         }
 
         $admin_menu_id = $param['admin_menu_id'];
@@ -110,7 +110,7 @@ class AdminMenuService
             ->where('admin_menu_id', '<>', $admin_menu_id)
             ->find();
         if ($admin_menu) {
-            return error('菜单已存在');
+            error('菜单已存在');
         }
 
         unset($param['admin_menu_id']);
@@ -120,7 +120,7 @@ class AdminMenuService
             ->update($param);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         $param['admin_menu_id'] = $admin_menu_id;
@@ -155,7 +155,7 @@ class AdminMenuService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminMenuCache::del(0);
@@ -166,6 +166,8 @@ class AdminMenuService
 
     /**
      * 菜单信息
+     * admin_menu_id：0所有菜单链接
+     * admin_menu_id：-1树形菜单
      *
      * @param integer $admin_menu_id 菜单id
      * 
@@ -201,7 +203,7 @@ class AdminMenuService
                     ->find();
 
                 if (empty($admin_menu)) {
-                    return error('菜单不存在');
+                    error('菜单不存在');
                 }
             }
 
@@ -229,7 +231,7 @@ class AdminMenuService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminMenuCache::del(0);
@@ -256,7 +258,7 @@ class AdminMenuService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminMenuCache::del(0);

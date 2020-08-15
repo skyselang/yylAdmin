@@ -103,7 +103,7 @@ class AdminUserService
                 ->find();
 
             if (empty($admin_user)) {
-                return error('用户不存在');
+                error('用户不存在');
             }
 
             unset($admin_user['password']);
@@ -217,7 +217,7 @@ class AdminUserService
             ->where('is_delete', 0)
             ->find();
         if ($admin_user) {
-            return error('账号已存在');
+            error('账号已存在');
         }
 
         $param['is_prohibit']    = 0;
@@ -227,7 +227,7 @@ class AdminUserService
         $admin_user_id = Db::name('admin_user')->insertGetId($param);
 
         if (empty($admin_user_id)) {
-            return error();
+            error();
         }
 
         $param['admin_user_id'] = $admin_user_id;
@@ -255,7 +255,7 @@ class AdminUserService
             ->find();
 
         if ($admin_user) {
-            return error('账号已存在');
+            error('账号已存在');
         }
 
         $param['update_time'] = date('Y-m-d H:i:s');
@@ -264,7 +264,7 @@ class AdminUserService
             ->update($param);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         $param['admin_user_id'] = $admin_user_id;
@@ -290,7 +290,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         $data['admin_user_id'] = $admin_user_id;
@@ -319,7 +319,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         $param['admin_user_id'] = $admin_user_id;
@@ -352,7 +352,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -378,7 +378,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -404,7 +404,7 @@ class AdminUserService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminUserCache::del($admin_user_id);

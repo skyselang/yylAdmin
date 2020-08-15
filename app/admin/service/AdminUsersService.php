@@ -49,7 +49,7 @@ class AdminUsersService
             ->where('is_delete', 0)
             ->find();
         if ($admin_user) {
-            return error('账号已存在');
+            error('账号已存在');
         }
 
         $data['username']    = $username;
@@ -61,7 +61,7 @@ class AdminUsersService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -90,7 +90,7 @@ class AdminUsersService
         if (md5($password) == $admin_user['password']) {
             $data['password'] = md5($passwords);
         } else {
-            return error('原密码错误');
+            error('原密码错误');
         }
 
         $data['update_time'] = date('Y-m-d H:i:s');
@@ -99,7 +99,7 @@ class AdminUsersService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         AdminUserCache::del($admin_user_id);
@@ -125,7 +125,7 @@ class AdminUsersService
             ->where('is_delete', 0)
             ->find();
         if (empty($admin_user)) {
-            return error('用户不存在');
+            error('用户不存在');
         }
 
         $avatar_name = Filesystem::disk('public')
@@ -140,7 +140,7 @@ class AdminUsersService
             ->update($update);
 
         if (empty($res)) {
-            return error();
+            error();
         }
 
         $data['admin_user_id'] = $admin_user_id;

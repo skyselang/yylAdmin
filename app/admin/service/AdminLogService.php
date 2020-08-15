@@ -129,7 +129,7 @@ class AdminLogService
                 ->where('is_delete', 0)
                 ->find();
             if (empty($admin_log)) {
-                return error('日志不存在');
+                error('日志不存在');
             }
 
             if ($admin_log['request_param']) {
@@ -175,7 +175,7 @@ class AdminLogService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         $data['admin_log_id'] = $admin_log_id;

@@ -29,12 +29,11 @@ class AdminLog
         $is_admin_log = Config::get('admin.is_admin_log', false);
 
         if ($is_admin_log) {
-            $admin_user_id_key = Config::get('admin.admin_user_id_key');
-            $admin_user_id     = $request->header($admin_user_id_key, '');
+            $admin_user_id = admin_user_id();
 
             if ($admin_user_id) {
                 $admin_log['admin_user_id']  = $admin_user_id;
-                $admin_log['menu_url']       = app('http')->getName() . '/' . $request->pathinfo();
+                $admin_log['menu_url']       = admin_menu_url();
                 $admin_log['request_method'] = $request->method();
                 $admin_log['request_ip']     = $request->ip();
                 $admin_log['request_param']  = serialize($request->param());

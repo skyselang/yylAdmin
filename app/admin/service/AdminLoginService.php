@@ -29,13 +29,13 @@ class AdminLoginService
         $is_verify   = Config::get('admin.is_verify', false);
         if ($is_verify) {
             if (empty($verify_code)) {
-                return error('请输入验证码');
+                error('请输入验证码');
             }
 
             $AdminVerifyService = new AdminVerifyService();
             $check_verify = $AdminVerifyService->check($verify_id, $verify_code);
             if (empty($check_verify)) {
-                return error('验证码错误');
+                error('验证码错误');
             }
         }
 
@@ -47,11 +47,11 @@ class AdminLoginService
 
         $admin_user = Db::name('admin_user')->field($field)->where($where)->find();
         if (empty($admin_user)) {
-            return error('账号或密码错误');
+            error('账号或密码错误');
         }
 
         if ($admin_user['is_prohibit'] == 1) {
-            return error('账号已被禁用');
+            error('账号已被禁用');
         }
 
         $update['login_ip']   = $param['request_ip'];

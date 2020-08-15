@@ -98,7 +98,7 @@ class AdminRuleService
             ->find();
 
         if ($admin_rule) {
-            return error('权限已存在');
+            error('权限已存在');
         }
 
         sort($param['admin_menu_ids']);
@@ -107,7 +107,7 @@ class AdminRuleService
         $admin_rule_id = Db::name('admin_rule')->insertGetId($param);
 
         if (empty($admin_rule_id)) {
-            return error();
+            error();
         }
 
         $param['admin_rule_id'] = $admin_rule_id;
@@ -134,7 +134,7 @@ class AdminRuleService
             ->find();
 
         if ($admin_rule) {
-            return error('权限已存在');
+            error('权限已存在');
         }
 
         unset($param['admin_rule_id']);
@@ -146,7 +146,7 @@ class AdminRuleService
             ->update($param);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         $param['admin_rule_id'] = $admin_rule_id;
@@ -170,7 +170,7 @@ class AdminRuleService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         $data['admin_rule_id'] = $admin_rule_id;
@@ -193,7 +193,7 @@ class AdminRuleService
             ->find();
 
         if (empty($admin_rule)) {
-            return error('权限不存在');
+            error('权限不存在');
         }
 
         return $admin_rule;
@@ -217,7 +217,7 @@ class AdminRuleService
             ->update($data);
 
         if (empty($update)) {
-            return error();
+            error();
         }
 
         return $param;

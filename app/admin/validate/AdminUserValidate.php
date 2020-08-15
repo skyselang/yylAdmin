@@ -2,7 +2,8 @@
 /*
  * @Description  : 用户验证器
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-04-24
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-15
  */
 
 namespace app\admin\validate;
@@ -12,6 +13,7 @@ use think\facade\Db;
 
 class AdminUserValidate extends Validate
 {
+    // 验证规则
     protected $rule = [
         'admin_user_id' => ['require'],
         'username'      => ['require', 'length' => '3,256'],
@@ -22,6 +24,7 @@ class AdminUserValidate extends Validate
         'avatar'        => ['require', 'file', 'fileExt' => 'jpg,png', 'fileSize' => '102400'],
     ];
 
+    // 错误信息
     protected $message  =   [
         'admin_user_id.require' => '缺少参数admin_user_id',
         'username.require'      => '请输入账号',
@@ -36,6 +39,7 @@ class AdminUserValidate extends Validate
         'avatar.require'        => '请选择图片',
     ];
 
+    // 验证场景
     protected $scene = [
         'admin_user_id' => ['admin_user_id'],
         'username'      => ['username'],
@@ -50,6 +54,7 @@ class AdminUserValidate extends Validate
 
     ];
 
+    // 验证场景定义
     public function sceneuser_login()
     {
         return $this->only(['username', 'password'])
