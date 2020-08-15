@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 14/08/2020 21:56:24
+ Date: 15/08/2020 21:13:06
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `ya_admin_log`  (
   INDEX `admin_log_id`(`admin_log_id`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `request_isp`(`request_isp`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 86 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_admin_log
@@ -62,8 +62,9 @@ CREATE TABLE `ya_admin_menu`  (
   `delete_time` datetime(0) NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`admin_menu_id`) USING BTREE,
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
-  INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+  INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
+  INDEX `menu_url`(`menu_url`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 71 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_admin_menu
@@ -97,7 +98,6 @@ INSERT INTO `ya_admin_menu` VALUES (36, 0, '实用工具', '', 200, '0', '1', 0,
 INSERT INTO `ya_admin_menu` VALUES (35, 4, '用户是否超管', 'admin/AdminUser/userSuperAdmin', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminTool/strran', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminTool/timestamp', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (39, 58, 'MD5加密', 'admin/AdminTool/md5Enc', 200, '0', '0', 1, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminTool/qrcode', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (41, 2, '日志管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (42, 41, '日志列表', 'admin/AdminLog/logList', 200, '0', '0', 0, NULL, NULL, NULL);
