@@ -3,7 +3,7 @@
  * @Description  : 设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-08-04
+ * @LastEditTime : 2020-08-19
  */
 
 namespace app\admin\service;
@@ -17,7 +17,7 @@ class AdminSettingService
      *
      * @return void
      */
-    public static function cacheclear()
+    public static function settingCache()
     {
         $res = Cache::clear();
 
