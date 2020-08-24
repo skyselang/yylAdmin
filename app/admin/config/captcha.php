@@ -3,6 +3,7 @@
  * @Description  : 验证码配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
+ * @LastEditTime : 2020-08-24
  */
 
 return [

@@ -2,7 +2,8 @@
 /*
  * @Description  : 后台配置
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-30
+ * @Date         : 2020-05-05
+ * @LastEditTime : 2020-08-24
  */
 
 return [
@@ -30,7 +31,6 @@ return [
     ],
     // 权限白名单
     'rule_white_list' => [
-        'admin/AdminUsers/users',
         'admin/AdminUsers/usersInfo',
         'admin/AdminUsers/usersLog',
         'admin/AdminIndex/index',
