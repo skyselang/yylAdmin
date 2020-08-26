@@ -27,7 +27,7 @@ class AdminLogService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
     {
         if (empty($field)) {
-            $field = 'admin_log_id,admin_user_id,admin_menu_id,menu_url,request_method,request_ip,request_region,request_isp,create_time';
+            $field = 'admin_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -54,7 +54,7 @@ class AdminLogService
         $admin_menu_id = array_column($list, 'admin_menu_id');
         $admin_menu_id = array_unique($admin_menu_id);
         $admin_menu = Db::name('admin_menu')
-            ->field('admin_menu_id,menu_name')
+            ->field('admin_menu_id,menu_url,menu_name')
             ->where('admin_menu_id', 'in', $admin_menu_id)
             ->select()
             ->toArray();
@@ -71,6 +71,7 @@ class AdminLogService
             foreach ($admin_menu as $km => $vm) {
                 if ($v['admin_menu_id'] == $vm['admin_menu_id']) {
                     $list[$k]['menu_name'] = $vm['menu_name'];
+                    $list[$k]['menu_url']  = $vm['menu_url'];
                 }
             }
 

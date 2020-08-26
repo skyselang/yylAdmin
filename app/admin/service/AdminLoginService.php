@@ -3,7 +3,7 @@
  * @Description  : 登录|退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-26
  */
 
 namespace app\admin\service;
@@ -65,8 +65,11 @@ class AdminLoginService
         $data['admin_user_id'] = $admin_user['admin_user_id'];
         $data['admin_token']   = $admin_user['admin_token'];
 
+        $menu_url   = admin_menu_url();
+        $admin_menu = AdminMenuService::info($menu_url, true);
+
         $admin_log['admin_user_id']  = $admin_user['admin_user_id'];
-        $admin_log['menu_url']       = $param['menu_url'];
+        $admin_log['admin_menu_id']  = $admin_menu['admin_menu_id'];
         $admin_log['request_ip']     = $param['request_ip'];
         $admin_log['request_method'] = $param['request_method'];
         $admin_log['request_param']  = serialize([]);

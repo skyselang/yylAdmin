@@ -39,7 +39,6 @@ class AdminLog
 
                 $admin_log['admin_user_id']  = $admin_user_id;
                 $admin_log['admin_menu_id']  = $admin_menu['admin_menu_id'];
-                $admin_log['menu_url']       = $menu_url;
                 $admin_log['request_method'] = $request->method();
                 $admin_log['request_ip']     = $request->ip();
                 $admin_log['request_param']  = serialize($request->param());
