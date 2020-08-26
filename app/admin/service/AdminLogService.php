@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-26
  */
 
 namespace app\admin\service;
@@ -27,7 +27,7 @@ class AdminLogService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
     {
         if (empty($field)) {
-            $field = 'admin_log_id,admin_user_id,menu_url,request_method,request_ip,request_region,request_isp,create_time';
+            $field = 'admin_log_id,admin_user_id,admin_menu_id,menu_url,request_method,request_ip,request_region,request_isp,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -51,11 +51,11 @@ class AdminLogService
 
         $pages = ceil($count / $limit);
 
-        $menu_url = array_column($list, 'menu_url');
-        $menu_url = array_unique($menu_url);
+        $admin_menu_id = array_column($list, 'admin_menu_id');
+        $admin_menu_id = array_unique($admin_menu_id);
         $admin_menu = Db::name('admin_menu')
-            ->field('menu_url,menu_name')
-            ->where('menu_url', 'in', $menu_url)
+            ->field('admin_menu_id,menu_name')
+            ->where('admin_menu_id', 'in', $admin_menu_id)
             ->select()
             ->toArray();
 
@@ -69,7 +69,7 @@ class AdminLogService
 
         foreach ($list as $k => $v) {
             foreach ($admin_menu as $km => $vm) {
-                if ($v['menu_url'] == $vm['menu_url']) {
+                if ($v['admin_menu_id'] == $vm['admin_menu_id']) {
                     $list[$k]['menu_name'] = $vm['menu_name'];
                 }
             }

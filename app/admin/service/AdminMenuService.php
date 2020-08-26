@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-08-26
  */
 
 namespace app\admin\service;
@@ -188,40 +188,52 @@ class AdminMenuService
      * admin_menu_id：-1树形菜单
      *
      * @param integer $admin_menu_id 菜单id
+     * @param boolean $is_menu_url   是否菜单url
      * 
      * @return array
      */
-    public static function info($admin_menu_id)
+    public static function info($admin_menu_id, $is_menu_url = false)
     {
         $admin_menu = AdminMenuCache::get($admin_menu_id);
 
         if (empty($admin_menu)) {
-            if ($admin_menu_id == 0) {
-                $where[] = ['is_delete', '=', 0];
-                $where[] = ['is_prohibit', '=', 0];
-                $where[] = ['menu_url', '<>', ''];
-
-                $where_un[] = ['is_delete', '=', 0];
-                $where_un[] = ['is_prohibit', '=', 0];
-                $where_un[] = ['menu_url', '<>', ''];
-                $where_un[] = ['is_unauth', '=', 1];
-
+            if ($is_menu_url) {
                 $admin_menu = Db::name('admin_menu')
-                    ->field('menu_url')
-                    ->order('menu_url', 'asc')
-                    ->whereOr([$where, $where_un])
-                    ->column('menu_url');
-            } elseif ($admin_menu_id == -1) {
-                $admin_menu = self::list();
-                $admin_menu = $admin_menu['list'];
-            } else {
-                $admin_menu = Db::name('admin_menu')
-                    ->where('is_delete', 0)
-                    ->where('admin_menu_id', $admin_menu_id)
+                    ->where('menu_url', '=', $admin_menu_id)
                     ->find();
 
                 if (empty($admin_menu)) {
                     error('菜单不存在');
+                }
+            } else {
+                if ($admin_menu_id == 0) {
+                    $where[] = ['is_delete', '=', 0];
+                    $where[] = ['is_prohibit', '=', 0];
+                    $where[] = ['menu_url', '<>', ''];
+
+                    $where_un[] = ['is_delete', '=', 0];
+                    $where_un[] = ['is_prohibit', '=', 0];
+                    $where_un[] = ['menu_url', '<>', ''];
+                    $where_un[] = ['is_unauth', '=', 1];
+
+                    $admin_menu = Db::name('admin_menu')
+                        ->field('menu_url')
+                        ->order('menu_url', 'asc')
+                        ->whereOr([$where, $where_un])
+                        ->column('menu_url');
+                } elseif ($admin_menu_id == -1) {
+                    $admin_menu = self::list();
+                    $admin_menu = $admin_menu['list'];
+                } elseif ($is_menu_url) {
+                } else {
+                    $admin_menu = Db::name('admin_menu')
+                        ->where('is_delete', 0)
+                        ->where('admin_menu_id', $admin_menu_id)
+                        ->find();
+
+                    if (empty($admin_menu)) {
+                        error('菜单不存在');
+                    }
                 }
             }
 
