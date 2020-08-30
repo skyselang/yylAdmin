@@ -3,7 +3,7 @@
  * @Description  : ip信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-08-30
  */
 
 namespace app\admin\service;
@@ -43,9 +43,9 @@ class AdminIpInfoService
                 $ip_info['city']   = $res_data['city'];
                 $ip_info['region'] = $region;
                 $ip_info['isp']    = $res_data['isp'];
-            }
 
-            AdminIpInfoCache::set($ip, $ip_info);
+                AdminIpInfoCache::set($ip, $ip_info);
+            }
         }
 
         return $ip_info;
