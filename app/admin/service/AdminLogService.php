@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-08-26
+ * @LastEditTime : 2020-08-30
  */
 
 namespace app\admin\service;
@@ -103,9 +103,11 @@ class AdminLogService
     {
         if ($admin_log['request_ip']) {
             $ip_info = AdminIpInfoService::info($admin_log['request_ip']);
-            $admin_log['request_city']   = $ip_info['city'];
-            $admin_log['request_region'] = $ip_info['region'];
-            $admin_log['request_isp']    = $ip_info['isp'];
+            $admin_log['request_country']  = $ip_info['country'];
+            $admin_log['request_province'] = $ip_info['province'];
+            $admin_log['request_city']     = $ip_info['city'];
+            $admin_log['request_region']   = $ip_info['region'];
+            $admin_log['request_isp']      = $ip_info['isp'];
         }
 
         $admin_log['create_time'] = date('Y-m-d H:i:s');

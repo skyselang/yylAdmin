@@ -28,21 +28,31 @@ class AdminIpInfoService
             $res = http_get($url);
 
             $ip_info = [
-                'ip'     => $ip,
-                'city'   => '',
-                'region' => '',
-                'isp'    => '',
+                'ip'       => $ip,
+                'country'  => '',
+                'province' => '',
+                'city'     => '',
+                'region'   => '',
+                'isp'      => '',
             ];
 
             if ($res['code'] == 0) {
-                $res_data = $res['data'];
-                $region   = $res_data['country'] . $res_data['region'] . $res_data['city'];
-                $region   = str_replace('X', '', $region);
+                $data     = $res['data'];
+                $country  = $data['country'];
+                $province = $data['region'];
+                $city     = $data['city'];
+                if ($province == '香港' && $city == 'XX') {
+                    $city = $province;
+                }
+                $region = $country . $province . $city;
+                $region = str_replace('X', '', $region);
 
-                $ip_info['ip']     = $ip;
-                $ip_info['city']   = $res_data['city'];
-                $ip_info['region'] = $region;
-                $ip_info['isp']    = $res_data['isp'];
+                $ip_info['ip']       = $ip;
+                $ip_info['country']  = $country;
+                $ip_info['province'] = $province;
+                $ip_info['city']     = $city;
+                $ip_info['region']   = $region;
+                $ip_info['isp']      = $data['isp'];
 
                 AdminIpInfoCache::set($ip, $ip_info);
             }
