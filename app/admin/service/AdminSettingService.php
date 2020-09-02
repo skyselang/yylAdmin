@@ -3,7 +3,7 @@
  * @Description  : 设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-08-19
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -15,7 +15,7 @@ class AdminSettingService
     /**
      * 清除缓存
      *
-     * @return void
+     * @return bool
      */
     public static function settingCache()
     {
