@@ -3,13 +3,12 @@
  * @Description  : 登录|退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-26
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use think\facade\Config;
 use app\cache\AdminUserCache;
 use app\cache\AdminVerifyCache;
 
@@ -24,21 +23,6 @@ class AdminLoginService
      */
     public static function login($param)
     {
-        $verify_id   = $param['verify_id'];
-        $verify_code = $param['verify_code'];
-        $is_verify   = Config::get('admin.is_verify', false);
-        if ($is_verify) {
-            if (empty($verify_code)) {
-                error('请输入验证码');
-            }
-
-            $AdminVerifyService = new AdminVerifyService();
-            $check_verify = $AdminVerifyService->check($verify_id, $verify_code);
-            if (empty($check_verify)) {
-                error('验证码错误');
-            }
-        }
-
         $field = 'admin_user_id,username,nickname,login_num,is_prohibit';
 
         $where[] = ['username', '=', $param['username']];
@@ -65,17 +49,22 @@ class AdminLoginService
         $data['admin_user_id'] = $admin_user['admin_user_id'];
         $data['admin_token']   = $admin_user['admin_token'];
 
-        $menu_url   = admin_menu_url();
-        $admin_menu = AdminMenuService::info($menu_url, true);
+        $admin_menu_url = admin_menu_url();
+        $admin_menu     = AdminMenuService::info($admin_menu_url, true);
+        $request_param  = [];
+        if ($param['verify_id']) {
+            $request_param['verify_id']   = $param['verify_id'];
+            $request_param['verify_code'] = $param['verify_code'];
+        }
 
         $admin_log['admin_user_id']  = $admin_user['admin_user_id'];
         $admin_log['admin_menu_id']  = $admin_menu['admin_menu_id'];
         $admin_log['request_ip']     = $param['request_ip'];
         $admin_log['request_method'] = $param['request_method'];
-        $admin_log['request_param']  = serialize([]);
+        $admin_log['request_param']  = serialize($request_param);
         AdminLogService::add($admin_log);
 
-        AdminVerifyCache::del($verify_id);
+        AdminVerifyCache::del($param['verify_id']);
 
         return $data;
     }

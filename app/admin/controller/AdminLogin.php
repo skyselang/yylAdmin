@@ -1,8 +1,9 @@
 <?php
 /*
- * @Description  : 登录，退出，验证码
+ * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\controller;
@@ -18,6 +19,7 @@ class AdminLogin
      * 登录
      *
      * @method POST
+     * 
      * @return json
      */
     public function login()
@@ -25,10 +27,9 @@ class AdminLogin
         $username       = Request::param('username/s', '');
         $password       = Request::param('password/s', '');
         $verify_id      = Request::param('verify_id/s', '');
-        $verify_code    = Request::param('verify_code/s', '');
+        $verify_code    = Request::param('verify_code/s', '1');
         $request_ip     = Request::ip();
         $request_method = Request::method();
-        $menu_url       = app('http')->getName() . '/' . Request::pathinfo();
 
         $param['username']       = $username;
         $param['password']       = $password;
@@ -36,7 +37,6 @@ class AdminLogin
         $param['verify_code']    = $verify_code;
         $param['request_ip']     = $request_ip;
         $param['request_method'] = $request_method;
-        $param['menu_url']       = $menu_url;
 
         validate(AdminUserValidate::class)->scene('user_login')->check($param);
 
@@ -49,6 +49,7 @@ class AdminLogin
      * 退出
      *
      * @method POST
+     * 
      * @return json
      */
     public function logout()
