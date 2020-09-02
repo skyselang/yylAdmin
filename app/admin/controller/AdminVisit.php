@@ -3,7 +3,7 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-23
- * @LastEditTime : 2020-08-14
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\controller;
@@ -14,7 +14,7 @@ use app\admin\service\AdminVisitService;
 class AdminVisit
 {
     /**
-     * 访问统计
+     * 数量统计
      *
      * @method GET
      *
@@ -50,35 +50,19 @@ class AdminVisit
     }
 
     /**
-     * 城市统计
+     * 访问统计
      *
      * @method GET
      *
      * @return json
      */
-    public function visitCity()
+    public function visitStats()
     {
-        $date = Request::param('date/a', []);
-        $top  = Request::param('top/d', 20);
+        $date  = Request::param('date/a', []);
+        $stats = Request::param('stats/s', 'city');
+        $top   = Request::param('top/d', 20);
 
-        $data = AdminVisitService::visitCity($date, $top);
-
-        return success($data);
-    }
-
-    /**
-     * ISP统计
-     *
-     * @method GET
-     *
-     * @return json
-     */
-    public function visitIsp()
-    {
-        $date = Request::param('date/a', []);
-        $top  = Request::param('top/d', 20);
-
-        $data = AdminVisitService::visitIsp($date, $top);
+        $data = AdminVisitService::visitStats($date, $stats, $top);
 
         return success($data);
     }

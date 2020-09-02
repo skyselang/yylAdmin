@@ -3,7 +3,7 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-08-14
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -15,7 +15,7 @@ use app\cache\AdminVisitCache;
 class AdminVisitService
 {
     /**
-     * 访问统计
+     * 数量统计
      *
      * @param string $date 日期
      *
@@ -80,21 +80,21 @@ class AdminVisitService
     /**
      * 日期统计
      *
-     * @param array $dates 日期范围
+     * @param array $date 日期范围
      *
      * @return array
      */
-    public static function visitDate($dates = [])
+    public static function visitDate($date = [])
     {
-        if (empty($dates)) {
-            $dates[0]  = Datetime::daysAgo(31);
-            $dates[1]  = Datetime::daysAgo(1);
-            $sta_date  = $dates[0];
-            $end_date  = $dates[1];
+        if (empty($date)) {
+            $date[0]  = Datetime::daysAgo(31);
+            $date[1]  = Datetime::daysAgo(1);
+            $sta_date  = $date[0];
+            $end_date  = $date[1];
             $date_days = Datetime::betweenDates($sta_date, $end_date);
         } else {
-            $sta_date  = $dates[0];
-            $end_date  = $dates[1];
+            $sta_date  = $date[0];
+            $end_date  = $date[1];
             $date_days = Datetime::betweenDates($sta_date, $end_date);
         }
 
@@ -102,25 +102,23 @@ class AdminVisitService
         $data = AdminVisitCache::get($key);
 
         if (empty($data)) {
-            $date = [];
-            $num  = [];
+            $x_data = [];
+            $y_data = [];
             foreach ($date_days as $k => $v) {
-                $data = 0;
+                $x_data[] = $v;
                 $where = [];
                 $where[] = ['create_time', '>=', $v . ' 00:00:00'];
                 $where[] = ['create_time', '<=', $v . ' 23:59:59'];
-                $data = Db::name('admin_log')
+                $y_data[] = Db::name('admin_log')
                     ->field('admin_log_id')
                     ->where($where)
                     ->count('admin_log_id');
-                $date[] = $v;
-                $num[]  = $data;
             }
 
             $data = [];
-            $data['date']  = $date;
-            $data['num']   = $num;
-            $data['dates'] = $dates;
+            $data['x_data'] = $x_data;
+            $data['y_data'] = $y_data;
+            $data['date']   = $date;
 
             AdminVisitCache::set($key, $data);
         }
@@ -129,110 +127,79 @@ class AdminVisitService
     }
 
     /**
-     * 城市统计
+     * 访问统计
      *
-     * @param integer $dates 日期范围
+     * @param integer $date  日期范围
+     * @param string  $stats 统计类型
      * @param integer $top   top排行
      *   
      * @return array
      */
-    public static function visitCity($dates = [], $top = 20)
+    public static function visitStats($date = [], $stats = 'city', $top = 20)
     {
-        if (empty($dates)) {
-            $dates[0] = Datetime::daysAgo(31);
-            $dates[1] = Datetime::daysAgo(1);
-            $sta_date = $dates[0];
-            $end_date = $dates[1];
+        if (empty($date)) {
+            $date[0] = Datetime::daysAgo(31);
+            $date[1] = Datetime::daysAgo(1);
+            $sta_date = $date[0];
+            $end_date = $date[1];
         } else {
-            $sta_date = $dates[0];
-            $end_date = $dates[1];
+            $sta_date = $date[0];
+            $end_date = $date[1];
         }
 
-        $key  = 'city:' . $sta_date . '-' . $end_date . ':top:' . $top;
+        $key  = ':' . $sta_date . '-' . $end_date . ':top:' . $top;
+        if ($stats == 'country') {
+            $group = 'request_country';
+            $key = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } elseif ($stats == 'province') {
+            $group = 'request_province';
+            $key = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } elseif ($stats == 'isp') {
+            $group = 'request_isp';
+            $key = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } else {
+            $group = 'request_city';
+            $key = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        }
+
         $data = AdminVisitCache::get($key);
 
         if (empty($data)) {
-            $sta_time = $dates[0] . ' 00:00:00';
-            $end_time = $dates[1] . ' 23:59:59';
-            $where[] = ['request_city', '<>', ''];
+            $sta_time = $date[0] . ' 00:00:00';
+            $end_time = $date[1] . ' 23:59:59';
+
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
 
             $data = Db::name('admin_log')
-                ->field('request_city as city, COUNT(admin_log_id) as num')
+                ->field($field . ', COUNT(admin_log_id) as y_data')
                 ->where($where)
-                ->group('request_city')
-                ->order('num desc')
+                ->group($group)
+                ->order('y_data desc')
                 ->limit($top)
                 ->select();
 
-            $city = [];
-            $num  = [];
+            $x_data = [];
+            $y_data = [];
             foreach ($data as $k => $v) {
-                $city[] = $v['city'];
-                $num[]  = $v['num'];
+                $x_data[] = $v['x_data'];
+                $y_data[] = $v['y_data'];
+                $p_data[] = ['value' => $v['y_data'], 'name' => $v['x_data']];
             }
 
             $data = [];
-            $data['city']  = $city;
-            $data['num']   = $num;
-            $data['dates'] = $dates;
-
-            AdminVisitCache::set($key, $data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * isp统计
-     *
-     * @param integer $dates 日期范围
-     * @param integer $top   top排行
-     *
-     * @return array
-     */
-    public static function visitIsp($dates = [], $top = 20)
-    {
-        if (empty($dates)) {
-            $dates[0] = Datetime::daysAgo(31);
-            $dates[1] = Datetime::daysAgo(1);
-            $sta_date = $dates[0];
-            $end_date = $dates[1];
-        } else {
-            $sta_date = $dates[0];
-            $end_date = $dates[1];
-        }
-
-        $key  = 'isp:' . $sta_date . '-' . $end_date . ':top:' . $top;
-        $data = AdminVisitCache::get($key);
-
-        if (empty($data)) {
-            $sta_time = $dates[0] . ' 00:00:00';
-            $end_time = $dates[1] . ' 23:59:59';
-            $where[] = ['request_isp', '<>', ''];
-            $where[] = ['create_time', '>=', $sta_time];
-            $where[] = ['create_time', '<=', $end_time];
-
-            $data = Db::name('admin_log')
-                ->field('request_isp as isp, COUNT(admin_log_id) as num')
-                ->where($where)
-                ->group('request_isp')
-                ->order('num desc')
-                ->limit($top)
-                ->select();
-
-            $isp = [];
-            $num = [];
-            foreach ($data as $k => $v) {
-                $isp[] = $v['isp'];
-                $num[] = ['value' => $v['num'], 'name' => $v['isp']];
-            }
-
-            $data = [];
-            $data['isp']   = $isp;
-            $data['num']   = $num;
-            $data['dates'] = $dates;
+            $data['x_data'] = $x_data;
+            $data['y_data'] = $y_data;
+            $data['p_data'] = $p_data;
+            $data['date']   = $date;
 
             AdminVisitCache::set($key, $data);
         }
