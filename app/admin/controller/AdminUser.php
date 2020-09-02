@@ -3,6 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\controller;
@@ -17,16 +18,18 @@ class AdminUser
      * 用户列表
      *
      * @method GET
+     * 
      * @return json
      */
     public function userList()
     {
         $page          = Request::param('page/d', 1);
         $limit         = Request::param('limit/d', 10);
-        $order_field   = Request::param('order_field/s ', '');
-        $order_type    = Request::param('order_type/s', '');
+        $sort_field    = Request::param('sort_field/s ', '');
+        $sort_type     = Request::param('sort_type/s', '');
         $username      = Request::param('username/s', '');
         $nickname      = Request::param('nickname/s', '');
+        $email         = Request::param('email/s', '');
         $admin_rule_id = Request::param('admin_rule_id/s', '');
 
         $where = [];
@@ -35,6 +38,9 @@ class AdminUser
         }
         if ($nickname) {
             $where[] = ['nickname', 'like', '%' . $nickname . '%'];
+        }
+        if ($email) {
+            $where[] = ['email', 'like', '%' . $email . '%'];
         }
         $whereOr = false;
         if ($admin_rule_id) {
@@ -49,8 +55,8 @@ class AdminUser
         $field = '';
 
         $order = [];
-        if ($order_field && $order_type) {
-            $order = [$order_field => $order_type];
+        if ($sort_field && $sort_type) {
+            $order = [$sort_field => $sort_type];
         }
 
         $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
@@ -62,6 +68,7 @@ class AdminUser
      * 用户添加
      *
      * @method POST
+     * 
      * @return json
      */
     public function userAdd()
@@ -88,6 +95,7 @@ class AdminUser
      * 用户修改
      *
      * @method POST
+     * 
      * @return json
      */
     public function userEdit()
@@ -114,6 +122,7 @@ class AdminUser
      * 用户删除
      *
      * @method POST
+     * 
      * @return json
      */
     public function userDele()
@@ -131,6 +140,7 @@ class AdminUser
      * 用户信息
      *
      * @method GET
+     * 
      * @return json
      */
     public function userInfo()
@@ -148,6 +158,7 @@ class AdminUser
      * 用户密码重置
      *
      * @method POST
+     * 
      * @return json
      */
     public function userPwd()
@@ -170,6 +181,7 @@ class AdminUser
      * 用户权限分配
      *
      * @method POST
+     * 
      * @return json
      */
     public function userRule()
@@ -193,6 +205,7 @@ class AdminUser
      * 用户权限明细
      *
      * @method POST
+     * 
      * @return json
      */
     public function userRuleInfo()
@@ -210,6 +223,7 @@ class AdminUser
      * 用户是否禁用
      *
      * @method POST
+     * 
      * @return json
      */
     public function userProhibit()
@@ -231,6 +245,7 @@ class AdminUser
      * 用户是否超管
      *
      * @method POST
+     * 
      * @return json
      */
     public function userSuperAdmin()

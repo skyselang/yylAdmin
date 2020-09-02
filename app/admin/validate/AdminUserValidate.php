@@ -3,13 +3,15 @@
  * @Description  : 用户验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\validate;
 
 use think\Validate;
 use think\facade\Db;
+use think\facade\Config;
+use app\admin\service\AdminVerifyService;
 
 class AdminUserValidate extends Validate
 {
@@ -20,6 +22,7 @@ class AdminUserValidate extends Validate
         'nickname'      => ['require', 'length' => '1,32'],
         'password'      => ['require', 'length' => '6,18'],
         'passwords'     => ['require', 'length' => '6,18'],
+        'verify_code'   => ['checkVerify'],
         'email'         => ['checkEmail', 'email'],
         'avatar'        => ['require', 'file', 'fileExt' => 'jpg,png', 'fileSize' => '102400'],
     ];
@@ -45,6 +48,7 @@ class AdminUserValidate extends Validate
         'username'      => ['username'],
         'nickname'      => ['nickname'],
         'password'      => ['password'],
+        'user_login'    => ['username', 'password', 'verify_code'],
         'user_add'      => ['username', 'nickname', 'password', 'email'],
         'user_edit'     => ['admin_user_id', 'username', 'nickname', 'email'],
         'user_pwd'      => ['admin_user_id', 'password'],
@@ -54,12 +58,40 @@ class AdminUserValidate extends Validate
 
     ];
 
-    // 验证场景定义
+    // 验证场景定义-登录
     public function sceneuser_login()
     {
-        return $this->only(['username', 'password'])
+        return $this->only(['username', 'password', 'verify_code'])
             ->remove('username', ['alphaNum', 'length'])
             ->remove('password', ['alphaNum', 'length']);
+    }
+
+    // 验证场景定义-修改信息
+    public function sceneusers_edit()
+    {
+        return $this->only(['username', 'nickname', 'email'])
+            ->append('username', ['checkUsername']);
+    }
+
+    // 账号是否存在
+    protected function checkUsername($value, $rule, $data = [])
+    {
+        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
+        $username      = $data['username'];
+
+        $where[] = ['is_delete', '=', 0];
+        if ($admin_user_id) {
+            $where[] = ['admin_user_id', '<>', $admin_user_id];
+            $where[] = ['email', '=', $username];
+        } else {
+            $where[] = ['email', '=', $username];
+        }
+        $check = Db::name('admin_user')
+            ->field('admin_user_id')
+            ->where($where)
+            ->find();
+
+        return $check ? '账号已存在' : true;
     }
 
     // 邮箱是否存在
@@ -81,5 +113,29 @@ class AdminUserValidate extends Validate
             ->find();
 
         return $check ? '邮箱已存在' : true;
+    }
+
+    // 验证码验证
+    protected function checkVerify($value, $rule, $data = [])
+    {
+        $verify_id   = $data['verify_id'];
+        $verify_code = $data['verify_code'];
+        $is_verify   = Config::get('admin.is_verify', false);
+        $check = false;
+        if ($is_verify) {
+            if (empty($verify_code)) {
+                $check = true;
+                $msg = '请输入验证码';
+            } else {
+                $AdminVerifyService = new AdminVerifyService();
+                $check_verify = $AdminVerifyService->check($verify_id, $verify_code);
+                if (empty($check_verify)) {
+                    $check = true;
+                    $msg = '验证码错误';
+                }
+            }
+        }
+
+        return $check ? $msg : true;
     }
 }

@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -225,7 +225,6 @@ class AdminUserService
         $param['password']       = md5($param['password']);
         $param['create_time']    = date('Y-m-d H:i:s');
         $admin_user_id = Db::name('admin_user')->insertGetId($param);
-
         if (empty($admin_user_id)) {
             error();
         }
@@ -262,7 +261,6 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
-
         if (empty($update)) {
             error();
         }
@@ -288,7 +286,6 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -317,7 +314,6 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -350,7 +346,6 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -376,7 +371,6 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -402,7 +396,6 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -410,5 +403,23 @@ class AdminUserService
         AdminUserCache::del($admin_user_id);
 
         return $param;
+    }
+
+    /**
+     * 用户模糊查询
+     *
+     * @param string $keyword 关键词
+     * @param string $field   字段
+     *
+     * @return array
+     */
+    public static function likeQuery($keyword, $field = 'username|nickname')
+    {
+        $data = Db::name('admin_user')
+            ->where($field, 'like', '%' . $keyword . '%')
+            ->select()
+            ->toArray();
+
+        return $data;
     }
 }
