@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-26
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -84,7 +84,6 @@ class AdminMenuService
         $param['create_time'] = date('Y-m-d H:i:s');
         $admin_menu_id = Db::name('admin_menu')
             ->insertGetId($param);
-
         if (empty($admin_menu_id)) {
             error();
         }
@@ -171,7 +170,6 @@ class AdminMenuService
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', 'in', $admin_menu_ids)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -224,13 +222,11 @@ class AdminMenuService
                 } elseif ($admin_menu_id == -1) {
                     $admin_menu = self::list();
                     $admin_menu = $admin_menu['list'];
-                } elseif ($is_menu_url) {
                 } else {
                     $admin_menu = Db::name('admin_menu')
-                        ->where('is_delete', 0)
                         ->where('admin_menu_id', $admin_menu_id)
+                        ->where('is_delete', 0)
                         ->find();
-
                     if (empty($admin_menu)) {
                         error('菜单不存在');
                     }
@@ -259,7 +255,6 @@ class AdminMenuService
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -286,7 +281,6 @@ class AdminMenuService
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -339,5 +333,23 @@ class AdminMenuService
         }
 
         return $tree;
+    }
+
+    /**
+     * 菜单模糊查询
+     *
+     * @param string $keyword 关键词
+     * @param string $field   字段
+     *
+     * @return array
+     */
+    public static function likeQuery($keyword, $field = 'menu_url|menu_name')
+    {
+        $data = Db::name('admin_menu')
+            ->where($field, 'like', '%' . $keyword . '%')
+            ->select()
+            ->toArray();
+
+        return $data;
     }
 }
