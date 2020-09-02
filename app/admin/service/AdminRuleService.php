@@ -3,7 +3,7 @@
  * @Description  : 权限管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -105,7 +105,6 @@ class AdminRuleService
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['create_time']    = date('Y-m-d H:i:s');
         $admin_rule_id = Db::name('admin_rule')->insertGetId($param);
-
         if (empty($admin_rule_id)) {
             error();
         }
@@ -132,7 +131,6 @@ class AdminRuleService
             ->where('admin_rule_id', '<>', $admin_rule_id)
             ->where('is_delete', 0)
             ->find();
-
         if ($admin_rule) {
             error('权限已存在');
         }
@@ -144,7 +142,6 @@ class AdminRuleService
         $update = Db::name('admin_rule')
             ->where('admin_rule_id', $admin_rule_id)
             ->update($param);
-
         if (empty($update)) {
             error();
         }
@@ -168,7 +165,6 @@ class AdminRuleService
         $update = Db::name('admin_rule')
             ->where('admin_rule_id', $admin_rule_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -191,7 +187,6 @@ class AdminRuleService
             ->where('is_delete', 0)
             ->where('admin_rule_id', $admin_rule_id)
             ->find();
-
         if (empty($admin_rule)) {
             error('权限不存在');
         }
@@ -215,7 +210,6 @@ class AdminRuleService
         $update = Db::name('admin_rule')
             ->where('admin_rule_id', $admin_rule_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
