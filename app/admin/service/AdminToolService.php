@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -107,16 +107,11 @@ class AdminToolService
      */
     public static function qrcode($str)
     {
-        $file_dir = '/storage/admin/user';
-        if (!file_exists('.' . $file_dir)) {
-            mkdir('.' . $file_dir);
-        }
-
         $admin_user_id = admin_user_id();
 
         $file_dir = '/storage/admin/user/' . $admin_user_id;
         if (!file_exists('.' . $file_dir)) {
-            mkdir('.' . $file_dir);
+            mkdir('.' . $file_dir, 0777, true);
         }
 
         $file_name = 'tool_qrcode.png';
