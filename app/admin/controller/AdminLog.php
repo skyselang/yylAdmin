@@ -3,12 +3,15 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
 use app\admin\service\AdminLogService;
+use app\admin\service\AdminMenuService;
+use app\admin\service\AdminUserService;
 use app\admin\validate\AdminLogValidate;
 
 class AdminLog
@@ -17,24 +20,37 @@ class AdminLog
      * 日志列表
      *
      * @method GET
+     * 
      * @return json
      */
     public function logList()
     {
-        $page          = Request::param('page/d', 1);
-        $limit         = Request::param('limit/d', 10);
-        $order_field   = Request::param('order_field/s ', '');
-        $order_type    = Request::param('order_type/s', '');
-        $admin_user_id = Request::param('admin_user_id/d', '');
-        $menu_url      = Request::param('menu_url/s', '');
-        $create_time   = Request::param('create_time/a', '');
+        $page            = Request::param('page/d', 1);
+        $limit           = Request::param('limit/d', 10);
+        $sort_field      = Request::param('sort_field/s ', '');
+        $sort_type       = Request::param('sort_type/s', '');
+        $request_keyword = Request::param('request_keyword/s', '');
+        $admin_user_id   = Request::param('admin_user_id/d', 0);
+        $user_keyword    = Request::param('user_keyword/s', '');
+        $menu_keyword    = Request::param('menu_keyword/s', '');
+        $create_time     = Request::param('create_time/a', []);
 
         $where = [];
+        if ($request_keyword) {
+            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        }
         if ($admin_user_id) {
             $where[] = ['admin_user_id', '=', $admin_user_id];
         }
-        if ($menu_url) {
-            $where[] = ['menu_url', 'like', '%' . $menu_url . '%'];
+        if ($user_keyword) {
+            $admin_user    = AdminUserService::likeQuery($user_keyword);
+            $admin_user_id = array_column($admin_user, 'admin_user_id');
+            $where[] = ['admin_user_id', 'in', $admin_user_id];
+        }
+        if ($menu_keyword) {
+            $admin_menu    = AdminMenuService::likeQuery($menu_keyword);
+            $admin_menu_id = array_column($admin_menu, 'admin_menu_id');
+            $where[] = ['admin_menu_id', 'in', $admin_menu_id];
         }
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
@@ -44,8 +60,8 @@ class AdminLog
         $field = '';
 
         $order = [];
-        if ($order_field && $order_type) {
-            $order = [$order_field => $order_type];
+        if ($sort_field && $sort_type) {
+            $order = [$sort_field => $sort_type];
         }
 
         $data = AdminLogService::list($where, $page, $limit, $field, $order);

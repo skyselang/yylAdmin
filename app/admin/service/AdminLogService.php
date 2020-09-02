@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-08-30
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -17,9 +17,9 @@ class AdminLogService
      * 日志列表
      *
      * @param array   $where 条件
-     * @param string  $field 字段
      * @param integer $page  页数
      * @param integer $limit 数量
+     * @param string  $field 字段
      * @param array   $order 排序
      * 
      * @return array 
@@ -40,6 +40,8 @@ class AdminLogService
             ->where($where)
             ->count('admin_log_id');
 
+        $pages = ceil($count / $limit);
+
         $list = Db::name('admin_log')
             ->field($field)
             ->where($where)
@@ -48,8 +50,6 @@ class AdminLogService
             ->order($order)
             ->select()
             ->toArray();
-
-        $pages = ceil($count / $limit);
 
         $admin_menu_id = array_column($list, 'admin_menu_id');
         $admin_menu_id = array_unique($admin_menu_id);
@@ -139,21 +139,20 @@ class AdminLogService
                 $admin_log['request_param'] = unserialize($admin_log['request_param']);
             }
 
-            $admin_user = Db::name('admin_user')
-                ->field('username,nickname')
-                ->where('admin_user_id', $admin_log['admin_user_id'])
-                ->find();
+            $admin_user = AdminUserService::info($admin_log['admin_user_id']);
+            $admin_log['username'] = '';
+            $admin_log['nickname'] = '';
             if ($admin_user) {
                 $admin_log['username'] = $admin_user['username'];
                 $admin_log['nickname'] = $admin_user['nickname'];
             }
 
-            $admin_menu = Db::name('admin_menu')
-                ->field('menu_name')
-                ->where('menu_url', $admin_log['menu_url'])
-                ->find();
+            $admin_menu = AdminMenuService::info($admin_log['admin_menu_id']);
+            $admin_log['menu_name'] = '';
+            $admin_log['menu_url']  = '';
             if ($admin_menu) {
                 $admin_log['menu_name'] = $admin_menu['menu_name'];
+                $admin_log['menu_url']  = $admin_menu['menu_url'];
             }
 
             AdminLogCache::set($admin_log_id, $admin_log);
