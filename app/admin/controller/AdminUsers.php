@@ -3,13 +3,14 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-07-28
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
 use app\admin\service\AdminUsersService;
+use app\admin\service\AdminMenuService;
 use app\admin\validate\AdminUserValidate;
 
 class AdminUsers
@@ -18,6 +19,7 @@ class AdminUsers
      * 个人信息
      *
      * @method GET
+     * 
      * @return json
      */
     public function usersInfo()
@@ -35,6 +37,7 @@ class AdminUsers
      * 修改信息
      *
      * @method POST
+     * 
      * @return json
      */
     public function usersEdit()
@@ -59,6 +62,7 @@ class AdminUsers
      * 修改密码
      *
      * @method POST
+     * 
      * @return json
      */
     public function usersPwd()
@@ -83,6 +87,7 @@ class AdminUsers
      * 更换头像
      *
      * @method POST
+     * 
      * @return json
      */
     public function usersAvatar()
@@ -104,17 +109,19 @@ class AdminUsers
      * 日志记录
      *
      * @method GET
+     * 
      * @return json
      */
     public function usersLog()
     {
-        $page          = Request::param('page/d', 1);
-        $limit         = Request::param('limit/d', 10);
-        $order_field   = Request::param('order_field/s ', '');
-        $order_type    = Request::param('order_type/s', '');
-        $admin_user_id = Request::param('admin_user_id/d', '');
-        $menu_url      = Request::param('menu_url/s', '');
-        $create_time   = Request::param('create_time/a', '');
+        $page            = Request::param('page/d', 1);
+        $limit           = Request::param('limit/d', 10);
+        $sort_field      = Request::param('sort_field/s ', '');
+        $sort_type       = Request::param('sort_type/s', '');
+        $admin_user_id   = Request::param('admin_user_id/d', 0);
+        $request_keyword = Request::param('request_keyword/s', '');
+        $menu_keyword    = Request::param('menu_keyword/s', '');
+        $create_time     = Request::param('create_time/a', []);
 
         validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
 
@@ -122,8 +129,13 @@ class AdminUsers
         if ($admin_user_id) {
             $where[] = ['admin_user_id', '=', $admin_user_id];
         }
-        if ($menu_url) {
-            $where[] = ['menu_url', 'like', '%' . $menu_url . '%'];
+        if ($request_keyword) {
+            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        }
+        if ($menu_keyword) {
+            $admin_menu    = AdminMenuService::likeQuery($menu_keyword);
+            $admin_menu_id = array_column($admin_menu, 'admin_menu_id');
+            $where[] = ['admin_menu_id', 'in', $admin_menu_id];
         }
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
@@ -133,8 +145,8 @@ class AdminUsers
         $field = '';
 
         $order = [];
-        if ($order_field && $order_type) {
-            $order = [$order_field => $order_type];
+        if ($sort_field && $sort_type) {
+            $order = [$sort_field => $sort_type];
         }
 
         $data = AdminUsersService::log($where, $page, $limit, $field, $order);

@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-09-02
  */
 
 namespace app\admin\service;
@@ -42,16 +42,6 @@ class AdminUsersService
         $nickname      = $param['nickname'];
         $email         = $param['email'];
 
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('username', $username)
-            ->where('admin_user_id', '<>', $admin_user_id)
-            ->where('is_delete', 0)
-            ->find();
-        if ($admin_user) {
-            error('账号已存在');
-        }
-
         $data['username']    = $username;
         $data['nickname']    = $nickname;
         $data['email']       = $email;
@@ -59,7 +49,6 @@ class AdminUsersService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -97,7 +86,6 @@ class AdminUsersService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
-
         if (empty($update)) {
             error();
         }
@@ -138,7 +126,6 @@ class AdminUsersService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             error();
         }
