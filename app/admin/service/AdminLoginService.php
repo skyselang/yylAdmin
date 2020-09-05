@@ -3,7 +3,7 @@
  * @Description  : 登录|退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-05
  */
 
 namespace app\admin\service;
@@ -38,9 +38,11 @@ class AdminLoginService
             error('账号已被禁用');
         }
 
-        $update['login_ip']   = $param['request_ip'];
-        $update['login_time'] = date('Y-m-d H:i:s');
-        $update['login_num']  = $admin_user['login_num'] + 1;
+        $ipinfo = AdminIpInfoService::info($param['request_ip']);
+        $update['login_ip']     = $param['request_ip'];
+        $update['login_region'] = $ipinfo['region'];
+        $update['login_time']   = date('Y-m-d H:i:s');
+        $update['login_num']    = $admin_user['login_num'] + 1;
         Db::name('admin_user')->where('admin_user_id', $admin_user['admin_user_id'])->update($update);
 
         AdminUserCache::del($admin_user['admin_user_id']);
