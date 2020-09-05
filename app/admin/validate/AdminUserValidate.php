@@ -59,7 +59,7 @@ class AdminUserValidate extends Validate
     public function sceneuser_login()
     {
         return $this->only(['username', 'password'])
-            ->remove('username', ['length'])
+            ->remove('username', ['length', 'checkUsername'])
             ->remove('password', ['length']);
     }
 
