@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-05
  */
 
 namespace app\admin\service;
@@ -49,6 +49,7 @@ class AdminUsersService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
+            
         if (empty($update)) {
             error();
         }
@@ -76,6 +77,7 @@ class AdminUsersService
             ->where('admin_user_id', $admin_user_id)
             ->where('is_delete', 0)
             ->find();
+
         if (md5($password) == $admin_user['password']) {
             $data['password'] = md5($passwords);
         } else {
@@ -86,6 +88,7 @@ class AdminUsersService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
+            
         if (empty($update)) {
             error();
         }
@@ -112,6 +115,7 @@ class AdminUsersService
             ->where('admin_user_id', $admin_user_id)
             ->where('is_delete', 0)
             ->find();
+            
         if (empty($admin_user)) {
             error('用户不存在');
         }

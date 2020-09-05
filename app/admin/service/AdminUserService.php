@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-05
  */
 
 namespace app\admin\service;
@@ -18,18 +18,21 @@ class AdminUserService
     /**
      * 用户列表
      *
-     * @param array   $where 条件
-     * @param string  $field 字段
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param array   $order 排序
+     * @param array   $where   条件
+     * @param string  $field   字段
+     * @param integer $page    页数
+     * @param integer $limit   数量
+     * @param array   $order   排序
+     * @param boolean $whereOr OR查询
      * 
      * @return array 
      */
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
     {
-        if (empty($field)) {
-            $field = 'admin_user_id,admin_rule_ids,username,nickname,email,remark,sort,is_prohibit,is_super_admin,login_num,login_ip,login_time,create_time,update_time';
+        if ($field) {
+            $withoutField = '';
+        } else {
+            $withoutField = 'admin_menu_id,password,is_delete,logout_time,delete_time';
         }
 
         if (empty($order)) {
@@ -43,6 +46,7 @@ class AdminUserService
 
             $list = Db::name('admin_user')
                 ->field($field)
+                ->withoutField($withoutField)
                 ->whereOr($where)
                 ->page($page)
                 ->limit($limit)
@@ -58,6 +62,7 @@ class AdminUserService
 
             $list = Db::name('admin_user')
                 ->field($field)
+                ->withoutField($withoutField)
                 ->where($where)
                 ->page($page)
                 ->limit($limit)
@@ -98,6 +103,7 @@ class AdminUserService
 
         if (empty($admin_user)) {
             $admin_user = Db::name('admin_user')
+                ->withoutField('password')
                 ->where('admin_user_id', $admin_user_id)
                 ->where('is_delete', 0)
                 ->find();
@@ -106,7 +112,6 @@ class AdminUserService
                 error('用户不存在');
             }
 
-            unset($admin_user['password']);
             $admin_user['avatar'] = file_url($admin_user['avatar']);
 
             if (super_admin($admin_user_id)) {
@@ -191,6 +196,7 @@ class AdminUserService
             $admin_menu      = array_merge($admin_menu, $white_list);
 
             sort($admin_menu);
+
             $admin_user['admin_rule_ids'] = $admin_rule_ids;
             $admin_user['admin_menu_id']  = $admin_menu_id;
             $admin_user['admin_token']    = AdminTokenService::create($admin_user);
@@ -211,20 +217,13 @@ class AdminUserService
      */
     public static function add($param)
     {
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('username', $param['username'])
-            ->where('is_delete', 0)
-            ->find();
-        if ($admin_user) {
-            error('账号已存在');
-        }
-
         $param['is_prohibit']    = 0;
         $param['is_super_admin'] = 0;
         $param['password']       = md5($param['password']);
         $param['create_time']    = date('Y-m-d H:i:s');
-        $admin_user_id = Db::name('admin_user')->insertGetId($param);
+        $admin_user_id = Db::name('admin_user')
+            ->insertGetId($param);
+
         if (empty($admin_user_id)) {
             error();
         }
@@ -244,23 +243,14 @@ class AdminUserService
     public static function edit($param)
     {
         $admin_user_id = $param['admin_user_id'];
+
         unset($param['admin_user_id']);
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('username', $param['username'])
-            ->where('admin_user_id', '<>', $admin_user_id)
-            ->where('is_delete', 0)
-            ->find();
-
-        if ($admin_user) {
-            error('账号已存在');
-        }
 
         $param['update_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
+
         if (empty($update)) {
             error();
         }
@@ -286,6 +276,7 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
@@ -314,6 +305,7 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
@@ -337,6 +329,7 @@ class AdminUserService
         $admin_user_id  = $param['admin_user_id'];
         $admin_rule_ids = $param['admin_rule_ids'];
         $admin_menu_id  = $param['admin_menu_id'];
+
         sort($admin_rule_ids);
         sort($admin_menu_id);
 
@@ -346,6 +339,7 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
@@ -371,6 +365,7 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
@@ -396,6 +391,7 @@ class AdminUserService
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
@@ -415,11 +411,29 @@ class AdminUserService
      */
     public static function likeQuery($keyword, $field = 'username|nickname')
     {
-        $data = Db::name('admin_user')
+        $admin_user = Db::name('admin_user')
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
 
-        return $data;
+        return $admin_user;
+    }
+
+    /**
+     * 用户精确查询
+     *
+     * @param string $keyword 关键词
+     * @param string $field   字段
+     *
+     * @return array
+     */
+    public static function etQuery($keyword, $field = 'username|nickname')
+    {
+        $admin_user = Db::name('admin_user')
+            ->where($field, '=', $keyword)
+            ->select()
+            ->toArray();
+
+        return $admin_user;
     }
 }

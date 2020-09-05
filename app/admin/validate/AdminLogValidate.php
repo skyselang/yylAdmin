@@ -3,7 +3,7 @@
  * @Description  : 日志验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-09-05
  */
 
 namespace app\admin\validate;
@@ -19,7 +19,7 @@ class AdminLogValidate extends Validate
 
     // 错误信息
     protected $message  =   [
-        'admin_log_id.require' => '缺少参数admin_log_id',
+        'admin_log_id.require' => 'admin_log_id must',
     ];
 
     // 验证场景

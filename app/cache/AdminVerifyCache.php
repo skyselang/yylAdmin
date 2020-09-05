@@ -3,7 +3,7 @@
  * @Description  : 验证码缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-09-04
  */
 
 namespace app\cache;
@@ -30,12 +30,17 @@ class AdminVerifyCache
     /**
      * 缓存有效时间
      *
-     * @param integer $expire 有效时间
+     * @param integer $expire    有效时间
+     * @param string  $verify_id 验证码id
      * 
      * @return integer
      */
-    public static function exp($expire = 0)
+    public static function exp($expire = 0, $verify_id = '')
     {
+        if ($verify_id == 1) {
+            return 30 * 24 * 60 * 60;
+        }
+
         if (empty($expire)) {
             $expire = Config::get('captcha.expire', 180);
         }
@@ -56,7 +61,7 @@ class AdminVerifyCache
     {
         $key = self::key($verify_id);
         $val = $verify_code;
-        $exp = $expire ?: self::exp();
+        $exp = $expire ?: self::exp($expire, $verify_id);
         $res = Cache::set($key, $val, $exp);
 
         return $res;

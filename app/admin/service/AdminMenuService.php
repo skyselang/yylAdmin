@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-05
  */
 
 namespace app\admin\service;
@@ -63,24 +63,6 @@ class AdminMenuService
      */
     public static function add($param)
     {
-        $menu_name = Db::name('admin_menu')
-            ->field('admin_menu_id')
-            ->where('menu_pid', '=', $param['menu_pid'])
-            ->where('menu_name', '=', $param['menu_name'])
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        $menu_url = Db::name('admin_menu')
-            ->field('admin_menu_id')
-            ->where('menu_url', '=', $param['menu_url'])
-            ->where('menu_url', '<>', '')
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($menu_name || $menu_url) {
-            error('菜单已存在');
-        }
-
         $param['create_time'] = date('Y-m-d H:i:s');
         $admin_menu_id = Db::name('admin_menu')
             ->insertGetId($param);
@@ -105,37 +87,15 @@ class AdminMenuService
      */
     public static function edit($param)
     {
-        if ($param['menu_pid'] == $param['admin_menu_id']) {
-            error('菜单父级不能等于菜单本身');
-        }
-
         $admin_menu_id = $param['admin_menu_id'];
 
-        $menu_name = Db::name('admin_menu')
-            ->field('admin_menu_id')
-            ->where('admin_menu_id', '<>', $admin_menu_id)
-            ->where('menu_pid', '=', $param['menu_pid'])
-            ->where('menu_name', '=', $param['menu_name'])
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        $menu_url = Db::name('admin_menu')
-            ->field('admin_menu_id')
-            ->where('admin_menu_id', '<>', $admin_menu_id)
-            ->where('menu_url', '=', $param['menu_url'])
-            ->where('menu_url', '<>', '')
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($menu_name || $menu_url) {
-            error('菜单已存在');
-        }
-
         unset($param['admin_menu_id']);
+
         $param['update_time'] = date('Y-m-d H:i:s');
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($param);
+
         if (empty($update)) {
             error();
         }
@@ -170,6 +130,7 @@ class AdminMenuService
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', 'in', $admin_menu_ids)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
@@ -227,6 +188,7 @@ class AdminMenuService
                         ->where('admin_menu_id', $admin_menu_id)
                         ->where('is_delete', 0)
                         ->find();
+
                     if (empty($admin_menu)) {
                         error('菜单不存在');
                     }
@@ -255,6 +217,7 @@ class AdminMenuService
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
@@ -347,6 +310,24 @@ class AdminMenuService
     {
         $data = Db::name('admin_menu')
             ->where($field, 'like', '%' . $keyword . '%')
+            ->select()
+            ->toArray();
+
+        return $data;
+    }
+
+    /**
+     * 菜单精确查询
+     *
+     * @param string $keyword 关键词
+     * @param string $field   字段
+     *
+     * @return array
+     */
+    public static function etQuery($keyword, $field = 'menu_url|menu_name')
+    {
+        $data = Db::name('admin_menu')
+            ->where($field, '=', $keyword)
             ->select()
             ->toArray();
 

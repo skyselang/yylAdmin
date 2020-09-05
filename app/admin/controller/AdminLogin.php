@@ -3,15 +3,16 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-04
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
+use app\admin\validate\AdminVerifyValidate;
+use app\admin\validate\AdminUserValidate;
 use app\admin\service\AdminLoginService;
 use app\admin\service\AdminVerifyService;
-use app\admin\validate\AdminUserValidate;
 
 class AdminLogin
 {
@@ -38,6 +39,7 @@ class AdminLogin
         $param['request_ip']     = $request_ip;
         $param['request_method'] = $request_method;
 
+        validate(AdminVerifyValidate::class)->scene('check')->check($param);
         validate(AdminUserValidate::class)->scene('user_login')->check($param);
 
         $data = AdminLoginService::login($param);

@@ -3,7 +3,7 @@
  * @Description  : 后台配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-24
+ * @LastEditTime : 2020-09-04
  */
 
 return [
@@ -43,6 +43,4 @@ return [
         'number' => 3, //次数,0不限制
         'expire' => 1, //时间,单位秒
     ],
-    // 是否开启验证码
-    'is_verify' => true,
 ];

@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-04
  */
 
 namespace app\admin\controller;
@@ -42,6 +42,7 @@ class AdminUser
         if ($email) {
             $where[] = ['email', 'like', '%' . $email . '%'];
         }
+
         $whereOr = false;
         if ($admin_rule_id) {
             $whereOr = true;
@@ -102,7 +103,7 @@ class AdminUser
     {
         $param = Request::only(
             [
-                'admin_user_id' => '',
+                'admin_user_id' => 0,
                 'username'      => '',
                 'nickname'      => '',
                 'email'         => '',
@@ -127,9 +128,11 @@ class AdminUser
      */
     public function userDele()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
+        $admin_user_id = Request::param('admin_user_id/d', 0);
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        $param['admin_user_id'] = $admin_user_id;
+
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
 
         $data = AdminUserService::dele($admin_user_id);
 
@@ -145,9 +148,11 @@ class AdminUser
      */
     public function userInfo()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
+        $admin_user_id = Request::param('admin_user_id/d', 0);
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        $param['admin_user_id'] = $admin_user_id;
+
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
 
         $admin_user = AdminUserService::info($admin_user_id);
 
@@ -186,15 +191,15 @@ class AdminUser
      */
     public function userRule()
     {
-        $admin_user_id  = Request::param('admin_user_id/d', '');
+        $admin_user_id  = Request::param('admin_user_id/d', 0);
         $admin_rule_ids = Request::param('admin_rule_ids/a', []);
-        $admin_menu_id = Request::param('admin_menu_id/a', []);
+        $admin_menu_id  = Request::param('admin_menu_id/a', []);
 
         $param['admin_user_id']  = $admin_user_id;
         $param['admin_rule_ids'] = $admin_rule_ids;
         $param['admin_menu_id']  = $admin_menu_id;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
 
         $data = AdminUserService::rule($param);
 
@@ -210,9 +215,11 @@ class AdminUser
      */
     public function userRuleInfo()
     {
-        $admin_user_id  = Request::param('admin_user_id/d', '');
+        $admin_user_id  = Request::param('admin_user_id/d', 0);
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        $param['admin_user_id'] = $admin_user_id;
+
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
 
         $data = AdminUserService::info($admin_user_id);
 
@@ -228,13 +235,13 @@ class AdminUser
      */
     public function userProhibit()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
-        $is_prohibit   = Request::param('is_prohibit/s', 0);
+        $admin_user_id = Request::param('admin_user_id/d', 0);
+        $is_prohibit   = Request::param('is_prohibit/s', '0');
 
         $param['admin_user_id'] = $admin_user_id;
         $param['is_prohibit']   = $is_prohibit;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
 
         $data = AdminUserService::prohibit($param);
 
@@ -250,13 +257,13 @@ class AdminUser
      */
     public function userSuperAdmin()
     {
-        $admin_user_id  = Request::param('admin_user_id/d', '');
-        $is_super_admin = Request::param('is_super_admin/s', 0);
+        $admin_user_id  = Request::param('admin_user_id/d', 0);
+        $is_super_admin = Request::param('is_super_admin/s', '0');
 
         $param['admin_user_id']  = $admin_user_id;
         $param['is_super_admin'] = $is_super_admin;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
 
         $data = AdminUserService::superAdmin($param);
 

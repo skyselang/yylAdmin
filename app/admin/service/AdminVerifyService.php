@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-09-05
  */
 
 namespace app\admin\service;
@@ -15,9 +15,12 @@ use app\cache\AdminVerifyCache;
 
 class AdminVerifyService
 {
-    private $im    = null; // 验证码图片实例
-    private $color = null; // 验证码字体颜色
-
+    // 是否开启验证码
+    protected $switch = false;
+    // 验证码图片实例
+    private $im    = null;
+    // 验证码字体颜色
+    private $color = null;
     // 验证码字符集合
     protected $codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
     // 验证码过期时间（s）
@@ -29,7 +32,7 @@ class AdminVerifyService
     // 使用背景图片
     protected $useImgBg = false;
     // 验证码字体大小(px)
-    protected $fontSize = 25;
+    protected $fontSize = 26;
     // 是否画混淆曲线
     protected $useCurve = true;
     // 是否添加杂点
@@ -44,7 +47,7 @@ class AdminVerifyService
     protected $fontttf = '';
     // 背景颜色
     protected $bg = [243, 251, 254];
-    //算术验证码
+    // 算术验证码
     protected $math = false;
 
     /**
@@ -62,17 +65,44 @@ class AdminVerifyService
      */
     protected function configure(string $config = null): void
     {
-        $config = Config::get('captcha', []);
-
-        foreach ($config as $key => $val) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $val;
+        $admin_verify = self::config();
+        if ($admin_verify) {
+            // 是否开启验证码
+            $this->switch = $admin_verify['verify_switch'];
+            // 是否画混淆曲线
+            $this->useCurve = $admin_verify['verify_curve'];
+            // 是否添加杂点
+            $this->useNoise = $admin_verify['verify_noise'];
+            // 使用背景图片
+            $this->useImgBg = $admin_verify['verify_bgimg'];
+            // 验证码类型：2字母，3数字字母，4算术，5中文，1数字
+            if ($admin_verify['verify_type'] == 2) {
+                $this->codeSet = 'abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
+            } elseif ($admin_verify['verify_type'] == 3) {
+                $this->codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
+            } elseif ($admin_verify['verify_type'] == 4) {
+                $this->math = true;
+            } elseif ($admin_verify['verify_type'] == 5) {
+                $this->useZh = true;
+            } else {
+                $this->codeSet = '0123456789';
+            }
+            // 验证码位数
+            $this->length = $admin_verify['verify_length'];
+            // 验证码有效时间
+            $this->expire = $admin_verify['verify_expire'];
+        } else {
+            $config = Config::get('captcha', []);
+            foreach ($config as $key => $val) {
+                if (property_exists($this, $key)) {
+                    $this->{$key} = $val;
+                }
             }
         }
     }
 
     /**
-     * 创建验证码
+     * 验证码创建
      * @return array
      * @throws Exception
      */
@@ -114,7 +144,7 @@ class AdminVerifyService
     }
 
     /**
-     * 验证验证码是否正确
+     * 验证码验证
      * @access public
      * @param string $verify_id   验证码id
      * @param string $verify_code 验证码
@@ -295,7 +325,7 @@ class AdminVerifyService
      */
     protected function background(): void
     {
-        $path = __DIR__ . '/../assets/bgs/';
+        $path = './static/verify/assets/bgs/';
         $dir  = dir($path);
 
         $bgs = [];
@@ -316,23 +346,40 @@ class AdminVerifyService
     }
 
     /**
-     * 验证码
+     * 验证码获取
      *
      * @return array
      */
     public function verify()
     {
-        $is_verify = Config::get('admin.is_verify', false);
-
-        if ($is_verify) {
+        $verify_switch = $this->switch;
+        if ($verify_switch) {
             $verify = $this->create();
 
             $res['verify_id']  = $verify['verify_id'];
             $res['verify_src'] = $verify['verify_src'];
         }
 
-        $res['is_verify'] = $is_verify;
+        $res['verify_switch'] = $verify_switch;
 
         return $res;
+    }
+
+    /**
+     * 验证码配置
+     *
+     * @return array
+     */
+    public static function config()
+    {
+        $admin_setting_id = 1;
+        $admin_verify     = AdminVerifyCache::get($admin_setting_id);
+
+        if (empty($admin_verify)) {
+            $admin_verify = AdminSettingService::settingVerify();
+            AdminVerifyCache::set($admin_setting_id, $admin_verify);
+        }
+
+        return $admin_verify;
     }
 }

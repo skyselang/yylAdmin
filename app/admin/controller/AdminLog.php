@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-05
  */
 
 namespace app\admin\controller;
@@ -43,7 +43,7 @@ class AdminLog
             $where[] = ['admin_user_id', '=', $admin_user_id];
         }
         if ($user_keyword) {
-            $admin_user    = AdminUserService::likeQuery($user_keyword);
+            $admin_user    = AdminUserService::etQuery($user_keyword);
             $admin_user_id = array_column($admin_user, 'admin_user_id');
             $where[] = ['admin_user_id', 'in', $admin_user_id];
         }
