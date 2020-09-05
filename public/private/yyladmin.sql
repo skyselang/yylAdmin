@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 05/09/2020 21:10:20
+ Date: 05/09/2020 22:51:28
 */
 
 SET NAMES utf8mb4;
@@ -151,9 +151,9 @@ CREATE TABLE `yyl_admin_rule`  (
 -- Records of yyl_admin_rule
 -- ----------------------------
 INSERT INTO `yyl_admin_rule` VALUES (1, '管理员', '1,2,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,56,58,59,60,62,63,64,65,66,67,71', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (2, '技术', '0', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (3, '产品', '0', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (4, '操作', '0', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (2, '技术', '', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (3, '产品', '', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (4, '操作', '', '', 200, '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_rule` VALUES (5, '客服', '1,2,3,4,5,12,13,17,22,36,37,38,40,41,42,45,49,50,51,52,54,56,58,62,63,64,65,66,67', '', 200, '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_rule` VALUES (6, '演示', '1,13,17,22,36,37,38,40,42,45,49,50,51,52,54,56,58,62,63,64,65,66,67', '', 200, '0', 0, NULL, NULL, NULL);
 
@@ -172,7 +172,7 @@ CREATE TABLE `yyl_admin_setting`  (
 -- ----------------------------
 -- Records of yyl_admin_setting
 -- ----------------------------
-INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:13:\"verify_switch\";b:1;s:12:\"verify_curve\";b:0;s:12:\"verify_noise\";b:1;s:12:\"verify_bgimg\";b:0;s:11:\"verify_type\";s:1:\"1\";s:13:\"verify_length\";s:1:\"4\";s:13:\"verify_expire\";s:3:\"180\";}', '2020-09-04 14:26:37', '2020-09-05 20:21:01');
+INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:13:\"verify_switch\";b:1;s:12:\"verify_curve\";b:0;s:12:\"verify_noise\";b:1;s:12:\"verify_bgimg\";b:0;s:11:\"verify_type\";s:1:\"1\";s:13:\"verify_length\";s:1:\"4\";s:13:\"verify_expire\";s:3:\"180\";}', '2020-09-05 19:26:37', '2020-09-05 20:21:01');
 
 -- ----------------------------
 -- Table structure for yyl_admin_user
@@ -182,8 +182,8 @@ CREATE TABLE `yyl_admin_user`  (
   `admin_user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id',
   `admin_rule_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '权限id',
   `admin_menu_id` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单id',
-  `username` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
-  `nickname` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
+  `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
   `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   `email` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
   `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'static/img/favicon.ico' COMMENT '头像',
@@ -194,6 +194,7 @@ CREATE TABLE `yyl_admin_user`  (
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
   `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
+  `login_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录地区',
   `login_time` datetime(0) NULL DEFAULT NULL COMMENT '登录时间',
   `logout_time` datetime(0) NULL DEFAULT NULL COMMENT '退出时间',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '添加时间',
@@ -207,10 +208,10 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '215817969@qq.com', 'storage/admin/user/1/avatar.png?t=20200902204003', '超级管理员', 200, '0', '0', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (2, '6,25', '', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/2/avatar.png?t=20200805092019', '演示账号', 200, '0', '0', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (6, '1', '', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (7, '6,25', '', '12345', '12345', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '演示账号', 200, '0', '0', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (9, '6', '1,36,40,49,50,53,56,59', '123456', '123456', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '215817969@qq.com', 'storage/admin/user/1/avatar.png?t=20200902204003', '超级管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (2, '6,25', '', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/2/avatar.png?t=20200805092019', '演示账号', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (6, '1', '', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (7, '6,25', '', '12345', '12345', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '演示账号', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (9, '6', '1,36,40,49,50,53,56,59', '123456', '123456', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
