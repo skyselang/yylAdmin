@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 05/09/2020 22:51:28
+ Date: 09/09/2020 18:29:14
 */
 
 SET NAMES utf8mb4;
@@ -66,7 +66,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 85 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 86 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -123,7 +123,8 @@ INSERT INTO `yyl_admin_menu` VALUES (62, 53, '系统设置', 'admin/AdminSetting
 INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串', 'admin/AdminTool/string', 210, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (65, 56, '访问统计', 'admin/AdminVisit/visitStats', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (67, 56, '数量统计', 'admin/AdminVisit/visitCount', 220, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (71, 53, '缓存清除', 'admin/AdminSetting/settingCache', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (71, 53, '缓存设置', 'admin/AdminSetting/settingCache', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (73, 53, '验证码设置', 'admin/AdminSetting/settingVerify', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (75, 12, '验证码', 'admin/AdminLogin/verify', 150, '0', '0', 0, NULL, NULL, NULL);
 
@@ -164,6 +165,7 @@ DROP TABLE IF EXISTS `yyl_admin_setting`;
 CREATE TABLE `yyl_admin_setting`  (
   `admin_setting_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '设置id',
   `admin_verify` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '验证码设置',
+  `admin_token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'token设置',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE
@@ -172,7 +174,7 @@ CREATE TABLE `yyl_admin_setting`  (
 -- ----------------------------
 -- Records of yyl_admin_setting
 -- ----------------------------
-INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:13:\"verify_switch\";b:1;s:12:\"verify_curve\";b:0;s:12:\"verify_noise\";b:1;s:12:\"verify_bgimg\";b:0;s:11:\"verify_type\";s:1:\"1\";s:13:\"verify_length\";s:1:\"4\";s:13:\"verify_expire\";s:3:\"180\";}', '2020-09-05 19:26:37', '2020-09-05 20:21:01');
+INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";s:1:\"1\";s:6:\"length\";s:1:\"4\";s:6:\"expire\";s:3:\"180\";}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";s:2:\"12\";}', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_user
@@ -208,9 +210,9 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '215817969@qq.com', 'storage/admin/user/1/avatar.png?t=20200902204003', '超级管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/1/avatar.png?t=20200902204003', '超级管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, '6,25', '', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/2/avatar.png?t=20200805092019', '演示账号', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (6, '1', '', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (6, '', '', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (7, '6,25', '', '12345', '12345', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '演示账号', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (9, '6', '1,36,40,49,50,53,56,59', '123456', '123456', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 

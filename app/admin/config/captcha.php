@@ -1,16 +1,15 @@
 <?php
 /*
- * @Description  : 验证码配置
+ * @Description  : 验证码配置（默认）
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-09-04
+ * @LastEditTime : 2020-09-09
  */
 
 return [
     // 验证码位数
     'length'   => 4,
     // 验证码字符集合
-    // 2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY
     'codeSet'  => '0123456789',
     // 验证码过期时间（s)
     'expire'   => 180,

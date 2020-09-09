@@ -3,7 +3,7 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-09-09
  */
 
 use think\facade\Config;
@@ -116,8 +116,8 @@ function admin_user_id()
  */
 function admin_token()
 {
-    $token_key   = Config::get('admin.token_key');
-    $admin_token = Request::header($token_key, '');
+    $admin_token_key = Config::get('admin.admin_token_key');
+    $admin_token     = Request::header($admin_token_key, '');
 
     return $admin_token;
 }
@@ -154,9 +154,9 @@ function super_admin($admin_user_id = 0)
  */
 function admin_menu_url()
 {
-    $admin_men_url = app('http')->getName() . '/' . Request::pathinfo();
+    $admin_menu_url = app('http')->getName() . '/' . Request::pathinfo();
 
-    return $admin_men_url;
+    return $admin_menu_url;
 }
 
 /**

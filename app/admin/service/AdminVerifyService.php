@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-09-05
+ * @LastEditTime : 2020-09-09
  */
 
 namespace app\admin\service;
@@ -18,7 +18,7 @@ class AdminVerifyService
     // 是否开启验证码
     protected $switch = false;
     // 验证码图片实例
-    private $im    = null;
+    private $im = null;
     // 验证码字体颜色
     private $color = null;
     // 验证码字符集合
@@ -60,6 +60,19 @@ class AdminVerifyService
     }
 
     /**
+     * 验证码配置
+     *
+     * @return array
+     */
+    public static function config()
+    {
+        $admin_setting = AdminSettingService::admin_setting();
+        $admin_verify  = $admin_setting['admin_verify'];
+
+        return $admin_verify;
+    }
+
+    /**
      * 配置验证码
      * @param string|null $config
      */
@@ -68,29 +81,29 @@ class AdminVerifyService
         $admin_verify = self::config();
         if ($admin_verify) {
             // 是否开启验证码
-            $this->switch = $admin_verify['verify_switch'];
+            $this->switch = $admin_verify['switch'];
             // 是否画混淆曲线
-            $this->useCurve = $admin_verify['verify_curve'];
+            $this->useCurve = $admin_verify['curve'];
             // 是否添加杂点
-            $this->useNoise = $admin_verify['verify_noise'];
+            $this->useNoise = $admin_verify['noise'];
             // 使用背景图片
-            $this->useImgBg = $admin_verify['verify_bgimg'];
+            $this->useImgBg = $admin_verify['bgimg'];
             // 验证码类型：2字母，3数字字母，4算术，5中文，1数字
-            if ($admin_verify['verify_type'] == 2) {
+            if ($admin_verify['type'] == 2) {
                 $this->codeSet = 'abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-            } elseif ($admin_verify['verify_type'] == 3) {
+            } elseif ($admin_verify['type'] == 3) {
                 $this->codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-            } elseif ($admin_verify['verify_type'] == 4) {
+            } elseif ($admin_verify['type'] == 4) {
                 $this->math = true;
-            } elseif ($admin_verify['verify_type'] == 5) {
+            } elseif ($admin_verify['type'] == 5) {
                 $this->useZh = true;
             } else {
                 $this->codeSet = '0123456789';
             }
             // 验证码位数
-            $this->length = $admin_verify['verify_length'];
+            $this->length = $admin_verify['length'];
             // 验证码有效时间
-            $this->expire = $admin_verify['verify_expire'];
+            $this->expire = $admin_verify['expire'];
         } else {
             $config = Config::get('captcha', []);
             foreach ($config as $key => $val) {
@@ -352,34 +365,17 @@ class AdminVerifyService
      */
     public function verify()
     {
-        $verify_switch = $this->switch;
-        if ($verify_switch) {
+        $switch = $this->switch;
+
+        if ($switch) {
             $verify = $this->create();
 
             $res['verify_id']  = $verify['verify_id'];
             $res['verify_src'] = $verify['verify_src'];
         }
 
-        $res['verify_switch'] = $verify_switch;
+        $res['verify_switch'] = $switch;
 
         return $res;
-    }
-
-    /**
-     * 验证码配置
-     *
-     * @return array
-     */
-    public static function config()
-    {
-        $admin_setting_id = 1;
-        $admin_verify     = AdminVerifyCache::get($admin_setting_id);
-
-        if (empty($admin_verify)) {
-            $admin_verify = AdminSettingService::settingVerify();
-            AdminVerifyCache::set($admin_setting_id, $admin_verify);
-        }
-
-        return $admin_verify;
     }
 }

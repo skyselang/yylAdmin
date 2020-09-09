@@ -3,13 +3,14 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-09-04
+ * @LastEditTime : 2020-09-09
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
 use app\admin\validate\AdminVerifyValidate;
+use app\admin\validate\AdminTokenValidate;
 use app\admin\service\AdminSettingService;
 
 class AdminSetting
@@ -42,19 +43,46 @@ class AdminSetting
         } else {
             $param = Request::only(
                 [
-                    'verify_type'   => 1,
-                    'verify_length' => 4,
-                    'verify_expire' => 180,
+                    'type'   => 1,
+                    'length' => 4,
+                    'expire' => 180,
                 ]
             );
-            $param['verify_switch'] = Request::param('verify_switch/b', false);
-            $param['verify_curve']  = Request::param('verify_curve/b', false);
-            $param['verify_noise']  = Request::param('verify_noise/b', false);
-            $param['verify_bgimg']  = Request::param('verify_bgimg/b', false);
+            $param['switch'] = Request::param('switch/b', false);
+            $param['curve']  = Request::param('curve/b', false);
+            $param['noise']  = Request::param('noise/b', false);
+            $param['bgimg']  = Request::param('bgimg/b', false);
 
             validate(AdminVerifyValidate::class)->scene('edit')->check($param);
 
             $data = AdminSettingService::settingVerify($param);
+        }
+
+        return success($data);
+    }
+
+    /**
+     * Token设置
+     *
+     * @method GET|POST
+     *
+     * @return josn
+     */
+    public function settingToken()
+    {
+        if (Request::isGet()) {
+            $data = AdminSettingService::settingToken();
+        } else {
+            $param = Request::only(
+                [
+                    'iss' => 'yylAdmin',   //签发者
+                    'exp' => 1,            //有效时间（小时）
+                ]
+            );
+
+            validate(AdminTokenValidate::class)->scene('edit')->check($param);
+
+            $data = AdminSettingService::settingToken($param);
         }
 
         return success($data);
