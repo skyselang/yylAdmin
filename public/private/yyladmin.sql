@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 09/09/2020 18:29:14
+ Date: 12/09/2020 10:41:42
 */
 
 SET NAMES utf8mb4;
@@ -39,8 +39,11 @@ CREATE TABLE `yyl_admin_log`  (
   PRIMARY KEY (`admin_log_id`) USING BTREE,
   INDEX `admin_log_id`(`admin_log_id`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
-  INDEX `request_isp`(`request_isp`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
+  INDEX `request_isp`(`request_isp`) USING BTREE,
+  INDEX `request_city`(`request_city`) USING BTREE,
+  INDEX `request_province`(`request_province`) USING BTREE,
+  INDEX `request_country`(`request_country`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of yyl_admin_log
@@ -66,7 +69,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 86 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 88 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -98,9 +101,9 @@ INSERT INTO `yyl_admin_menu` VALUES (32, 4, '用户密码重置', 'admin/AdminUs
 INSERT INTO `yyl_admin_menu` VALUES (33, 5, '权限禁用', 'admin/AdminRule/ruleProhibit', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (36, 0, '实用工具', '', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (35, 4, '用户是否超管', 'admin/AdminUser/userSuperAdmin', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminTool/strran', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminTool/timestamp', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminTool/qrcode', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminTool/strRand', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminTool/timeTran', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminTool/qrcode', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (41, 2, '日志管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (42, 41, '日志列表', 'admin/AdminLog/logList', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (43, 41, '日志信息', 'admin/AdminLog/logInfo', 200, '0', '0', 0, NULL, NULL, NULL);
@@ -120,13 +123,15 @@ INSERT INTO `yyl_admin_menu` VALUES (56, 2, '访问统计', '', 120, '0', '0', 0
 INSERT INTO `yyl_admin_menu` VALUES (64, 56, '日期统计', 'admin/AdminVisit/visitDate', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (60, 4, '用户权限明细', 'admin/AdminUser/userRuleInfo', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (62, 53, '系统设置', 'admin/AdminSetting/setting', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串', 'admin/AdminTool/string', 210, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminTool/strTran', 210, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (65, 56, '访问统计', 'admin/AdminVisit/visitStats', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (67, 56, '数量统计', 'admin/AdminVisit/visitCount', 220, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (71, 53, '缓存设置', 'admin/AdminSetting/settingCache', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (73, 53, '验证码设置', 'admin/AdminSetting/settingVerify', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (75, 12, '验证码', 'admin/AdminLogin/verify', 150, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminTool/ipQuery', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminTool/byteTran', 200, '0', '1', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_rule
@@ -151,12 +156,12 @@ CREATE TABLE `yyl_admin_rule`  (
 -- ----------------------------
 -- Records of yyl_admin_rule
 -- ----------------------------
-INSERT INTO `yyl_admin_rule` VALUES (1, '管理员', '1,2,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,56,58,59,60,62,63,64,65,66,67,71', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (2, '技术', '', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (3, '产品', '', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (4, '操作', '', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (5, '客服', '1,2,3,4,5,12,13,17,22,36,37,38,40,41,42,45,49,50,51,52,54,56,58,62,63,64,65,66,67', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_rule` VALUES (6, '演示', '1,13,17,22,36,37,38,40,42,45,49,50,51,52,54,56,58,62,63,64,65,66,67', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (1, '管理员', '1,2,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,56,58,60,62,63,64,65,67,71,73,75,85,86,87', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (2, '技术', '1,2,3,4,5,12,13,14,15,17,18,19,22,23,24,29,31,36,37,38,40,41,42,43,45,46,47,48,49,50,51,52,53,54,56,58,60,62,63,64,65,67,75,86,87', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (3, '产品', '1,2,3,4,5,12,13,15,17,18,19,22,23,29,36,37,38,40,41,42,43,45,46,47,48,49,50,51,52,53,54,56,58,60,62,63,64,65,67,75,86,87', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (4, '操作', '1,2,3,4,5,12,13,14,17,18,22,23,29,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,56,58,60,62,63,64,65,67,75,86,87', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (5, '客服', '1,2,3,4,5,12,13,17,22,36,37,38,40,41,42,45,46,47,48,49,50,51,52,54,56,58,62,63,64,65,67,75,86,87', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_rule` VALUES (6, '演示', '1,13,17,22,29,36,37,38,40,42,45,49,50,51,52,54,56,58,62,63,64,65,67,75,86,87', '', 200, '0', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_setting
@@ -210,8 +215,8 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/1/avatar.png?t=20200902204003', '超级管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (2, '6,25', '', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/2/avatar.png?t=20200805092019', '演示账号', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/1/avatar.png?t=20200902204003', '超级管理员', 200, '0', '0', 0, 3, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (2, '6,25', '', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/2/avatar.png?t=20200805092019', '演示账号', 200, '0', '0', 0, 1, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (6, '', '', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (7, '6,25', '', '12345', '12345', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '演示账号', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (9, '6', '1,36,40,49,50,53,56,59', '123456', '123456', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);

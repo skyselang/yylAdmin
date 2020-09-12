@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-11
  */
 
 namespace app\admin\service;
@@ -106,6 +106,7 @@ class AdminLogService
             $admin_log['request_country']  = $ip_info['country'];
             $admin_log['request_province'] = $ip_info['province'];
             $admin_log['request_city']     = $ip_info['city'];
+            $admin_log['request_area']     = $ip_info['area'];
             $admin_log['request_region']   = $ip_info['region'];
             $admin_log['request_isp']      = $ip_info['isp'];
         }

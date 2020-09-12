@@ -3,26 +3,28 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-11
  */
 
 namespace app\admin\service;
 
+use think\facade\Cache;
 use Endroid\QrCode\QrCode;
 
 class AdminToolService
 {
     /**
-     * 字符串
+     * 字符串转换
      *
      * @param string $str 字符串
      *
      * @return array
      */
-    public static function string($str)
+    public static function strTran($str)
     {
-        $len = mb_strlen($str, 'utf-8');
         $rev = '';
+        $len = mb_strlen($str, 'utf-8');
+
         for ($i = $len - 1; $i >= 0; $i--) {
             $rev = $rev . mb_substr($str, $i, 1, 'utf-8');
         }
@@ -45,7 +47,7 @@ class AdminToolService
      * 
      * @return array
      */
-    public static function strran($ids, $len)
+    public static function strRand($ids, $len)
     {
         $str_arr = [
             1 => '0123456789',
@@ -61,7 +63,7 @@ class AdminToolService
         $ori = str_shuffle($ori);
 
         $str = '';
-        $str_len    = strlen($ori) - 1;
+        $str_len = strlen($ori) - 1;
         for ($i = 0; $i < $len; $i++) {
             $str .= $ori[mt_rand(0, $str_len)];
         }
@@ -80,22 +82,23 @@ class AdminToolService
      * 
      * @return array
      */
-    public static function timestamp($param)
+    public static function timeTran($param)
     {
-        $res['trantype']  = $param['trantype'];
-        $trantype = $param['trantype'];
+        $type  = $param['type'] ?: 'timestamp';
+        $value = $param['value'] ?: time();
 
-        if ($trantype == 'time') {
-            $res['datetime']  = $param['datetime'];
-            $res['timestamp'] = strtotime($param['datetime']);
+        $data['type']  = $type;
+        $data['value'] = $value;
+
+        if ($type == 'timestamp') {
+            $data['datetime']  = date('Y-m-d H:i:s', $value);
+            $data['timestamp'] = $value;
+        } else {
+            $data['datetime']  = $value;
+            $data['timestamp'] = strtotime($value);
         }
 
-        if ($trantype == 'date') {
-            $res['datetime']  = date('Y-m-d H:i:s', $param['timestamp']);
-            $res['timestamp'] = $param['timestamp'];
-        }
-
-        return $res;
+        return $data;
     }
 
     /**
@@ -120,8 +123,90 @@ class AdminToolService
         $QrCode->writeFile('.' . $file_path);
 
         $qrcode_url = file_url($file_path);
+
         $data['url'] = $qrcode_url . '?r=' . mt_rand(10, 99);
 
         return $data;
+    }
+
+    /**
+     * 字节转换
+     *
+     * @param array $param 类型、数值
+     *
+     * @return array
+     */
+    public static function byteTran($param)
+    {
+        $type  = $param['type'] ?: 'b';
+        $value = $param['value'] ?: 0;
+
+        $hex_b = 8;
+        $hex_B = 1024;
+
+        $data['type']  = $type;
+        $data['value'] = $value;
+
+        if ($type == 'B') {
+            $data['B']  = $value;
+            $data['b']  = $data['B'] * $hex_b;
+            $data['KB'] = $data['B'] / $hex_B;
+            $data['MB'] = $data['KB'] / $hex_B;
+            $data['GB'] = $data['MB'] / $hex_B;
+            $data['TB'] = $data['GB'] / $hex_B;
+        } elseif ($type == 'KB') {
+            $data['KB'] = $value;
+            $data['B']  = $data['KB'] * $hex_B;
+            $data['b']  = $data['B'] * $hex_b;
+            $data['MB'] = $data['KB'] / $hex_B;
+            $data['GB'] = $data['MB'] / $hex_B;
+            $data['TB'] = $data['GB'] / $hex_B;
+        } elseif ($type == 'MB') {
+            $data['MB'] = $value;
+            $data['KB'] = $data['MB'] * $hex_B;
+            $data['B']  = $data['KB'] * $hex_B;
+            $data['b']  = $data['B']  * $hex_b;
+            $data['GB'] = $data['MB'] / $hex_B;
+            $data['TB'] = $data['GB'] / $hex_B;
+        } elseif ($type == 'GB') {
+            $data['GB'] = $value;
+            $data['MB'] = $data['GB'] * $hex_B;
+            $data['KB'] = $data['MB'] * $hex_B;
+            $data['B']  = $data['KB'] * $hex_B;
+            $data['b']  = $data['B'] * $hex_b;
+            $data['TB'] = $data['GB'] / $hex_B;
+        } elseif ($type == 'TB') {
+            $data['TB'] = $value;
+            $data['GB'] = $data['TB'] * $hex_B;
+            $data['MB'] = $data['GB'] * $hex_B;
+            $data['KB'] = $data['MB'] * $hex_B;
+            $data['B']  = $data['KB'] * $hex_B;
+            $data['b']  = $data['B'] * $hex_b;
+        } else {
+            $data['b']  = $value;
+            $data['B']  = $data['b'] / $hex_b;
+            $data['KB'] = $data['B'] / $hex_B;
+            $data['MB'] = $data['KB'] / $hex_B;
+            $data['GB'] = $data['MB'] / $hex_B;
+            $data['TB'] = $data['GB'] / $hex_B;
+        }
+
+        return $data;
+    }
+
+    /**
+     * IP查询
+     *
+     * @param array $param ip、域名
+     *
+     * @return array
+     */
+    public static function ipQuery($param)
+    {
+        $ip = $param['ip'];
+
+        $ip_query = AdminIpInfoService::info($ip);
+
+        return $ip_query;
     }
 }

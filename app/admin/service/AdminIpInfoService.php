@@ -3,7 +3,7 @@
  * @Description  : ip信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-08-30
+ * @LastEditTime : 2020-09-11
  */
 
 namespace app\admin\service;
@@ -32,27 +32,28 @@ class AdminIpInfoService
                 'country'  => '',
                 'province' => '',
                 'city'     => '',
+                'area'     => '',
                 'region'   => '',
                 'isp'      => '',
             ];
 
             if ($res['code'] == 0) {
                 $data     = $res['data'];
+
                 $country  = $data['country'];
                 $province = $data['region'];
                 $city     = $data['city'];
-                if ($province == '香港' && $city == 'XX') {
-                    $city = $province;
-                }
-                $region = $country . $province . $city;
-                $region = str_replace('X', '', $region);
+                $area     = $data['area'];
+                $region   = $country . $province . $city . $area;
+                $isp      = $data['isp'];
 
                 $ip_info['ip']       = $ip;
                 $ip_info['country']  = $country;
                 $ip_info['province'] = $province;
                 $ip_info['city']     = $city;
                 $ip_info['region']   = $region;
-                $ip_info['isp']      = $data['isp'];
+                $ip_info['area']     = $area;
+                $ip_info['isp']      = $isp;
 
                 AdminIpInfoCache::set($ip, $ip_info);
             }

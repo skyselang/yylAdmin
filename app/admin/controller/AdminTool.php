@@ -3,32 +3,33 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-09-11
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\service\AdminToolService;
 use app\admin\validate\AdminToolValidate;
+use app\admin\service\AdminToolService;
 
 class AdminTool
 {
     /**
-     * 字符串
+     * 字符串转换
      *
-     * @method GET
+     * @method POST
      *
      * @return json
      */
-    public function string()
+    public function strTran()
     {
         $str = Request::param('str/s', '');
 
-        $param['string_str'] = $str;
-        validate(AdminToolValidate::class)->scene('string')->check($param);
+        $param['strtran_str'] = $str;
 
-        $data = AdminToolService::string($str);
+        validate(AdminToolValidate::class)->scene('strtran')->check($param);
+
+        $data = AdminToolService::strTran($str);
 
         return success($data);
     }
@@ -40,50 +41,40 @@ class AdminTool
      * 
      * @return json
      */
-    public function strran()
+    public function strRand()
     {
         $ids = Request::param('ids/a', []);
         $len = Request::param('len/d', 0);
 
-        $param['strran_ids'] = $ids;
-        $param['strran_len'] = $len;
-        validate(AdminToolValidate::class)->scene('strran')->check($param);
+        $param['strrand_ids'] = $ids;
+        $param['strrand_len'] = $len;
 
-        $data = AdminToolService::strran($ids, $len);
+        validate(AdminToolValidate::class)->scene('strrand')->check($param);
+
+        $data = AdminToolService::strRand($ids, $len);
 
         return success($data);
     }
 
     /**
-     * 时间戳转换
+     * 时间转换
      *
      * @method POST
      * 
      * @return json
      */
-    public function timestamp()
+    public function timeTran()
     {
         $param = Request::only(
             [
-                'trantype'  => 'time',
-                'datetime'  => '',
+                'type'      => '',
+                'value'     => '',
                 'timestamp' => '',
+                'datetime'  => '',
             ]
         );
 
-        $param['timestamp_trantype']  = $param['trantype'];
-        $param['timestamp_datetime']  = $param['datetime'];
-        $param['timestamp_timestamp'] = $param['timestamp'];
-
-        validate(AdminToolValidate::class)->scene('timestamp_type')->check($param);
-        if ($param['trantype'] == 'time') {
-            validate(AdminToolValidate::class)->scene('timestamp_time')->check($param);
-        }
-        if ($param['trantype'] == 'date') {
-            validate(AdminToolValidate::class)->scene('timestamp_date')->check($param);
-        }
-
-        $data = AdminToolService::timestamp($param);
+        $data = AdminToolService::timeTran($param);
 
         return success($data);
     }
@@ -100,9 +91,55 @@ class AdminTool
         $str = Request::param('str/s', '');
 
         $param['qrcode_str'] = $str;
+
         validate(AdminToolValidate::class)->scene('qrcode')->check($param);
 
         $data = AdminToolService::qrcode($str);
+
+        return success($data);
+    }
+
+    /**
+     * 字节转换
+     *
+     * @method POST
+     *
+     * @return json
+     */
+    public function byteTran()
+    {
+        $param = Request::only(
+            [
+                'type'  => 'b',
+                'value' => 0,
+            ],
+        );
+
+        $data = AdminToolService::byteTran($param);
+
+        return success($data);
+    }
+
+    /**
+     * IP查询
+     *
+     * @method POST
+     *
+     * @return json
+     */
+    public function ipQuery()
+    {
+        $param = Request::only(
+            [
+                'ip'  => '',
+            ],
+        );
+
+        if (empty($param['ip'])) {
+            $param['ip'] = Request::ip();
+        }
+
+        $data = AdminToolService::ipQuery($param);
 
         return success($data);
     }
