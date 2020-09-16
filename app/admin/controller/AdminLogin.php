@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-09-04
+ * @LastEditTime : 2020-09-16
  */
 
 namespace app\admin\controller;
@@ -56,7 +56,7 @@ class AdminLogin
      */
     public function logout()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
+        $admin_user_id = admin_user_id();
 
         $param['admin_user_id'] = $admin_user_id;
 

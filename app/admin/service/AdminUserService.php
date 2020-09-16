@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-05
+ * @LastEditTime : 2020-09-15
  */
 
 namespace app\admin\service;
@@ -74,11 +74,11 @@ class AdminUserService
         $pages = ceil($count / $limit);
 
         foreach ($list as $k => $v) {
-            $admin_rule_ids = explode(',', $v['admin_rule_ids']);
-            foreach ($admin_rule_ids as $ka => $va) {
-                $admin_rule_ids[$ka] = (int) $va;
+            $admin_role_ids = explode(',', $v['admin_role_ids']);
+            foreach ($admin_role_ids as $ka => $va) {
+                $admin_role_ids[$ka] = (int) $va;
             }
-            $list[$k]['admin_rule_ids'] = $admin_rule_ids;
+            $list[$k]['admin_role_ids'] = $admin_role_ids;
         }
 
         $data['count'] = $count;
@@ -143,14 +143,14 @@ class AdminUserService
                 }
                 $admin_user['admin_menu_ids'] = $admin_menu_ids;
             } else {
-                $admin_rule = Db::name('admin_rule')
-                    ->field('admin_rule_id')
-                    ->where('admin_rule_id', 'in', $admin_user['admin_rule_ids'])
+                $admin_role = Db::name('admin_role')
+                    ->field('admin_role_id')
+                    ->where('admin_role_id', 'in', $admin_user['admin_role_ids'])
                     ->where('is_delete', 0)
                     ->where('is_prohibit', 0)
                     ->column('admin_menu_ids');
 
-                $admin_menu_ids     = $admin_rule;
+                $admin_menu_ids     = $admin_role;
                 $admin_menu_ids[]   = $admin_user['admin_menu_id'];
                 $admin_menu_ids_str = implode(',', $admin_menu_ids);
                 $admin_menu_ids_arr = explode(',', $admin_menu_ids_str);
@@ -180,9 +180,9 @@ class AdminUserService
                     ->column('menu_url');
             }
 
-            $admin_rule_ids = explode(',', $admin_user['admin_rule_ids']);
-            foreach ($admin_rule_ids as $k => $v) {
-                $admin_rule_ids[$k] = (int) $v;
+            $admin_role_ids = explode(',', $admin_user['admin_role_ids']);
+            foreach ($admin_role_ids as $k => $v) {
+                $admin_role_ids[$k] = (int) $v;
             }
 
             $admin_menu_id = explode(',', $admin_user['admin_menu_id']);
@@ -191,13 +191,13 @@ class AdminUserService
             }
 
             $api_white_list  = Config::get('admin.api_white_list', []);
-            $rule_white_list = Config::get('admin.rule_white_list', []);
-            $white_list      = array_merge($api_white_list, $rule_white_list);
+            $role_white_list = Config::get('admin.role_white_list', []);
+            $white_list      = array_merge($api_white_list, $role_white_list);
             $admin_menu      = array_merge($admin_menu, $white_list);
 
             sort($admin_menu);
 
-            $admin_user['admin_rule_ids'] = $admin_rule_ids;
+            $admin_user['admin_role_ids'] = $admin_role_ids;
             $admin_user['admin_menu_id']  = $admin_menu_id;
             $admin_user['admin_token']    = AdminTokenService::create($admin_user);
             $admin_user['roles']          = $admin_menu;
@@ -327,13 +327,13 @@ class AdminUserService
     public static function rule($param)
     {
         $admin_user_id  = $param['admin_user_id'];
-        $admin_rule_ids = $param['admin_rule_ids'];
+        $admin_role_ids = $param['admin_role_ids'];
         $admin_menu_id  = $param['admin_menu_id'];
 
-        sort($admin_rule_ids);
+        sort($admin_role_ids);
         sort($admin_menu_id);
 
-        $data['admin_rule_ids'] = implode(',', $admin_rule_ids);
+        $data['admin_role_ids'] = implode(',', $admin_role_ids);
         $data['admin_menu_id']  = implode(',', $admin_menu_id);
         $data['update_time']    = date('Y-m-d H:i:s');
         $update = Db::name('admin_user')

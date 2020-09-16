@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-16
  */
 
 namespace app\admin\controller;
@@ -116,9 +116,10 @@ class AdminUsers
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
+        $admin_user_id   = Request::param('admin_user_id/d', 0);
+        $admin_log_type  = Request::param('type/d', 0);
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
-        $admin_user_id   = Request::param('admin_user_id/d', 0);
         $request_keyword = Request::param('request_keyword/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
@@ -128,6 +129,9 @@ class AdminUsers
         $where = [];
         if ($admin_user_id) {
             $where[] = ['admin_user_id', '=', $admin_user_id];
+        }
+        if ($admin_log_type) {
+            $where[] = ['admin_log_type', '=', $admin_log_type];
         }
         if ($request_keyword) {
             $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];

@@ -3,7 +3,7 @@
  * @Description  : 登录|退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-05
+ * @LastEditTime : 2020-09-16
  */
 
 namespace app\admin\service;
@@ -59,6 +59,7 @@ class AdminLoginService
             $request_param['verify_code'] = $param['verify_code'];
         }
 
+        $admin_log['admin_log_type'] = 1;
         $admin_log['admin_user_id']  = $admin_user['admin_user_id'];
         $admin_log['admin_menu_id']  = $admin_menu['admin_menu_id'];
         $admin_log['request_ip']     = $param['request_ip'];

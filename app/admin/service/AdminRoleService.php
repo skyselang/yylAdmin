@@ -1,16 +1,16 @@
 <?php
 /*
- * @Description  : 权限管理
+ * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-05
+ * @LastEditTime : 2020-09-15
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 
-class AdminRuleService
+class AdminRoleService
 {
     /**
      * 权限列表
@@ -26,19 +26,19 @@ class AdminRuleService
     public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
     {
         if (empty($field)) {
-            $field = 'admin_rule_id,admin_menu_ids,rule_name,rule_desc,rule_sort,is_prohibit,create_time,update_time';
+            $field = 'admin_role_id,admin_menu_ids,role_name,role_desc,role_sort,is_prohibit,create_time,update_time';
         }
 
         if (empty($order)) {
-            $order = ['rule_sort' => 'desc', 'admin_rule_id' => 'asc'];
+            $order = ['role_sort' => 'desc', 'admin_role_id' => 'asc'];
         }
 
         if ($whereOr) {
-            $count = Db::name('admin_rule')
+            $count = Db::name('admin_role')
                 ->whereOr($where)
-                ->count('admin_rule_id');
+                ->count('admin_role_id');
 
-            $list = Db::name('admin_rule')
+            $list = Db::name('admin_role')
                 ->field($field)
                 ->whereOr($where)
                 ->page($page)
@@ -49,11 +49,11 @@ class AdminRuleService
         } else {
             $where[] = ['is_delete', '=', 0];
 
-            $count = Db::name('admin_rule')
+            $count = Db::name('admin_role')
                 ->where($where)
-                ->count('admin_rule_id');
+                ->count('admin_role_id');
 
-            $list = Db::name('admin_rule')
+            $list = Db::name('admin_role')
                 ->field($field)
                 ->where($where)
                 ->page($page)
@@ -95,13 +95,13 @@ class AdminRuleService
 
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['create_time']    = date('Y-m-d H:i:s');
-        $admin_rule_id = Db::name('admin_rule')->insertGetId($param);
+        $admin_role_id = Db::name('admin_role')->insertGetId($param);
 
-        if (empty($admin_rule_id)) {
+        if (empty($admin_role_id)) {
             error();
         }
 
-        $param['admin_rule_id'] = $admin_rule_id;
+        $param['admin_role_id'] = $admin_role_id;
 
         return $param;
     }
@@ -115,23 +115,23 @@ class AdminRuleService
      */
     public static function edit($param)
     {
-        $admin_rule_id = $param['admin_rule_id'];
+        $admin_role_id = $param['admin_role_id'];
 
-        unset($param['admin_rule_id']);
+        unset($param['admin_role_id']);
 
         sort($param['admin_menu_ids']);
 
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['update_time']    = date('Y-m-d H:i:s');
-        $update = Db::name('admin_rule')
-            ->where('admin_rule_id', $admin_rule_id)
+        $update = Db::name('admin_role')
+            ->where('admin_role_id', $admin_role_id)
             ->update($param);
 
         if (empty($update)) {
             error();
         }
 
-        $param['admin_rule_id'] = $admin_rule_id;
+        $param['admin_role_id'] = $admin_role_id;
 
         return $param;
     }
@@ -139,23 +139,23 @@ class AdminRuleService
     /**
      * 权限删除
      *
-     * @param array $admin_rule_id 权限id
+     * @param array $admin_role_id 权限id
      * 
      * @return array
      */
-    public static function dele($admin_rule_id)
+    public static function dele($admin_role_id)
     {
         $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
-        $update = Db::name('admin_rule')
-            ->where('admin_rule_id', $admin_rule_id)
+        $update = Db::name('admin_role')
+            ->where('admin_role_id', $admin_role_id)
             ->update($data);
 
         if (empty($update)) {
             error();
         }
 
-        $data['admin_rule_id'] = $admin_rule_id;
+        $data['admin_role_id'] = $admin_role_id;
 
         return $data;
     }
@@ -163,22 +163,22 @@ class AdminRuleService
     /**
      * 权限信息
      *
-     * @param integer $admin_rule_id 权限id
+     * @param integer $admin_role_id 权限id
      * 
      * @return array
      */
-    public static function info($admin_rule_id = 0)
+    public static function info($admin_role_id = 0)
     {
-        $admin_rule = Db::name('admin_rule')
+        $admin_role = Db::name('admin_role')
             ->where('is_delete', 0)
-            ->where('admin_rule_id', $admin_rule_id)
+            ->where('admin_role_id', $admin_role_id)
             ->find();
 
-        if (empty($admin_rule)) {
+        if (empty($admin_role)) {
             error('权限不存在');
         }
 
-        return $admin_rule;
+        return $admin_role;
     }
 
     /**
@@ -190,12 +190,12 @@ class AdminRuleService
      */
     public static function prohibit($param)
     {
-        $admin_rule_id = $param['admin_rule_id'];
+        $admin_role_id = $param['admin_role_id'];
 
         $data['is_prohibit'] = $param['is_prohibit'];
         $data['update_time'] = date('Y-m-d H:i:s');
-        $update = Db::name('admin_rule')
-            ->where('admin_rule_id', $admin_rule_id)
+        $update = Db::name('admin_role')
+            ->where('admin_role_id', $admin_role_id)
             ->update($data);
 
         if (empty($update)) {

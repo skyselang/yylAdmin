@@ -1,42 +1,42 @@
 <?php
 /*
- * @Description  : 权限管理
+ * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-15
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\service\AdminRuleService;
-use app\admin\validate\AdminRuleValidate;
+use app\admin\service\AdminRoleService;
+use app\admin\validate\AdminRoleValidate;
 
-class AdminRule
+class AdminRole
 {
     /**
-     * 权限列表
+     * 角色列表
      *
      * @method GET
      * 
      * @return json
      */
-    public function ruleList()
+    public function roleList()
     {
         $page          = Request::param('page/d', 1);
         $limit         = Request::param('limit/d', 10);
         $sort_field    = Request::param('sort_field/s', '');
         $sort_type     = Request::param('sort_type/s', '');
-        $rule_name     = Request::param('rule_name/s', '');
-        $rule_desc     = Request::param('rule_desc/s', '');
+        $role_name     = Request::param('role_name/s', '');
+        $role_desc     = Request::param('role_desc/s', '');
         $admin_menu_id = Request::param('admin_menu_id/d', 0);
 
         $where = [];
-        if ($rule_name) {
-            $where[] = ['rule_name', 'like', '%' . $rule_name . '%'];
+        if ($role_name) {
+            $where[] = ['role_name', 'like', '%' . $role_name . '%'];
         }
-        if ($rule_desc) {
-            $where[] = ['rule_desc', 'like', '%' . $rule_desc . '%'];
+        if ($role_desc) {
+            $where[] = ['role_desc', 'like', '%' . $role_desc . '%'];
         }
         $whereOr = false;
         if ($admin_menu_id) {
@@ -55,118 +55,118 @@ class AdminRule
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminRuleService::list($where, $page, $limit, $field, $order, $whereOr);
+        $data = AdminRoleService::list($where, $page, $limit, $field, $order, $whereOr);
 
         return success($data);
     }
 
     /**
-     * 权限添加
+     * 角色添加
      *
      * @method POST
      * 
      * @return json
      */
-    public function ruleAdd()
+    public function roleAdd()
     {
         $param = Request::only(
             [
-                'rule_name'   => '',
-                'rule_desc'   => '',
-                'rule_sort'   => 200,
+                'role_name'   => '',
+                'role_desc'   => '',
+                'role_sort'   => 200,
                 'is_prohibit' => '0',
             ]
         );
         $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
-        validate(AdminRuleValidate::class)->scene('rule_add')->check($param);
+        validate(AdminRoleValidate::class)->scene('role_add')->check($param);
 
-        $data = AdminRuleService::add($param);
+        $data = AdminRoleService::add($param);
 
         return success($data);
     }
 
     /**
-     * 权限修改
+     * 角色修改
      *
      * @method POST
      * 
      * @return json
      */
-    public function ruleEdit()
+    public function roleEdit()
     {
         $param = Request::only(
             [
-                'admin_rule_id' => 0,
-                'rule_name'     => '',
-                'rule_desc'     => '',
-                'rule_sort'     => 200,
+                'admin_role_id' => 0,
+                'role_name'     => '',
+                'role_desc'     => '',
+                'role_sort'     => 200,
                 'is_prohibit'   => '0',
             ]
         );
         $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
-        validate(AdminRuleValidate::class)->scene('rule_edit')->check($param);
+        validate(AdminRoleValidate::class)->scene('role_edit')->check($param);
 
-        $data = AdminRuleService::edit($param);
+        $data = AdminRoleService::edit($param);
 
         return success($data);
     }
 
     /**
-     * 权限删除
+     * 角色删除
      *
      * @method POST
      * 
      * @return json
      */
-    public function ruleDele()
+    public function roleDele()
     {
-        $admin_rule_id = Request::param('admin_rule_id/d', 0);
+        $admin_role_id = Request::param('admin_role_id/d', 0);
 
-        validate(AdminRuleValidate::class)->scene('admin_rule_id')->check(['admin_rule_id' => $admin_rule_id]);
+        validate(AdminRoleValidate::class)->scene('admin_role_id')->check(['admin_role_id' => $admin_role_id]);
 
-        $data = AdminRuleService::dele($admin_rule_id);
+        $data = AdminRoleService::dele($admin_role_id);
 
         return success($data);
     }
 
     /**
-     * 权限信息
+     * 角色信息
      *
      * @method GET
      * 
      * @return json
      */
-    public function ruleInfo()
+    public function roleInfo()
     {
-        $admin_rule_id = Request::param('admin_rule_id/d', 0);
+        $admin_role_id = Request::param('admin_role_id/d', 0);
 
-        validate(AdminRuleValidate::class)->scene('admin_rule_id')->check(['admin_rule_id' => $admin_rule_id]);
+        validate(AdminRoleValidate::class)->scene('admin_role_id')->check(['admin_role_id' => $admin_role_id]);
 
-        $data = AdminRuleService::info($admin_rule_id);
+        $data = AdminRoleService::info($admin_role_id);
 
         return success($data);
     }
 
     /**
-     * 权限是否禁用
+     * 角色是否禁用
      *
      * @method POST
      * 
      * @return json
      */
-    public function ruleProhibit()
+    public function roleProhibit()
     {
-        $admin_rule_id = Request::param('admin_rule_id/d', '');
+        $admin_role_id = Request::param('admin_role_id/d', '');
         $is_prohibit   = Request::param('is_prohibit/s', '0');
 
-        $param['admin_rule_id'] = $admin_rule_id;
+        $param['admin_role_id'] = $admin_role_id;
         $param['is_prohibit']   = $is_prohibit;
 
-        validate(AdminRuleValidate::class)->scene('admin_rule_id')->check(['admin_rule_id' => $admin_rule_id]);
+        validate(AdminRoleValidate::class)->scene('admin_role_id')->check(['admin_role_id' => $admin_role_id]);
 
-        $data = AdminRuleService::prohibit($param);
+        $data = AdminRoleService::prohibit($param);
 
         return success($data);
     }

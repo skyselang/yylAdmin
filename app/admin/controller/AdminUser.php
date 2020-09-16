@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-09-04
+ * @LastEditTime : 2020-09-15
  */
 
 namespace app\admin\controller;
@@ -30,7 +30,7 @@ class AdminUser
         $username      = Request::param('username/s', '');
         $nickname      = Request::param('nickname/s', '');
         $email         = Request::param('email/s', '');
-        $admin_rule_id = Request::param('admin_rule_id/s', '');
+        $admin_role_id = Request::param('admin_role_id/s', '');
 
         $where = [];
         if ($username) {
@@ -44,12 +44,12 @@ class AdminUser
         }
 
         $whereOr = false;
-        if ($admin_rule_id) {
+        if ($admin_role_id) {
             $whereOr = true;
-            $where0 = [['admin_rule_ids', 'like', $admin_rule_id], ['is_delete', '=', 0]];
-            $where1 = [['admin_rule_ids', 'like', $admin_rule_id . ',%'], ['is_delete', '=', 0]];
-            $where2 = [['admin_rule_ids', 'like', '%,' . $admin_rule_id . ',%'], ['is_delete', '=', 0]];
-            $where3 = [['admin_rule_ids', 'like', '%,' . $admin_rule_id], ['is_delete', '=', 0]];
+            $where0 = [['admin_role_ids', 'like', $admin_role_id], ['is_delete', '=', 0]];
+            $where1 = [['admin_role_ids', 'like', $admin_role_id . ',%'], ['is_delete', '=', 0]];
+            $where2 = [['admin_role_ids', 'like', '%,' . $admin_role_id . ',%'], ['is_delete', '=', 0]];
+            $where3 = [['admin_role_ids', 'like', '%,' . $admin_role_id], ['is_delete', '=', 0]];
             $where = [$where0, $where1, $where2, $where3];
         }
 
@@ -192,11 +192,11 @@ class AdminUser
     public function userRule()
     {
         $admin_user_id  = Request::param('admin_user_id/d', 0);
-        $admin_rule_ids = Request::param('admin_rule_ids/a', []);
+        $admin_role_ids = Request::param('admin_role_ids/a', []);
         $admin_menu_id  = Request::param('admin_menu_id/a', []);
 
         $param['admin_user_id']  = $admin_user_id;
-        $param['admin_rule_ids'] = $admin_rule_ids;
+        $param['admin_role_ids'] = $admin_role_ids;
         $param['admin_menu_id']  = $admin_menu_id;
 
         validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
