@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-05
+ * @LastEditTime : 2020-09-18
  */
 
 namespace app\admin\service;
@@ -22,7 +22,7 @@ class AdminMenuService
     {
         $tree = AdminMenuCache::get(-1);
 
-        if (empty($admin_menu)) {
+        if (empty($tree)) {
             $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_prohibit,is_unauth,create_time,update_time';
 
             $admin_menu_pid = Db::name('admin_menu')
