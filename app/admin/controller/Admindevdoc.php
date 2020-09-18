@@ -9,8 +9,8 @@
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\service\AdminDevdocService;
 use app\admin\validate\AdminDevdocValidate;
+use app\admin\service\AdminDevdocService;
 
 class AdminDevdoc
 {
