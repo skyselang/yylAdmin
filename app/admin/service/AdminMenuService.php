@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-18
+ * @LastEditTime : 2020-09-26
  */
 
 namespace app\admin\service;
@@ -29,7 +29,7 @@ class AdminMenuService
                 ->field($field)
                 ->where('menu_pid', '=', 0)
                 ->where('is_delete', 0)
-                ->order(['admin_menu_id' => 'asc', 'menu_sort' => 'desc'])
+                ->order(['menu_sort' => 'desc', 'admin_menu_id' => 'asc'])
                 ->select()
                 ->toArray();
 
