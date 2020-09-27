@@ -11,72 +11,11 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 18/09/2020 18:21:21
+ Date: 27/09/2020 08:53:23
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for yyl_admin_apidoc
--- ----------------------------
-DROP TABLE IF EXISTS `yyl_admin_apidoc`;
-CREATE TABLE `yyl_admin_apidoc`  (
-  `admin_apidoc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '接口文档id',
-  `apidoc_pid` int(11) NOT NULL DEFAULT 0 COMMENT '接口父级id',
-  `apidoc_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接口名称',
-  `apidoc_path` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '接口路径',
-  `apidoc_sort` int(10) NOT NULL DEFAULT 200 COMMENT '接口排序',
-  `apidoc_method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'GET' COMMENT '接口请求方式',
-  `apidoc_request` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '接口请求参数',
-  `apidoc_response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '接口返回参数',
-  `apidoc_example` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '接口返回示例',
-  `apidoc_explain` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '接口额外说明',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `delete_time` datetime(0) NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`admin_apidoc_id`) USING BTREE,
-  INDEX `admin_apidoc_id`(`admin_apidoc_id`) USING BTREE,
-  INDEX `apidoc_pid`(`apidoc_pid`, `apidoc_name`) USING BTREE,
-  INDEX `apidoc_path`(`apidoc_path`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口文档' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of yyl_admin_apidoc
--- ----------------------------
-INSERT INTO `yyl_admin_apidoc` VALUES (1, 0, '后台接口文档', '', 200, '', '', '', '', '', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_apidoc` VALUES (2, 0, '前台接口文档', '', 200, 'GET', '', '', '', '', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_apidoc` VALUES (3, 1, '验证码', 'admin/AdminLogin/login', 200, 'GET', 'user_id:用户id\nbegin_id:起始城市id\nend_id:目的城市id\nweight:重量\nvolume:体积\nbegin_type:port\nend_type:port', '{\n    \"code\": \"\",\n    \"msg\": \"\",\n    \"time\": \"\",\n    \"data\": {\n        \"list\": [{\n            \"supplier_icon\": \"航空公司的logo\",\n            \"supplier_name\": \"航空公司的名称\",\n            \"supplier_code\": \"航空公司的代码\",\n            \"from_port_name\": \"出发港口名称\",\n            \"from_port_code\": \"出发港口代码\",\n            \"from_city_id\": \"出发港口所属城市id\",\n            \"from_location_full_name\": \"出发港口所属城市全路径名称\",\n            \"to_port_name\": \"目的港口名称\",\n            \"to_port_code\": \"目的港口代码\",\n            \"to_city_id\": \"目的港口所属城市id\",\n            \"to_location_full_name\": \"目的港口所属城市全路径名称\",\n            \"list\": [{\n                \"transport_id\": \"\",\n                \"transport_supplier_id\": \"\",\n                \"itinerary_id_path\": \"\",\n                \"port_to_port_id_path\": \"\",\n                \"from_port_id\": \"始发港口id\",\n                \"from_port_code\": \"始发港口代码\",\n                \"to_port_id\": \"目的港口id\",\n                \"to_port_code\": \"目的港口代码\",\n                \"several_date\": \"日期\",\n                \"several_week\": \"周几1-7\",\n                \"several_weeks\": \"周几飞\",\n                \"etd\": \"起飞时间\",\n                \"eta\": \"到达时间\",\n                \"material_arrival_time\": \"\",\n                \"capacity_cm\": \"容量\",\n                \"flight_number\": \"航班号\",\n                \"via\": \"经停1\",\n                \"dest1\": \"经停2\",\n                \"dest2\": \"经停3\",\n                \"dest3\": \"经停4\",\n                \"dest4\": \"经停5\",\n                \"via_total\": \"总经停\",\n                \"price\": \"价格\",\n                \"time_consuming\": \"服务时效\",\n                \"time_transport\": \"飞行运输时间\",\n                \"airplane_type\": \"\",\n                \"airplane_model\": \"\",\n                \"enabled\": \"\",\n                \"is_del\": \"\",\n                \"create_time\": \"\",\n                \"update_time\": \"\",\n                \"supplier_icon\": \"\",\n                \"supplier_name\": \"\",\n                \"supplier_code\": \"\",\n                \"journey\": [{\n                    \"port_to_port_id\": \"\",\n                    \"from_port_id\": \"\",\n                    \"from_port_code\": \"\",\n                    \"to_port_id\": \"\",\n                    \"to_port_code\": \"\",\n                    \"transfer_type\": \"\",\n                    \"enabled\": \"\",\n                    \"flight_number\": \"\",\n                    \"time_consuming\": \"\",\n                    \"via\": \"\",\n                    \"dest1\": \"\",\n                    \"dest2\": \"\",\n                    \"dest3\": \"\",\n                    \"dest4\": \"\",\n                    \"via_total\": \"\",\n                    \"dest\": \"\",\n                    \"price_id\": \"\",\n                    \"level1_weight\": \"\",\n                    \"level2_weight\": \"\",\n                    \"level3_weight\": \"\",\n                    \"level4_weight\": \"\",\n                    \"level5_weight\": \"\",\n                    \"level6_weight\": \"\",\n                    \"level7_weight\": \"\",\n                    \"level8_weight\": \"\",\n                    \"level9_weight\": \"\",\n                    \"level10_weight\": \"\",\n                    \"level1_price\": \"\",\n                    \"level2_price\": \"\",\n                    \"level3_price\": \"\",\n                    \"level4_price\": \"\",\n                    \"level5_price\": \"\",\n                    \"level6_price\": \"\",\n                    \"level7_price\": \"\",\n                    \"level8_price\": \"\",\n                    \"level9_price\": \"\",\n                    \"level10_price\": \"\",\n                    \"minimum_rate\": \"\",\n                    \"normal_flat_rate\": \"\",\n                    \"effective_from\": \"\",\n                    \"effective_to\": \"\"\n                }]\n            }],\n            \"price\": \"价格\",\n            \"Mon\": \"周一\",\n            \"Tues\": \"周二\",\n            \"Wed\": \"周三\",\n            \"Thur\": \"周四\",\n            \"Fri\": \"周五\",\n            \"Sat\": \"周六\",\n            \"Sun\": \"周天\",\n            \"via\": \"经停1\",\n            \"dest1\": \"经停2\",\n            \"dest2\": \"经停3\",\n            \"dest3\": \"经停4\",\n            \"dest4\": \"经停5\"\n        }],\n        \"celerity\": {\n            \"from_port_id\": \"始发港口id\",\n            \"to_port_id\": \"目标港口id\",\n            \"transport_id\": \"线路id\",\n            \"total_price\": \"价格\",\n            \"list\": [{\n                \"supplier_icon\": \"\",\n                \"supplier_name\": \"\",\n                \"supplier_code\": \"\",\n                \"from_port_name\": \"\",\n                \"from_port_code\": \"\",\n                \"from_city_id\": \"\",\n                \"from_location_full_name\": \"\",\n                \"to_port_name\": \"\",\n                \"to_port_code\": \"\",\n                \"to_city_id\": \"\",\n                \"to_location_full_name\": \"\",\n                \"price\": \"\",\n                \"Mon\": \"\",\n                \"Tues\": \"\",\n                \"Wed\": \"\",\n                \"Thur\": \"\",\n                \"Fri\": \"\",\n                \"Sat\": \"\",\n                \"Sun\": \"\",\n                \"via\": \"\",\n                \"dest1\": \"\",\n                \"dest2\": \"\",\n                \"dest3\": \"\",\n                \"dest4\": \"\",\n                \"transport_id\": \"\",\n                \"transport_supplier_id\": \"\",\n                \"itinerary_id_path\": \"\",\n                \"port_to_port_id_path\": \"\",\n                \"from_port_id\": \"\",\n                \"to_port_id\": \"\",\n                \"several_weeks\": \"\",\n                \"etd\": \"\",\n                \"eta\": \"\",\n                \"material_arrival_time\": \"\",\n                \"capacity_cm\": \"\",\n                \"time_consuming\": \"\",\n                \"flight_number\": \"\",\n                \"via_total\": \"\",\n                \"airplane_type\": \"\",\n                \"airplane_model\": \"\",\n                \"enabled\": \"\",\n                \"is_del\": \"\",\n                \"create_time\": \"\",\n                \"update_time\": \"\"\n            }],\n            \"supplier_icon\": \"\",\n            \"supplier_name\": \"\",\n            \"supplier_code\": \"\",\n            \"from_port_name\": \"\",\n            \"from_port_code\": \"\",\n            \"from_city_id\": \"\",\n            \"from_location_full_name\": \"\",\n            \"to_port_name\": \"\",\n            \"to_port_code\": \"\",\n            \"to_city_id\": \"\",\n            \"to_location_full_name\": \"\",\n            \"price\": \"\",\n            \"Mon\": \"\",\n            \"Tues\": \"\",\n            \"Wed\": \"\",\n            \"Thur\": \"\",\n            \"Fri\": \"\",\n            \"Sat\": \"\",\n            \"Sun\": \"\",\n            \"transport_supplier_id\": \"\",\n            \"itinerary_id_path\": \"\",\n            \"port_to_port_id_path\": \"\",\n            \"several_weeks\": \"\",\n            \"etd\": \"\",\n            \"eta\": \"\",\n            \"airplane_type\": \"\",\n            \"airplane_model\": \"\",\n            \"material_arrival_time\": \"\",\n            \"capacity_cm\": \"\",\n            \"enabled\": \"\",\n            \"is_del\": \"\",\n            \"create_time\": \"\",\n            \"update_time\": \"\",\n            \"time_consuming\": \"\"\n        }\n    }\n}', '', '', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_apidoc` VALUES (4, 2, '注册', 'index/Register/register', 200, 'POST', 'username:用户名\npasssword:密码', '', '', '', 0, NULL, NULL, NULL);
-
--- ----------------------------
--- Table structure for yyl_admin_devdoc
--- ----------------------------
-DROP TABLE IF EXISTS `yyl_admin_devdoc`;
-CREATE TABLE `yyl_admin_devdoc`  (
-  `admin_devdoc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文档id',
-  `devdoc_pid` int(11) NOT NULL DEFAULT 0 COMMENT '父级id',
-  `devdoc_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
-  `devdoc_sort` int(10) NOT NULL DEFAULT 200 COMMENT '排序',
-  `devdoc_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `delete_time` datetime(0) NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`admin_devdoc_id`) USING BTREE,
-  INDEX `admin_devdoc_id`(`admin_devdoc_id`) USING BTREE,
-  INDEX `devdoc_pid`(`devdoc_pid`, `devdoc_name`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '开发文档' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of yyl_admin_devdoc
--- ----------------------------
-INSERT INTO `yyl_admin_devdoc` VALUES (1, 0, '介绍', 200, 'yylAdmin是基于ThinkPHP6和Element2的极简后台管理系统，只有登录注销、权限管理等基本功能，方便扩展；前后端分离。', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_devdoc` VALUES (2, 0, '基础', 200, '', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_devdoc` VALUES (3, 2, '要求', 200, 'PHP >= 7.1\nMySQL >= 5.6\nRedis', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_devdoc` VALUES (4, 2, '准备', 200, 'Git\nNode\nComposer\nThinkPHP\nElement\nPhpStudy', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_devdoc` VALUES (5, 2, '安装', 200, 'PHP部分\n\n# 克隆项目\ngit clone https://gitee.com/skyselang/yylAdmin.git\n\n# 进入项目目录\ncd yylAdmin\n\n# 安装依赖\ncomposer install\n\n# 可以通过composer镜像解决速度慢的问题\ncomposer config -g repo.packagist composer https://mirrors.aliyun.com/composer/\n\n# 配置环境（PhpStudy）\n\n# 导入数据库\n数据库文件：public/private/yyladmin.sql\n\nWEB部分\n\n# 克隆项目\ngit clone https://gitee.com/skyselang/yylAdminWeb.git\n\n# 进入项目目录\ncd yylAdminWeb\n\n# 安装依赖\nnpm install\n\n# 可以通过npm镜像解决速度慢的问题\nnpm install --registry=https://registry.npm.taobao.org\n\n# 启动服务\nnpm run dev', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_log
@@ -132,12 +71,12 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 105 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 112 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
 -- ----------------------------
-INSERT INTO `yyl_admin_menu` VALUES (1, 0, '控制台', '', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (1, 0, '控制台', '', 250, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (2, 0, '系统管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (3, 88, '菜单管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (4, 88, '用户管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
@@ -177,38 +116,26 @@ INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/AdminUsers/u
 INSERT INTO `yyl_admin_menu` VALUES (48, 12, '更换头像', 'admin/AdminUsers/usersAvatar', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (49, 1, '控制台', 'admin/AdminIndex/index', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (50, 36, '地图坐标拾取', 'admin/AdminTool/mapPoint', 150, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (51, 12, '登录', 'admin/AdminLogin/login', 160, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (52, 12, '退出', 'admin/AdminLogin/logout', 150, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/AdminLogin/login', 160, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (52, 111, '退出', 'admin/AdminLogin/logout', 150, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (53, 2, '系统设置', '', 110, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (54, 12, '日志记录', 'admin/AdminUsers/usersLog', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (58, 36, '实用工具合集', 'admin/AdminTool/tools', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (56, 2, '访问统计', '', 120, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (64, 56, '日期统计', 'admin/AdminVisit/visitDate', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (60, 4, '用户权限明细', 'admin/AdminUser/userRuleInfo', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (62, 53, '基础设置', 'admin/AdminSetting/settingBase', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (62, 53, '基本设置', 'admin/AdminSetting/settingBase', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminTool/strTran', 210, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (65, 56, '访问统计', 'admin/AdminVisit/visitStats', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (67, 56, '数量统计', 'admin/AdminVisit/visitCount', 220, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (71, 53, '缓存设置', 'admin/AdminSetting/settingCache', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (73, 53, '验证码设置', 'admin/AdminSetting/settingVerify', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (75, 12, '验证码', 'admin/AdminLogin/verify', 170, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/AdminLogin/verify', 170, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (88, 2, '权限管理', '', 210, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminTool/ipQuery', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminTool/byteTran', 200, '0', '1', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (89, 0, '文档管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (90, 89, '接口文档', '', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (91, 90, '接口文档列表', 'admin/AdminApidoc/apidocList', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (92, 90, '接口文档详情', 'admin/AdminApidoc/apidocInfo', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (93, 90, '接口文档添加', 'admin/AdminApidoc/apidocAdd', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (98, 89, '开发文档', '', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (95, 90, '接口文档修改', 'admin/AdminApidoc/apidocEdit', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (96, 90, '接口文档删除', 'admin/AdminApidoc/apidocDele', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (100, 98, '开发文档详情', 'admin/AdminDevdoc/devdocInfo', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (99, 98, '开发文档列表', 'admin/AdminDevdoc/devdocList', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (101, 98, '开发文档添加', 'admin/AdminDevdoc/devdocAdd', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (102, 98, '开发文档修改', 'admin/AdminDevdoc/devdocEdit', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (103, 98, '开发文档删除', 'admin/AdminDevdoc/devdocDele', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (111, 0, '登录退出', '', 200, '0', '0', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -292,7 +219,7 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/1/avatar.png?t=20200916212502', '超级管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, '', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/1/avatar.png?t=20200924000359', '超级管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, '6', '', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/2/avatar.png?t=20200805092019', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (6, '6', '', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (7, '6', '', '12345', '12345', 'e10adc3949ba59abbe56e057f20f883e', '', 'static/img/favicon.ico?t=20200612222621', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
