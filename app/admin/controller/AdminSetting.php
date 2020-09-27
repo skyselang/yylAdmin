@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\controller;
@@ -76,7 +76,7 @@ class AdminSetting
             $param = Request::only(
                 [
                     'iss' => 'yylAdmin',   //签发者
-                    'exp' => 1,            //有效时间（小时）
+                    'exp' => 12,            //有效时间（小时）
                 ]
             );
 

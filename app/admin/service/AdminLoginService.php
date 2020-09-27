@@ -1,16 +1,16 @@
 <?php
 /*
- * @Description  : 登录|退出
+ * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-16
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use app\cache\AdminUserCache;
-use app\cache\AdminVerifyCache;
+use app\common\cache\AdminUserCache;
+use app\common\cache\AdminVerifyCache;
 
 class AdminLoginService
 {

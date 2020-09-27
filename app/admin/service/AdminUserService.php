@@ -3,14 +3,14 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-15
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Config;
-use app\cache\AdminUserCache;
+use app\common\cache\AdminUserCache;
 use app\admin\service\AdminTokenService;
 
 class AdminUserService
@@ -36,7 +36,7 @@ class AdminUserService
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'admin_user_id' => 'asc'];
+            $order = ['sort' => 'desc', 'admin_user_id' => 'desc'];
         }
 
         if ($whereOr) {
@@ -221,6 +221,7 @@ class AdminUserService
         $param['is_super_admin'] = 0;
         $param['password']       = md5($param['password']);
         $param['create_time']    = date('Y-m-d H:i:s');
+        
         $admin_user_id = Db::name('admin_user')
             ->insertGetId($param);
 
@@ -247,6 +248,7 @@ class AdminUserService
         unset($param['admin_user_id']);
 
         $param['update_time'] = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
@@ -273,6 +275,7 @@ class AdminUserService
     {
         $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
+
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
@@ -302,6 +305,7 @@ class AdminUserService
 
         $data['password']    = md5($password);
         $data['update_time'] = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
@@ -336,6 +340,7 @@ class AdminUserService
         $data['admin_role_ids'] = implode(',', $admin_role_ids);
         $data['admin_menu_id']  = implode(',', $admin_menu_id);
         $data['update_time']    = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
@@ -362,6 +367,7 @@ class AdminUserService
 
         $data['is_prohibit'] = $param['is_prohibit'];
         $data['update_time'] = date('Y-m-d H:i:s');
+
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
@@ -388,6 +394,7 @@ class AdminUserService
 
         $data['is_super_admin'] = $param['is_super_admin'];
         $data['update_time']    = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);

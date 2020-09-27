@@ -3,14 +3,14 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Cache;
-use app\cache\AdminSettingCache;
+use app\common\cache\AdminSettingCache;
 
 class AdminSettingService
 {
@@ -51,6 +51,7 @@ class AdminSettingService
 
             $update['admin_verify'] = serialize($admin_verify);
             $update['update_time']  = date('Y-m-d H:i:s');
+
             $admin_setting = Db::name('admin_setting')
                 ->where('admin_setting_id', $admin_setting_id)
                 ->update($update);
@@ -85,6 +86,7 @@ class AdminSettingService
 
             $update['admin_token'] = serialize($admin_token);
             $update['update_time'] = date('Y-m-d H:i:s');
+            
             $admin_setting = Db::name('admin_setting')
                 ->where('admin_setting_id', $admin_setting_id)
                 ->update($update);
@@ -142,7 +144,7 @@ class AdminSettingService
             $admin_token = unserialize($admin_setting['admin_token']);
             if (empty($admin_token)) {
                 $admin_token['iss'] = 'yylAdmin';  //签发者
-                $admin_token['exp'] = 0.5;         //有效时间（天）
+                $admin_token['exp'] = 0.5;         //有效时间（小时）
             }
 
             $admin_setting['admin_verify'] = serialize($admin_verify);

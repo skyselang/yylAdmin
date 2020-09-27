@@ -3,16 +3,16 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-09-16
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
+use app\admin\validate\AdminLogValidate;
 use app\admin\service\AdminLogService;
 use app\admin\service\AdminMenuService;
 use app\admin\service\AdminUserService;
-use app\admin\validate\AdminLogValidate;
 
 class AdminLog
 {
@@ -77,6 +77,7 @@ class AdminLog
      * 日志信息
      *
      * @method GET
+     * 
      * @return json
      */
     public function logInfo()
@@ -94,6 +95,7 @@ class AdminLog
      * 日志删除
      *
      * @method POST
+     * 
      * @return json
      */
     public function logDele()

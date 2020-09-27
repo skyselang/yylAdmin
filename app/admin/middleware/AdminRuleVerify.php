@@ -3,7 +3,7 @@
  * @Description  : 权限验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-14
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\middleware;
@@ -13,7 +13,7 @@ use think\Request;
 use think\Response;
 use think\facade\Config;
 use app\admin\service\AdminMenuService;
-use app\cache\AdminUserCache;
+use app\common\cache\AdminUserCache;
 
 class AdminRuleVerify
 {

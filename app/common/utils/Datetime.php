@@ -1,12 +1,12 @@
 <?php
 /*
- * @Description  : 日期
+ * @Description  : 日期时间
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2020-07-29
+ * @LastEditTime : 2020-09-27
  */
 
-namespace app\utils;
+namespace app\common\utils;
 
 class Datetime
 {
@@ -37,12 +37,12 @@ class Datetime
      */
     public static function thisWeek()
     {
-        $N     = date('N');
-        $d     = 7 - $N;
-        $start = date('Y-m-d', strtotime("-{$N} day"));
-        $end   = date('Y-m-d', strtotime("+{$d} day"));
+        $N   = date('N');
+        $d   = 7 - $N;
+        $sta = date('Y-m-d', strtotime("-{$N} day"));
+        $end = date('Y-m-d', strtotime("+{$d} day"));
 
-        return [$start, $end];
+        return [$sta, $end];
     }
 
     /**
@@ -52,12 +52,14 @@ class Datetime
      */
     public static function thisWeeks()
     {
-        $N = date('N') - 1;
-        $mon = strtotime("-{$N} day");
+        $N     = date('N') - 1;
+        $mon   = strtotime("-{$N} day");
         $weeks = [];
+        
         for ($i = 0; $i < 7; $i++) {
             $date = '';
             $date = date('Y-m-d', strtotime("+{$i} day", $mon));
+            
             $weeks[] = $date;
         }
 
@@ -71,15 +73,15 @@ class Datetime
      */
     public static function lastWeek()
     {
-        $week  = date('Y-m-d', strtotime("-1 week"));
-        $time  = strtotime($week);
-        $N     = date('N', $time);
-        $d     = 7 - $N;
-        $N     = $N - 1;
-        $start = date('Y-m-d', strtotime("-{$N} day", $time));
-        $end   = date('Y-m-d', strtotime("+{$d} day", $time));
+        $week = date('Y-m-d', strtotime("-1 week"));
+        $time = strtotime($week);
+        $N    = date('N', $time);
+        $d    = 7 - $N;
+        $N    = $N - 1;
+        $sta  = date('Y-m-d', strtotime("-{$N} day", $time));
+        $end  = date('Y-m-d', strtotime("+{$d} day", $time));
 
-        return [$start, $end];
+        return [$sta, $end];
     }
 
     /**
@@ -89,16 +91,17 @@ class Datetime
      */
     public static function lastWeeks()
     {
-        $week  = date('Y-m-d', strtotime("-1 week"));
-        $time  = strtotime($week);
-        $N     = date('N', $time);
-        $N     = $N - 1;
-        $mon = strtotime("-{$N} day", $time);
+        $week = date('Y-m-d', strtotime("-1 week"));
+        $time = strtotime($week);
+        $N    = date('N', $time);
+        $N    = $N - 1;
+        $mon  = strtotime("-{$N} day", $time);
 
         $weeks = [];
         for ($i = 0; $i < 7; $i++) {
             $date = '';
             $date = date('Y-m-d', strtotime("+{$i} day", $mon));
+            
             $weeks[] = $date;
         }
 
@@ -117,17 +120,19 @@ class Datetime
         if ($month == 'thismonth') {
             $month = date('Y-m');
         }
+        
         if ($month == 'lastmonth') {
             $month = date('Y-m', strtotime("-1 month"));
         }
 
-        $t =  date('t', strtotime($month));
+        $t    = date('t', strtotime($month));
         $time = strtotime($month);
 
         $dates = [];
         for ($i = 0; $i < $t; $i++) {
             $date = '';
             $date = date('Y-m-d', strtotime("+{$i} day", $time));
+            
             $dates[] = $date;
         }
 
@@ -141,27 +146,42 @@ class Datetime
      */
     public static function thisMonth()
     {
-        $ym    = date('Y-m');
-        $t     = date('t');
-        $start = $ym . '-01';
-        $end   = $ym . '-' . $t;
+        $ym  = date('Y-m');
+        $t   = date('t');
+        $sta = $ym . '-01';
+        $end = $ym . '-' . $t;
 
-        return [$start, $end];
+        return [$sta, $end];
     }
 
     /**
-     * 上个月开始和结束日期
+     * 上月开始和结束日期
      *
      * @return array
      */
     public static function lastMonth()
     {
-        $m     = strtotime("-1 month");
-        $t     = date('t', $m);
-        $start = date('Y-m', $m) . '-01';
-        $end   = date('Y-m', $m) . '-' . $t;
+        $m   = strtotime("-1 month");
+        $t   = date('t', $m);
+        $sta = date('Y-m', $m) . '-01';
+        $end = date('Y-m', $m) . '-' . $t;
 
-        return [$start, $end];
+        return [$sta, $end];
+    }
+
+    /**
+     * 下月开始和结束日期
+     *
+     * @return array
+     */
+    public static function nextMonth()
+    {
+        $m   = strtotime("+1 month");
+        $t   = date('t', $m);
+        $sta = date('Y-m', $m) . '-01';
+        $end = date('Y-m', $m) . '-' . $t;
+
+        return [$sta, $end];
     }
 
     /**
@@ -173,11 +193,13 @@ class Datetime
      */
     public static function daysDate($days = 1)
     {
-        $start = strtotime("-{$days} day");
+        $sta   = strtotime("-{$days} day");
         $dates = [];
+
         for ($i = 0; $i < $days; $i++) {
             $date = '';
-            $date = date('Y-m-d', strtotime("+{$i} day", $start));
+            $date = date('Y-m-d', strtotime("+{$i} day", $sta));
+            
             $dates[] = $date;
         }
 
@@ -193,11 +215,11 @@ class Datetime
      */
     public static function year($year = 0)
     {
-        $year  = date('Y') - $year;
-        $start = $year . '-01-01';
-        $end   = $year . '-12-31';
+        $year = date('Y') - $year;
+        $sta  = $year . '-01-01';
+        $end  = $year . '-12-31';
 
-        return [$start, $end];
+        return [$sta, $end];
     }
 
     /**
@@ -211,30 +233,33 @@ class Datetime
     public static function dayToNow($day = 1, $now = false)
     {
         $end = date('Y-m-d');
+
         if (!$now) {
             $end = date('Y-m-d', strtotime("-1 day"));
         }
-        $start = date('Y-m-d', strtotime("-{$day} day"));
+        
+        $sta = date('Y-m-d', strtotime("-{$day} day"));
 
-        return [$start, $end];
+        return [$sta, $end];
     }
 
     /**
      * 两个日期间的所有日期
      *
-     * @param string $start 开始日期
-     * @param string $en    结束日期
+     * @param string $sta 开始日期
+     * @param string $end 结束日期
      * 
      * @return array
      */
-    public static function betweenDates($start = '', $end = '')
+    public static function betweenDates($sta = '', $end = '')
     {
-        $dt_start = strtotime($start);
-        $dt_end   = strtotime($end);
-        $dates    = [];
-        while ($dt_start <= $dt_end) {
-            $dates[]  = date('Y-m-d', $dt_start);
-            $dt_start = strtotime('+1 day', $dt_start);
+        $dt_sta = strtotime($sta);
+        $dt_end = strtotime($end);
+        $dates  = [];
+        
+        while ($dt_sta <= $dt_end) {
+            $dates[] = date('Y-m-d', $dt_sta);
+            $dt_sta  = strtotime('+1 day', $dt_sta);
         }
 
         return $dates;
@@ -271,13 +296,13 @@ class Datetime
     /**
      * 天数转换成秒数
      *
-     * @param integer $day 天数
+     * @param integer $days 天数
      * 
      * @return integer
      */
-    public static function daysToSecond($day = 1)
+    public static function daysToSecond($days = 1)
     {
-        return $day * 86400;
+        return $days * 86400;
     }
 
     /**
@@ -287,9 +312,9 @@ class Datetime
      * 
      * @return integer
      */
-    public static function weekToSecond($week = 1)
+    public static function weekToSecond($weeks = 1)
     {
-        return self::daysToSecond() * 7 * $week;
+        return self::daysToSecond() * 7 * $weeks;
     }
 
     /**
@@ -305,9 +330,9 @@ class Datetime
             $date = date('Y-m-d');
         }
 
-        $start = $date . ' 00:00:00';
-        $end   = $date . ' 23:59:59';
+        $sta = $date . ' 00:00:00';
+        $end = $date . ' 23:59:59';
 
-        return [$start, $end];
+        return [$sta, $end];
     }
 }

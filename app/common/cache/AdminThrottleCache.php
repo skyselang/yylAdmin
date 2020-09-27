@@ -1,16 +1,16 @@
 <?php
 /*
- * @Description  : 接口访问频率限制
+ * @Description  : 请求频率限制中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2020-08-13
+ * @LastEditTime : 2020-09-27
  */
 
-namespace app\cache;
+namespace app\common\cache;
 
 use think\facade\Cache;
 
-class AdminApiLimitCache
+class AdminThrottleCache
 {
     /**
      * 缓存key
@@ -22,8 +22,7 @@ class AdminApiLimitCache
      */
     public static function key($admin_user_id, $admin_menu_url)
     {
-        $url = str_replace('/', '', $admin_menu_url);
-        $key = 'adminApiLimit:' . $admin_user_id . ':' . $url;
+        $key = 'adminApiLimit:' . $admin_user_id . ':' . $admin_menu_url;
 
         return $key;
     }

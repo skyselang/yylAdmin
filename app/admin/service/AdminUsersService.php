@@ -3,14 +3,14 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-09-05
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Filesystem;
-use app\cache\AdminUserCache;
+use app\common\cache\AdminUserCache;
 
 class AdminUsersService
 {
@@ -46,6 +46,7 @@ class AdminUsersService
         $data['nickname']    = $nickname;
         $data['email']       = $email;
         $data['update_time'] = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
@@ -85,6 +86,7 @@ class AdminUsersService
         }
 
         $data['update_time'] = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($data);
@@ -99,7 +101,7 @@ class AdminUsersService
     }
 
     /**
-     * 更换头像
+     * 修改头像
      *
      * @param array $param 头像信息
      * 
@@ -127,9 +129,11 @@ class AdminUsersService
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
         $update['update_time'] = date('Y-m-d H:i:s');
+        
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
+
         if (empty($res)) {
             error();
         }
@@ -143,7 +147,7 @@ class AdminUsersService
     }
 
     /**
-     * 日志列表
+     * 个人日志
      *
      * @param array   $where 条件
      * @param string  $field 字段

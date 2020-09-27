@@ -3,14 +3,14 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-09-15
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\service\AdminUserService;
 use app\admin\validate\AdminUserValidate;
+use app\admin\service\AdminUserService;
 
 class AdminUser
 {
@@ -63,6 +63,26 @@ class AdminUser
         $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
 
         return success($data);
+    }
+
+    /**
+     * 用户信息
+     *
+     * @method GET
+     * 
+     * @return json
+     */
+    public function userInfo()
+    {
+        $admin_user_id = Request::param('admin_user_id/d', 0);
+
+        $param['admin_user_id'] = $admin_user_id;
+
+        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
+
+        $admin_user = AdminUserService::info($admin_user_id);
+
+        return success($admin_user);
     }
 
     /**
@@ -137,26 +157,6 @@ class AdminUser
         $data = AdminUserService::dele($admin_user_id);
 
         return success($data);
-    }
-
-    /**
-     * 用户信息
-     *
-     * @method GET
-     * 
-     * @return json
-     */
-    public function userInfo()
-    {
-        $admin_user_id = Request::param('admin_user_id/d', 0);
-
-        $param['admin_user_id'] = $admin_user_id;
-
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
-
-        $admin_user = AdminUserService::info($admin_user_id);
-
-        return success($admin_user);
     }
 
     /**

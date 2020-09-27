@@ -3,12 +3,12 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-27
  */
 
-namespace app\cache;
+namespace app\common\cache;
 
-use app\utils\Datetime;
+use app\common\utils\Datetime;
 use think\facade\Cache;
 
 class AdminVisitCache
@@ -40,7 +40,7 @@ class AdminVisitCache
         if (empty($exp)) {
             $today = date('Y-m-d');
             if ($date == 'today' || $date == 'total' || $date == $today) {
-                $exp = 30 * 60;
+                $exp = 30 * 60 + mt_rand(0, 9);
             } elseif ($date == 'lastWeek') {
                 $this_week = Datetime::thisWeek();
                 $exp = strtotime($this_week[1] . ' 23:59:59') - time();

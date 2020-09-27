@@ -3,12 +3,12 @@
  * @Description  : ip信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-09-11
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
 
-use app\cache\AdminIpInfoCache;
+use app\common\cache\AdminIpInfoCache;
 
 class AdminIpInfoService
 {
@@ -37,7 +37,7 @@ class AdminIpInfoService
                 'isp'      => '',
             ];
 
-            if ($res['code'] == 0) {
+            if ($res['code'] == 0 && $res['data']) {
                 $data     = $res['data'];
 
                 $country  = $data['country'];

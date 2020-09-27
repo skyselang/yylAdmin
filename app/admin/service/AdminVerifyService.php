@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
@@ -11,7 +11,7 @@ namespace app\admin\service;
 use Exception;
 use think\Response;
 use think\facade\Config;
-use app\cache\AdminVerifyCache;
+use app\common\cache\AdminVerifyCache;
 
 class AdminVerifyService
 {
@@ -52,6 +52,7 @@ class AdminVerifyService
 
     /**
      * 架构方法 设置参数
+     * 
      * @access public
      */
     public function __construct()
@@ -74,6 +75,7 @@ class AdminVerifyService
 
     /**
      * 配置验证码
+     * 
      * @param string|null $config
      */
     protected function configure(string $config = null): void
@@ -116,7 +118,9 @@ class AdminVerifyService
 
     /**
      * 验证码创建
+     * 
      * @return array
+     * 
      * @throws Exception
      */
     protected function generate(): array
@@ -158,9 +162,12 @@ class AdminVerifyService
 
     /**
      * 验证码验证
+     * 
      * @access public
+     * 
      * @param string $verify_id   验证码id
      * @param string $verify_code 验证码
+     * 
      * @return bool 验证码是否正确
      */
     public function check($verify_id, $verify_code): bool
@@ -176,9 +183,12 @@ class AdminVerifyService
 
     /**
      * 输出验证码并把验证码的值保存到Redis中
+     * 
      * @access public
+     * 
      * @param null|string $config
      * @param bool        $api
+     * 
      * @return Response
      */
     public function create(string $config = null, bool $api = false)
@@ -258,16 +268,16 @@ class AdminVerifyService
     }
 
     /**
-     * 画一条由两条连在一起构成的随机正弦函数曲线作干扰线(你可以改成更帅的曲线函数)
+     * 画一条由两条连在一起构成的随机正弦函数曲线作干扰线
      *
-     *      高中的数学公式咋都忘了涅，写出来
-     *        正弦型函数解析式：y=Asin(ωx+φ)+b
-     *      各常数值对函数图像的影响：
-     *        A：决定峰值（即纵向拉伸压缩的倍数）
-     *        b：表示波形在Y轴的位置关系或纵向移动距离（上加下减）
-     *        φ：决定波形与X轴位置关系或横向移动距离（左加右减）
-     *        ω：决定周期（最小正周期T=2π/∣ω∣）
-     *
+     * 高中的数学公式
+     * 正弦型函数解析式：y=Asin(ωx+φ)+b
+     * 各常数值对函数图像的影响：
+     * A：决定峰值（即纵向拉伸压缩的倍数）
+     * b：表示波形在Y轴的位置关系或纵向移动距离（上加下减）
+     * φ：决定波形与X轴位置关系或横向移动距离（左加右减）
+     * ω：决定周期（最小正周期T=2π/∣ω∣）
+     * 
      */
     protected function writeCurve(): void
     {

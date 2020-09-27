@@ -3,14 +3,14 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-09-02
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use app\utils\Datetime;
-use app\cache\AdminVisitCache;
+use app\common\utils\Datetime;
+use app\common\cache\AdminVisitCache;
 
 class AdminVisitService
 {
@@ -104,6 +104,7 @@ class AdminVisitService
         if (empty($data)) {
             $x_data = [];
             $y_data = [];
+
             foreach ($date_days as $k => $v) {
                 $x_data[] = $v;
                 $where = [];
@@ -148,6 +149,7 @@ class AdminVisitService
         }
 
         $key  = ':' . $sta_date . '-' . $end_date . ':top:' . $top;
+        
         if ($stats == 'country') {
             $group = 'request_country';
             $key = $group . $key;

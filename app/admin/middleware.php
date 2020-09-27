@@ -7,8 +7,8 @@ return [
     \app\admin\middleware\AdminTokenVerify::class,
     // 权限验证
     \app\admin\middleware\AdminRuleVerify::class,
-    // 接口访问频率限制
-    \app\admin\middleware\AdminApiLimit::class,
-    // 操作日志
+    // 请求频率限制
+    \app\admin\middleware\AdminThrottle::class,
+    // 日志
     \app\admin\middleware\AdminLog::class,
 ];

@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-15
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
@@ -83,6 +83,27 @@ class AdminRoleService
     }
 
     /**
+     * 权限信息
+     *
+     * @param integer $admin_role_id 权限id
+     * 
+     * @return array
+     */
+    public static function info($admin_role_id = 0)
+    {
+        $admin_role = Db::name('admin_role')
+            ->where('is_delete', 0)
+            ->where('admin_role_id', $admin_role_id)
+            ->find();
+
+        if (empty($admin_role)) {
+            error('权限不存在');
+        }
+
+        return $admin_role;
+    }
+
+    /**
      * 权限添加
      *
      * @param array $param 权限信息
@@ -95,7 +116,9 @@ class AdminRoleService
 
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['create_time']    = date('Y-m-d H:i:s');
-        $admin_role_id = Db::name('admin_role')->insertGetId($param);
+
+        $admin_role_id = Db::name('admin_role')
+            ->insertGetId($param);
 
         if (empty($admin_role_id)) {
             error();
@@ -123,6 +146,7 @@ class AdminRoleService
 
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['update_time']    = date('Y-m-d H:i:s');
+
         $update = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
             ->update($param);
@@ -147,6 +171,7 @@ class AdminRoleService
     {
         $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
+
         $update = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
             ->update($data);
@@ -158,27 +183,6 @@ class AdminRoleService
         $data['admin_role_id'] = $admin_role_id;
 
         return $data;
-    }
-
-    /**
-     * 权限信息
-     *
-     * @param integer $admin_role_id 权限id
-     * 
-     * @return array
-     */
-    public static function info($admin_role_id = 0)
-    {
-        $admin_role = Db::name('admin_role')
-            ->where('is_delete', 0)
-            ->where('admin_role_id', $admin_role_id)
-            ->find();
-
-        if (empty($admin_role)) {
-            error('权限不存在');
-        }
-
-        return $admin_role;
     }
 
     /**
@@ -194,6 +198,7 @@ class AdminRoleService
 
         $data['is_prohibit'] = $param['is_prohibit'];
         $data['update_time'] = date('Y-m-d H:i:s');
+
         $update = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
             ->update($data);

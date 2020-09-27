@@ -3,15 +3,15 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-09-16
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
+use app\admin\validate\AdminUserValidate;
 use app\admin\service\AdminUsersService;
 use app\admin\service\AdminMenuService;
-use app\admin\validate\AdminUserValidate;
 
 class AdminUsers
 {
@@ -84,7 +84,7 @@ class AdminUsers
     }
 
     /**
-     * 更换头像
+     * 修改头像
      *
      * @method POST
      * 
@@ -106,7 +106,7 @@ class AdminUsers
     }
 
     /**
-     * 日志记录
+     * 个人日志
      *
      * @method GET
      * 

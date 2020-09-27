@@ -2,7 +2,8 @@
 /*
  * @Description  : 跨域请求中间件
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-28
+ * @Date         : 2020-08-27
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\middleware;

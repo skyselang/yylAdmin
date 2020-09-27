@@ -3,13 +3,13 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-09-28
  */
 
 namespace app\admin\service;
 
 use think\facade\Config;
-use app\cache\AdminUserCache;
+use app\common\cache\AdminUserCache;
 use Firebase\JWT\JWT;
 
 class AdminTokenService
@@ -26,11 +26,11 @@ class AdminTokenService
         $admin_setting = AdminSettingService::admin_setting();
         $admin_token   = $admin_setting['admin_token'];
 
-        $key = Config::get('admin.token_key');; //密钥
-        $iss = $admin_token['iss']; //签发者
-        $iat = time(); //签发时间
-        $nbf = time(); //生效时间
-        $exp = time() + $admin_token['exp'] * 60 * 60; //过期时间
+        $key = Config::get('admin.token_key');;         //密钥
+        $iss = $admin_token['iss'];                     //签发者
+        $iat = time();                                  //签发时间
+        $nbf = time();                                  //生效时间
+        $exp = time() + $admin_token['exp'] * 60 * 60;  //过期时间
 
         $data = [
             'admin_user_id' => $admin_user['admin_user_id'],
@@ -65,19 +65,18 @@ class AdminTokenService
             $key     = Config::get('admin.token_key');
             $decoded = JWT::decode($token, $key, array('HS256'));
 
-            if (!super_admin($admin_user_id)) {
-                $token_admin_user_id = $decoded->data->admin_user_id;
+            $token_admin_user_id = $decoded->data->admin_user_id;
 
-                if ($admin_user_id != $token_admin_user_id) {
-                    error('账号信息错误', 'Token：登录账号和请求账号不一致', 401);
+            if ($admin_user_id != $token_admin_user_id) {
+                error('账号信息错误', 'Token：登录账号和请求账号不一致', 401);
+            } else {
+                $admin_user = AdminUserCache::get($admin_user_id);
+                
+                if (empty($admin_user)) {
+                    error('账号登录状态失效', 'Token：账号登录状态已经过期', 401);
                 } else {
-                    $admin_user = AdminUserCache::get($admin_user_id);
-                    if (empty($admin_user)) {
-                        error('账号登录状态失效', 'Token：账号登录状态已经过期', 401);
-                    } else {
-                        if ($token != $admin_user['admin_token']) {
-                            error('账号已在另一处登录', 'Token：账号已在另一处登录', 401);
-                        }
+                    if ($token != $admin_user['admin_token']) {
+                        error('账号已在另一处登录', 'Token：账号已在另一处登录', 401);
                     }
                 }
             }

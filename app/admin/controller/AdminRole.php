@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2020-09-15
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\controller;
@@ -56,6 +56,24 @@ class AdminRole
         }
 
         $data = AdminRoleService::list($where, $page, $limit, $field, $order, $whereOr);
+
+        return success($data);
+    }
+
+    /**
+     * 角色信息
+     *
+     * @method GET
+     * 
+     * @return json
+     */
+    public function roleInfo()
+    {
+        $admin_role_id = Request::param('admin_role_id/d', 0);
+
+        validate(AdminRoleValidate::class)->scene('admin_role_id')->check(['admin_role_id' => $admin_role_id]);
+
+        $data = AdminRoleService::info($admin_role_id);
 
         return success($data);
     }
@@ -127,24 +145,6 @@ class AdminRole
         validate(AdminRoleValidate::class)->scene('admin_role_id')->check(['admin_role_id' => $admin_role_id]);
 
         $data = AdminRoleService::dele($admin_role_id);
-
-        return success($data);
-    }
-
-    /**
-     * 角色信息
-     *
-     * @method GET
-     * 
-     * @return json
-     */
-    public function roleInfo()
-    {
-        $admin_role_id = Request::param('admin_role_id/d', 0);
-
-        validate(AdminRoleValidate::class)->scene('admin_role_id')->check(['admin_role_id' => $admin_role_id]);
-
-        $data = AdminRoleService::info($admin_role_id);
 
         return success($data);
     }

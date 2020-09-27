@@ -3,13 +3,13 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-26
+ * @LastEditTime : 2020-09-28
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use app\cache\AdminMenuCache;
+use app\common\cache\AdminMenuCache;
 
 class AdminMenuService
 {
@@ -55,96 +55,8 @@ class AdminMenuService
     }
 
     /**
-     * 菜单添加
-     *
-     * @param array $param 菜单信息
-     * 
-     * @return array
-     */
-    public static function add($param)
-    {
-        $param['create_time'] = date('Y-m-d H:i:s');
-        $admin_menu_id = Db::name('admin_menu')
-            ->insertGetId($param);
-        if (empty($admin_menu_id)) {
-            error();
-        }
-
-        $param['admin_menu_id'] = $admin_menu_id;
-
-        AdminMenuCache::del(0);
-        AdminMenuCache::del(-1);
-
-        return $param;
-    }
-
-    /**
-     * 菜单修改
-     *
-     * @param array $param 菜单信息
-     * 
-     * @return array
-     */
-    public static function edit($param)
-    {
-        $admin_menu_id = $param['admin_menu_id'];
-
-        unset($param['admin_menu_id']);
-
-        $param['update_time'] = date('Y-m-d H:i:s');
-        $update = Db::name('admin_menu')
-            ->where('admin_menu_id', $admin_menu_id)
-            ->update($param);
-
-        if (empty($update)) {
-            error();
-        }
-
-        $param['admin_menu_id'] = $admin_menu_id;
-
-        AdminMenuCache::del(0);
-        AdminMenuCache::del(-1);
-
-        return $param;
-    }
-
-    /**
-     * 菜单删除
-     *
-     * @param integer $admin_menu_id 菜单id
-     * 
-     * @return array
-     */
-    public static function dele($admin_menu_id)
-    {
-        $admin_menu = Db::name('admin_menu')
-            ->field('admin_menu_id,menu_pid')
-            ->where('is_delete', 0)
-            ->select();
-
-        $admin_menu_ids   = self::getChildren($admin_menu, $admin_menu_id);
-        $admin_menu_ids[] = (int) $admin_menu_id;
-
-        $data['is_delete']   = 1;
-        $data['delete_time'] = date('Y-m-d H:i:s');
-        $update = Db::name('admin_menu')
-            ->where('admin_menu_id', 'in', $admin_menu_ids)
-            ->update($data);
-
-        if (empty($update)) {
-            error();
-        }
-
-        AdminMenuCache::del(0);
-        AdminMenuCache::del(-1);
-
-        return $admin_menu_ids;
-    }
-
-    /**
      * 菜单信息
-     * admin_menu_id：0所有菜单链接
-     * admin_menu_id：-1树形菜单
+     * admin_menu_id：-1树形菜单，0所有菜单链接
      *
      * @param integer $admin_menu_id 菜单id
      * @param boolean $is_menu_url   是否菜单url
@@ -202,6 +114,105 @@ class AdminMenuService
     }
 
     /**
+     * 菜单添加
+     *
+     * @param array $param 菜单信息
+     * 
+     * @return array
+     */
+    public static function add($param)
+    {
+        $param['create_time'] = date('Y-m-d H:i:s');
+
+        $admin_menu_id = Db::name('admin_menu')
+            ->insertGetId($param);
+            
+        if (empty($admin_menu_id)) {
+            error();
+        }
+
+        $param['admin_menu_id'] = $admin_menu_id;
+
+        AdminMenuCache::del(-1);
+        AdminMenuCache::del(0);
+
+        return $param;
+    }
+
+    /**
+     * 菜单修改
+     *
+     * @param array $param 菜单信息
+     * 
+     * @return array
+     */
+    public static function edit($param)
+    {
+        $admin_menu_id = $param['admin_menu_id'];
+
+        $admin_menu_info = self::info($admin_menu_id);
+        $admin_menu_url  = $admin_menu_info['menu_url'];
+
+        unset($param['admin_menu_id']);
+
+        $param['update_time'] = date('Y-m-d H:i:s');
+        
+        $update = Db::name('admin_menu')
+            ->where('admin_menu_id', $admin_menu_id)
+            ->update($param);
+
+        if (empty($update)) {
+            error();
+        }
+
+        $param['admin_menu_id'] = $admin_menu_id;
+
+        AdminMenuCache::del(-1);
+        AdminMenuCache::del(0);
+        AdminMenuCache::del($admin_menu_url);
+
+        return $param;
+    }
+
+    /**
+     * 菜单删除
+     *
+     * @param integer $admin_menu_id 菜单id
+     * 
+     * @return array
+     */
+    public static function dele($admin_menu_id)
+    {
+        $admin_menu = Db::name('admin_menu')
+            ->field('admin_menu_id,menu_pid')
+            ->where('is_delete', 0)
+            ->select();
+
+        $admin_menu_ids   = self::getChildren($admin_menu, $admin_menu_id);
+        $admin_menu_ids[] = (int) $admin_menu_id;
+
+        $update['is_delete']   = 1;
+        $update['delete_time'] = date('Y-m-d H:i:s');
+        
+        $delete = Db::name('admin_menu')
+            ->where('admin_menu_id', 'in', $admin_menu_ids)
+            ->update($update);
+
+        if (empty($delete)) {
+            error();
+        }
+
+        $admin_menu_info = self::info($admin_menu_id);
+        $admin_menu_url  = $admin_menu_info['menu_url'];
+
+        AdminMenuCache::del(-1);
+        AdminMenuCache::del(0);
+        AdminMenuCache::del($admin_menu_url);
+
+        return $admin_menu_ids;
+    }
+
+    /**
      * 菜单是否禁用
      *
      * @param array $param 菜单信息
@@ -214,6 +225,7 @@ class AdminMenuService
 
         $data['is_prohibit'] = $param['is_prohibit'];
         $data['update_time'] = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($data);
@@ -222,8 +234,8 @@ class AdminMenuService
             error();
         }
 
-        AdminMenuCache::del(0);
         AdminMenuCache::del(-1);
+        AdminMenuCache::del(0);
 
         return $param;
     }
@@ -241,15 +253,17 @@ class AdminMenuService
 
         $data['is_unauth']   = $param['is_unauth'];
         $data['update_time'] = date('Y-m-d H:i:s');
+        
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($data);
+
         if (empty($update)) {
             error();
         }
 
-        AdminMenuCache::del(0);
         AdminMenuCache::del(-1);
+        AdminMenuCache::del(0);
 
         return $param;
     }

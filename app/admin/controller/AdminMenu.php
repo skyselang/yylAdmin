@@ -3,14 +3,14 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\service\AdminMenuService;
 use app\admin\validate\AdminMenuValidate;
+use app\admin\service\AdminMenuService;
 
 class AdminMenu
 {

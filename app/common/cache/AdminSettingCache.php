@@ -3,10 +3,10 @@
  * @Description  : 设置缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-09-07
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-09-27
  */
 
-namespace app\cache;
+namespace app\common\cache;
 
 use think\facade\Cache;
 
@@ -36,7 +36,7 @@ class AdminSettingCache
     public static function exp($expire = 0)
     {
         if (empty($expire)) {
-            $expire = 30 * 24 * 60 * 60;
+            $expire = 30 * 24 * 60 * 60 + mt_rand(0, 99);
         }
 
         return $expire;

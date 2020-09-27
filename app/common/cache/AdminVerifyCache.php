@@ -3,10 +3,10 @@
  * @Description  : 验证码缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-09-04
+ * @LastEditTime : 2020-09-27
  */
 
-namespace app\cache;
+namespace app\common\cache;
 
 use think\facade\Cache;
 use think\facade\Config;
@@ -38,7 +38,7 @@ class AdminVerifyCache
     public static function exp($expire = 0, $verify_id = '')
     {
         if ($verify_id == 1) {
-            return 30 * 24 * 60 * 60;
+            return 30 * 24 * 60 * 60 + mt_rand(0, 99);
         }
 
         if (empty($expire)) {

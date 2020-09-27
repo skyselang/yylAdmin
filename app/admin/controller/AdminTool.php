@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-11
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\controller;
@@ -14,26 +14,6 @@ use app\admin\service\AdminToolService;
 
 class AdminTool
 {
-    /**
-     * 字符串转换
-     *
-     * @method POST
-     *
-     * @return json
-     */
-    public function strTran()
-    {
-        $str = Request::param('str/s', '');
-
-        $param['strtran_str'] = $str;
-
-        validate(AdminToolValidate::class)->scene('strtran')->check($param);
-
-        $data = AdminToolService::strTran($str);
-
-        return success($data);
-    }
-
     /**
      * 随机字符串
      *
@@ -57,7 +37,27 @@ class AdminTool
     }
 
     /**
-     * 时间转换
+     * 字符串转换
+     *
+     * @method POST
+     *
+     * @return json
+     */
+    public function strTran()
+    {
+        $str = Request::param('str/s', '');
+
+        $param['strtran_str'] = $str;
+
+        validate(AdminToolValidate::class)->scene('strtran')->check($param);
+
+        $data = AdminToolService::strTran($str);
+
+        return success($data);
+    }
+
+    /**
+     * 时间戳转换
      *
      * @method POST
      * 

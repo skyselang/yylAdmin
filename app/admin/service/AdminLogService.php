@@ -3,13 +3,13 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-09-11
+ * @LastEditTime : 2020-09-27
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use app\cache\AdminLogCache;
+use app\common\cache\AdminLogCache;
 
 class AdminLogService
 {
@@ -93,30 +93,6 @@ class AdminLogService
     }
 
     /**
-     * 日志添加
-     *
-     * @param array $admin_log 日志数据
-     * 
-     * @return void
-     */
-    public static function add($admin_log = [])
-    {
-        if ($admin_log['request_ip']) {
-            $ip_info = AdminIpInfoService::info($admin_log['request_ip']);
-            $admin_log['request_country']  = $ip_info['country'];
-            $admin_log['request_province'] = $ip_info['province'];
-            $admin_log['request_city']     = $ip_info['city'];
-            $admin_log['request_area']     = $ip_info['area'];
-            $admin_log['request_region']   = $ip_info['region'];
-            $admin_log['request_isp']      = $ip_info['isp'];
-        }
-
-        $admin_log['create_time'] = date('Y-m-d H:i:s');
-
-        Db::name('admin_log')->strict(false)->insert($admin_log);
-    }
-
-    /**
      * 日志信息
      *
      * @param integer $admin_log_id 日志id
@@ -160,6 +136,30 @@ class AdminLogService
         }
 
         return $admin_log;
+    }
+
+    /**
+     * 日志添加
+     *
+     * @param array $admin_log 日志数据
+     * 
+     * @return void
+     */
+    public static function add($admin_log = [])
+    {
+        if ($admin_log['request_ip']) {
+            $ip_info = AdminIpInfoService::info($admin_log['request_ip']);
+            $admin_log['request_country']  = $ip_info['country'];
+            $admin_log['request_province'] = $ip_info['province'];
+            $admin_log['request_city']     = $ip_info['city'];
+            $admin_log['request_area']     = $ip_info['area'];
+            $admin_log['request_region']   = $ip_info['region'];
+            $admin_log['request_isp']      = $ip_info['isp'];
+        }
+
+        $admin_log['create_time'] = date('Y-m-d H:i:s');
+
+        Db::name('admin_log')->strict(false)->insert($admin_log);
     }
 
     /**
