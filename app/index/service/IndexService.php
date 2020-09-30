@@ -3,7 +3,7 @@
  * @Description  : 首页
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-17
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-09-30
  */
 
 namespace app\index\service;
@@ -22,6 +22,6 @@ class IndexService
         $data['Github'] = 'https://github.com/skyselang/yylAdmin';
         $data['Gitee']  = 'https://gitee.com/skyselang/yylAdmin';
 
-        return success($data);
+        return $data;
     }
 }

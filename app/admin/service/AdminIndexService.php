@@ -3,7 +3,7 @@
  * @Description  : 控制台
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-17
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-09-30
  */
 
 namespace app\admin\service;
@@ -11,13 +11,16 @@ namespace app\admin\service;
 class AdminIndexService
 {
     /**
-     * 控制台
+     * 首页
      *
      * @return array
      */
     public static function index()
     {
-        $data = [];
+        $data['name']   = 'yylAdmin';
+        $data['desc']   = '基于ThinkPHP6和Element2的极简后台管理系统';
+        $data['Github'] = 'https://github.com/skyselang/yylAdmin';
+        $data['Gitee']  = 'https://gitee.com/skyselang/yylAdmin';
 
         return $data;
     }

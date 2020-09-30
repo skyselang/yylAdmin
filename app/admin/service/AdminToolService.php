@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-09-29
  */
 
 namespace app\admin\service;
@@ -57,6 +57,10 @@ class AdminToolService
      */
     public static function strTran($str)
     {
+        if (empty($str)) {
+            $str = 'yylAdmin';
+        }
+
         $rev = '';
         $len = mb_strlen($str, 'utf-8');
 
@@ -109,6 +113,10 @@ class AdminToolService
      */
     public static function qrcode($str)
     {
+        if (empty($str)) {
+            $str = 'https://gitee.com/skyselang/yylAdmin';
+        }
+
         $admin_user_id = admin_user_id();
 
         $file_dir = '/storage/admin/user/' . $admin_user_id;
@@ -123,6 +131,7 @@ class AdminToolService
 
         $qrcode_url = file_url($file_path);
 
+        $data['str'] = $str;
         $data['url'] = $qrcode_url . '?r=' . mt_rand(10, 99);
 
         return $data;

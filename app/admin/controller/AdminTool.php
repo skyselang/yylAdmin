@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-09-29
  */
 
 namespace app\admin\controller;
@@ -47,10 +47,6 @@ class AdminTool
     {
         $str = Request::param('str/s', '');
 
-        $param['strtran_str'] = $str;
-
-        validate(AdminToolValidate::class)->scene('strtran')->check($param);
-
         $data = AdminToolService::strTran($str);
 
         return success($data);
@@ -89,10 +85,6 @@ class AdminTool
     public function qrcode()
     {
         $str = Request::param('str/s', '');
-
-        $param['qrcode_str'] = $str;
-
-        validate(AdminToolValidate::class)->scene('qrcode')->check($param);
 
         $data = AdminToolService::qrcode($str);
 
