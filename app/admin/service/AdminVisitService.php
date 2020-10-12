@@ -3,7 +3,7 @@
  * @Description  : 访问统计
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-12
  */
 
 namespace app\admin\service;
@@ -149,7 +149,7 @@ class AdminVisitService
         }
 
         $key  = ':' . $sta_date . '-' . $end_date . ':top:' . $top;
-        
+
         if ($stats == 'country') {
             $group = 'request_country';
             $key = $group . $key;
@@ -191,6 +191,7 @@ class AdminVisitService
 
             $x_data = [];
             $y_data = [];
+            $p_data = [];
             foreach ($data as $k => $v) {
                 $x_data[] = $v['x_data'];
                 $y_data[] = $v['y_data'];
