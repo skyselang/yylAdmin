@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-15
  */
 
 namespace app\admin\service;
@@ -114,6 +114,12 @@ class AdminRoleService
     {
         sort($param['admin_menu_ids']);
 
+        if (count($param['admin_menu_ids']) == 1) {
+            if ($param['admin_menu_ids'][0] == 0) {
+                $param['admin_menu_ids'] = [];
+            }
+        }
+
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['create_time']    = date('Y-m-d H:i:s');
 
@@ -143,6 +149,12 @@ class AdminRoleService
         unset($param['admin_role_id']);
 
         sort($param['admin_menu_ids']);
+
+        if (count($param['admin_menu_ids']) == 1) {
+            if ($param['admin_menu_ids'][0] == 0) {
+                $param['admin_menu_ids'] = [];
+            }
+        }
 
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['update_time']    = date('Y-m-d H:i:s');
