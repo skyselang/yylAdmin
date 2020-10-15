@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-15
  */
 
 namespace app\admin\service;
@@ -36,7 +36,7 @@ class AdminUserService
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'admin_user_id' => 'desc'];
+            $order = ['sort' => 'desc', 'admin_user_id' => 'asc'];
         }
 
         if ($whereOr) {
