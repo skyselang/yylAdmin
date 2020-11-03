@@ -36,7 +36,7 @@ class AdminSettingService
             $byte['value'] = $data['used_memory_lua'];
 
             $data['used_memory_lua_human'] = AdminToolService::byteTran($byte)['KB'] . 'K';;
-            $data['os_arch_bits']          = $data['os'] . $data['arch_bits'];
+            $data['os_arch_bits']          = $data['os'];
             $data['uptime_in_days']        = $data['uptime_in_days'] . '天';
 
             return $data;
