@@ -3,7 +3,7 @@
  * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-10-25
+ * @LastEditTime : 2020-11-03
  */
 
 namespace app;
@@ -76,13 +76,15 @@ class ExceptionHandle extends Handle
             $err['file']  = $e->getFile();
             $err['line']  = $e->getLine();
             $err['trace'] = $e->getTrace();
+            
             $data['code'] = $e->getCode();
             $data['msg']  = $e->getMessage();
             $data['err']  = $err;
         } else {
-            $data['code'] = 500;
+            $data['code'] = $e->getCode();
             $data['msg']  = '服务器错误';
-            $data['err']  = ['msg' => $e->getMessage()];
+            $data['err']  = ['desc' => $e->getMessage()];
+
             if ($data['code'] >= 400 && $data['code'] < 500) {
                 $data['msg']  = $e->getMessage();
             } else {
