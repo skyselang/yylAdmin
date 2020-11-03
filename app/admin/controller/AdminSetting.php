@@ -2,8 +2,8 @@
 /*
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-08-04
- * @LastEditTime : 2020-09-27
+ * @Date         : 2020-08-05
+ * @LastEditTime : 2020-11-03
  */
 
 namespace app\admin\controller;
@@ -24,7 +24,11 @@ class AdminSetting
      */
     public function settingCache()
     {
-        $data = AdminSettingService::settingCache();
+        if (Request::isGet()) {
+            $data = AdminSettingService::settingCache();
+        } else {
+            $data = AdminSettingService::settingCache([], 'post');
+        }
 
         return success($data);
     }
@@ -55,7 +59,7 @@ class AdminSetting
 
             validate(AdminVerifyValidate::class)->scene('edit')->check($param);
 
-            $data = AdminSettingService::settingVerify($param);
+            $data = AdminSettingService::settingVerify($param, 'post');
         }
 
         return success($data);
@@ -75,14 +79,14 @@ class AdminSetting
         } else {
             $param = Request::only(
                 [
-                    'iss' => 'yylAdmin',   //签发者
-                    'exp' => 12,            //有效时间（小时）
+                    'iss' => 'yylAdmin',
+                    'exp' => 12,
                 ]
             );
 
             validate(AdminTokenValidate::class)->scene('edit')->check($param);
 
-            $data = AdminSettingService::settingToken($param);
+            $data = AdminSettingService::settingToken($param, 'post');
         }
 
         return success($data);

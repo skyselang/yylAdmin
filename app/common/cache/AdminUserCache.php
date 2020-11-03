@@ -3,11 +3,12 @@
  * @Description  : 用户缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-30
  */
 
 namespace app\common\cache;
 
+use app\admin\service\AdminUserService;
 use think\facade\Cache;
 
 class AdminUserCache
@@ -87,6 +88,30 @@ class AdminUserCache
     {
         $key = self::key($admin_user_id);
         $res = Cache::delete($key);
+
+        return $res;
+    }
+
+    /**
+     * 缓存更新
+     *
+     * @param integer $admin_user_id 用户id
+     * 
+     * @return bool
+     */
+    public static function upd($admin_user_id)
+    {
+        $old = AdminUserService::info($admin_user_id);
+
+        self::del($admin_user_id);
+
+        $new = AdminUserService::info($admin_user_id);
+
+        unset($new['admin_token']);
+
+        $user = array_merge($old, $new);
+
+        $res = self::set($admin_user_id, $user);
 
         return $res;
     }

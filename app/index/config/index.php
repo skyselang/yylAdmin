@@ -3,7 +3,7 @@
  * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-29
  */
 
 return [
@@ -27,7 +27,7 @@ return [
         'index/Login/login',
     ],
     // 是否记录日志
-    'is_user_log' => false,
+    'is_log' => false,
     // 请求频率限制（次数/时间）
     'throttle' => [
         'number' => 3, //次数,0不限制

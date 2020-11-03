@@ -3,7 +3,7 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-28
+ * @LastEditTime : 2020-11-03
  */
 
 namespace app\admin\service;
@@ -64,24 +64,31 @@ class AdminTokenService
         try {
             $key     = Config::get('admin.token_key');
             $decoded = JWT::decode($token, $key, array('HS256'));
+        } catch (\Exception $e) {
+            exception('账号登录状态错误', 401);
+        }
 
-            $token_admin_user_id = $decoded->data->admin_user_id;
+        $admin_user_id_token = $decoded->data->admin_user_id;
 
-            if ($admin_user_id != $token_admin_user_id) {
-                error('账号信息错误', 'Token：登录账号和请求账号不一致', 401);
+        if ($admin_user_id != $admin_user_id_token) {
+            exception('账号信息错误', 401);
+        } else {
+            $admin_user = AdminUserCache::get($admin_user_id);
+
+            if (empty($admin_user)) {
+                exception('账号登录状态失效', 401);
             } else {
-                $admin_user = AdminUserCache::get($admin_user_id);
-                
-                if (empty($admin_user)) {
-                    error('账号登录状态失效', 'Token：账号登录状态已经过期', 401);
+                if ($token != $admin_user['admin_token']) {
+                    exception('账号已在另一处登录', 401);
                 } else {
-                    if ($token != $admin_user['admin_token']) {
-                        error('账号已在另一处登录', 'Token：账号已在另一处登录', 401);
+                    if ($admin_user['is_disable'] == 1) {
+                        exception('账号已被禁用', 401);
+                    }
+                    if ($admin_user['is_delete'] == 1) {
+                        exception('账号已被删除', 401);
                     }
                 }
             }
-        } catch (\Exception $e) {
-            error('账号登录状态错误', 'Token：' . $e->getMessage(), 401);
         }
     }
 }

@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-29
+ * @LastEditTime : 2020-10-29
  */
 
 namespace app\admin\controller;
@@ -24,7 +24,7 @@ class AdminTool
     public function strRand()
     {
         $ids = Request::param('ids/a', []);
-        $len = Request::param('len/d', 0);
+        $len = Request::param('len/d', 12);
 
         $param['strrand_ids'] = $ids;
         $param['strrand_len'] = $len;
@@ -121,17 +121,13 @@ class AdminTool
      */
     public function ipQuery()
     {
-        $param = Request::only(
-            [
-                'ip'  => '',
-            ],
-        );
+        $ip = Request::param('ip/s', '');
 
-        if (empty($param['ip'])) {
-            $param['ip'] = Request::ip();
+        if (empty($ip)) {
+            $ip = Request::ip();
         }
 
-        $data = AdminToolService::ipQuery($param);
+        $data = AdminToolService::ipQuery($ip);
 
         return success($data);
     }

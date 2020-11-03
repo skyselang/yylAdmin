@@ -9,6 +9,6 @@ return [
     \app\admin\middleware\AdminRuleVerify::class,
     // 请求频率限制
     \app\admin\middleware\AdminThrottle::class,
-    // 日志
+    // 日志记录
     \app\admin\middleware\AdminLog::class,
 ];

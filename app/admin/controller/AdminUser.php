@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-11-03
  */
 
 namespace app\admin\controller;
@@ -23,14 +23,13 @@ class AdminUser
      */
     public function userList()
     {
-        $page          = Request::param('page/d', 1);
-        $limit         = Request::param('limit/d', 10);
-        $sort_field    = Request::param('sort_field/s ', '');
-        $sort_type     = Request::param('sort_type/s', '');
-        $username      = Request::param('username/s', '');
-        $nickname      = Request::param('nickname/s', '');
-        $email         = Request::param('email/s', '');
-        $admin_role_id = Request::param('admin_role_id/s', '');
+        $page       = Request::param('page/d', 1);
+        $limit      = Request::param('limit/d', 10);
+        $sort_field = Request::param('sort_field/s ', '');
+        $sort_type  = Request::param('sort_type/s', '');
+        $username   = Request::param('username/s', '');
+        $nickname   = Request::param('nickname/s', '');
+        $email      = Request::param('email/s', '');
 
         $where = [];
         if ($username) {
@@ -43,16 +42,6 @@ class AdminUser
             $where[] = ['email', 'like', '%' . $email . '%'];
         }
 
-        $whereOr = false;
-        if ($admin_role_id) {
-            $whereOr = true;
-            $where0 = [['admin_role_ids', 'like', $admin_role_id], ['is_delete', '=', 0]];
-            $where1 = [['admin_role_ids', 'like', $admin_role_id . ',%'], ['is_delete', '=', 0]];
-            $where2 = [['admin_role_ids', 'like', '%,' . $admin_role_id . ',%'], ['is_delete', '=', 0]];
-            $where3 = [['admin_role_ids', 'like', '%,' . $admin_role_id], ['is_delete', '=', 0]];
-            $where = [$where0, $where1, $where2, $where3];
-        }
-
         $field = '';
 
         $order = [];
@@ -60,7 +49,7 @@ class AdminUser
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
+        $data = AdminUserService::list($where, $page, $limit, $field, $order);
 
         return success($data);
     }
@@ -74,15 +63,19 @@ class AdminUser
      */
     public function userInfo()
     {
-        $admin_user_id = Request::param('admin_user_id/d', 0);
+        $admin_user_id = Request::param('admin_user_id/d', '');
 
         $param['admin_user_id'] = $admin_user_id;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
+        validate(AdminUserValidate::class)->scene('user_id')->check($param);
 
-        $admin_user = AdminUserService::info($admin_user_id);
+        $data = AdminUserService::info($admin_user_id);
 
-        return success($admin_user);
+        if ($data['is_delete'] == 1) {
+            exception('用户已被删除');
+        }
+
+        return success($data);
     }
 
     /**
@@ -123,7 +116,7 @@ class AdminUser
     {
         $param = Request::only(
             [
-                'admin_user_id' => 0,
+                'admin_user_id' => '',
                 'username'      => '',
                 'nickname'      => '',
                 'email'         => '',
@@ -148,11 +141,11 @@ class AdminUser
      */
     public function userDele()
     {
-        $admin_user_id = Request::param('admin_user_id/d', 0);
+        $admin_user_id = Request::param('admin_user_id/d', '');
 
         $param['admin_user_id'] = $admin_user_id;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
+        validate(AdminUserValidate::class)->scene('user_dele')->check($param);
 
         $data = AdminUserService::dele($admin_user_id);
 
@@ -191,37 +184,21 @@ class AdminUser
      */
     public function userRule()
     {
-        $admin_user_id  = Request::param('admin_user_id/d', 0);
-        $admin_role_ids = Request::param('admin_role_ids/a', []);
-        $admin_menu_id  = Request::param('admin_menu_id/a', []);
+        if (Request::isGet()) {
+            $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
-        $param['admin_user_id']  = $admin_user_id;
-        $param['admin_role_ids'] = $admin_role_ids;
-        $param['admin_menu_id']  = $admin_menu_id;
+            validate(AdminUserValidate::class)->scene('user_id')->check($param);
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
+            $data = AdminUserService::rule($param);
+        } else {
+            $param['admin_user_id']  = Request::param('admin_user_id/d', '');
+            $param['admin_role_ids'] = Request::param('admin_role_ids/a', []);
+            $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
-        $data = AdminUserService::rule($param);
+            validate(AdminUserValidate::class)->scene('user_rule')->check($param);
 
-        return success($data);
-    }
-
-    /**
-     * 用户权限明细
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function userRuleInfo()
-    {
-        $admin_user_id  = Request::param('admin_user_id/d', 0);
-
-        $param['admin_user_id'] = $admin_user_id;
-
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
-
-        $data = AdminUserService::info($admin_user_id);
+            $data = AdminUserService::rule($param, 'post');
+        }
 
         return success($data);
     }
@@ -233,39 +210,39 @@ class AdminUser
      * 
      * @return json
      */
-    public function userProhibit()
+    public function userDisable()
     {
-        $admin_user_id = Request::param('admin_user_id/d', 0);
-        $is_prohibit   = Request::param('is_prohibit/s', '0');
+        $admin_user_id = Request::param('admin_user_id/d', '');
+        $is_disable    = Request::param('is_disable/s', '0');
 
         $param['admin_user_id'] = $admin_user_id;
-        $param['is_prohibit']   = $is_prohibit;
+        $param['is_disable']    = $is_disable;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
+        validate(AdminUserValidate::class)->scene('user_disable')->check($param);
 
-        $data = AdminUserService::prohibit($param);
+        $data = AdminUserService::disable($param);
 
         return success($data);
     }
 
     /**
-     * 用户是否超管
+     * 用户是否管理员
      *
      * @method POST
      * 
      * @return json
      */
-    public function userSuperAdmin()
+    public function userAdmin()
     {
-        $admin_user_id  = Request::param('admin_user_id/d', 0);
-        $is_super_admin = Request::param('is_super_admin/s', '0');
+        $admin_user_id = Request::param('admin_user_id/d', '');
+        $is_admin      = Request::param('is_admin/s', '0');
 
-        $param['admin_user_id']  = $admin_user_id;
-        $param['is_super_admin'] = $is_super_admin;
+        $param['admin_user_id'] = $admin_user_id;
+        $param['is_admin']      = $is_admin;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check($param);
+        validate(AdminUserValidate::class)->scene('user_admin')->check($param);
 
-        $data = AdminUserService::superAdmin($param);
+        $data = AdminUserService::admin($param);
 
         return success($data);
     }

@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-28
+ * @LastEditTime : 2020-11-03
  */
 
 namespace app\admin\service;
@@ -15,15 +15,17 @@ class AdminMenuService
 {
     /**
      * 菜单列表
+     * 
+     * @param string $type list列表，tree树形，url链接
      *
      * @return array 
      */
-    public static function list()
+    public static function list($type = 'tree')
     {
-        $tree = AdminMenuCache::get(-1);
+        $menu = AdminMenuCache::get(0);
 
-        if (empty($tree)) {
-            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_prohibit,is_unauth,create_time,update_time';
+        if (empty($menu)) {
+            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time';
 
             $admin_menu_pid = Db::name('admin_menu')
                 ->field($field)
@@ -37,74 +39,60 @@ class AdminMenuService
                 ->field($field)
                 ->where('menu_pid', '>', 0)
                 ->where('is_delete', 0)
-                ->order(['menu_sort' => 'desc', 'admin_menu_id' => 'asc',])
+                ->order(['menu_sort' => 'desc', 'admin_menu_id' => 'asc'])
                 ->select()
                 ->toArray();
 
-            $admin_menu = array_merge($admin_menu_pid, $admin_menu_child);
+            $list = array_merge($admin_menu_pid, $admin_menu_child);
+            $tree = self::toTree($list, 0);
+            $url  = array_filter(array_column($list, 'menu_url'));
 
-            $tree = self::toTree($admin_menu, 0);
+            $menu['tree'] = $tree;
+            $menu['list'] = $list;
+            $menu['url']  = $url;
 
-            AdminMenuCache::set(-1, $tree);
+            AdminMenuCache::set(0, $menu);
         }
 
-        $data['count'] = count($tree);
-        $data['list']  = $tree;
+        if ($type == 'list') {
+            $data['count'] = count($menu['list']);
+            $data['list']  = $menu['list'];
+        } elseif ($type == 'url') {
+            $data['count'] = count($menu['url']);
+            $data['list']  = $menu['url'];
+        } else {
+            $data['count'] = count($menu['tree']);
+            $data['list']  = $menu['tree'];
+        }
 
         return $data;
     }
 
     /**
      * 菜单信息
-     * admin_menu_id：-1树形菜单，0所有菜单链接
      *
      * @param integer $admin_menu_id 菜单id
-     * @param boolean $is_menu_url   是否菜单url
      * 
      * @return array
      */
-    public static function info($admin_menu_id, $is_menu_url = false)
+    public static function info($admin_menu_id)
     {
         $admin_menu = AdminMenuCache::get($admin_menu_id);
 
         if (empty($admin_menu)) {
-            if ($is_menu_url) {
-                $admin_menu = Db::name('admin_menu')
-                    ->where('menu_url', '=', $admin_menu_id)
-                    ->find();
-
-                if (empty($admin_menu)) {
-                    error('菜单不存在');
-                }
+            if (is_numeric($admin_menu_id)) {
+                $where[] = ['admin_menu_id', '=',  $admin_menu_id];
             } else {
-                if ($admin_menu_id == 0) {
-                    $where[] = ['is_delete', '=', 0];
-                    $where[] = ['is_prohibit', '=', 0];
-                    $where[] = ['menu_url', '<>', ''];
+                $where[] = ['is_delete', '=', 0];
+                $where[] = ['menu_url', '=',  $admin_menu_id];
+            }
 
-                    $where_un[] = ['is_delete', '=', 0];
-                    $where_un[] = ['is_prohibit', '=', 0];
-                    $where_un[] = ['menu_url', '<>', ''];
-                    $where_un[] = ['is_unauth', '=', 1];
+            $admin_menu = Db::name('admin_menu')
+                ->where($where)
+                ->find();
 
-                    $admin_menu = Db::name('admin_menu')
-                        ->field('menu_url')
-                        ->order('menu_url', 'asc')
-                        ->whereOr([$where, $where_un])
-                        ->column('menu_url');
-                } elseif ($admin_menu_id == -1) {
-                    $admin_menu = self::list();
-                    $admin_menu = $admin_menu['list'];
-                } else {
-                    $admin_menu = Db::name('admin_menu')
-                        ->where('admin_menu_id', $admin_menu_id)
-                        ->where('is_delete', 0)
-                        ->find();
-
-                    if (empty($admin_menu)) {
-                        error('菜单不存在');
-                    }
-                }
+            if (empty($admin_menu)) {
+                exception('菜单不存在');
             }
 
             AdminMenuCache::set($admin_menu_id, $admin_menu);
@@ -126,14 +114,13 @@ class AdminMenuService
 
         $admin_menu_id = Db::name('admin_menu')
             ->insertGetId($param);
-            
+
         if (empty($admin_menu_id)) {
-            error();
+            exception();
         }
 
         $param['admin_menu_id'] = $admin_menu_id;
 
-        AdminMenuCache::del(-1);
         AdminMenuCache::del(0);
 
         return $param;
@@ -142,36 +129,41 @@ class AdminMenuService
     /**
      * 菜单修改
      *
-     * @param array $param 菜单信息
+     * @param array  $param  菜单信息
+     * @param string $method 请求方式
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($param, $method = 'get')
     {
         $admin_menu_id = $param['admin_menu_id'];
+        $admin_menu    = self::info($admin_menu_id);
 
-        $admin_menu_info = self::info($admin_menu_id);
-        $admin_menu_url  = $admin_menu_info['menu_url'];
+        if ($method == 'get') {
+            $data['admin_menu_id'] = $admin_menu['admin_menu_id'];
+            $data['menu_pid']      = $admin_menu['menu_pid'];
+            $data['menu_name']     = $admin_menu['menu_name'];
+            $data['menu_url']      = $admin_menu['menu_url'];
+            $data['menu_sort']     = $admin_menu['menu_sort'];
 
-        unset($param['admin_menu_id']);
+            return $data;
+        } else {
+            $param['update_time'] = date('Y-m-d H:i:s');
 
-        $param['update_time'] = date('Y-m-d H:i:s');
-        
-        $update = Db::name('admin_menu')
-            ->where('admin_menu_id', $admin_menu_id)
-            ->update($param);
+            $update = Db::name('admin_menu')
+                ->where('admin_menu_id', '=', $admin_menu_id)
+                ->update($param);
 
-        if (empty($update)) {
-            error();
+            if (empty($update)) {
+                exception();
+            }
+
+            AdminMenuCache::del(0);
+            AdminMenuCache::del($admin_menu_id);
+            AdminMenuCache::del($admin_menu['menu_url']);
+
+            return $param;
         }
-
-        $param['admin_menu_id'] = $admin_menu_id;
-
-        AdminMenuCache::del(-1);
-        AdminMenuCache::del(0);
-        AdminMenuCache::del($admin_menu_url);
-
-        return $param;
     }
 
     /**
@@ -183,33 +175,26 @@ class AdminMenuService
      */
     public static function dele($admin_menu_id)
     {
-        $admin_menu = Db::name('admin_menu')
-            ->field('admin_menu_id,menu_pid')
-            ->where('is_delete', 0)
-            ->select();
-
-        $admin_menu_ids   = self::getChildren($admin_menu, $admin_menu_id);
-        $admin_menu_ids[] = (int) $admin_menu_id;
+        $admin_menu = self::info($admin_menu_id);
 
         $update['is_delete']   = 1;
         $update['delete_time'] = date('Y-m-d H:i:s');
-        
+
         $delete = Db::name('admin_menu')
-            ->where('admin_menu_id', 'in', $admin_menu_ids)
+            ->where('admin_menu_id', '=', $admin_menu_id)
             ->update($update);
 
         if (empty($delete)) {
-            error();
+            exception();
         }
 
-        $admin_menu_info = self::info($admin_menu_id);
-        $admin_menu_url  = $admin_menu_info['menu_url'];
-
-        AdminMenuCache::del(-1);
         AdminMenuCache::del(0);
-        AdminMenuCache::del($admin_menu_url);
+        AdminMenuCache::del($admin_menu_id);
+        AdminMenuCache::del($admin_menu['menu_url']);
 
-        return $admin_menu_ids;
+        $update['admin_menu_id'] = $admin_menu_id;
+
+        return $update;
     }
 
     /**
@@ -219,23 +204,25 @@ class AdminMenuService
      * 
      * @return array
      */
-    public static function prohibit($param)
+    public static function disable($param)
     {
         $admin_menu_id = $param['admin_menu_id'];
+        $admin_menu    = self::info($admin_menu_id);
 
-        $data['is_prohibit'] = $param['is_prohibit'];
-        $data['update_time'] = date('Y-m-d H:i:s');
-        
+        $param['is_disable'] = $param['is_disable'];
+        $param['update_time'] = date('Y-m-d H:i:s');
+
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
-            ->update($data);
+            ->update($param);
 
         if (empty($update)) {
-            error();
+            exception();
         }
 
-        AdminMenuCache::del(-1);
         AdminMenuCache::del(0);
+        AdminMenuCache::del($admin_menu_id);
+        AdminMenuCache::del($admin_menu['menu_url']);
 
         return $param;
     }
@@ -250,22 +237,62 @@ class AdminMenuService
     public static function unauth($param)
     {
         $admin_menu_id = $param['admin_menu_id'];
+        $admin_menu    = self::info($admin_menu_id);
 
-        $data['is_unauth']   = $param['is_unauth'];
-        $data['update_time'] = date('Y-m-d H:i:s');
-        
+        $param['is_unauth']   = $param['is_unauth'];
+        $param['update_time'] = date('Y-m-d H:i:s');
+
         $update = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
-            ->update($data);
+            ->update($param);
 
         if (empty($update)) {
-            error();
+            exception();
         }
 
-        AdminMenuCache::del(-1);
         AdminMenuCache::del(0);
+        AdminMenuCache::del($admin_menu_id);
+        AdminMenuCache::del($admin_menu['menu_url']);
 
         return $param;
+    }
+
+    /**
+     * 菜单角色
+     *
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param string  $field 字段
+     * @param array   $order 排序
+     * @param boolean $whereOr or查询
+     * 
+     * @return array 
+     */
+    public static function role($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
+    {
+        $data = AdminRoleService::list($where, $page, $limit, $field, $order, $whereOr);
+
+        return $data;
+    }
+
+    /**
+     * 菜单用户
+     *
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param string  $field 字段 
+     * @param array   $order 排序
+     * @param boolean $whereOr or查询
+     *
+     * @return array 
+     */
+    public static function user($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
+    {
+        $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
+
+        return $data;
     }
 
     /**
@@ -323,6 +350,7 @@ class AdminMenuService
     public static function likeQuery($keyword, $field = 'menu_url|menu_name')
     {
         $data = Db::name('admin_menu')
+            ->where('is_delete', '=', 0)
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
@@ -341,6 +369,7 @@ class AdminMenuService
     public static function etQuery($keyword, $field = 'menu_url|menu_name')
     {
         $data = Db::name('admin_menu')
+            ->where('is_delete', '=', 0)
             ->where($field, '=', $keyword)
             ->select()
             ->toArray();

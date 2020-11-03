@@ -3,7 +3,7 @@
  * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-08-15
+ * @LastEditTime : 2020-10-25
  */
 
 namespace app;
@@ -59,7 +59,10 @@ class ExceptionHandle extends Handle
 
         // 参数验证错误
         if ($e instanceof ValidateException) {
-            error($e->getError());
+            $data['code'] = 400;
+            $data['msg']  = $e->getError();
+            $data['err']  = [];
+            return response($data, 200, [], 'json');
         }
 
         // 请求异常
@@ -67,10 +70,26 @@ class ExceptionHandle extends Handle
             return response($e->getMessage(), $e->getStatusCode(), [], 'json');
         }
 
+        // 手动异常
         $debug = Env::get('app_debug');
-        if (!$debug) {
-            error('服务器错误', $e->getMessage(), 500);
+        if ($debug) {
+            $err['file']  = $e->getFile();
+            $err['line']  = $e->getLine();
+            $err['trace'] = $e->getTrace();
+            $data['code'] = $e->getCode();
+            $data['msg']  = $e->getMessage();
+            $data['err']  = $err;
+        } else {
+            $data['code'] = 500;
+            $data['msg']  = '服务器错误';
+            $data['err']  = ['msg' => $e->getMessage()];
+            if ($data['code'] >= 400 && $data['code'] < 500) {
+                $data['msg']  = $e->getMessage();
+            } else {
+                $data['code'] = $e->getCode();
+            }
         }
+        return response($data, 200, [], 'json');
 
         // 其他错误交给系统处理
         return parent::render($request, $e);

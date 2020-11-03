@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-29
  */
 
 namespace app\admin\service;
@@ -45,7 +45,7 @@ class AdminVerifyService
     protected $length = 5;
     // 验证码字体，不设置随机获取
     protected $fontttf = '';
-    // 背景颜色
+    // 验证码背景颜色
     protected $bg = [243, 251, 254];
     // 算术验证码
     protected $math = false;
@@ -76,7 +76,7 @@ class AdminVerifyService
     /**
      * 配置验证码
      * 
-     * @param string|null $config
+     * @param string|null $config 配置
      */
     protected function configure(string $config = null): void
     {
@@ -125,8 +125,8 @@ class AdminVerifyService
      */
     protected function generate(): array
     {
+        $key = md5(uniqid(mt_rand(1, 99), true));
         $bag = '';
-        $key = md5(uniqid(mt_rand(), true));
 
         if ($this->math) {
             $this->useZh  = false;
@@ -155,8 +155,8 @@ class AdminVerifyService
         }
 
         return [
-            'value' => $bag,
-            'key'   => $key,
+            'key' => $key,
+            'val' => $bag,
         ];
     }
 
@@ -240,7 +240,7 @@ class AdminVerifyService
         }
 
         // 绘验证码
-        $text = $this->useZh ? preg_split('/(?<!^)(?!$)/u', $generator['value']) : str_split($generator['value']); // 验证码
+        $text = $this->useZh ? preg_split('/(?<!^)(?!$)/u', $generator['val']) : str_split($generator['val']); // 验证码
 
         foreach ($text as $index => $char) {
 

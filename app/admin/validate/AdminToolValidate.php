@@ -3,7 +3,7 @@
  * @Description  : 实用工具验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-15
- * @LastEditTime : 2020-09-11
+ * @LastEditTime : 2020-10-29
  */
 
 namespace app\admin\validate;
@@ -21,7 +21,7 @@ class AdminToolValidate extends Validate
     ];
 
     // 错误信息
-    protected $message  =   [
+    protected $message = [
         'strtran_str.require' => '请输入字符串',
         'strrand_ids.require' => '请选择所用字符',
         'strrand_len.require' => '请选择字符长度',

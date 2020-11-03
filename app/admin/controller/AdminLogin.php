@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-28
  */
 
 namespace app\admin\controller;
@@ -16,6 +16,22 @@ use app\admin\service\AdminVerifyService;
 
 class AdminLogin
 {
+    /**
+     * 验证码
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function verify()
+    {
+        $AdminVerifyService = new AdminVerifyService();
+
+        $data = $AdminVerifyService->verify();
+
+        return success($data);
+    }
+
     /**
      * 登录
      *
@@ -60,26 +76,10 @@ class AdminLogin
 
         $param['admin_user_id'] = $admin_user_id;
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        validate(AdminUserValidate::class)->scene('user_id')->check($param);
 
-        $data = AdminLoginService::logout($param);
+        $data = AdminLoginService::logout($admin_user_id);
 
         return success($data, '退出成功');
-    }
-
-    /**
-     * 验证码
-     *
-     * @method GET
-     *
-     * @return json
-     */
-    public function verify()
-    {
-        $AdminVerifyService = new AdminVerifyService();
-
-        $data = $AdminVerifyService->verify();
-
-        return success($data);
     }
 }

@@ -3,14 +3,14 @@
  * @Description  : 后台配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-11-03
  */
 
 return [
-    // 超级管理员id
-    'super_admin' => [1],
+    // 系统管理员id
+    'admin_ids' => [1],
     // 是否记录日志
-    'is_admin_log' => true,
+    'is_log' => true,
     // token密钥
     'token_key' => 'c8d16adf54b1a66fbf3f16147e4f159e',
     // 请求头部token键名
@@ -24,7 +24,7 @@ return [
     ],
     // 权限白名单
     'rule_white_list' => [
-        'admin/AdminUsers/usersInfo',
+        'admin/AdminMy/myInfo',
         'admin/AdminIndex/index',
         'admin/AdminLogin/logout',
     ],

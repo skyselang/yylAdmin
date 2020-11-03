@@ -3,7 +3,7 @@
  * @Description  : Token验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-09-08
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-10-29
  */
 
 namespace app\admin\validate;
@@ -19,11 +19,11 @@ class AdminTokenValidate extends Validate
     ];
 
     // 错误信息
-    protected $message  =   [
+    protected $message = [
         'iss.require' => '请输入签发者',
         'iss.length'  => '签发者为2-32个字符',
         'exp.require' => '请输入有效时间',
-        'exp.between' => '有效时间范围为1-720',
+        'exp.between' => '有效时间范围为1-720小时',
     ];
 
     // 验证场景

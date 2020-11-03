@@ -3,7 +3,7 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-10-29
  */
 
 use think\facade\Config;
@@ -45,6 +45,19 @@ function error($msg = '操作失败', $err = [], $code = 400)
     print_r(json_encode($res, JSON_UNESCAPED_UNICODE));
 
     exit;
+}
+
+/**
+ * 抛出异常
+ *
+ * @param string  $msg  异常提示
+ * @param integer $code 错误码
+ * 
+ * @return json
+ */
+function exception($msg = '操作失败', $code = 400)
+{
+    throw new \think\Exception($msg, $code);
 }
 
 /**
@@ -97,20 +110,20 @@ function file_url($file_path = '')
 }
 
 /**
- * 管理员账号id
+ * 用户id
  *
  * @return integer
  */
 function admin_user_id()
 {
     $admin_user_id_key = Config::get('admin.admin_user_id_key');
-    $admin_user_id     = Request::header($admin_user_id_key, 0);
+    $admin_user_id     = Request::header($admin_user_id_key, '');
 
     return $admin_user_id;
 }
 
 /**
- * 管理员账号token
+ * 用户token
  *
  * @return string
  */
@@ -123,24 +136,24 @@ function admin_token()
 }
 
 /**
- * 是否超级管理员
+ * 用户是否管理员
  *
  * @param integer $admin_user_id 用户id
  * 
  * @return bool
  */
-function super_admin($admin_user_id = 0)
+function is_admin($admin_user_id = 0)
 {
     if (empty($admin_user_id)) {
         return false;
     }
 
-    $super_admin = Config::get('admin.super_admin', []);
-    if (empty($super_admin)) {
+    $admin_ids = Config::get('admin.admin_ids', []);
+    if (empty($admin_ids)) {
         return false;
     }
 
-    if (in_array($admin_user_id, $super_admin)) {
+    if (in_array($admin_user_id, $admin_ids)) {
         return true;
     } else {
         return false;
@@ -148,15 +161,15 @@ function super_admin($admin_user_id = 0)
 }
 
 /**
- * 菜单链接
+ * 菜单链接（当前访问url）
  *
  * @return string
  */
-function admin_menu_url()
+function menu_url()
 {
-    $admin_menu_url = app('http')->getName() . '/' . Request::pathinfo();
+    $menu_url = app('http')->getName() . '/' . Request::pathinfo();
 
-    return $admin_menu_url;
+    return $menu_url;
 }
 
 /**

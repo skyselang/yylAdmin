@@ -3,12 +3,13 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-09-29
+ * @LastEditTime : 2020-11-01
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
+use app\common\utils\Datetime;
 use app\common\cache\AdminLogCache;
 
 class AdminLogService
@@ -17,14 +18,14 @@ class AdminLogService
      * 日志列表
      *
      * @param array   $where 条件
-     * @param integer $page  页数
+     * @param integer $page  分页
      * @param integer $limit 数量
-     * @param string  $field 字段
      * @param array   $order 排序
+     * @param string  $field 字段
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
             $field = 'admin_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,create_time';
@@ -40,8 +41,6 @@ class AdminLogService
             ->where($where)
             ->count('admin_log_id');
 
-        $pages = ceil($count / $limit);
-
         $list = Db::name('admin_log')
             ->field($field)
             ->where($where)
@@ -51,37 +50,27 @@ class AdminLogService
             ->select()
             ->toArray();
 
-        $admin_menu_id = array_column($list, 'admin_menu_id');
-        $admin_menu_id = array_unique($admin_menu_id);
-        $admin_menu = Db::name('admin_menu')
-            ->field('admin_menu_id,menu_url,menu_name')
-            ->where('admin_menu_id', 'in', $admin_menu_id)
-            ->select()
-            ->toArray();
-
-        $admin_user_id = array_column($list, 'admin_user_id');
-        $admin_user_id = array_unique($admin_user_id);
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id,username,nickname')
-            ->where('admin_user_id', 'in', $admin_user_id)
-            ->select()
-            ->toArray();
-
         foreach ($list as $k => $v) {
-            foreach ($admin_menu as $km => $vm) {
-                if ($v['admin_menu_id'] == $vm['admin_menu_id']) {
-                    $list[$k]['menu_name'] = $vm['menu_name'];
-                    $list[$k]['menu_url']  = $vm['menu_url'];
-                }
+            $list[$k]['menu_name'] = '';
+            $list[$k]['menu_url']  = '';
+            $admin_menu = AdminMenuService::info($v['admin_menu_id']);
+
+            if ($admin_menu) {
+                $list[$k]['menu_name'] = $admin_menu['menu_name'];
+                $list[$k]['menu_url']  = $admin_menu['menu_url'];
             }
 
-            foreach ($admin_user as $ku => $vu) {
-                if ($v['admin_user_id'] == $vu['admin_user_id']) {
-                    $list[$k]['username'] = $vu['username'];
-                    $list[$k]['nickname'] = $vu['nickname'];
-                }
+            $list[$k]['username'] = '';
+            $list[$k]['nickname'] = '';
+            $admin_user = AdminUserService::info($v['admin_user_id']);
+
+            if ($admin_user) {
+                $list[$k]['username'] = $admin_user['username'];
+                $list[$k]['nickname'] = $admin_user['nickname'];
             }
         }
+
+        $pages = ceil($count / $limit);
 
         $data['count'] = $count;
         $data['pages'] = $pages;
@@ -106,30 +95,29 @@ class AdminLogService
         if (empty($admin_log)) {
             $admin_log = Db::name('admin_log')
                 ->where('admin_log_id', $admin_log_id)
-                ->where('is_delete', 0)
                 ->find();
-                
+
             if (empty($admin_log)) {
-                error('日志不存在');
+                exception('日志不存在');
             }
 
             if ($admin_log['request_param']) {
                 $admin_log['request_param'] = unserialize($admin_log['request_param']);
             }
 
-            $admin_user = AdminUserService::info($admin_log['admin_user_id']);
             $admin_log['username'] = '';
             $admin_log['nickname'] = '';
+            $admin_user = AdminUserService::info($admin_log['admin_user_id']);
 
             if ($admin_user) {
                 $admin_log['username'] = $admin_user['username'];
                 $admin_log['nickname'] = $admin_user['nickname'];
             }
 
-            $admin_menu = AdminMenuService::info($admin_log['admin_menu_id']);
             $admin_log['menu_name'] = '';
             $admin_log['menu_url']  = '';
-            
+            $admin_menu = AdminMenuService::info($admin_log['admin_menu_id']);
+
             if ($admin_menu) {
                 $admin_log['menu_name'] = $admin_menu['menu_name'];
                 $admin_log['menu_url']  = $admin_menu['menu_url'];
@@ -150,9 +138,11 @@ class AdminLogService
      */
     public static function add($admin_log = [])
     {
-        if ($admin_log['request_ip']) {
-            $ip_info = AdminIpInfoService::info($admin_log['request_ip']);
-            
+        $ip = $admin_log['request_ip'];
+
+        if ($ip) {
+            $ip_info = AdminIpInfoService::info($ip);
+
             $admin_log['request_country']  = $ip_info['country'];
             $admin_log['request_province'] = $ip_info['province'];
             $admin_log['request_city']     = $ip_info['city'];
@@ -167,6 +157,32 @@ class AdminLogService
     }
 
     /**
+     * 日志修改
+     *
+     * @param array $admin_log 日志数据
+     * 
+     * @return array
+     */
+    public static function edit($admin_log = [])
+    {
+        $admin_log_id = $admin_log['admin_log_id'];
+
+        $admin_log['update_time'] = date('Y-m-d H:i:s');
+
+        $update = Db::name('admin_log')
+            ->where('admin_log_id', $admin_log_id)
+            ->update($admin_log);
+
+        if (empty($update)) {
+            exception();
+        }
+
+        AdminLogCache::del($admin_log_id);
+
+        return $admin_log;
+    }
+
+    /**
      * 日志删除
      *
      * @param integer $admin_log_id 日志id
@@ -177,18 +193,220 @@ class AdminLogService
     {
         $data['is_delete']   = 1;
         $data['delete_time'] = date('Y-m-d H:i:s');
-        
+
         $update = Db::name('admin_log')
             ->where('admin_log_id', $admin_log_id)
             ->update($data);
 
         if (empty($update)) {
-            error();
+            exception();
         }
 
         $data['admin_log_id'] = $admin_log_id;
 
         AdminLogCache::del($admin_log_id);
+
+        return $data;
+    }
+
+    /**
+     * 数量统计
+     *
+     * @param string $date 日期
+     *
+     * @return integer
+     */
+    public static function staNumber($date = 'total')
+    {
+        $key  = $date;
+        $data = AdminLogCache::get($key);
+
+        if (empty($data)) {
+            $where[] = ['is_delete', '=', 0];
+
+            if ($date == 'total') {
+                $where[] = ['admin_log_id', '>', 0];
+            } else {
+                if ($date == 'yesterday') {
+                    $yesterday = Datetime::yesterday();
+                    list($sta_time, $end_time) = Datetime::datetime($yesterday);
+                } elseif ($date == 'thisWeek') {
+                    list($start, $end) = Datetime::thisWeek();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } elseif ($date == 'lastWeek') {
+                    list($start, $end) = Datetime::lastWeek();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } elseif ($date == 'thisMonth') {
+                    list($start, $end) = Datetime::thisMonth();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } elseif ($date == 'lastMonth') {
+                    list($start, $end) = Datetime::lastMonth();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } else {
+                    $today = Datetime::today();
+                    list($sta_time, $end_time) = Datetime::datetime($today);
+                }
+
+                $where[] = ['create_time', '>=', $sta_time];
+                $where[] = ['create_time', '<=', $end_time];
+            }
+
+            $data = Db::name('admin_log')
+                ->field('admin_log_id')
+                ->where($where)
+                ->count('admin_log_id');
+
+            AdminLogCache::set($key, $data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * 日期统计
+     *
+     * @param array $date 日期范围
+     *
+     * @return array
+     */
+    public static function staDate($date = [])
+    {
+        if (empty($date)) {
+            $date[0] = Datetime::daysAgo(31);
+            $date[1] = Datetime::daysAgo(1);
+
+            $sta_date = $date[0];
+            $end_date = $date[1];
+
+            $date_days = Datetime::betweenDates($sta_date, $end_date);
+        } else {
+            $sta_date = $date[0];
+            $end_date = $date[1];
+
+            $date_days = Datetime::betweenDates($sta_date, $end_date);
+        }
+
+        $key  = 'date:' . $sta_date . '-' . $end_date;
+        $data = AdminLogCache::get($key);
+
+        if (empty($data)) {
+            $x_data = [];
+            $y_data = [];
+
+            foreach ($date_days as $k => $v) {
+                $x_data[] = $v;
+
+                $y_data[] = Db::name('admin_log')
+                    ->field('admin_log_id')
+                    ->where('is_delete', '=', 0)
+                    ->where('create_time', '>=', $v . ' 00:00:00')
+                    ->where('create_time', '<=', $v . ' 23:59:59')
+                    ->count('admin_log_id');
+            }
+
+            $data['x_data'] = $x_data;
+            $data['y_data'] = $y_data;
+            $data['date']   = $date;
+
+            AdminLogCache::set($key, $data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * 地区统计
+     *
+     * @param integer $date   日期范围
+     * @param string  $region 地区类型
+     * @param integer $top    top排行
+     *   
+     * @return array
+     */
+    public static function staRegion($date = [], $region = 'city', $top = 20)
+    {
+        if (empty($date)) {
+            $date[0] = Datetime::daysAgo(31);
+            $date[1] = Datetime::daysAgo(1);
+
+            $sta_date = $date[0];
+            $end_date = $date[1];
+        } else {
+            $sta_date = $date[0];
+            $end_date = $date[1];
+        }
+
+        $key  = ':' . $sta_date . '-' . $end_date . ':top:' . $top;
+
+        if ($region == 'country') {
+            $group = 'request_country';
+            $key   = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } elseif ($region == 'province') {
+            $group = 'request_province';
+            $key   = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } elseif ($region == 'isp') {
+            $group = 'request_isp';
+            $key   = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } else {
+            $group = 'request_city';
+            $key   = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        }
+
+        $data = AdminLogCache::get($key);
+
+        if (empty($data)) {
+            $sta_time = $date[0] . ' 00:00:00';
+            $end_time = $date[1] . ' 23:59:59';
+
+            $where[] = ['is_delete', '=', 0];
+            $where[] = ['create_time', '>=', $sta_time];
+            $where[] = ['create_time', '<=', $end_time];
+
+            $data = Db::name('admin_log')
+                ->field($field . ', COUNT(admin_log_id) as y_data')
+                ->where($where)
+                ->group($group)
+                ->order('y_data desc')
+                ->limit($top)
+                ->select();
+
+            $x_data = [];
+            $y_data = [];
+            $p_data = [];
+
+            foreach ($data as $k => $v) {
+                $x_data[] = $v['x_data'];
+                $y_data[] = $v['y_data'];
+                $p_data[] = ['value' => $v['y_data'], 'name' => $v['x_data']];
+            }
+
+            $data['x_data'] = $x_data;
+            $data['y_data'] = $y_data;
+            $data['p_data'] = $p_data;
+            $data['date']   = $date;
+
+            AdminLogCache::set($key, $data);
+        }
 
         return $data;
     }

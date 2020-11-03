@@ -1,27 +1,27 @@
 <?php
 /*
- * @Description  : 菜单缓存
+ * @Description  : 角色缓存
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-06-12
- * @LastEditTime : 2020-10-25
+ * @Date         : 2020-10-24
+ * @LastEditTime : 2020-10-24
  */
 
 namespace app\common\cache;
 
 use think\facade\Cache;
 
-class AdminMenuCache
+class AdminRoleCache
 {
     /**
      * 缓存key
      *
-     * @param integer $admin_menu_id 菜单id
+     * @param integer $admin_role_id 角色id
      * 
      * @return string
      */
-    public static function key($admin_menu_id = 0)
+    public static function key($admin_role_id = 0)
     {
-        $key = 'adminMenu:' . $admin_menu_id;
+        $key = 'adminRole:' . $admin_role_id;
 
         return $key;
     }
@@ -45,16 +45,16 @@ class AdminMenuCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_menu_id 菜单id
-     * @param array   $admin_menu    菜单信息
+     * @param integer $admin_role_id 角色id
+     * @param array   $admin_role    角色信息
      * @param integer $expire        有效时间
      * 
-     * @return array 菜单信息
+     * @return array 角色信息
      */
-    public static function set($admin_menu_id = 0, $admin_menu = [], $expire = 0)
+    public static function set($admin_role_id = 0, $admin_role = [], $expire = 0)
     {
-        $key = self::key($admin_menu_id);
-        $val = $admin_menu;
+        $key = self::key($admin_role_id);
+        $val = $admin_role;
         $exp = $expire ?: self::exp();
         Cache::set($key, $val, $exp);
 
@@ -64,13 +64,13 @@ class AdminMenuCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_menu_id 菜单id
+     * @param integer $admin_role_id 角色id
      * 
-     * @return array 菜单信息
+     * @return array 角色信息
      */
-    public static function get($admin_menu_id = 0)
+    public static function get($admin_role_id = 0)
     {
-        $key = self::key($admin_menu_id);
+        $key = self::key($admin_role_id);
         $res = Cache::get($key);
 
         return $res;
@@ -79,13 +79,13 @@ class AdminMenuCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_menu_id 菜单id
+     * @param integer $admin_role_id 角色id
      * 
      * @return bool
      */
-    public static function del($admin_menu_id = 0)
+    public static function del($admin_role_id = 0)
     {
-        $key = self::key($admin_menu_id);
+        $key = self::key($admin_role_id);
         $res = Cache::delete($key);
 
         return $res;

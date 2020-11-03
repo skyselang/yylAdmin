@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 验证码配置（默认）
+ * @Description  : 验证码配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
  * @LastEditTime : 2020-09-09

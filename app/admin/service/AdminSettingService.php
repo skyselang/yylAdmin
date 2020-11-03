@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-11-03
  */
 
 namespace app\admin\service;
@@ -19,28 +19,57 @@ class AdminSettingService
 
     /**
      * 缓存设置
+     * 
+     * @param array  $param  缓存参数
+     * @param string $method 请求方式
      *
-     * @return bool
+     * @return array|bool
      */
-    public static function settingCache()
+    public static function settingCache($param = [], $method = 'get')
     {
-        $res = Cache::clear(); //缓存清除
+        if ($method == 'get') {
+            $cache = Cache::handler();
 
-        return $res;
+            $data = $cache->info();
+
+            $byte['type']  = 'B';
+            $byte['value'] = $data['used_memory_lua'];
+
+            $data['used_memory_lua_human'] = AdminToolService::byteTran($byte)['KB'] . 'K';;
+            $data['os_arch_bits']          = $data['os'] . $data['arch_bits'];
+            $data['uptime_in_days']        = $data['uptime_in_days'] . '天';
+
+            return $data;
+        } else {
+            $res = Cache::clear();
+
+            if (empty($res)) {
+                exception();
+            }
+
+            $data['msg'] = '缓存已清空';
+            $data['res'] = $res;
+
+            return $data;
+        }
     }
 
     /**
      * 验证码设置
      *
-     * @param array $param 验证码参数
+     * @param array  $param  验证码参数
+     * @param string $method 请求方式
      *
      * @return array
      */
-    public static function settingVerify($param = [])
+    public static function settingVerify($param = [], $method = 'get')
     {
-        $admin_setting_id = self::$admin_setting_id;
+        if ($method == 'get') {
+            $admin_setting = self::admin_setting();
+            $admin_verify  = $admin_setting['admin_verify'];
+        } else {
+            $admin_setting_id = self::$admin_setting_id;
 
-        if ($param) {
             $admin_verify['switch'] = $param['switch'];
             $admin_verify['curve']  = $param['curve'];
             $admin_verify['noise']  = $param['noise'];
@@ -57,13 +86,10 @@ class AdminSettingService
                 ->update($update);
 
             if (empty($admin_setting)) {
-                error();
+                exception();
             } else {
                 AdminSettingCache::del($admin_setting_id);
             }
-        } else {
-            $admin_setting = self::admin_setting();
-            $admin_verify  = $admin_setting['admin_verify'];
         }
 
         return $admin_verify;
@@ -72,33 +98,34 @@ class AdminSettingService
     /**
      * Token设置
      *
-     * @param array $param token参数
+     * @param array  $param  token参数
+     * @param string $method 请求方式
      *
      * @return array
      */
-    public static function settingToken($param = [])
+    public static function settingToken($param = [], $method = 'get')
     {
-        $admin_setting_id = self::$admin_setting_id;
+        if ($method == 'get') {
+            $admin_setting = self::admin_setting();
+            $admin_token   = $admin_setting['admin_token'];
+        } else {
+            $admin_setting_id = self::$admin_setting_id;
 
-        if ($param) {
             $admin_token['iss'] = $param['iss'];
             $admin_token['exp'] = $param['exp'];
 
             $update['admin_token'] = serialize($admin_token);
             $update['update_time'] = date('Y-m-d H:i:s');
-            
+
             $admin_setting = Db::name('admin_setting')
                 ->where('admin_setting_id', $admin_setting_id)
                 ->update($update);
 
             if (empty($admin_setting)) {
-                error();
+                exception();
             } else {
                 AdminSettingCache::del($admin_setting_id);
             }
-        } else {
-            $admin_setting = self::admin_setting();
-            $admin_token   = $admin_setting['admin_token'];
         }
 
         return $admin_token;

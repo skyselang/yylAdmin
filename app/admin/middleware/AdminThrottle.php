@@ -3,7 +3,7 @@
  * @Description  : 请求频率限制中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-22
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-23
  */
 
 namespace app\admin\middleware;
@@ -30,7 +30,7 @@ class AdminThrottle
 
         if ($number > 0) {
             $admin_user_id  = admin_user_id();
-            $admin_menu_url = admin_menu_url();
+            $admin_menu_url = menu_url();
 
             if ($admin_user_id && $admin_menu_url) {
                 $expire = $throttle['expire'];
@@ -39,7 +39,7 @@ class AdminThrottle
                 if ($count) {
                     if ($count >= $number) {
                         AdminThrottleCache::del($admin_user_id, $admin_menu_url);
-                        error('你的操作过于频繁', '请求频率限制：' . $number . '次/' . $expire . '秒', 429);
+                        exception('你的操作过于频繁', 429);
                     } else {
                         AdminThrottleCache::inc($admin_user_id, $admin_menu_url);
                     }

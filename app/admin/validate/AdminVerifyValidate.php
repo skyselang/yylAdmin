@@ -3,7 +3,7 @@
  * @Description  : 验证码验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-15
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2020-10-29
  */
 
 namespace app\admin\validate;
@@ -21,12 +21,12 @@ class AdminVerifyValidate extends Validate
         'bgimg'       => ['require', 'boolean'],
         'type'        => ['require', 'between:1,5'],
         'length'      => ['require', 'between:3,6'],
-        'expire'      => ['require', 'between:1,3600'],
+        'expire'      => ['require', 'between:10,3600'],
         'verify_code' => ['checkVerify'],
     ];
 
     // 错误信息
-    protected $message  =   [
+    protected $message = [
         'switch.require' => '验证码开关状态错误',
         'switch.boolean' => '验证码开关值错误',
         'curve.require'  => '验证码曲线状态错误',
@@ -40,7 +40,7 @@ class AdminVerifyValidate extends Validate
         'length.require' => '请选择验证码位数',
         'length.between' => '验证码位数错误',
         'expire.require' => '请输入验证码有效时间',
-        'expire.between' => '验证码有效时间范围：1-3600 秒',
+        'expire.between' => '验证码有效时间范围：10-3600 秒',
     ];
 
     // 验证场景
@@ -49,7 +49,7 @@ class AdminVerifyValidate extends Validate
         'check' => ['verify_code'],
     ];
 
-    // 验证码验证
+    // 自定义验证规则：验证码验证
     protected function checkVerify($value, $rule, $data = [])
     {
         $admin_verify = AdminVerifyService::config();

@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-09-29
+ * @LastEditTime : 2020-10-29
  */
 
 namespace app\admin\service;
@@ -20,7 +20,7 @@ class AdminToolService
      * 
      * @return array
      */
-    public static function strRand($ids, $len)
+    public static function strRand($ids = [1, 2, 3], $len = 12)
     {
         $str_arr = [
             1 => '0123456789',
@@ -55,9 +55,9 @@ class AdminToolService
      *
      * @return array
      */
-    public static function strTran($str)
+    public static function strTran($str = '')
     {
-        if (empty($str)) {
+        if ($str == '') {
             $str = 'yylAdmin';
         }
 
@@ -111,7 +111,7 @@ class AdminToolService
      * 
      * @return array
      */
-    public static function qrcode($str)
+    public static function qrcode($str = '')
     {
         if (empty($str)) {
             $str = 'https://gitee.com/skyselang/yylAdmin';
@@ -132,7 +132,7 @@ class AdminToolService
         $qrcode_url = file_url($file_path);
 
         $data['str'] = $str;
-        $data['url'] = $qrcode_url . '?r=' . mt_rand(10, 99);
+        $data['url'] = $qrcode_url . '?r=' . mt_rand(1, 99);
 
         return $data;
     }
@@ -209,12 +209,10 @@ class AdminToolService
      *
      * @return array
      */
-    public static function ipQuery($param)
+    public static function ipQuery($ip = '')
     {
-        $ip = $param['ip'];
+        $ip_info = AdminIpInfoService::info($ip);
 
-        $ip_query = AdminIpInfoService::info($ip);
-
-        return $ip_query;
+        return $ip_info;
     }
 }

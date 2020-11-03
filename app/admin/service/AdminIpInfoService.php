@@ -3,7 +3,7 @@
  * @Description  : ip信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-10-24
  */
 
 namespace app\admin\service;
@@ -38,7 +38,7 @@ class AdminIpInfoService
             ];
 
             if ($res['code'] == 0 && $res['data']) {
-                $data     = $res['data'];
+                $data = $res['data'];
 
                 $country  = $data['country'];
                 $province = $data['region'];

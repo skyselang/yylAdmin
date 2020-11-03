@@ -3,7 +3,7 @@
  * @Description  : 日志中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-08-26
+ * @LastEditTime : 2020-10-20
  */
 
 namespace app\admin\middleware;
@@ -28,14 +28,14 @@ class AdminLog
     {
         $response = $next($request);
 
-        $is_admin_log = Config::get('admin.is_admin_log', false);
+        $is_log = Config::get('admin.is_log', false);
 
-        if ($is_admin_log) {
+        if ($is_log) {
             $admin_user_id = admin_user_id();
 
             if ($admin_user_id) {
-                $menu_url   = admin_menu_url();
-                $admin_menu = AdminMenuService::info($menu_url, true);
+                $menu_url   = menu_url();
+                $admin_menu = AdminMenuService::info($menu_url);
 
                 $admin_log['admin_user_id']  = $admin_user_id;
                 $admin_log['admin_menu_id']  = $admin_menu['admin_menu_id'];

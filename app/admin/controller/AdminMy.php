@@ -2,33 +2,39 @@
 /*
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-14
- * @LastEditTime : 2020-09-27
+ * @Date         : 2020-10-12
+ * @LastEditTime : 2020-11-01
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\AdminUserValidate;
-use app\admin\service\AdminUsersService;
+use app\admin\validate\AdminMyValidate;
+use app\admin\service\AdminMyService;
 use app\admin\service\AdminMenuService;
 
-class AdminUsers
+class AdminMy
 {
     /**
-     * 个人信息
+     * 我的信息
      *
      * @method GET
      * 
      * @return json
      */
-    public function usersInfo()
+    public function myInfo()
     {
         $admin_user_id = Request::param('admin_user_id/d', '');
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        $param['admin_user_id'] = $admin_user_id;
 
-        $data = AdminUsersService::info($admin_user_id);
+        validate(AdminMyValidate::class)->scene('user_id')->check($param);
+
+        $data = AdminMyService::info($admin_user_id);
+
+        if ($data['is_delete'] == 1) {
+            exception('账号信息错误，请重新登录！');
+        }
 
         return success($data);
     }
@@ -36,26 +42,36 @@ class AdminUsers
     /**
      * 修改信息
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
-    public function usersEdit()
+    public function myEdit()
     {
-        $param = Request::only(
-            [
-                'admin_user_id' => '',
-                'username'      => '',
-                'nickname'      => '',
-                'email'         => '',
-            ]
-        );
+        if (Request::isGet()) {
+            $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
-        validate(AdminUserValidate::class)->scene('users_edit')->check($param);
+            validate(AdminMyValidate::class)->scene('user_id')->check($param);
 
-        $data = AdminUsersService::edit($param);
+            $data = AdminMyService::edit($param);
 
-        return success($data);
+            return success($data);
+        } else {
+            $param = Request::only(
+                [
+                    'admin_user_id' => '',
+                    'username'      => '',
+                    'nickname'      => '',
+                    'email'         => '',
+                ]
+            );
+
+            validate(AdminMyValidate::class)->scene('my_edit')->check($param);
+
+            $data = AdminMyService::edit($param, 'post');
+
+            return success($data);
+        }
     }
 
     /**
@@ -65,20 +81,20 @@ class AdminUsers
      * 
      * @return json
      */
-    public function usersPwd()
+    public function myPwd()
     {
 
         $param = Request::only(
             [
                 'admin_user_id' => '',
-                'password'      => '',
-                'passwords'     => '',
+                'password_old'  => '',
+                'password_new'  => '',
             ]
         );
 
-        validate(AdminUserValidate::class)->scene('users_pwd')->check($param);
+        validate(AdminMyValidate::class)->scene('my_pwd')->check($param);
 
-        $data = AdminUsersService::pwd($param);
+        $data = AdminMyService::pwd($param);
 
         return success($data);
     }
@@ -90,7 +106,7 @@ class AdminUsers
      * 
      * @return json
      */
-    public function usersAvatar()
+    public function myAvatar()
     {
         $admin_user_id = Request::param('admin_user_id/d', '');
         $avatar        = Request::file('avatar_file');
@@ -98,33 +114,35 @@ class AdminUsers
         $param['admin_user_id'] = $admin_user_id;
         $param['avatar']        = $avatar;
 
-        validate(AdminUserValidate::class)->scene('users_avatar')->check($param);
+        validate(AdminMyValidate::class)->scene('my_avatar')->check($param);
 
-        $data = AdminUsersService::avatar($param);
+        $data = AdminMyService::avatar($param);
 
         return success($data);
     }
 
     /**
-     * 个人日志
+     * 我的日志
      *
      * @method GET
      * 
      * @return json
      */
-    public function usersLog()
+    public function myLog()
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $admin_user_id   = Request::param('admin_user_id/d', 0);
-        $admin_log_type  = Request::param('type/d', 0);
+        $admin_user_id   = Request::param('admin_user_id/d', '');
+        $admin_log_type  = Request::param('type/d', '');
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
         $request_keyword = Request::param('request_keyword/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
 
-        validate(AdminUserValidate::class)->scene('admin_user_id')->check(['admin_user_id' => $admin_user_id]);
+        $param['admin_user_id'] = $admin_user_id;
+
+        validate(AdminMyValidate::class)->scene('user_id')->check($param);
 
         $where = [];
         if ($admin_user_id) {
@@ -153,7 +171,7 @@ class AdminUsers
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminUsersService::log($where, $page, $limit, $field, $order);
+        $data = AdminMyService::log($where, $page, $limit, $field, $order);
 
         return success($data);
     }
