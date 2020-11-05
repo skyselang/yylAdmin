@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-02
+ * @LastEditTime : 2020-11-05
  */
 
 namespace app\admin\controller;
@@ -237,10 +237,10 @@ class AdminMenu
 
             validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
-            $where0 = [['admin_menu_ids', 'like', $admin_role_id], ['is_delete', '=', 0]];
-            $where1 = [['admin_menu_ids', 'like', $admin_role_id . ',%'], ['is_delete', '=', 0]];
-            $where2 = [['admin_menu_ids', 'like', '%,' . $admin_role_id . ',%'], ['is_delete', '=', 0]];
-            $where3 = [['admin_menu_ids', 'like', '%,' . $admin_role_id], ['is_delete', '=', 0]];
+            $where0 = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];                                       
+            $where1 = [['admin_menu_ids', 'like', $admin_menu_id . ',%'], ['is_delete', '=', 0]];
+            $where2 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id . ',%'], ['is_delete', '=', 0]];
+            $where3 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id], ['is_delete', '=', 0]];
             $where  = [$where0, $where1, $where2, $where3];
             $whereOr = true;
 
