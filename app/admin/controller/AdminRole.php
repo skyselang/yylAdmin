@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-09
  */
 
 namespace app\admin\controller;
@@ -11,6 +11,7 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\admin\service\AdminRoleService;
 use app\admin\validate\AdminRoleValidate;
+use app\admin\validate\AdminUserValidate;
 
 class AdminRole
 {
@@ -215,6 +216,30 @@ class AdminRole
         }
 
         $data = AdminRoleService::user($where, $page, $limit, $field, $order, $whereOr);
+
+        return success($data);
+    }
+
+    /**
+     * 角色用户解除
+     *
+     * @method POST
+     *
+     * @return json
+     */
+    public function roleUserRemove()
+    {
+        $param = Request::only(
+            [
+                'admin_role_id' => '',
+                'admin_user_id' => '',
+            ]
+        );
+
+        validate(AdminRoleValidate::class)->scene('role_id')->check($param);
+        validate(AdminUserValidate::class)->scene('user_id')->check($param);
+
+        $data = AdminRoleService::userRemove($param);
 
         return success($data);
     }

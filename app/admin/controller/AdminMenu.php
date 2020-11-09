@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-05
+ * @LastEditTime : 2020-11-09
  */
 
 namespace app\admin\controller;
@@ -11,6 +11,7 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\admin\validate\AdminMenuValidate;
 use app\admin\validate\AdminRoleValidate;
+use app\admin\validate\AdminUserValidate;
 use app\admin\service\AdminMenuService;
 use app\admin\service\AdminUserService;
 
@@ -216,6 +217,30 @@ class AdminMenu
     }
 
     /**
+     * 菜单角色解除
+     *
+     * @method POST
+     *
+     * @return json
+     */
+    public function menuRoleRemove()
+    {
+        $param = Request::only(
+            [
+                'admin_menu_id' => '',
+                'admin_role_id' => '',
+            ]
+        );
+
+        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminRoleValidate::class)->scene('role_id')->check($param);
+
+        $data = AdminMenuService::roleRemove($param);
+
+        return success($data);
+    }
+
+    /**
      * 菜单用户
      *
      * @method GET
@@ -237,7 +262,7 @@ class AdminMenu
 
             validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
-            $where0 = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];                                       
+            $where0 = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];
             $where1 = [['admin_menu_ids', 'like', $admin_menu_id . ',%'], ['is_delete', '=', 0]];
             $where2 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id . ',%'], ['is_delete', '=', 0]];
             $where3 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id], ['is_delete', '=', 0]];
@@ -282,5 +307,29 @@ class AdminMenu
 
             return success($data);
         }
+    }
+
+    /**
+     * 菜单用户解除
+     *
+     * @method POST
+     *
+     * @return json
+     */
+    public function menuUserRemove()
+    {
+        $param = Request::only(
+            [
+                'admin_menu_id' => '',
+                'admin_user_id' => '',
+            ]
+        );
+
+        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminUserValidate::class)->scene('user_id')->check($param);
+
+        $data = AdminMenuService::userRemove($param);
+
+        return success($data);
     }
 }

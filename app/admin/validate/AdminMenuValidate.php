@@ -3,7 +3,7 @@
  * @Description  : 菜单验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-09
  */
 
 namespace app\admin\validate;
@@ -28,11 +28,12 @@ class AdminMenuValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'menu_id'   => ['admin_menu_id'],
-        'menu_name' => ['menu_name'],
-        'menu_add'  => ['menu_name'],
-        'menu_edit' => ['admin_menu_id', 'menu_name'],
-        'menu_dele' => ['admin_menu_id'],
+        'menu_id'          => ['admin_menu_id'],
+        'menu_name'        => ['menu_name'],
+        'menu_add'         => ['menu_name'],
+        'menu_edit'        => ['admin_menu_id', 'menu_name'],
+        'menu_dele'        => ['admin_menu_id'],
+        'menu_role_remove' => ['admin_menu_id'],
     ];
 
     // 验证场景定义：删除
@@ -40,6 +41,13 @@ class AdminMenuValidate extends Validate
     {
         return $this->only(['admin_menu_id'])
             ->append('admin_menu_id', 'checkAdminMenuRole');
+    }
+
+    // 验证场景定义：角色解除
+    protected function scenemenu_role_remove()
+    {
+        return $this->only(['admin_menu_id'])
+            ->append('admin_menu_id', 'checkAdminMenuRoleRemove');
     }
 
     // 自定义验证规则：菜单是否存在
@@ -119,7 +127,7 @@ class AdminMenuValidate extends Validate
             ->find();
 
         if ($admin_role) {
-            return '请在[角色管理][修改]中解除所有菜单关联后再删除';
+            return '请在[角色]中解除所有角色后再删除';
         }
 
         $where0  = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];
@@ -132,7 +140,7 @@ class AdminMenuValidate extends Validate
             ->whereOr($whereOr)
             ->find();
         if ($admin_user) {
-            return '请在[用户管理][权限]中解除所有菜单关联后再删除';
+            return '请在[用户]中解除所有用户后再删除';
         }
 
         return true;

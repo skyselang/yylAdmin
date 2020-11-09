@@ -3,7 +3,7 @@
  * @Description  : 用户验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-09
  */
 
 namespace app\admin\validate;
@@ -202,7 +202,7 @@ class AdminUserValidate extends Validate
             ->find();
 
         if ($admin_user['admin_role_ids'] || $admin_user['admin_menu_ids']) {
-            return '请在[权限]中取消所有角色和菜单的勾选后再删除';
+            return '请在[权限]中取消所有角色和菜单后再删除';
         }
 
         return true;

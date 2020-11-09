@@ -3,7 +3,7 @@
  * @Description  : 角色验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-02
+ * @LastEditTime : 2020-11-09
  */
 
 namespace app\admin\validate;
@@ -91,7 +91,7 @@ class AdminRoleValidate extends Validate
             ->find();
 
         if ($admin_role['admin_menu_ids']) {
-            return '请在[修改]中取消所有菜单的勾选后再删除';
+            return '请在[修改]中取消所有菜单后再删除';
         }
 
         $where0  = [['admin_role_ids', 'like', $admin_role_id], ['is_delete', '=', 0]];
@@ -106,7 +106,7 @@ class AdminRoleValidate extends Validate
             ->find();
 
         if ($admin_user) {
-            return '请在[用户管理][权限]中解除与该角色关联的所有用户后再删除';
+            return '请在[用户]中解除所有用户后再删除';
         }
 
         return true;

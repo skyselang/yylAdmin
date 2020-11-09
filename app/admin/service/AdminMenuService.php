@@ -3,13 +3,15 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-09
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use app\common\cache\AdminMenuCache;
+use app\common\cache\AdminRoleCache;
+use app\common\cache\AdminUserCache;
 
 class AdminMenuService
 {
@@ -277,6 +279,49 @@ class AdminMenuService
     }
 
     /**
+     * 菜单角色解除
+     *
+     * @param array $param 菜单角色id
+     *
+     * @return array
+     */
+    public static function roleRemove($param)
+    {
+        $admin_menu_id = $param['admin_menu_id'];
+        $admin_role_id = $param['admin_role_id'];
+
+        $admin_role = AdminRoleService::info($admin_role_id);
+
+        $admin_menu_ids = $admin_role['admin_menu_ids'];
+        foreach ($admin_menu_ids as $k => $v) {
+            if ($admin_menu_id == $v) {
+                unset($admin_menu_ids[$k]);
+            }
+        }
+
+        if (empty($admin_menu_ids)) {
+            $admin_menu_ids = '';
+        } else {
+            $admin_menu_ids = implode(',', $admin_menu_ids);
+        }
+
+        $update['update_time']    = date('Y-m-d H:i:s');
+        $update['admin_menu_ids'] = $admin_menu_ids;
+
+        $res = Db::name('admin_role')
+            ->where('admin_role_id', $admin_role_id)
+            ->update($update);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        AdminRoleCache::del($admin_role_id);
+
+        return $param;
+    }
+
+    /**
      * 菜单用户
      *
      * @param array   $where 条件
@@ -293,6 +338,49 @@ class AdminMenuService
         $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
 
         return $data;
+    }
+
+    /**
+     * 菜单用户解除
+     *
+     * @param array $param 菜单用户id
+     *
+     * @return array
+     */
+    public static function userRemove($param)
+    {
+        $admin_menu_id = $param['admin_menu_id'];
+        $admin_user_id = $param['admin_user_id'];
+
+        $admin_user = AdminUserService::info($admin_user_id);
+
+        $admin_menu_ids = $admin_user['admin_menu_ids'];
+        foreach ($admin_menu_ids as $k => $v) {
+            if ($admin_menu_id == $v) {
+                unset($admin_menu_ids[$k]);
+            }
+        }
+
+        if (empty($admin_menu_ids)) {
+            $admin_menu_ids = '';
+        } else {
+            $admin_menu_ids = implode(',', $admin_menu_ids);
+        }
+
+        $update['update_time']    = date('Y-m-d H:i:s');
+        $update['admin_menu_ids'] = $admin_menu_ids;
+
+        $res = Db::name('admin_user')
+            ->where('admin_user_id', $admin_user_id)
+            ->update($update);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        AdminUserCache::upd($admin_user_id);
+
+        return $param;
     }
 
     /**

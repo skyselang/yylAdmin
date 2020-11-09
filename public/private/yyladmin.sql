@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 03/11/2020 19:59:11
+ Date: 09/11/2020 15:41:23
 */
 
 SET NAMES utf8mb4;
@@ -37,6 +37,7 @@ CREATE TABLE `yyl_admin_log`  (
   `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '请求时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `delete_time` datetime(0) NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`admin_log_id`) USING BTREE,
   INDEX `admin_log_id`(`admin_log_id`) USING BTREE,
@@ -71,7 +72,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 118 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 121 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -100,8 +101,8 @@ INSERT INTO `yyl_admin_menu` VALUES (30, 4, '用户是否禁用', 'admin/AdminUs
 INSERT INTO `yyl_admin_menu` VALUES (31, 4, '用户权限分配', 'admin/AdminUser/userRule', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (32, 4, '用户密码重置', 'admin/AdminUser/userPwd', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (33, 5, '角色禁用', 'admin/AdminRole/roleDisable', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (36, 0, '实用工具', '', 110, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (35, 4, '用户是否管理员', 'admin/AdminUser/userAdmin', 180, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (36, 0, '实用工具', '', 110, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminTool/strRand', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminTool/timeTran', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminTool/qrcode', 200, '0', '1', 0, NULL, NULL, NULL);
@@ -122,18 +123,21 @@ INSERT INTO `yyl_admin_menu` VALUES (54, 12, '我的日志', 'admin/AdminMy/myLo
 INSERT INTO `yyl_admin_menu` VALUES (58, 36, '实用工具合集', 'admin/AdminTool/toolMix', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminTool/strTran', 210, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (71, 53, '缓存设置', 'admin/AdminSetting/settingCache', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (73, 53, '验证码设置', 'admin/AdminSetting/settingVerify', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/AdminLogin/verify', 170, '0', '1', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (88, 0, '权限管理', '', 150, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminTool/ipQuery', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminTool/byteTran', 200, '0', '1', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/AdminMy/mySetting', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (116, 41, '日志统计', 'admin/AdminLog/logStatistic', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (115, 5, '角色用户', 'admin/AdminRole/roleUser', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (114, 3, '菜单用户', 'admin/AdminMenu/menuUser', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (113, 3, '菜单角色', 'admin/AdminMenu/menuRole', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminTool/ipQuery', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (88, 0, '权限管理', '', 150, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (111, 0, '登录退出', '', 100, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (113, 3, '菜单角色', 'admin/AdminMenu/menuRole', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (114, 3, '菜单用户', 'admin/AdminMenu/menuUser', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (115, 5, '角色用户', 'admin/AdminRole/roleUser', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (116, 41, '日志统计', 'admin/AdminLog/logStatistic', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/AdminMy/mySetting', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/AdminMenu/menuRoleRemove', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/AdminMenu/menuUserRemove', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/AdminRole/roleUserRemove', 200, '0', '0', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -153,13 +157,13 @@ CREATE TABLE `yyl_admin_role`  (
   PRIMARY KEY (`admin_role_id`) USING BTREE,
   INDEX `admin_rule_id`(`admin_role_id`) USING BTREE,
   INDEX `rule_name`(`role_name`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_role
 -- ----------------------------
-INSERT INTO `yyl_admin_role` VALUES (1, '1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117', '管理员', '', 200, '0', 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, '13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,113,114,115,116,117', '演示', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (1, '1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,36,37,38,40,41,42,43,44,45,46,47,48,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117', '管理员', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, '13,17,22,29,37,38,40,42,43,45,50,51,52,54,58,63,75,86,87,113,114,115,116,117', '演示', '', 200, '0', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_setting
@@ -172,7 +176,7 @@ CREATE TABLE `yyl_admin_setting`  (
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of yyl_admin_setting
@@ -208,7 +212,7 @@ CREATE TABLE `yyl_admin_user`  (
   PRIMARY KEY (`admin_user_id`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `username`(`username`, `password`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_user

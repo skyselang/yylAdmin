@@ -3,13 +3,14 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-09
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use app\common\cache\AdminRoleCache;
+use app\common\cache\AdminUserCache;
 
 class AdminRoleService
 {
@@ -266,6 +267,49 @@ class AdminRoleService
         $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
 
         return $data;
+    }
+
+    /**
+     * 角色用户解除
+     *
+     * @param array $param 菜单用户id
+     *
+     * @return array
+     */
+    public static function userRemove($param)
+    {
+        $admin_role_id = $param['admin_role_id'];
+        $admin_user_id = $param['admin_user_id'];
+
+        $admin_user = AdminUserService::info($admin_user_id);
+
+        $admin_role_ids = $admin_user['admin_role_ids'];
+        foreach ($admin_role_ids as $k => $v) {
+            if ($admin_role_id == $v) {
+                unset($admin_role_ids[$k]);
+            }
+        }
+
+        if (empty($admin_role_ids)) {
+            $admin_role_ids = '';
+        } else {
+            $admin_role_ids = implode(',', $admin_role_ids);
+        }
+
+        $update['update_time']    = date('Y-m-d H:i:s');
+        $update['admin_role_ids'] = $admin_role_ids;
+
+        $res = Db::name('admin_user')
+            ->where('admin_user_id', $admin_user_id)
+            ->update($update);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        AdminUserCache::upd($admin_user_id);
+
+        return $param;
     }
 
     /**
