@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-11-01
+ * @LastEditTime : 2020-11-11
  */
 
 namespace app\admin\service;
@@ -230,25 +230,25 @@ class AdminLogService
                 if ($date == 'yesterday') {
                     $yesterday = Datetime::yesterday();
                     list($sta_time, $end_time) = Datetime::datetime($yesterday);
-                } elseif ($date == 'thisWeek') {
+                } elseif ($date == 'thisweek') {
                     list($start, $end) = Datetime::thisWeek();
                     $sta_time = Datetime::datetime($start);
                     $sta_time = $sta_time[0];
                     $end_time = Datetime::datetime($end);
                     $end_time = $end_time[1];
-                } elseif ($date == 'lastWeek') {
+                } elseif ($date == 'lastweek') {
                     list($start, $end) = Datetime::lastWeek();
                     $sta_time = Datetime::datetime($start);
                     $sta_time = $sta_time[0];
                     $end_time = Datetime::datetime($end);
                     $end_time = $end_time[1];
-                } elseif ($date == 'thisMonth') {
+                } elseif ($date == 'thismonth') {
                     list($start, $end) = Datetime::thisMonth();
                     $sta_time = Datetime::datetime($start);
                     $sta_time = $sta_time[0];
                     $end_time = Datetime::datetime($end);
                     $end_time = $end_time[1];
-                } elseif ($date == 'lastMonth') {
+                } elseif ($date == 'lastmonth') {
                     list($start, $end) = Datetime::lastMonth();
                     $sta_time = Datetime::datetime($start);
                     $sta_time = $sta_time[0];
