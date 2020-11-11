@@ -3,14 +3,14 @@
  * @Description  : 菜单验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-09
+ * @LastEditTime : 2020-11-11
  */
 
 namespace app\admin\validate;
 
-use app\admin\service\AdminMenuService;
 use think\Validate;
 use think\facade\Db;
+use app\admin\service\AdminMenuService;
 
 class AdminMenuValidate extends Validate
 {

@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-11
  */
 
 namespace app\admin\service;
@@ -11,6 +11,7 @@ namespace app\admin\service;
 use think\facade\Db;
 use think\facade\Cache;
 use app\common\cache\AdminSettingCache;
+use app\common\cache\AdminUserCache;
 
 class AdminSettingService
 {
@@ -41,10 +42,30 @@ class AdminSettingService
 
             return $data;
         } else {
-            $res = Cache::clear();
+            $admin_user = Db::name('admin_user')
+                ->field('admin_user_id')
+                ->where('is_delete', 0)
+                ->select();
 
+            $admin_user_cache = [];
+            foreach ($admin_user as $k => $v) {
+                $user_cache = AdminUserCache::get($v['admin_user_id']);
+                if ($user_cache) {
+                    $user_cache_temp['admin_user_id'] = $user_cache['admin_user_id'];
+                    $user_cache_temp['admin_token']   = $user_cache['admin_token'];
+                    $admin_user_cache[] = $user_cache_temp;
+                }
+            }
+
+            $res = Cache::clear();
             if (empty($res)) {
                 exception();
+            }
+            
+            foreach ($admin_user_cache as $k => $v) {
+                $admin_user_new = AdminUserService::info($v['admin_user_id']);
+                $admin_user_new['admin_token'] = $v['admin_token'];
+                AdminUserCache::set($admin_user_new['admin_user_id'], $admin_user_new);
             }
 
             $data['msg'] = '缓存已清空';
