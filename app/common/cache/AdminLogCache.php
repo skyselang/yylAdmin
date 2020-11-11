@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-11-11
  */
 
 namespace app\common\cache;
@@ -15,11 +15,11 @@ class AdminLogCache
     /**
      * 缓存key
      *
-     * @param integer $admin_log_id 日志id
+     * @param string $admin_log_id 日志id
      * 
      * @return integer
      */
-    public static function key($admin_log_id = 0)
+    public static function key($admin_log_id = '')
     {
         $key = 'adminLog:' . $admin_log_id;
 
@@ -36,7 +36,7 @@ class AdminLogCache
     public static function exp($expire = 0)
     {
         if (empty($expire)) {
-            $expire = 3 * 24 * 60 * 60 + mt_rand(0, 99);
+            $expire = 1 * 24 * 60 * 60 + mt_rand(0, 99);
         }
 
         return $expire;
@@ -45,17 +45,22 @@ class AdminLogCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_log_id 日志id
+     * @param string  $admin_log_id 日志id
      * @param array   $admin_log    日志信息
      * @param integer $expire       有效时间
      * 
      * @return array 日志信息
      */
-    public static function set($admin_log_id = 0, $admin_log = [], $expire = 0)
+    public static function set($admin_log_id = '', $admin_log = [], $expire = 0)
     {
         $key = self::key($admin_log_id);
         $val = $admin_log;
-        $exp = $expire ?: self::exp();
+
+        if (is_numeric($admin_log_id)) {
+            $exp = $expire ?: self::exp();
+        } else {
+            $exp = 1800;
+        }
 
         Cache::set($key, $val, $exp);
 
@@ -65,11 +70,11 @@ class AdminLogCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_log_id 日志id
+     * @param string $admin_log_id 日志id
      * 
      * @return array 日志信息
      */
-    public static function get($admin_log_id = 0)
+    public static function get($admin_log_id = '')
     {
         $key = self::key($admin_log_id);
         $res = Cache::get($key);
@@ -80,11 +85,11 @@ class AdminLogCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_log_id 日志id
+     * @param string $admin_log_id 日志id
      * 
      * @return bool
      */
-    public static function del($admin_log_id = 0)
+    public static function del($admin_log_id = '')
     {
         $key = self::key($admin_log_id);
         $res = Cache::delete($key);
