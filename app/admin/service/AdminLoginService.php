@@ -60,7 +60,7 @@ class AdminLoginService
 
         AdminUserCache::del($admin_user_id);
 
-        $menu_url   = menu_url();
+        $menu_url   = request_pathinfo();
         $admin_menu = AdminMenuService::info($menu_url);
 
         $request_param['username'] = $username;

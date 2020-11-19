@@ -30,7 +30,7 @@ class AdminThrottle
 
         if ($number > 0) {
             $admin_user_id  = admin_user_id();
-            $admin_menu_url = menu_url();
+            $admin_menu_url = request_pathinfo();
 
             if ($admin_user_id && $admin_menu_url) {
                 $expire = $throttle['expire'];

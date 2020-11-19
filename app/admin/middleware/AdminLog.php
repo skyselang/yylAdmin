@@ -34,7 +34,7 @@ class AdminLog
             $admin_user_id = admin_user_id();
 
             if ($admin_user_id) {
-                $menu_url   = menu_url();
+                $menu_url   = request_pathinfo();
                 $admin_menu = AdminMenuService::info($menu_url);
 
                 $admin_log['admin_user_id']  = $admin_user_id;

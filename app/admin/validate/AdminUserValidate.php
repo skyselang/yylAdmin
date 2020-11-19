@@ -3,7 +3,7 @@
  * @Description  : 用户验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-09
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\validate;
@@ -21,7 +21,7 @@ class AdminUserValidate extends Validate
         'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
         'password'      => ['require', 'length' => '6,18'],
         'email'         => ['email', 'checkEmail'],
-        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png', 'fileSize' => '51200'],
+        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif', 'fileSize' => '11151200'],
     ];
 
     // 错误信息
@@ -35,6 +35,10 @@ class AdminUserValidate extends Validate
         'password.length'       => '密码长度为6至18个字符',
         'email.email'           => '请输入正确的邮箱地址',
         'avatar.require'        => '请选择图片',
+        'avatar.file'           => '请选择图片文件',
+        'avatar.image'          => '请选择图片格式文件',
+        'avatar.fileExt'        => '请选择jpg、png、gif格式图片',
+        'avatar.fileSize'       => '请选择大小小于50kb图片',
     ];
 
     // 验证场景
@@ -51,6 +55,7 @@ class AdminUserValidate extends Validate
         'user_disable' => ['admin_user_id'],
         'user_rule'    => ['admin_user_id'],
         'user_pwd'     => ['admin_user_id', 'password'],
+        'user_avatar'  => ['admin_user_id', 'avatar'],
 
     ];
 
@@ -87,7 +92,7 @@ class AdminUserValidate extends Validate
     protected function sceneuser_disable()
     {
         return $this->only(['admin_user_id'])
-            ->append('admin_user_id', ['checkAdminUserIsAdmin']);
+            ->append('admin_user_id', ['checkAdminUserIsDisable']);
     }
 
     // 验证场景定义：权限分配
@@ -208,14 +213,26 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否系统内置管理员
+    // 自定义验证规则：用户是否系统管理员
     protected function checkAdminUserIsAdmin($value, $rule, $data = [])
     {
-        $is_admin_user  = is_admin($value);
-        $is_admin_admin = is_admin(admin_user_id());
+        $is_admin_user  = admin_is_admin($value);
+        $is_admin_admin = admin_is_admin(admin_user_id());
 
         if ($is_admin_user && !$is_admin_admin) {
-            return '无法对系统内置管理员进行操作';
+            return '无法对系统管理员进行操作';
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：用户是否禁用
+    protected function checkAdminUserIsDisable($value, $rule, $data = [])
+    {
+        $is_admin_user = admin_is_admin($value);
+
+        if ($is_admin_user) {
+            return '无法对系统管理员进行操作';
         }
 
         return true;

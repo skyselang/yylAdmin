@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\controller;
@@ -133,6 +133,28 @@ class AdminUser
     }
 
     /**
+     * 用户修改头像
+     *
+     * @method POST
+     * 
+     * @return json
+     */
+    public function userAvatar()
+    {
+        $admin_user_id = Request::param('admin_user_id/d', '');
+        $avatar_file   = Request::file('avatar_file');
+
+        $param['admin_user_id'] = $admin_user_id;
+        $param['avatar']        = $avatar_file;
+
+        validate(AdminUserValidate::class)->scene('user_avatar')->check($param);
+
+        $data = AdminUserService::avatar($param);
+
+        return success($data);
+    }
+
+    /**
      * 用户删除
      *
      * @method POST
@@ -212,11 +234,12 @@ class AdminUser
      */
     public function userDisable()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
-        $is_disable    = Request::param('is_disable/s', '0');
-
-        $param['admin_user_id'] = $admin_user_id;
-        $param['is_disable']    = $is_disable;
+        $param = Request::only(
+            [
+                'admin_user_id' => '',
+                'is_disable'    => '0',
+            ]
+        );
 
         validate(AdminUserValidate::class)->scene('user_disable')->check($param);
 
@@ -234,11 +257,12 @@ class AdminUser
      */
     public function userAdmin()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
-        $is_admin      = Request::param('is_admin/s', '0');
-
-        $param['admin_user_id'] = $admin_user_id;
-        $param['is_admin']      = $is_admin;
+        $param = Request::only(
+            [
+                'admin_user_id' => '',
+                'is_admin'      => '0',
+            ]
+        );
 
         validate(AdminUserValidate::class)->scene('user_admin')->check($param);
 

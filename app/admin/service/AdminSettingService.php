@@ -3,13 +3,14 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-11-11
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Cache;
+use think\facade\App;
 use app\common\cache\AdminSettingCache;
 use app\common\cache\AdminUserCache;
 
@@ -61,7 +62,7 @@ class AdminSettingService
             if (empty($res)) {
                 exception();
             }
-            
+
             foreach ($admin_user_cache as $k => $v) {
                 $admin_user_new = AdminUserService::info($v['admin_user_id']);
                 $admin_user_new['admin_token'] = $v['admin_token'];
@@ -210,5 +211,45 @@ class AdminSettingService
         }
 
         return $admin_setting;
+    }
+
+    /**
+     * 服务器信息
+     *
+     * @return array
+     */
+    public static function serverInfo($param = [], $method = 'get')
+    {
+        $server_info = [];
+        $server_info_key = 'server';
+
+        if ($method == 'get') {
+            $server_info = AdminSettingCache::get($server_info_key);
+
+            if (empty($server_info)) {
+                $cache = Cache::handler();
+                $mysql = Db::query('select version() as version');
+
+                $server_info['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
+                $server_info['domain']              = $_SERVER['SERVER_NAME'];                   //domain
+                $server_info['port']                = $_SERVER['SERVER_PORT'];                   //port
+                $server_info['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
+                $server_info['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
+                $server_info['database']            = 'mysql ' . $mysql[0]['version'];           //database
+                $server_info['php_info']            = php_sapi_name() . ' ' . PHP_VERSION;       //php
+                $server_info['thinkphp']            = App::version();                            //thinkphp
+                $server_info['redis']               = $cache->info()['redis_version'];           //redis
+                $server_info['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //协议/版本
+                $server_info['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //上传文件最大尺寸
+                $server_info['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //脚本最大执行时间
+                $server_info['post_max_size']       = get_cfg_var('post_max_size');              //post数据最大尺寸
+
+                AdminSettingCache::set($server_info_key, $server_info);
+            }
+        } else {
+            AdminSettingCache::del($server_info_key);
+        }
+
+        return $server_info;
     }
 }

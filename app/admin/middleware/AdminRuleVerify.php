@@ -26,7 +26,7 @@ class AdminRuleVerify
      */
     public function handle($request, Closure $next)
     {
-        $admin_menu_url  = menu_url();
+        $admin_menu_url  = request_pathinfo();
         $api_white_list  = Config::get('admin.api_white_list');
         $rule_white_list = Config::get('admin.rule_white_list');
         $white_list      = array_merge($rule_white_list, $api_white_list);

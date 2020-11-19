@@ -3,7 +3,7 @@
  * @Description  : 个人中心验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\validate;
@@ -22,7 +22,7 @@ class AdminMyValidate extends Validate
         'password_old'  => ['require', 'length' => '6,18'],
         'password_new'  => ['require', 'length' => '6,18'],
         'email'         => ['email', 'checkEmail'],
-        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png', 'fileSize' => '51200'],
+        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif', 'fileSize' => '51200'],
     ];
 
     // 错误信息
@@ -38,6 +38,10 @@ class AdminMyValidate extends Validate
         'password_new.length'   => '新密码长度为6至18个字符',
         'email.email'           => '请输入正确的邮箱地址',
         'avatar.require'        => '请选择图片',
+        'avatar.file'           => '请选择图片文件',
+        'avatar.image'          => '请选择图片格式文件',
+        'avatar.fileExt'        => '请选择jpg、png、gif格式图片',
+        'avatar.fileSize'       => '请选择大小小于50kb图片',
     ];
 
     // 验证场景

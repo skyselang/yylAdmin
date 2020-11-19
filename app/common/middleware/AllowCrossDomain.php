@@ -2,11 +2,11 @@
 /*
  * @Description  : 跨域请求中间件
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-08-27
- * @LastEditTime : 2020-09-27
+ * @Date         : 2020-11-17
+ * @LastEditTime : 2020-11-19
  */
 
-namespace app\admin\middleware;
+namespace app\common\middleware;
 
 use Closure;
 use think\Request;

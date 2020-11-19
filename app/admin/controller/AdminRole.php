@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2020-11-09
+ * @LastEditTime : 2020-11-18
  */
 
 namespace app\admin\controller;
@@ -169,11 +169,12 @@ class AdminRole
      */
     public function roleDisable()
     {
-        $admin_role_id = Request::param('admin_role_id/d', '');
-        $is_disable    = Request::param('is_disable/s', '0');
-
-        $param['admin_role_id'] = $admin_role_id;
-        $param['is_disable']    = $is_disable;
+        $param = Request::only(
+            [
+                'admin_role_id' => '',
+                'is_disable'    => '0',
+            ]
+        );
 
         validate(AdminRoleValidate::class)->scene('role_id')->check($param);
 

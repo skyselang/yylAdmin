@@ -3,10 +3,9 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-10-29
+ * @LastEditTime : 2020-11-19
  */
 
-use think\facade\Config;
 use think\facade\Request;
 
 /**
@@ -62,6 +61,7 @@ function exception($msg = '操作失败', $code = 400)
 
 /**
  * 服务器地址
+ * 协议和域名
  *
  * @return string
  */
@@ -83,6 +83,7 @@ function server_url()
 
 /**
  * 文件地址
+ * 协议，域名，文件路径
  *
  * @param string $file_path 文件路径
  * 
@@ -94,13 +95,13 @@ function file_url($file_path = '')
         return '';
     }
 
-    if (strstr($file_path, 'http')) {
+    if (strpos($file_path, 'http') !== false) {
         return $file_path;
     }
 
     $server_url = server_url();
 
-    if (stripos($file_path, '/') == 0) {
+    if (stripos($file_path, '/') === 0) {
         $res = $server_url . $file_path;
     } else {
         $res = $server_url . '/' . $file_path;
@@ -110,62 +111,13 @@ function file_url($file_path = '')
 }
 
 /**
- * 用户id
- *
- * @return integer
- */
-function admin_user_id()
-{
-    $admin_user_id_key = Config::get('admin.admin_user_id_key');
-    $admin_user_id     = Request::header($admin_user_id_key, '');
-
-    return $admin_user_id;
-}
-
-/**
- * 用户token
+ * 获取请求pathinfo
+ * 应用/控制器/操作 
+ * eg：admin/Index/index
  *
  * @return string
  */
-function admin_token()
-{
-    $admin_token_key = Config::get('admin.admin_token_key');
-    $admin_token     = Request::header($admin_token_key, '');
-
-    return $admin_token;
-}
-
-/**
- * 用户是否管理员
- *
- * @param integer $admin_user_id 用户id
- * 
- * @return bool
- */
-function is_admin($admin_user_id = 0)
-{
-    if (empty($admin_user_id)) {
-        return false;
-    }
-
-    $admin_ids = Config::get('admin.admin_ids', []);
-    if (empty($admin_ids)) {
-        return false;
-    }
-
-    if (in_array($admin_user_id, $admin_ids)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
- * 菜单链接（当前访问url）
- *
- * @return string
- */
-function menu_url()
+function request_pathinfo()
 {
     $menu_url = app('http')->getName() . '/' . Request::pathinfo();
 

@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-11-11
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\service;
@@ -98,7 +98,7 @@ class AdminLogService
                 ->find();
 
             if (empty($admin_log)) {
-                exception('日志不存在');
+                exception('日志不存在:' . $admin_log_id);
             }
 
             if ($admin_log['request_param']) {

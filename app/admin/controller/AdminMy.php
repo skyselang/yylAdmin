@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-11-01
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\controller;
@@ -109,10 +109,10 @@ class AdminMy
     public function myAvatar()
     {
         $admin_user_id = Request::param('admin_user_id/d', '');
-        $avatar        = Request::file('avatar_file');
+        $avatar_file   = Request::file('avatar_file');
 
         $param['admin_user_id'] = $admin_user_id;
-        $param['avatar']        = $avatar;
+        $param['avatar']        = $avatar_file;
 
         validate(AdminMyValidate::class)->scene('my_avatar')->check($param);
 

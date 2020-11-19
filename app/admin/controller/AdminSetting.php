@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\controller;
@@ -87,6 +87,26 @@ class AdminSetting
             validate(AdminTokenValidate::class)->scene('edit')->check($param);
 
             $data = AdminSettingService::settingToken($param, 'post');
+        }
+
+        return success($data);
+    }
+
+    /**
+     * 服务器信息
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function serverInfo()
+    {
+        if (Request::isGet()) {
+            $data = AdminSettingService::serverInfo();
+        } else {
+            AdminSettingService::serverInfo([], 'post');
+
+            $data = AdminSettingService::serverInfo();
         }
 
         return success($data);

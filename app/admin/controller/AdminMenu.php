@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-09
+ * @LastEditTime : 2020-11-18
  */
 
 namespace app\admin\controller;
@@ -143,11 +143,12 @@ class AdminMenu
      */
     public function menuDisable()
     {
-        $admin_menu_id = Request::param('admin_menu_id/d', '');
-        $is_disable   = Request::param('is_disable/s', '0');
-
-        $param['admin_menu_id'] = $admin_menu_id;
-        $param['is_disable']    = $is_disable;
+        $param = Request::only(
+            [
+                'admin_menu_id' => '',
+                'is_disable'    => '0',
+            ]
+        );
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 

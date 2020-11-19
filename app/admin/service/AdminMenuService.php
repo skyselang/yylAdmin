@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-09
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\service;
@@ -94,7 +94,7 @@ class AdminMenuService
                 ->find();
 
             if (empty($admin_menu)) {
-                exception('菜单不存在');
+                exception('菜单不存在:' . $admin_menu_id);
             }
 
             AdminMenuCache::set($admin_menu_id, $admin_menu);

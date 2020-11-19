@@ -25,7 +25,7 @@ class AdminTokenVerify
      */
     public function handle($request, Closure $next)
     {
-        $admin_menu_url = menu_url();
+        $admin_menu_url = request_pathinfo();
         $api_white_list = Config::get('admin.api_white_list');
 
         if (!in_array($admin_menu_url, $api_white_list)) {

@@ -3,13 +3,14 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-02
+ * @LastEditTime : 2020-11-19
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Config;
+use think\facade\Filesystem;
 use app\common\cache\AdminUserCache;
 use app\admin\service\AdminTokenService;
 
@@ -95,12 +96,12 @@ class AdminUserService
                 ->find();
 
             if (empty($admin_user)) {
-                exception('用户不存在');
+                exception('用户不存在:' . $admin_user_id);
             }
 
             $admin_user['avatar'] = file_url($admin_user['avatar']);
 
-            if (is_admin($admin_user_id)) {
+            if (admin_is_admin($admin_user_id)) {
                 $admin_menu = Db::name('admin_menu')
                     ->field('admin_menu_id,menu_url')
                     ->where('is_delete', 0)
@@ -249,6 +250,47 @@ class AdminUserService
         AdminUserCache::upd($admin_user_id);
 
         return $param;
+    }
+
+    /**
+     * 用户修改头像
+     *
+     * @param array $param 头像信息
+     * 
+     * @return array
+     */
+    public static function avatar($param)
+    {
+        $admin_user_id = $param['admin_user_id'];
+        $avatar        = $param['avatar'];
+
+        $avatar_name = Filesystem::disk('public')
+            ->putFile('admin/user', $avatar, function () use ($admin_user_id) {
+                return $admin_user_id . '/avatar';
+            });
+
+        $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
+        $update['update_time'] = date('Y-m-d H:i:s');
+
+        $res = Db::name('admin_user')
+            ->where('admin_user_id', $admin_user_id)
+            ->update($update);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        $data['admin_user_id'] = $admin_user_id;
+        $data['update_time']   = $update['update_time'];
+        $data['avatar']        = file_url($update['avatar']);
+        $data['avatar_url']    = file_url($update['avatar']);
+
+        $admin_user = AdminUserService::info($admin_user_id);
+        $admin_user = array_merge($admin_user, $data);
+
+        AdminUserCache::set($admin_user_id, $admin_user);
+
+        return $data;
     }
 
     /**
