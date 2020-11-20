@@ -155,5 +155,5 @@ npm run lint -- --fix
 
 ## 协议
 
-- Apache2开源协议，完全免费使用。
+- Apache2开源协议，完全免费使用
 - Copyright skyselang https://github.com/skyselang
