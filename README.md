@@ -1,12 +1,29 @@
-<h1>yylAdmin</h1>
+# yylAdmin
 
-Github | [码云](https://gitee.com/skyselang/yylAdmin)
+<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">码云</a> | Github
+
+## 演示
+
+地址：<a href="https://demo.yyladmin.top" target="_blank">https://demo.yyladmin.top</a>  
+账号：yyladmin、admin  
+密码：123456  
+提示：演示账号只有部分权限，请下载源码安装体验全部功能
 
 ## 简介
 
-[yylAdmin](https://github.com/skyselang/yylAdmin) 是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Element2；项目由后端[yylAdmin](https://github.com/skyselang/yylAdmin)和前端[yylAdminWeb](https://github.com/skyselang/yylAdminWeb)组成。
-- [yylAdmin](https://github.com/skyselang/yylAdmin)
-- [yylAdminWeb](https://github.com/skyselang/yylAdminWeb)
+<a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Vue2；项目由后端<a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>和前端<a href="https://github.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>组成。
+- <a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>
+- <a href="https://github.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>
+
+## 准备
+
+- <a href="https://www.xp.cn" target="_blank">PhpStudy</a>
+- <a href="https://git-scm.com" target="_blank">Git</a>
+- <a href="https://nodejs.org/zh-cn" target="_blank">Node</a>
+- <a href="https://www.phpcomposer.com" target="_blank">Composer</a>
+- <a href="https://www.kancloud.cn/manual/thinkphp6_0/1037479" target="_blank">ThinkPHP</a>
+- <a href="https://cn.vuejs.org/v2/guide/syntax.html" target="_blank">Vue</a>
+- <a href="https://element.eleme.cn/#/zh-CN/component/installation" target="_blank">Element</a>
 
 ## 要求
 
@@ -14,16 +31,7 @@ Github | [码云](https://gitee.com/skyselang/yylAdmin)
 - MySQL >= 5.6
 - Redis
 
-## 准备
-
-- [Git](https://git-scm.com/) 
-- [Node](https://nodejs.org/zh-cn/) 
-- [Composer](https://www.phpcomposer.com/) 
-- [ThinkPHP](https://www.kancloud.cn/manual/thinkphp6_0/1037479) 
-- [Element](https://element.eleme.cn/#/zh-CN/component/installation) 
-- [PhpStudy](https://www.xp.cn/) 
-
-## 开发
+## 安装
 
 PHP部分
 ```bash
@@ -58,6 +66,8 @@ npm install
 
 # 可以通过npm镜像解决速度慢的问题
 npm install --registry=https://registry.npm.taobao.org
+# 或者使用cnpm（推荐），安装后使用cnpm替代npm，如 cnpm run dev
+npm install -g cnpm --registry=https://registry.npm.taobao.org
 
 # 启动服务
 npm run dev
@@ -67,6 +77,30 @@ npm run dev
 浏览器访问 http://localhost:9527
 
 账号：yyladmin，密码：123456
+
+管理员：skyselang，密码：123456
+
+## 开发
+> 以日志管理为例子
+### PHP部分
+- 编写接口代码：app/admin/controller/AdminLog.php
+<img width="100%" src="./public/static/img/devphp1.jpg">
+- 添加菜单信息
+<img width="100%" src="./public/static/img/devphp2.jpg">
+- 分配相应权限
+<img width="100%" src="./public/static/img/devphp3.jpg">
+
+### WEB部分
+- 新建接口文件：src/api/admin.js
+<img width="100%" src="./public/static/img/devweb1.jpg">
+- 新建页面文件：src/views/admin/log.vue
+<img width="100%" src="./public/static/img/devweb2.jpg">
+- 添加路由信息：src/router/index.js
+<img width="100%" src="./public/static/img/devweb3.jpg">
+
+### 刷新权限
+- 退出重新登录
+<img width="100%" src="./public/static/img/devref.jpg">
 
 ## 发布
 
@@ -93,6 +127,26 @@ npm run lint
 # 代码格式检查并自动修复
 npm run lint -- --fix
 ```
+
+## 截图
+
 <img width="100%" src="./public/static/img/yyladmin_login.jpg">
 
 <img width="100%" src="./public/static/img/yyladmin.jpg">
+
+## FQA
+
+### npm
+- 推荐使用cnpm：<a href="https://developer.aliyun.com/mirror/NPM" target="_blank">cnpm</a>
+- 删除node_modules文件夹后使用cnpm重新安装依赖
+
+### UI
+- 使用的是element-ui：<a href="https://element.eleme.cn/#/zh-CN/component/installation" target="_blank">element-ui</a>
+
+### debug
+- 调试模式下根据接口返回错误信息排查，或者提<a href="https://gitee.com/skyselang/yylAdmin/issues" target="_blank">Issue</a>
+
+## 协议
+
+- Apache2开源协议，完全免费使用。
+- Copyright skyselang https://github.com/skyselang
