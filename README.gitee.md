@@ -33,7 +33,7 @@
 
 ## 安装
 
-PHP部分
+### PHP部分
 ```bash
 # 克隆项目
 git clone https://gitee.com/skyselang/yylAdmin.git
@@ -47,13 +47,16 @@ composer install
 # 可以通过composer镜像解决速度慢的问题
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
-# 配置环境（PhpStudy）
-
 # 导入数据库
 数据库文件：public/private/yyladmin.sql
 
+# 配置
+重命名.env.example为.env，修改里面配置
+或者直接修改config文件夹里面的相应配置
+
 ```
-WEB部分
+
+### WEB部分
 ```bash
 # 克隆项目
 git clone https://gitee.com/skyselang/yylAdminWeb.git
@@ -69,16 +72,20 @@ npm install --registry=https://registry.npm.taobao.org
 # 或者使用cnpm（推荐），安装后使用cnpm替代npm，如 cnpm run dev
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 
+# 配置
+在.env*环境变量文件里面修改接口地址
+
 # 启动服务
 npm run dev
 ```
-在 .env* 环境变量文件 修改接口地址
 
-浏览器访问 http://localhost:9527
+### 访问
 
-账号：yyladmin，密码：123456
-
-管理员：skyselang，密码：123456
+地址：http://localhost:9527  
+账号：yyladmin  
+密码：123456  
+管理员：skyselang  
+密码：123456
 
 ## 开发
 > 以日志管理为例子
