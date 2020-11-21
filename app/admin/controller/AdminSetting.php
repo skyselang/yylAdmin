@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-05
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-11-21
  */
 
 namespace app\admin\controller;
@@ -101,13 +101,7 @@ class AdminSetting
      */
     public function serverInfo()
     {
-        if (Request::isGet()) {
-            $data = AdminSettingService::serverInfo();
-        } else {
-            AdminSettingService::serverInfo([], 'post');
-
-            $data = AdminSettingService::serverInfo();
-        }
+        $data = AdminSettingService::serverInfo();
 
         return success($data);
     }

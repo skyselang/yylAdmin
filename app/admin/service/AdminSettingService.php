@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-11-21
  */
 
 namespace app\admin\service;
@@ -38,7 +38,6 @@ class AdminSettingService
             $byte['value'] = $data['used_memory_lua'];
 
             $data['used_memory_lua_human'] = AdminToolService::byteTran($byte)['KB'] . 'K';;
-            $data['os_arch_bits']          = $data['os'];
             $data['uptime_in_days']        = $data['uptime_in_days'] . '天';
 
             return $data;
@@ -218,36 +217,32 @@ class AdminSettingService
      *
      * @return array
      */
-    public static function serverInfo($param = [], $method = 'get')
+    public static function serverInfo()
     {
-        $server_info = [];
+        $server_info     = [];
         $server_info_key = 'server';
+        $server_info     = AdminSettingCache::get($server_info_key);
 
-        if ($method == 'get') {
-            $server_info = AdminSettingCache::get($server_info_key);
+        if (empty($server_info)) {
+            $cache = Cache::handler();
+            $mysql = Db::query('select version() as version');
 
-            if (empty($server_info)) {
-                $cache = Cache::handler();
-                $mysql = Db::query('select version() as version');
+            $server_info['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
+            $server_info['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
+            $server_info['mysql']               = $mysql[0]['version'];                      //mysql
+            $server_info['php_version']         = PHP_VERSION;                               //php
+            $server_info['thinkphp']            = App::version();                            //thinkphp
+            $server_info['redis']               = $cache->info()['redis_version'];           //redis
+            $server_info['php_sapi_name']       = php_sapi_name();                           //php_sapi_name
+            $server_info['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
+            $server_info['domain']              = $_SERVER['SERVER_NAME'];                   //domain
+            $server_info['port']                = $_SERVER['SERVER_PORT'];                   //port
+            $server_info['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //protocol
+            $server_info['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
+            $server_info['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //max_execution_time
+            $server_info['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
 
-                $server_info['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
-                $server_info['domain']              = $_SERVER['SERVER_NAME'];                   //domain
-                $server_info['port']                = $_SERVER['SERVER_PORT'];                   //port
-                $server_info['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
-                $server_info['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
-                $server_info['database']            = 'mysql ' . $mysql[0]['version'];           //database
-                $server_info['php_info']            = php_sapi_name() . ' ' . PHP_VERSION;       //php
-                $server_info['thinkphp']            = App::version();                            //thinkphp
-                $server_info['redis']               = $cache->info()['redis_version'];           //redis
-                $server_info['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //协议/版本
-                $server_info['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //上传文件最大尺寸
-                $server_info['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //脚本最大执行时间
-                $server_info['post_max_size']       = get_cfg_var('post_max_size');              //post数据最大尺寸
-
-                AdminSettingCache::set($server_info_key, $server_info);
-            }
-        } else {
-            AdminSettingCache::del($server_info_key);
+            AdminSettingCache::set($server_info_key, $server_info, 86400);
         }
 
         return $server_info;
