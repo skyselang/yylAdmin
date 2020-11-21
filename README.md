@@ -4,7 +4,7 @@
 
 ## 演示
 
-地址：<a href="https://demo.yyladmin.top" target="_blank">https://demo.yyladmin.top</a>  
+地址：<a href="https://demo.yyladmin.top" target="_blank">yylAdmin demo</a>  
 账号：yyladmin、admin  
 密码：123456  
 提示：演示账号只有部分权限，请下载源码安装体验全部功能
@@ -69,7 +69,7 @@ npm install
 
 # 可以通过npm镜像解决速度慢的问题
 npm install --registry=https://registry.npm.taobao.org
-# 或者使用cnpm（推荐），安装后使用cnpm替代npm，如 cnpm run dev
+# 或者使用cnpm，安装后使用cnpm替代npm，如 cnpm install
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 
 # 配置
@@ -147,7 +147,7 @@ npm run lint -- --fix
 - 推荐使用cnpm：<a href="https://developer.aliyun.com/mirror/NPM" target="_blank">cnpm</a>
 - 删除node_modules文件夹后使用cnpm重新安装依赖
 
-### UI
+### ui
 - 使用的是element-ui：<a href="https://element.eleme.cn/#/zh-CN/component/installation" target="_blank">element-ui</a>
 
 ### debug
