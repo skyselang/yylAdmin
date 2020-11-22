@@ -150,10 +150,13 @@ npm run lint -- --fix
 ### ui
 - 使用的是element-ui：<a href="https://element.eleme.cn/#/zh-CN/component/installation" target="_blank">element-ui</a>
 
+### browser
+- 支持Chrome、Firefox、QQ、360、Edge等主流浏览器，不支持IE以及浏览器的兼容模式（IE内核）
+
 ### debug
 - 调试模式下根据接口返回错误信息排查，或者提<a href="https://gitee.com/skyselang/yylAdmin/issues" target="_blank">Issue</a>
 
 ## 协议
 
 - Apache2开源协议，完全免费使用
-- Copyright skyselang https://github.com/skyselang
+- Copyright skyselang https://gitee.com/skyselang
