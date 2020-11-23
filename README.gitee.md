@@ -1,6 +1,13 @@
 # yylAdmin
 
-码云 | <a href="https://github.com/skyselang/yylAdmin" target="_blank">Github</a>
+Gitee：<a href="https://gitee.com/skyselang/yylAdmin">https://gitee.com/skyselang/yylAdmin</a>  
+Github：<a href="https://github.com/skyselang/yylAdmin">https://github.com/skyselang/yylAdmin</a>
+
+## 简介
+
+<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Vue2；项目由后端<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>和前端<a href="https://gitee.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>组成。
+- <a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>
+- <a href="https://gitee.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>
 
 ## 演示
 
@@ -8,12 +15,6 @@
 账号：yyladmin、admin  
 密码：123456  
 提示：演示账号只有部分权限，请下载源码安装体验全部功能
-
-## 简介
-
-<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Vue2；项目由后端<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>和前端<a href="https://gitee.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>组成。
-- <a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>
-- <a href="https://gitee.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>
 
 ## 准备
 
@@ -88,7 +89,7 @@ npm run dev
 密码：123456
 
 ## 开发
-> 以日志管理为例子
+> 以日志管理为例
 ### PHP部分
 - 编写接口代码：app/admin/controller/AdminLog.php
 <img width="100%" src="./public/static/img/devphp1.jpg">
@@ -135,7 +136,7 @@ npm run lint
 npm run lint -- --fix
 ```
 
-## 截图
+## 预览
 
 <img width="100%" src="./public/static/img/yyladmin_login.jpg">
 
