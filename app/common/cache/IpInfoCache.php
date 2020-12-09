@@ -1,16 +1,16 @@
 <?php
 /*
- * @Description  : ip信息缓存
+ * @Description  : IP信息缓存
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-07-14
- * @LastEditTime : 2020-09-27
+ * @Date         : 2020-10-12
+ * @LastEditTime : 2020-12-03
  */
 
 namespace app\common\cache;
 
 use think\facade\Cache;
 
-class AdminIpInfoCache
+class IpInfoCache
 {
     /**
      * 缓存key
@@ -21,45 +21,30 @@ class AdminIpInfoCache
      */
     public static function key($ip = '')
     {
-        $key = 'adminIpInfo:' . $ip;
+        $key = 'IpInfo:' . $ip;
 
         return $key;
     }
 
     /**
-     * 缓存有效时间
-     *
-     * @param integer $expire 有效时间
-     * 
-     * @return integer
-     */
-    public static function exp($expire = 0)
-    {
-        if (empty($expire)) {
-            $expire = 30 * 24 * 60 * 60 + mt_rand(0, 99);
-        }
-
-        return $expire;
-    }
-
-    /**
      * 缓存设置
      *
-     * @param string  $ip      ip地址
-     * @param array   $ip_info ip信息
-     * @param integer $expire  有效时间
+     * @param string  $ip     ip地址
+     * @param array   $ipinfo ip信息
+     * @param integer $expire 有效时间（秒）
      * 
-     * @return array ip信息
+     * @return bool
      */
-    public static function set($ip = '', $ip_info = [], $expire = 0)
+    public static function set($ip = '', $ipinfo = [], $expire = 0)
     {
         $key = self::key($ip);
-        $val = $ip_info;
-        $exp = $expire ?: self::exp();
+        $val = $ipinfo;
+        $ttl = 15 * 24 * 60 * 60;
+        $exp = $expire ?: $ttl;
 
-        Cache::set($key, $val, $exp);
+        $res = Cache::set($key, $val, $exp);
 
-        return $val;
+        return $res;
     }
 
     /**

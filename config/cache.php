@@ -33,7 +33,7 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
             // 缓存前缀
-            'prefix'     => Env::get('redis.prefix', 'yyl:'),
+            'prefix'     => Env::get('redis.prefix', 'ya:'),
             // 主机
             'host'       => Env::get('redis.host', '127.0.0.1'),
             // 端口

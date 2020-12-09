@@ -3,7 +3,7 @@
  * @Description  : 用户验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-03
  */
 
 namespace app\admin\validate;
@@ -21,7 +21,7 @@ class AdminUserValidate extends Validate
         'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
         'password'      => ['require', 'length' => '6,18'],
         'email'         => ['email', 'checkEmail'],
-        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif', 'fileSize' => '11151200'],
+        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif', 'fileSize' => '51200'],
     ];
 
     // 错误信息
@@ -78,7 +78,7 @@ class AdminUserValidate extends Validate
     protected function sceneuser_dele()
     {
         return $this->only(['admin_user_id'])
-            ->append('admin_user_id', ['checkAdminUserIsAdmin', 'checkAdminUserRoleMenu']);
+            ->append('admin_user_id', ['checkAdminUserIsDelete', 'checkAdminUserRoleMenu']);
     }
 
     // 验证场景定义：是否管理员
@@ -228,6 +228,18 @@ class AdminUserValidate extends Validate
 
     // 自定义验证规则：用户是否禁用
     protected function checkAdminUserIsDisable($value, $rule, $data = [])
+    {
+        $is_admin_user = admin_is_admin($value);
+
+        if ($is_admin_user) {
+            return '无法对系统管理员进行操作';
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：用户删除
+    protected function checkAdminUserIsDelete($value, $rule, $data = [])
     {
         $is_admin_user = admin_is_admin($value);
 

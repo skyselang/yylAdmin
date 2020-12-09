@@ -3,7 +3,7 @@
  * @Description  : 首页
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-17
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-11-24
  */
 
 namespace app\index\controller;
@@ -22,7 +22,7 @@ class Index
     public function index()
     {
         $data = IndexService::index();
-
+        
         return success($data);
     }
 }

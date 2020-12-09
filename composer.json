@@ -26,7 +26,8 @@
         "topthink/think-multi-app": "^1.0",
         "topthink/think-captcha": "^3.0",
         "firebase/php-jwt": "^5.2",
-        "endroid/qr-code": "^3.9"
+        "endroid/qr-code": "^3.9",
+        "overtrue/pinyin": "~4.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"

@@ -3,7 +3,7 @@
  * @Description  : 权限验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-10-29
+ * @LastEditTime : 2020-12-09
  */
 
 namespace app\admin\middleware;
@@ -12,8 +12,8 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
-use app\admin\service\AdminMenuService;
 use app\common\cache\AdminUserCache;
+use app\admin\service\AdminMenuService;
 
 class AdminRuleVerify
 {
@@ -26,12 +26,12 @@ class AdminRuleVerify
      */
     public function handle($request, Closure $next)
     {
-        $admin_menu_url  = request_pathinfo();
+        $menu_url        = request_pathinfo();
         $api_white_list  = Config::get('admin.api_white_list');
         $rule_white_list = Config::get('admin.rule_white_list');
         $white_list      = array_merge($rule_white_list, $api_white_list);
 
-        if (!in_array($admin_menu_url, $white_list)) {
+        if (!in_array($menu_url, $white_list)) {
             $admin_user_id = admin_user_id();
             $admin_ids     = Config::get('admin.admin_ids');
 
@@ -46,15 +46,16 @@ class AdminRuleVerify
                     exception('账号已禁用，请联系管理员', 401);
                 }
 
-                if (!in_array($admin_menu_url, $admin_user['roles'])) {
-                    exception('你没有权限操作', 403);
+                if (!in_array($menu_url, $admin_user['roles'])) {
+                    $admin_menu = AdminMenuService::info($menu_url);
+                    exception('你没有权限操作：' . $admin_menu['menu_name'], 403);
                 }
             }
 
-            $menu_url = AdminMenuService::list('url')['list'];
+            $admin_menu_url = AdminMenuService::list('url')['list'];
 
-            if (!in_array($admin_menu_url, $menu_url)) {
-                exception('接口地址错误', 404);
+            if (!in_array($menu_url, $admin_menu_url)) {
+                exception('接口地址错误：' . $menu_url, 404);
             }
         }
 

@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-07
  */
 
 namespace app\admin\service;
@@ -96,7 +96,7 @@ class AdminUserService
                 ->find();
 
             if (empty($admin_user)) {
-                exception('用户不存在:' . $admin_user_id);
+                exception('用户不存在：' . $admin_user_id);
             }
 
             $admin_user['avatar'] = file_url($admin_user['avatar']);
@@ -253,6 +253,33 @@ class AdminUserService
     }
 
     /**
+     * 用户删除
+     *
+     * @param integer $admin_user_id 用户id
+     * 
+     * @return array
+     */
+    public static function dele($admin_user_id)
+    {
+        $data['is_delete']   = 1;
+        $data['delete_time'] = date('Y-m-d H:i:s');
+
+        $update = Db::name('admin_user')
+            ->where('admin_user_id', $admin_user_id)
+            ->update($data);
+
+        if (empty($update)) {
+            exception();
+        }
+
+        $data['admin_user_id'] = $admin_user_id;
+
+        AdminUserCache::upd($admin_user_id);
+
+        return $data;
+    }
+
+    /**
      * 用户修改头像
      *
      * @param array $param 头像信息
@@ -265,7 +292,7 @@ class AdminUserService
         $avatar        = $param['avatar'];
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('admin/user', $avatar, function () use ($admin_user_id) {
+            ->putFile('adminUser', $avatar, function () use ($admin_user_id) {
                 return $admin_user_id . '/avatar';
             });
 
@@ -289,33 +316,6 @@ class AdminUserService
         $admin_user = array_merge($admin_user, $data);
 
         AdminUserCache::set($admin_user_id, $admin_user);
-
-        return $data;
-    }
-
-    /**
-     * 用户删除
-     *
-     * @param integer $admin_user_id 用户id
-     * 
-     * @return array
-     */
-    public static function dele($admin_user_id)
-    {
-        $data['is_delete']   = 1;
-        $data['delete_time'] = date('Y-m-d H:i:s');
-
-        $update = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
-            ->update($data);
-
-        if (empty($update)) {
-            exception();
-        }
-
-        $data['admin_user_id'] = $admin_user_id;
-
-        AdminUserCache::upd($admin_user_id);
 
         return $data;
     }

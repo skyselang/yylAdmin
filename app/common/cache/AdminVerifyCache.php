@@ -3,13 +3,12 @@
  * @Description  : 验证码缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-09-27
+ * @LastEditTime : 2020-12-03
  */
 
 namespace app\common\cache;
 
 use think\facade\Cache;
-use think\facade\Config;
 
 class AdminVerifyCache
 {
@@ -28,32 +27,11 @@ class AdminVerifyCache
     }
 
     /**
-     * 缓存有效时间
-     *
-     * @param integer $expire    有效时间
-     * @param string  $verify_id 验证码id
-     * 
-     * @return integer
-     */
-    public static function exp($expire = 0, $verify_id = '')
-    {
-        if ($verify_id == 1) {
-            return 30 * 24 * 60 * 60 + mt_rand(0, 99);
-        }
-
-        if (empty($expire)) {
-            $expire = Config::get('captcha.expire', 180);
-        }
-
-        return $expire;
-    }
-
-    /**
      * 缓存设置
      *
      * @param string  $verify_id   验证码id
      * @param string  $verify_code 验证码
-     * @param integer $expire      有效时间
+     * @param integer $expire      有效时间（秒）
      * 
      * @return bool
      */
@@ -61,7 +39,8 @@ class AdminVerifyCache
     {
         $key = self::key($verify_id);
         $val = $verify_code;
-        $exp = $expire ?: self::exp($expire, $verify_id);
+        $exp = $expire ?: 180;
+
         $res = Cache::set($key, $val, $exp);
 
         return $res;

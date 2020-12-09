@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\service;
@@ -24,7 +24,7 @@ class AdminMenuService
      */
     public static function list($type = 'tree')
     {
-        $menu = AdminMenuCache::get(0);
+        $menu = AdminMenuCache::get();
 
         if (empty($menu)) {
             $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time';
@@ -53,7 +53,7 @@ class AdminMenuService
             $menu['list'] = $list;
             $menu['url']  = $url;
 
-            AdminMenuCache::set(0, $menu);
+            AdminMenuCache::set('', $menu);
         }
 
         if ($type == 'list') {
@@ -123,7 +123,7 @@ class AdminMenuService
 
         $param['admin_menu_id'] = $admin_menu_id;
 
-        AdminMenuCache::del(0);
+        AdminMenuCache::del();
 
         return $param;
     }
@@ -160,7 +160,7 @@ class AdminMenuService
                 exception();
             }
 
-            AdminMenuCache::del(0);
+            AdminMenuCache::del();
             AdminMenuCache::del($admin_menu_id);
             AdminMenuCache::del($admin_menu['menu_url']);
 
@@ -190,7 +190,7 @@ class AdminMenuService
             exception();
         }
 
-        AdminMenuCache::del(0);
+        AdminMenuCache::del();
         AdminMenuCache::del($admin_menu_id);
         AdminMenuCache::del($admin_menu['menu_url']);
 
@@ -222,7 +222,7 @@ class AdminMenuService
             exception();
         }
 
-        AdminMenuCache::del(0);
+        AdminMenuCache::del();
         AdminMenuCache::del($admin_menu_id);
         AdminMenuCache::del($admin_menu['menu_url']);
 
@@ -252,7 +252,7 @@ class AdminMenuService
             exception();
         }
 
-        AdminMenuCache::del(0);
+        AdminMenuCache::del();
         AdminMenuCache::del($admin_menu_id);
         AdminMenuCache::del($admin_menu['menu_url']);
 

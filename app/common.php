@@ -3,9 +3,10 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-01
  */
 
+use think\facade\Env;
 use think\facade\Request;
 
 /**

@@ -1,33 +1,33 @@
 <?php
 /*
- * @Description  : ip信息
+ * @Description  : IP信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-10-24
+ * @LastEditTime : 2020-12-03
  */
 
-namespace app\admin\service;
+namespace app\common\service;
 
-use app\common\cache\AdminIpInfoCache;
+use app\common\cache\IpInfoCache;
 
-class AdminIpInfoService
+class IpInfoService
 {
     /**
-     * 获取ip信息
+     * 获取IP信息
      *
-     * @param string $ip ip地址
+     * @param string $ip IP地址
      *
      * @return array
      */
     public static function info($ip)
     {
-        $ip_info = AdminIpInfoCache::get($ip);
+        $ipinfo = IpInfoCache::get($ip);
 
-        if (empty($ip_info)) {
+        if (empty($ipinfo)) {
             $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';
             $res = http_get($url);
 
-            $ip_info = [
+            $ipinfo = [
                 'ip'       => $ip,
                 'country'  => '',
                 'province' => '',
@@ -47,18 +47,18 @@ class AdminIpInfoService
                 $region   = $country . $province . $city . $area;
                 $isp      = $data['isp'];
 
-                $ip_info['ip']       = $ip;
-                $ip_info['country']  = $country;
-                $ip_info['province'] = $province;
-                $ip_info['city']     = $city;
-                $ip_info['region']   = $region;
-                $ip_info['area']     = $area;
-                $ip_info['isp']      = $isp;
+                $ipinfo['ip']       = $ip;
+                $ipinfo['country']  = $country;
+                $ipinfo['province'] = $province;
+                $ipinfo['city']     = $city;
+                $ipinfo['region']   = $region;
+                $ipinfo['area']     = $area;
+                $ipinfo['isp']      = $isp;
 
-                AdminIpInfoCache::set($ip, $ip_info);
+                IpInfoCache::set($ip, $ipinfo);
             }
         }
 
-        return $ip_info;
+        return $ipinfo;
     }
 }

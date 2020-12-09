@@ -3,12 +3,13 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-10-29
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\service;
 
 use Endroid\QrCode\QrCode;
+use app\common\service\IpInfoService;
 
 class AdminToolService
 {
@@ -132,7 +133,7 @@ class AdminToolService
         $qrcode_url = file_url($file_path);
 
         $data['str'] = $str;
-        $data['url'] = $qrcode_url . '?r=' . mt_rand(1, 99);
+        $data['url'] = $qrcode_url . '?r=' . mt_rand(10, 99);
 
         return $data;
     }
@@ -211,8 +212,8 @@ class AdminToolService
      */
     public static function ipQuery($ip = '')
     {
-        $ip_info = AdminIpInfoService::info($ip);
+        $ipinfo = IpInfoService::info($ip);
 
-        return $ip_info;
+        return $ipinfo;
     }
 }

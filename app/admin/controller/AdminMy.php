@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\controller;
@@ -133,7 +133,7 @@ class AdminMy
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
         $admin_user_id   = Request::param('admin_user_id/d', '');
-        $admin_log_type  = Request::param('type/d', '');
+        $admin_log_type  = Request::param('admin_log_type/d', '');
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
         $request_keyword = Request::param('request_keyword/s', '');

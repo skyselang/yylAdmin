@@ -3,7 +3,7 @@
  * @Description  : 用户缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2020-10-30
+ * @LastEditTime : 2020-12-03
  */
 
 namespace app\common\cache;
@@ -28,38 +28,24 @@ class AdminUserCache
     }
 
     /**
-     * 缓存有效时间
-     *
-     * @param integer $expire 有效时间
-     * 
-     * @return integer
-     */
-    public static function exp($expire = 0)
-    {
-        if (empty($expire)) {
-            $expire = 1 * 24 * 60 * 60 + mt_rand(0, 99);
-        }
-
-        return $expire;
-    }
-
-    /**
      * 缓存设置
      *
      * @param integer $admin_user_id 用户id
      * @param array   $admin_user    用户信息
-     * @param integer $expire        有效时间
+     * @param integer $expire        有效时间（秒）
      * 
-     * @return array 用户信息
+     * @return bool
      */
     public static function set($admin_user_id, $admin_user, $expire = 0)
     {
         $key = self::key($admin_user_id);
         $val = $admin_user;
-        $exp = $expire ?: self::exp();
-        Cache::set($key, $val, $exp);
+        $ttl = 1 * 24 * 60 * 60;
+        $exp = $expire ?: $ttl;
 
-        return $val;
+        $res = Cache::set($key, $val, $exp);
+
+        return $res;
     }
 
     /**

@@ -3,7 +3,7 @@
  * @Description  : 日志中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-10-20
+ * @LastEditTime : 2020-12-09
  */
 
 namespace app\admin\middleware;
@@ -12,8 +12,8 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
-use app\admin\service\AdminLogService;
 use app\admin\service\AdminMenuService;
+use app\admin\service\AdminLogService;
 
 class AdminLog
 {

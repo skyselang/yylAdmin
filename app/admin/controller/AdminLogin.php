@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-10-28
+ * @LastEditTime : 2020-12-01
  */
 
 namespace app\admin\controller;
@@ -44,7 +44,7 @@ class AdminLogin
         $username       = Request::param('username/s', '');
         $password       = Request::param('password/s', '');
         $verify_id      = Request::param('verify_id/s', '');
-        $verify_code    = Request::param('verify_code/s', '1');
+        $verify_code    = Request::param('verify_code/s', '');
         $request_ip     = Request::ip();
         $request_method = Request::method();
 
@@ -55,7 +55,11 @@ class AdminLogin
         $param['request_ip']     = $request_ip;
         $param['request_method'] = $request_method;
 
-        validate(AdminVerifyValidate::class)->scene('check')->check($param);
+        $verify_config = AdminVerifyService::config();
+        if ($verify_config['switch']) {
+            validate(AdminVerifyValidate::class)->scene('check')->check($param);
+        }
+
         validate(AdminUserValidate::class)->scene('user_login')->check($param);
 
         $data = AdminLoginService::login($param);

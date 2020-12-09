@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\controller;
@@ -27,7 +27,7 @@ class AdminLog
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $type            = Request::param('type/d', '');
+        $admin_log_type  = Request::param('admin_log_type/d', '');
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
         $request_keyword = Request::param('request_keyword/s', '');
@@ -36,8 +36,8 @@ class AdminLog
         $create_time     = Request::param('create_time/a', []);
 
         $where = [];
-        if ($type) {
-            $where[] = ['admin_log_type', '=', $type];
+        if ($admin_log_type) {
+            $where[] = ['admin_log_type', '=', $admin_log_type];
         }
         if ($request_keyword) {
             $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
@@ -118,7 +118,7 @@ class AdminLog
      *
      * @return json
      */
-    public static function LogStatistic()
+    public function LogStatistic()
     {
         $type   = Request::param('type/s', 'number');
         $date   = Request::param('date/a', []);

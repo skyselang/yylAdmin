@@ -3,7 +3,7 @@
  * @Description  : 菜单缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2020-10-25
+ * @LastEditTime : 2020-12-03
  */
 
 namespace app\common\cache;
@@ -15,60 +15,50 @@ class AdminMenuCache
     /**
      * 缓存key
      *
-     * @param integer $admin_menu_id 菜单id
+     * @param integer|string $admin_menu_id 菜单id
      * 
      * @return string
      */
-    public static function key($admin_menu_id = 0)
+    public static function key($admin_menu_id = '')
     {
+        if (empty($admin_menu_id)) {
+            $admin_menu_id = 'all';
+        }
+
         $key = 'adminMenu:' . $admin_menu_id;
 
         return $key;
     }
 
     /**
-     * 缓存有效时间
-     *
-     * @param integer $expire 有效时间
-     * 
-     * @return integer
-     */
-    public static function exp($expire = 0)
-    {
-        if (empty($expire)) {
-            $expire = 30 * 24 * 60 * 60 + mt_rand(0, 99);
-        }
-
-        return $expire;
-    }
-
-    /**
      * 缓存设置
      *
-     * @param integer $admin_menu_id 菜单id
-     * @param array   $admin_menu    菜单信息
-     * @param integer $expire        有效时间
+     * @param integer|string $admin_menu_id 菜单id
+     * @param array          $admin_menu    菜单信息
+     * @param integer        $expire        有效时间（秒）
      * 
-     * @return array 菜单信息
+     * @return bool
      */
-    public static function set($admin_menu_id = 0, $admin_menu = [], $expire = 0)
+    public static function set($admin_menu_id = '', $admin_menu = [], $expire = 0)
     {
         $key = self::key($admin_menu_id);
         $val = $admin_menu;
-        $exp = $expire ?: self::exp();
-        Cache::set($key, $val, $exp);
+        $ttl = 15 * 24 * 60 * 60;
+        $exp = $expire ?: $ttl;
 
-        return $val;
+        $res = Cache::set($key, $val, $exp);
+
+        return $res;
     }
 
     /**
      * 缓存获取
      *
-     * @param integer $admin_menu_id 菜单id
+     * @param integer|string $admin_menu_id 菜单id
      * 
      * @return array 菜单信息
      */
-    public static function get($admin_menu_id = 0)
+    public static function get($admin_menu_id = '')
     {
         $key = self::key($admin_menu_id);
         $res = Cache::get($key);
@@ -79,11 +69,11 @@ class AdminMenuCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_menu_id 菜单id
+     * @param integer|string $admin_menu_id 菜单id
      * 
      * @return bool
      */
-    public static function del($admin_menu_id = 0)
+    public static function del($admin_menu_id = '')
     {
         $key = self::key($admin_menu_id);
         $res = Cache::delete($key);

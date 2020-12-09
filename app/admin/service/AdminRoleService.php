@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\service;
@@ -93,7 +93,7 @@ class AdminRoleService
                 ->find();
 
             if (empty($admin_role)) {
-                exception('角色不存在:' . $admin_role_id);
+                exception('角色不存在：' . $admin_role_id);
             }
 
             $admin_menu_ids = $admin_role['admin_menu_ids'];

@@ -3,15 +3,15 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2020-11-18
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\service\AdminRoleService;
 use app\admin\validate\AdminRoleValidate;
 use app\admin\validate\AdminUserValidate;
+use app\admin\service\AdminRoleService;
 
 class AdminRole
 {

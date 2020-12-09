@@ -3,7 +3,7 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-12-03
  */
 
 namespace app\admin\service;
@@ -26,7 +26,7 @@ class AdminTokenService
         $admin_setting = AdminSettingService::admin_setting();
         $admin_token   = $admin_setting['admin_token'];
 
-        $key = Config::get('admin.token_key');;         //密钥
+        $key = Config::get('admin.token_key');          //密钥
         $iss = $admin_token['iss'];                     //签发者
         $iat = time();                                  //签发时间
         $nbf = time();                                  //生效时间
@@ -71,7 +71,7 @@ class AdminTokenService
         $admin_user_id_token = $decoded->data->admin_user_id;
 
         if ($admin_user_id != $admin_user_id_token) {
-            exception('账号信息错误', 401);
+            exception('账号请求信息错误', 401);
         } else {
             $admin_user = AdminUserCache::get($admin_user_id);
 

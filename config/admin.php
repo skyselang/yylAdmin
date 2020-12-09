@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 后台配置
+ * @Description  : admin配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-11-24
  */
 
 return [

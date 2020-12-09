@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-11-21
+ * @LastEditTime : 2020-12-03
  */
 
 namespace app\admin\service;
@@ -17,7 +17,7 @@ use app\common\cache\AdminUserCache;
 class AdminSettingService
 {
     // 默认设置id
-    static $admin_setting_id = 1;
+    private static $admin_setting_id = 1;
 
     /**
      * 缓存设置
@@ -37,7 +37,7 @@ class AdminSettingService
             $byte['type']  = 'B';
             $byte['value'] = $data['used_memory_lua'];
 
-            $data['used_memory_lua_human'] = AdminToolService::byteTran($byte)['KB'] . 'K';;
+            $data['used_memory_lua_human'] = AdminToolService::byteTran($byte)['KB'] . 'K';
             $data['uptime_in_days']        = $data['uptime_in_days'] . '天';
 
             return $data;
@@ -192,7 +192,7 @@ class AdminSettingService
             $admin_token = unserialize($admin_setting['admin_token']);
             if (empty($admin_token)) {
                 $admin_token['iss'] = 'yylAdmin';  //签发者
-                $admin_token['exp'] = 0.5;         //有效时间（小时）
+                $admin_token['exp'] = 12;          //有效时间（小时）
             }
 
             $admin_setting['admin_verify'] = serialize($admin_verify);
@@ -219,9 +219,8 @@ class AdminSettingService
      */
     public static function serverInfo()
     {
-        $server_info     = [];
-        $server_info_key = 'server';
-        $server_info     = AdminSettingCache::get($server_info_key);
+        $server_key  = 'server';
+        $server_info = AdminSettingCache::get($server_key);
 
         if (empty($server_info)) {
             $cache = Cache::handler();
@@ -242,7 +241,8 @@ class AdminSettingService
             $server_info['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //max_execution_time
             $server_info['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
 
-            AdminSettingCache::set($server_info_key, $server_info, 86400);
+            $expire = 12 * 60 * 60;
+            AdminSettingCache::set($server_key, $server_info, $expire);
         }
 
         return $server_info;

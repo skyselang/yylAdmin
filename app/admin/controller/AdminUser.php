@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\controller;
@@ -133,6 +133,26 @@ class AdminUser
     }
 
     /**
+     * 用户删除
+     *
+     * @method POST
+     * 
+     * @return json
+     */
+    public function userDele()
+    {
+        $admin_user_id = Request::param('admin_user_id/d', '');
+
+        $param['admin_user_id'] = $admin_user_id;
+
+        validate(AdminUserValidate::class)->scene('user_dele')->check($param);
+
+        $data = AdminUserService::dele($admin_user_id);
+
+        return success($data);
+    }
+
+    /**
      * 用户修改头像
      *
      * @method POST
@@ -150,26 +170,6 @@ class AdminUser
         validate(AdminUserValidate::class)->scene('user_avatar')->check($param);
 
         $data = AdminUserService::avatar($param);
-
-        return success($data);
-    }
-
-    /**
-     * 用户删除
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function userDele()
-    {
-        $admin_user_id = Request::param('admin_user_id/d', '');
-
-        $param['admin_user_id'] = $admin_user_id;
-
-        validate(AdminUserValidate::class)->scene('user_dele')->check($param);
-
-        $data = AdminUserService::dele($admin_user_id);
 
         return success($data);
     }

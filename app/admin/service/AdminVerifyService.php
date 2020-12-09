@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-10-29
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\service;
@@ -24,7 +24,7 @@ class AdminVerifyService
     // 验证码字符集合
     protected $codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
     // 验证码过期时间（s）
-    protected $expire = 1800;
+    protected $expire = 180;
     // 使用中文验证码
     protected $useZh = false;
     // 中文验证码字符串
@@ -125,7 +125,7 @@ class AdminVerifyService
      */
     protected function generate(): array
     {
-        $key = md5(uniqid(mt_rand(1, 99), true));
+        $key = md5(uniqid(mt_rand(10, 99), true));
         $bag = '';
 
         if ($this->math) {
@@ -182,7 +182,7 @@ class AdminVerifyService
     }
 
     /**
-     * 输出验证码并把验证码的值保存到Redis中
+     * 输出验证码并把验证码的值保存到缓存中
      * 
      * @access public
      * 
@@ -253,7 +253,7 @@ class AdminVerifyService
 
         ob_start();
         // 输出图像
-        $tmpfname = tempnam(sys_get_temp_dir(), 'ya');
+        $tmpfname = tempnam(sys_get_temp_dir(), 'yyl');
         imagepng($this->im, $tmpfname);
         $img_data = file_get_contents($tmpfname);
         $img_base64 = 'data:image/png;base64,' . base64_encode($img_data);
@@ -377,14 +377,14 @@ class AdminVerifyService
     {
         $switch = $this->switch;
 
+        $res['verify_switch'] = $switch;
+
         if ($switch) {
             $verify = $this->create();
 
             $res['verify_id']  = $verify['verify_id'];
             $res['verify_src'] = $verify['verify_src'];
         }
-
-        $res['verify_switch'] = $switch;
 
         return $res;
     }

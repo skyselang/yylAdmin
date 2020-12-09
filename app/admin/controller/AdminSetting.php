@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-05
- * @LastEditTime : 2020-11-21
+ * @LastEditTime : 2020-12-09
  */
 
 namespace app\admin\controller;
@@ -18,7 +18,7 @@ class AdminSetting
     /**
      * 缓存设置
      *
-     * @method GET
+     * @method GET|POST
      *
      * @return json
      */

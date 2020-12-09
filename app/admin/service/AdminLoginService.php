@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-10-29
+ * @LastEditTime : 2020-11-24
  */
 
 namespace app\admin\service;
@@ -11,6 +11,7 @@ namespace app\admin\service;
 use think\facade\Db;
 use app\common\cache\AdminUserCache;
 use app\common\cache\AdminVerifyCache;
+use app\common\service\IpInfoService;
 
 class AdminLoginService
 {
@@ -46,12 +47,12 @@ class AdminLoginService
         }
 
         $request_ip = $param['request_ip'];
-        $ip_info    = AdminIpInfoService::info($request_ip);
+        $ipinfo     = IpInfoService::info($request_ip);
 
         $admin_user_id = $admin_user['admin_user_id'];
 
         $update['login_ip']     = $request_ip;
-        $update['login_region'] = $ip_info['region'];
+        $update['login_region'] = $ipinfo['region'];
         $update['login_time']   = date('Y-m-d H:i:s');
         $update['login_num']    = $admin_user['login_num'] + 1;
         Db::name('admin_user')

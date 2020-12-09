@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\service;
@@ -11,6 +11,7 @@ namespace app\admin\service;
 use think\facade\Db;
 use app\common\utils\Datetime;
 use app\common\cache\AdminLogCache;
+use app\common\service\IpInfoService;
 
 class AdminLogService
 {
@@ -98,7 +99,7 @@ class AdminLogService
                 ->find();
 
             if (empty($admin_log)) {
-                exception('日志不存在:' . $admin_log_id);
+                exception('日志不存在：' . $admin_log_id);
             }
 
             if ($admin_log['request_param']) {
@@ -141,14 +142,14 @@ class AdminLogService
         $ip = $admin_log['request_ip'];
 
         if ($ip) {
-            $ip_info = AdminIpInfoService::info($ip);
+            $ipinfo = IpInfoService::info($ip);
 
-            $admin_log['request_country']  = $ip_info['country'];
-            $admin_log['request_province'] = $ip_info['province'];
-            $admin_log['request_city']     = $ip_info['city'];
-            $admin_log['request_area']     = $ip_info['area'];
-            $admin_log['request_region']   = $ip_info['region'];
-            $admin_log['request_isp']      = $ip_info['isp'];
+            $admin_log['request_country']  = $ipinfo['country'];
+            $admin_log['request_province'] = $ipinfo['province'];
+            $admin_log['request_city']     = $ipinfo['city'];
+            $admin_log['request_area']     = $ipinfo['area'];
+            $admin_log['request_region']   = $ipinfo['region'];
+            $admin_log['request_isp']      = $ipinfo['isp'];
         }
 
         $admin_log['create_time'] = date('Y-m-d H:i:s');
@@ -210,7 +211,7 @@ class AdminLogService
     }
 
     /**
-     * 数量统计
+     * 日志数量统计
      *
      * @param string $date 日期
      *
@@ -275,7 +276,7 @@ class AdminLogService
     }
 
     /**
-     * 日期统计
+     * 日志日期统计
      *
      * @param array $date 日期范围
      *
@@ -327,7 +328,7 @@ class AdminLogService
     }
 
     /**
-     * 地区统计
+     * 日志地区统计
      *
      * @param integer $date   日期范围
      * @param string  $region 地区类型

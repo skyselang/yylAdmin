@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-18
+ * @LastEditTime : 2020-12-02
  */
 
 namespace app\admin\controller;
@@ -166,11 +166,12 @@ class AdminMenu
      */
     public function menuUnauth()
     {
-        $admin_menu_id = Request::param('admin_menu_id/d', '');
-        $is_unauth     = Request::param('is_unauth/s', '0');
-
-        $param['admin_menu_id'] = $admin_menu_id;
-        $param['is_unauth']     = $is_unauth;
+        $param = Request::only(
+            [
+                'admin_menu_id' => '',
+                'is_unauth'     => '0',
+            ]
+        );
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
