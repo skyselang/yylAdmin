@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -24,13 +24,11 @@ class AdminMy
      */
     public function myInfo()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
-
-        $param['admin_user_id'] = $admin_user_id;
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
         validate(AdminMyValidate::class)->scene('user_id')->check($param);
 
-        $data = AdminMyService::info($admin_user_id);
+        $data = AdminMyService::info($param['admin_user_id']);
 
         if ($data['is_delete'] == 1) {
             exception('账号信息错误，请重新登录！');
@@ -48,23 +46,18 @@ class AdminMy
      */
     public function myEdit()
     {
-        if (Request::isGet()) {
-            $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
+        if (Request::isGet()) {
             validate(AdminMyValidate::class)->scene('user_id')->check($param);
 
             $data = AdminMyService::edit($param);
 
             return success($data);
         } else {
-            $param = Request::only(
-                [
-                    'admin_user_id' => '',
-                    'username'      => '',
-                    'nickname'      => '',
-                    'email'         => '',
-                ]
-            );
+            $param['username'] = Request::param('username/s', '');
+            $param['nickname'] = Request::param('nickname/s', '');
+            $param['email']    = Request::param('email/s', '');
 
             validate(AdminMyValidate::class)->scene('my_edit')->check($param);
 
@@ -83,14 +76,9 @@ class AdminMy
      */
     public function myPwd()
     {
-
-        $param = Request::only(
-            [
-                'admin_user_id' => '',
-                'password_old'  => '',
-                'password_new'  => '',
-            ]
-        );
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['password_old']  = Request::param('password_old/s', '');
+        $param['password_new']  = Request::param('password_new/s', '');
 
         validate(AdminMyValidate::class)->scene('my_pwd')->check($param);
 
@@ -108,11 +96,8 @@ class AdminMy
      */
     public function myAvatar()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
-        $avatar_file   = Request::file('avatar_file');
-
-        $param['admin_user_id'] = $admin_user_id;
-        $param['avatar']        = $avatar_file;
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['avatar']        = Request::file('avatar_file');
 
         validate(AdminMyValidate::class)->scene('my_avatar')->check($param);
 
@@ -140,9 +125,7 @@ class AdminMy
         $menu_keyword    = Request::param('menu_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
 
-        $param['admin_user_id'] = $admin_user_id;
-
-        validate(AdminMyValidate::class)->scene('user_id')->check($param);
+        validate(AdminMyValidate::class)->scene('user_id')->check(['admin_user_id' => $admin_user_id]);
 
         $where = [];
         if ($admin_user_id) {
@@ -155,9 +138,9 @@ class AdminMy
             $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
         }
         if ($menu_keyword) {
-            $admin_menu    = AdminMenuService::likeQuery($menu_keyword);
-            $admin_menu_id = array_column($admin_menu, 'admin_menu_id');
-            $where[] = ['admin_menu_id', 'in', $admin_menu_id];
+            $admin_menu     = AdminMenuService::likeQuery($menu_keyword);
+            $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
+            $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
         }
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];

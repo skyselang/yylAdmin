@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -45,12 +45,12 @@ class AdminLog
         if ($user_keyword) {
             $admin_user     = AdminUserService::etQuery($user_keyword);
             $admin_user_ids = array_column($admin_user, 'admin_user_id');
-            $where[] = ['admin_user_id', 'in', $admin_user_ids];
+            $where[]        = ['admin_user_id', 'in', $admin_user_ids];
         }
         if ($menu_keyword) {
             $admin_menu     = AdminMenuService::etQuery($menu_keyword);
             $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
-            $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
+            $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
         }
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
@@ -76,13 +76,11 @@ class AdminLog
      */
     public function logInfo()
     {
-        $admin_log_id = Request::param('admin_log_id/d', '');
-
-        $param['admin_log_id'] = $admin_log_id;
+        $param['admin_log_id'] = Request::param('admin_log_id/d', '');
 
         validate(AdminLogValidate::class)->scene('log_id')->check($param);
 
-        $data = AdminLogService::info($admin_log_id);
+        $data = AdminLogService::info($param['admin_log_id']);
 
         if ($data['is_delete'] == 1) {
             exception('日志已被删除');
@@ -100,13 +98,11 @@ class AdminLog
      */
     public function logDele()
     {
-        $admin_log_id = Request::param('admin_log_id/d', '');
-
-        $param['admin_log_id'] = $admin_log_id;
+        $param['admin_log_id'] = Request::param('admin_log_id/d', '');
 
         validate(AdminLogValidate::class)->scene('log_id')->check($param);
 
-        $data = AdminLogService::dele($admin_log_id);
+        $data = AdminLogService::dele($param['admin_log_id']);
 
         return success($data);
     }

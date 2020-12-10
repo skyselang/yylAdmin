@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -24,28 +24,23 @@ class AdminMenuService
      */
     public static function list($type = 'tree')
     {
+
         $menu = AdminMenuCache::get();
 
         if (empty($menu)) {
             $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time';
 
-            $admin_menu_pid = Db::name('admin_menu')
+            $where[] = ['is_delete', '=', 0];
+
+            $order = ['menu_sort' => 'desc', 'admin_menu_id' => 'asc'];
+
+            $list = Db::name('admin_menu')
                 ->field($field)
-                ->where('menu_pid', '=', 0)
-                ->where('is_delete', 0)
-                ->order(['menu_sort' => 'desc', 'admin_menu_id' => 'asc'])
+                ->where($where)
+                ->order($order)
                 ->select()
                 ->toArray();
 
-            $admin_menu_child = Db::name('admin_menu')
-                ->field($field)
-                ->where('menu_pid', '>', 0)
-                ->where('is_delete', 0)
-                ->order(['menu_sort' => 'desc', 'admin_menu_id' => 'asc'])
-                ->select()
-                ->toArray();
-
-            $list = array_merge($admin_menu_pid, $admin_menu_child);
             $tree = self::toTree($list, 0);
             $url  = array_filter(array_column($list, 'menu_url'));
 
@@ -94,7 +89,7 @@ class AdminMenuService
                 ->find();
 
             if (empty($admin_menu)) {
-                exception('菜单不存在:' . $admin_menu_id);
+                exception('菜单不存在：' . $admin_menu_id);
             }
 
             AdminMenuCache::set($admin_menu_id, $admin_menu);
@@ -136,7 +131,7 @@ class AdminMenuService
      * 
      * @return array
      */
-    public static function edit($param, $method = 'get')
+    public static function edit($param, $method = 'post')
     {
         $admin_menu_id = $param['admin_menu_id'];
         $admin_menu    = self::info($admin_menu_id);

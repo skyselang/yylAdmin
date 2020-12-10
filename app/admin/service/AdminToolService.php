@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -16,13 +16,15 @@ class AdminToolService
     /**
      * 随机字符串
      *
-     * @param array   $ids 包含字符
-     * @param integer $len 字符长度
+     * @param array $param 生成参数
      * 
      * @return array
      */
-    public static function strRand($ids = [1, 2, 3], $len = 12)
+    public static function strRand($param)
     {
+        $ids = $param['strrand_ids'];
+        $len = $param['strrand_len'];
+
         $str_arr = [
             1 => '0123456789',
             2 => 'abcdefghijklmnopqrstuvwxyz',
@@ -120,7 +122,7 @@ class AdminToolService
 
         $admin_user_id = admin_user_id();
 
-        $file_dir = '/storage/admin/user/' . $admin_user_id;
+        $file_dir = '/storage/admin_user/' . $admin_user_id;
         if (!file_exists('.' . $file_dir)) {
             mkdir('.' . $file_dir, 0777, true);
         }

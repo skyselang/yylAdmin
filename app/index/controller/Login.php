@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\index\controller;
@@ -76,13 +76,11 @@ class Login
      */
     public function logout()
     {
-        $member_id = member_id();
-
-        $param['member_id'] = $member_id;
+        $param['member_id'] = member_id();
 
         validate(MemberValidate::class)->scene('member_id')->check($param);
 
-        $data = LoginService::logout($member_id);
+        $data = LoginService::logout($param['member_id']);
 
         return success($data, '退出成功');
     }

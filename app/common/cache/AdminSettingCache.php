@@ -3,7 +3,7 @@
  * @Description  : 设置缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-09-07
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\common\cache;
@@ -39,7 +39,7 @@ class AdminSettingCache
     {
         $key = self::key($admin_setting_id);
         $val = $admin_setting;
-        $ttl = 15 * 24 * 60 * 60;
+        $ttl = 7 * 24 * 60 * 60;
         $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $val, $exp);

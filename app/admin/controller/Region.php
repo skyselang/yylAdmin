@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-09
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -49,13 +49,13 @@ class Region
      */
     public function regionInfo()
     {
-        $region_id = Request::param('region_id/d', '');
+        $param['region_id'] = Request::param('region_id/d', '');
 
-        validate(RegionValidate::class)->scene('region_id')->check(['region_id' => $region_id]);
+        validate(RegionValidate::class)->scene('region_id')->check($param);
 
-        $data = RegionService::info($region_id);
+        $data = RegionService::info($param['region_id']);
 
-        if ($data['is_delete'] == -1) {
+        if ($data['is_delete'] == 1) {
             exception('地区已被删除');
         }
 
@@ -72,23 +72,19 @@ class Region
     public function regionAdd()
     {
         if (Request::isGet()) {
-            $data = RegionService::add([], 'get');
+            $data = RegionService::add();
         } else {
-            $param = Request::only(
-                [
-                    'region_pid'       => 0,
-                    'region_level'     => 1,
-                    'region_name'      => '',
-                    'region_pinyin'    => '',
-                    'region_jianpin'   => '',
-                    'region_initials'  => '',
-                    'region_citycode'  => '',
-                    'region_zipcode'   => '',
-                    'region_longitude' => '',
-                    'region_latitude'  => '',
-                    'region_sort'      => 1000,
-                ]
-            );
+            $param['region_pid']       = Request::param('region_pid/d', 0);
+            $param['region_level']     = Request::param('region_level/d', 1);
+            $param['region_name']      = Request::param('region_name/s', '');
+            $param['region_pinyin']    = Request::param('region_pinyin/s', '');
+            $param['region_jianpin']   = Request::param('region_jianpin/s', '');
+            $param['region_initials']  = Request::param('region_initials/s', '');
+            $param['region_citycode']  = Request::param('region_citycode/s', '');
+            $param['region_zipcode']   = Request::param('region_zipcode/s', '');
+            $param['region_longitude'] = Request::param('region_longitude/s', '');
+            $param['region_latitude']  = Request::param('region_latitude/s', '');
+            $param['region_sort']      = Request::param('region_sort/d', 1000);
 
             if (empty($param['region_pid'])) {
                 $param['region_pid'] = 0;
@@ -100,7 +96,7 @@ class Region
 
             validate(RegionValidate::class)->scene('region_add')->check($param);
 
-            $data = RegionService::add($param);
+            $data = RegionService::add($param, 'post');
         }
 
         return success($data);
@@ -115,33 +111,28 @@ class Region
      */
     public function regionEdit()
     {
-        if (Request::isGet()) {
-            $param['region_id'] = Request::param('region_id/d', '');
+        $param['region_id'] = Request::param('region_id/d', '');
 
+        if (Request::isGet()) {
             validate(RegionValidate::class)->scene('region_id')->check($param);
 
             $data = RegionService::edit($param, 'get');
 
-            if ($data['is_delete'] == -1) {
+            if ($data['is_delete'] == 1) {
                 exception('地区已被删除');
             }
         } else {
-            $param = Request::only(
-                [
-                    'region_id'        => '',
-                    'region_pid'       => 0,
-                    'region_level'     => 1,
-                    'region_name'      => '',
-                    'region_pinyin'    => '',
-                    'region_jianpin'   => '',
-                    'region_initials'  => '',
-                    'region_citycode'  => '',
-                    'region_zipcode'   => '',
-                    'region_longitude' => '',
-                    'region_latitude'  => '',
-                    'region_sort'      => 1000,
-                ]
-            );
+            $param['region_pid']       = Request::param('region_pid/d', 0);
+            $param['region_level']     = Request::param('region_level/d', 1);
+            $param['region_name']      = Request::param('region_name/s', '');
+            $param['region_pinyin']    = Request::param('region_pinyin/s', '');
+            $param['region_jianpin']   = Request::param('region_jianpin/s', '');
+            $param['region_initials']  = Request::param('region_initials/s', '');
+            $param['region_citycode']  = Request::param('region_citycode/s', '');
+            $param['region_zipcode']   = Request::param('region_zipcode/s', '');
+            $param['region_longitude'] = Request::param('region_longitude/s', '');
+            $param['region_latitude']  = Request::param('region_latitude/s', '');
+            $param['region_sort']      = Request::param('region_sort/d', 1000);
 
             if (empty($param['region_pid'])) {
                 $param['region_pid'] = 0;
@@ -168,11 +159,11 @@ class Region
      */
     public function regionDele()
     {
-        $region_id = Request::param('region_id/d', '');
+        $param['region_id'] = Request::param('region_id/d', '');
 
-        validate(RegionValidate::class)->scene('region_dele')->check(['region_id' => $region_id]);
+        validate(RegionValidate::class)->scene('region_dele')->check($param);
 
-        $data = RegionService::dele($region_id);
+        $data = RegionService::dele($param['region_id']);
 
         return success($data);
     }

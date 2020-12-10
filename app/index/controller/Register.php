@@ -3,14 +3,14 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2020-12-07
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
 use app\admin\validate\MemberValidate;
-use app\index\service\UserService;
+use app\admin\service\MemberService;
 
 class Register
 {
@@ -23,17 +23,13 @@ class Register
      */
     public function register()
     {
-        $param = Request::only(
-            [
-                'username' => '',
-                'password' => '',
-            ]
-        );
+        $param['username'] = Request::param('username/s', '');
+        $param['password'] = Request::param('password/s', '');
         $param['nickname'] = $param['username'];
 
         validate(MemberValidate::class)->scene('member_register')->check($param);
 
-        $data = UserService::register($param);
+        $data = MemberService::add($param);
 
         return success($data, '注册成功');
     }

@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -27,7 +27,7 @@ class Log
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $type            = Request::param('type/d', '');
+        $log_type        = Request::param('log_type/d', '');
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
         $request_keyword = Request::param('request_keyword/s', '');
@@ -36,8 +36,8 @@ class Log
         $create_time     = Request::param('create_time/a', []);
 
         $where = [];
-        if ($type) {
-            $where[] = ['log_type', '=', $type];
+        if ($log_type) {
+            $where[] = ['log_type', '=', $log_type];
         }
         if ($request_keyword) {
             $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
@@ -76,13 +76,11 @@ class Log
      */
     public function logInfo()
     {
-        $log_id = Request::param('log_id/d', '');
-
-        $param['log_id'] = $log_id;
+        $param['log_id'] = Request::param('log_id/d', '');
 
         validate(LogValidate::class)->scene('log_id')->check($param);
 
-        $data = LogService::info($log_id);
+        $data = LogService::info($param['log_id']);
 
         if ($data['is_delete'] == 1) {
             exception('日志已删除');
@@ -100,13 +98,11 @@ class Log
      */
     public function logDele()
     {
-        $log_id = Request::param('log_id/d', '');
-
-        $param['log_id'] = $log_id;
+        $param['log_id'] = Request::param('log_id/d', '');
 
         validate(LogValidate::class)->scene('log_id')->check($param);
 
-        $data = LogService::dele($log_id);
+        $data = LogService::dele($param['log_id']);
 
         return success($data);
     }

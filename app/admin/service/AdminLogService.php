@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -52,15 +52,6 @@ class AdminLogService
             ->toArray();
 
         foreach ($list as $k => $v) {
-            $list[$k]['menu_name'] = '';
-            $list[$k]['menu_url']  = '';
-            $admin_menu = AdminMenuService::info($v['admin_menu_id']);
-
-            if ($admin_menu) {
-                $list[$k]['menu_name'] = $admin_menu['menu_name'];
-                $list[$k]['menu_url']  = $admin_menu['menu_url'];
-            }
-
             $list[$k]['username'] = '';
             $list[$k]['nickname'] = '';
             $admin_user = AdminUserService::info($v['admin_user_id']);
@@ -68,6 +59,15 @@ class AdminLogService
             if ($admin_user) {
                 $list[$k]['username'] = $admin_user['username'];
                 $list[$k]['nickname'] = $admin_user['nickname'];
+            }
+
+            $list[$k]['menu_name'] = '';
+            $list[$k]['menu_url']  = '';
+            $admin_menu = AdminMenuService::info($v['admin_menu_id']);
+
+            if ($admin_menu) {
+                $list[$k]['menu_name'] = $admin_menu['menu_name'];
+                $list[$k]['menu_url']  = $admin_menu['menu_url'];
             }
         }
 

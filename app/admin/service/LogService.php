@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -52,15 +52,6 @@ class LogService
             ->toArray();
 
         foreach ($list as $k => $v) {
-            $list[$k]['api_name'] = '';
-            $list[$k]['api_url']  = '';
-            $api = ApiService::info($v['api_id']);
-
-            if ($api) {
-                $list[$k]['api_name'] = $api['api_name'];
-                $list[$k]['api_url']  = $api['api_url'];
-            }
-
             $list[$k]['username'] = '';
             $list[$k]['nickname'] = '';
             $admin_user = MemberService::info($v['member_id']);
@@ -68,6 +59,15 @@ class LogService
             if ($admin_user) {
                 $list[$k]['username'] = $admin_user['username'];
                 $list[$k]['nickname'] = $admin_user['nickname'];
+            }
+
+            $list[$k]['api_name'] = '';
+            $list[$k]['api_url']  = '';
+            $api = ApiService::info($v['api_id']);
+
+            if ($api) {
+                $list[$k]['api_name'] = $api['api_name'];
+                $list[$k]['api_url']  = $api['api_url'];
             }
         }
 
@@ -99,7 +99,7 @@ class LogService
                 ->find();
 
             if (empty($log)) {
-                exception('会员日志不存在:' . $log_id);
+                exception('会员日志不存在：' . $log_id);
             }
 
             if ($log['request_param']) {

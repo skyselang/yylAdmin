@@ -3,7 +3,7 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-11-24
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -37,13 +37,11 @@ class Api
      */
     public function apiInfo()
     {
-        $api_id = Request::param('api_id/d', '');
-
-        $param['api_id'] = $api_id;
+        $param['api_id'] = Request::param('api_id/d', '');
 
         validate(ApiValidate::class)->scene('api_id')->check($param);
 
-        $data = ApiService::info($api_id);
+        $data = ApiService::info($param['api_id']);
 
         if ($data['is_delete'] == 1) {
             exception('接口已被删除');
@@ -61,14 +59,10 @@ class Api
      */
     public function apiAdd()
     {
-        $param = Request::only(
-            [
-                'api_pid'  => 0,
-                'api_name' => '',
-                'api_url'  => '',
-                'api_sort' => 200,
-            ]
-        );
+        $param['api_pid']  = Request::param('api_pid/d', 0);
+        $param['api_name'] = Request::param('api_name/s', '');
+        $param['api_url']  = Request::param('api_url/s', '');
+        $param['api_sort'] = Request::param('api_sort/d', 200);
 
         validate(ApiValidate::class)->scene('api_add')->check($param);
 
@@ -80,28 +74,23 @@ class Api
     /**
      * 接口修改
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
     public function apiEdit()
     {
-        if (Request::isGet()) {
-            $param['api_id'] = Request::param('api_id/d', '');
+        $param['api_id'] = Request::param('api_id/d', '');
 
+        if (Request::isGet()) {
             validate(ApiValidate::class)->scene('api_id')->check($param);
 
             $data = ApiService::edit($param);
         } else {
-            $param = Request::only(
-                [
-                    'api_id'   => '',
-                    'api_pid'  => 0,
-                    'api_name' => '',
-                    'api_url'  => '',
-                    'api_sort' => 200,
-                ]
-            );
+            $param['api_pid']  = Request::param('api_pid/d', 0);
+            $param['api_name'] = Request::param('api_name/s', '');
+            $param['api_url']  = Request::param('api_url/s', '');
+            $param['api_sort'] = Request::param('api_sort/d', 200);
 
             validate(ApiValidate::class)->scene('api_edit')->check($param);
 
@@ -120,13 +109,11 @@ class Api
      */
     public function apiDele()
     {
-        $api_id = Request::param('api_id/d', '');
-
-        $param['api_id'] = $api_id;
+        $param['api_id'] = Request::param('api_id/d', '');
 
         validate(ApiValidate::class)->scene('api_dele')->check($param);
 
-        $data = ApiService::dele($api_id);
+        $data = ApiService::dele($param['api_id']);
 
         return success($data);
     }
@@ -140,12 +127,8 @@ class Api
      */
     public function apiDisable()
     {
-        $param = Request::only(
-            [
-                'api_id'     => '',
-                'is_disable' => '0',
-            ]
-        );
+        $param['api_id']     = Request::param('api_id/d', '');
+        $param['is_disable'] = Request::param('is_disable/s', '0');
 
         validate(ApiValidate::class)->scene('api_id')->check($param);
 
@@ -163,12 +146,8 @@ class Api
      */
     public function apiUnauth()
     {
-        $param = Request::only(
-            [
-                'api_id'    => '',
-                'is_unauth' => '0',
-            ]
-        );
+        $param['api_id']    = Request::param('api_id/d', '');
+        $param['is_unauth'] = Request::param('is_unauth/s', '0');
 
         validate(ApiValidate::class)->scene('api_id')->check($param);
 

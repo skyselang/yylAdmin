@@ -3,7 +3,7 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-11-24
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -22,30 +22,22 @@ class ApiService
      */
     public static function list($type = 'tree')
     {
-        $api = ApiCache::get(0);
+        $api = ApiCache::get();
 
         if (empty($api)) {
             $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unauth,create_time,update_time';
 
+            $where[] = ['is_delete', '=', 0];
+
             $order = ['api_sort' => 'desc', 'api_id' => 'asc'];
 
-            $api_pid = Db::name('api')
+            $list = Db::name('api')
                 ->field($field)
-                ->where('api_pid', '=', 0)
-                ->where('is_delete', 0)
+                ->where($where)
                 ->order($order)
                 ->select()
                 ->toArray();
 
-            $api_child = Db::name('api')
-                ->field($field)
-                ->where('api_pid', '>', 0)
-                ->where('is_delete', 0)
-                ->order($order)
-                ->select()
-                ->toArray();
-
-            $list = array_merge($api_pid, $api_child);
             $tree = self::toTree($list, 0);
             $url  = array_filter(array_column($list, 'api_url'));
 
@@ -53,7 +45,7 @@ class ApiService
             $api['list'] = $list;
             $api['url']  = $url;
 
-            ApiCache::set(0, $api);
+            ApiCache::set('', $api);
         }
 
         if ($type == 'list') {
@@ -94,7 +86,7 @@ class ApiService
                 ->find();
 
             if (empty($api)) {
-                exception('接口不存在:' . $api_id);
+                exception('接口不存在：' . $api_id);
             }
 
             ApiCache::set($api_id, $api);
@@ -123,7 +115,7 @@ class ApiService
 
         $param['api_id'] = $api_id;
 
-        ApiCache::del(0);
+        ApiCache::del();
 
         return $param;
     }
@@ -160,7 +152,7 @@ class ApiService
                 exception();
             }
 
-            ApiCache::del(0);
+            ApiCache::del();
             ApiCache::del($api_id);
             ApiCache::del($api['api_url']);
 
@@ -190,7 +182,7 @@ class ApiService
             exception();
         }
 
-        ApiCache::del(0);
+        ApiCache::del();
         ApiCache::del($api_id);
         ApiCache::del($api['api_url']);
 
@@ -222,7 +214,7 @@ class ApiService
             exception();
         }
 
-        ApiCache::del(0);
+        ApiCache::del();
         ApiCache::del($api_id);
         ApiCache::del($api['api_url']);
 
@@ -252,7 +244,7 @@ class ApiService
             exception();
         }
 
-        ApiCache::del(0);
+        ApiCache::del();
         ApiCache::del($api_id);
         ApiCache::del($api['api_url']);
 

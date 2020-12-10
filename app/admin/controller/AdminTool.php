@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-10-29
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -23,15 +23,12 @@ class AdminTool
      */
     public function strRand()
     {
-        $ids = Request::param('ids/a', []);
-        $len = Request::param('len/d', 12);
-
-        $param['strrand_ids'] = $ids;
-        $param['strrand_len'] = $len;
+        $param['strrand_ids'] = Request::param('ids/a', [1, 2, 3]);
+        $param['strrand_len'] = Request::param('len/d', 12);
 
         validate(AdminToolValidate::class)->scene('strrand')->check($param);
 
-        $data = AdminToolService::strRand($ids, $len);
+        $data = AdminToolService::strRand($param);
 
         return success($data);
     }
@@ -61,14 +58,10 @@ class AdminTool
      */
     public function timeTran()
     {
-        $param = Request::only(
-            [
-                'type'      => '',
-                'value'     => '',
-                'timestamp' => '',
-                'datetime'  => '',
-            ]
-        );
+        $param['type']      = Request::param('type', '');
+        $param['value']     = Request::param('value', '');
+        $param['timestamp'] = Request::param('timestamp', '');
+        $param['datetime']  = Request::param('datetime', '');
 
         $data = AdminToolService::timeTran($param);
 
@@ -100,12 +93,8 @@ class AdminTool
      */
     public function byteTran()
     {
-        $param = Request::only(
-            [
-                'type'  => 'b',
-                'value' => 0,
-            ],
-        );
+        $param['type']  = Request::param('type', 'b');
+        $param['value'] = Request::param('value', 0);
 
         $data = AdminToolService::byteTran($param);
 

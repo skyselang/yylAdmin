@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-24
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -43,7 +43,7 @@ class AdminLoginService
         }
 
         if ($admin_user['is_disable'] == 1) {
-            exception('账号已被禁用');
+            exception('账号已被禁用，请联系管理员');
         }
 
         $request_ip = $param['request_ip'];

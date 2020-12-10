@@ -3,7 +3,7 @@
  * @Description  : 权限验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-09
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\middleware;
@@ -11,6 +11,7 @@ namespace app\admin\middleware;
 use Closure;
 use think\Request;
 use think\Response;
+use think\facade\Env;
 use think\facade\Config;
 use app\common\cache\AdminUserCache;
 use app\admin\service\AdminMenuService;
@@ -55,7 +56,12 @@ class AdminRuleVerify
             $admin_menu_url = AdminMenuService::list('url')['list'];
 
             if (!in_array($menu_url, $admin_menu_url)) {
-                exception('接口地址错误：' . $menu_url, 404);
+                $errmsg = '接口地址错误';
+                $debug  = Env::get('app_debug');
+                if ($debug) {
+                    $errmsg .= '：' . $menu_url;
+                }
+                exception($errmsg, 404);
             }
         }
 

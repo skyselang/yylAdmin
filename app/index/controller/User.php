@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-09
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\index\controller;
@@ -24,13 +24,11 @@ class User
      */
     public function userInfo()
     {
-        $member_id = member_id();
-
-        $param['member_id'] = $member_id;
+        $param['member_id'] = member_id();
 
         validate(MemberValidate::class)->scene('member_id')->check($param);
 
-        $data = MemberService::info($member_id);
+        $data = MemberService::info($param['member_id']);
 
         if ($data['is_delete'] == 1) {
             exception('账户已注销');
@@ -50,15 +48,11 @@ class User
      */
     public function userEdit()
     {
-        $param = Request::only(
-            [
-                'username'  => '',
-                'nickname'  => '',
-                'phone'     => '',
-                'email'     => '',
-            ]
-        );
         $param['member_id'] = member_id();
+        $param['username']  = Request::param('username/s', '');
+        $param['nickname']  = Request::param('nickname/s', '');
+        $param['phone']     = Request::param('phone/s', '');
+        $param['email']     = Request::param('email/s', '');
 
         validate(MemberValidate::class)->scene('member_edit')->check($param);
 
@@ -76,11 +70,8 @@ class User
      */
     public function userAvatar()
     {
-        $member_id   = member_id();
-        $avatar_file = Request::file('avatar_file');
-
-        $param['member_id'] = $member_id;
-        $param['avatar']    = $avatar_file;
+        $param['member_id'] = member_id();
+        $param['avatar']    = Request::file('avatar_file');
 
         validate(MemberValidate::class)->scene('member_avatar')->check($param);
 
@@ -98,13 +89,9 @@ class User
      */
     public function userPwd()
     {
-        $param = Request::only(
-            [
-                'password_old' => '',
-                'password_new' => '',
-            ]
-        );
-        $param['member_id'] = member_id();
+        $param['member_id']    = member_id();
+        $param['password_old'] = Request::param('password_old/s', '');
+        $param['password_new'] = Request::param('password_new/s', '');
 
         validate(MemberValidate::class)->scene('member_pwdedit')->check($param);
 

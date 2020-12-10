@@ -3,14 +3,14 @@
  * @Description  : index公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-11-24
+ * @LastEditTime : 2020-12-10
  */
 
 use think\facade\Config;
 use think\facade\Request;
 
 /**
- * 获取请求会员id
+ * 获取会员id
  *
  * @return integer
  */
@@ -23,7 +23,7 @@ function member_id()
 }
 
 /**
- * 获取请求会员token
+ * 获取会员token
  *
  * @return string
  */

@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -76,13 +76,11 @@ class AdminLogin
      */
     public function logout()
     {
-        $admin_user_id = admin_user_id();
-
-        $param['admin_user_id'] = $admin_user_id;
+        $param['admin_user_id'] = admin_user_id();
 
         validate(AdminUserValidate::class)->scene('user_id')->check($param);
 
-        $data = AdminLoginService::logout($admin_user_id);
+        $data = AdminLoginService::logout($param['admin_user_id']);
 
         return success($data, '退出成功');
     }

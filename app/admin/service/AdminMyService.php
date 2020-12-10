@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-14
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -72,10 +72,7 @@ class AdminMyService
                 exception();
             }
 
-            $admin_user = AdminUserService::info($admin_user_id);
-            $admin_user = array_merge($admin_user, $param);
-
-            AdminUserCache::set($admin_user_id, $admin_user);
+            AdminUserCache::upd($admin_user_id);
 
             return $param;
         }
@@ -100,23 +97,20 @@ class AdminMyService
             exception('旧密码错误');
         }
 
-        $data['password']    = md5($password_new);
-        $data['update_time'] = date('Y-m-d H:i:s');
+        $update['password']    = md5($password_new);
+        $update['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_user')
+        $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
-            ->update($data);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
-        $admin_user = AdminUserService::info($admin_user_id);
-        $admin_user = array_merge($admin_user, $data);
+        AdminUserCache::upd($admin_user_id);
 
-        AdminUserCache::set($admin_user_id, $admin_user);
-
-        return $admin_user_id;
+        return $res;
     }
 
     /**
@@ -132,7 +126,7 @@ class AdminMyService
         $avatar        = $param['avatar'];
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('admin/user', $avatar, function () use ($admin_user_id) {
+            ->putFile('admin_user', $avatar, function () use ($admin_user_id) {
                 return $admin_user_id . '/avatar';
             });
 
@@ -147,15 +141,12 @@ class AdminMyService
             exception();
         }
 
-        $data['admin_user_id'] = $admin_user_id;
-        $data['update_time']   = $update['update_time'];
-        $data['avatar']        = file_url($update['avatar']);
-        $data['avatar_url']    = file_url($update['avatar']);
-
+        AdminUserCache::upd($admin_user_id);
         $admin_user = AdminUserService::info($admin_user_id);
-        $admin_user = array_merge($admin_user, $data);
 
-        AdminUserCache::set($admin_user_id, $admin_user);
+        $data['admin_user_id'] = $admin_user['admin_user_id'];
+        $data['update_time']   = $admin_user['update_time'];
+        $data['avatar']        = $admin_user['avatar'];
 
         return $data;
     }

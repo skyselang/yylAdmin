@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -17,11 +17,12 @@ class AdminRoleService
     /**
      * 角色列表
      *
-     * @param array   $where 条件
-     * @param string  $field 字段
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param array   $order 排序
+     * @param array   $where   条件
+     * @param string  $field   字段
+     * @param integer $page    页数
+     * @param integer $limit   数量
+     * @param array   $order   排序
+     * @param bool    $whereOr OR查询
      * 
      * @return array 
      */

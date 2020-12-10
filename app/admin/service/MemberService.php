@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-07
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -79,7 +79,7 @@ class MemberService
                 ->find();
 
             if (empty($member)) {
-                exception('会员不存在:' . $member_id);
+                exception('会员不存在：' . $member_id);
             }
 
             $member['avatar'] = file_url($member['avatar']);
@@ -100,7 +100,7 @@ class MemberService
      */
     public static function add($param)
     {
-        $param['is_disable']  = 0;
+        $param['is_disable']  = '0';
         $param['password']    = md5($param['password']);
         $param['create_time'] = date('Y-m-d H:i:s');
 

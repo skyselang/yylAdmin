@@ -3,7 +3,7 @@
  * @Description  : 接口缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\common\cache;
@@ -15,12 +15,16 @@ class ApiCache
     /**
      * 缓存key
      *
-     * @param integer $api_id 接口id
+     * @param integer|string $api_id 接口id
      * 
      * @return string
      */
-    public static function key($api_id = 0)
+    public static function key($api_id = '')
     {
+        if (empty($api_id)) {
+            $api_id = 'all';
+        }
+
         $key = 'api:' . $api_id;
 
         return $key;
@@ -29,16 +33,16 @@ class ApiCache
     /**
      * 缓存设置
      *
-     * @param integer $api_id 接口id
-     * @param array   $api    接口信息
-     * @param integer $expire 有效时间（秒）
+     * @param integer|string $api_id 接口id
+     * @param array          $api    接口信息
+     * @param integer        $expire 有效时间（秒）
      * 
      * @return bool
      */
-    public static function set($api_id = 0, $api = [], $expire = 0)
+    public static function set($api_id = '', $api = [], $expire = 0)
     {
         $key = self::key($api_id);
-        $ttl = 15 * 24 * 60 * 60;
+        $ttl = 7 * 24 * 60 * 60;
         $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $api, $exp);
@@ -49,11 +53,11 @@ class ApiCache
     /**
      * 缓存获取
      *
-     * @param integer $api_id 接口id
+     * @param integer|string $api_id 接口id
      * 
      * @return array 接口信息
      */
-    public static function get($api_id = 0)
+    public static function get($api_id = '')
     {
         $key = self::key($api_id);
         $res = Cache::get($key);
@@ -64,11 +68,11 @@ class ApiCache
     /**
      * 缓存删除
      *
-     * @param integer $api_id 接口id
+     * @param integer|string $api_id 接口id
      * 
      * @return bool
      */
-    public static function del($api_id = 0)
+    public static function del($api_id = '')
     {
         $key = self::key($api_id);
         $res = Cache::delete($key);

@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-11-30
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -67,13 +67,11 @@ class Member
      */
     public function memberInfo()
     {
-        $member_id = Request::param('member_id/d', '');
-
-        $param['member_id'] = $member_id;
+        $param['member_id'] = Request::param('member_id/d', '');
 
         validate(MemberValidate::class)->scene('member_id')->check($param);
 
-        $data = MemberService::info($member_id);
+        $data = MemberService::info($param['member_id']);
 
         if ($data['is_delete'] == 1) {
             exception('会员已被删除');
@@ -91,17 +89,13 @@ class Member
      */
     public function memberAdd()
     {
-        $param = Request::only(
-            [
-                'username' => '',
-                'nickname' => '',
-                'password' => '',
-                'phone'    => '',
-                'email'    => '',
-                'remark'   => '',
-                'sort'     => 10000,
-            ]
-        );
+        $param['username'] = Request::param('username/s', '');
+        $param['nickname'] = Request::param('nickname/s', '');
+        $param['password'] = Request::param('password/s', '');
+        $param['phone']    = Request::param('phone/s', '');
+        $param['email']    = Request::param('email/s', '');
+        $param['remark']   = Request::param('remark/s', '');
+        $param['sort']     = Request::param('sort/d', 10000);
 
         validate(MemberValidate::class)->scene('member_add')->check($param);
 
@@ -119,17 +113,13 @@ class Member
      */
     public function memberEdit()
     {
-        $param = Request::only(
-            [
-                'member_id' => '',
-                'username'  => '',
-                'nickname'  => '',
-                'phone'     => '',
-                'email'     => '',
-                'remark'    => '',
-                'sort'      => 10000,
-            ]
-        );
+        $param['member_id'] = Request::param('member_id/d', '');
+        $param['username']  = Request::param('username/s', '');
+        $param['nickname']  = Request::param('nickname/s', '');
+        $param['phone']     = Request::param('phone/s', '');
+        $param['email']     = Request::param('email/s', '');
+        $param['remark']    = Request::param('remark/s', '');
+        $param['sort']      = Request::param('sort/d', 10000);
 
         validate(MemberValidate::class)->scene('member_edit')->check($param);
 
@@ -147,11 +137,8 @@ class Member
      */
     public function memberAvatar()
     {
-        $member_id   = Request::param('member_id/d', '');
-        $avatar_file = Request::file('avatar_file');
-
-        $param['member_id'] = $member_id;
-        $param['avatar']    = $avatar_file;
+        $param['member_id'] = Request::param('member_id/d', '');
+        $param['avatar']    = Request::file('avatar_file');
 
         validate(MemberValidate::class)->scene('member_avatar')->check($param);
 
@@ -169,13 +156,11 @@ class Member
      */
     public function memberDele()
     {
-        $member_id = Request::param('member_id/d', '');
-
-        $param['member_id'] = $member_id;
+        $param['member_id'] = Request::param('member_id/d', '');
 
         validate(MemberValidate::class)->scene('member_dele')->check($param);
 
-        $data = MemberService::dele($member_id);
+        $data = MemberService::dele($param['member_id']);
 
         return success($data);
     }
@@ -189,12 +174,8 @@ class Member
      */
     public function memberPassword()
     {
-        $param = Request::only(
-            [
-                'member_id' => '',
-                'password'  => '',
-            ]
-        );
+        $param['member_id'] = Request::param('member_id/d', '');
+        $param['password']  = Request::param('password/s', '');
 
         validate(MemberValidate::class)->scene('member_password')->check($param);
 
@@ -212,12 +193,8 @@ class Member
      */
     public function memberDisable()
     {
-        $param = Request::only(
-            [
-                'member_id'  => '',
-                'is_disable' => '0',
-            ]
-        );
+        $param['member_id']  = Request::param('member_id/d', '');
+        $param['is_disable'] = Request::param('is_disable/s', '0');
 
         validate(MemberValidate::class)->scene('member_disable')->check($param);
 

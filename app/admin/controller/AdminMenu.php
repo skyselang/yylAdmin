@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-02
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\controller;
@@ -40,13 +40,11 @@ class AdminMenu
      */
     public function menuInfo()
     {
-        $admin_menu_id = Request::param('admin_menu_id/d', '');
-
-        $param['admin_menu_id'] = $admin_menu_id;
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
-        $data = AdminMenuService::info($admin_menu_id);
+        $data = AdminMenuService::info($param['admin_menu_id']);
 
         if ($data['is_delete'] == 1) {
             exception('菜单已被删除');
@@ -64,14 +62,10 @@ class AdminMenu
      */
     public function menuAdd()
     {
-        $param = Request::only(
-            [
-                'menu_pid'  => 0,
-                'menu_name' => '',
-                'menu_url'  => '',
-                'menu_sort' => 200,
-            ]
-        );
+        $param['menu_pid']  = Request::param('menu_pid/d', 0);
+        $param['menu_name'] = Request::param('menu_name/s', '');
+        $param['menu_url']  = Request::param('menu_url/s', '');
+        $param['menu_sort'] = Request::param('menu_sort/d', 200);
 
         validate(AdminMenuValidate::class)->scene('menu_add')->check($param);
 
@@ -89,22 +83,17 @@ class AdminMenu
      */
     public function menuEdit()
     {
-        if (Request::isGet()) {
-            $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
 
+        if (Request::isGet()) {
             validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
             $data = AdminMenuService::edit($param);
         } else {
-            $param = Request::only(
-                [
-                    'admin_menu_id' => '',
-                    'menu_pid'      => 0,
-                    'menu_name'     => '',
-                    'menu_url'      => '',
-                    'menu_sort'     => 200,
-                ]
-            );
+            $param['menu_pid']  = Request::param('menu_pid/d', 0);
+            $param['menu_name'] = Request::param('menu_name/s', '');
+            $param['menu_url']  = Request::param('menu_url/s', '');
+            $param['menu_sort'] = Request::param('menu_sort/d', 200);
 
             validate(AdminMenuValidate::class)->scene('menu_edit')->check($param);
 
@@ -123,13 +112,11 @@ class AdminMenu
      */
     public function menuDele()
     {
-        $admin_menu_id = Request::param('admin_menu_id/d', '');
-
-        $param['admin_menu_id'] = $admin_menu_id;
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
 
         validate(AdminMenuValidate::class)->scene('menu_dele')->check($param);
 
-        $data = AdminMenuService::dele($admin_menu_id);
+        $data = AdminMenuService::dele($param['admin_menu_id']);
 
         return success($data);
     }
@@ -143,12 +130,8 @@ class AdminMenu
      */
     public function menuDisable()
     {
-        $param = Request::only(
-            [
-                'admin_menu_id' => '',
-                'is_disable'    => '0',
-            ]
-        );
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['is_disable']    = Request::param('is_disable/s', '0');
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
@@ -166,12 +149,8 @@ class AdminMenu
      */
     public function menuUnauth()
     {
-        $param = Request::only(
-            [
-                'admin_menu_id' => '',
-                'is_unauth'     => '0',
-            ]
-        );
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['is_unauth']     = Request::param('is_unauth/s', '0');
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
@@ -195,9 +174,7 @@ class AdminMenu
         $sort_type     = Request::param('sort_type/s', '');
         $admin_menu_id = Request::param('admin_menu_id/d', '');
 
-        $param['admin_menu_id'] = $admin_menu_id;
-
-        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('menu_id')->check(['admin_menu_id' => $admin_menu_id]);
 
         $where0 = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];
         $where1 = [['admin_menu_ids', 'like', $admin_menu_id . ',%'], ['is_delete', '=', 0]];
@@ -227,12 +204,8 @@ class AdminMenu
      */
     public function menuRoleRemove()
     {
-        $param = Request::only(
-            [
-                'admin_menu_id' => '',
-                'admin_role_id' => '',
-            ]
-        );
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
         validate(AdminRoleValidate::class)->scene('role_id')->check($param);
@@ -260,9 +233,7 @@ class AdminMenu
             $sort_field = Request::param('sort_field/s ', '');
             $sort_type  = Request::param('sort_type/s', '');
 
-            $param['admin_menu_id'] = $admin_menu_id;
-
-            validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+            validate(AdminMenuValidate::class)->scene('menu_id')->check(['admin_menu_id' => $admin_menu_id]);
 
             $where0 = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];
             $where1 = [['admin_menu_ids', 'like', $admin_menu_id . ',%'], ['is_delete', '=', 0]];
@@ -287,9 +258,7 @@ class AdminMenu
             $sort_field = Request::param('sort_field/s ', '');
             $sort_type  = Request::param('sort_type/s', '');
 
-            $param['admin_role_id'] = $admin_role_id;
-
-            validate(AdminRoleValidate::class)->scene('role_id')->check($param);
+            validate(AdminRoleValidate::class)->scene('role_id')->check(['admin_role_id' => $admin_role_id]);
 
             $where0 = [['admin_role_ids', 'like', $admin_role_id], ['is_delete', '=', 0]];
             $where1 = [['admin_role_ids', 'like', $admin_role_id . ',%'], ['is_delete', '=', 0]];
@@ -320,12 +289,8 @@ class AdminMenu
      */
     public function menuUserRemove()
     {
-        $param = Request::only(
-            [
-                'admin_menu_id' => '',
-                'admin_user_id' => '',
-            ]
-        );
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
         validate(AdminUserValidate::class)->scene('user_id')->check($param);

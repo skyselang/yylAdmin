@@ -3,7 +3,7 @@
  * @Description  : 菜单缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\common\cache;
@@ -43,7 +43,7 @@ class AdminMenuCache
     {
         $key = self::key($admin_menu_id);
         $val = $admin_menu;
-        $ttl = 15 * 24 * 60 * 60;
+        $ttl = 7 * 24 * 60 * 60;
         $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $val, $exp);

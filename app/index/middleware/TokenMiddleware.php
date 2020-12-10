@@ -3,7 +3,7 @@
  * @Description  : Token中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\index\middleware;
@@ -27,12 +27,12 @@ class TokenMiddleware
     {
         $api_url   = request_pathinfo();
         $whitelist = Config::get('index.whitelist', []);
-
+        
         if (!in_array($api_url, $whitelist)) {
             $member_token = member_token();
 
             if (empty($member_token)) {
-                exception('Requests Headers：Token must');
+                exception('Requests Headers：MemberToken must');
             }
 
             $member_id = member_id();

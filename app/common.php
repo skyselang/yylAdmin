@@ -3,10 +3,9 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-10
  */
 
-use think\facade\Env;
 use think\facade\Request;
 
 /**
@@ -120,9 +119,9 @@ function file_url($file_path = '')
  */
 function request_pathinfo()
 {
-    $menu_url = app('http')->getName() . '/' . Request::pathinfo();
+    $request_pathinfo = app('http')->getName() . '/' . Request::pathinfo();
 
-    return $menu_url;
+    return $request_pathinfo;
 }
 
 /**

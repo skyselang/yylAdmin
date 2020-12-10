@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-07
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -209,8 +209,8 @@ class AdminUserService
      */
     public static function add($param)
     {
-        $param['is_admin']    = 0;
-        $param['is_disable']  = 0;
+        $param['is_admin']    = '0';
+        $param['is_disable']  = '0';
         $param['password']    = md5($param['password']);
         $param['create_time'] = date('Y-m-d H:i:s');
 
@@ -292,7 +292,7 @@ class AdminUserService
         $avatar        = $param['avatar'];
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('adminUser', $avatar, function () use ($admin_user_id) {
+            ->putFile('admin_user', $avatar, function () use ($admin_user_id) {
                 return $admin_user_id . '/avatar';
             });
 
@@ -307,15 +307,12 @@ class AdminUserService
             exception();
         }
 
-        $data['admin_user_id'] = $admin_user_id;
-        $data['update_time']   = $update['update_time'];
-        $data['avatar']        = file_url($update['avatar']);
-        $data['avatar_url']    = file_url($update['avatar']);
-
+        AdminUserCache::upd($admin_user_id);
         $admin_user = AdminUserService::info($admin_user_id);
-        $admin_user = array_merge($admin_user, $data);
 
-        AdminUserCache::set($admin_user_id, $admin_user);
+        $data['admin_user_id'] = $admin_user['admin_user_id'];
+        $data['avatar']        = $admin_user['avatar'];
+        $data['update_time']   = $admin_user['update_time'];
 
         return $data;
     }
@@ -345,7 +342,7 @@ class AdminUserService
 
         AdminUserCache::upd($admin_user_id);
 
-        return $param;
+        return $res;
     }
 
     /**

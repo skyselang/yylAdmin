@@ -3,16 +3,16 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-04
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use think\facade\Cache;
 use think\facade\App;
-use app\common\cache\AdminSettingCache;
+use think\facade\Cache;
 use app\common\cache\AdminUserCache;
+use app\common\cache\AdminSettingCache;
 
 class AdminSettingService
 {

@@ -3,7 +3,7 @@
  * @Description  : 接口中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\index\middleware;
@@ -11,6 +11,7 @@ namespace app\index\middleware;
 use Closure;
 use think\Request;
 use think\Response;
+use think\facade\Env;
 use think\facade\Config;
 use app\admin\service\ApiService;
 use app\common\cache\MemberCache;
@@ -49,7 +50,12 @@ class ApiMiddleware
             $api = ApiService::list('url')['list'];
 
             if (!in_array($api_url, $api)) {
-                exception('接口地址错误', 404);
+                $errmsg = '接口地址错误';
+                $debug  = Env::get('app_debug');
+                if ($debug) {
+                    $errmsg .= '：' . $api_url;
+                }
+                exception($errmsg, 404);
             }
         }
 

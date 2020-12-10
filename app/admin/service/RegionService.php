@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-09
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\service;
@@ -14,6 +14,8 @@ use Overtrue\Pinyin\Pinyin;
 
 class RegionService
 {
+    protected static $tree_key = 'tree';
+
     /**
      * 地区列表
      * 
@@ -69,7 +71,7 @@ class RegionService
         $region = RegionCache::get($region_id);
 
         if (empty($region)) {
-            if ($region_id == 'tree') {
+            if ($region_id == self::$tree_key) {
                 $region = Db::name('region')
                     ->field('region_id,region_pid,region_name')
                     ->where('is_delete', '=', 0)
@@ -83,7 +85,7 @@ class RegionService
                     ->find();
 
                 if (empty($region)) {
-                    exception('地区不存在');
+                    exception('地区不存在：' . $region_id);
                 }
             }
 
@@ -101,7 +103,7 @@ class RegionService
      * 
      * @return array
      */
-    public static function add($param, $method = 'post')
+    public static function add($param = [], $method = 'get')
     {
         if ($method == 'get') {
             $region['region_tree'] = self::info('tree');
@@ -159,7 +161,7 @@ class RegionService
                 exception();
             }
 
-            RegionCache::del('tree');
+            RegionCache::del(self::$tree_key);
 
             $param['region_id']   = $region_id;
             $param['region_path'] = $region_path;
@@ -244,6 +246,7 @@ class RegionService
             $param['region_id']   = $region_id;
             $param['region_path'] = $region_path;
 
+            RegionCache::del(self::$tree_key);
             RegionCache::del($region_id);
 
             return $param;
@@ -270,9 +273,10 @@ class RegionService
             exception();
         }
 
-        RegionCache::del($region_id);
-
         $data['region_id'] = $region_id;
+
+        RegionCache::del(self::$tree_key);
+        RegionCache::del($region_id);
 
         return $data;
     }

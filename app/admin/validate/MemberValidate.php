@@ -3,7 +3,7 @@
  * @Description  : 会员验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-07
+ * @LastEditTime : 2020-12-10
  */
 
 namespace app\admin\validate;
@@ -68,8 +68,8 @@ class MemberValidate extends Validate
     protected function scenemember_login()
     {
         return $this->only(['username', 'password'])
-            ->remove('username', ['length', 'checkUsername'])
-            ->remove('password', ['length']);
+            ->remove('username', ['length', 'alphaNum', 'checkUsername'])
+            ->remove('password', ['length', 'alphaNum']);
     }
 
     // 自定义验证规则：会员是否存在
