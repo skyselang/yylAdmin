@@ -5,13 +5,13 @@ Github：<a href="https://github.com/skyselang/yylAdmin">https://github.com/skys
 
 ## 简介
 
-<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Vue2；项目由后端<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>和前端<a href="https://gitee.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>组成。
+<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架，只有后台后端、后台前端、前台后端基础功能，你可以在此基础根据你的业务需求进行开发扩展。前后端分离，后端采用ThinkPHP6，前端采用Vue2；项目由后端<a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>和前端<a href="https://gitee.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>组成。
 - <a href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>
 - <a href="https://gitee.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>
 
 ## 演示
 
-地址：<a href="https://demo.yyladmin.top" target="_blank">yylAdmin demo</a>  
+地址：<a href="https://admin.yyladmin.top" target="_blank">yylAdmin demo</a>  
 账号：yyladmin、admin  
 密码：123456  
 提示：演示账号只有部分权限，请下载源码安装体验全部功能
@@ -31,6 +31,55 @@ Github：<a href="https://github.com/skyselang/yylAdmin">https://github.com/skys
 - PHP >= 7.1
 - MySQL >= 5.6
 - Redis
+
+## 目录
+
+```bash
+yylAdmin
+├── app                        # 应用（核心目录）
+│   │── admin                  # 后台接口
+│   │── common                 # 公共（缓存、工具等）
+│   └── index                  # 前台接口
+│   ...
+├── config                     # 配置
+├── extend                     # 扩展类库
+├── public                     # 静态资源
+├── route                      # 路由
+├── runtime                    # 运行时目录（读写权限）
+├── vendor                     # Composer类库
+├── .env.example               # 环境变量示例文件（重命名.env后使用）
+...
+# 更多请参考thinkphp6目录结构
+
+yylAdminWeb
+├── build                      # 构建相关
+├── public                     # 静态资源
+│   │── favicon.ico            # favicon图标
+│   └── index.html             # html模板
+├── src                        # 源代码
+│   ├── api                    # 所有请求
+│   ├── assets                 # 主题 字体等静态资源
+│   ├── components             # 全局公用组件
+│   ├── directive              # 全局指令
+│   ├── filters                # 全局 filter
+│   ├── layout                 # 全局 layout
+│   ├── router                 # 路由
+│   ├── store                  # 全局 store管理
+│   ├── styles                 # 全局样式
+│   ├── utils                  # 全局公用方法
+│   ├── views                  # views 所有页面
+│   ├── App.vue                # 入口页面
+│   ├── main.js                # 入口文件 加载组件 初始化等
+│   ├── permission.js          # 权限管理
+│   └── setting.js             # 基础设置
+├── .env.xxx                   # 环境变量配置
+├── .eslintrc.js               # eslint 配置项
+├── .travis.yml                # 自动化CI配置
+├── package.json               # package.json
+├── postcss.config.js          # postcss 配置
+└── vue.config.js              # vue-cli 配置
+...
+```
 
 ## 安装
 
