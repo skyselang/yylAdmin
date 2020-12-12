@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 09/12/2020 19:49:42
+ Date: 12/12/2020 14:15:23
 */
 
 SET NAMES utf8mb4;
@@ -72,17 +72,17 @@ CREATE TABLE `ya_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 156 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_admin_menu
 -- ----------------------------
-INSERT INTO `ya_admin_menu` VALUES (1, 0, '控制台', '', 230, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (1, 0, '控制台', '', 300, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (3, 88, '菜单管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (4, 88, '用户管理', '', 180, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (5, 88, '角色管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (12, 88, '个人中心', '', 130, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (13, 3, '菜单列表', 'admin/AdminMenu/menuList', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (13, 3, '菜单列表', 'admin/AdminMenu/menuList', 220, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (14, 3, '菜单添加', 'admin/AdminMenu/menuAdd', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (15, 3, '菜单修改', 'admin/AdminMenu/menuEdit', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (16, 3, '菜单删除', 'admin/AdminMenu/menuDele', 200, '0', '0', 0, NULL, NULL, NULL);
@@ -140,7 +140,7 @@ INSERT INTO `ya_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/AdminMe
 INSERT INTO `ya_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/AdminRole/roleUserRemove', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (121, 4, '用户修改头像', 'admin/AdminUser/userAvatar', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (122, 53, '服务器信息', 'admin/AdminSetting/serverInfo', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (123, 0, '会员管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (123, 156, '会员管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (124, 123, '会员列表', 'admin/Member/memberList', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (125, 123, '会员信息', 'admin/Member/memberInfo', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (126, 123, '会员添加', 'admin/Member/memberAdd', 200, '0', '0', 0, NULL, NULL, NULL);
@@ -149,7 +149,7 @@ INSERT INTO `ya_admin_menu` VALUES (128, 123, '会员删除', 'admin/Member/memb
 INSERT INTO `ya_admin_menu` VALUES (129, 123, '会员密码重置', 'admin/Member/memberPassword', 130, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (130, 123, '会员是否禁用', 'admin/Member/memberDisable', 120, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (131, 123, '会员修改头像', 'admin/Member/memberAvatar', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (132, 0, '接口管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (132, 157, '接口管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (133, 132, '接口列表', 'admin/Api/apiList', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (134, 132, '接口信息', 'admin/Api/apiInfo', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (135, 132, '接口添加', 'admin/Api/apiAdd', 200, '0', '0', 0, NULL, NULL, NULL);
@@ -157,7 +157,7 @@ INSERT INTO `ya_admin_menu` VALUES (136, 132, '接口修改', 'admin/Api/apiEdit
 INSERT INTO `ya_admin_menu` VALUES (137, 132, '接口删除', 'admin/Api/apiDele', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (138, 132, '接口是否禁用', 'admin/Api/apiDisable', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (139, 132, '接口无需权限', 'admin/Api/apiUnauth', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (140, 0, '会员日志', '', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (140, 156, '会员日志', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (141, 140, '会员日志列表', 'admin/Log/logList', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (142, 140, '会员日志信息', 'admin/Log/logInfo', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (143, 140, '会员日志删除', 'admin/Log/logDele', 200, '0', '0', 0, NULL, NULL, NULL);
@@ -173,6 +173,9 @@ INSERT INTO `ya_admin_menu` VALUES (152, 150, '地区管理信息', 'admin/Regio
 INSERT INTO `ya_admin_menu` VALUES (153, 150, '地区管理添加', 'admin/Region/regionAdd', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (154, 150, '地区管理修改', 'admin/Region/regionEdit', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (155, 150, '地区管理删除', 'admin/Region/regionDele', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (156, 0, '会员管理', '', 250, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (157, 0, '应用管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/menuInfo', 210, '0', '0', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_admin_role
@@ -192,13 +195,14 @@ CREATE TABLE `ya_admin_role`  (
   PRIMARY KEY (`admin_role_id`) USING BTREE,
   INDEX `admin_rule_id`(`admin_role_id`) USING BTREE,
   INDEX `rule_name`(`role_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_admin_role
 -- ----------------------------
 INSERT INTO `ya_admin_role` VALUES (1, '1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149', '管理员', '', 200, '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_role` VALUES (2, '13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,113,114,115,116,117,122,124,133,141,144,145,146,147,148,149', '演示', '', 200, '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_role` VALUES (3, '1,49,51,52,75,111,123,124,125,126,127,128,129,130,131,140,156', '测试', '', 200, '0', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_admin_setting
@@ -216,7 +220,7 @@ CREATE TABLE `ya_admin_setting`  (
 -- ----------------------------
 -- Records of ya_admin_setting
 -- ----------------------------
-INSERT INTO `ya_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";s:1:\"1\";s:6:\"length\";s:1:\"4\";s:6:\"expire\";s:3:\"180\";}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";s:2:\"12\";}', NULL, NULL);
+INSERT INTO `ya_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_admin_user
@@ -252,8 +256,8 @@ CREATE TABLE `ya_admin_user`  (
 -- ----------------------------
 -- Records of ya_admin_user
 -- ----------------------------
-INSERT INTO `ya_admin_user` VALUES (1, '1', '', 'skyselang', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/1/avatar.png?t=20201208141357', '管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_admin_user` VALUES (2, '2', '', 'yyladmin', '演示账号1', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/2/avatar.jpg?t=20201203160933', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_admin_user` VALUES (1, '1', '', 'skyselang', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin_user/1/avatar.png?t=20201211235538', '内置管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_admin_user` VALUES (2, '2', '', 'yyladmin', '演示账号1', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin_user/2/avatar.jpg?t=20201210210732', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `ya_admin_user` VALUES (3, '2', '', 'admin', '演示账号2', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/3/avatar.jpg?t=20201208143356', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -276,14 +280,14 @@ CREATE TABLE `ya_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`) USING BTREE,
   INDEX `api_url`(`api_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_api
 -- ----------------------------
-INSERT INTO `ya_api` VALUES (1, 0, '登录退出', '', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_api` VALUES (2, 1, '验证码', 'index/Login/verify', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_api` VALUES (3, 1, '登录', 'index/Login/login', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (1, 0, '登录注册', '', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (2, 1, '验证码', 'index/Login/verify', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (3, 1, '登录', 'index/Login/login', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `ya_api` VALUES (4, 1, '退出', 'index/Login/logout', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_api` VALUES (5, 0, '个人中心', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_api` VALUES (6, 5, '我的信息', 'index/User/userInfo', 200, '0', '0', 0, NULL, NULL, NULL);
@@ -291,6 +295,10 @@ INSERT INTO `ya_api` VALUES (7, 5, '修改信息', 'index/User/userEdit', 200, '
 INSERT INTO `ya_api` VALUES (8, 5, '修改头像', 'index/User/userAvatar', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_api` VALUES (9, 5, '修改密码', 'index/User/userPwd', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_api` VALUES (10, 5, '我的日志', 'index/User/userLog', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (11, 1, '注册', 'index/Register/register', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (12, 0, '地区', '', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (13, 12, '地区列表', 'index/Region/regionList', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (14, 12, '地区信息', 'index/Region/regionInfo', 200, '0', '1', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_log
@@ -321,516 +329,11 @@ CREATE TABLE `ya_log`  (
   INDEX `request_city`(`request_city`) USING BTREE,
   INDEX `request_province`(`request_province`) USING BTREE,
   INDEX `request_country`(`request_country`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 506 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_log
 -- ----------------------------
-INSERT INTO `ya_log` VALUES (1, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 1, '2020-11-30 17:40:27', NULL, '2020-12-01 15:37:25');
-INSERT INTO `ya_log` VALUES (2, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-11-30 17:43:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (3, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-11-30 17:44:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (4, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-11-30 17:46:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (5, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-11-30 17:46:36', NULL, NULL);
-INSERT INTO `ya_log` VALUES (6, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:08:37', NULL, NULL);
-INSERT INTO `ya_log` VALUES (7, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:12:08', NULL, NULL);
-INSERT INTO `ya_log` VALUES (8, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:17:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (9, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:17:34', NULL, NULL);
-INSERT INTO `ya_log` VALUES (10, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:20:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (11, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:20:26', NULL, NULL);
-INSERT INTO `ya_log` VALUES (12, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:21:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (13, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"11\";}', 0, '2020-12-01 10:21:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (14, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:8:\"username\";s:2:\"11\";s:9:\"verify_id\";s:32:\"98cad9c7dcfb5dbe805cc270e737bedd\";s:11:\"verify_code\";s:4:\"2783\";}', 0, '2020-12-01 10:30:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (15, 2, 1000001, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000001\";}', 0, '2020-12-01 10:49:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (16, 2, 1000001, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000001\";}', 0, '2020-12-01 10:50:04', NULL, NULL);
-INSERT INTO `ya_log` VALUES (17, 2, 1000001, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000001\";}', 0, '2020-12-01 10:51:01', NULL, NULL);
-INSERT INTO `ya_log` VALUES (18, 2, 1000001, 4, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-01 10:53:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (19, 2, 1000001, 4, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-01 10:55:34', NULL, NULL);
-INSERT INTO `ya_log` VALUES (20, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-03 18:04:43', NULL, NULL);
-INSERT INTO `ya_log` VALUES (21, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-03 18:04:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (22, 1, 1000005, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"33\";}', 0, '2020-12-04 09:50:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (23, 1, 1000005, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"33\";}', 0, '2020-12-04 09:53:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (24, 1, 1000005, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"33\";}', 0, '2020-12-04 09:53:37', NULL, NULL);
-INSERT INTO `ya_log` VALUES (25, 1, 1000005, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"33\";}', 0, '2020-12-04 10:02:38', NULL, NULL);
-INSERT INTO `ya_log` VALUES (26, 1, 1000005, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"33\";}', 0, '2020-12-04 10:23:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (27, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-04 17:50:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (28, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 11:28:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (29, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 11:30:14', NULL, NULL);
-INSERT INTO `ya_log` VALUES (30, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 14:01:47', NULL, NULL);
-INSERT INTO `ya_log` VALUES (31, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 14:03:15', NULL, NULL);
-INSERT INTO `ya_log` VALUES (32, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 14:07:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (33, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 14:09:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (34, 2, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:8:\"username\";s:3:\"123\";s:8:\"password\";s:6:\"123456\";}', 0, '2020-12-07 14:09:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (35, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 14:09:47', NULL, NULL);
-INSERT INTO `ya_log` VALUES (36, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000003\";}', 0, '2020-12-07 14:12:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (37, 2, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:8:\"username\";s:2:\"11\";s:8:\"password\";s:6:\"123456\";}', 0, '2020-12-07 14:13:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (38, 1, 1000004, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"22\";}', 0, '2020-12-07 14:13:25', NULL, NULL);
-INSERT INTO `ya_log` VALUES (39, 2, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:8:\"username\";s:2:\"22\";s:8:\"password\";s:6:\"123456\";}', 0, '2020-12-07 14:13:25', NULL, NULL);
-INSERT INTO `ya_log` VALUES (40, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000003\";}', 0, '2020-12-07 14:13:26', NULL, NULL);
-INSERT INTO `ya_log` VALUES (41, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000003\";}', 0, '2020-12-07 14:14:41', NULL, NULL);
-INSERT INTO `ya_log` VALUES (42, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000003\";}', 0, '2020-12-07 14:15:05', NULL, NULL);
-INSERT INTO `ya_log` VALUES (43, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000003\";}', 0, '2020-12-07 14:15:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (44, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:15:32', NULL, NULL);
-INSERT INTO `ya_log` VALUES (45, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:16:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (46, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:16:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (47, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:19:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (48, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:25:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (49, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:25:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (50, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:26:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (51, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:30:09', NULL, NULL);
-INSERT INTO `ya_log` VALUES (52, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:34:21', NULL, NULL);
-INSERT INTO `ya_log` VALUES (53, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:37:04', NULL, NULL);
-INSERT INTO `ya_log` VALUES (54, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:38:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (55, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:39:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (56, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:39:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (57, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:39:27', NULL, NULL);
-INSERT INTO `ya_log` VALUES (58, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:40:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (59, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:40:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (60, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:50:32', NULL, NULL);
-INSERT INTO `ya_log` VALUES (61, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:51:08', NULL, NULL);
-INSERT INTO `ya_log` VALUES (62, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:51:45', NULL, NULL);
-INSERT INTO `ya_log` VALUES (63, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:54:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (64, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:54:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (65, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:55:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (66, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:55:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (67, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:55:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (68, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:55:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (69, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:55:59', NULL, NULL);
-INSERT INTO `ya_log` VALUES (70, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:56:00', NULL, NULL);
-INSERT INTO `ya_log` VALUES (71, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:4:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";s:8:\"log_type\";s:1:\"1\";}', 0, '2020-12-07 14:56:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (72, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:56:41', NULL, NULL);
-INSERT INTO `ya_log` VALUES (73, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:56:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (74, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:57:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (75, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 14:57:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (76, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:57:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (77, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:58:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (78, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:58:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (79, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:4:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";s:11:\"create_time\";a:2:{i:0;s:10:\"2020-12-07\";i:1;s:10:\"2020-12-07\";}}', 0, '2020-12-07 14:59:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (80, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:4:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";s:11:\"create_time\";a:2:{i:0;s:10:\"2020-12-04\";i:1;s:10:\"2020-12-04\";}}', 0, '2020-12-07 14:59:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (81, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"10\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 14:59:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (82, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"15\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:00:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (83, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"15\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:00:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (84, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"15\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:00:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (85, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"15\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:00:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (86, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"15\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (87, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"13\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (88, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (89, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (90, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 15:01:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (91, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"2\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (92, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"3\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (93, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"4\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (94, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:01:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (95, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:03:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (96, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 15:03:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (97, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 15:13:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (98, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:13:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (99, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 15:15:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (100, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:15:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (101, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 15:17:21', NULL, NULL);
-INSERT INTO `ya_log` VALUES (102, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:17:21', NULL, NULL);
-INSERT INTO `ya_log` VALUES (103, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 15:46:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (104, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:46:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (105, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:9:\"member_id\";s:7:\"1000004\";}', 0, '2020-12-07 15:46:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (106, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:46:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (107, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:47:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (108, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:47:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (109, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:47:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (110, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:47:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (111, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:48:24', NULL, NULL);
-INSERT INTO `ya_log` VALUES (112, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:48:24', NULL, NULL);
-INSERT INTO `ya_log` VALUES (113, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:48:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (114, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:48:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (115, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:49:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (116, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:49:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (117, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:50:00', NULL, NULL);
-INSERT INTO `ya_log` VALUES (118, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:50:00', NULL, NULL);
-INSERT INTO `ya_log` VALUES (119, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:50:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (120, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:50:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (121, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:50:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (122, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:51:01', NULL, NULL);
-INSERT INTO `ya_log` VALUES (123, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:51:01', NULL, NULL);
-INSERT INTO `ya_log` VALUES (124, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:51:01', NULL, NULL);
-INSERT INTO `ya_log` VALUES (125, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:51:01', NULL, NULL);
-INSERT INTO `ya_log` VALUES (126, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:51:01', NULL, NULL);
-INSERT INTO `ya_log` VALUES (127, 2, 1000004, 7, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 15:51:01', NULL, NULL);
-INSERT INTO `ya_log` VALUES (128, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 15:51:41', NULL, NULL);
-INSERT INTO `ya_log` VALUES (129, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:04:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (130, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:04:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (131, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:04:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (132, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:04:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (133, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:04:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (134, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:04:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (135, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:26', NULL, NULL);
-INSERT INTO `ya_log` VALUES (136, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:26', NULL, NULL);
-INSERT INTO `ya_log` VALUES (137, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:26', NULL, NULL);
-INSERT INTO `ya_log` VALUES (138, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (139, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:34', NULL, NULL);
-INSERT INTO `ya_log` VALUES (140, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:34', NULL, NULL);
-INSERT INTO `ya_log` VALUES (141, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (142, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (143, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:06:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (144, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:09:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (145, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:09:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (146, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:09:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (147, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:09:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (148, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:09:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (149, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:09:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (150, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:09:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (151, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:09:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (152, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:11:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (153, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:12:26', NULL, NULL);
-INSERT INTO `ya_log` VALUES (154, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:14:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (155, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:14:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (156, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:14:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (157, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:14:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (158, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:17:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (159, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:17:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (160, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:17:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (161, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:17:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (162, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:17:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (163, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:17:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (164, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:17:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (165, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:17:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (166, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:19:48', NULL, NULL);
-INSERT INTO `ya_log` VALUES (167, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:0:\"\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:0:\"\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:32:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (168, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:3:\"123\";s:8:\"nickname\";s:0:\"\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:0:\"\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:33:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (169, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:0:\"\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:0:\"\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:33:14', NULL, NULL);
-INSERT INTO `ya_log` VALUES (170, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:2:\"22\";s:5:\"phone\";s:3:\"122\";s:5:\"email\";s:2:\"12\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:0:\"\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:33:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (171, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:2:\"22\";s:5:\"phone\";s:11:\"18812345678\";s:5:\"email\";s:12:\"22@email.com\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:0:\"\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:34:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (172, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:35:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (173, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:36:02', NULL, NULL);
-INSERT INTO `ya_log` VALUES (174, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:36:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (175, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:36:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (176, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:36:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (177, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:36:59', NULL, NULL);
-INSERT INTO `ya_log` VALUES (178, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:38:00', NULL, NULL);
-INSERT INTO `ya_log` VALUES (179, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:38:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (180, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:38:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (181, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:38:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (182, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:39:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (183, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:39:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (184, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:39:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (185, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:39:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (186, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:39:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (187, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:39:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (188, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:39:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (189, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:39:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (190, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:42:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (191, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:42:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (192, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:42:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (193, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:42:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (194, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:42:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (195, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:0:\"\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:19:\"2020-12-07 16:34:06\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:42:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (196, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:42:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (197, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:0:\"\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:19:\"2020-12-07 16:42:52\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:44:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (198, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:44:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (199, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:45:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (200, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:45:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (201, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:45:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (202, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:45:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (203, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:46:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (204, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:46:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (205, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:46:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (206, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:46:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (207, 2, 1000004, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:46:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (208, 2, 1000004, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:49:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (209, 2, 1000004, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (210, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (211, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:50:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (212, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (213, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (214, 2, 1000004, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (215, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:59', NULL, NULL);
-INSERT INTO `ya_log` VALUES (216, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:50:59', NULL, NULL);
-INSERT INTO `ya_log` VALUES (217, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:59', NULL, NULL);
-INSERT INTO `ya_log` VALUES (218, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:50:59', NULL, NULL);
-INSERT INTO `ya_log` VALUES (219, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:51:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (220, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:51:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (221, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:51:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (222, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:51:14', NULL, NULL);
-INSERT INTO `ya_log` VALUES (223, 2, 1000004, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:51:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (224, 2, 1000004, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:51:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (225, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:0:\"\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:72:\"http://localhost:9526/storage/member/1000004/avatar.jpg?t=20201207165029\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:19:\"2020-12-07 16:50:29\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 16:51:27', NULL, NULL);
-INSERT INTO `ya_log` VALUES (226, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:51:27', NULL, NULL);
-INSERT INTO `ya_log` VALUES (227, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:3:\"123\";s:12:\"password_new\";s:6:\"123456\";}', 0, '2020-12-07 16:51:36', NULL, NULL);
-INSERT INTO `ya_log` VALUES (228, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:3:\"123\";s:12:\"password_new\";s:6:\"123456\";}', 0, '2020-12-07 16:52:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (229, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:3:\"123\";s:12:\"password_new\";s:6:\"123456\";}', 0, '2020-12-07 16:53:26', NULL, NULL);
-INSERT INTO `ya_log` VALUES (230, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:6:\"123456\";}', 0, '2020-12-07 16:53:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (231, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:56:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (232, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 16:56:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (233, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:56:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (234, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 16:56:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (235, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:3:\"123\";}', 0, '2020-12-07 16:56:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (236, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:3:\"123\";}', 0, '2020-12-07 16:56:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (237, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:6:\"123456\";}', 0, '2020-12-07 16:57:02', NULL, NULL);
-INSERT INTO `ya_log` VALUES (238, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:16:\"adasdfsdadf~!@~@\";}', 0, '2020-12-07 17:00:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (239, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:8:\"内网IP\";}', 0, '2020-12-07 17:00:43', NULL, NULL);
-INSERT INTO `ya_log` VALUES (240, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:16:\"内网IP内网IP\";}', 0, '2020-12-07 17:00:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (241, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:16:\"内网IP内网IP\";}', 0, '2020-12-07 17:01:34', NULL, NULL);
-INSERT INTO `ya_log` VALUES (242, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:16:\"内网IP内网IP\";}', 0, '2020-12-07 17:02:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (243, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:16:\"内网IP内网IP\";}', 0, '2020-12-07 17:02:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (244, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:5:\"12345\";s:12:\"password_new\";s:6:\"123456\";}', 0, '2020-12-07 17:05:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (245, 2, 1000004, 9, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:12:\"password_old\";s:6:\"123456\";s:12:\"password_new\";s:6:\"123456\";}', 0, '2020-12-07 17:05:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (246, 2, 1000004, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000004\";s:8:\"username\";s:2:\"22\";s:8:\"nickname\";s:2:\"22\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:72:\"http://localhost:9526/storage/member/1000004/avatar.jpg?t=20201207165122\";s:9:\"login_num\";s:1:\"1\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 14:13:25\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-04 09:46:18\";s:11:\"update_time\";s:19:\"2020-12-07 16:51:27\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzIxNjA1LCJuYmYiOjE2MDczMjE2MDUsImV4cCI6MTYwNzQwODAwNSwiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDQsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE0OjEzOjI1IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.pPPJUuWp_CMsx1P5s1JRJq_31sI882i16rTAhpVboLA\";}', 0, '2020-12-07 17:06:03', NULL, NULL);
-INSERT INTO `ya_log` VALUES (247, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:06:03', NULL, NULL);
-INSERT INTO `ya_log` VALUES (248, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:06:25', NULL, NULL);
-INSERT INTO `ya_log` VALUES (249, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:06:50', NULL, NULL);
-INSERT INTO `ya_log` VALUES (250, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:07:15', NULL, NULL);
-INSERT INTO `ya_log` VALUES (251, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:08:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (252, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:08:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (253, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:08:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (254, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:08:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (255, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:08:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (256, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:09:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (257, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:09:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (258, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:09:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (259, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:09:54', NULL, NULL);
-INSERT INTO `ya_log` VALUES (260, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:09:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (261, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:09:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (262, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:09:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (263, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:09:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (264, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (265, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:10:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (266, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (267, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (268, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (269, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:10:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (270, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (271, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (272, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:43', NULL, NULL);
-INSERT INTO `ya_log` VALUES (273, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:10:43', NULL, NULL);
-INSERT INTO `ya_log` VALUES (274, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:43', NULL, NULL);
-INSERT INTO `ya_log` VALUES (275, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:10:43', NULL, NULL);
-INSERT INTO `ya_log` VALUES (276, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:12:45', NULL, NULL);
-INSERT INTO `ya_log` VALUES (277, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:12:45', NULL, NULL);
-INSERT INTO `ya_log` VALUES (278, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:12:45', NULL, NULL);
-INSERT INTO `ya_log` VALUES (279, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:12:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (280, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:12:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (281, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:12:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (282, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:12:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (283, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:12:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (284, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:13:09', NULL, NULL);
-INSERT INTO `ya_log` VALUES (285, 2, 1000004, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:13:09', NULL, NULL);
-INSERT INTO `ya_log` VALUES (286, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:13:09', NULL, NULL);
-INSERT INTO `ya_log` VALUES (287, 2, 1000004, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:13:09', NULL, NULL);
-INSERT INTO `ya_log` VALUES (288, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:27:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (289, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:27:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (290, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:35:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (291, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:36:08', NULL, NULL);
-INSERT INTO `ya_log` VALUES (292, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:36:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (293, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:40:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (294, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:42:04', NULL, NULL);
-INSERT INTO `ya_log` VALUES (295, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:42:04', NULL, NULL);
-INSERT INTO `ya_log` VALUES (296, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:42:04', NULL, NULL);
-INSERT INTO `ya_log` VALUES (297, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:42:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (298, 2, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:8:\"username\";s:3:\"123\";s:8:\"password\";s:6:\"123456\";}', 0, '2020-12-07 17:42:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (299, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:42:27', NULL, NULL);
-INSERT INTO `ya_log` VALUES (300, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:42:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (301, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:42:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (302, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:42:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (303, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:47:48', NULL, NULL);
-INSERT INTO `ya_log` VALUES (304, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:48:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (305, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:50:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (306, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:50:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (307, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:50:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (308, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:50:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (309, 1, 1000003, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:3:\"123\";}', 0, '2020-12-07 17:50:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (310, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:50:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (311, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:50:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (312, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:50:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (313, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:51:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (314, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:51:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (315, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:51:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (316, 2, 1000003, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:51:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (317, 2, 1000003, 7, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:14:{s:9:\"member_id\";s:7:\"1000003\";s:8:\"username\";s:3:\"123\";s:8:\"nickname\";s:3:\"123\";s:5:\"phone\";s:0:\"\";s:5:\"email\";s:0:\"\";s:6:\"avatar\";s:0:\"\";s:9:\"login_num\";s:2:\"22\";s:8:\"login_ip\";s:9:\"127.0.0.1\";s:12:\"login_region\";s:12:\"XXXX内网IP\";s:10:\"login_time\";s:19:\"2020-12-07 17:50:57\";s:11:\"logout_time\";s:0:\"\";s:11:\"create_time\";s:19:\"2020-12-03 17:53:21\";s:11:\"update_time\";s:0:\"\";s:5:\"token\";s:296:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5eWxBZG1pbkluZGV4IiwiaWF0IjoxNjA3MzM0NjU3LCJuYmYiOjE2MDczMzQ2NTcsImV4cCI6MTYwNzQyMTA1NywiZGF0YSI6eyJtZW1iZXJfaWQiOjEwMDAwMDMsImxvZ2luX3RpbWUiOiIyMDIwLTEyLTA3IDE3OjUwOjU3IiwibG9naW5faXAiOiIxMjcuMC4wLjEifX0.nAJhQe6YqoClgZoKf9kQSpsl2YhPbRdVvK90wDNu0EU\";}', 0, '2020-12-07 17:51:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (318, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:51:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (319, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 17:55:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (320, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:55:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (321, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 17:55:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (322, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:01:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (323, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 18:01:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (324, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:01:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (325, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:01:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (326, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 18:01:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (327, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:01:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (328, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:02:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (329, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 18:02:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (330, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:02:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (331, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:02:36', NULL, NULL);
-INSERT INTO `ya_log` VALUES (332, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 18:02:36', NULL, NULL);
-INSERT INTO `ya_log` VALUES (333, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:02:36', NULL, NULL);
-INSERT INTO `ya_log` VALUES (334, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:03:19', NULL, NULL);
-INSERT INTO `ya_log` VALUES (335, 2, 1000003, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-07 18:03:19', NULL, NULL);
-INSERT INTO `ya_log` VALUES (336, 2, 1000003, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-07 18:03:19', NULL, NULL);
-INSERT INTO `ya_log` VALUES (337, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 15:37:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (338, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:37:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (339, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:37:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (340, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:37:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (341, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:37:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (342, 2, 1000000, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:37:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (343, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:38:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (344, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:38:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (345, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:38:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (346, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 15:39:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (347, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:39:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (348, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:39:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (349, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:39:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (350, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:40:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (351, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:40:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (352, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:40:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (353, 2, 1000000, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:40:32', NULL, NULL);
-INSERT INTO `ya_log` VALUES (354, 1, 1000001, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"12\";}', 0, '2020-12-09 15:40:37', NULL, NULL);
-INSERT INTO `ya_log` VALUES (355, 2, 1000001, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:40:37', NULL, NULL);
-INSERT INTO `ya_log` VALUES (356, 2, 1000001, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:40:38', NULL, NULL);
-INSERT INTO `ya_log` VALUES (357, 2, 1000001, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:40:38', NULL, NULL);
-INSERT INTO `ya_log` VALUES (358, 2, 1000001, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:40:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (359, 2, 1000001, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:42:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (360, 2, 1000001, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:42:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (361, 2, 1000001, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:42:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (362, 2, 1000001, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:43:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (363, 2, 1000001, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:43:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (364, 1, 1000009, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"88\";}', 0, '2020-12-09 15:44:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (365, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:44:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (366, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:44:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (367, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:44:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (368, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:3:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";s:4:\"type\";s:0:\"\";}', 0, '2020-12-09 15:44:34', NULL, NULL);
-INSERT INTO `ya_log` VALUES (369, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:47:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (370, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:47:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (371, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:47:47', NULL, NULL);
-INSERT INTO `ya_log` VALUES (372, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:47:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (373, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:47:49', NULL, NULL);
-INSERT INTO `ya_log` VALUES (374, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:48:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (375, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:48:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (376, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:48:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (377, 2, 1000009, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:48:42', NULL, NULL);
-INSERT INTO `ya_log` VALUES (378, 1, 1000009, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"88\";}', 0, '2020-12-09 15:48:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (379, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:48:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (380, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:48:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (381, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:48:51', NULL, NULL);
-INSERT INTO `ya_log` VALUES (382, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:48:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (383, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:49:45', NULL, NULL);
-INSERT INTO `ya_log` VALUES (384, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:49:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (385, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:49:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (386, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:49:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (387, 2, 1000009, 8, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:50:05', NULL, NULL);
-INSERT INTO `ya_log` VALUES (388, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:54:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (389, 2, 1000009, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:54:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (390, 2, 1000009, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:54:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (391, 2, 1000009, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:54:33', NULL, NULL);
-INSERT INTO `ya_log` VALUES (392, 1, 1000005, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"33\";}', 0, '2020-12-09 15:55:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (393, 2, 1000005, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:55:08', NULL, NULL);
-INSERT INTO `ya_log` VALUES (394, 2, 1000005, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:55:08', NULL, NULL);
-INSERT INTO `ya_log` VALUES (395, 2, 1000005, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:55:08', NULL, NULL);
-INSERT INTO `ya_log` VALUES (396, 2, 1000005, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:55:48', NULL, NULL);
-INSERT INTO `ya_log` VALUES (397, 2, 1000005, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:55:48', NULL, NULL);
-INSERT INTO `ya_log` VALUES (398, 2, 1000005, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:55:48', NULL, NULL);
-INSERT INTO `ya_log` VALUES (399, 2, 1000005, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:55:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (400, 1, 1000007, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"66\";}', 0, '2020-12-09 15:56:38', NULL, NULL);
-INSERT INTO `ya_log` VALUES (401, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:56:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (402, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:56:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (403, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:56:39', NULL, NULL);
-INSERT INTO `ya_log` VALUES (404, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:56:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (405, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:56:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (406, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:56:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (407, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:57:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (408, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:57:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (409, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:57:46', NULL, NULL);
-INSERT INTO `ya_log` VALUES (410, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:57:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (411, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:57:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (412, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:57:52', NULL, NULL);
-INSERT INTO `ya_log` VALUES (413, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:57:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (414, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:58:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (415, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:58:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (416, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:58:40', NULL, NULL);
-INSERT INTO `ya_log` VALUES (417, 2, 1000007, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:58:41', NULL, NULL);
-INSERT INTO `ya_log` VALUES (418, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 15:58:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (419, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:58:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (420, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:58:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (421, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:58:56', NULL, NULL);
-INSERT INTO `ya_log` VALUES (422, 2, 1000000, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:59:00', NULL, NULL);
-INSERT INTO `ya_log` VALUES (423, 1, 1000007, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"66\";}', 0, '2020-12-09 15:59:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (424, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:59:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (425, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:59:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (426, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:59:13', NULL, NULL);
-INSERT INTO `ya_log` VALUES (427, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:59:37', NULL, NULL);
-INSERT INTO `ya_log` VALUES (428, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 15:59:37', NULL, NULL);
-INSERT INTO `ya_log` VALUES (429, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 15:59:37', NULL, NULL);
-INSERT INTO `ya_log` VALUES (430, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 16:18:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (431, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 16:18:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (432, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 16:18:35', NULL, NULL);
-INSERT INTO `ya_log` VALUES (433, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 16:18:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (434, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 16:18:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (435, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 16:18:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (436, 2, 1000007, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 16:18:55', NULL, NULL);
-INSERT INTO `ya_log` VALUES (437, 2, 1000007, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 16:19:02', NULL, NULL);
-INSERT INTO `ya_log` VALUES (438, 2, 1000007, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 16:19:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (439, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 17:08:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (440, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:08:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (441, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:08:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (442, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:08:18', NULL, NULL);
-INSERT INTO `ya_log` VALUES (443, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:08:29', NULL, NULL);
-INSERT INTO `ya_log` VALUES (444, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:10:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (445, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:10:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (446, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:10:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (447, 2, 1000000, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:10:23', NULL, NULL);
-INSERT INTO `ya_log` VALUES (448, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 17:11:02', NULL, NULL);
-INSERT INTO `ya_log` VALUES (449, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:11:03', NULL, NULL);
-INSERT INTO `ya_log` VALUES (450, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:11:03', NULL, NULL);
-INSERT INTO `ya_log` VALUES (451, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:11:03', NULL, NULL);
-INSERT INTO `ya_log` VALUES (452, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:12:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (453, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:12:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (454, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:12:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (455, 2, 1000000, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:12:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (456, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 17:13:43', NULL, NULL);
-INSERT INTO `ya_log` VALUES (457, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:13:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (458, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:13:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (459, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:13:44', NULL, NULL);
-INSERT INTO `ya_log` VALUES (460, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:13:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (461, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:13:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (462, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:13:57', NULL, NULL);
-INSERT INTO `ya_log` VALUES (463, 2, 1000000, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:13:58', NULL, NULL);
-INSERT INTO `ya_log` VALUES (464, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 17:14:30', NULL, NULL);
-INSERT INTO `ya_log` VALUES (465, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:14:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (466, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:14:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (467, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:14:31', NULL, NULL);
-INSERT INTO `ya_log` VALUES (468, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:14:34', NULL, NULL);
-INSERT INTO `ya_log` VALUES (469, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:24:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (470, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:24:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (471, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:24:07', NULL, NULL);
-INSERT INTO `ya_log` VALUES (472, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:39:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (473, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:39:20', NULL, NULL);
-INSERT INTO `ya_log` VALUES (474, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:39:21', NULL, NULL);
-INSERT INTO `ya_log` VALUES (475, 2, 1000000, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:39:22', NULL, NULL);
-INSERT INTO `ya_log` VALUES (476, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 17:45:27', NULL, NULL);
-INSERT INTO `ya_log` VALUES (477, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:45:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (478, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:45:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (479, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:45:28', NULL, NULL);
-INSERT INTO `ya_log` VALUES (480, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:48:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (481, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:48:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (482, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:48:17', NULL, NULL);
-INSERT INTO `ya_log` VALUES (483, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:49:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (484, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:49:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (485, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:49:12', NULL, NULL);
-INSERT INTO `ya_log` VALUES (486, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:51:41', NULL, NULL);
-INSERT INTO `ya_log` VALUES (487, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:51:41', NULL, NULL);
-INSERT INTO `ya_log` VALUES (488, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:51:41', NULL, NULL);
-INSERT INTO `ya_log` VALUES (489, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:53:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (490, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:53:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (491, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:53:16', NULL, NULL);
-INSERT INTO `ya_log` VALUES (492, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:53:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (493, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:53:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (494, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:53:53', NULL, NULL);
-INSERT INTO `ya_log` VALUES (495, 2, 1000000, 4, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:54:02', NULL, NULL);
-INSERT INTO `ya_log` VALUES (496, 1, 1000000, 3, 'POST', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:1:{s:8:\"username\";s:2:\"10\";}', 0, '2020-12-09 17:54:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (497, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:54:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (498, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:54:10', NULL, NULL);
-INSERT INTO `ya_log` VALUES (499, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:54:11', NULL, NULL);
-INSERT INTO `ya_log` VALUES (500, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:54:14', NULL, NULL);
-INSERT INTO `ya_log` VALUES (501, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:54:14', NULL, NULL);
-INSERT INTO `ya_log` VALUES (502, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:54:15', NULL, NULL);
-INSERT INTO `ya_log` VALUES (503, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:57:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (504, 2, 1000000, 10, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:2:{s:4:\"page\";s:1:\"1\";s:5:\"limit\";s:2:\"12\";}', 0, '2020-12-09 17:57:06', NULL, NULL);
-INSERT INTO `ya_log` VALUES (505, 2, 1000000, 6, 'GET', '127.0.0.1', 'XX', 'XX', '内网IP', '', 'XXXX内网IP', '内网IP', 'a:0:{}', 0, '2020-12-09 17:57:06', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_member
@@ -860,11 +363,14 @@ CREATE TABLE `ya_member`  (
   INDEX `member_id`(`member_id`) USING BTREE,
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `email`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1000000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1000003 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_member
 -- ----------------------------
+INSERT INTO `ya_member` VALUES (1000000, 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000001, 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000002, 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_region
@@ -889,7 +395,7 @@ CREATE TABLE `ya_region`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `delete_time` datetime(0) NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`region_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 659006102 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '地区' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 659006102 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '地区' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_region
@@ -925,6 +431,9 @@ INSERT INTO `ya_region` VALUES (62, 0, '62', 1, '甘肃省', 'GanSuSheng', 'GSS'
 INSERT INTO `ya_region` VALUES (63, 0, '63', 1, '青海省', 'QingHaiSheng', 'QHS', 'Q', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (64, 0, '64', 1, '宁夏回族自治区', 'NingXiaHuiZuZiZhiQu', 'NXHZZZQ', 'N', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (65, 0, '65', 1, '新疆维吾尔自治区', 'XinJiangWeiWuErZiZhiQu', 'XJWWEZZQ', 'X', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (82, 0, '82', 1, '香港特别行政区', 'XiangGangTeBieXingZhengQu', 'XGTBXZQ', 'X', '00852', '999077', '114.182343', '22.295803', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (83, 0, '83', 1, '澳门特别行政区', 'AoMenTeBieXingZhengQu', 'AMTBXZQ', 'A', '00853', '999078', '113.552565', '22.200858', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (88, 0, '88', 1, '台湾省', 'TaiWanSheng', 'TWS', 'T', '00886', '222', '121.566349', '25.047042', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (1101, 11, '11,1101', 2, '北京市', 'BeiJingShi', 'BJS', 'S', '010', '100000', '116.402544', '39.915378', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (1201, 12, '12,1201', 2, '天津市', 'TianJinShi', 'TJS', 'S', '022', '300000', '117.208214', '39.133908', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (1301, 13, '13,1301', 2, '石家庄市', 'ShiJiaZhuangShi', 'SJZS', 'S', '', '', '', '', 1000, 0, NULL, NULL, NULL);
@@ -1262,6 +771,31 @@ INSERT INTO `ya_region` VALUES (6532, 65, '65,6532', 2, '和田地区', 'HeTianD
 INSERT INTO `ya_region` VALUES (6540, 65, '65,6540', 2, '伊犁哈萨克自治州', 'YiLiHaSaKeZiZhiZhou', 'YLHSKZZZ', 'Y', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (6542, 65, '65,6542', 2, '塔城地区', 'TaChengDiQu', 'TCDQ', 'T', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (6543, 65, '65,6543', 2, '阿勒泰地区', 'ALeTaiDiQu', 'ALTDQ', 'A', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8200, 82, '82,8200', 2, '香港岛', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8201, 82, '82,8201', 2, '九龙', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8202, 82, '82,8202', 2, '新界', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8300, 83, '83,8300', 2, '澳门半岛', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8301, 83, '83,8301', 2, '澳门外岛', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8800, 88, '88,8800', 2, '台北市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8801, 88, '88,8801', 2, '新北市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8802, 88, '88,8802', 2, '桃园市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8803, 88, '88,8803', 2, '台中市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8804, 88, '88,8804', 2, '台南市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8805, 88, '88,8805', 2, '高雄市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8806, 88, '88,8806', 2, '基隆市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8807, 88, '88,8807', 2, '新竹市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8808, 88, '88,8808', 2, '嘉义市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8809, 88, '88,8809', 2, '新竹县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8810, 88, '88,8810', 2, '苗栗县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8811, 88, '88,8811', 2, '彰化县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8812, 88, '88,8812', 2, '南投县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8813, 88, '88,8813', 2, '云林县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8814, 88, '88,8814', 2, '嘉义县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8815, 88, '88,8815', 2, '屏东县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8816, 88, '88,8816', 2, '宜兰县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8817, 88, '88,8817', 2, '花莲县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8818, 88, '88,8818', 2, '台东县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (8819, 88, '88,8819', 2, '澎湖县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (110101, 1101, '11,1101,110101', 3, '东城区', 'DongChengQu', 'DCQ', 'D', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (110102, 1101, '11,1101,110102', 3, '西城区', 'XiChengQu', 'XCQ', 'X', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (110105, 1101, '11,1101,110105', 3, '朝阳区', 'ChaoYangQu', 'CYQ', 'C', '', '', '', '', 1000, 0, NULL, NULL, NULL);
@@ -4564,33 +4098,5 @@ INSERT INTO `ya_region` VALUES (659004501, 659004, '65,659004,659004501', 3, '�
 INSERT INTO `ya_region` VALUES (659004502, 659004, '65,659004,659004502', 3, '兵团一零三团', 'BingTuanYiLingSanTuan', 'BTYLST', 'B', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (659006100, 659006, '65,659006,659006100', 3, '博古其镇', 'BoGuQiZhen', 'BGQZ', 'B', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (659006101, 659006, '65,659006,659006101', 3, '双丰镇', 'ShuangFengZhen', 'SFZ', 'S', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (88, 0, '88', 1, '台湾省', 'TaiWanSheng', 'TWS', 'T', '00886', '222', '121.566349', '25.047042', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (83, 0, '83', 1, '澳门特别行政区', 'AoMenTeBieXingZhengQu', 'AMTBXZQ', 'A', '00853', '999078', '113.552565', '22.200858', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (82, 0, '82', 1, '香港特别行政区', 'XiangGangTeBieXingZhengQu', 'XGTBXZQ', 'X', '00852', '999077', '114.182343', '22.295803', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8200, 82, '82,8200', 2, '香港岛', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8201, 82, '82,8201', 2, '九龙', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8202, 82, '82,8202', 2, '新界', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8300, 83, '83,8300', 2, '澳门半岛', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8301, 83, '83,8301', 2, '澳门外岛', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8800, 88, '88,8800', 2, '台北市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8801, 88, '88,8801', 2, '新北市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8802, 88, '88,8802', 2, '桃园市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8803, 88, '88,8803', 2, '台中市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8804, 88, '88,8804', 2, '台南市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8805, 88, '88,8805', 2, '高雄市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8806, 88, '88,8806', 2, '基隆市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8807, 88, '88,8807', 2, '新竹市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8808, 88, '88,8808', 2, '嘉义市', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8809, 88, '88,8809', 2, '新竹县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8810, 88, '88,8810', 2, '苗栗县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8811, 88, '88,8811', 2, '彰化县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8812, 88, '88,8812', 2, '南投县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8813, 88, '88,8813', 2, '云林县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8814, 88, '88,8814', 2, '嘉义县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8815, 88, '88,8815', 2, '屏东县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8816, 88, '88,8816', 2, '宜兰县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8817, 88, '88,8817', 2, '花莲县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8818, 88, '88,8818', 2, '台东县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (8819, 88, '88,8819', 2, '澎湖县', '', '', '', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
