@@ -3,7 +3,7 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\controller;
@@ -80,22 +80,15 @@ class Api
      */
     public function apiEdit()
     {
-        $param['api_id'] = Request::param('api_id/d', '');
+        $param['api_id']   = Request::param('api_id/d', 0);
+        $param['api_pid']  = Request::param('api_pid/d', 0);
+        $param['api_name'] = Request::param('api_name/s', '');
+        $param['api_url']  = Request::param('api_url/s', '');
+        $param['api_sort'] = Request::param('api_sort/d', 200);
 
-        if (Request::isGet()) {
-            validate(ApiValidate::class)->scene('api_id')->check($param);
+        validate(ApiValidate::class)->scene('api_edit')->check($param);
 
-            $data = ApiService::edit($param);
-        } else {
-            $param['api_pid']  = Request::param('api_pid/d', 0);
-            $param['api_name'] = Request::param('api_name/s', '');
-            $param['api_url']  = Request::param('api_url/s', '');
-            $param['api_sort'] = Request::param('api_sort/d', 200);
-
-            validate(ApiValidate::class)->scene('api_edit')->check($param);
-
-            $data = ApiService::edit($param, 'post');
-        }
+        $data = ApiService::edit($param);
 
         return success($data);
     }

@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\controller;
@@ -31,6 +31,8 @@ class Member
         $nickname   = Request::param('nickname/s', '');
         $phone      = Request::param('phone/s', '');
         $email      = Request::param('email/s', '');
+        $date_type  = Request::param('date_type/s', '');
+        $date_range = Request::param('date_range/a', []);
 
         $where = [];
         if ($username) {
@@ -44,6 +46,10 @@ class Member
         }
         if ($email) {
             $where[] = ['email', 'like', '%' . $email . '%'];
+        }
+        if ($date_type && $date_range) {
+            $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
+            $where[] = [$date_type, '<=', $date_range[1] . ' 23:59:59'];
         }
 
         $field = '';
@@ -76,6 +82,8 @@ class Member
         if ($data['is_delete'] == 1) {
             exception('会员已被删除');
         }
+
+        unset($data['password'], $data['token']);
 
         return success($data);
     }

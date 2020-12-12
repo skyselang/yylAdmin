@@ -3,7 +3,7 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\service;
@@ -124,40 +124,29 @@ class ApiService
      * 接口修改
      *
      * @param array  $param  接口信息
-     * @param string $method 请求方式
      * 
      * @return array
      */
-    public static function edit($param, $method = 'get')
+    public static function edit($param)
     {
         $api_id = $param['api_id'];
         $api    = self::info($api_id);
 
-        if ($method == 'get') {
-            $data['api_id']   = $api['api_id'];
-            $data['api_pid']  = $api['api_pid'];
-            $data['api_name'] = $api['api_name'];
-            $data['api_url']  = $api['api_url'];
-            $data['api_sort'] = $api['api_sort'];
+        $param['update_time'] = date('Y-m-d H:i:s');
 
-            return $data;
-        } else {
-            $param['update_time'] = date('Y-m-d H:i:s');
+        $update = Db::name('api')
+            ->where('api_id', '=', $api_id)
+            ->update($param);
 
-            $update = Db::name('api')
-                ->where('api_id', '=', $api_id)
-                ->update($param);
-
-            if (empty($update)) {
-                exception();
-            }
-
-            ApiCache::del();
-            ApiCache::del($api_id);
-            ApiCache::del($api['api_url']);
-
-            return $param;
+        if (empty($update)) {
+            exception();
         }
+
+        ApiCache::del();
+        ApiCache::del($api_id);
+        ApiCache::del($api['api_url']);
+
+        return $param;
     }
 
     /**

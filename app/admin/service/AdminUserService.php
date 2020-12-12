@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\service;
@@ -223,6 +223,8 @@ class AdminUserService
 
         $param['admin_user_id'] = $admin_user_id;
 
+        unset($param['password']);
+
         return $param;
     }
 
@@ -237,15 +239,19 @@ class AdminUserService
     {
         $admin_user_id = $param['admin_user_id'];
 
+        unset($param['admin_user_id']);
+
         $param['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_user')
+        $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $param['admin_user_id'] = $admin_user_id;
 
         AdminUserCache::upd($admin_user_id);
 
@@ -261,22 +267,22 @@ class AdminUserService
      */
     public static function dele($admin_user_id)
     {
-        $data['is_delete']   = 1;
-        $data['delete_time'] = date('Y-m-d H:i:s');
+        $update['is_delete']   = 1;
+        $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_user')
+        $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
-            ->update($data);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
-        $data['admin_user_id'] = $admin_user_id;
+        $update['admin_user_id'] = $admin_user_id;
 
         AdminUserCache::upd($admin_user_id);
 
-        return $data;
+        return $update;
     }
 
     /**
@@ -327,22 +333,27 @@ class AdminUserService
     public static function pwd($param)
     {
         $admin_user_id = $param['admin_user_id'];
-        $password      = $param['password'];
 
-        $data['password']    = md5($password);
-        $data['update_time'] = date('Y-m-d H:i:s');
+        unset($param['admin_user_id']);
+
+        $param['password']    = md5($param['password']);
+        $param['update_time'] = date('Y-m-d H:i:s');
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
-            ->update($data);
+            ->update($param);
 
         if (empty($res)) {
             exception();
         }
 
+        $param['admin_user_id'] = $admin_user_id;
+
+        unset($param['password']);
+
         AdminUserCache::upd($admin_user_id);
 
-        return $res;
+        return $param;
     }
 
     /**
@@ -419,15 +430,15 @@ class AdminUserService
                 }
             }
 
-            $data['admin_role_ids'] = implode(',', $admin_role_ids);
-            $data['admin_menu_ids'] = implode(',', $admin_menu_ids);
-            $data['update_time']    = date('Y-m-d H:i:s');
+            $update['admin_role_ids'] = implode(',', $admin_role_ids);
+            $update['admin_menu_ids'] = implode(',', $admin_menu_ids);
+            $update['update_time']    = date('Y-m-d H:i:s');
 
-            $update = Db::name('admin_user')
+            $res = Db::name('admin_user')
                 ->where('admin_user_id', $admin_user_id)
-                ->update($data);
+                ->update($update);
 
-            if (empty($update)) {
+            if (empty($res)) {
                 exception();
             }
 
@@ -448,15 +459,19 @@ class AdminUserService
     {
         $admin_user_id = $param['admin_user_id'];
 
+        unset($param['admin_user_id']);
+
         $param['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_user')
+        $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $param['admin_user_id'] = $admin_user_id;
 
         AdminUserCache::upd($admin_user_id);
 
@@ -474,15 +489,19 @@ class AdminUserService
     {
         $admin_user_id = $param['admin_user_id'];
 
+        unset($param['admin_user_id']);
+
         $param['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_user')
+        $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $param['admin_user_id'] = $admin_user_id;
 
         AdminUserCache::upd($admin_user_id);
 

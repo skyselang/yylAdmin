@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\service;
@@ -383,7 +383,7 @@ class LogService
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
 
-            $data = Db::name('log')
+            $log = Db::name('log')
                 ->field($field . ', COUNT(log_id) as y_data')
                 ->where($where)
                 ->group($group)
@@ -395,7 +395,7 @@ class LogService
             $y_data = [];
             $p_data = [];
 
-            foreach ($data as $k => $v) {
+            foreach ($log as $k => $v) {
                 $x_data[] = $v['x_data'];
                 $y_data[] = $v['y_data'];
                 $p_data[] = ['value' => $v['y_data'], 'name' => $v['x_data']];

@@ -3,7 +3,7 @@
  * @Description  : 会员缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-07
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\common\cache;
@@ -83,7 +83,7 @@ class MemberCache
      *
      * @param integer $member_id 会员id
      * 
-     * @return bool
+     * @return array
      */
     public static function upd($member_id)
     {

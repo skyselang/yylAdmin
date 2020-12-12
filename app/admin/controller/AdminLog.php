@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\controller;
@@ -116,20 +116,33 @@ class AdminLog
      */
     public function LogStatistic()
     {
-        $type   = Request::param('type/s', 'number');
+        $type   = Request::param('type/s', '');
         $date   = Request::param('date/a', []);
         $region = Request::param('region/s', 'city');
 
-        if ($type == 'date') {
-            $data = AdminLogService::staDate($date);
-        } elseif ($type == 'region') {
-            $data = AdminLogService::staRegion($date, $region);
-        } else {
-            $data  = [];
-            $dates = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-            foreach ($dates as $k => $v) {
-                $data[$v] = AdminLogService::staNumber($v);
+        $data     = [];
+        $date_arr = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
+
+        if ($type == 'number') {
+            $number = [];
+            foreach ($date_arr as $k => $v) {
+                $number[$v] = AdminLogService::staNumber($v);
             }
+            $data['number'] = $number;
+        } elseif ($type == 'date') {
+            $data['date'] = AdminLogService::staDate($date);
+        } elseif ($type == 'region') {
+            $data['region'] = AdminLogService::staRegion($date, $region);
+        } else {
+            $number = [];
+            foreach ($date_arr as $k => $v) {
+                $number[$v] = AdminLogService::staNumber($v);
+            }
+            $data['number'] = $number;
+
+            $data['date'] = AdminLogService::staDate($date);
+
+            $data['region'] = AdminLogService::staRegion($date, $region);
         }
 
         return success($data);

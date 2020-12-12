@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\controller;
@@ -84,21 +84,14 @@ class AdminMenu
     public function menuEdit()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['menu_pid']      = Request::param('menu_pid/d', 0);
+        $param['menu_name']     = Request::param('menu_name/s', '');
+        $param['menu_url']      = Request::param('menu_url/s', '');
+        $param['menu_sort']     = Request::param('menu_sort/d', 200);
 
-        if (Request::isGet()) {
-            validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('menu_edit')->check($param);
 
-            $data = AdminMenuService::edit($param);
-        } else {
-            $param['menu_pid']  = Request::param('menu_pid/d', 0);
-            $param['menu_name'] = Request::param('menu_name/s', '');
-            $param['menu_url']  = Request::param('menu_url/s', '');
-            $param['menu_sort'] = Request::param('menu_sort/d', 200);
-
-            validate(AdminMenuValidate::class)->scene('menu_edit')->check($param);
-
-            $data = AdminMenuService::edit($param, 'post');
-        }
+        $data = AdminMenuService::edit($param);
 
         return success($data);
     }

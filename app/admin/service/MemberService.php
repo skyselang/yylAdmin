@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\service;
@@ -19,9 +19,9 @@ class MemberService
      * 会员列表
      *
      * @param array   $where   条件
-     * @param string  $field   字段
      * @param integer $page    页数
      * @param integer $limit   数量
+     * @param string  $field   字段
      * @param array   $order   排序
      * 
      * @return array 
@@ -32,11 +32,11 @@ class MemberService
             $field = 'member_id,username,nickname,phone,email,sort,remark,create_time,login_time,is_disable';
         }
 
+        $where[] = ['is_delete', '=', 0];
+
         if (empty($order)) {
             $order = ['sort' => 'desc', 'member_id' => 'desc'];
         }
-
-        $where[] = ['is_delete', '=', 0];
 
         $count = Db::name('member')
             ->where($where)
@@ -100,7 +100,6 @@ class MemberService
      */
     public static function add($param)
     {
-        $param['is_disable']  = '0';
         $param['password']    = md5($param['password']);
         $param['create_time'] = date('Y-m-d H:i:s');
 
@@ -112,6 +111,7 @@ class MemberService
         }
 
         $param['member_id'] = $member_id;
+        unset($param['password']);
 
         return $param;
     }
@@ -127,15 +127,19 @@ class MemberService
     {
         $member_id = $param['member_id'];
 
+        unset($param['member_id']);
+
         $param['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('member')
+        $res = Db::name('member')
             ->where('member_id', $member_id)
             ->update($param);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $param['member_id'] = $member_id;
 
         MemberCache::upd($member_id);
 
@@ -170,9 +174,11 @@ class MemberService
             exception();
         }
 
-        $member = MemberCache::upd($member_id);
+        $update['avatar'] = file_url($update['avatar']);
 
-        return $member;
+        MemberCache::upd($member_id);
+
+        return $update;
     }
 
     /**
@@ -184,22 +190,20 @@ class MemberService
      */
     public static function dele($member_id)
     {
-        $data['is_delete']   = 1;
-        $data['delete_time'] = date('Y-m-d H:i:s');
+        $update['is_delete']   = 1;
+        $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('member')
+        $res = Db::name('member')
             ->where('member_id', $member_id)
-            ->update($data);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
-        $data['member_id'] = $member_id;
-
         MemberCache::upd($member_id);
 
-        return $data;
+        return $update;
     }
 
     /**
@@ -214,12 +218,12 @@ class MemberService
         $member_id = $param['member_id'];
         $password  = $param['password'];
 
-        $data['password']    = md5($password);
-        $data['update_time'] = date('Y-m-d H:i:s');
+        $update['password']    = md5($password);
+        $update['update_time'] = date('Y-m-d H:i:s');
 
         $res = Db::name('member')
             ->where('member_id', $member_id)
-            ->update($data);
+            ->update($update);
 
         if (empty($res)) {
             exception();
@@ -227,7 +231,7 @@ class MemberService
 
         MemberCache::upd($member_id);
 
-        return $param;
+        return $update;
     }
 
     /**
@@ -242,12 +246,12 @@ class MemberService
         $member_id = $param['member_id'];
         $password  = $param['password_new'];
 
-        $data['password']    = md5($password);
-        $data['update_time'] = date('Y-m-d H:i:s');
+        $update['password']    = md5($password);
+        $update['update_time'] = date('Y-m-d H:i:s');
 
         $res = Db::name('member')
             ->where('member_id', $member_id)
-            ->update($data);
+            ->update($update);
 
         if (empty($res)) {
             exception();
@@ -255,7 +259,7 @@ class MemberService
 
         MemberCache::upd($member_id);
 
-        return $param;
+        return $update;
     }
 
     /**
@@ -269,19 +273,20 @@ class MemberService
     {
         $member_id = $param['member_id'];
 
-        $param['update_time'] = date('Y-m-d H:i:s');
+        $update['is_disable']  = $param['is_disable'];
+        $update['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('member')
+        $res = Db::name('member')
             ->where('member_id', $member_id)
-            ->update($param);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
         MemberCache::upd($member_id);
 
-        return $param;
+        return $update;
     }
 
     /**

@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\service;
@@ -182,11 +182,11 @@ class AdminRoleService
             $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
             $param['update_time']    = date('Y-m-d H:i:s');
 
-            $update = Db::name('admin_role')
+            $res = Db::name('admin_role')
                 ->where('admin_role_id', $admin_role_id)
                 ->update($param);
 
-            if (empty($update)) {
+            if (empty($res)) {
                 exception();
             }
 
@@ -207,22 +207,22 @@ class AdminRoleService
      */
     public static function dele($admin_role_id)
     {
-        $data['is_delete']   = 1;
-        $data['delete_time'] = date('Y-m-d H:i:s');
+        $update['is_delete']   = 1;
+        $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_role')
+        $res = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
-            ->update($data);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
-        $data['admin_role_id'] = $admin_role_id;
+        $update['admin_role_id'] = $admin_role_id;
 
         AdminRoleCache::del($admin_role_id);
 
-        return $data;
+        return $update;
     }
 
     /**
@@ -239,11 +239,11 @@ class AdminRoleService
         $param['is_disable']  = $param['is_disable'];
         $param['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_role')
+        $res = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
             ->update($param);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 

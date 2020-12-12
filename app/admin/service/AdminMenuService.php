@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-11
  */
 
 namespace app\admin\service;
@@ -127,40 +127,31 @@ class AdminMenuService
      * 菜单修改
      *
      * @param array  $param  菜单信息
-     * @param string $method 请求方式
      * 
      * @return array
      */
-    public static function edit($param, $method = 'post')
+    public static function edit($param)
     {
         $admin_menu_id = $param['admin_menu_id'];
         $admin_menu    = self::info($admin_menu_id);
 
-        if ($method == 'get') {
-            $data['admin_menu_id'] = $admin_menu['admin_menu_id'];
-            $data['menu_pid']      = $admin_menu['menu_pid'];
-            $data['menu_name']     = $admin_menu['menu_name'];
-            $data['menu_url']      = $admin_menu['menu_url'];
-            $data['menu_sort']     = $admin_menu['menu_sort'];
+        unset($param['admin_menu_id']);
 
-            return $data;
-        } else {
-            $param['update_time'] = date('Y-m-d H:i:s');
+        $param['update_time'] = date('Y-m-d H:i:s');
 
-            $update = Db::name('admin_menu')
-                ->where('admin_menu_id', '=', $admin_menu_id)
-                ->update($param);
+        $res = Db::name('admin_menu')
+            ->where('admin_menu_id', '=', $admin_menu_id)
+            ->update($param);
 
-            if (empty($update)) {
-                exception();
-            }
-
-            AdminMenuCache::del();
-            AdminMenuCache::del($admin_menu_id);
-            AdminMenuCache::del($admin_menu['menu_url']);
-
-            return $param;
+        if (empty($res)) {
+            exception();
         }
+
+        AdminMenuCache::del();
+        AdminMenuCache::del($admin_menu_id);
+        AdminMenuCache::del($admin_menu['menu_url']);
+
+        return $param;
     }
 
     /**
@@ -185,11 +176,11 @@ class AdminMenuService
             exception();
         }
 
+        $update['admin_menu_id'] = $admin_menu_id;
+
         AdminMenuCache::del();
         AdminMenuCache::del($admin_menu_id);
         AdminMenuCache::del($admin_menu['menu_url']);
-
-        $update['admin_menu_id'] = $admin_menu_id;
 
         return $update;
     }
@@ -206,22 +197,24 @@ class AdminMenuService
         $admin_menu_id = $param['admin_menu_id'];
         $admin_menu    = self::info($admin_menu_id);
 
-        $param['is_disable'] = $param['is_disable'];
-        $param['update_time'] = date('Y-m-d H:i:s');
+        $update['is_disable'] = $param['is_disable'];
+        $update['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_menu')
+        $res = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
-            ->update($param);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $update['admin_menu_id'] = $admin_menu_id;
 
         AdminMenuCache::del();
         AdminMenuCache::del($admin_menu_id);
         AdminMenuCache::del($admin_menu['menu_url']);
 
-        return $param;
+        return $update;
     }
 
     /**
@@ -236,22 +229,24 @@ class AdminMenuService
         $admin_menu_id = $param['admin_menu_id'];
         $admin_menu    = self::info($admin_menu_id);
 
-        $param['is_unauth']   = $param['is_unauth'];
-        $param['update_time'] = date('Y-m-d H:i:s');
+        $update['is_unauth']   = $param['is_unauth'];
+        $update['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_menu')
+        $res = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
-            ->update($param);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $update['admin_menu_id'] = $admin_menu_id;
 
         AdminMenuCache::del();
         AdminMenuCache::del($admin_menu_id);
         AdminMenuCache::del($admin_menu['menu_url']);
 
-        return $param;
+        return $update;
     }
 
     /**
@@ -313,7 +308,7 @@ class AdminMenuService
 
         AdminRoleCache::del($admin_role_id);
 
-        return $param;
+        return $update;
     }
 
     /**
@@ -375,7 +370,7 @@ class AdminMenuService
 
         AdminUserCache::upd($admin_user_id);
 
-        return $param;
+        return $update;
     }
 
     /**
