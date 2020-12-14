@@ -5,16 +5,16 @@ Github：<a href="https://github.com/skyselang/yylAdmin">https://github.com/skys
 
 ## 简介
 
-<a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基本功能，方便扩展；前后端分离，后端采用ThinkPHP6，前端采用Vue2；项目由后端<a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>和前端<a href="https://github.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>组成。
+<a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架，只有后台后端、后台前端、前台后端基础功能，你可以在此基础根据你的业务需求进行开发扩展。前后端分离，后端采用ThinkPHP6，前端采用Vue2。
 - <a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>
 - <a href="https://github.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>
 
 ## 演示
 
-地址：<a href="https://demo.yyladmin.top" target="_blank">yylAdmin demo</a>  
+地址：<a href="https://admin.yyladmin.top" target="_blank">yylAdmin demo</a>  
 账号：yyladmin、admin  
 密码：123456  
-提示：演示账号只有部分权限，请下载源码安装体验全部功能
+提示：演示账号只有部分权限，请安装体验全部功能
 
 ## 准备
 
@@ -54,7 +54,6 @@ composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 # 配置
 重命名.env.example为.env，修改里面配置
 或者直接修改config文件夹里面的相应配置
-
 ```
 
 ### WEB部分
@@ -88,9 +87,58 @@ npm run dev
 管理员：skyselang  
 密码：123456
 
+## 目录
+
+```bash
+yylAdmin
+├── app                        # 应用（核心目录）
+│   │── admin                  # 后台接口
+│   │── common                 # 公共（缓存、工具等）
+│   └── index                  # 前台接口
+│   ...
+├── config                     # 配置
+├── extend                     # 扩展类库
+├── public                     # 静态资源
+├── route                      # 路由
+├── runtime                    # 运行时目录（读写权限）
+├── vendor                     # Composer类库
+├── .env.example               # 环境变量示例文件（重命名.env后使用）
+...
+# 更多请参考thinkphp6目录结构
+
+yylAdminWeb
+├── build                      # 构建相关
+├── public                     # 静态资源
+│   │── favicon.ico            # favicon图标
+│   └── index.html             # html模板
+├── src                        # 源代码
+│   ├── api                    # 所有请求接口
+│   ├── assets                 # 主题字体等静态资源
+│   ├── components             # 全局公用组件
+│   ├── directive              # 全局指令
+│   ├── filters                # 全局filter
+│   ├── layout                 # 全局layout
+│   ├── router                 # 路由
+│   ├── store                  # 全局store管理
+│   ├── styles                 # 全局样式
+│   ├── utils                  # 全局公用方法
+│   ├── views                  # 所有页面
+│   ├── App.vue                # 入口页面
+│   ├── main.js                # 入口文件加载组件初始化等
+│   ├── permission.js          # 权限管理
+│   └── setting.js             # 基础设置
+├── .env.xxx                   # 环境变量配置
+├── .eslintrc.js               # eslint配置项
+├── .travis.yml                # 自动化CI配置
+├── package.json               # package.json
+├── postcss.config.js          # postcss配置
+└── vue.config.js              # vue-cli配置
+...
+```
+
 ## 开发
 > 以日志管理为例
-### PHP部分
+### PHP部分（后台接口）
 - 编写接口代码：app/admin/controller/AdminLog.php
 <img width="100%" src="./public/static/img/devphp1.jpg">
 - 添加菜单信息
@@ -98,17 +146,19 @@ npm run dev
 - 分配相应权限
 <img width="100%" src="./public/static/img/devphp3.jpg">
 
-### WEB部分
+### WEB部分（后台页面）
 - 新建接口文件：src/api/admin.js
 <img width="100%" src="./public/static/img/devweb1.jpg">
 - 新建页面文件：src/views/admin/log.vue
 <img width="100%" src="./public/static/img/devweb2.jpg">
 - 添加路由信息：src/router/index.js
 <img width="100%" src="./public/static/img/devweb3.jpg">
-
-### 刷新权限
-- 退出重新登录
+- 重新登录刷新权限
 <img width="100%" src="./public/static/img/devref.jpg">
+
+### PHP部分（前台接口）
+- 前台接口写在app/index/controller
+
 
 ## 发布
 
@@ -118,16 +168,6 @@ npm run build:stage
 
 # 构建生产环境
 npm run build:prod
-```
-
-## 其它
-
-```bash
-# 预览发布环境效果
-npm run preview
-
-# 预览发布环境效果 + 静态资源分析
-npm run preview -- --report
 
 # 代码格式检查
 npm run lint
@@ -155,9 +195,9 @@ npm run lint -- --fix
 - 支持Chrome、Firefox、QQ、360、Edge等主流浏览器，不支持IE以及浏览器的兼容模式（IE内核）
 
 ### debug
-- 调试模式下根据接口返回错误信息排查，或者提<a href="https://gitee.com/skyselang/yylAdmin/issues" target="_blank">Issue</a>
+- 调试模式下根据接口返回错误信息排查，或者提<a href="https://github.com/skyselang/yylAdmin/issues" target="_blank">Issue</a> 
 
 ## 协议
 
-- Apache2开源协议，完全免费使用
-- Copyright skyselang https://gitee.com/skyselang
+- Apache2协议，代码开源
+- Copyright skyselang https://github.com/skyselang
