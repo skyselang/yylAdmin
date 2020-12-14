@@ -3,7 +3,7 @@
  * @Description  : 接口缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-14
  */
 
 namespace app\common\cache;
@@ -76,6 +76,11 @@ class ApiCache
     {
         $key = self::key($api_id);
         $res = Cache::delete($key);
+
+        if (empty($api_id)) {
+            $key = self::key('whiteList');
+            $res = Cache::delete($key);
+        }
 
         return $res;
     }

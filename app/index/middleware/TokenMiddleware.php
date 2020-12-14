@@ -3,7 +3,7 @@
  * @Description  : Token中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-14
  */
 
 namespace app\index\middleware;
@@ -11,7 +11,7 @@ namespace app\index\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use think\facade\Config;
+use app\admin\service\ApiService;
 use app\index\service\TokenService;
 
 class TokenMiddleware
@@ -26,8 +26,8 @@ class TokenMiddleware
     public function handle($request, Closure $next)
     {
         $api_url   = request_pathinfo();
-        $whitelist = Config::get('index.whitelist', []);
-        
+        $whitelist = ApiService::whiteList();
+
         if (!in_array($api_url, $whitelist)) {
             $member_token = member_token();
 

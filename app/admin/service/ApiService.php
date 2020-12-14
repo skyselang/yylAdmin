@@ -3,13 +3,14 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-14
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use app\common\cache\ApiCache;
+use think\facade\Config;
 
 class ApiService
 {
@@ -320,5 +321,36 @@ class ApiService
             ->toArray();
 
         return $data;
+    }
+
+    /**
+     * 接口白名单
+     *
+     * @return array
+     */
+    public static function whiteList()
+    {
+        $key = 'whiteList';
+
+        $whitelist = ApiCache::get($key);
+
+        if (empty($whitelist)) {
+            $where[] = ['is_delete', '=', 0];
+            $where[] = ['is_unauth', '=', 1];
+            $where[] = ['api_url', '<>', ''];
+
+            $api_url = Db::name('api')
+                ->field('api_url')
+                ->where($where)
+                ->column('api_url');
+
+            $whitelist = Config::get('index.whitelist', []);
+            $whitelist = array_merge($api_url, $whitelist);
+            $whitelist = array_unique($whitelist);
+
+            ApiCache::set($key, $whitelist);
+        }
+
+        return $whitelist;
     }
 }
