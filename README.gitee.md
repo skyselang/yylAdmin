@@ -129,7 +129,6 @@ yylAdminWeb
 │   └── setting.js             # 基础设置
 ├── .env.xxx                   # 环境变量配置
 ├── .eslintrc.js               # eslint配置项
-├── .travis.yml                # 自动化CI配置
 ├── package.json               # package.json
 ├── postcss.config.js          # postcss配置
 └── vue.config.js              # vue-cli配置
