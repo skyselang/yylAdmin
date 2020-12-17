@@ -32,9 +32,7 @@ class RegionService
             $field = 'region_id,region_pid,region_path,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_sort';
         }
 
-        if (empty($where)) {
-            $where[] = ['region_pid', '=', 0];
-        }
+        $where[] = ['is_delete', '=', 0];
 
         if (empty($order)) {
             $order = ['region_sort' => 'desc', 'region_id' => 'asc'];

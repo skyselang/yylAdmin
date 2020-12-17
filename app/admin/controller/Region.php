@@ -23,12 +23,30 @@ class Region
      */
     public function regionList()
     {
-        $region_pid = Request::param('region_pid/d', 0) ?: 0;
-        $sort_field = Request::param('sort_field/s ', '');
-        $sort_type  = Request::param('sort_type/s', '');
+        $region_pid      = Request::param('region_pid/d', 0) ?: 0;
+        $region_name     = Request::param('region_name/s', '');
+        $region_pinyin   = Request::param('region_pinyin/s', '');
+        $region_jianpin  = Request::param('region_jianpin/s', '');
+        $region_initials = Request::param('region_initials/s', '');
+        $sort_field      = Request::param('sort_field/s ', '');
+        $sort_type       = Request::param('sort_type/s', '');
 
-        $where[] = ['is_delete', '=', 0];
-        $where[] = ['region_pid', '=', $region_pid];
+        if ($region_name || $region_pinyin || $region_jianpin || $region_initials) {
+            if ($region_name) {
+                $where[] = ['region_name', '=', $region_name];
+            }
+            if ($region_pinyin) {
+                $where[] = ['region_pinyin', '=', $region_pinyin];
+            }
+            if ($region_jianpin) {
+                $where[] = ['region_jianpin', '=', $region_jianpin];
+            }
+            if ($region_initials) {
+                $where[] = ['region_initials', '=', $region_initials];
+            }
+        } else {
+            $where[] = ['region_pid', '=', $region_pid];
+        }
 
         $order = [];
         if ($sort_field && $sort_type) {
