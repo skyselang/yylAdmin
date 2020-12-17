@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-17
  */
 
 namespace app\admin\controller;
@@ -56,7 +56,7 @@ class Region
         $data = RegionService::info($param['region_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('地区已被删除');
+            exception('地区已被删除：' . $param['region_id']);
         }
 
         return success($data);
@@ -116,7 +116,7 @@ class Region
         if (Request::isGet()) {
             validate(RegionValidate::class)->scene('region_id')->check($param);
 
-            $data = RegionService::edit($param, 'get');
+            $data = RegionService::edit($param);
 
             if ($data['is_delete'] == 1) {
                 exception('地区已被删除');
@@ -144,7 +144,7 @@ class Region
 
             validate(RegionValidate::class)->scene('region_edit')->check($param);
 
-            $data = RegionService::edit($param);
+            $data = RegionService::edit($param, 'post');
         }
 
         return success($data);

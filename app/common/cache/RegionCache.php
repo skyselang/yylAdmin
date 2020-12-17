@@ -3,7 +3,7 @@
  * @Description  : 地区缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-09
+ * @LastEditTime : 2020-12-17
  */
 
 namespace app\common\cache;
@@ -36,7 +36,7 @@ class RegionCache
     public static function exp($expire = 0)
     {
         if (empty($expire)) {
-            $expire = 1 * 24 * 60 * 60;
+            $expire = 3 * 24 * 60 * 60;
         }
 
         return $expire;

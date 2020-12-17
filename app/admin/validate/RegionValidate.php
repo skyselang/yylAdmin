@@ -3,47 +3,34 @@
  * @Description  : 地区验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-08
+ * @LastEditTime : 2020-12-17
  */
 
 namespace app\admin\validate;
 
 use think\Validate;
 use think\facade\Db;
+use app\admin\service\RegionService;
 
 class RegionValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'region_id'        => ['require'],
-        'region_name'      => ['require', 'checkRegion'],
-        'region_pinyin'    => ['require'],
-        'region_jianpin'   => ['require'],
-        'region_initials'  => ['require'],
-        'region_citycode'  => ['require'],
-        'region_zipcode'   => ['require'],
-        'region_longitude' => ['require'],
-        'region_latitude'  => ['require'],
+        'region_id'   => ['require', 'checkRegion'],
+        'region_name' => ['require', 'checkRegionName'],
     ];
 
     // 错误信息
-    protected $message  =   [
-        'region_id.require'        => '缺少参数：region_id',
-        'region_name.require'      => '请输入名称',
-        'region_pinyin.require'    => '请输入拼音',
-        'region_jianpin.require'   => '请输入简拼',
-        'region_initials.require'  => '请输入首字母',
-        'region_citycode.require'  => '请输入区号',
-        'region_zipcode.require'   => '请输入邮编',
-        'region_longitude.require' => '请输入经度',
-        'region_latitude.require'  => '请输入纬度',
+    protected $message = [
+        'region_id.require'   => 'region_id must',
+        'region_name.require' => '请输入名称',
     ];
 
     // 验证场景
     protected $scene = [
         'region_id'   => ['region_id'],
-        'region_add'  => ['region_name', 'region_citycode', 'region_zipcode', 'region_longitude', 'region_latitude'],
-        'region_edit' => ['region_id', 'region_name', 'region_citycode', 'region_zipcode', 'region_longitude', 'region_latitude'],
+        'region_add'  => ['region_name'],
+        'region_edit' => ['region_id', 'region_name'],
         'region_dele' => ['region_id'],
     ];
 
@@ -57,6 +44,24 @@ class RegionValidate extends Validate
     // 自定义验证规则：地区是否存在
     protected function checkRegion($value, $rule, $data = [])
     {
+        $region_id = $value;
+
+        $region = RegionService::info($region_id);
+
+        if (empty($region)) {
+            return '地区不存在：' . $region_id;
+        } else {
+            if ($region['is_delete'] == 1) {
+                return '地区已被删除：' . $region_id;
+            }
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：地区是否已存在
+    protected function checkRegionName($value, $rule, $data = [])
+    {
         $region_id = isset($data['region_id']) ? $data['region_id'] : '';
 
         if ($region_id) {
@@ -65,7 +70,7 @@ class RegionValidate extends Validate
             }
         }
 
-        $region_name = Db::name('region')
+        $region = Db::name('region')
             ->field('region_id')
             ->where('region_id', '<>', $region_id)
             ->where('region_pid', '=', $data['region_pid'])
@@ -73,7 +78,7 @@ class RegionValidate extends Validate
             ->where('is_delete', '=', 0)
             ->find();
 
-        if ($region_name) {
+        if ($region) {
             return '地区已存在：' . $data['region_name'];
         }
 

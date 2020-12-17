@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-17
  */
 
 namespace app\admin\service;
@@ -87,6 +87,27 @@ class RegionService
                 if (empty($region)) {
                     exception('地区不存在：' . $region_id);
                 }
+
+                // 地区完整名称
+                $region_path = explode(',', $region['region_path']);
+                if (count($region_path) == 1) {
+                    $region_fullname    = $region['region_name'];
+                    $region_fullname_py = $region['region_pinyin'];
+                } else {
+                    $region_pid = [];
+                    foreach ($region_path as $k => $v) {
+                        $region_pid[] = Db::name('region')
+                            ->field('region_name,region_pinyin')
+                            ->where('region_id', '=', $v)
+                            ->find();
+                    }
+                    $region_fullname    = array_column($region_pid, 'region_name');
+                    $region_fullname    = implode('-', $region_fullname);
+                    $region_fullname_py = array_column($region_pid, 'region_pinyin');
+                    $region_fullname_py = implode('-', $region_fullname_py);
+                }
+                $region['region_fullname']    = $region_fullname;
+                $region['region_fullname_py'] = $region_fullname_py;
             }
 
             RegionCache::set($region_id, $region);
@@ -143,7 +164,7 @@ class RegionService
 
                 $region_path = $region['region_path'] . ',' . $region_id;
                 $update['region_path'] = $region_path;
-                $update_re = Db::name('region')
+                $update_res = Db::name('region')
                     ->where('region_id', $region_id)
                     ->update($update);
             } else {
@@ -152,12 +173,12 @@ class RegionService
 
                 $region_path = $region_id;
                 $update['region_path'] = $region_path;
-                $update_re = Db::name('region')
+                $update_res = Db::name('region')
                     ->where('region_id', $region_id)
                     ->update($update);
             }
 
-            if (empty($update_re)) {
+            if (empty($update_res)) {
                 exception();
             }
 
@@ -177,7 +198,7 @@ class RegionService
      * 
      * @return array
      */
-    public static function edit($param, $method = 'post')
+    public static function edit($param, $method = 'get')
     {
         if ($method == 'get') {
             $region_id = $param['region_id'];
@@ -223,7 +244,7 @@ class RegionService
                 $region_path = $region['region_path'] . ',' . $region_id;
                 $update['region_path'] = $region_path;
                 $update['update_time'] = date('Y-m-d H:i:s');
-                $update_re = Db::name('region')
+                $update_res = Db::name('region')
                     ->where('region_id', $region_id)
                     ->update($update);
             } else {
@@ -234,12 +255,12 @@ class RegionService
                 $region_path = $region_id;
                 $update['region_path'] = $region_path;
                 $update['update_time'] = date('Y-m-d H:i:s');
-                $update_re = Db::name('region')
+                $update_res = Db::name('region')
                     ->where('region_id', $region_id)
                     ->update($update);
             }
 
-            if (empty($update_re)) {
+            if (empty($update_res)) {
                 exception();
             }
 
@@ -336,6 +357,7 @@ class RegionService
     public static function likeQuery($keyword, $field = 'region_name')
     {
         $data = Db::name('region')
+            ->where('is_delete', '=', 0)
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
@@ -354,6 +376,7 @@ class RegionService
     public static function etQuery($keyword, $field = 'region_name')
     {
         $data = Db::name('region')
+            ->where('is_delete', '=', 0)
             ->where($field, '=', $keyword)
             ->select()
             ->toArray();
