@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-17
+ * @LastEditTime : 2020-12-19
  */
 
 namespace app\admin\service;
@@ -14,6 +14,7 @@ use Overtrue\Pinyin\Pinyin;
 
 class RegionService
 {
+    // 地区树形key
     protected static $tree_key = 'tree';
 
     /**
@@ -59,8 +60,9 @@ class RegionService
 
     /**
      * 地区信息
+     * location_id：tree树形
      *
-     * @param integer $region_id 地区id
+     * @param integer|string $region_id 地区id
      * 
      * @return array
      */
@@ -323,7 +325,7 @@ class RegionService
     }
 
     /**
-     * 地区树形获取
+     * 地区转换树形
      *
      * @param array   $region     所有地区
      * @param integer $region_pid 地区父级id

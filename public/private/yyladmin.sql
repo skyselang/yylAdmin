@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 12/12/2020 14:15:23
+ Date: 19/12/2020 14:32:24
 */
 
 SET NAMES utf8mb4;
@@ -169,10 +169,10 @@ INSERT INTO `ya_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/
 INSERT INTO `ya_admin_menu` VALUES (149, 50, '北斗地图坐标拾取', 'admin/AdminTool/toolMapBeidou', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (150, 0, '地区管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/regionList', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (152, 150, '地区管理信息', 'admin/Region/regionInfo', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (153, 150, '地区管理添加', 'admin/Region/regionAdd', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (154, 150, '地区管理修改', 'admin/Region/regionEdit', 200, '0', '0', 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (155, 150, '地区管理删除', 'admin/Region/regionDele', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/regionInfo', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/regionAdd', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/regionEdit', 200, '0', '0', 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/regionDele', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (156, 0, '会员管理', '', 250, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (157, 0, '应用管理', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/menuInfo', 210, '0', '0', 0, NULL, NULL, NULL);
@@ -256,9 +256,9 @@ CREATE TABLE `ya_admin_user`  (
 -- ----------------------------
 -- Records of ya_admin_user
 -- ----------------------------
-INSERT INTO `ya_admin_user` VALUES (1, '1', '', 'skyselang', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin_user/1/avatar.png?t=20201211235538', '内置管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_admin_user` VALUES (2, '2', '', 'yyladmin', '演示账号1', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin_user/2/avatar.jpg?t=20201210210732', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_admin_user` VALUES (3, '2', '', 'admin', '演示账号2', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin/user/3/avatar.jpg?t=20201208143356', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_admin_user` VALUES (1, '1', '', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin_user/1/avatar.png?t=20201211235538', '系统管理员', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_admin_user` VALUES (2, '2', '', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin_user/2/avatar.jpg?t=20201210210732', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_admin_user` VALUES (3, '2', '', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 'storage/admin_user/3/avatar.png?t=20201216104732', '', 200, '0', '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_api
@@ -280,7 +280,7 @@ CREATE TABLE `ya_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`) USING BTREE,
   INDEX `api_url`(`api_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_api
@@ -299,6 +299,7 @@ INSERT INTO `ya_api` VALUES (11, 1, '注册', 'index/Register/register', 200, '0
 INSERT INTO `ya_api` VALUES (12, 0, '地区', '', 200, '0', '0', 0, NULL, NULL, NULL);
 INSERT INTO `ya_api` VALUES (13, 12, '地区列表', 'index/Region/regionList', 200, '0', '1', 0, NULL, NULL, NULL);
 INSERT INTO `ya_api` VALUES (14, 12, '地区信息', 'index/Region/regionInfo', 200, '0', '1', 0, NULL, NULL, NULL);
+INSERT INTO `ya_api` VALUES (15, 12, '地区树形', 'index/Region/regionTree', 200, '0', '1', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_log
@@ -348,6 +349,7 @@ CREATE TABLE `ya_member`  (
   `email` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
   `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '头像',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
   `sort` int(10) NOT NULL DEFAULT 10000 COMMENT '排序',
   `is_disable` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否禁用1是0否',
   `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
@@ -363,14 +365,17 @@ CREATE TABLE `ya_member`  (
   INDEX `member_id`(`member_id`) USING BTREE,
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `email`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1000003 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1000006 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_member
 -- ----------------------------
-INSERT INTO `ya_member` VALUES (1000000, 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_member` VALUES (1000001, 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_member` VALUES (1000002, 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000000, 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000001, 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000002, 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 150102, 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000003, '103', '103', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 440305, 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000004, '104', '104', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 110101, 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ya_member` VALUES (1000005, '105', '105', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 120101, 10000, '0', 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_region
@@ -394,21 +399,23 @@ CREATE TABLE `ya_region`  (
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `delete_time` datetime(0) NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`region_id`) USING BTREE
+  PRIMARY KEY (`region_id`) USING BTREE,
+  INDEX `region_id`(`region_id`) USING BTREE,
+  INDEX `region_name`(`region_name`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 659006102 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '地区' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_region
 -- ----------------------------
-INSERT INTO `ya_region` VALUES (11, 0, '11', 1, '北京市', 'BeiJingShi', 'BJS', 'B', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (12, 0, '12', 1, '天津市', 'TianJinShi', 'TJS', 'T', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (11, 0, '11', 1, '北京', 'BeiJing', 'BJ', 'B', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (12, 0, '12', 1, '天津', 'TianJin', 'TJ', 'T', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (13, 0, '13', 1, '河北省', 'HeBeiSheng', 'HBS', 'H', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (14, 0, '14', 1, '山西省', 'ShanXiSheng', 'SXS', 'S', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (15, 0, '15', 1, '内蒙古自治区', 'NeiMengGuZiZhiQu', 'NMGZZQ', 'N', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (21, 0, '21', 1, '辽宁省', 'LiaoNingSheng', 'LNS', 'L', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (22, 0, '22', 1, '吉林省', 'JiLinSheng', 'JLS', 'J', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (23, 0, '23', 1, '黑龙江省', 'HeiLongJiangSheng', 'HLJS', 'H', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (31, 0, '31', 1, '上海市', 'ShangHaiShi', 'SHS', 'S', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (31, 0, '31', 1, '上海', 'ShangHai', 'SH', 'S', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (32, 0, '32', 1, '江苏省', 'JiangSuSheng', 'JSS', 'J', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (33, 0, '33', 1, '浙江省', 'ZheJiangSheng', 'ZJS', 'Z', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (34, 0, '34', 1, '安徽省', 'AnHuiSheng', 'AHS', 'A', '', '', '', '', 1000, 0, NULL, NULL, NULL);
@@ -421,7 +428,7 @@ INSERT INTO `ya_region` VALUES (43, 0, '43', 1, '湖南省', 'HuNanSheng', 'HNS'
 INSERT INTO `ya_region` VALUES (44, 0, '44', 1, '广东省', 'GuangDongSheng', 'GDS', 'G', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (45, 0, '45', 1, '广西壮族自治区', 'GuangXiZhuangZuZiZhiQu', 'GXZZZZQ', 'G', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (46, 0, '46', 1, '海南省', 'HaiNanSheng', 'HNS', 'H', '', '', '', '', 1000, 0, NULL, NULL, NULL);
-INSERT INTO `ya_region` VALUES (50, 0, '50', 1, '重庆市', 'ChongQingShi', 'CQS', 'C', '', '', '', '', 1000, 0, NULL, NULL, NULL);
+INSERT INTO `ya_region` VALUES (50, 0, '50', 1, '重庆', 'ChongQing', 'CQ', 'C', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (51, 0, '51', 1, '四川省', 'SiChuanSheng', 'SCS', 'S', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (52, 0, '52', 1, '贵州省', 'GuiZhouSheng', 'GZS', 'G', '', '', '', '', 1000, 0, NULL, NULL, NULL);
 INSERT INTO `ya_region` VALUES (53, 0, '53', 1, '云南省', 'YunNanSheng', 'YNS', 'Y', '', '', '', '', 1000, 0, NULL, NULL, NULL);

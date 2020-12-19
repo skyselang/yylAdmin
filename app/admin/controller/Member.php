@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-19
  */
 
 namespace app\admin\controller;
@@ -97,17 +97,22 @@ class Member
      */
     public function memberAdd()
     {
-        $param['username'] = Request::param('username/s', '');
-        $param['nickname'] = Request::param('nickname/s', '');
-        $param['password'] = Request::param('password/s', '');
-        $param['phone']    = Request::param('phone/s', '');
-        $param['email']    = Request::param('email/s', '');
-        $param['remark']   = Request::param('remark/s', '');
-        $param['sort']     = Request::param('sort/d', 10000);
+        if (Request::isGet()) {
+            $data = MemberService::add();
+        } else {
+            $param['username']  = Request::param('username/s', '');
+            $param['nickname']  = Request::param('nickname/s', '');
+            $param['password']  = Request::param('password/s', '');
+            $param['phone']     = Request::param('phone/s', '');
+            $param['email']     = Request::param('email/s', '');
+            $param['region_id'] = Request::param('region_id/d', 0);
+            $param['remark']    = Request::param('remark/s', '');
+            $param['sort']      = Request::param('sort/d', 10000);
 
-        validate(MemberValidate::class)->scene('member_add')->check($param);
+            validate(MemberValidate::class)->scene('member_add')->check($param);
 
-        $data = MemberService::add($param);
+            $data = MemberService::add($param, 'post');
+        }
 
         return success($data);
     }
@@ -122,16 +127,24 @@ class Member
     public function memberEdit()
     {
         $param['member_id'] = Request::param('member_id/d', '');
-        $param['username']  = Request::param('username/s', '');
-        $param['nickname']  = Request::param('nickname/s', '');
-        $param['phone']     = Request::param('phone/s', '');
-        $param['email']     = Request::param('email/s', '');
-        $param['remark']    = Request::param('remark/s', '');
-        $param['sort']      = Request::param('sort/d', 10000);
 
-        validate(MemberValidate::class)->scene('member_edit')->check($param);
+        if (Request::isGet()) {
+            validate(MemberValidate::class)->scene('member_id')->check($param);
 
-        $data = MemberService::edit($param);
+            $data = MemberService::edit($param);
+        } else {
+            $param['username']  = Request::param('username/s', '');
+            $param['nickname']  = Request::param('nickname/s', '');
+            $param['phone']     = Request::param('phone/s', '');
+            $param['email']     = Request::param('email/s', '');
+            $param['region_id'] = Request::param('region_id/d', 0);
+            $param['remark']    = Request::param('remark/s', '');
+            $param['sort']      = Request::param('sort/d', 10000);
+
+            validate(MemberValidate::class)->scene('member_edit')->check($param);
+
+            $data = MemberService::edit($param, 'post');
+        }
 
         return success($data);
     }

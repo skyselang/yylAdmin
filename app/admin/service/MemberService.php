@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-19
  */
 
 namespace app\admin\service;
@@ -98,22 +98,28 @@ class MemberService
      * 
      * @return array
      */
-    public static function add($param)
+    public static function add($param = [], $method = 'get')
     {
-        $param['password']    = md5($param['password']);
-        $param['create_time'] = date('Y-m-d H:i:s');
+        if ($method == 'get') {
+            $data['region_tree'] = RegionService::info('tree');
 
-        $member_id = Db::name('member')
-            ->insertGetId($param);
+            return $data;
+        } else {
+            $param['password']    = md5($param['password']);
+            $param['create_time'] = date('Y-m-d H:i:s');
 
-        if (empty($member_id)) {
-            exception();
+            $member_id = Db::name('member')
+                ->insertGetId($param);
+
+            if (empty($member_id)) {
+                exception();
+            }
+
+            $param['member_id'] = $member_id;
+            unset($param['password']);
+
+            return $param;
         }
-
-        $param['member_id'] = $member_id;
-        unset($param['password']);
-
-        return $param;
     }
 
     /**
@@ -123,27 +129,34 @@ class MemberService
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($param, $method = 'get')
     {
         $member_id = $param['member_id'];
 
-        unset($param['member_id']);
+        if ($method == 'get') {
+            $data['member_info'] = self::info($member_id);
+            $data['region_tree'] = RegionService::info('tree');
 
-        $param['update_time'] = date('Y-m-d H:i:s');
+            return $data;
+        } else {
+            unset($param['member_id']);
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
-            ->update($param);
+            $param['update_time'] = date('Y-m-d H:i:s');
 
-        if (empty($res)) {
-            exception();
+            $res = Db::name('member')
+                ->where('member_id', $member_id)
+                ->update($param);
+
+            if (empty($res)) {
+                exception();
+            }
+
+            $param['member_id'] = $member_id;
+
+            MemberCache::upd($member_id);
+
+            return $param;
         }
-
-        $param['member_id'] = $member_id;
-
-        MemberCache::upd($member_id);
-
-        return $param;
     }
 
     /**

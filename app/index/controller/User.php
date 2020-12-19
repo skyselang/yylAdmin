@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-19
  */
 
 namespace app\index\controller;
@@ -12,6 +12,7 @@ use think\facade\Request;
 use app\admin\validate\MemberValidate;
 use app\admin\service\MemberService;
 use app\admin\service\LogService;
+use app\admin\service\RegionService;
 
 class User
 {
@@ -28,11 +29,14 @@ class User
 
         validate(MemberValidate::class)->scene('member_id')->check($param);
 
-        $data = MemberService::info($param['member_id']);
+        $member = MemberService::info($param['member_id']);
 
-        if ($data['is_delete'] == 1) {
+        if ($member['is_delete'] == 1) {
             exception('账户已注销');
         }
+
+        $data['member_info'] = $member;
+        $data['region_tree'] = RegionService::info('tree');
 
         unset($data['password'], $data['remark'], $data['sort'], $data['is_disable'], $data['is_delete'], $data['delete_time']);
 
@@ -53,6 +57,7 @@ class User
         $param['nickname']  = Request::param('nickname/s', '');
         $param['phone']     = Request::param('phone/s', '');
         $param['email']     = Request::param('email/s', '');
+        $param['region_id'] = Request::param('region_id/d', 0);
 
         validate(MemberValidate::class)->scene('member_edit')->check($param);
 

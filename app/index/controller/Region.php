@@ -3,7 +3,7 @@
  * @Description  : 地区
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-14
- * @LastEditTime : 2020-12-14
+ * @LastEditTime : 2020-12-19
  */
 
 namespace app\index\controller;
@@ -23,7 +23,7 @@ class Region
      */
     public function regionList()
     {
-        $region_pid = Request::param('region_pid/d', 0) ?: 0;
+        $region_pid = Request::param('region_pid/d', 0);
 
         $where[] = ['is_delete', '=', 0];
         $where[] = ['region_pid', '=', $region_pid];
@@ -53,6 +53,20 @@ class Region
         if ($data['is_delete'] == 1) {
             exception('地区已被删除');
         }
+
+        return success($data);
+    }
+
+    /**
+     * 地区树形
+     *
+     * @method GET
+     *
+     * @return json
+     */
+    public function regionTree()
+    {
+        $data = RegionService::info('tree');
 
         return success($data);
     }
