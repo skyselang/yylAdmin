@@ -3,7 +3,7 @@
  * @Description  : admin配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-24
+ * @LastEditTime : 2020-12-20
  */
 
 return [
@@ -12,7 +12,7 @@ return [
     // 是否记录日志
     'is_log' => true,
     // token密钥
-    'token_key' => 'c8d16adf54b1a66fbf3f16147e4f159e',
+    'token_key' => '58o6dAEZ4Jbb',
     // 请求头部token键名
     'admin_token_key' => 'AdminToken',
     // 请求头部user_id键名
