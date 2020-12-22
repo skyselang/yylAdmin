@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-22
  */
 
 namespace app\admin\service;
@@ -127,7 +127,7 @@ class AdminToolService
             mkdir('.' . $file_dir, 0777, true);
         }
 
-        $file_name = 'tool_qrcode.png';
+        $file_name = $admin_user_id . '_tool_qrcode.png';
         $file_path = $file_dir . '/' . $file_name;
         $QrCode = new QrCode($str);
         $QrCode->writeFile('.' . $file_path);

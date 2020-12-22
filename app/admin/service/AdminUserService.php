@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-22
  */
 
 namespace app\admin\service;
@@ -299,7 +299,7 @@ class AdminUserService
 
         $avatar_name = Filesystem::disk('public')
             ->putFile('admin_user', $avatar, function () use ($admin_user_id) {
-                return $admin_user_id . '/avatar';
+                return $admin_user_id . '/' . $admin_user_id . '_avatar';
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
@@ -519,6 +519,7 @@ class AdminUserService
     public static function likeQuery($keyword, $field = 'username|nickname')
     {
         $admin_user = Db::name('admin_user')
+            ->where('is_delete', '=', 0)
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
@@ -537,6 +538,7 @@ class AdminUserService
     public static function etQuery($keyword, $field = 'username|nickname')
     {
         $admin_user = Db::name('admin_user')
+            ->where('is_delete', '=', 0)
             ->where($field, '=', $keyword)
             ->select()
             ->toArray();
