@@ -3,14 +3,14 @@
  * @Description  : 角色验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-09
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\validate;
 
-use app\admin\service\AdminRoleService;
 use think\Validate;
 use think\facade\Db;
+use app\admin\service\AdminRoleService;
 
 class AdminRoleValidate extends Validate
 {
@@ -29,7 +29,6 @@ class AdminRoleValidate extends Validate
     // 验证场景
     protected $scene = [
         'role_id'   => ['admin_role_id'],
-        'role_name' => ['role_name'],
         'role_add'  => ['role_name'],
         'role_edit' => ['admin_role_id', 'role_name'],
         'role_dele' => ['admin_role_id'],
@@ -84,11 +83,7 @@ class AdminRoleValidate extends Validate
     {
         $admin_role_id = $value;
 
-        $admin_role = Db::name('admin_role')
-            ->field('admin_role_id,admin_menu_ids')
-            ->where('admin_role_id', '=', $admin_role_id)
-            ->where('is_delete', '=', 0)
-            ->find();
+        $admin_role = AdminRoleService::info($admin_role_id);
 
         if ($admin_role['admin_menu_ids']) {
             return '请在[修改]中取消所有菜单后再删除';

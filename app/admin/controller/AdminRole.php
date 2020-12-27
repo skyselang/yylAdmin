@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -39,14 +39,12 @@ class AdminRole
             $where[] = ['role_desc', 'like', '%' . $role_desc . '%'];
         }
 
-        $field = '';
-
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminRoleService::list($where, $page, $limit, $field, $order);
+        $data = AdminRoleService::list($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -67,7 +65,7 @@ class AdminRole
         $data = AdminRoleService::info($param['admin_role_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('角色已被删除');
+            exception('角色已被删除：' . $param['admin_role_id']);
         }
 
         return success($data);
@@ -88,7 +86,6 @@ class AdminRole
             $param['role_name']      = Request::param('role_name/s', '');
             $param['role_desc']      = Request::param('role_desc/s', '');
             $param['role_sort']      = Request::param('role_sort/d', 200);
-            $param['is_disable']     = Request::param('is_disable/s', '0');
             $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
             validate(AdminRoleValidate::class)->scene('role_add')->check($param);
@@ -102,7 +99,7 @@ class AdminRole
     /**
      * 角色修改
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
@@ -114,11 +111,14 @@ class AdminRole
             validate(AdminRoleValidate::class)->scene('role_id')->check($param);
 
             $data = AdminRoleService::edit($param);
+
+            if ($data['admin_role']['is_delete'] == 1) {
+                exception('角色已被删除：' . $param['admin_role_id']);
+            }
         } else {
             $param['role_name']      = Request::param('role_name/s', '');
             $param['role_desc']      = Request::param('role_desc/s', '');
             $param['role_sort']      = Request::param('role_sort/d', 200);
-            $param['is_disable']     = Request::param('is_disable/s', '0');
             $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
             validate(AdminRoleValidate::class)->scene('role_edit')->check($param);
@@ -157,7 +157,7 @@ class AdminRole
     public function roleDisable()
     {
         $param['admin_role_id'] = Request::param('admin_role_id/d', '');
-        $param['is_disable']    = Request::param('is_disable/s', '0');
+        $param['is_disable']    = Request::param('is_disable/d', 0);
 
         validate(AdminRoleValidate::class)->scene('role_id')->check($param);
 
@@ -190,14 +190,14 @@ class AdminRole
         $where  = [$where0, $where1, $where2, $where3];
         $whereOr = true;
 
-        $field = '';
-
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminRoleService::user($where, $page, $limit, $field, $order, $whereOr);
+        $field = '';
+
+        $data = AdminRoleService::user($where, $page, $limit, $order, $field, $whereOr);
 
         return success($data);
     }
