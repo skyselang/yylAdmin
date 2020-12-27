@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-17
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -23,11 +23,11 @@ class Region
      */
     public function regionList()
     {
-        $region_pid      = Request::param('region_pid/d', 0) ?: 0;
-        $region_name     = Request::param('region_name/s', '');
-        $region_pinyin   = Request::param('region_pinyin/s', '');
-        $sort_field      = Request::param('sort_field/s ', '');
-        $sort_type       = Request::param('sort_type/s', '');
+        $region_pid    = Request::param('region_pid/d', 0) ?: 0;
+        $region_name   = Request::param('region_name/s', '');
+        $region_pinyin = Request::param('region_pinyin/s', '');
+        $sort_field    = Request::param('sort_field/s ', '');
+        $sort_type     = Request::param('sort_type/s', '');
 
         if ($region_name || $region_pinyin) {
             if ($region_name) {
@@ -75,7 +75,7 @@ class Region
     /**
      * 地区添加
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
@@ -115,7 +115,7 @@ class Region
     /**
      * 地区修改
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
@@ -128,7 +128,7 @@ class Region
 
             $data = RegionService::edit($param);
 
-            if ($data['is_delete'] == 1) {
+            if ($data['region_info']['is_delete'] == 1) {
                 exception('地区已被删除');
             }
         } else {

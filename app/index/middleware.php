@@ -3,7 +3,7 @@
  * @Description  : 应用中间件定义文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-24
  */
 
 return [
@@ -11,6 +11,6 @@ return [
     \app\index\middleware\TokenMiddleware::class,
     // api
     \app\index\middleware\ApiMiddleware::class,
-    // log
-    \app\index\middleware\LogMiddleware::class,
+    // member log
+    \app\index\middleware\MemberLogMiddleware::class,
 ];

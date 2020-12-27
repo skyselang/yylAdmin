@@ -3,7 +3,7 @@
  * @Description  : 验证码验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-24
  */
 
 namespace app\index\validate;
@@ -60,6 +60,7 @@ class VerifyValidate extends Validate
 
         $VerifyService = new VerifyService();
         $verify_check  = $VerifyService->check($verify_id, $verify_code);
+
         if (empty($verify_check)) {
             return '验证码错误';
         }

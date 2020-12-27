@@ -3,7 +3,7 @@
  * @Description  : 接口中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-14
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\index\middleware;
@@ -31,8 +31,7 @@ class ApiMiddleware
 
         if (!in_array($api_url, $whitelist)) {
             $member_id = member_id();
-
-            $member = MemberCache::get($member_id);
+            $member    = MemberCache::get($member_id);
 
             if (empty($member)) {
                 exception('登录已失效，请重新登录', 401);
@@ -46,15 +45,15 @@ class ApiMiddleware
                 exception('账号已注销，请重新注册', 401);
             }
 
-            $api = ApiService::list('url')['list'];
+            $api_list = ApiService::list('url')['list'];
 
-            if (!in_array($api_url, $api)) {
-                $errmsg = '接口地址错误';
-                $debug  = Env::get('app_debug');
+            if (!in_array($api_url, $api_list)) {
+                $msg   = '接口地址错误';
+                $debug = Env::get('app_debug');
                 if ($debug) {
-                    $errmsg .= '：' . $api_url;
+                    $msg .= '：' . $api_url;
                 }
-                exception($errmsg, 404);
+                exception($msg, 404);
             }
         }
 

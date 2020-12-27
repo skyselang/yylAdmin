@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-19
+ * @LastEditTime : 2020-12-27
  */
 
 namespace app\index\controller;
@@ -11,7 +11,7 @@ namespace app\index\controller;
 use think\facade\Request;
 use app\admin\validate\MemberValidate;
 use app\admin\service\MemberService;
-use app\admin\service\LogService;
+use app\admin\service\MemberLogService;
 use app\admin\service\RegionService;
 
 class User
@@ -35,10 +35,10 @@ class User
             exception('账户已注销');
         }
 
+        unset($member['password'], $member['remark'], $member['sort'], $member['is_disable'], $member['is_delete'], $member['delete_time']);
+
         $data['member_info'] = $member;
         $data['region_tree'] = RegionService::info('tree');
-
-        unset($data['password'], $data['remark'], $data['sort'], $data['is_disable'], $data['is_delete'], $data['delete_time']);
 
         return success($data);
     }
@@ -53,21 +53,28 @@ class User
     public function userEdit()
     {
         $param['member_id'] = member_id();
-        $param['username']  = Request::param('username/s', '');
-        $param['nickname']  = Request::param('nickname/s', '');
-        $param['phone']     = Request::param('phone/s', '');
-        $param['email']     = Request::param('email/s', '');
-        $param['region_id'] = Request::param('region_id/d', 0);
 
-        validate(MemberValidate::class)->scene('member_edit')->check($param);
+        if (Request::isGet()) {
+            validate(MemberValidate::class)->scene('member_id')->check($param);
 
-        $data = MemberService::edit($param);
+            $data = MemberService::edit($param);
+        } else {
+            $param['username']  = Request::param('username/s', '');
+            $param['nickname']  = Request::param('nickname/s', '');
+            $param['phone']     = Request::param('phone/s', '');
+            $param['email']     = Request::param('email/s', '');
+            $param['region_id'] = Request::param('region_id/d', 0);
+
+            validate(MemberValidate::class)->scene('member_edit')->check($param);
+
+            $data = MemberService::edit($param, 'post');
+        }
 
         return success($data);
     }
 
     /**
-     * 修改头像
+     * 更换头像
      *
      * @method POST
      * 
@@ -114,17 +121,17 @@ class User
      */
     public function userLog()
     {
-        $member_id   = member_id();
-        $page        = Request::param('page/d', 1);
-        $limit       = Request::param('limit/d', 10);
-        $log_type    = Request::param('log_type/d', '');
-        $sort_field  = Request::param('sort_field/s ', '');
-        $sort_type   = Request::param('sort_type/s', '');
-        $create_time = Request::param('create_time/a', []);
+        $member_id       = member_id();
+        $page            = Request::param('page/d', 1);
+        $limit           = Request::param('limit/d', 10);
+        $member_log_type = Request::param('member_log_type/d', '');
+        $sort_field      = Request::param('sort_field/s ', '');
+        $sort_type       = Request::param('sort_type/s', '');
+        $create_time     = Request::param('create_time/a', []);
 
         $where[] = ['member_id', '=', $member_id];
-        if ($log_type) {
-            $where[] = ['log_type', '=', $log_type];
+        if ($member_log_type) {
+            $where[] = ['member_log_type', '=', $member_log_type];
         }
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
@@ -136,7 +143,7 @@ class User
             $order = [$sort_field => $sort_type];
         }
 
-        $data = LogService::list($where, $page, $limit, $order);
+        $data = MemberLogService::list($where, $page, $limit, $order);
 
         return success($data);
     }

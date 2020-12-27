@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-19
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\service;
@@ -60,7 +60,7 @@ class RegionService
 
     /**
      * 地区信息
-     * location_id：tree树形
+     * region_id=tree：树形
      *
      * @param integer|string $region_id 地区id
      * 
@@ -200,15 +200,14 @@ class RegionService
      */
     public static function edit($param, $method = 'get')
     {
+        $region_id = $param['region_id'];
+
         if ($method == 'get') {
-            $region_id = $param['region_id'];
-            $region = self::info($region_id);
-            $region['region_tree'] = self::info('tree');
+            $data['region_info'] = self::info($region_id);
+            $data['region_tree'] = self::info('tree');
 
-            return $region;
+            return $data;
         } else {
-            $region_id = $param['region_id'];
-
             unset($param['region_id']);
 
             $Pinyin          = new Pinyin();
@@ -283,23 +282,23 @@ class RegionService
      */
     public static function dele($region_id)
     {
-        $data['is_delete']   = 1;
-        $data['delete_time'] = date('Y-m-d H:i:s');
+        $update['is_delete']   = 1;
+        $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('region')
+        $res = Db::name('region')
             ->where('region_id', '=', $region_id)
-            ->update($data);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
-        $data['region_id'] = $region_id;
+        $update['region_id'] = $region_id;
 
         RegionCache::del(self::$tree_key);
         RegionCache::del($region_id);
 
-        return $data;
+        return $update;
     }
 
     /**

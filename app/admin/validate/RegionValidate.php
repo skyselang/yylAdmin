@@ -3,7 +3,7 @@
  * @Description  : 地区验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-17
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\validate;
@@ -48,12 +48,8 @@ class RegionValidate extends Validate
 
         $region = RegionService::info($region_id);
 
-        if (empty($region)) {
-            return '地区不存在：' . $region_id;
-        } else {
-            if ($region['is_delete'] == 1) {
-                return '地区已被删除：' . $region_id;
-            }
+        if ($region['is_delete'] == 1) {
+            return '地区已被删除：' . $region_id;
         }
 
         return true;

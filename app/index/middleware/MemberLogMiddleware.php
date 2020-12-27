@@ -3,7 +3,7 @@
  * @Description  : 日志中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-07
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\index\middleware;
@@ -12,10 +12,10 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
-use app\admin\service\LogService;
+use app\admin\service\MemberLogService;
 use app\admin\service\ApiService;
 
-class LogMiddleware
+class MemberLogMiddleware
 {
     /**
      * 处理请求
@@ -42,7 +42,7 @@ class LogMiddleware
                 $admin_log['request_method'] = $request->method();
                 $admin_log['request_ip']     = $request->ip();
                 $admin_log['request_param']  = serialize($request->param());
-                LogService::add($admin_log);
+                MemberLogService::add($admin_log);
             }
         }
 

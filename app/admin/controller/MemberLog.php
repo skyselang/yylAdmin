@@ -3,18 +3,18 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\LogValidate;
-use app\admin\service\LogService;
-use app\admin\service\ApiService;
+use app\admin\validate\MemberLogValidate;
+use app\admin\service\MemberLogService;
 use app\admin\service\MemberService;
+use app\admin\service\ApiService;
 
-class Log
+class MemberLog
 {
     /**
      * 会员日志列表
@@ -23,29 +23,29 @@ class Log
      * 
      * @return json
      */
-    public function logList()
+    public function memberLogList()
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $log_type        = Request::param('log_type/d', '');
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
-        $request_keyword = Request::param('request_keyword/s', '');
+        $member_log_type = Request::param('member_log_type/d', '');
         $member_keyword  = Request::param('member_keyword/s', '');
+        $request_keyword = Request::param('request_keyword/s', '');
         $api_keyword     = Request::param('api_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
 
         $where = [];
-        if ($log_type) {
-            $where[] = ['log_type', '=', $log_type];
-        }
-        if ($request_keyword) {
-            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        if ($member_log_type) {
+            $where[] = ['member_log_type', '=', $member_log_type];
         }
         if ($member_keyword) {
             $member     = MemberService::etQuery($member_keyword);
             $member_ids = array_column($member, 'member_id');
             $where[]    = ['member_id', 'in', $member_ids];
+        }
+        if ($request_keyword) {
+            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
         }
         if ($api_keyword) {
             $api     = ApiService::etQuery($api_keyword);
@@ -62,7 +62,7 @@ class Log
             $order = [$sort_field => $sort_type];
         }
 
-        $data = LogService::list($where, $page, $limit, $order);
+        $data = MemberLogService::list($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -74,16 +74,16 @@ class Log
      * 
      * @return json
      */
-    public function logInfo()
+    public function memberLogInfo()
     {
-        $param['log_id'] = Request::param('log_id/d', '');
+        $param['member_log_id'] = Request::param('member_log_id/d', '');
 
-        validate(LogValidate::class)->scene('log_id')->check($param);
+        validate(MemberLogValidate::class)->scene('member_log_id')->check($param);
 
-        $data = LogService::info($param['log_id']);
+        $data = MemberLogService::info($param['member_log_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('日志已删除');
+            exception('会员日志已删除：' . $param['member_log_id']);
         }
 
         return success($data);
@@ -96,13 +96,13 @@ class Log
      * 
      * @return json
      */
-    public function logDele()
+    public function memberLogDele()
     {
-        $param['log_id'] = Request::param('log_id/d', '');
+        $param['member_log_id'] = Request::param('member_log_id/d', '');
 
-        validate(LogValidate::class)->scene('log_id')->check($param);
+        validate(MemberLogValidate::class)->scene('member_log_dele')->check($param);
 
-        $data = LogService::dele($param['log_id']);
+        $data = MemberLogService::dele($param['member_log_id']);
 
         return success($data);
     }
@@ -114,35 +114,34 @@ class Log
      *
      * @return json
      */
-    public function LogStatistic()
+    public function MemberLogSta()
     {
         $type   = Request::param('type/s', '');
         $date   = Request::param('date/a', []);
         $region = Request::param('region/s', 'city');
 
-        $data     = [];
-        $date_arr = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
+        $data  = [];
+        $dates = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
 
         if ($type == 'number') {
             $number = [];
-            foreach ($date_arr as $k => $v) {
-                $number[$v] = LogService::staNumber($v);
+            foreach ($dates as $k => $v) {
+                $number[$v] = MemberLogService::staNumber($v);
             }
             $data['number'] = $number;
         } elseif ($type == 'date') {
-            $data['date'] = LogService::staDate($date);
+            $data['date'] = MemberLogService::staDate($date);
         } elseif ($type == 'region') {
-            $data['region'] = LogService::staRegion($date, $region);
+            $data['region'] = MemberLogService::staRegion($date, $region);
         } else {
             $number = [];
-            foreach ($date_arr as $k => $v) {
-                $number[$v] = LogService::staNumber($v);
+            foreach ($dates as $k => $v) {
+                $number[$v] = MemberLogService::staNumber($v);
             }
+
             $data['number'] = $number;
-
-            $data['date'] = LogService::staDate($date);
-
-            $data['region'] = LogService::staRegion($date, $region);
+            $data['date']   = MemberLogService::staDate($date);
+            $data['region'] = MemberLogService::staRegion($date, $region);
         }
 
         return success($data);

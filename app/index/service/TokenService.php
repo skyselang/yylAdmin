@@ -3,7 +3,7 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\index\service;
@@ -62,13 +62,13 @@ class TokenService
     public static function verify($token, $member_id = 0)
     {
         try {
-            $key     = Config::get('index.token.key');
-            $decoded = JWT::decode($token, $key, array('HS256'));
+            $key    = Config::get('index.token.key');
+            $decode = JWT::decode($token, $key, array('HS256'));
         } catch (\Exception $e) {
-            exception('账号登录状态错误', 401);
+            exception('账号登录状态已过期', 401);
         }
 
-        $token_member_id = $decoded->data->member_id;
+        $token_member_id = $decode->data->member_id;
 
         if ($member_id != $token_member_id) {
             exception('账号信息错误', 401);

@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-19
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -52,14 +52,14 @@ class Member
             $where[] = [$date_type, '<=', $date_range[1] . ' 23:59:59'];
         }
 
-        $field = '';
-
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
         }
 
-        $data = MemberService::list($where, $page, $limit, $field, $order);
+        $field = '';
+
+        $data = MemberService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
@@ -80,7 +80,7 @@ class Member
         $data = MemberService::info($param['member_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('会员已被删除');
+            exception('会员已被删除：' . $param['member_id']);
         }
 
         unset($data['password'], $data['token']);
@@ -91,7 +91,7 @@ class Member
     /**
      * 会员添加
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
@@ -120,7 +120,7 @@ class Member
     /**
      * 会员修改
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
@@ -150,7 +150,7 @@ class Member
     }
 
     /**
-     * 会员修改头像
+     * 会员更换头像
      *
      * @method POST
      * 
@@ -215,7 +215,7 @@ class Member
     public function memberDisable()
     {
         $param['member_id']  = Request::param('member_id/d', '');
-        $param['is_disable'] = Request::param('is_disable/s', '0');
+        $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(MemberValidate::class)->scene('member_disable')->check($param);
 

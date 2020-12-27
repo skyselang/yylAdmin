@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-19
+ * @LastEditTime : 2020-12-27
  */
 
 namespace app\admin\service;
@@ -21,12 +21,12 @@ class MemberService
      * @param array   $where   条件
      * @param integer $page    页数
      * @param integer $limit   数量
-     * @param string  $field   字段
      * @param array   $order   排序
+     * @param string  $field   字段
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
             $field = 'member_id,username,nickname,phone,email,sort,remark,create_time,login_time,is_disable';
@@ -116,6 +116,7 @@ class MemberService
             }
 
             $param['member_id'] = $member_id;
+
             unset($param['password']);
 
             return $param;
@@ -136,6 +137,8 @@ class MemberService
         if ($method == 'get') {
             $data['member_info'] = self::info($member_id);
             $data['region_tree'] = RegionService::info('tree');
+
+            unset($data['member_info']['password'], $data['member_info']['token']);
 
             return $data;
         } else {
@@ -173,7 +176,7 @@ class MemberService
 
         $avatar_name = Filesystem::disk('public')
             ->putFile('member', $avatar, function () use ($member_id) {
-                return $member_id . '/avatar';
+                return $member_id . '/' . $member_id . '_avatar';
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
@@ -214,6 +217,8 @@ class MemberService
             exception();
         }
 
+        $update['member_id'] = $member_id;
+
         MemberCache::upd($member_id);
 
         return $update;
@@ -229,9 +234,8 @@ class MemberService
     public static function password($param)
     {
         $member_id = $param['member_id'];
-        $password  = $param['password'];
 
-        $update['password']    = md5($password);
+        $update['password']    = md5($param['password']);
         $update['update_time'] = date('Y-m-d H:i:s');
 
         $res = Db::name('member')
@@ -241,6 +245,9 @@ class MemberService
         if (empty($res)) {
             exception();
         }
+
+        $update['member_id'] = $member_id;
+        $update['password']  = $res;
 
         MemberCache::upd($member_id);
 
@@ -257,9 +264,8 @@ class MemberService
     public static function pwdedit($param)
     {
         $member_id = $param['member_id'];
-        $password  = $param['password_new'];
 
-        $update['password']    = md5($password);
+        $update['password']    = md5($param['password_new']);
         $update['update_time'] = date('Y-m-d H:i:s');
 
         $res = Db::name('member')
@@ -269,6 +275,9 @@ class MemberService
         if (empty($res)) {
             exception();
         }
+
+        $update['member_id'] = $member_id;
+        $update['password']  = $res;
 
         MemberCache::upd($member_id);
 
@@ -297,6 +306,8 @@ class MemberService
             exception();
         }
 
+        $update['member_id'] = $member_id;
+
         MemberCache::upd($member_id);
 
         return $update;
@@ -310,9 +321,10 @@ class MemberService
      *
      * @return array
      */
-    public static function likeQuery($keyword, $field = 'username|nickname|phone|email')
+    public static function likeQuery($keyword, $field = 'username|nickname|email|phone')
     {
         $member = Db::name('member')
+            ->where('is_delete', '=', 0)
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
@@ -328,9 +340,10 @@ class MemberService
      *
      * @return array
      */
-    public static function etQuery($keyword, $field = 'username|nickname|phone|email')
+    public static function etQuery($keyword, $field = 'username|nickname|email|phone')
     {
         $member = Db::name('member')
+            ->where('is_delete', '=', 0)
             ->where($field, '=', $keyword)
             ->select()
             ->toArray();

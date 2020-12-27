@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\index\service;
@@ -90,8 +90,10 @@ class VerifyService
             $this->useNoise = $index_verify['noise'];
             // 使用背景图片
             $this->useImgBg = $index_verify['bgimg'];
-            // 验证码类型：2字母，3数字字母，4算术，5中文，1数字
-            if ($index_verify['type'] == 2) {
+            // 验证码类型：1数字，2字母，3数字字母，4算术，5中文
+            if ($index_verify['type'] == 1) {
+                $this->codeSet = '0123456789';
+            } elseif ($index_verify['type'] == 2) {
                 $this->codeSet = 'abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
             } elseif ($index_verify['type'] == 3) {
                 $this->codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
@@ -227,6 +229,7 @@ class VerifyService
         $fontttf = $ttfPath . $this->fontttf;
 
         if ($this->useImgBg) {
+            // 绘背景图片
             $this->background();
         }
 
@@ -243,7 +246,6 @@ class VerifyService
         $text = $this->useZh ? preg_split('/(?<!^)(?!$)/u', $generator['val']) : str_split($generator['val']); // 验证码
 
         foreach ($text as $index => $char) {
-
             $x     = $this->fontSize * ($index + 1) * mt_rand(1.2, 1.6) * ($this->math ? 1 : 1.5);
             $y     = $this->fontSize + mt_rand(10, 20);
             $angle = $this->math ? 0 : mt_rand(-40, 40);
@@ -277,7 +279,6 @@ class VerifyService
      * b：表示波形在Y轴的位置关系或纵向移动距离（上加下减）
      * φ：决定波形与X轴位置关系或横向移动距离（左加右减）
      * ω：决定周期（最小正周期T=2π/∣ω∣）
-     * 
      */
     protected function writeCurve(): void
     {
@@ -298,7 +299,8 @@ class VerifyService
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
                 $i  = (int) ($this->fontSize / 5);
                 while ($i > 0) {
-                    imagesetpixel($this->im, $px + $i, $py + $i, $this->color); // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
+                    // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
+                    imagesetpixel($this->im, $px + $i, $py + $i, $this->color);
                     $i--;
                 }
             }
@@ -331,13 +333,15 @@ class VerifyService
      */
     protected function writeNoise(): void
     {
-        $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
+        $codeSet = $this->codeSet;
+        $length  = strlen($codeSet) - 1;
+
         for ($i = 0; $i < 10; $i++) {
             //杂点颜色
             $noiseColor = imagecolorallocate($this->im, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225));
             for ($j = 0; $j < 5; $j++) {
                 // 绘杂点
-                imagestring($this->im, 5, mt_rand(-10, $this->imageW), mt_rand(-10, $this->imageH), $codeSet[mt_rand(0, 29)], $noiseColor);
+                imagestring($this->im, 5, mt_rand(-10, $this->imageW), mt_rand(-10, $this->imageH), $codeSet[mt_rand(0, $length)], $noiseColor);
             }
         }
     }
@@ -362,7 +366,7 @@ class VerifyService
         $gb = $bgs[array_rand($bgs)];
 
         list($width, $height) = @getimagesize($gb);
-        // Resample
+        // 重采样
         $bgImage = @imagecreatefromjpeg($gb);
         @imagecopyresampled($this->im, $bgImage, 0, 0, 0, 0, $this->imageW, $this->imageH, $width, $height);
         @imagedestroy($bgImage);

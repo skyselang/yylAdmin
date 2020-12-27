@@ -3,14 +3,14 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-14
+ * @LastEditTime : 2020-12-24
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
-use app\common\cache\ApiCache;
 use think\facade\Config;
+use app\common\cache\ApiCache;
 
 class ApiService
 {
@@ -128,26 +128,37 @@ class ApiService
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($param, $method = 'get')
     {
         $api_id = $param['api_id'];
-        $api    = self::info($api_id);
 
-        $param['update_time'] = date('Y-m-d H:i:s');
+        if ($method == 'get') {
+            $data['api_info'] = self::info($api_id);
 
-        $update = Db::name('api')
-            ->where('api_id', '=', $api_id)
-            ->update($param);
+            return $data;
+        } else {
+            unset($param['api_id']);
 
-        if (empty($update)) {
-            exception();
+            $api = self::info($api_id);
+
+            $param['update_time'] = date('Y-m-d H:i:s');
+
+            $update = Db::name('api')
+                ->where('api_id', '=', $api_id)
+                ->update($param);
+
+            if (empty($update)) {
+                exception();
+            }
+
+            $param['api_id'] = $api_id;
+
+            ApiCache::del();
+            ApiCache::del($api_id);
+            ApiCache::del($api['api_url']);
+
+            return $param;
         }
-
-        ApiCache::del();
-        ApiCache::del($api_id);
-        ApiCache::del($api['api_url']);
-
-        return $param;
     }
 
     /**
@@ -164,19 +175,19 @@ class ApiService
         $update['is_delete']   = 1;
         $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $delete = Db::name('api')
+        $res = Db::name('api')
             ->where('api_id', '=', $api_id)
             ->update($update);
 
-        if (empty($delete)) {
+        if (empty($res)) {
             exception();
         }
+
+        $update['api_id'] = $api_id;
 
         ApiCache::del();
         ApiCache::del($api_id);
         ApiCache::del($api['api_url']);
-
-        $update['api_id'] = $api_id;
 
         return $update;
     }
@@ -191,24 +202,27 @@ class ApiService
     public static function disable($param)
     {
         $api_id = $param['api_id'];
-        $api    = self::info($api_id);
 
-        $param['is_disable'] = $param['is_disable'];
-        $param['update_time'] = date('Y-m-d H:i:s');
+        $update['is_disable']  = $param['is_disable'];
+        $update['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('api')
+        $res = Db::name('api')
             ->where('api_id', $api_id)
-            ->update($param);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $api = self::info($api_id);
+
+        $update['api_id'] = $api_id;
 
         ApiCache::del();
         ApiCache::del($api_id);
         ApiCache::del($api['api_url']);
 
-        return $param;
+        return $update;
     }
 
     /**
@@ -221,24 +235,27 @@ class ApiService
     public static function unauth($param)
     {
         $api_id = $param['api_id'];
-        $api    = self::info($api_id);
 
-        $param['is_unauth']   = $param['is_unauth'];
-        $param['update_time'] = date('Y-m-d H:i:s');
+        $update['is_unauth']   = $param['is_unauth'];
+        $update['update_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('api')
+        $res = Db::name('api')
             ->where('api_id', $api_id)
-            ->update($param);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
+
+        $api = self::info($api_id);
+
+        $update['api_id'] = $api_id;
 
         ApiCache::del();
         ApiCache::del($api_id);
         ApiCache::del($api['api_url']);
 
-        return $param;
+        return $update;
     }
 
     /**
@@ -266,8 +283,8 @@ class ApiService
     /**
      * 接口树形获取
      *
-     * @param array   $api 所有接口
-     * @param integer $api_pid   接口父级id
+     * @param array   $api     所有接口
+     * @param integer $api_pid 接口父级id
      * 
      * @return array
      */
@@ -295,13 +312,13 @@ class ApiService
      */
     public static function likeQuery($keyword, $field = 'api_url|api_name')
     {
-        $data = Db::name('api')
+        $api = Db::name('api')
             ->where('is_delete', '=', 0)
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
 
-        return $data;
+        return $api;
     }
 
     /**
@@ -314,13 +331,13 @@ class ApiService
      */
     public static function etQuery($keyword, $field = 'api_url|api_name')
     {
-        $data = Db::name('api')
+        $api = Db::name('api')
             ->where('is_delete', '=', 0)
             ->where($field, '=', $keyword)
             ->select()
             ->toArray();
 
-        return $data;
+        return $api;
     }
 
     /**

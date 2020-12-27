@@ -3,7 +3,7 @@
  * @Description  : 接口验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-11-24
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\validate;
@@ -105,6 +105,7 @@ class ApiValidate extends Validate
             ->where('api_pid', '=', $api_id)
             ->where('is_delete', '=', 0)
             ->find();
+
         if ($api) {
             return '请删除所有子接口后再删除';
         }
