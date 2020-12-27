@@ -3,7 +3,7 @@
  * @Description  : 跨域请求中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-17
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\common\middleware;
@@ -31,7 +31,7 @@ class AllowCrossDomain
         if ($request->isOptions()) {
             return Response::create();
         }
-
+        
         return $next($request);
     }
 }
