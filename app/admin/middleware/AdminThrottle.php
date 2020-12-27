@@ -3,7 +3,7 @@
  * @Description  : 请求频率限制中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-22
- * @LastEditTime : 2020-12-09
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\middleware;
@@ -27,14 +27,14 @@ class AdminThrottle
     {
         $throttle = Config::get('admin.throttle');
         $number   = $throttle['number'];
+        $expire   = $throttle['expire'];
 
-        if ($number > 0) {
+        if ($number > 0 && $expire > 0) {
             $admin_user_id = admin_user_id();
             $menu_url      = request_pathinfo();
 
             if ($admin_user_id && $menu_url) {
-                $expire = $throttle['expire'];
-                $count  = AdminThrottleCache::get($admin_user_id, $menu_url);
+                $count = AdminThrottleCache::get($admin_user_id, $menu_url);
 
                 if ($count) {
                     if ($count >= $number) {
