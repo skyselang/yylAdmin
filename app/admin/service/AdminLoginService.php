@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\service;
@@ -47,12 +47,12 @@ class AdminLoginService
         }
 
         $request_ip = $param['request_ip'];
-        $ipinfo     = IpInfoService::info($request_ip);
+        $ip_info    = IpInfoService::info($request_ip);
 
         $admin_user_id = $admin_user['admin_user_id'];
 
         $update['login_ip']     = $request_ip;
-        $update['login_region'] = $ipinfo['region'];
+        $update['login_region'] = $ip_info['region'];
         $update['login_time']   = date('Y-m-d H:i:s');
         $update['login_num']    = $admin_user['login_num'] + 1;
         Db::name('admin_user')
@@ -65,6 +65,7 @@ class AdminLoginService
         $admin_menu = AdminMenuService::info($menu_url);
 
         $request_param['username'] = $username;
+        
         if ($param['verify_id']) {
             $request_param['verify_id']   = $param['verify_id'];
             $request_param['verify_code'] = $param['verify_code'];
@@ -78,12 +79,12 @@ class AdminLoginService
         $admin_log['request_param']  = serialize($request_param);
         AdminLogService::add($admin_log);
 
-        AdminVerifyCache::del($param['verify_id']);
-
         $admin_user = AdminUserService::info($admin_user_id);
 
         $data['admin_user_id'] = $admin_user_id;
         $data['admin_token']   = $admin_user['admin_token'];
+
+        AdminVerifyCache::del($param['verify_id']);
 
         return $data;
     }
@@ -99,10 +100,14 @@ class AdminLoginService
     {
         $update['logout_time'] = date('Y-m-d H:i:s');
 
-        Db::name('admin_user')->where('admin_user_id', $admin_user_id)->update($update);
+        Db::name('admin_user')
+            ->where('admin_user_id', $admin_user_id)
+            ->update($update);
+
+        $update['admin_user_id'] = $admin_user_id;
 
         AdminUserCache::del($admin_user_id);
 
-        return $admin_user_id;
+        return $update;
     }
 }
