@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\service;
@@ -43,6 +43,8 @@ class AdminMenuService
 
             $tree = self::toTree($list, 0);
             $url  = array_filter(array_column($list, 'menu_url'));
+
+            sort($url);
 
             $menu['tree'] = $tree;
             $menu['list'] = $list;
@@ -130,28 +132,34 @@ class AdminMenuService
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($param, $method = 'get')
     {
         $admin_menu_id = $param['admin_menu_id'];
         $admin_menu    = self::info($admin_menu_id);
 
-        unset($param['admin_menu_id']);
+        if ($method == 'get') {
+            return $admin_menu;
+        } else {
+            unset($param['admin_menu_id']);
 
-        $param['update_time'] = date('Y-m-d H:i:s');
+            $param['update_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('admin_menu')
-            ->where('admin_menu_id', '=', $admin_menu_id)
-            ->update($param);
+            $res = Db::name('admin_menu')
+                ->where('admin_menu_id', '=', $admin_menu_id)
+                ->update($param);
 
-        if (empty($res)) {
-            exception();
+            if (empty($res)) {
+                exception();
+            }
+
+            $param['admin_menu_id'] = $admin_menu_id;
+
+            AdminMenuCache::del();
+            AdminMenuCache::del($admin_menu_id);
+            AdminMenuCache::del($admin_menu['menu_url']);
+
+            return $param;
         }
-
-        AdminMenuCache::del();
-        AdminMenuCache::del($admin_menu_id);
-        AdminMenuCache::del($admin_menu['menu_url']);
-
-        return $param;
     }
 
     /**
@@ -168,11 +176,11 @@ class AdminMenuService
         $update['is_delete']   = 1;
         $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $delete = Db::name('admin_menu')
+        $res = Db::name('admin_menu')
             ->where('admin_menu_id', '=', $admin_menu_id)
             ->update($update);
 
-        if (empty($delete)) {
+        if (empty($res)) {
             exception();
         }
 
@@ -195,9 +203,8 @@ class AdminMenuService
     public static function disable($param)
     {
         $admin_menu_id = $param['admin_menu_id'];
-        $admin_menu    = self::info($admin_menu_id);
 
-        $update['is_disable'] = $param['is_disable'];
+        $update['is_disable']  = $param['is_disable'];
         $update['update_time'] = date('Y-m-d H:i:s');
 
         $res = Db::name('admin_menu')
@@ -207,6 +214,8 @@ class AdminMenuService
         if (empty($res)) {
             exception();
         }
+
+        $admin_menu = self::info($admin_menu_id);
 
         $update['admin_menu_id'] = $admin_menu_id;
 
@@ -227,7 +236,6 @@ class AdminMenuService
     public static function unauth($param)
     {
         $admin_menu_id = $param['admin_menu_id'];
-        $admin_menu    = self::info($admin_menu_id);
 
         $update['is_unauth']   = $param['is_unauth'];
         $update['update_time'] = date('Y-m-d H:i:s');
@@ -239,6 +247,8 @@ class AdminMenuService
         if (empty($res)) {
             exception();
         }
+
+        $admin_menu = self::info($admin_menu_id);
 
         $update['admin_menu_id'] = $admin_menu_id;
 
@@ -252,18 +262,18 @@ class AdminMenuService
     /**
      * 菜单角色
      *
-     * @param array   $where 条件
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param string  $field 字段
-     * @param array   $order 排序
-     * @param boolean $whereOr or查询
+     * @param array   $where   条件
+     * @param integer $page    页数
+     * @param integer $limit   数量
+     * @param array   $order   排序
+     * @param string  $field   字段
+     * @param boolean $whereOr OR查询
      * 
      * @return array 
      */
-    public static function role($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
+    public static function role($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $whereOr = false)
     {
-        $data = AdminRoleService::list($where, $page, $limit, $field, $order, $whereOr);
+        $data = AdminRoleService::list($where, $page, $limit, $order, $field, $whereOr);
 
         return $data;
     }
@@ -306,6 +316,9 @@ class AdminMenuService
             exception();
         }
 
+        $update['admin_menu_id'] = $admin_menu_id;
+        $update['admin_role_id'] = $admin_role_id;
+
         AdminRoleCache::del($admin_role_id);
 
         return $update;
@@ -314,18 +327,18 @@ class AdminMenuService
     /**
      * 菜单用户
      *
-     * @param array   $where 条件
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param string  $field 字段 
-     * @param array   $order 排序
-     * @param boolean $whereOr or查询
+     * @param array   $where   条件
+     * @param integer $page    页数
+     * @param integer $limit   数量
+     * @param array   $order   排序
+     * @param string  $field   字段 
+     * @param boolean $whereOr OR查询
      *
      * @return array 
      */
-    public static function user($where = [], $page = 1, $limit = 10, $field = '',  $order = [], $whereOr = false)
+    public static function user($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $whereOr = false)
     {
-        $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
+        $data = AdminUserService::list($where, $page, $limit, $order, $field, $whereOr);
 
         return $data;
     }
@@ -367,6 +380,9 @@ class AdminMenuService
         if (empty($res)) {
             exception();
         }
+
+        $update['admin_menu_id'] = $admin_menu_id;
+        $update['admin_user_id'] = $admin_user_id;
 
         AdminUserCache::upd($admin_user_id);
 

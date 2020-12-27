@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -47,7 +47,7 @@ class AdminMenu
         $data = AdminMenuService::info($param['admin_menu_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('菜单已被删除');
+            exception('菜单已被删除：' . $param['admin_menu_id']);
         }
 
         return success($data);
@@ -77,21 +77,32 @@ class AdminMenu
     /**
      * 菜单修改
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
     public function menuEdit()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['menu_pid']      = Request::param('menu_pid/d', 0);
-        $param['menu_name']     = Request::param('menu_name/s', '');
-        $param['menu_url']      = Request::param('menu_url/s', '');
-        $param['menu_sort']     = Request::param('menu_sort/d', 200);
 
-        validate(AdminMenuValidate::class)->scene('menu_edit')->check($param);
+        if (Request::isGet()) {
+            validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
-        $data = AdminMenuService::edit($param);
+            $data = AdminMenuService::edit($param);
+
+            if ($data['is_delete'] == 1) {
+                exception('菜单已被删除：' . $param['admin_menu_id']);
+            }
+        } else {
+            $param['menu_pid']  = Request::param('menu_pid/d', 0);
+            $param['menu_name'] = Request::param('menu_name/s', '');
+            $param['menu_url']  = Request::param('menu_url/s', '');
+            $param['menu_sort'] = Request::param('menu_sort/d', 200);
+
+            validate(AdminMenuValidate::class)->scene('menu_edit')->check($param);
+
+            $data = AdminMenuService::edit($param, 'post');
+        }
 
         return success($data);
     }
@@ -124,7 +135,7 @@ class AdminMenu
     public function menuDisable()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['is_disable']    = Request::param('is_disable/s', '0');
+        $param['is_disable']    = Request::param('is_disable/d', 0);
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
@@ -143,7 +154,7 @@ class AdminMenu
     public function menuUnauth()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['is_unauth']     = Request::param('is_unauth/s', '0');
+        $param['is_unauth']     = Request::param('is_unauth/d', 0);
 
         validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
 
@@ -174,16 +185,17 @@ class AdminMenu
         $where2 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id . ',%'], ['is_delete', '=', 0]];
         $where3 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id], ['is_delete', '=', 0]];
         $where  = [$where0, $where1, $where2, $where3];
-        $whereOr = true;
 
-        $field = '';
+        $whereOr = true;
 
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminMenuService::role($where, $page, $limit, $field, $order, $whereOr);
+        $field = '';
+
+        $data = AdminMenuService::role($where, $page, $limit, $order, $field, $whereOr);
 
         return success($data);
     }
@@ -233,16 +245,17 @@ class AdminMenu
             $where2 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id . ',%'], ['is_delete', '=', 0]];
             $where3 = [['admin_menu_ids', 'like', '%,' . $admin_menu_id], ['is_delete', '=', 0]];
             $where  = [$where0, $where1, $where2, $where3];
-            $whereOr = true;
 
-            $field = '';
+            $whereOr = true;
 
             $order = [];
             if ($sort_field && $sort_type) {
                 $order = [$sort_field => $sort_type];
             }
 
-            $data = AdminUserService::list($where, $page, $limit, $field, $order, $whereOr);
+            $field = '';
+
+            $data = AdminUserService::list($where, $page, $limit, $order, $field, $whereOr);
 
             return success($data);
         } else {
@@ -258,16 +271,17 @@ class AdminMenu
             $where2 = [['admin_role_ids', 'like', '%,' . $admin_role_id . ',%'], ['is_delete', '=', 0]];
             $where3 = [['admin_role_ids', 'like', '%,' . $admin_role_id], ['is_delete', '=', 0]];
             $where  = [$where0, $where1, $where2, $where3];
-            $whereOr = true;
 
-            $field = '';
+            $whereOr = true;
 
             $order = [];
             if ($sort_field && $sort_type) {
                 $order = [$sort_field => $sort_type];
             }
 
-            $data = AdminMenuService::user($where, $page, $limit, $field, $order, $whereOr);
+            $field = '';
+
+            $data = AdminMenuService::user($where, $page, $limit, $order, $field, $whereOr);
 
             return success($data);
         }
