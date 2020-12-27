@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : token验证中间件
+ * @Description  : Token验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-09
+ * @LastEditTime : 2020-12-24
  */
 
 namespace app\admin\middleware;
