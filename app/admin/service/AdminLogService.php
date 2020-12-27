@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\service;
@@ -133,54 +133,57 @@ class AdminLogService
     /**
      * 日志添加
      *
-     * @param array $admin_log 日志数据
+     * @param array $param 日志数据
      * 
      * @return void
      */
-    public static function add($admin_log = [])
+    public static function add($param = [])
     {
-        $ip = $admin_log['request_ip'];
+        if ($param['request_ip']) {
+            $ip_info = IpInfoService::info($param['request_ip']);
 
-        if ($ip) {
-            $ipinfo = IpInfoService::info($ip);
-
-            $admin_log['request_country']  = $ipinfo['country'];
-            $admin_log['request_province'] = $ipinfo['province'];
-            $admin_log['request_city']     = $ipinfo['city'];
-            $admin_log['request_area']     = $ipinfo['area'];
-            $admin_log['request_region']   = $ipinfo['region'];
-            $admin_log['request_isp']      = $ipinfo['isp'];
+            $param['request_country']  = $ip_info['country'];
+            $param['request_province'] = $ip_info['province'];
+            $param['request_city']     = $ip_info['city'];
+            $param['request_area']     = $ip_info['area'];
+            $param['request_region']   = $ip_info['region'];
+            $param['request_isp']      = $ip_info['isp'];
         }
 
-        $admin_log['create_time'] = date('Y-m-d H:i:s');
+        $param['create_time'] = date('Y-m-d H:i:s');
 
-        Db::name('admin_log')->strict(false)->insert($admin_log);
+        Db::name('admin_log')->strict(false)->insert($param);
     }
 
     /**
      * 日志修改
      *
-     * @param array $admin_log 日志数据
+     * @param array $param 日志数据
      * 
      * @return array
      */
-    public static function edit($admin_log = [])
+    public static function edit($param = [])
     {
-        $admin_log_id = $admin_log['admin_log_id'];
+        $admin_log_id = $param['admin_log_id'];
 
-        $admin_log['update_time'] = date('Y-m-d H:i:s');
+        unset($param['admin_log_id']);
 
-        $update = Db::name('admin_log')
+        $param['request_param'] = serialize($param['request_param']);
+        $param['update_time']   = date('Y-m-d H:i:s');
+
+        $res = Db::name('admin_log')
             ->where('admin_log_id', $admin_log_id)
-            ->update($admin_log);
+            ->update($param);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
+        $param['admin_log_id'] = $admin_log_id;
+
         AdminLogCache::del($admin_log_id);
 
-        return $admin_log;
+        return $param;
     }
 
     /**
@@ -192,22 +195,22 @@ class AdminLogService
      */
     public static function dele($admin_log_id)
     {
-        $data['is_delete']   = 1;
-        $data['delete_time'] = date('Y-m-d H:i:s');
+        $update['is_delete']   = 1;
+        $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $update = Db::name('admin_log')
+        $res = Db::name('admin_log')
             ->where('admin_log_id', $admin_log_id)
-            ->update($data);
+            ->update($update);
 
-        if (empty($update)) {
+        if (empty($res)) {
             exception();
         }
 
-        $data['admin_log_id'] = $admin_log_id;
+        $update['admin_log_id'] = $admin_log_id;
 
         AdminLogCache::del($admin_log_id);
 
-        return $data;
+        return $update;
     }
 
     /**

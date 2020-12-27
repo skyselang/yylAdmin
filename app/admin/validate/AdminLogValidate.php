@@ -3,7 +3,7 @@
  * @Description  : 日志验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\validate;
@@ -25,7 +25,8 @@ class AdminLogValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'log_id' => ['admin_log_id'],
+        'log_id'   => ['admin_log_id'],
+        'log_dele' => ['admin_log_id'],
     ];
 
     // 自定义验证规则：日志是否存在

@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-11
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -83,7 +83,7 @@ class AdminLog
         $data = AdminLogService::info($param['admin_log_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('日志已被删除');
+            exception('日志已被删除：' . $param['admin_log_id']);
         }
 
         return success($data);
@@ -100,7 +100,7 @@ class AdminLog
     {
         $param['admin_log_id'] = Request::param('admin_log_id/d', '');
 
-        validate(AdminLogValidate::class)->scene('log_id')->check($param);
+        validate(AdminLogValidate::class)->scene('log_dele')->check($param);
 
         $data = AdminLogService::dele($param['admin_log_id']);
 
@@ -138,10 +138,9 @@ class AdminLog
             foreach ($date_arr as $k => $v) {
                 $number[$v] = AdminLogService::staNumber($v);
             }
+
             $data['number'] = $number;
-
-            $data['date'] = AdminLogService::staDate($date);
-
+            $data['date']   = AdminLogService::staDate($date);
             $data['region'] = AdminLogService::staRegion($date, $region);
         }
 
