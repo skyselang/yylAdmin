@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-22
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\service;
@@ -16,7 +16,7 @@ class AdminToolService
     /**
      * 随机字符串
      *
-     * @param array $param 生成参数
+     * @param array $param 字符串参数
      * 
      * @return array
      */
@@ -116,7 +116,7 @@ class AdminToolService
      */
     public static function qrcode($str = '')
     {
-        if (empty($str)) {
+        if ($str == '') {
             $str = 'https://gitee.com/skyselang/yylAdmin';
         }
 
@@ -149,8 +149,8 @@ class AdminToolService
      */
     public static function byteTran($param)
     {
-        $type  = $param['type'] ?: 'b';
-        $value = $param['value'] ?: 0;
+        $type  = $param['type'] ?: 'B';
+        $value = $param['value'] ?: 1024;
 
         $hex_b = 8;
         $hex_B = 1024;

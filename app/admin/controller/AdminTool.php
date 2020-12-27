@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 实用工具
+ * @Description  : 实用工具合集
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -93,8 +93,8 @@ class AdminTool
      */
     public function byteTran()
     {
-        $param['type']  = Request::param('type', 'b');
-        $param['value'] = Request::param('value', 0);
+        $param['type']  = Request::param('type', 'B');
+        $param['value'] = Request::param('value', 1024);
 
         $data = AdminToolService::byteTran($param);
 
