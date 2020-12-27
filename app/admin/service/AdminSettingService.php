@@ -2,8 +2,8 @@
 /*
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-08-04
- * @LastEditTime : 2020-12-10
+ * @Date         : 2020-10-12
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\service;
@@ -68,8 +68,8 @@ class AdminSettingService
                 AdminUserCache::set($admin_user_new['admin_user_id'], $admin_user_new);
             }
 
-            $data['msg'] = '缓存已清空';
-            $data['res'] = $res;
+            $data['msg']   = '缓存已清空';
+            $data['clear'] = $res;
 
             return $data;
         }
@@ -173,7 +173,8 @@ class AdminSettingService
                 $admin_setting['admin_verify']     = serialize([]);
                 $admin_setting['admin_token']      = serialize([]);
                 $admin_setting['create_time']      = date('Y-m-d H:i:s');
-                Db::name('admin_setting')->insert($admin_setting);
+                Db::name('admin_setting')
+                    ->insert($admin_setting);
             }
 
             // 验证码
@@ -198,7 +199,9 @@ class AdminSettingService
             $admin_setting['admin_verify'] = serialize($admin_verify);
             $admin_setting['admin_token']  = serialize($admin_token);
             $admin_setting['update_time']  = date('Y-m-d H:i:s');
-            Db::name('admin_setting')->where('admin_setting_id', $admin_setting_id)->update($admin_setting);
+            Db::name('admin_setting')
+                ->where('admin_setting_id', $admin_setting_id)
+                ->update($admin_setting);
 
             AdminSettingCache::set($admin_setting_id, $admin_setting);
 
@@ -237,8 +240,8 @@ class AdminSettingService
             $server_info['domain']              = $_SERVER['SERVER_NAME'];                   //domain
             $server_info['port']                = $_SERVER['SERVER_PORT'];                   //port
             $server_info['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //protocol
-            $server_info['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
             $server_info['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //max_execution_time
+            $server_info['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
             $server_info['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
 
             $expire = 12 * 60 * 60;
