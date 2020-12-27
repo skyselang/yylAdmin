@@ -3,14 +3,14 @@
  * @Description  : 个人中心验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-11-19
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\validate;
 
-use app\admin\service\AdminUserService;
 use think\Validate;
 use think\facade\Db;
+use app\admin\service\AdminUserService;
 
 class AdminMyValidate extends Validate
 {
@@ -19,7 +19,7 @@ class AdminMyValidate extends Validate
         'admin_user_id' => ['require', 'checkAdminUser'],
         'username'      => ['require', 'checkUsername', 'length' => '2,32'],
         'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
-        'password_old'  => ['require', 'length' => '6,18'],
+        'password_old'  => ['require'],
         'password_new'  => ['require', 'length' => '6,18'],
         'email'         => ['email', 'checkEmail'],
         'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif', 'fileSize' => '51200'],
@@ -33,7 +33,6 @@ class AdminMyValidate extends Validate
         'nickname.require'      => '请输入昵称',
         'nickname.length'       => '昵称长度为1至32个字符',
         'password_old.require'  => '请输入旧密码',
-        'password_old.length'   => '旧密码长度为6至18个字符',
         'password_new.require'  => '请输入新密码',
         'password_new.length'   => '新密码长度为6至18个字符',
         'email.email'           => '请输入正确的邮箱地址',

@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -53,7 +53,9 @@ class AdminMy
 
             $data = AdminMyService::edit($param);
 
-            return success($data);
+            if ($data['is_delete'] == 1) {
+                exception('账号信息错误，请重新登录！');
+            }
         } else {
             $param['username'] = Request::param('username/s', '');
             $param['nickname'] = Request::param('nickname/s', '');
@@ -62,9 +64,9 @@ class AdminMy
             validate(AdminMyValidate::class)->scene('my_edit')->check($param);
 
             $data = AdminMyService::edit($param, 'post');
-
-            return success($data);
         }
+
+        return success($data);
     }
 
     /**
@@ -88,7 +90,7 @@ class AdminMy
     }
 
     /**
-     * 修改头像
+     * 更换头像
      *
      * @method POST
      * 
@@ -117,7 +119,6 @@ class AdminMy
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $admin_user_id   = Request::param('admin_user_id/d', '');
         $admin_log_type  = Request::param('admin_log_type/d', '');
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
@@ -125,12 +126,12 @@ class AdminMy
         $menu_keyword    = Request::param('menu_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
 
+        $admin_user_id   = admin_user_id();
+
         validate(AdminMyValidate::class)->scene('user_id')->check(['admin_user_id' => $admin_user_id]);
 
-        $where = [];
-        if ($admin_user_id) {
-            $where[] = ['admin_user_id', '=', $admin_user_id];
-        }
+        $where   = [];
+        $where[] = ['admin_user_id', '=', $admin_user_id];
         if ($admin_log_type) {
             $where[] = ['admin_log_type', '=', $admin_log_type];
         }
@@ -147,14 +148,12 @@ class AdminMy
             $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
         }
 
-        $field = '';
-
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminMyService::log($where, $page, $limit, $field, $order);
+        $data = AdminMyService::log($where, $page, $limit, $order);
 
         return success($data);
     }

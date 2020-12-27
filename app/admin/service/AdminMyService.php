@@ -2,8 +2,8 @@
 /*
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-14
- * @LastEditTime : 2020-12-10
+ * @Date         : 2020-10-12
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\service;
@@ -43,8 +43,7 @@ class AdminMyService
     /**
      * 修改信息
      *
-     * @param array  $param  用户信息
-     * @param string $method 请求方式
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -59,18 +58,23 @@ class AdminMyService
             $data['username']      = $admin_user['username'];
             $data['nickname']      = $admin_user['nickname'];
             $data['email']         = $admin_user['email'];
+            $data['is_delete']     = $admin_user['is_delete'];
 
             return $data;
         } else {
+            unset($param['admin_user_id']);
+
             $param['update_time'] = date('Y-m-d H:i:s');
 
-            $update = Db::name('admin_user')
+            $res = Db::name('admin_user')
                 ->where('admin_user_id', $admin_user_id)
                 ->update($param);
 
-            if (empty($update)) {
+            if (empty($res)) {
                 exception();
             }
+
+            $param['admin_user_id'] = $admin_user_id;
 
             AdminUserCache::upd($admin_user_id);
 
@@ -108,13 +112,16 @@ class AdminMyService
             exception();
         }
 
+        $update['admin_user_id'] = $admin_user_id;
+        $update['password']      = $res;
+
         AdminUserCache::upd($admin_user_id);
 
-        return $res;
+        return $update;
     }
 
     /**
-     * 修改头像
+     * 更换头像
      *
      * @param array $param 头像信息
      * 
@@ -127,7 +134,7 @@ class AdminMyService
 
         $avatar_name = Filesystem::disk('public')
             ->putFile('admin_user', $avatar, function () use ($admin_user_id) {
-                return $admin_user_id . '/avatar';
+                return $admin_user_id . '/' . $admin_user_id . '_avatar';
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
@@ -155,16 +162,16 @@ class AdminMyService
      * 我的日志
      *
      * @param array   $where 条件
-     * @param string  $field 字段
      * @param integer $page  页数
      * @param integer $limit 数量
      * @param array   $order 排序
+     * @param string  $field 字段
      * 
      * @return array 
      */
-    public static function log($where = [], $page = 1, $limit = 10, $field = '',  $order = [])
+    public static function log($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        $data = AdminLogService::list($where, $page, $limit, $field, $order);
+        $data = AdminLogService::list($where, $page, $limit, $order, $field);
 
         return $data;
     }
