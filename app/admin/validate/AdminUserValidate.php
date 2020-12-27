@@ -3,14 +3,14 @@
  * @Description  : 用户验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\validate;
 
-use app\admin\service\AdminUserService;
 use think\Validate;
 use think\facade\Db;
+use app\admin\service\AdminUserService;
 
 class AdminUserValidate extends Validate
 {
@@ -44,9 +44,6 @@ class AdminUserValidate extends Validate
     // 验证场景
     protected $scene = [
         'user_id'      => ['admin_user_id'],
-        'username'     => ['username'],
-        'nickname'     => ['nickname'],
-        'password'     => ['password'],
         'user_login'   => ['username', 'password'],
         'user_add'     => ['username', 'nickname', 'password', 'email'],
         'user_edit'    => ['admin_user_id', 'username', 'nickname', 'email'],
@@ -112,7 +109,7 @@ class AdminUserValidate extends Validate
     // 自定义验证规则：用户是否存在
     protected function checkAdminUser($value, $rule, $data = [])
     {
-        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
+        $admin_user_id = $value;
 
         $admin_user = AdminUserService::info($admin_user_id);
 
@@ -200,11 +197,7 @@ class AdminUserValidate extends Validate
     {
         $admin_user_id = $value;
 
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id,admin_role_ids,admin_menu_ids')
-            ->where('admin_user_id', '=', $admin_user_id)
-            ->where('is_delete', '=', 0)
-            ->find();
+        $admin_user = AdminUserService::info($admin_user_id);
 
         if ($admin_user['admin_role_ids'] || $admin_user['admin_menu_ids']) {
             return '请在[权限]中取消所有角色和菜单后再删除';

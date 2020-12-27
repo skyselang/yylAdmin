@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2020-12-25
  */
 
 namespace app\admin\controller;
@@ -42,14 +42,14 @@ class AdminUser
             $where[] = ['email', 'like', '%' . $email . '%'];
         }
 
-        $field = '';
-
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminUserService::list($where, $page, $limit, $field, $order);
+        $field = '';
+
+        $data = AdminUserService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
@@ -70,7 +70,7 @@ class AdminUser
         $data = AdminUserService::info($param['admin_user_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('用户已被删除');
+            exception('用户已被删除：' . $param['admin_user_id']);
         }
 
         return success($data);
@@ -102,22 +102,33 @@ class AdminUser
     /**
      * 用户修改
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
     public function userEdit()
     {
         $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['username']      = Request::param('username/s', '');
-        $param['nickname']      = Request::param('nickname/s', '');
-        $param['email']         = Request::param('email/s', '');
-        $param['remark']        = Request::param('remark/s', '');
-        $param['sort']          = Request::param('sort/d', 200);
 
-        validate(AdminUserValidate::class)->scene('user_edit')->check($param);
+        if (Request::isGet()) {
+            validate(AdminUserValidate::class)->scene('user_id')->check($param);
 
-        $data = AdminUserService::edit($param);
+            $data = AdminUserService::edit($param);
+
+            if ($data['admin_user']['is_delete'] == 1) {
+                exception('用户已被删除：' . $param['admin_user_id']);
+            }
+        } else {
+            $param['username'] = Request::param('username/s', '');
+            $param['nickname'] = Request::param('nickname/s', '');
+            $param['email']    = Request::param('email/s', '');
+            $param['remark']   = Request::param('remark/s', '');
+            $param['sort']     = Request::param('sort/d', 200);
+
+            validate(AdminUserValidate::class)->scene('user_edit')->check($param);
+
+            $data = AdminUserService::edit($param, 'post');
+        }
 
         return success($data);
     }
@@ -141,7 +152,7 @@ class AdminUser
     }
 
     /**
-     * 用户修改头像
+     * 用户更换头像
      *
      * @method POST
      * 
@@ -181,7 +192,7 @@ class AdminUser
     /**
      * 用户权限分配
      *
-     * @method POST
+     * @method GET|POST
      * 
      * @return json
      */
@@ -215,7 +226,7 @@ class AdminUser
     public function userDisable()
     {
         $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['is_disable']    = Request::param('is_disable/s', '0');
+        $param['is_disable']    = Request::param('is_disable/d', 0);
 
         validate(AdminUserValidate::class)->scene('user_disable')->check($param);
 
@@ -234,7 +245,7 @@ class AdminUser
     public function userAdmin()
     {
         $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['is_admin']      = Request::param('is_admin/s', '0');
+        $param['is_admin']      = Request::param('is_admin/d', 0);
 
         validate(AdminUserValidate::class)->scene('user_admin')->check($param);
 
