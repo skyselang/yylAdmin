@@ -23,9 +23,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `ya_admin_log`;
 CREATE TABLE `ya_admin_log`  (
   `admin_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志id',
-  `admin_log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
   `admin_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
   `admin_menu_id` int(11) NULL DEFAULT 0 COMMENT '菜单id',
+  `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
   `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
   `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ip',
   `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
