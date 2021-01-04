@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-01-04
  */
 
 namespace app\admin\controller;
@@ -29,15 +29,15 @@ class MemberLog
         $limit           = Request::param('limit/d', 10);
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
-        $member_log_type = Request::param('member_log_type/d', '');
+        $log_type        = Request::param('log_type/d', '');
         $member_keyword  = Request::param('member_keyword/s', '');
         $request_keyword = Request::param('request_keyword/s', '');
         $api_keyword     = Request::param('api_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
 
         $where = [];
-        if ($member_log_type) {
-            $where[] = ['member_log_type', '=', $member_log_type];
+        if ($log_type) {
+            $where[] = ['log_type', '=', $log_type];
         }
         if ($member_keyword) {
             $member     = MemberService::etQuery($member_keyword);

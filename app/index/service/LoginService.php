@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-01-04
  */
 
 namespace app\index\service;
@@ -74,12 +74,12 @@ class LoginService
             $request_param['verify_code'] = $param['verify_code'];
         }
 
-        $log['member_log_type'] = 1;
-        $log['member_id']       = $member_id;
-        $log['api_id']          = $api['api_id'];
-        $log['request_ip']      = $request_ip;
-        $log['request_method']  = $param['request_method'];
-        $log['request_param']   = serialize($request_param);
+        $log['member_id']      = $member_id;
+        $log['log_type']       = 1;
+        $log['api_id']         = $api['api_id'];
+        $log['request_ip']     = $request_ip;
+        $log['request_method'] = $param['request_method'];
+        $log['request_param']  = serialize($request_param);
         MemberLogService::add($log);
 
         $member = MemberService::info($member_id);

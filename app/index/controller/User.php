@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-27
+ * @LastEditTime : 2021-01-04
  */
 
 namespace app\index\controller;
@@ -121,17 +121,17 @@ class User
      */
     public function userLog()
     {
-        $member_id       = member_id();
-        $page            = Request::param('page/d', 1);
-        $limit           = Request::param('limit/d', 10);
-        $member_log_type = Request::param('member_log_type/d', '');
-        $sort_field      = Request::param('sort_field/s ', '');
-        $sort_type       = Request::param('sort_type/s', '');
-        $create_time     = Request::param('create_time/a', []);
+        $member_id   = member_id();
+        $page        = Request::param('page/d', 1);
+        $limit       = Request::param('limit/d', 10);
+        $log_type    = Request::param('log_type/d', '');
+        $sort_field  = Request::param('sort_field/s ', '');
+        $sort_type   = Request::param('sort_type/s', '');
+        $create_time = Request::param('create_time/a', []);
 
         $where[] = ['member_id', '=', $member_id];
-        if ($member_log_type) {
-            $where[] = ['member_log_type', '=', $member_log_type];
+        if ($log_type) {
+            $where[] = ['log_type', '=', $log_type];
         }
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];

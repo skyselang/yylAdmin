@@ -346,8 +346,8 @@ INSERT INTO `ya_member` VALUES (1000002, 'admin', 'admin', 'e10adc3949ba59abbe56
 DROP TABLE IF EXISTS `ya_member_log`;
 CREATE TABLE `ya_member_log`  (
   `member_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志id',
-  `member_log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
   `member_id` int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
+  `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
   `api_id` int(11) NULL DEFAULT 0 COMMENT '接口id',
   `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
   `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求IP',
