@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-01-05
  */
 
 namespace app\admin\controller;
@@ -27,19 +27,19 @@ class Member
         $limit      = Request::param('limit/d', 10);
         $sort_field = Request::param('sort_field/s ', '');
         $sort_type  = Request::param('sort_type/s', '');
+        $member_id  = Request::param('member_id/d', '');
         $username   = Request::param('username/s', '');
-        $nickname   = Request::param('nickname/s', '');
         $phone      = Request::param('phone/s', '');
         $email      = Request::param('email/s', '');
         $date_type  = Request::param('date_type/s', '');
         $date_range = Request::param('date_range/a', []);
 
         $where = [];
+        if ($member_id) {
+            $where[] = ['member_id', '=', $member_id];
+        }
         if ($username) {
             $where[] = ['username', 'like', '%' . $username . '%'];
-        }
-        if ($nickname) {
-            $where[] = ['nickname', 'like', '%' . $nickname . '%'];
         }
         if ($phone) {
             $where[] = ['phone', 'like', '%' . $phone . '%'];
