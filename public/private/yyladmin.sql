@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 27/12/2020 11:28:42
+ Date: 05/01/2021 17:38:14
 */
 
 SET NAMES utf8mb4;
@@ -25,8 +25,8 @@ CREATE TABLE `ya_admin_log`  (
   `admin_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志id',
   `admin_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
   `admin_menu_id` int(11) NULL DEFAULT 0 COMMENT '菜单id',
-  `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
   `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
+  `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
   `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ip',
   `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
   `request_province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
@@ -168,7 +168,7 @@ INSERT INTO `ya_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/
 INSERT INTO `ya_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/AdminTool/toolMapSogou', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/AdminTool/toolMapTencent', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (149, 50, '北斗地图坐标拾取', 'admin/AdminTool/toolMapBeidou', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (150, 0, '地区管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (150, 157, '地区管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/regionList', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/regionInfo', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/regionAdd', 200, 0, 0, 0, NULL, NULL, NULL);
