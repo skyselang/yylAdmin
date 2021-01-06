@@ -3,7 +3,7 @@
  * @Description  : 会员验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-10
+ * @LastEditTime : 2021-01-06
  */
 
 namespace app\admin\validate;
@@ -17,11 +17,11 @@ class MemberValidate extends Validate
     // 验证规则
     protected $rule = [
         'member_id'    => ['require', 'checkMember'],
-        'username'     => ['require', 'checkUsername', 'length' => '2,32'],
+        'username'     => ['require', 'alphaDash', 'checkUsername', 'length' => '2,32'],
         'nickname'     => ['checkNickname', 'length' => '1,32'],
-        'password'     => ['require', 'length' => '6,18', 'alphaNum'],
+        'password'     => ['require', 'alphaNum', 'length' => '6,18'],
         'password_old' => ['require', 'checkPwdOld'],
-        'password_new' => ['require', 'length' => '6,18', 'alphaNum'],
+        'password_new' => ['require', 'alphaNum', 'length' => '6,18'],
         'phone'        => ['mobile', 'checkPhone'],
         'email'        => ['email', 'checkEmail'],
         'avatar'       => ['require', 'file', 'image', 'fileExt' => 'jpg,png', 'fileSize' => '102400'],
@@ -32,6 +32,7 @@ class MemberValidate extends Validate
         'member_id.require'     => '缺少参数：会员id',
         'username.require'      => '请输入账号',
         'username.length'       => '账号长度为2至32个字符',
+        'username.alphaDash'    => '账号由字母、数字、下划线、破折号组成',
         'nickname.require'      => '请输入昵称',
         'nickname.length'       => '昵称长度为1至32个字符',
         'password.require'      => '请输入密码',
