@@ -28,7 +28,9 @@ yylAdmin是一个极简后台管理系统，只有登录退出、权限管理、
 
 ## 要求
 
-- PHP >= 7.1
+- PHP >= 7.2  
+  安装 fileinfo、redis 扩展  
+  开启 putenv、proc_open 函数
 - MySQL >= 5.6
 - Redis
 - node >= 10.15.0
