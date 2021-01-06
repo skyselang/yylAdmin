@@ -5,5 +5,4 @@
 /public/storage
 /vendor
 *.log
-.env
 .user.ini
