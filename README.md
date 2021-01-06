@@ -4,15 +4,15 @@ Gitee：<a href="https://gitee.com/skyselang/yylAdmin">https://gitee.com/skysela
 Github：<a href="https://github.com/skyselang/yylAdmin">https://github.com/skyselang/yylAdmin</a>
 
 ## 简介
-
-<a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架，只有后台后端、后台前端、前台后端基础功能，你可以在此基础根据你的业务需求进行开发扩展。前后端分离，后端采用ThinkPHP6，前端采用Vue2。
+免费开源、快速、简单、轻量  
+yylAdmin是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架，只有后台后端、后台前端、前台后端基础功能，你可以在此基础根据你的业务需求进行开发扩展。前后端分离，后端采用ThinkPHP6，前端采用Vue2。
 - <a href="https://github.com/skyselang/yylAdmin" target="_blank">yylAdmin</a>
 - <a href="https://github.com/skyselang/yylAdminWeb" target="_blank">yylAdminWeb</a>
 
 ## 演示
 
 地址：<a href="https://admin.yyladmin.top" target="_blank">yylAdmin demo</a>  
-账号：yyladmin、admin  
+账号：yyladmin、admin、demo、php  
 密码：123456  
 提示：演示账号只有部分权限，请安装体验全部功能
 
@@ -31,6 +31,8 @@ Github：<a href="https://github.com/skyselang/yylAdmin">https://github.com/skys
 - PHP >= 7.1
 - MySQL >= 5.6
 - Redis
+- node >= 10.15.0
+- npm >= 5.6.0
 
 ## 安装
 
@@ -42,18 +44,17 @@ git clone https://github.com/skyselang/yylAdmin.git
 # 进入项目目录
 cd yylAdmin
 
+# 设置composer
+composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+
 # 安装依赖
 composer install
-
-# 可以通过composer镜像解决速度慢的问题
-composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 # 导入数据库
 数据库文件：public/private/yyladmin.sql
 
-# 配置
-重命名.env.example为.env，修改里面配置
-或者直接修改config文件夹里面的相应配置
+# 修改配置
+修改.env环境变量文件里面配置（或者直接修改config文件夹里面的相应配置）
 ```
 
 ### WEB部分
@@ -64,23 +65,20 @@ git clone https://github.com/skyselang/yylAdminWeb.git
 # 进入项目目录
 cd yylAdminWeb
 
-# 安装依赖
-npm install
-
-# 可以通过npm镜像解决速度慢的问题
-npm install --registry=https://registry.npm.taobao.org
-# 或者使用cnpm，安装后使用cnpm替代npm，如 cnpm install
+# 使用cnpm
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 
-# 配置
-在.env*环境变量文件里面修改接口地址
+# 安装依赖
+cnpm install
+
+# 修改配置
+在.env.xxx环境变量文件里面修改接口地址
 
 # 启动服务
-npm run dev
+cnpm run dev
 ```
 
 ### 访问
-
 地址：http://localhost:9527  
 账号：yyladmin  
 密码：123456  
@@ -96,13 +94,13 @@ yylAdmin
 │   │── common                 # 公共（缓存、工具等）
 │   └── index                  # 前台接口
 │   ...
-├── config                     # 配置
+├── config                     # 配置目录（admin、index，其它为tp配置）
 ├── extend                     # 扩展类库
-├── public                     # 静态资源
-├── route                      # 路由
+├── public                     # 静态资源（上传的目录需要读写权限）
+├── route                      # 路由（没有用到路由）
 ├── runtime                    # 运行时目录（读写权限）
 ├── vendor                     # Composer类库
-├── .env.example               # 环境变量示例文件（重命名.env后使用）
+├── .env                       # 环境变量文件
 ...
 # 更多请参考thinkphp6目录结构
 
@@ -163,16 +161,16 @@ yylAdminWeb
 
 ```bash
 # 构建测试环境
-npm run build:stage
+cnpm run build:stage
 
 # 构建生产环境
-npm run build:prod
+cnpm run build:prod
 
 # 代码格式检查
-npm run lint
+cnpm run lint
 
 # 代码格式检查并自动修复
-npm run lint -- --fix
+cnpm run lint -- --fix
 ```
 
 ## 预览
@@ -185,7 +183,6 @@ npm run lint -- --fix
 
 ### npm
 - 推荐使用cnpm：<a href="https://developer.aliyun.com/mirror/NPM" target="_blank">cnpm</a>
-- 删除node_modules文件夹后使用cnpm重新安装依赖
 
 ### ui
 - 使用的是element-ui：<a href="https://element.eleme.cn/#/zh-CN/component/installation" target="_blank">element-ui</a>
@@ -198,5 +195,5 @@ npm run lint -- --fix
 
 ## 协议
 
-- Apache2协议，代码开源
+- Apache2协议，免费开源
 - Copyright skyselang https://github.com/skyselang
