@@ -3,7 +3,7 @@
  * @Description  : IP信息缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-01-08
  */
 
 namespace app\common\cache;
@@ -21,7 +21,7 @@ class IpInfoCache
      */
     public static function key($ip = '')
     {
-        $key = 'IpInfo:' . $ip;
+        $key = 'ipInfo:' . $ip;
 
         return $key;
     }
@@ -39,7 +39,7 @@ class IpInfoCache
     {
         $key = self::key($ip);
         $val = $ipinfo;
-        $ttl = 15 * 24 * 60 * 60;
+        $ttl = 30 * 24 * 60 * 60;
         $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $val, $exp);

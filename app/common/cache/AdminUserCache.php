@@ -3,7 +3,7 @@
  * @Description  : 用户缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-01-08
  */
 
 namespace app\common\cache;
@@ -40,7 +40,7 @@ class AdminUserCache
     {
         $key = self::key($admin_user_id);
         $val = $admin_user;
-        $ttl = 1 * 24 * 60 * 60;
+        $ttl = 7 * 24 * 60 * 60;
         $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $val, $exp);

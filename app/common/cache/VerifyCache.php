@@ -3,7 +3,7 @@
  * @Description  : 验证码缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-01-08
  */
 
 namespace app\common\cache;
@@ -39,8 +39,7 @@ class VerifyCache
     {
         $key = self::key($verify_id);
         $val = $verify_code;
-        $ttl = 7 * 24 * 60 * 60;
-        $exp = $expire ?: $ttl;
+        $exp = $expire ?: 180;
 
         $res = Cache::set($key, $val, $exp);
 

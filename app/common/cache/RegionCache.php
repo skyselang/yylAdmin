@@ -3,7 +3,7 @@
  * @Description  : 地区缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-17
+ * @LastEditTime : 2021-01-08
  */
 
 namespace app\common\cache;
@@ -27,22 +27,6 @@ class RegionCache
     }
 
     /**
-     * 缓存有效时间
-     *
-     * @param integer $expire 有效时间
-     * 
-     * @return integer
-     */
-    public static function exp($expire = 0)
-    {
-        if (empty($expire)) {
-            $expire = 3 * 24 * 60 * 60;
-        }
-
-        return $expire;
-    }
-
-    /**
      * 缓存设置
      *
      * @param integer|string $region_id 地区id
@@ -55,7 +39,8 @@ class RegionCache
     {
         $key = self::key($region_id);
         $val = $region;
-        $exp = $expire ?: self::exp();
+        $ttl = 7 * 24 * 60 * 60;
+        $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $val, $exp);
 
