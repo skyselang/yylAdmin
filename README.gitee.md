@@ -55,7 +55,7 @@ composer install
 数据库文件：public/private/yyladmin.sql
 
 # 修改配置
-重命名.env.example成.env环境变量文件修改里面配置（或者直接修改config文件夹里面的相应配置）
+重命名.env.example成.env环境变量文件修改里面配置（或修改config文件夹里面的配置）
 ```
 
 ### WEB部分
