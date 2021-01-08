@@ -1,7 +1,6 @@
 # yylAdmin
 
-Gitee：<a href="https://gitee.com/skyselang/yylAdmin">https://gitee.com/skyselang/yylAdmin</a>  
-Github：<a href="https://github.com/skyselang/yylAdmin">https://github.com/skyselang/yylAdmin</a>
+<a href="https://gitee.com/skyselang/yylAdmin">Gitee</a>  |  <a href="https://github.com/skyselang/yylAdmin">Github</a>
 
 ## 简介
 免费开源、快速、简单、轻量  
@@ -56,7 +55,7 @@ composer install
 数据库文件：public/private/yyladmin.sql
 
 # 修改配置
-修改.env环境变量文件里面配置（或者直接修改config文件夹里面的相应配置）
+重命名.env.example成.env环境变量文件修改里面配置（或者直接修改config文件夹里面的相应配置）
 ```
 
 ### WEB部分
