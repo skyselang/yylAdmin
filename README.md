@@ -97,11 +97,18 @@ yylAdmin
 │   ...
 ├── config                     # 配置目录（admin、index，其它为tp配置）
 ├── extend                     # 扩展类库
-├── public                     # 静态资源（上传的目录需要读写权限）
+├── public                     # 对外访问目录
+│   │── private                # 数据库文件在里面
+│   │── static                 # 静态资源目录
+│   │── storage                # 上传目录（读写权限）
+│   │── .htaccess              # apache重写文件
+│   │── index.php              # 入口文件
+│   └── nginx.htaccess         # nginx重写文件
+│   ...                 
 ├── route                      # 路由（没有用到路由）
 ├── runtime                    # 运行时目录（读写权限）
-├── vendor                     # Composer类库
-├── .env                       # 环境变量文件
+├── vendor                     # Composer类库目录
+├── .env.example               # 环境变量示例文件，重命名.env后使用
 ...
 # 更多请参考thinkphp6目录结构
 
