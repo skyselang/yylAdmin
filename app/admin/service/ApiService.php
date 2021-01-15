@@ -3,13 +3,14 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-24
+ * @LastEditTime : 2021-01-15
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Config;
+use think\facade\Filesystem;
 use app\common\cache\ApiCache;
 
 class ApiService
@@ -133,7 +134,7 @@ class ApiService
         $api_id = $param['api_id'];
 
         if ($method == 'get') {
-            $data['api_info'] = self::info($api_id);
+            $data = self::info($api_id);
 
             return $data;
         } else {
@@ -188,6 +189,30 @@ class ApiService
         ApiCache::del();
         ApiCache::del($api_id);
         ApiCache::del($api['api_url']);
+
+        return $update;
+    }
+
+    /**
+     * 接口上传图片
+     *
+     * @param array $param 图片信息
+     * 
+     * @return array
+     */
+    public static function upload($param)
+    {
+        $image_field = $param['image_field'];
+        $image_file  = $param['image_file'];
+
+        $image_file_name = Filesystem::disk('public')
+            ->putFile('api', $image_file, function () use ($image_field) {
+                return date('Ymd') . '/' . date('YmdHis') . '_' . $image_field;
+            });
+
+        $update['image']       = 'storage/' . $image_file_name;
+        $update['image_src']   = file_url($update['image']);
+        $update['image_field'] = $image_field;
 
         return $update;
     }

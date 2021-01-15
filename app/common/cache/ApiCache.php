@@ -3,7 +3,7 @@
  * @Description  : 接口缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-14
+ * @LastEditTime : 2021-01-15
  */
 
 namespace app\common\cache;
@@ -55,7 +55,7 @@ class ApiCache
      *
      * @param integer|string $api_id 接口id
      * 
-     * @return array 接口信息
+     * @return array
      */
     public static function get($api_id = '')
     {
