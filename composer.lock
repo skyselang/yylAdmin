@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8316203ca59556abf0d36815745fac0",
+    "content-hash": "c3bdc4cba470167f3bbff8a27fe8f57e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2087,16 +2087,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.35",
+            "version": "v2.0.36",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "f0bba0b15610d4015655ff6f07ea3d639212076f"
+                "reference": "f48dc09050f25029d41a66bfc9c3c403e4f82024"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/f0bba0b15610d4015655ff6f07ea3d639212076f",
-                "reference": "f0bba0b15610d4015655ff6f07ea3d639212076f",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/f48dc09050f25029d41a66bfc9c3c403e4f82024",
+                "reference": "f48dc09050f25029d41a66bfc9c3c403e4f82024",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2136,9 +2136,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.35"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.36"
             },
-            "time": "2021-01-06T12:55:12+00:00"
+            "time": "2021-01-12T09:08:52+00:00"
         }
     ],
     "packages-dev": [
