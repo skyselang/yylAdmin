@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-01-18
  */
 
 namespace app\admin\controller;
@@ -62,10 +62,13 @@ class AdminMenu
      */
     public function menuAdd()
     {
-        $param['menu_pid']  = Request::param('menu_pid/d', 0);
-        $param['menu_name'] = Request::param('menu_name/s', '');
-        $param['menu_url']  = Request::param('menu_url/s', '');
-        $param['menu_sort'] = Request::param('menu_sort/d', 200);
+        $param['menu_pid']      = Request::param('menu_pid/d', 0);
+        $param['menu_name']     = Request::param('menu_name/s', '');
+        $param['menu_url']      = Request::param('menu_url/s', '');
+        $param['menu_sort']     = Request::param('menu_sort/d', 200);
+        $param['menu_request']  = Request::param('menu_request/s', '');
+        $param['menu_response'] = Request::param('menu_response/s', '');
+        $param['menu_explain']  = Request::param('menu_explain/s', '');
 
         validate(AdminMenuValidate::class)->scene('menu_add')->check($param);
 
@@ -94,10 +97,13 @@ class AdminMenu
                 exception('菜单已被删除：' . $param['admin_menu_id']);
             }
         } else {
-            $param['menu_pid']  = Request::param('menu_pid/d', 0);
-            $param['menu_name'] = Request::param('menu_name/s', '');
-            $param['menu_url']  = Request::param('menu_url/s', '');
-            $param['menu_sort'] = Request::param('menu_sort/d', 200);
+            $param['menu_pid']      = Request::param('menu_pid/d', 0);
+            $param['menu_name']     = Request::param('menu_name/s', '');
+            $param['menu_url']      = Request::param('menu_url/s', '');
+            $param['menu_sort']     = Request::param('menu_sort/d', 200);
+            $param['menu_request']  = Request::param('menu_request/s', '');
+            $param['menu_response'] = Request::param('menu_response/s', '');
+            $param['menu_explain']  = Request::param('menu_explain/s', '');
 
             validate(AdminMenuValidate::class)->scene('menu_edit')->check($param);
 
@@ -121,6 +127,47 @@ class AdminMenu
         validate(AdminMenuValidate::class)->scene('menu_dele')->check($param);
 
         $data = AdminMenuService::dele($param['admin_menu_id']);
+
+        return success($data);
+    }
+
+    /**
+     * 菜单文档
+     *
+     * @method GET
+     * 
+     * @return json
+     */
+    public function menuDoc()
+    {
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+
+        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+
+        $data = AdminMenuService::info($param['admin_menu_id']);
+
+        if ($data['is_delete'] == 1) {
+            exception('菜单已删除：' . $param['admin_menu_id']);
+        }
+
+        return success($data);
+    }
+
+    /**
+     * 菜单上传图片
+     *
+     * @method POST
+     * 
+     * @return json
+     */
+    public function menuUpload()
+    {
+        $param['image_file']  = Request::file('image_file');
+        $param['image_field'] = Request::param('image_field/s', '');
+
+        validate(AdminMenuValidate::class)->scene('menu_image')->check($param);
+
+        $data = AdminMenuService::upload($param);
 
         return success($data);
     }

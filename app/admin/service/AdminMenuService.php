@@ -3,12 +3,13 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-01-18
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
+use think\facade\Filesystem;
 use app\common\cache\AdminMenuCache;
 use app\common\cache\AdminRoleCache;
 use app\common\cache\AdminUserCache;
@@ -128,7 +129,7 @@ class AdminMenuService
     /**
      * 菜单修改
      *
-     * @param array  $param  菜单信息
+     * @param array $param 菜单信息
      * 
      * @return array
      */
@@ -189,6 +190,30 @@ class AdminMenuService
         AdminMenuCache::del();
         AdminMenuCache::del($admin_menu_id);
         AdminMenuCache::del($admin_menu['menu_url']);
+
+        return $update;
+    }
+
+    /**
+     * 菜单上传图片
+     *
+     * @param array $param 图片信息
+     * 
+     * @return array
+     */
+    public static function upload($param)
+    {
+        $image_field = $param['image_field'];
+        $image_file  = $param['image_file'];
+
+        $image_file_name = Filesystem::disk('public')
+            ->putFile('admin_menu', $image_file, function () use ($image_field) {
+                return date('Ymd') . '/' . date('YmdHis') . '_' . $image_field;
+            });
+
+        $update['image']       = 'storage/' . $image_file_name;
+        $update['image_src']   = file_url($update['image']);
+        $update['image_field'] = $image_field;
 
         return $update;
     }
