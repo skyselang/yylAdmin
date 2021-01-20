@@ -12,6 +12,7 @@ return [
     // 接口白名单
     'whitelist' => [
         'index/',
+        'index/Index/',
         'index/Index/index',
         'index/Register/register',
         'index/Login/verify',
