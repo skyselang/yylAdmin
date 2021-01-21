@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-01-21
  */
 
 namespace app\admin\service;
@@ -30,15 +30,40 @@ class AdminSettingService
     public static function settingCache($param = [], $method = 'get')
     {
         if ($method == 'get') {
-            $cache = Cache::handler();
+            $config = Cache::getConfig();
 
-            $data = $cache->info();
+            if ($config['default'] == 'redis') {
+                $cache = Cache::handler();
 
-            $byte['type']  = 'B';
-            $byte['value'] = $data['used_memory_lua'];
+                $data = $cache->info();
 
-            $data['used_memory_lua_human'] = AdminToolService::byteTran($byte)['KB'] . 'K';
-            $data['uptime_in_days']        = $data['uptime_in_days'] . '天';
+                $byte['type']  = 'B';
+                $byte['value'] = $data['used_memory_lua'];
+
+                $data['used_memory_lua_human'] = AdminToolService::byteTran($byte)['KB'] . 'K';
+                $data['uptime_in_days']        = $data['uptime_in_days'] . '天';
+            } elseif ($config['default'] == 'memcache') {
+                $cache = Cache::handler();
+
+                $data = $cache->getstats();
+
+                $data['time']           = date('Y-m-d H:i:s', $data['time']);
+                $data['uptime']         = $data['uptime'] / (24 * 60 * 60) . ' 天';
+                $data['bytes_read']     = AdminToolService::byteTran(['type' => 'B', 'value' => $data['bytes_read']])['MB'] . ' MB';
+                $data['bytes_written']  = AdminToolService::byteTran(['type' => 'B', 'value' => $data['bytes_written']])['MB'] . ' MB';
+                $data['limit_maxbytes'] = AdminToolService::byteTran(['type' => 'B', 'value' => $data['limit_maxbytes']])['MB'] . ' MB';
+            } elseif ($config['default'] == 'wincache') {
+                $cache = Cache::handler();
+
+                $data['wincache_info']['wincache_fcache_meminfo'] = wincache_fcache_meminfo();
+                $data['wincache_info']['wincache_ucache_meminfo'] = wincache_ucache_meminfo();
+                $data['wincache_info']['wincache_rplist_meminfo'] = wincache_rplist_meminfo();
+            }
+
+            $data['type']         = $config['default'];
+            $data['read_times']   = Cache::getReadTimes();
+            $data['write_times']  = Cache::getWriteTimes();
+            $data['store_config'] = Cache::getStoreConfig($config['default']);
 
             return $data;
         } else {
@@ -226,15 +251,17 @@ class AdminSettingService
         $server_info = AdminSettingCache::get($server_key);
 
         if (empty($server_info)) {
-            $cache = Cache::handler();
-            $mysql = Db::query('select version() as version');
+            try {
+                $mysql = Db::query('select version() as version');
+                $server_info['mysql'] = $mysql[0]['version']; //mysql
+            } catch (\Throwable $th) {
+                $server_info['mysql'] = '';
+            }
 
             $server_info['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
             $server_info['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
-            $server_info['mysql']               = $mysql[0]['version'];                      //mysql
             $server_info['php_version']         = PHP_VERSION;                               //php
             $server_info['thinkphp']            = App::version();                            //thinkphp
-            $server_info['redis']               = $cache->info()['redis_version'];           //redis
             $server_info['php_sapi_name']       = php_sapi_name();                           //php_sapi_name
             $server_info['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
             $server_info['domain']              = $_SERVER['SERVER_NAME'];                   //domain

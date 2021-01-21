@@ -13,17 +13,17 @@ return [
     'stores'  => [
         'file' => [
             // 驱动方式
-            'type'       => 'File',
-            // 缓存保存目录
-            'path'       => '',
-            // 缓存前缀
-            'prefix'     => 'yyl:',
+            'type'       => 'file',
             // 缓存有效期 0表示永久缓存
             'expire'     => 0,
-            // 缓存标签前缀
-            'tag_prefix' => 'tag:',
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
+            // 缓存前缀
+            'prefix'     => Env::get('cache.prefix', 'ya'),
+            // 缓存保存目录
+            'path'       => '',
+            // 缓存标签前缀
+            'tag_prefix' => 'tag:',
         ],
         'redis' => [
             // 驱动方式
@@ -33,13 +33,41 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
             // 缓存前缀
-            'prefix'     => Env::get('redis.prefix', 'ya:'),
+            'prefix'     => Env::get('cache.prefix', 'ya:'),
             // 主机
-            'host'       => Env::get('redis.host', '127.0.0.1'),
+            'host'       => Env::get('cache.host', '127.0.0.1'),
             // 端口
-            'port'       => Env::get('redis.port', 6379),
+            'port'       => Env::get('cache.port', 6379),
             // 密码
-            'password'   => Env::get('redis.password', ''),
+            'password'   => Env::get('cache.password', ''),
+        ],
+        'memcache' => [
+            // 驱动方式
+            'type'       => 'memcache',
+            // 缓存有效期 0表示永久缓存
+            'expire'     => 0,
+            // 序列化机制 例如 ['serialize', 'unserialize']
+            'serialize'  => [],
+            // 缓存前缀
+            'prefix'     => Env::get('cache.prefix', 'ya:'),
+            // 主机
+            'host'       => Env::get('cache.host', '127.0.0.1'),
+            // 端口
+            'port'       => Env::get('cache.port', 11211),
+            // 密码
+            'password'   => Env::get('cache.password', ''),
+        ],
+        'wincache' => [
+            // 驱动方式
+            'type'       => 'wincache',
+            // 缓存有效期 0表示永久缓存
+            'expire'     => 0,
+            // 序列化机制 例如 ['serialize', 'unserialize']
+            'serialize'  => [],
+            // 缓存前缀
+            'prefix'     => Env::get('cache.prefix', 'ya'),
+            // 缓存标签前缀
+            'tag_prefix' => 'tag:',
         ],
         // 更多的缓存连接
     ],
