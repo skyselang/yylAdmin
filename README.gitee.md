@@ -1,14 +1,10 @@
 # yylAdmin
-<a href="https://gitee.com/skyselang/yylAdmin">Gitee（码云）</a>  |  <a href="https://github.com/skyselang/yylAdmin">Github</a>
-
-## 文档
-- <a href="https://gitee.com/skyselang/yylAdmin/wikis">文档</a>
+- <a href="https://gitee.com/skyselang/yylAdmin">Gitee</a> | <a href="https://github.com/skyselang/yylAdmin">Github</a> | <a href="https://gitee.com/skyselang/yylAdmin/wikis">文档</a>
 
 ## 简介
 免费开源、快速、简单、轻量  
-yylAdmin是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架，只有后台后端、后台前端、前台后端基础功能，你可以在此基础根据你的业务需求进行开发扩展。前后端分离，后端采用ThinkPHP6，前端采用Vue2。
-- 后端：<a href="https://gitee.com/skyselang/yylAdmin">yylAdmin</a>   
-- 前端：<a href="https://gitee.com/skyselang/yylAdminWeb">yylAdminWeb</a>
+yylAdmin是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架，只有后台后端、后台前端、前台后端基础功能，你可以在此基础根据你的业务需求进行开发扩展。前后分离，后端yylAdmin(ThinkPHP)，前端yylAdminWeb(Vue)。
+- <a href="https://gitee.com/skyselang/yylAdmin">yylAdmin</a> | <a href="https://gitee.com/skyselang/yylAdminWeb">yylAdminWeb</a>
 
 ## 演示
 - 地址：<a href="https://admin.yyladmin.top" target="_blank">yylAdmin demo</a>  
@@ -27,15 +23,15 @@ yylAdmin是一个极简后台管理系统，只有登录退出、权限管理、
 
 ## 要求
 - PHP >= 7.2  
-  安装 fileinfo、redis 扩展  
+  安装 fileinfo 扩展  
   开启 putenv、proc_open 函数
 - MySQL >= 5.6
-- Redis
 - node >= 10.15.0
 - npm >= 5.6.0
 
 ## 安装
 - 前后分离，需分别安装
+
 ### 后端
 ```bash
 # 克隆项目
@@ -73,8 +69,14 @@ cnpm install
 # 修改配置
 在.env.xxx环境变量文件里面修改接口地址
 
-# 启动服务
+# 本地开发 启动服务
 cnpm run dev
+
+# 开发完打包正式环境
+cnpm run build:prod
+
+# 开发完打包测试环境
+cnpm run build:stage
 ```
 ### 访问
 - 地址：http://localhost:9527  
