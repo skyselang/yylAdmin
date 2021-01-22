@@ -1,9 +1,8 @@
-# yylAdmin
+# yylAdmin 快速、简单、轻量
 - <a href="https://gitee.com/skyselang/yylAdmin">Gitee</a> | <a href="https://github.com/skyselang/yylAdmin">Github</a> | <a href="https://gitee.com/skyselang/yylAdmin/wikis">文档</a>
 
-## 简介
-免费开源、快速、简单、轻量  
-yylAdmin是一个极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架，只有后台后端、后台前端、前台后端基础功能，你可以在此基础根据你的业务需求进行开发扩展。前后分离，后端yylAdmin(ThinkPHP)，前端yylAdminWeb(Vue)。
+## 简介 
+yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架；你可以在此基础上根据你的业务需求进行开发扩展。开箱即用，前后分离，免费开源。
 - <a href="https://gitee.com/skyselang/yylAdmin">yylAdmin</a> | <a href="https://gitee.com/skyselang/yylAdminWeb">yylAdminWeb</a>
 
 ## 演示
@@ -26,7 +25,7 @@ yylAdmin是一个极简后台管理系统，只有登录退出、权限管理、
   安装 fileinfo 扩展  
   开启 putenv、proc_open 函数
 - MySQL >= 5.6
-- node >= 10.15.0
+- Node >= 10.15.0
 - npm >= 5.6.0
 
 ## 安装
