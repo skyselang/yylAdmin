@@ -3,7 +3,7 @@
  * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-01-26
  */
 
 return [
@@ -11,6 +11,7 @@ return [
     'is_log' => true,
     // 接口白名单
     'whitelist' => [
+        'index/',
         'index/Register/register',
         'index/Login/verify',
         'index/Login/login',
