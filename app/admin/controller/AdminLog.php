@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-01-04
+ * @LastEditTime : 2021-01-27
  */
 
 namespace app\admin\controller;
@@ -27,13 +27,14 @@ class AdminLog
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $log_type        = Request::param('log_type/d', '');
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
+        $log_type        = Request::param('log_type/d', '');
         $request_keyword = Request::param('request_keyword/s', '');
         $user_keyword    = Request::param('user_keyword/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
+        $response_code   = Request::param('response_code/s', '');
 
         $where = [];
         if ($log_type) {
@@ -55,6 +56,9 @@ class AdminLog
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
             $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
+        }
+        if ($response_code) {
+            $where[] = ['response_code', '=', $response_code];
         }
 
         $order = [];

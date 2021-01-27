@@ -3,7 +3,7 @@
  * @Description  : 日志中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-24
+ * @LastEditTime : 2021-01-27
  */
 
 namespace app\admin\middleware;
@@ -36,12 +36,15 @@ class AdminLog
             if ($admin_user_id) {
                 $menu_url   = request_pathinfo();
                 $admin_menu = AdminMenuService::info($menu_url);
+                $response_data = $response->getData();
 
                 $admin_log['admin_user_id']  = $admin_user_id;
                 $admin_log['admin_menu_id']  = $admin_menu['admin_menu_id'];
                 $admin_log['request_method'] = $request->method();
                 $admin_log['request_ip']     = $request->ip();
                 $admin_log['request_param']  = serialize($request->param());
+                $admin_log['response_code']  = $response_data['code'];
+                $admin_log['response_msg']   = $response_data['msg'];
                 AdminLogService::add($admin_log);
             }
         }

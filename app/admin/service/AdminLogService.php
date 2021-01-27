@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-01-27
  */
 
 namespace app\admin\service;
@@ -29,7 +29,7 @@ class AdminLogService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'admin_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,create_time';
+            $field = 'admin_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];

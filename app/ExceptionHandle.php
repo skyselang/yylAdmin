@@ -3,7 +3,7 @@
  * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2020-11-03
+ * @LastEditTime : 2021-01-27
  */
 
 namespace app;
@@ -14,7 +14,7 @@ use think\exception\Handle;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\exception\ValidateException;
-use think\facade\Env;
+use think\facade\Config;
 use think\Response;
 use Throwable;
 
@@ -71,25 +71,17 @@ class ExceptionHandle extends Handle
         }
 
         // 手动异常
-        $debug = Env::get('app_debug');
+        $data['code'] = $e->getCode();
+        $debug = Config::get('app.app_trace', false);
         if ($debug) {
-            $err['file']  = $e->getFile();
-            $err['line']  = $e->getLine();
-            $err['trace'] = $e->getTrace();
-            
-            $data['code'] = $e->getCode();
-            $data['msg']  = $e->getMessage();
-            $data['err']  = $err;
-        } else {
-            $data['code'] = $e->getCode();
-            $data['msg']  = '服务器错误';
-            $data['err']  = ['desc' => $e->getMessage()];
+            $err['message'] = $e->getMessage();
+            $err['trace']   = $e->getTrace();
 
-            if ($data['code'] >= 400 && $data['code'] < 500) {
-                $data['msg']  = $e->getMessage();
-            } else {
-                $data['code'] = $e->getCode();
-            }
+            $data['msg'] = $err['message'];
+            $data['err'] = $err;
+        } else {
+            $data['msg'] = '服务器错误';
+            $data['err'] = ['message' => $e->getMessage()];
         }
         return response($data, 200, [], 'json');
 

@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 18/01/2021 16:59:32
+ Date: 27/01/2021 15:05:35
 */
 
 SET NAMES utf8mb4;
@@ -35,6 +35,8 @@ CREATE TABLE `ya_admin_log`  (
   `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
   `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
   `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
+  `response_code` int(11) NULL DEFAULT NULL COMMENT '返回码',
+  `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '请求时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
@@ -338,7 +340,7 @@ CREATE TABLE `ya_api_env`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`api_env_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口环境' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口环境' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_api_env
