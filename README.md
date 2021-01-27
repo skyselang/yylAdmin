@@ -2,7 +2,7 @@
 - <a href="https://gitee.com/skyselang/yylAdmin">Gitee</a> | <a href="https://github.com/skyselang/yylAdmin">Github</a> | <a href="https://gitee.com/skyselang/yylAdmin/wikis">文档</a>
 
 ## 简介
-yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架；你可以在此基础上根据你的业务需求进行开发扩展。开箱即用，前后分离，免费开源。
+yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录退出、权限管理、日志管理等基础功能；前后台基础框架；你可以在此基础上根据你的业务需求进行开发扩展。简单轻量，开箱即用，前后分离，免费开源。
 - <a href="https://github.com/skyselang/yylAdmin">yylAdmin</a> | <a href="https://github.com/skyselang/yylAdminWeb">yylAdminWeb</a>
 
 ## 演示
@@ -50,6 +50,19 @@ composer install
 
 # 修改配置
 重命名.env.example成.env环境变量文件修改里面配置（或修改config文件夹里面的配置）
+
+# 环境配置（phpStudy）
+根据你的实际情况配置
+域名：localhost
+端口：9526
+根目录：yylAdmin/public
+PHP版本：7.3
+伪静态：
+location / {
+    if (!-e $request_filename){
+        rewrite  ^(.*)$  /index.php?s=$1  last;   break;
+    }
+}
 ```
 ### 前端
 ```bash
@@ -66,7 +79,8 @@ npm install -g cnpm --registry=https://registry.npm.taobao.org
 cnpm install
 
 # 修改配置
-在.env.xxx环境变量文件里面修改接口地址
+在.env.xxx环境变量文件里面修改接口地址（后端环境配置域名端口）
+VUE_APP_BASE_API = 'http://localhost:9526/index.php'
 
 # 本地开发 启动服务
 cnpm run dev
@@ -150,5 +164,5 @@ yylAdminWeb
 - 有任何疑问或者建议，请提 <a href="https://github.com/skyselang/yylAdmin/issues">Issue</a> 
 
 ## 协议
-- Apache2协议，免费开源  
+- Apache-2.0许可协议，免费开源  
 - Copyright skyselang https://github.com/skyselang
