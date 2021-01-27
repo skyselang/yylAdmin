@@ -80,7 +80,7 @@ cnpm install
 
 # 修改配置
 在.env.xxx环境变量文件里面修改接口地址（后端环境配置域名端口）
-VUE_APP_BASE_API = 'http://localhost:9526/index.php'
+VUE_APP_BASE_API = 'http://localhost:9526'
 
 # 本地开发 启动服务
 cnpm run dev
