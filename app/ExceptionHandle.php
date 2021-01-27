@@ -72,16 +72,15 @@ class ExceptionHandle extends Handle
 
         // 手动异常
         $data['code'] = $e->getCode();
+        $data['msg']  = $e->getMessage();
+        $data['err']  = [];
+        
         $debug = Config::get('app.app_trace', false);
         if ($debug) {
             $err['message'] = $e->getMessage();
             $err['trace']   = $e->getTrace();
 
-            $data['msg'] = $err['message'];
             $data['err'] = $err;
-        } else {
-            $data['msg'] = '服务器错误';
-            $data['err'] = ['message' => $e->getMessage()];
         }
         return response($data, 200, [], 'json');
 
