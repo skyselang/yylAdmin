@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-01-04
+ * @LastEditTime : 2021-01-28
  */
 
 namespace app\admin\service;
@@ -77,6 +77,8 @@ class AdminLoginService
         $admin_log['request_ip']     = $request_ip;
         $admin_log['request_method'] = $param['request_method'];
         $admin_log['request_param']  = serialize($request_param);
+        $admin_log['response_code']  = 200;
+        $admin_log['response_msg']   = '登录成功';
         AdminLogService::add($admin_log);
 
         $admin_user = AdminUserService::info($admin_user_id);
