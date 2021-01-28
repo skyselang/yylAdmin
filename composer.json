@@ -1,6 +1,6 @@
 {
     "name": "skyselang/yyladmin",
-    "version": "2.2.2",
+    "version": "2.2.3",
     "description": "Minimalist background management system based on ThinkPHP6 and Vue2",
     "type": "project",
     "keywords": [
