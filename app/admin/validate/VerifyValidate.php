@@ -2,14 +2,14 @@
 /*
  * @Description  : 验证码验证器
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-24
+ * @Date         : 2021-03-09
+ * @LastEditTime : 2021-03-09
  */
 
-namespace app\index\validate;
+namespace app\admin\validate;
 
 use think\Validate;
-use app\index\service\VerifyService;
+use app\admin\service\VerifyService;
 
 class VerifyValidate extends Validate
 {
@@ -59,9 +59,8 @@ class VerifyValidate extends Validate
         $verify_code = $data['verify_code'];
 
         $VerifyService = new VerifyService();
-        $verify_check  = $VerifyService->check($verify_id, $verify_code);
-
-        if (empty($verify_check)) {
+        $check_verify  = $VerifyService->check($verify_id, $verify_code);
+        if (empty($check_verify)) {
             return '验证码错误';
         }
 

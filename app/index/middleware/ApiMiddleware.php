@@ -13,7 +13,7 @@ use think\Request;
 use think\Response;
 use think\facade\Env;
 use app\admin\service\ApiService;
-use app\common\cache\MemberCache;
+use app\common\cache\UserCache;
 
 class ApiMiddleware
 {
@@ -30,18 +30,18 @@ class ApiMiddleware
         $whitelist = ApiService::whiteList();
 
         if (!in_array($api_url, $whitelist)) {
-            $member_id = member_id();
-            $member    = MemberCache::get($member_id);
+            $user_id = user_id();
+            $user    = UserCache::get($user_id);
 
-            if (empty($member)) {
+            if (empty($user)) {
                 exception('登录已失效，请重新登录', 401);
             }
 
-            if ($member['is_disable'] == 1) {
+            if ($user['is_disable'] == 1) {
                 exception('账号已禁用，请联系客服', 401);
             }
 
-            if ($member['is_delete'] == 1) {
+            if ($user['is_delete'] == 1) {
                 exception('账号已注销，请重新注册', 401);
             }
 

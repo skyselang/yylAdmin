@@ -3,15 +3,15 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-01-04
+ * @LastEditTime : 2021-03-10
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
-use app\admin\validate\MemberValidate;
-use app\admin\service\MemberService;
-use app\admin\service\MemberLogService;
+use app\admin\validate\UserValidate;
+use app\admin\service\UserService;
+use app\admin\service\UserLogService;
 use app\admin\service\RegionService;
 
 class User
@@ -25,19 +25,19 @@ class User
      */
     public function userInfo()
     {
-        $param['member_id'] = member_id();
+        $param['user_id'] = user_id();
 
-        validate(MemberValidate::class)->scene('member_id')->check($param);
+        validate(UserValidate::class)->scene('user_id')->check($param);
 
-        $member = MemberService::info($param['member_id']);
+        $user = UserService::info($param['user_id']);
 
-        if ($member['is_delete'] == 1) {
+        if ($user['is_delete'] == 1) {
             exception('账户已注销');
         }
 
-        unset($member['password'], $member['remark'], $member['sort'], $member['is_disable'], $member['is_delete'], $member['delete_time']);
+        unset($user['password'], $user['remark'], $user['sort'], $user['is_disable'], $user['is_delete'], $user['delete_time']);
 
-        $data['member_info'] = $member;
+        $data['user_info']   = $user;
         $data['region_tree'] = RegionService::info('tree');
 
         return success($data);
@@ -52,12 +52,12 @@ class User
      */
     public function userEdit()
     {
-        $param['member_id'] = member_id();
+        $param['user_id'] = user_id();
 
         if (Request::isGet()) {
-            validate(MemberValidate::class)->scene('member_id')->check($param);
+            validate(UserValidate::class)->scene('user_id')->check($param);
 
-            $data = MemberService::edit($param);
+            $data = UserService::edit($param);
         } else {
             $param['username']  = Request::param('username/s', '');
             $param['nickname']  = Request::param('nickname/s', '');
@@ -65,9 +65,9 @@ class User
             $param['email']     = Request::param('email/s', '');
             $param['region_id'] = Request::param('region_id/d', 0);
 
-            validate(MemberValidate::class)->scene('member_edit')->check($param);
+            validate(UserValidate::class)->scene('user_edit')->check($param);
 
-            $data = MemberService::edit($param, 'post');
+            $data = UserService::edit($param, 'post');
         }
 
         return success($data);
@@ -82,12 +82,12 @@ class User
      */
     public function userAvatar()
     {
-        $param['member_id'] = member_id();
-        $param['avatar']    = Request::file('avatar_file');
+        $param['user_id'] = user_id();
+        $param['avatar']  = Request::file('avatar_file');
 
-        validate(MemberValidate::class)->scene('member_avatar')->check($param);
+        validate(UserValidate::class)->scene('user_avatar')->check($param);
 
-        $data = MemberService::avatar($param);
+        $data = UserService::avatar($param);
 
         return success($data);
     }
@@ -101,13 +101,13 @@ class User
      */
     public function userPwd()
     {
-        $param['member_id']    = member_id();
+        $param['user_id']      = user_id();
         $param['password_old'] = Request::param('password_old/s', '');
         $param['password_new'] = Request::param('password_new/s', '');
 
-        validate(MemberValidate::class)->scene('member_pwdedit')->check($param);
+        validate(UserValidate::class)->scene('user_pwdedit')->check($param);
 
-        $data = MemberService::pwdedit($param);
+        $data = UserService::pwdedit($param);
 
         return success($data);
     }
@@ -121,7 +121,7 @@ class User
      */
     public function userLog()
     {
-        $member_id   = member_id();
+        $user_id     = user_id();
         $page        = Request::param('page/d', 1);
         $limit       = Request::param('limit/d', 10);
         $log_type    = Request::param('log_type/d', '');
@@ -129,7 +129,7 @@ class User
         $sort_type   = Request::param('sort_type/s', '');
         $create_time = Request::param('create_time/a', []);
 
-        $where[] = ['member_id', '=', $member_id];
+        $where[] = ['user_id', '=', $user_id];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
@@ -143,7 +143,7 @@ class User
             $order = [$sort_field => $sort_type];
         }
 
-        $data = MemberLogService::list($where, $page, $limit, $order);
+        $data = UserLogService::list($where, $page, $limit, $order);
 
         return success($data);
     }

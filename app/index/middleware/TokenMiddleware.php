@@ -3,7 +3,7 @@
  * @Description  : Token中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-24
+ * @LastEditTime : 2021-03-09
  */
 
 namespace app\index\middleware;
@@ -12,7 +12,7 @@ use Closure;
 use think\Request;
 use think\Response;
 use app\admin\service\ApiService;
-use app\index\service\TokenService;
+use app\admin\service\TokenService;
 
 class TokenMiddleware
 {
@@ -29,19 +29,13 @@ class TokenMiddleware
         $whitelist = ApiService::whiteList();
 
         if (!in_array($api_url, $whitelist)) {
-            $member_token = member_token();
+            $user_token = user_token();
 
-            if (empty($member_token)) {
-                exception('Requests Headers：MemberToken must');
+            if (empty($user_token)) {
+                exception('Requests Headers：UserToken must');
             }
 
-            $member_id = member_id();
-
-            if (empty($member_id)) {
-                exception('Requests Headers：MemberId must');
-            }
-
-            TokenService::verify($member_token, $member_id);
+            TokenService::verify($user_token);
         }
 
         return $next($request);

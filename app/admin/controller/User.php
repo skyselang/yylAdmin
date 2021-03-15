@@ -1,33 +1,33 @@
 <?php
 /*
- * @Description  : 会员管理
+ * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-01-05
+ * @LastEditTime : 2021-03-08
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\MemberValidate;
-use app\admin\service\MemberService;
+use app\admin\validate\UserValidate;
+use app\admin\service\UserService;
 
-class Member
+class User
 {
     /**
-     * 会员列表
+     * 用户列表
      *
      * @method GET
      * 
      * @return json
      */
-    public function memberList()
+    public function userList()
     {
         $page       = Request::param('page/d', 1);
         $limit      = Request::param('limit/d', 10);
         $sort_field = Request::param('sort_field/s ', '');
         $sort_type  = Request::param('sort_type/s', '');
-        $member_id  = Request::param('member_id/d', '');
+        $user_id    = Request::param('user_id/d', '');
         $username   = Request::param('username/s', '');
         $phone      = Request::param('phone/s', '');
         $email      = Request::param('email/s', '');
@@ -35,8 +35,8 @@ class Member
         $date_range = Request::param('date_range/a', []);
 
         $where = [];
-        if ($member_id) {
-            $where[] = ['member_id', '=', $member_id];
+        if ($user_id) {
+            $where[] = ['user_id', '=', $user_id];
         }
         if ($username) {
             $where[] = ['username', 'like', '%' . $username . '%'];
@@ -59,28 +59,28 @@ class Member
 
         $field = '';
 
-        $data = MemberService::list($where, $page, $limit, $order, $field);
+        $data = UserService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
 
     /**
-     * 会员信息
+     * 用户信息
      *
      * @method GET
      * 
      * @return json
      */
-    public function memberInfo()
+    public function userInfo()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
+        $param['user_id'] = Request::param('user_id/d', '');
 
-        validate(MemberValidate::class)->scene('member_id')->check($param);
+        validate(UserValidate::class)->scene('user_id')->check($param);
 
-        $data = MemberService::info($param['member_id']);
+        $data = UserService::info($param['user_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('会员已被删除：' . $param['member_id']);
+            exception('用户已被删除：' . $param['user_id']);
         }
 
         unset($data['password'], $data['token']);
@@ -89,16 +89,16 @@ class Member
     }
 
     /**
-     * 会员添加
+     * 用户添加
      *
      * @method GET|POST
      * 
      * @return json
      */
-    public function memberAdd()
+    public function userAdd()
     {
         if (Request::isGet()) {
-            $data = MemberService::add();
+            $data = UserService::add();
         } else {
             $param['username']  = Request::param('username/s', '');
             $param['nickname']  = Request::param('nickname/s', '');
@@ -109,29 +109,29 @@ class Member
             $param['remark']    = Request::param('remark/s', '');
             $param['sort']      = Request::param('sort/d', 10000);
 
-            validate(MemberValidate::class)->scene('member_add')->check($param);
+            validate(UserValidate::class)->scene('user_add')->check($param);
 
-            $data = MemberService::add($param, 'post');
+            $data = UserService::add($param, 'post');
         }
 
         return success($data);
     }
 
     /**
-     * 会员修改
+     * 用户修改
      *
      * @method GET|POST
      * 
      * @return json
      */
-    public function memberEdit()
+    public function userEdit()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
+        $param['user_id'] = Request::param('user_id/d', '');
 
         if (Request::isGet()) {
-            validate(MemberValidate::class)->scene('member_id')->check($param);
+            validate(UserValidate::class)->scene('user_id')->check($param);
 
-            $data = MemberService::edit($param);
+            $data = UserService::edit($param);
         } else {
             $param['username']  = Request::param('username/s', '');
             $param['nickname']  = Request::param('nickname/s', '');
@@ -141,85 +141,85 @@ class Member
             $param['remark']    = Request::param('remark/s', '');
             $param['sort']      = Request::param('sort/d', 10000);
 
-            validate(MemberValidate::class)->scene('member_edit')->check($param);
+            validate(UserValidate::class)->scene('user_edit')->check($param);
 
-            $data = MemberService::edit($param, 'post');
+            $data = UserService::edit($param, 'post');
         }
 
         return success($data);
     }
 
     /**
-     * 会员更换头像
+     * 用户更换头像
      *
      * @method POST
      * 
      * @return json
      */
-    public function memberAvatar()
+    public function userAvatar()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
-        $param['avatar']    = Request::file('avatar_file');
+        $param['user_id'] = Request::param('user_id/d', '');
+        $param['avatar']  = Request::file('avatar_file');
 
-        validate(MemberValidate::class)->scene('member_avatar')->check($param);
+        validate(UserValidate::class)->scene('user_avatar')->check($param);
 
-        $data = MemberService::avatar($param);
+        $data = UserService::avatar($param);
 
         return success($data);
     }
 
     /**
-     * 会员删除
+     * 用户删除
      *
      * @method POST
      * 
      * @return json
      */
-    public function memberDele()
+    public function userDele()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
+        $param['user_id'] = Request::param('user_id/d', '');
 
-        validate(MemberValidate::class)->scene('member_dele')->check($param);
+        validate(UserValidate::class)->scene('user_dele')->check($param);
 
-        $data = MemberService::dele($param['member_id']);
+        $data = UserService::dele($param['user_id']);
 
         return success($data);
     }
 
     /**
-     * 会员密码重置
+     * 用户密码重置
      *
      * @method POST
      * 
      * @return json
      */
-    public function memberPassword()
+    public function userPassword()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
-        $param['password']  = Request::param('password/s', '');
+        $param['user_id']  = Request::param('user_id/d', '');
+        $param['password'] = Request::param('password/s', '');
 
-        validate(MemberValidate::class)->scene('member_password')->check($param);
+        validate(UserValidate::class)->scene('user_password')->check($param);
 
-        $data = MemberService::password($param);
+        $data = UserService::password($param);
 
         return success($data);
     }
 
     /**
-     * 会员是否禁用
+     * 用户是否禁用
      *
      * @method POST
      * 
      * @return json
      */
-    public function memberDisable()
+    public function userDisable()
     {
-        $param['member_id']  = Request::param('member_id/d', '');
+        $param['user_id']    = Request::param('user_id/d', '');
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
-        validate(MemberValidate::class)->scene('member_disable')->check($param);
+        validate(UserValidate::class)->scene('user_disable')->check($param);
 
-        $data = MemberService::disable($param);
+        $data = UserService::disable($param);
 
         return success($data);
     }

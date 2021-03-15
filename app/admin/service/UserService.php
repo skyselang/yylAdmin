@@ -1,22 +1,22 @@
 <?php
 /*
- * @Description  : 会员管理
+ * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2020-12-27
+ * @LastEditTime : 2021-03-09
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Filesystem;
-use app\common\cache\MemberCache;
-use app\index\service\TokenService;
+use app\common\cache\UserCache;
+use app\admin\service\TokenService;
 
-class MemberService
+class UserService
 {
     /**
-     * 会员列表
+     * 用户列表
      *
      * @param array   $where   条件
      * @param integer $page    页数
@@ -29,20 +29,20 @@ class MemberService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'member_id,username,nickname,phone,email,sort,remark,create_time,login_time,is_disable';
+            $field = 'user_id,username,nickname,phone,email,sort,remark,create_time,login_time,is_disable';
         }
 
         $where[] = ['is_delete', '=', 0];
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'member_id' => 'desc'];
+            $order = ['sort' => 'desc', 'user_id' => 'desc'];
         }
 
-        $count = Db::name('member')
+        $count = Db::name('user')
             ->where($where)
-            ->count('member_id');
+            ->count('user_id');
 
-        $list = Db::name('member')
+        $list = Db::name('user')
             ->field($field)
             ->where($where)
             ->page($page)
@@ -63,38 +63,38 @@ class MemberService
     }
 
     /**
-     * 会员信息
+     * 用户信息
      *
-     * @param integer $member_id 会员id
+     * @param integer $user_id 用户id
      * 
      * @return array
      */
-    public static function info($member_id)
+    public static function info($user_id)
     {
-        $member = MemberCache::get($member_id);
+        $user = UserCache::get($user_id);
 
-        if (empty($member)) {
-            $member = Db::name('member')
-                ->where('member_id', $member_id)
+        if (empty($user)) {
+            $user = Db::name('user')
+                ->where('user_id', $user_id)
                 ->find();
 
-            if (empty($member)) {
-                exception('会员不存在：' . $member_id);
+            if (empty($user)) {
+                exception('用户不存在：' . $user_id);
             }
 
-            $member['avatar'] = file_url($member['avatar']);
-            $member['token']  = TokenService::create($member);
+            $user['avatar']     = file_url($user['avatar']);
+            $user['user_token'] = TokenService::create($user);
 
-            MemberCache::set($member_id, $member);
+            UserCache::set($user_id, $user);
         }
 
-        return $member;
+        return $user;
     }
 
     /**
-     * 会员添加
+     * 用户添加
      *
-     * @param array $param 会员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -108,14 +108,14 @@ class MemberService
             $param['password']    = md5($param['password']);
             $param['create_time'] = date('Y-m-d H:i:s');
 
-            $member_id = Db::name('member')
+            $user_id = Db::name('user')
                 ->insertGetId($param);
 
-            if (empty($member_id)) {
+            if (empty($user_id)) {
                 exception();
             }
 
-            $param['member_id'] = $member_id;
+            $param['user_id'] = $user_id;
 
             unset($param['password']);
 
@@ -124,46 +124,46 @@ class MemberService
     }
 
     /**
-     * 会员修改
+     * 用户修改
      *
-     * @param array $param 会员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
     public static function edit($param, $method = 'get')
     {
-        $member_id = $param['member_id'];
+        $user_id = $param['user_id'];
 
         if ($method == 'get') {
-            $data['member_info'] = self::info($member_id);
+            $data['user_info']   = self::info($user_id);
             $data['region_tree'] = RegionService::info('tree');
 
-            unset($data['member_info']['password'], $data['member_info']['token']);
+            unset($data['user_info']['password'], $data['user_info']['user_token']);
 
             return $data;
         } else {
-            unset($param['member_id']);
+            unset($param['user_id']);
 
             $param['update_time'] = date('Y-m-d H:i:s');
 
-            $res = Db::name('member')
-                ->where('member_id', $member_id)
+            $res = Db::name('user')
+                ->where('user_id', $user_id)
                 ->update($param);
 
             if (empty($res)) {
                 exception();
             }
 
-            $param['member_id'] = $member_id;
+            $param['user_id'] = $user_id;
 
-            MemberCache::upd($member_id);
+            UserCache::upd($user_id);
 
             return $param;
         }
     }
 
     /**
-     * 会员修改头像
+     * 用户修改头像
      *
      * @param array $param 头像信息
      * 
@@ -171,19 +171,19 @@ class MemberService
      */
     public static function avatar($param)
     {
-        $member_id = $param['member_id'];
-        $avatar    = $param['avatar'];
+        $user_id = $param['user_id'];
+        $avatar  = $param['avatar'];
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('member', $avatar, function () use ($member_id) {
-                return $member_id . '/' . $member_id . '_avatar';
+            ->putFile('user', $avatar, function () use ($user_id) {
+                return $user_id . '/' . $user_id . '_avatar';
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
         $update['update_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name('user')
+            ->where('user_id', $user_id)
             ->update($update);
 
         if (empty($res)) {
@@ -192,129 +192,129 @@ class MemberService
 
         $update['avatar'] = file_url($update['avatar']);
 
-        MemberCache::upd($member_id);
+        UserCache::upd($user_id);
 
         return $update;
     }
 
     /**
-     * 会员删除
+     * 用户删除
      *
-     * @param integer $member_id 会员id
+     * @param integer $user_id 用户id
      * 
      * @return array
      */
-    public static function dele($member_id)
+    public static function dele($user_id)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name('user')
+            ->where('user_id', $user_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['member_id'] = $member_id;
+        $update['user_id'] = $user_id;
 
-        MemberCache::upd($member_id);
+        UserCache::upd($user_id);
 
         return $update;
     }
 
     /**
-     * 会员密码重置
+     * 用户密码重置
      *
-     * @param array $param 会员信息
+     * @param array $param 密码信息
      * 
      * @return array
      */
     public static function password($param)
     {
-        $member_id = $param['member_id'];
+        $user_id = $param['user_id'];
 
         $update['password']    = md5($param['password']);
         $update['update_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name('user')
+            ->where('user_id', $user_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['member_id'] = $member_id;
+        $update['user_id'] = $user_id;
         $update['password']  = $res;
 
-        MemberCache::upd($member_id);
+        UserCache::upd($user_id);
 
         return $update;
     }
 
     /**
-     * 会员修改密码
+     * 用户修改密码
      *
-     * @param array $param 会员信息
+     * @param array $param 密码信息
      * 
      * @return array
      */
     public static function pwdedit($param)
     {
-        $member_id = $param['member_id'];
+        $user_id = $param['user_id'];
 
         $update['password']    = md5($param['password_new']);
         $update['update_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name('user')
+            ->where('user_id', $user_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['member_id'] = $member_id;
-        $update['password']  = $res;
+        $update['user_id']  = $user_id;
+        $update['password'] = $res;
 
-        MemberCache::upd($member_id);
+        UserCache::upd($user_id);
 
         return $update;
     }
 
     /**
-     * 会员是否禁用
+     * 用户是否禁用
      *
-     * @param array $param 会员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
     public static function disable($param)
     {
-        $member_id = $param['member_id'];
+        $user_id = $param['user_id'];
 
         $update['is_disable']  = $param['is_disable'];
         $update['update_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name('user')
+            ->where('user_id', $user_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['member_id'] = $member_id;
+        $update['user_id'] = $user_id;
 
-        MemberCache::upd($member_id);
+        UserCache::upd($user_id);
 
         return $update;
     }
 
     /**
-     * 会员模糊查询
+     * 用户模糊查询
      *
      * @param string $keyword 关键词
      * @param string $field   字段
@@ -323,17 +323,17 @@ class MemberService
      */
     public static function likeQuery($keyword, $field = 'username|nickname|email|phone')
     {
-        $member = Db::name('member')
+        $user = Db::name('user')
             ->where('is_delete', '=', 0)
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
 
-        return $member;
+        return $user;
     }
 
     /**
-     * 会员精确查询
+     * 用户精确查询
      *
      * @param string $keyword 关键词
      * @param string $field   字段
@@ -342,12 +342,12 @@ class MemberService
      */
     public static function etQuery($keyword, $field = 'username|nickname|email|phone')
     {
-        $member = Db::name('member')
+        $user = Db::name('user')
             ->where('is_delete', '=', 0)
             ->where($field, '=', $keyword)
             ->select()
             ->toArray();
 
-        return $member;
+        return $user;
     }
 }

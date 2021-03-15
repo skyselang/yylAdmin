@@ -11,6 +11,6 @@ return [
     \app\index\middleware\TokenMiddleware::class,
     // api
     \app\index\middleware\ApiMiddleware::class,
-    // member log
-    \app\index\middleware\MemberLogMiddleware::class,
+    // user log
+    \app\index\middleware\UserLogMiddleware::class,
 ];

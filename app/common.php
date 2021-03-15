@@ -3,10 +3,12 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-01-27
+ * @LastEditTime : 2021-03-15
  */
 
+use think\facade\Config;
 use think\facade\Request;
+use app\admin\service\TokenService;
 
 /**
  * 成功返回
@@ -187,4 +189,31 @@ function http_post($url, $param = [], $header = [])
     $response = json_decode($response, true);
 
     return $response;
+}
+
+/**
+ * 获取用户id
+ *
+ * @return integer
+ */
+function user_id()
+{
+    $user_token = user_token();
+
+    $user_id = TokenService::userId($user_token);
+
+    return $user_id;
+}
+
+/**
+ * 获取用户token
+ *
+ * @return string
+ */
+function user_token()
+{
+    $token_key  = Config::get('index.token_key');
+    $user_token = Request::header($token_key, '');
+
+    return $user_token;
 }

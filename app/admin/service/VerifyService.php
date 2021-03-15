@@ -2,11 +2,11 @@
 /*
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-30
- * @LastEditTime : 2020-12-25
+ * @Date         : 2021-03-09
+ * @LastEditTime : 2021-03-09
  */
 
-namespace app\index\service;
+namespace app\admin\service;
 
 use Exception;
 use think\Response;
@@ -24,7 +24,7 @@ class VerifyService
     // 验证码字符集合
     protected $codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
     // 验证码过期时间（s）
-    protected $expire = 1800;
+    protected $expire = 180;
     // 使用中文验证码
     protected $useZh = false;
     // 中文验证码字符串
@@ -67,10 +67,10 @@ class VerifyService
      */
     public static function config()
     {
-        $index_setting = Config::get('index.verify', []); //SettingService::index_setting();
-        $index_verify  = Config::get('index.verify', []); //$index_setting['index_verify'];
+        $setting = SettingService::setting();
+        $verify  = $setting['verify'];
 
-        return $index_verify;
+        return $verify;
     }
 
     /**
@@ -80,34 +80,34 @@ class VerifyService
      */
     protected function configure(string $config = null): void
     {
-        $index_verify = self::config();
-        if ($index_verify) {
+        $verify = self::config();
+        if ($verify) {
             // 是否开启验证码
-            $this->switch = $index_verify['switch'];
+            $this->switch   = $verify['switch'];
             // 是否画混淆曲线
-            $this->useCurve = $index_verify['curve'];
+            $this->useCurve = $verify['curve'];
             // 是否添加杂点
-            $this->useNoise = $index_verify['noise'];
+            $this->useNoise = $verify['noise'];
             // 使用背景图片
-            $this->useImgBg = $index_verify['bgimg'];
+            $this->useImgBg = $verify['bgimg'];
             // 验证码类型：1数字，2字母，3数字字母，4算术，5中文
-            if ($index_verify['type'] == 1) {
+            if ($verify['type'] == 1) {
                 $this->codeSet = '0123456789';
-            } elseif ($index_verify['type'] == 2) {
+            } elseif ($verify['type'] == 2) {
                 $this->codeSet = 'abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-            } elseif ($index_verify['type'] == 3) {
+            } elseif ($verify['type'] == 3) {
                 $this->codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-            } elseif ($index_verify['type'] == 4) {
+            } elseif ($verify['type'] == 4) {
                 $this->math = true;
-            } elseif ($index_verify['type'] == 5) {
+            } elseif ($verify['type'] == 5) {
                 $this->useZh = true;
             } else {
                 $this->codeSet = '0123456789';
             }
             // 验证码位数
-            $this->length = $index_verify['length'];
+            $this->length = $verify['length'];
             // 验证码有效时间
-            $this->expire = $index_verify['expire'];
+            $this->expire = $verify['expire'];
         } else {
             $config = Config::get('captcha', []);
             foreach ($config as $key => $val) {
@@ -127,7 +127,7 @@ class VerifyService
      */
     protected function generate(): array
     {
-        $key = md5(uniqid(mt_rand(1, 99), true));
+        $key = md5(uniqid(mt_rand(10, 99), true));
         $bag = '';
 
         if ($this->math) {
@@ -255,7 +255,7 @@ class VerifyService
 
         ob_start();
         // 输出图像
-        $tmpfname = tempnam(sys_get_temp_dir(), 'ya');
+        $tmpfname = tempnam(sys_get_temp_dir(), 'yyl');
         imagepng($this->im, $tmpfname);
         $img_data = file_get_contents($tmpfname);
         $img_base64 = 'data:image/png;base64,' . base64_encode($img_data);
@@ -337,7 +337,7 @@ class VerifyService
         $length  = strlen($codeSet) - 1;
 
         for ($i = 0; $i < 10; $i++) {
-            //杂点颜色
+            // 杂点颜色
             $noiseColor = imagecolorallocate($this->im, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225));
             for ($j = 0; $j < 5; $j++) {
                 // 绘杂点
@@ -381,14 +381,14 @@ class VerifyService
     {
         $switch = $this->switch;
 
+        $res['verify_switch'] = $switch;
+
         if ($switch) {
             $verify = $this->create();
 
             $res['verify_id']  = $verify['verify_id'];
             $res['verify_src'] = $verify['verify_src'];
         }
-
-        $res['verify_switch'] = $switch;
 
         return $res;
     }

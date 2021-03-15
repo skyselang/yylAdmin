@@ -3,16 +3,16 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-11
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
-use app\admin\validate\MemberValidate;
-use app\index\validate\VerifyValidate;
+use app\admin\validate\UserValidate;
+use app\admin\validate\VerifyValidate;
+use app\admin\service\VerifyService;
 use app\index\service\LoginService;
-use app\index\service\VerifyService;
 
 class Login
 {
@@ -41,20 +41,20 @@ class Login
      */
     public function login()
     {
-        $param['username']       = Request::param('username/s', '');;
-        $param['password']       = Request::param('password/s', '');;
-        $param['verify_id']      = Request::param('verify_id/s', '');;
-        $param['verify_code']    = Request::param('verify_code/s', '');;
-        $param['request_ip']     = Request::ip();;
-        $param['request_method'] = Request::method();;
+        $param['username']       = Request::param('username/s', '');
+        $param['password']       = Request::param('password/s', '');
+        $param['verify_id']      = Request::param('verify_id/s', '');
+        $param['verify_code']    = Request::param('verify_code/s', '');
+        $param['request_ip']     = Request::ip();
+        $param['request_method'] = Request::method();
 
         $verify_config = VerifyService::config();
-        
+
         if ($verify_config['switch']) {
             validate(VerifyValidate::class)->scene('check')->check($param);
         }
 
-        validate(MemberValidate::class)->scene('member_login')->check($param);
+        validate(UserValidate::class)->scene('user_login')->check($param);
 
         $data = LoginService::login($param);
 
@@ -70,11 +70,11 @@ class Login
      */
     public function logout()
     {
-        $param['member_id'] = member_id();
+        $param['user_id'] = user_id();
 
-        validate(MemberValidate::class)->scene('member_id')->check($param);
+        validate(UserValidate::class)->scene('user_id')->check($param);
 
-        $data = LoginService::logout($param['member_id']);
+        $data = LoginService::logout($param['user_id']);
 
         return success($data, '退出成功');
     }

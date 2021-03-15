@@ -1,36 +1,36 @@
 <?php
 /*
- * @Description  : 会员日志
+ * @Description  : 用户日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-01-04
+ * @LastEditTime : 2021-03-08
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\MemberLogValidate;
-use app\admin\service\MemberLogService;
-use app\admin\service\MemberService;
+use app\admin\validate\UserLogValidate;
+use app\admin\service\UserLogService;
+use app\admin\service\UserService;
 use app\admin\service\ApiService;
 
-class MemberLog
+class UserLog
 {
     /**
-     * 会员日志列表
+     * 用户日志列表
      *
      * @method GET
      * 
      * @return json
      */
-    public function memberLogList()
+    public function userLogList()
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
         $sort_field      = Request::param('sort_field/s ', '');
         $sort_type       = Request::param('sort_type/s', '');
         $log_type        = Request::param('log_type/d', '');
-        $member_keyword  = Request::param('member_keyword/s', '');
+        $user_keyword    = Request::param('user_keyword/s', '');
         $request_keyword = Request::param('request_keyword/s', '');
         $api_keyword     = Request::param('api_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
@@ -39,10 +39,10 @@ class MemberLog
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($member_keyword) {
-            $member     = MemberService::etQuery($member_keyword);
-            $member_ids = array_column($member, 'member_id');
-            $where[]    = ['member_id', 'in', $member_ids];
+        if ($user_keyword) {
+            $user     = UserService::etQuery($user_keyword);
+            $user_ids = array_column($user, 'user_id');
+            $where[]  = ['user_id', 'in', $user_ids];
         }
         if ($request_keyword) {
             $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
@@ -62,59 +62,59 @@ class MemberLog
             $order = [$sort_field => $sort_type];
         }
 
-        $data = MemberLogService::list($where, $page, $limit, $order);
+        $data = UserLogService::list($where, $page, $limit, $order);
 
         return success($data);
     }
 
     /**
-     * 会员日志信息
+     * 用户日志信息
      *
      * @method GET
      * 
      * @return json
      */
-    public function memberLogInfo()
+    public function userLogInfo()
     {
-        $param['member_log_id'] = Request::param('member_log_id/d', '');
+        $param['user_log_id'] = Request::param('user_log_id/d', '');
 
-        validate(MemberLogValidate::class)->scene('member_log_id')->check($param);
+        validate(UserLogValidate::class)->scene('user_log_id')->check($param);
 
-        $data = MemberLogService::info($param['member_log_id']);
+        $data = UserLogService::info($param['user_log_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('会员日志已删除：' . $param['member_log_id']);
+            exception('用户日志已删除：' . $param['user_log_id']);
         }
 
         return success($data);
     }
 
     /**
-     * 会员日志删除
+     * 用户日志删除
      *
      * @method POST
      * 
      * @return json
      */
-    public function memberLogDele()
+    public function userLogDele()
     {
-        $param['member_log_id'] = Request::param('member_log_id/d', '');
+        $param['user_log_id'] = Request::param('user_log_id/d', '');
 
-        validate(MemberLogValidate::class)->scene('member_log_dele')->check($param);
+        validate(UserLogValidate::class)->scene('user_log_dele')->check($param);
 
-        $data = MemberLogService::dele($param['member_log_id']);
+        $data = UserLogService::dele($param['user_log_id']);
 
         return success($data);
     }
 
     /**
-     * 会员日志统计
+     * 用户日志统计
      *
      * @method POST
      *
      * @return json
      */
-    public function MemberLogSta()
+    public function UserLogSta()
     {
         $type   = Request::param('type/s', '');
         $date   = Request::param('date/a', []);
@@ -126,22 +126,22 @@ class MemberLog
         if ($type == 'number') {
             $number = [];
             foreach ($dates as $k => $v) {
-                $number[$v] = MemberLogService::staNumber($v);
+                $number[$v] = UserLogService::staNumber($v);
             }
             $data['number'] = $number;
         } elseif ($type == 'date') {
-            $data['date'] = MemberLogService::staDate($date);
+            $data['date'] = UserLogService::staDate($date);
         } elseif ($type == 'region') {
-            $data['region'] = MemberLogService::staRegion($date, $region);
+            $data['region'] = UserLogService::staRegion($date, $region);
         } else {
             $number = [];
             foreach ($dates as $k => $v) {
-                $number[$v] = MemberLogService::staNumber($v);
+                $number[$v] = UserLogService::staNumber($v);
             }
 
             $data['number'] = $number;
-            $data['date']   = MemberLogService::staDate($date);
-            $data['region'] = MemberLogService::staRegion($date, $region);
+            $data['date']   = UserLogService::staDate($date);
+            $data['region'] = UserLogService::staRegion($date, $region);
         }
 
         return success($data);

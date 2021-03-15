@@ -3,7 +3,7 @@
  * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-01-26
+ * @LastEditTime : 2021-03-10
  */
 
 return [
@@ -15,6 +15,7 @@ return [
         'index/Register/register',
         'index/Login/verify',
         'index/Login/login',
+        'index/Login/weixin',
     ],
     // token 
     'token' => [
@@ -23,21 +24,19 @@ return [
         // 签发者
         'iss' => 'yylAdminIndex',
         // 有效时间(小时)
-        'exp' => 24,
+        'exp' => 7200,
     ],
-    // member_id key
-    'member_id_key' => 'MemberId',
     // token key
-    'member_token_key' => 'MemberToken',
+    'token_key' => 'UserToken',
     // 请求频率限制（次数/时间）
     'throttle' => [
-        'number' => 3, //次数,0不限制
-        'expire' => 1, //时间,单位秒
+        'number' => 3,   //次数,0不限制
+        'expire' => 1,   //时间,单位秒
     ],
     // 验证码配置
     'verify' => [
         // 是否开启验证码
-        'switch' => false,
+        'switch' => true,
         // 是否画混淆曲线
         'curve' => false,
         // 是否添加杂点

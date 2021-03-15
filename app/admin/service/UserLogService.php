@@ -1,22 +1,22 @@
 <?php
 /*
- * @Description  : 会员日志
+ * @Description  : 用户日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2020-12-24
+ * @LastEditTime : 2021-03-08
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use app\common\utils\Datetime;
-use app\common\cache\MemberLogCache;
+use app\common\cache\UserLogCache;
 use app\common\service\IpInfoService;
 
-class MemberLogService
+class UserLogService
 {
     /**
-     * 会员日志列表
+     * 用户日志列表
      *
      * @param array   $where 条件
      * @param integer $page  分页
@@ -29,20 +29,20 @@ class MemberLogService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'member_log_id,member_id,api_id,request_method,request_ip,request_region,request_isp,create_time';
+            $field = 'user_log_id,user_id,api_id,request_method,request_ip,request_region,request_isp,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
 
         if (empty($order)) {
-            $order = ['member_log_id' => 'desc'];
+            $order = ['user_log_id' => 'desc'];
         }
 
-        $count = Db::name('member_log')
+        $count = Db::name('user_log')
             ->where($where)
-            ->count('member_log_id');
+            ->count('user_log_id');
 
-        $list = Db::name('member_log')
+        $list = Db::name('user_log')
             ->field($field)
             ->where($where)
             ->page($page)
@@ -54,7 +54,7 @@ class MemberLogService
         foreach ($list as $k => $v) {
             $list[$k]['username'] = '';
             $list[$k]['nickname'] = '';
-            $admin_user = MemberService::info($v['member_id']);
+            $admin_user = UserService::info($v['user_id']);
 
             if ($admin_user) {
                 $list[$k]['username'] = $admin_user['username'];
@@ -83,23 +83,23 @@ class MemberLogService
     }
 
     /**
-     * 会员日志信息
+     * 用户日志信息
      *
-     * @param integer $member_log_id 会员日志id
+     * @param integer $user_log_id 用户日志id
      * 
      * @return array
      */
-    public static function info($member_log_id)
+    public static function info($user_log_id)
     {
-        $log = MemberLogCache::get($member_log_id);
+        $log = UserLogCache::get($user_log_id);
 
         if (empty($log)) {
-            $log = Db::name('member_log')
-                ->where('member_log_id', $member_log_id)
+            $log = Db::name('user_log')
+                ->where('user_log_id', $user_log_id)
                 ->find();
 
             if (empty($log)) {
-                exception('会员日志不存在：' . $member_log_id);
+                exception('用户日志不存在：' . $user_log_id);
             }
 
             if ($log['request_param']) {
@@ -108,7 +108,7 @@ class MemberLogService
 
             $log['username'] = '';
             $log['nickname'] = '';
-            $admin_user = MemberService::info($log['member_id']);
+            $admin_user = UserService::info($log['user_id']);
 
             if ($admin_user) {
                 $log['username'] = $admin_user['username'];
@@ -124,16 +124,16 @@ class MemberLogService
                 $log['api_url']  = $api['api_url'];
             }
 
-            MemberLogCache::set($member_log_id, $log);
+            UserLogCache::set($user_log_id, $log);
         }
 
         return $log;
     }
 
     /**
-     * 会员日志添加
+     * 用户日志添加
      *
-     * @param array $param 会员日志信息
+     * @param array $param 用户日志信息
      * 
      * @return void
      */
@@ -152,68 +152,68 @@ class MemberLogService
 
         $param['create_time'] = date('Y-m-d H:i:s');
 
-        Db::name('member_log')->strict(false)->insert($param);
+        Db::name('user_log')->strict(false)->insert($param);
     }
 
     /**
-     * 会员日志修改
+     * 用户日志修改
      *
-     * @param array $param 会员日志信息
+     * @param array $param 用户日志信息
      * 
      * @return array
      */
     public static function edit($param = [])
     {
-        $member_log_id = $param['member_log_id'];
+        $user_log_id = $param['user_log_id'];
 
-        unset($param['member_log_id']);
+        unset($param['user_log_id']);
 
         $param['update_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('member_log')
-            ->where('member_log_id', $member_log_id)
+        $res = Db::name('user_log')
+            ->where('user_log_id', $user_log_id)
             ->update($param);
 
         if (empty($res)) {
             exception();
         }
 
-        $param['member_log_id'] = $member_log_id;
+        $param['user_log_id'] = $user_log_id;
 
-        MemberLogCache::del($member_log_id);
+        UserLogCache::del($user_log_id);
 
         return $param;
     }
 
     /**
-     * 会员日志删除
+     * 用户日志删除
      *
-     * @param integer $member_log_id 会员日志id
+     * @param integer $user_log_id 用户日志id
      * 
      * @return array
      */
-    public static function dele($member_log_id)
+    public static function dele($user_log_id)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = date('Y-m-d H:i:s');
 
-        $res = Db::name('member_log')
-            ->where('member_log_id', $member_log_id)
+        $res = Db::name('user_log')
+            ->where('user_log_id', $user_log_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['member_log_id'] = $member_log_id;
+        $update['user_log_id'] = $user_log_id;
 
-        MemberLogCache::del($member_log_id);
+        UserLogCache::del($user_log_id);
 
         return $update;
     }
 
     /**
-     * 会员日志数量统计
+     * 用户日志数量统计
      *
      * @param string $date 日期
      *
@@ -222,13 +222,13 @@ class MemberLogService
     public static function staNumber($date = 'total')
     {
         $key  = $date;
-        $data = MemberLogCache::get($key);
+        $data = UserLogCache::get($key);
 
         if (empty($data)) {
             $where[] = ['is_delete', '=', 0];
 
             if ($date == 'total') {
-                $where[] = ['member_log_id', '>', 0];
+                $where[] = ['user_log_id', '>', 0];
             } else {
                 if ($date == 'yesterday') {
                     $yesterday = Datetime::yesterday();
@@ -266,19 +266,19 @@ class MemberLogService
                 $where[] = ['create_time', '<=', $end_time];
             }
 
-            $data = Db::name('member_log')
-                ->field('member_log_id')
+            $data = Db::name('user_log')
+                ->field('user_log_id')
                 ->where($where)
-                ->count('member_log_id');
+                ->count('user_log_id');
 
-            MemberLogCache::set($key, $data);
+            UserLogCache::set($key, $data);
         }
 
         return $data;
     }
 
     /**
-     * 会员日志日期统计
+     * 用户日志日期统计
      *
      * @param array $date 日期范围
      *
@@ -302,7 +302,7 @@ class MemberLogService
         }
 
         $key  = 'date:' . $sta_date . '-' . $end_date;
-        $data = MemberLogCache::get($key);
+        $data = UserLogCache::get($key);
 
         if (empty($data)) {
             $x_data = [];
@@ -311,26 +311,26 @@ class MemberLogService
             foreach ($date_days as $k => $v) {
                 $x_data[] = $v;
 
-                $y_data[] = Db::name('member_log')
-                    ->field('member_log_id')
+                $y_data[] = Db::name('user_log')
+                    ->field('user_log_id')
                     ->where('is_delete', '=', 0)
                     ->where('create_time', '>=', $v . ' 00:00:00')
                     ->where('create_time', '<=', $v . ' 23:59:59')
-                    ->count('member_log_id');
+                    ->count('user_log_id');
             }
 
             $data['x_data'] = $x_data;
             $data['y_data'] = $y_data;
             $data['date']   = $date;
 
-            MemberLogCache::set($key, $data);
+            UserLogCache::set($key, $data);
         }
 
         return $data;
     }
 
     /**
-     * 会员日志地区统计
+     * 用户日志地区统计
      *
      * @param integer $date   日期范围
      * @param string  $region 地区类型
@@ -375,7 +375,7 @@ class MemberLogService
             $where[] = [$group, '<>', ''];
         }
 
-        $data = MemberLogCache::get($key);
+        $data = UserLogCache::get($key);
 
         if (empty($data)) {
             $sta_time = $date[0] . ' 00:00:00';
@@ -385,8 +385,8 @@ class MemberLogService
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
 
-            $log = Db::name('member_log')
-                ->field($field . ', COUNT(member_log_id) as y_data')
+            $log = Db::name('user_log')
+                ->field($field . ', COUNT(user_log_id) as y_data')
                 ->where($where)
                 ->group($group)
                 ->order('y_data desc')
@@ -408,7 +408,7 @@ class MemberLogService
             $data['p_data'] = $p_data;
             $data['date']   = $date;
 
-            MemberLogCache::set($key, $data);
+            UserLogCache::set($key, $data);
         }
 
         return $data;
