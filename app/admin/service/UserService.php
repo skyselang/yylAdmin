@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-03-09
+ * @LastEditTime : 2021-03-18
  */
 
 namespace app\admin\service;
@@ -11,6 +11,7 @@ namespace app\admin\service;
 use think\facade\Db;
 use think\facade\Filesystem;
 use app\common\cache\UserCache;
+use app\common\utils\Datetime;
 use app\admin\service\TokenService;
 
 class UserService
@@ -349,5 +350,143 @@ class UserService
             ->toArray();
 
         return $user;
+    }
+
+    /**
+     * 用户数量统计
+     *
+     * @param string $date 日期
+     * @param string $type 类型：new新增，act活跃
+     *
+     * @return integer
+     */
+    public static function staNumber($date = 'total', $type = 'new')
+    {
+        $key  = $date . ':' . $type;
+        $data = UserCache::get($key);
+
+        if (empty($data)) {
+            $where[] = ['is_delete', '=', 0];
+
+            if ($date == 'total') {
+                $where[] = ['user_id', '>', 0];
+            } else {
+                if ($date == 'yesterday') {
+                    $yesterday = Datetime::yesterday();
+                    list($sta_time, $end_time) = Datetime::datetime($yesterday);
+                } elseif ($date == 'thisweek') {
+                    list($start, $end) = Datetime::thisWeek();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } elseif ($date == 'lastweek') {
+                    list($start, $end) = Datetime::lastWeek();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } elseif ($date == 'thismonth') {
+                    list($start, $end) = Datetime::thisMonth();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } elseif ($date == 'lastmonth') {
+                    list($start, $end) = Datetime::lastMonth();
+                    $sta_time = Datetime::datetime($start);
+                    $sta_time = $sta_time[0];
+                    $end_time = Datetime::datetime($end);
+                    $end_time = $end_time[1];
+                } else {
+                    $today = Datetime::today();
+                    list($sta_time, $end_time) = Datetime::datetime($today);
+                }
+
+                if ($type == 'act') {
+                    $where[] = ['login_time', '>=', $sta_time];
+                    $where[] = ['login_time', '<=', $end_time];
+                } else {
+                    $where[] = ['create_time', '>=', $sta_time];
+                    $where[] = ['create_time', '<=', $end_time];
+                }
+            }
+
+            $data = Db::name('user')
+                ->field('user_id')
+                ->where($where)
+                ->count('user_id');
+
+            UserCache::set($key, $data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * 用户日期统计
+     *
+     * @param array  $date 日期范围
+     * @param string $type 类型：new新增，act活跃
+     * 
+     * @return array
+     */
+    public static function staDate($date = [], $type = 'new')
+    {
+        if (empty($date)) {
+            $date[0] = Datetime::daysAgo(30);
+            $date[1] = Datetime::daysAfter(1);
+
+            $sta_date = $date[0];
+            $end_date = $date[1];
+        } else {
+            $sta_date = $date[0];
+            $end_date = $date[1];
+        }
+
+        $date_days = Datetime::betweenDates($sta_date, $end_date);
+
+        $key  = 'date:' . $sta_date . '-' . $end_date . ':' . $type;
+        $data = UserCache::get($key);
+
+        if (empty($data)) {
+            $x_data = $date_days;
+            $y_data = [];
+
+            if ($type == 'act') {
+                $field = "count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date";
+                $where[] = ['login_time', '>=', $sta_date];
+                $where[] = ['login_time', '<=', $end_date];
+                $group = "date_format(login_time,'%Y-%m-%d')";
+            } else {
+                $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
+                $where[] = ['create_time', '>=', $sta_date];
+                $where[] = ['create_time', '<=', $end_date];
+                $group = "date_format(create_time,'%Y-%m-%d')";
+            }
+
+            $user = Db::name('user')
+                ->field($field)
+                ->where($where)
+                ->group($group)
+                ->select();
+
+            foreach ($x_data as $k => $v) {
+                $y_data[$k] = 0;
+                foreach ($user as $ku => $vu) {
+                    if ($v == $vu['date']) {
+                        $y_data[$k] = $vu['num'];
+                    }
+                }
+            }
+
+            $data['x_data'] = $x_data;
+            $data['y_data'] = $y_data;
+            $data['date']   = $date;
+
+            UserCache::set($key, $data);
+        }
+
+        return $data;
     }
 }

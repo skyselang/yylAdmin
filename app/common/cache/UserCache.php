@@ -3,7 +3,7 @@
  * @Description  : 用户缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-03-08
+ * @LastEditTime : 2021-03-16
  */
 
 namespace app\common\cache;
@@ -16,7 +16,7 @@ class UserCache
     /**
      * 缓存key
      *
-     * @param integer $user_id 用户id
+     * @param integer|string $user_id 用户id、统计时间
      * 
      * @return string
      */
@@ -30,9 +30,9 @@ class UserCache
     /**
      * 缓存设置
      *
-     * @param integer $user_id 用户id
-     * @param array   $user    用户信息
-     * @param integer $expire  有效时间（秒）
+     * @param integer|string $user_id 用户id、统计时间
+     * @param array          $user    用户信息
+     * @param integer        $expire  有效时间（秒）
      * 
      * @return bool
      */
@@ -40,7 +40,12 @@ class UserCache
     {
         $key = self::key($user_id);
         $val = $user;
-        $ttl = 7 * 24 * 60 * 60;
+
+        if (is_numeric($user_id)) {
+            $ttl = 7 * 24 * 60 * 60;
+        } else {
+            $ttl = 1 * 60 * 60;
+        }
         $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $val, $exp);
@@ -51,7 +56,7 @@ class UserCache
     /**
      * 缓存获取
      *
-     * @param integer $user_id 用户id
+     * @param integer|string $user_id 用户id、统计时间
      * 
      * @return array 用户信息
      */
@@ -66,7 +71,7 @@ class UserCache
     /**
      * 缓存删除
      *
-     * @param integer $user_id 用户id
+     * @param integer|string $user_id 用户id、统计时间
      * 
      * @return bool
      */

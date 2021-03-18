@@ -3,7 +3,7 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-03-15
+ * @LastEditTime : 2021-03-17
  */
 
 use think\facade\Config;
@@ -216,4 +216,15 @@ function user_token()
     $user_token = Request::header($token_key, '');
 
     return $user_token;
+}
+
+/**
+ * 获取当前日期时间
+ * format：Y-m-d H:i:s
+ *
+ * @return string
+ */
+function datetime()
+{
+    return date('Y-m-d H:i:s');
 }

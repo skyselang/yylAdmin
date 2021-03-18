@@ -3,7 +3,7 @@
  * @Description  : 日期时间
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2020-10-23
+ * @LastEditTime : 2021-03-18
  */
 
 namespace app\common\utils;
@@ -130,10 +130,7 @@ class Datetime
 
         $dates = [];
         for ($i = 0; $i < $t; $i++) {
-            $date = '';
-            $date = date('Y-m-d', strtotime("+{$i} day", $time));
-            
-            $dates[] = $date;
+            $dates[] = date('Y-m-d', strtotime("+{$i} day", $time));
         }
 
         return $dates;
@@ -288,7 +285,7 @@ class Datetime
      */
     public static function daysAfter($days = 1)
     {
-        $date = date('Y-m-d H:i:s', strtotime("+{$days} day"));
+        $date = date('Y-m-d', strtotime("+{$days} day"));
 
         return $date;
     }
