@@ -21,7 +21,7 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 <a href="https://element.eleme.cn/#/zh-CN/component/installation" target="_blank">Element</a>
 
 ## 要求
-- PHP >= 7.2  
+- PHP >= 7.3  
   安装 fileinfo 扩展  
   开启 putenv、proc_open 函数
 - MySQL >= 5.6
@@ -57,7 +57,7 @@ composer install
 端口：9526
 根目录：yylAdmin/public
 PHP版本：7.3
-伪静态：
+伪静态Nginx：
 location / {
     if (!-e $request_filename){
         rewrite  ^(.*)$  /index.php?s=$1  last;   break;
