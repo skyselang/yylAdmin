@@ -3,12 +3,13 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-01-27
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
+use think\facade\Request;
 use app\common\utils\Datetime;
 use app\common\cache\AdminLogCache;
 use app\common\service\IpInfoService;
@@ -139,18 +140,31 @@ class AdminLogService
      */
     public static function add($param = [])
     {
-        if ($param['request_ip']) {
-            $ip_info = IpInfoService::info($param['request_ip']);
+        $admin_menu    = AdminMenuService::info();
+        $ip_info       = IpInfoService::info();
+        $request_param = Request::param();
 
-            $param['request_country']  = $ip_info['country'];
-            $param['request_province'] = $ip_info['province'];
-            $param['request_city']     = $ip_info['city'];
-            $param['request_area']     = $ip_info['area'];
-            $param['request_region']   = $ip_info['region'];
-            $param['request_isp']      = $ip_info['isp'];
+        if (isset($request_param['password'])) {
+            unset($request_param['password']);
+        }
+        if (isset($request_param['new_password'])) {
+            unset($request_param['new_password']);
+        }
+        if (isset($request_param['old_password'])) {
+            unset($request_param['old_password']);
         }
 
-        $param['create_time'] = date('Y-m-d H:i:s');
+        $param['admin_menu_id']    = $admin_menu['admin_menu_id'];
+        $param['request_ip']       = $ip_info['ip'];
+        $param['request_country']  = $ip_info['country'];
+        $param['request_province'] = $ip_info['province'];
+        $param['request_city']     = $ip_info['city'];
+        $param['request_area']     = $ip_info['area'];
+        $param['request_region']   = $ip_info['region'];
+        $param['request_isp']      = $ip_info['isp'];
+        $param['request_param']    = serialize($request_param);
+        $param['request_method']   = Request::method();
+        $param['create_time']      = datetime();
 
         Db::name('admin_log')->strict(false)->insert($param);
     }
@@ -169,7 +183,7 @@ class AdminLogService
         unset($param['admin_log_id']);
 
         $param['request_param'] = serialize($param['request_param']);
-        $param['update_time']   = date('Y-m-d H:i:s');
+        $param['update_time']   = datetime();
 
         $res = Db::name('admin_log')
             ->where('admin_log_id', $admin_log_id)
@@ -196,7 +210,7 @@ class AdminLogService
     public static function dele($admin_log_id)
     {
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('admin_log')
             ->where('admin_log_id', $admin_log_id)
@@ -288,36 +302,41 @@ class AdminLogService
     public static function staDate($date = [])
     {
         if (empty($date)) {
-            $date[0] = Datetime::daysAgo(31);
-            $date[1] = Datetime::daysAgo(1);
-
-            $sta_date = $date[0];
-            $end_date = $date[1];
-
-            $date_days = Datetime::betweenDates($sta_date, $end_date);
-        } else {
-            $sta_date = $date[0];
-            $end_date = $date[1];
-
-            $date_days = Datetime::betweenDates($sta_date, $end_date);
+            $date[0] = Datetime::daysAgo(30);
+            $date[1] = Datetime::today();
         }
+
+        $sta_date = $date[0];
+        $end_date = $date[1];
 
         $key  = 'date:' . $sta_date . '-' . $end_date;
         $data = AdminLogCache::get($key);
 
         if (empty($data)) {
-            $x_data = [];
+            $sta_time = Datetime::dateStartTime($sta_date);
+            $end_time = Datetime::dateEndTime($end_date);
+
+            $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
+            $where[] = ['create_time', '>=', $sta_time];
+            $where[] = ['create_time', '<=', $end_time];
+            $group = "date_format(create_time,'%Y-%m-%d')";
+
+            $admin_log = Db::name('admin_log')
+                ->field($field)
+                ->where($where)
+                ->group($group)
+                ->select();
+
+            $x_data = Datetime::betweenDates($sta_date, $end_date);
             $y_data = [];
 
-            foreach ($date_days as $k => $v) {
-                $x_data[] = $v;
-
-                $y_data[] = Db::name('admin_log')
-                    ->field('admin_log_id')
-                    ->where('is_delete', '=', 0)
-                    ->where('create_time', '>=', $v . ' 00:00:00')
-                    ->where('create_time', '<=', $v . ' 23:59:59')
-                    ->count('admin_log_id');
+            foreach ($x_data as $k => $v) {
+                $y_data[$k] = 0;
+                foreach ($admin_log as $ka => $va) {
+                    if ($v == $va['date']) {
+                        $y_data[$k] = $va['num'];
+                    }
+                }
             }
 
             $data['x_data'] = $x_data;
@@ -342,15 +361,12 @@ class AdminLogService
     public static function staRegion($date = [], $region = 'city', $top = 20)
     {
         if (empty($date)) {
-            $date[0] = Datetime::daysAgo(31);
-            $date[1] = Datetime::daysAgo(1);
-
-            $sta_date = $date[0];
-            $end_date = $date[1];
-        } else {
-            $sta_date = $date[0];
-            $end_date = $date[1];
+            $date[0] = Datetime::daysAgo(30);
+            $date[1] = Datetime::today();
         }
+
+        $sta_date = $date[0];
+        $end_date = $date[1];
 
         $key  = ':' . $sta_date . '-' . $end_date . ':top:' . $top;
 
@@ -379,8 +395,8 @@ class AdminLogService
         $data = AdminLogCache::get($key);
 
         if (empty($data)) {
-            $sta_time = $date[0] . ' 00:00:00';
-            $end_time = $date[1] . ' 23:59:59';
+            $sta_time = Datetime::dateStartTime($date[0]);
+            $end_time = Datetime::dateEndTime($date[1]);
 
             $where[] = ['is_delete', '=', 0];
             $where[] = ['create_time', '>=', $sta_time];

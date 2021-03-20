@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-01-28
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -46,41 +46,25 @@ class AdminLoginService
             exception('账号已被禁用，请联系管理员');
         }
 
-        $request_ip = $param['request_ip'];
-        $ip_info    = IpInfoService::info($request_ip);
+        $ip_info = IpInfoService::info();
 
         $admin_user_id = $admin_user['admin_user_id'];
 
-        $update['login_ip']     = $request_ip;
+        $update['login_ip']     = $ip_info['ip'];
         $update['login_region'] = $ip_info['region'];
-        $update['login_time']   = date('Y-m-d H:i:s');
+        $update['login_time']   = datetime();
         $update['login_num']    = $admin_user['login_num'] + 1;
         Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
 
-        AdminUserCache::del($admin_user_id);
-
-        $menu_url   = request_pathinfo();
-        $admin_menu = AdminMenuService::info($menu_url);
-
-        $request_param['username'] = $username;
-
-        if ($param['verify_id']) {
-            $request_param['verify_id']   = $param['verify_id'];
-            $request_param['verify_code'] = $param['verify_code'];
-        }
-
         $admin_log['admin_user_id']  = $admin_user_id;
-        $admin_log['admin_menu_id']  = $admin_menu['admin_menu_id'];
         $admin_log['log_type']       = 1;
-        $admin_log['request_ip']     = $request_ip;
-        $admin_log['request_method'] = $param['request_method'];
-        $admin_log['request_param']  = serialize($request_param);
         $admin_log['response_code']  = 200;
         $admin_log['response_msg']   = '登录成功';
         AdminLogService::add($admin_log);
 
+        AdminUserCache::del($admin_user_id);
         $admin_user = AdminUserService::info($admin_user_id);
 
         $data['admin_user_id'] = $admin_user_id;
@@ -94,13 +78,13 @@ class AdminLoginService
     /**
      * 退出
      *
-     * @param integer $admin_user_id 用户id
+     * @param integer $admin_user_id 管理员id
      * 
      * @return array
      */
     public static function logout($admin_user_id)
     {
-        $update['logout_time'] = date('Y-m-d H:i:s');
+        $update['logout_time'] = datetime();
 
         Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)

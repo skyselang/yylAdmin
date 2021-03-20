@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-03-18
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -107,7 +107,7 @@ class UserService
             return $data;
         } else {
             $param['password']    = md5($param['password']);
-            $param['create_time'] = date('Y-m-d H:i:s');
+            $param['create_time'] = datetime();
 
             $user_id = Db::name('user')
                 ->insertGetId($param);
@@ -145,7 +145,7 @@ class UserService
         } else {
             unset($param['user_id']);
 
-            $param['update_time'] = date('Y-m-d H:i:s');
+            $param['update_time'] = datetime();
 
             $res = Db::name('user')
                 ->where('user_id', $user_id)
@@ -181,7 +181,7 @@ class UserService
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('user')
             ->where('user_id', $user_id)
@@ -208,7 +208,7 @@ class UserService
     public static function dele($user_id)
     {
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('user')
             ->where('user_id', $user_id)
@@ -237,7 +237,7 @@ class UserService
         $user_id = $param['user_id'];
 
         $update['password']    = md5($param['password']);
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('user')
             ->where('user_id', $user_id)
@@ -267,7 +267,7 @@ class UserService
         $user_id = $param['user_id'];
 
         $update['password']    = md5($param['password_new']);
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('user')
             ->where('user_id', $user_id)
@@ -297,7 +297,7 @@ class UserService
         $user_id = $param['user_id'];
 
         $update['is_disable']  = $param['is_disable'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('user')
             ->where('user_id', $user_id)
@@ -435,35 +435,33 @@ class UserService
     {
         if (empty($date)) {
             $date[0] = Datetime::daysAgo(30);
-            $date[1] = Datetime::daysAfter(1);
-
-            $sta_date = $date[0];
-            $end_date = $date[1];
-        } else {
-            $sta_date = $date[0];
-            $end_date = $date[1];
+            $date[1] = Datetime::today();
         }
 
-        $date_days = Datetime::betweenDates($sta_date, $end_date);
+        $sta_date = $date[0];
+        $end_date = $date[1];
 
         $key  = 'date:' . $sta_date . '-' . $end_date . ':' . $type;
         $data = UserCache::get($key);
 
         if (empty($data)) {
-            $x_data = $date_days;
-            $y_data = [];
+            $sta_time = Datetime::dateStartTime($sta_date);
+            $end_time = Datetime::dateEndTime($end_date);
 
             if ($type == 'act') {
                 $field = "count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date";
-                $where[] = ['login_time', '>=', $sta_date];
-                $where[] = ['login_time', '<=', $end_date];
+                $where[] = ['login_time', '>=', $sta_time];
+                $where[] = ['login_time', '<=', $end_time];
                 $group = "date_format(login_time,'%Y-%m-%d')";
             } else {
                 $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
-                $where[] = ['create_time', '>=', $sta_date];
-                $where[] = ['create_time', '<=', $end_date];
+                $where[] = ['create_time', '>=', $sta_time];
+                $where[] = ['create_time', '<=', $end_time];
                 $group = "date_format(create_time,'%Y-%m-%d')";
             }
+
+            $x_data = Datetime::betweenDates($sta_date, $end_date);
+            $y_data = [];
 
             $user = Db::name('user')
                 ->field($field)

@@ -3,7 +3,7 @@
  * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-03-15
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app;
@@ -75,7 +75,7 @@ class ExceptionHandle extends Handle
         $data['msg']  = $e->getMessage();
         $data['err']  = [];
 
-        $debug = Config::get('app.app_trace', false);
+        $debug = Config::get('app.app_debug');
         if ($debug) {
             $err['message'] = $e->getMessage();
             $err['trace']   = $e->getTrace();

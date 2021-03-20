@@ -3,7 +3,7 @@
  * @Description  : 日志中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-03-09
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\index\middleware;
@@ -38,19 +38,12 @@ class UserLogMiddleware
                 $user_id = user_id();
 
                 if ($user_id) {
-                    $api_url = request_pathinfo();
-                    $api     = ApiService::info($api_url);
-
-                    $admin_log['user_id']        = $user_id;
-                    $admin_log['api_id']         = $api['api_id'];
-                    $admin_log['request_method'] = $request->method();
-                    $admin_log['request_ip']     = $request->ip();
-                    $admin_log['request_param']  = serialize($request->param());
-                    UserLogService::add($admin_log);
+                    $user_log['user_id'] = $user_id;
+                    UserLogService::add($user_log);
                 }
             }
         }
-        
+
         return $response;
     }
 }

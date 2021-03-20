@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -17,7 +17,7 @@ class AdminMyService
     /**
      * 我的信息
      *
-     * @param integer $admin_user_id 用户id
+     * @param integer $admin_user_id 管理员id
      * 
      * @return array
      */
@@ -43,7 +43,7 @@ class AdminMyService
     /**
      * 修改信息
      *
-     * @param array $param 用户信息
+     * @param array $param 管理员信息
      * 
      * @return array
      */
@@ -64,7 +64,7 @@ class AdminMyService
         } else {
             unset($param['admin_user_id']);
 
-            $param['update_time'] = date('Y-m-d H:i:s');
+            $param['update_time'] = datetime();
 
             $res = Db::name('admin_user')
                 ->where('admin_user_id', $admin_user_id)
@@ -85,7 +85,7 @@ class AdminMyService
     /**
      * 修改密码
      *
-     * @param array $param 用户密码
+     * @param array $param 管理员密码
      * 
      * @return array
      */
@@ -102,7 +102,7 @@ class AdminMyService
         }
 
         $update['password']    = md5($password_new);
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
@@ -138,7 +138,7 @@ class AdminMyService
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)

@@ -3,7 +3,7 @@
  * @Description  : 角色验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\validate;
@@ -78,7 +78,7 @@ class AdminRoleValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：角色是否有菜单或用户
+    // 自定义验证规则：角色是否有菜单或管理员
     protected function checkAdminRoleMenuUser($value, $rule, $data = [])
     {
         $admin_role_id = $value;
@@ -101,7 +101,7 @@ class AdminRoleValidate extends Validate
             ->find();
 
         if ($admin_user) {
-            return '请在[用户]中解除所有用户后再删除';
+            return '请在[管理员]中解除所有管理员后再删除';
         }
 
         return true;

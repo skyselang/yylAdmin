@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-11
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\index\service;
@@ -13,9 +13,7 @@ use app\common\cache\UserCache;
 use app\common\cache\VerifyCache;
 use app\common\service\IpInfoService;
 use app\admin\service\UserLogService;
-use app\admin\service\ApiService;
 use app\admin\service\UserService;
-use think\facade\Cache;
 
 class LoginService
 {
@@ -50,39 +48,22 @@ class LoginService
             exception('账号已被禁用');
         }
 
-        $request_ip = $param['request_ip'];
-        $ip_info    = IpInfoService::info($request_ip);
-
+        $ip_info = IpInfoService::info();
         $user_id = $user['user_id'];
 
-        $update['login_ip']     = $request_ip;
+        $update['login_ip']     = $ip_info['ip'];
         $update['login_region'] = $ip_info['region'];
-        $update['login_time']   = date('Y-m-d H:i:s');
         $update['login_num']    = $user['login_num'] + 1;
+        $update['login_time']   = datetime();
         Db::name('user')
             ->where('user_id', $user_id)
             ->update($update);
 
+        $user_log['log_type'] = 2;
+        $user_log['user_id']  = $user_id;
+        UserLogService::add($user_log);
+
         UserCache::del($user_id);
-
-        $api_url = request_pathinfo();
-        $api     = ApiService::info($api_url);
-
-        $request_param['username'] = $username;
-
-        if ($param['verify_id']) {
-            $request_param['verify_id']   = $param['verify_id'];
-            $request_param['verify_code'] = $param['verify_code'];
-        }
-
-        $log['user_id']        = $user_id;
-        $log['log_type']       = 1;
-        $log['api_id']         = $api['api_id'];
-        $log['request_ip']     = $request_ip;
-        $log['request_method'] = $param['request_method'];
-        $log['request_param']  = serialize($request_param);
-        UserLogService::add($log);
-
         $user = UserService::info($user_id);
 
         VerifyCache::del($param['verify_id']);
@@ -99,7 +80,7 @@ class LoginService
      */
     public static function logout($user_id)
     {
-        $update['logout_time'] = date('Y-m-d H:i:s');
+        $update['logout_time'] = datetime();
 
         Db::name('user')
             ->where('user_id', $user_id)

@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-01-18
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\controller;
@@ -268,7 +268,7 @@ class AdminMenu
     }
 
     /**
-     * 菜单用户
+     * 菜单管理员
      *
      * @method GET
      *
@@ -335,7 +335,7 @@ class AdminMenu
     }
 
     /**
-     * 菜单用户解除
+     * 菜单管理员解除
      *
      * @method POST
      *

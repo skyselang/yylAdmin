@@ -3,7 +3,7 @@
  * @Description  : 日期时间
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2021-03-18
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\common\utils;
@@ -11,7 +11,7 @@ namespace app\common\utils;
 class Datetime
 {
     /**
-     * 今日日期
+     * 今天日期
      *
      * @return string
      */
@@ -21,7 +21,7 @@ class Datetime
     }
 
     /**
-     * 昨日日期
+     * 昨天日期
      *
      * @return string
      */
@@ -55,11 +55,11 @@ class Datetime
         $N     = date('N') - 1;
         $mon   = strtotime("-{$N} day");
         $weeks = [];
-        
+
         for ($i = 0; $i < 7; $i++) {
             $date = '';
             $date = date('Y-m-d', strtotime("+{$i} day", $mon));
-            
+
             $weeks[] = $date;
         }
 
@@ -101,7 +101,7 @@ class Datetime
         for ($i = 0; $i < 7; $i++) {
             $date = '';
             $date = date('Y-m-d', strtotime("+{$i} day", $mon));
-            
+
             $weeks[] = $date;
         }
 
@@ -120,7 +120,7 @@ class Datetime
         if ($month == 'thismonth') {
             $month = date('Y-m');
         }
-        
+
         if ($month == 'lastmonth') {
             $month = date('Y-m', strtotime("-1 month"));
         }
@@ -196,7 +196,7 @@ class Datetime
         for ($i = 0; $i < $days; $i++) {
             $date = '';
             $date = date('Y-m-d', strtotime("+{$i} day", $sta));
-            
+
             $dates[] = $date;
         }
 
@@ -234,7 +234,7 @@ class Datetime
         if (!$now) {
             $end = date('Y-m-d', strtotime("-1 day"));
         }
-        
+
         $sta = date('Y-m-d', strtotime("-{$day} day"));
 
         return [$sta, $end];
@@ -253,7 +253,7 @@ class Datetime
         $dt_sta = strtotime($sta);
         $dt_end = strtotime($end);
         $dates  = [];
-        
+
         while ($dt_sta <= $dt_end) {
             $dates[] = date('Y-m-d', $dt_sta);
             $dt_sta  = strtotime('+1 day', $dt_sta);
@@ -331,5 +331,41 @@ class Datetime
         $end = $date . ' 23:59:59';
 
         return [$sta, $end];
+    }
+
+    /**
+     * 日期开始时间
+     *
+     * @param string $date 日期
+     *
+     * @return string
+     */
+    public static function dateStartTime($date = '')
+    {
+        if (empty($date)) {
+            $date = self::today();
+        }
+
+        $datetime = $date . ' 00:00:00';
+
+        return $datetime;
+    }
+
+    /**
+     * 日期结束时间
+     *
+     * @param string $date 日期
+     *
+     * @return string
+     */
+    public static function dateEndTime($date = '')
+    {
+        if (empty($date)) {
+            $date = self::today();
+        }
+
+        $datetime = $date . ' 23:59:59';
+
+        return $datetime;
     }
 }

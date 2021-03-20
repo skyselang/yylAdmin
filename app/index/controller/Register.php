@@ -3,14 +3,14 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-03-08
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
 use app\admin\validate\UserValidate;
-use app\admin\service\UserService;
+use app\index\service\RegisterService;
 
 class Register
 {
@@ -33,7 +33,7 @@ class Register
 
         validate(UserValidate::class)->scene('user_register')->check($param);
 
-        $data = UserService::add($param, 'post');
+        $data = RegisterService::register($param);
 
         return success($data, '注册成功');
     }

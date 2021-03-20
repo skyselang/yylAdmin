@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -33,7 +33,7 @@ class AdminRoleService
         }
 
         if (empty($order)) {
-            $order = ['role_sort' => 'desc', 'admin_role_id' => 'asc'];
+            $order = ['role_sort' => 'desc', 'admin_role_id' => 'desc'];
         }
 
         if ($whereOr) {
@@ -139,7 +139,7 @@ class AdminRoleService
             }
 
             $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-            $param['create_time']    = date('Y-m-d H:i:s');
+            $param['create_time']    = datetime();
 
             $admin_role_id = Db::name('admin_role')
                 ->insertGetId($param);
@@ -182,7 +182,7 @@ class AdminRoleService
             }
 
             $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-            $param['update_time']    = date('Y-m-d H:i:s');
+            $param['update_time']    = datetime();
 
             $res = Db::name('admin_role')
                 ->where('admin_role_id', $admin_role_id)
@@ -210,7 +210,7 @@ class AdminRoleService
     public static function dele($admin_role_id)
     {
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
@@ -239,7 +239,7 @@ class AdminRoleService
         $admin_role_id = $param['admin_role_id'];
 
         $update['is_disable']  = $param['is_disable'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
@@ -257,7 +257,7 @@ class AdminRoleService
     }
 
     /**
-     * 角色用户
+     * 角色管理员
      *
      * @param array   $where   条件
      * @param integer $page    页数
@@ -276,9 +276,9 @@ class AdminRoleService
     }
 
     /**
-     * 角色用户解除
+     * 角色管理员解除
      *
-     * @param array $param 菜单用户id
+     * @param array $param 菜单管理员id
      *
      * @return array
      */
@@ -303,7 +303,7 @@ class AdminRoleService
         }
 
         $update['admin_role_ids'] = $admin_role_ids;
-        $update['update_time']    = date('Y-m-d H:i:s');
+        $update['update_time']    = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)

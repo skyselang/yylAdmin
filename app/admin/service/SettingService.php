@@ -3,7 +3,7 @@
  * @Description  : 设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-03-10
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -41,7 +41,7 @@ class SettingService
             $verify['expire'] = $param['expire'];
 
             $update['verify']      = serialize($verify);
-            $update['update_time'] = date('Y-m-d H:i:s');
+            $update['update_time'] = datetime();
 
             $setting = Db::name('setting')
                 ->where('setting_id', $setting_id)
@@ -81,7 +81,7 @@ class SettingService
             $token['exp'] = $param['exp'];
 
             $update['token']       = serialize($token);
-            $update['update_time'] = date('Y-m-d H:i:s');
+            $update['update_time'] = datetime();
 
             $setting = Db::name('setting')
                 ->where('setting_id', $setting_id)
@@ -117,7 +117,7 @@ class SettingService
                 $setting['setting_id']  = $setting_id;
                 $setting['verify']      = serialize([]);
                 $setting['token']       = serialize([]);
-                $setting['create_time'] = date('Y-m-d H:i:s');
+                $setting['create_time'] = datetime();
                 Db::name('setting')
                     ->insert($setting);
             }
@@ -143,7 +143,7 @@ class SettingService
 
             $setting['verify']      = serialize($verify);
             $setting['token']       = serialize($token);
-            $setting['update_time'] = date('Y-m-d H:i:s');
+            $setting['update_time'] = datetime();
             Db::name('setting')
                 ->where('setting_id', $setting_id)
                 ->update($setting);

@@ -3,7 +3,7 @@
  * @Description  : 菜单验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-01-18
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\validate;
@@ -108,7 +108,7 @@ class AdminMenuValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：菜单是否有子菜单或分配有角色或分配有用户
+    // 自定义验证规则：菜单是否有子菜单或分配有角色或分配有管理员
     protected function checkAdminMenuRole($value, $rule, $data = [])
     {
         $admin_menu_id = $value;
@@ -146,7 +146,7 @@ class AdminMenuValidate extends Validate
             ->whereOr($whereOr)
             ->find();
         if ($admin_user) {
-            return '请在[用户]中解除所有用户后再删除';
+            return '请在[管理员]中解除所有管理员后再删除';
         }
 
         return true;

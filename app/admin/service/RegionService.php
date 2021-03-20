@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -131,7 +131,7 @@ class RegionService
 
             return $region;
         } else {
-            $param['create_time'] = date('Y-m-d H:i:s');
+            $param['create_time'] = datetime();
 
             $Pinyin          = new Pinyin();
             $region_py       = $Pinyin->convert($param['region_name']);
@@ -242,7 +242,7 @@ class RegionService
 
                 $region_path = $region['region_path'] . ',' . $region_id;
                 $update['region_path'] = $region_path;
-                $update['update_time'] = date('Y-m-d H:i:s');
+                $update['update_time'] = datetime();
                 $update_res = Db::name('region')
                     ->where('region_id', $region_id)
                     ->update($update);
@@ -253,7 +253,7 @@ class RegionService
 
                 $region_path = $region_id;
                 $update['region_path'] = $region_path;
-                $update['update_time'] = date('Y-m-d H:i:s');
+                $update['update_time'] = datetime();
                 $update_res = Db::name('region')
                     ->where('region_id', $region_id)
                     ->update($update);
@@ -283,7 +283,7 @@ class RegionService
     public static function dele($region_id)
     {
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('region')
             ->where('region_id', '=', $region_id)

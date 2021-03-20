@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-03-11
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\index\controller;
@@ -41,12 +41,10 @@ class Login
      */
     public function login()
     {
-        $param['username']       = Request::param('username/s', '');
-        $param['password']       = Request::param('password/s', '');
-        $param['verify_id']      = Request::param('verify_id/s', '');
-        $param['verify_code']    = Request::param('verify_code/s', '');
-        $param['request_ip']     = Request::ip();
-        $param['request_method'] = Request::method();
+        $param['username']    = Request::param('username/s', '');
+        $param['password']    = Request::param('password/s', '');
+        $param['verify_id']   = Request::param('verify_id/s', '');
+        $param['verify_code'] = Request::param('verify_code/s', '');
 
         $verify_config = VerifyService::config();
 

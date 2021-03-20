@@ -167,7 +167,7 @@ class AdminRole
     }
 
     /**
-     * 角色用户
+     * 角色管理员
      *
      * @method GET
      *
@@ -203,7 +203,7 @@ class AdminRole
     }
 
     /**
-     * 角色用户解除
+     * 角色管理员解除
      *
      * @method POST
      *

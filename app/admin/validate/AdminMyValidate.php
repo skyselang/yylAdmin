@@ -3,7 +3,7 @@
  * @Description  : 个人中心验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\validate;
@@ -27,7 +27,7 @@ class AdminMyValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'admin_user_id.require' => '缺少参数：用户id',
+        'admin_user_id.require' => '缺少参数：管理员id',
         'username.require'      => '请输入账号',
         'username.length'       => '账号长度为2至32个字符',
         'nickname.require'      => '请输入昵称',
@@ -52,7 +52,7 @@ class AdminMyValidate extends Validate
 
     ];
 
-    // 自定义验证规则：用户是否存在
+    // 自定义验证规则：管理员是否存在
     protected function checkAdminUser($value, $rule, $data = [])
     {
         $admin_user_id = $value;
@@ -60,7 +60,7 @@ class AdminMyValidate extends Validate
         $admin_user = AdminUserService::info($admin_user_id);
 
         if ($admin_user['is_delete'] == 1) {
-            return '用户已被删除：' . $admin_user_id;
+            return '管理员已被删除：' . $admin_user_id;
         }
 
         return true;

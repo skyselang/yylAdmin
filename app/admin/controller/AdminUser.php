@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户管理
+ * @Description  : 管理员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\controller;
@@ -15,7 +15,7 @@ use app\admin\service\AdminUserService;
 class AdminUser
 {
     /**
-     * 用户列表
+     * 管理员列表
      *
      * @method GET
      * 
@@ -55,7 +55,7 @@ class AdminUser
     }
 
     /**
-     * 用户信息
+     * 管理员信息
      *
      * @method GET
      * 
@@ -70,14 +70,14 @@ class AdminUser
         $data = AdminUserService::info($param['admin_user_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('用户已被删除：' . $param['admin_user_id']);
+            exception('管理员已被删除：' . $param['admin_user_id']);
         }
 
         return success($data);
     }
 
     /**
-     * 用户添加
+     * 管理员添加
      *
      * @method POST
      * 
@@ -100,7 +100,7 @@ class AdminUser
     }
 
     /**
-     * 用户修改
+     * 管理员修改
      *
      * @method GET|POST
      * 
@@ -116,7 +116,7 @@ class AdminUser
             $data = AdminUserService::edit($param);
 
             if ($data['admin_user']['is_delete'] == 1) {
-                exception('用户已被删除：' . $param['admin_user_id']);
+                exception('管理员已被删除：' . $param['admin_user_id']);
             }
         } else {
             $param['username'] = Request::param('username/s', '');
@@ -134,7 +134,7 @@ class AdminUser
     }
 
     /**
-     * 用户删除
+     * 管理员删除
      *
      * @method POST
      * 
@@ -152,7 +152,7 @@ class AdminUser
     }
 
     /**
-     * 用户更换头像
+     * 管理员更换头像
      *
      * @method POST
      * 
@@ -171,7 +171,7 @@ class AdminUser
     }
 
     /**
-     * 用户密码重置
+     * 管理员密码重置
      *
      * @method POST
      * 
@@ -190,7 +190,7 @@ class AdminUser
     }
 
     /**
-     * 用户权限分配
+     * 管理员权限分配
      *
      * @method GET|POST
      * 
@@ -217,7 +217,7 @@ class AdminUser
     }
 
     /**
-     * 用户是否禁用
+     * 管理员是否禁用
      *
      * @method POST
      * 
@@ -236,7 +236,7 @@ class AdminUser
     }
 
     /**
-     * 用户是否管理员
+     * 管理员是否超管
      *
      * @method POST
      * 

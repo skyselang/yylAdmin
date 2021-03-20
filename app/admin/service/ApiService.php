@@ -3,7 +3,7 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-01-15
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -71,8 +71,12 @@ class ApiService
      * 
      * @return array
      */
-    public static function info($api_id)
+    public static function info($api_id = '')
     {
+        if (empty($api_id)) {
+            $api_id = request_pathinfo();
+        }
+
         $api = ApiCache::get($api_id);
 
         if (empty($api)) {
@@ -106,7 +110,7 @@ class ApiService
      */
     public static function add($param)
     {
-        $param['create_time'] = date('Y-m-d H:i:s');
+        $param['create_time'] = datetime();
 
         $api_id = Db::name('api')
             ->insertGetId($param);
@@ -142,7 +146,7 @@ class ApiService
 
             $api = self::info($api_id);
 
-            $param['update_time'] = date('Y-m-d H:i:s');
+            $param['update_time'] = datetime();
 
             $update = Db::name('api')
                 ->where('api_id', '=', $api_id)
@@ -174,7 +178,7 @@ class ApiService
         $api = self::info($api_id);
 
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('api')
             ->where('api_id', '=', $api_id)
@@ -229,7 +233,7 @@ class ApiService
         $api_id = $param['api_id'];
 
         $update['is_disable']  = $param['is_disable'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('api')
             ->where('api_id', $api_id)
@@ -262,7 +266,7 @@ class ApiService
         $api_id = $param['api_id'];
 
         $update['is_unauth']   = $param['is_unauth'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('api')
             ->where('api_id', $api_id)

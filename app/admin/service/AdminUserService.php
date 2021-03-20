@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户管理
+ * @Description  : 管理员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -17,7 +17,7 @@ use app\admin\service\AdminTokenService;
 class AdminUserService
 {
     /**
-     * 用户列表
+     * 管理员列表
      *
      * @param array   $where   条件
      * @param integer $page    页数
@@ -35,7 +35,7 @@ class AdminUserService
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'admin_user_id' => 'asc'];
+            $order = ['sort' => 'desc', 'admin_user_id' => 'desc'];
         }
 
         if ($whereOr) {
@@ -80,9 +80,9 @@ class AdminUserService
     }
 
     /**
-     * 用户信息
+     * 管理员信息
      *
-     * @param integer $admin_user_id 用户id
+     * @param integer $admin_user_id 管理员id
      * 
      * @return array
      */
@@ -96,12 +96,12 @@ class AdminUserService
                 ->find();
 
             if (empty($admin_user)) {
-                exception('用户不存在：' . $admin_user_id);
+                exception('管理员不存在：' . $admin_user_id);
             }
 
             $admin_user['avatar'] = file_url($admin_user['avatar']);
 
-            if (admin_is_admin($admin_user_id)) {
+            if (admin_is_system($admin_user_id)) {
                 $admin_menu = Db::name('admin_menu')
                     ->field('admin_menu_id,menu_url')
                     ->where('is_delete', 0)
@@ -201,16 +201,16 @@ class AdminUserService
     }
 
     /**
-     * 用户添加
+     * 管理员添加
      *
-     * @param array $param 用户信息
+     * @param array $param 管理员信息
      * 
      * @return array
      */
     public static function add($param)
     {
         $param['password']    = md5($param['password']);
-        $param['create_time'] = date('Y-m-d H:i:s');
+        $param['create_time'] = datetime();
 
         $admin_user_id = Db::name('admin_user')
             ->insertGetId($param);
@@ -227,9 +227,9 @@ class AdminUserService
     }
 
     /**
-     * 用户修改
+     * 管理员修改
      *
-     * @param array $param 用户信息
+     * @param array $param 管理员信息
      * 
      * @return array
      */
@@ -248,7 +248,7 @@ class AdminUserService
         } else {
             unset($param['admin_user_id']);
 
-            $param['update_time'] = date('Y-m-d H:i:s');
+            $param['update_time'] = datetime();
 
             $res = Db::name('admin_user')
                 ->where('admin_user_id', $admin_user_id)
@@ -267,16 +267,16 @@ class AdminUserService
     }
 
     /**
-     * 用户删除
+     * 管理员删除
      *
-     * @param integer $admin_user_id 用户id
+     * @param integer $admin_user_id 管理员id
      * 
      * @return array
      */
     public static function dele($admin_user_id)
     {
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
@@ -294,7 +294,7 @@ class AdminUserService
     }
 
     /**
-     * 用户修改头像
+     * 管理员修改头像
      *
      * @param array $param 头像信息
      * 
@@ -311,7 +311,7 @@ class AdminUserService
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
@@ -332,9 +332,9 @@ class AdminUserService
     }
 
     /**
-     * 用户密码重置
+     * 管理员密码重置
      *
-     * @param array $param 用户信息
+     * @param array $param 管理员信息
      * 
      * @return array
      */
@@ -343,7 +343,7 @@ class AdminUserService
         $admin_user_id = $param['admin_user_id'];
 
         $update['password']    = md5($param['password']);
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
@@ -362,9 +362,9 @@ class AdminUserService
     }
 
     /**
-     * 用户权限分配
+     * 管理员权限分配
      *
-     * @param array  $param  用户信息
+     * @param array  $param  管理员信息
      * @param string $method 请求方式
      * 
      * @return array
@@ -437,7 +437,7 @@ class AdminUserService
 
             $update['admin_role_ids'] = implode(',', $admin_role_ids);
             $update['admin_menu_ids'] = implode(',', $admin_menu_ids);
-            $update['update_time']    = date('Y-m-d H:i:s');
+            $update['update_time']    = datetime();
 
             $res = Db::name('admin_user')
                 ->where('admin_user_id', $admin_user_id)
@@ -456,9 +456,9 @@ class AdminUserService
     }
 
     /**
-     * 用户是否禁用
+     * 管理员是否禁用
      *
-     * @param array $param 用户信息
+     * @param array $param 管理员信息
      * 
      * @return array
      */
@@ -467,7 +467,7 @@ class AdminUserService
         $admin_user_id = $param['admin_user_id'];
 
         $update['is_disable']  = $param['is_disable'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
@@ -485,9 +485,9 @@ class AdminUserService
     }
 
     /**
-     * 用户是否管理员
+     * 管理员是否超管
      *
-     * @param array $param 用户信息
+     * @param array $param 管理员信息
      * 
      * @return array
      */
@@ -496,7 +496,7 @@ class AdminUserService
         $admin_user_id = $param['admin_user_id'];
 
         $update['is_admin']    = $param['is_admin'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
@@ -514,7 +514,7 @@ class AdminUserService
     }
 
     /**
-     * 用户模糊查询
+     * 管理员模糊查询
      *
      * @param string $keyword 关键词
      * @param string $field   字段
@@ -533,7 +533,7 @@ class AdminUserService
     }
 
     /**
-     * 用户精确查询
+     * 管理员精确查询
      *
      * @param string $keyword 关键词
      * @param string $field   字段

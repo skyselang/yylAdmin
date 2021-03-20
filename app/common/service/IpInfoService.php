@@ -3,11 +3,12 @@
  * @Description  : IP信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\common\service;
 
+use think\facade\Request;
 use app\common\cache\IpInfoCache;
 
 class IpInfoService
@@ -19,15 +20,19 @@ class IpInfoService
      *
      * @return array
      */
-    public static function info($ip)
+    public static function info($ip = '')
     {
-        $ipinfo = IpInfoCache::get($ip);
+        if (empty($ip)) {
+            $ip = Request::ip();
+        }
 
-        if (empty($ipinfo)) {
+        $ip_info = IpInfoCache::get($ip);
+
+        if (empty($ip_info)) {
             $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';
             $res = http_get($url);
 
-            $ipinfo = [
+            $ip_info = [
                 'ip'       => $ip,
                 'country'  => '',
                 'province' => '',
@@ -47,18 +52,18 @@ class IpInfoService
                 $region   = $country . $province . $city . $area;
                 $isp      = $data['isp'];
 
-                $ipinfo['ip']       = $ip;
-                $ipinfo['country']  = $country;
-                $ipinfo['province'] = $province;
-                $ipinfo['city']     = $city;
-                $ipinfo['region']   = $region;
-                $ipinfo['area']     = $area;
-                $ipinfo['isp']      = $isp;
+                $ip_info['ip']       = $ip;
+                $ip_info['country']  = $country;
+                $ip_info['province'] = $province;
+                $ip_info['city']     = $city;
+                $ip_info['region']   = $region;
+                $ip_info['area']     = $area;
+                $ip_info['isp']      = $isp;
 
-                IpInfoCache::set($ip, $ipinfo);
+                IpInfoCache::set($ip, $ip_info);
             }
         }
 
-        return $ipinfo;
+        return $ip_info;
     }
 }

@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-01-21
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -125,7 +125,7 @@ class AdminSettingService
             $admin_verify['expire'] = $param['expire'];
 
             $update['admin_verify'] = serialize($admin_verify);
-            $update['update_time']  = date('Y-m-d H:i:s');
+            $update['update_time']  = datetime();
 
             $admin_setting = Db::name('admin_setting')
                 ->where('admin_setting_id', $admin_setting_id)
@@ -161,7 +161,7 @@ class AdminSettingService
             $admin_token['exp'] = $param['exp'];
 
             $update['admin_token'] = serialize($admin_token);
-            $update['update_time'] = date('Y-m-d H:i:s');
+            $update['update_time'] = datetime();
 
             $admin_setting = Db::name('admin_setting')
                 ->where('admin_setting_id', $admin_setting_id)
@@ -197,7 +197,7 @@ class AdminSettingService
                 $admin_setting['admin_setting_id'] = $admin_setting_id;
                 $admin_setting['admin_verify']     = serialize([]);
                 $admin_setting['admin_token']      = serialize([]);
-                $admin_setting['create_time']      = date('Y-m-d H:i:s');
+                $admin_setting['create_time']      = datetime();
                 Db::name('admin_setting')
                     ->insert($admin_setting);
             }
@@ -223,7 +223,7 @@ class AdminSettingService
 
             $admin_setting['admin_verify'] = serialize($admin_verify);
             $admin_setting['admin_token']  = serialize($admin_token);
-            $admin_setting['update_time']  = date('Y-m-d H:i:s');
+            $admin_setting['update_time']  = datetime();
             Db::name('admin_setting')
                 ->where('admin_setting_id', $admin_setting_id)
                 ->update($admin_setting);

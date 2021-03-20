@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-01-18
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -75,8 +75,12 @@ class AdminMenuService
      * 
      * @return array
      */
-    public static function info($admin_menu_id)
+    public static function info($admin_menu_id = '')
     {
+        if (empty($admin_menu_id)) {
+            $admin_menu_id = request_pathinfo();
+        }
+        
         $admin_menu = AdminMenuCache::get($admin_menu_id);
 
         if (empty($admin_menu)) {
@@ -110,7 +114,7 @@ class AdminMenuService
      */
     public static function add($param)
     {
-        $param['create_time'] = date('Y-m-d H:i:s');
+        $param['create_time'] = datetime();
 
         $admin_menu_id = Db::name('admin_menu')
             ->insertGetId($param);
@@ -143,7 +147,7 @@ class AdminMenuService
         } else {
             unset($param['admin_menu_id']);
 
-            $param['update_time'] = date('Y-m-d H:i:s');
+            $param['update_time'] = datetime();
 
             $res = Db::name('admin_menu')
                 ->where('admin_menu_id', '=', $admin_menu_id)
@@ -175,7 +179,7 @@ class AdminMenuService
         $admin_menu = self::info($admin_menu_id);
 
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('admin_menu')
             ->where('admin_menu_id', '=', $admin_menu_id)
@@ -230,7 +234,7 @@ class AdminMenuService
         $admin_menu_id = $param['admin_menu_id'];
 
         $update['is_disable']  = $param['is_disable'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
@@ -263,7 +267,7 @@ class AdminMenuService
         $admin_menu_id = $param['admin_menu_id'];
 
         $update['is_unauth']   = $param['is_unauth'];
-        $update['update_time'] = date('Y-m-d H:i:s');
+        $update['update_time'] = datetime();
 
         $res = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
@@ -330,7 +334,7 @@ class AdminMenuService
             $admin_menu_ids = implode(',', $admin_menu_ids);
         }
 
-        $update['update_time']    = date('Y-m-d H:i:s');
+        $update['update_time']    = datetime();
         $update['admin_menu_ids'] = $admin_menu_ids;
 
         $res = Db::name('admin_role')
@@ -350,7 +354,7 @@ class AdminMenuService
     }
 
     /**
-     * 菜单用户
+     * 菜单管理员
      *
      * @param array   $where   条件
      * @param integer $page    页数
@@ -369,9 +373,9 @@ class AdminMenuService
     }
 
     /**
-     * 菜单用户解除
+     * 菜单管理员解除
      *
-     * @param array $param 菜单用户id
+     * @param array $param 菜单管理员id
      *
      * @return array
      */
@@ -395,7 +399,7 @@ class AdminMenuService
             $admin_menu_ids = implode(',', $admin_menu_ids);
         }
 
-        $update['update_time']    = date('Y-m-d H:i:s');
+        $update['update_time']    = datetime();
         $update['admin_menu_ids'] = $admin_menu_ids;
 
         $res = Db::name('admin_user')

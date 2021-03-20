@@ -3,7 +3,7 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -17,7 +17,7 @@ class AdminTokenService
     /**
      * Token生成
      * 
-     * @param array $admin_user 用户数据
+     * @param array $admin_user 管理员数据
      * 
      * @return string
      */
@@ -55,7 +55,7 @@ class AdminTokenService
      * Token验证
      *
      * @param string  $token         token
-     * @param integer $admin_user_id 用户id
+     * @param integer $admin_user_id 管理员id
      * 
      * @return json
      */

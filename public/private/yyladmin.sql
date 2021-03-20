@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 15/03/2021 18:31:46
+ Date: 20/03/2021 23:24:36
 */
 
 SET NAMES utf8mb4;
@@ -23,7 +23,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `ya_admin_log`;
 CREATE TABLE `ya_admin_log`  (
   `admin_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志id',
-  `admin_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
+  `admin_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '管理员id',
   `admin_menu_id` int(11) NULL DEFAULT 0 COMMENT '菜单id',
   `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
   `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
@@ -49,7 +49,7 @@ CREATE TABLE `ya_admin_log`  (
   INDEX `request_province`(`request_province`) USING BTREE,
   INDEX `request_country`(`request_country`) USING BTREE,
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员日志' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_admin_log
@@ -78,74 +78,74 @@ CREATE TABLE `ya_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 172 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 173 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_admin_menu
 -- ----------------------------
-INSERT INTO `ya_admin_menu` VALUES (1, 0, '控制台', '', 300, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (3, 88, '菜单管理', '', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (4, 88, '用户管理', '', 180, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (5, 88, '角色管理', '', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (12, 88, '个人中心', '', 130, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (13, 3, '菜单列表', 'admin/AdminMenu/menuList', 220, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (14, 3, '菜单添加', 'admin/AdminMenu/menuAdd', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (15, 3, '菜单修改', 'admin/AdminMenu/menuEdit', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (16, 3, '菜单删除', 'admin/AdminMenu/menuDele', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (17, 4, '用户列表', 'admin/AdminUser/userList', 220, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (18, 4, '用户添加', 'admin/AdminUser/userAdd', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (19, 4, '用户修改', 'admin/AdminUser/userEdit', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (20, 4, '用户删除', 'admin/AdminUser/userDele', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (22, 5, '角色列表', 'admin/AdminRole/roleList', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (23, 5, '角色添加', 'admin/AdminRole/roleAdd', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (24, 5, '角色修改', 'admin/AdminRole/roleEdit', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (25, 5, '角色删除', 'admin/AdminRole/roleDele', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (1, 0, '控制台', '', 300, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (3, 88, '菜单管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (4, 88, '管理员管理', '', 180, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (5, 88, '角色管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (12, 88, '个人中心', '', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (13, 3, '菜单列表', 'admin/AdminMenu/menuList', 220, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (14, 3, '菜单添加', 'admin/AdminMenu/menuAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (15, 3, '菜单修改', 'admin/AdminMenu/menuEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (16, 3, '菜单删除', 'admin/AdminMenu/menuDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (17, 4, '管理员列表', 'admin/AdminUser/userList', 220, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (18, 4, '管理员添加', 'admin/AdminUser/userAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (19, 4, '管理员修改', 'admin/AdminUser/userEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (20, 4, '管理员删除', 'admin/AdminUser/userDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (22, 5, '角色列表', 'admin/AdminRole/roleList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (23, 5, '角色添加', 'admin/AdminRole/roleAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (24, 5, '角色修改', 'admin/AdminRole/roleEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (25, 5, '角色删除', 'admin/AdminRole/roleDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (27, 3, '菜单是否禁用', 'admin/AdminMenu/menuDisable', 160, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (28, 3, '菜单无需权限', 'admin/AdminMenu/menuUnauth', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (29, 4, '用户信息', 'admin/AdminUser/userInfo', 210, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (30, 4, '用户是否禁用', 'admin/AdminUser/userDisable', 130, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (31, 4, '用户权限分配', 'admin/AdminUser/userRule', 150, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (32, 4, '用户密码重置', 'admin/AdminUser/userPwd', 140, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (33, 5, '角色禁用', 'admin/AdminRole/roleDisable', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (35, 4, '用户是否管理员', 'admin/AdminUser/userAdmin', 120, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (36, 53, '实用工具', '', 110, NULL, NULL, '', 0, 1, 1, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminTool/strRand', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminTool/timeTran', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminTool/qrcode', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (41, 88, '日志管理', '', 140, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (42, 41, '日志列表', 'admin/AdminLog/logList', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (43, 41, '日志信息', 'admin/AdminLog/logInfo', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (44, 41, '日志删除', 'admin/AdminLog/logDele', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (45, 12, '我的信息', 'admin/AdminMy/myInfo', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (46, 12, '修改信息', 'admin/AdminMy/myEdit', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (47, 12, '修改密码', 'admin/AdminMy/myPwd', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (48, 12, '更换头像', 'admin/AdminMy/myAvatar', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (49, 1, '控制台', 'admin/AdminIndex/index', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (50, 53, '地图坐标拾取', 'admin/AdminTool/toolMap', 150, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (51, 111, '登录', 'admin/AdminLogin/login', 160, NULL, NULL, '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (52, 111, '退出', 'admin/AdminLogin/logout', 150, NULL, NULL, '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (53, 0, '系统管理', '', 120, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (54, 12, '我的日志', 'admin/AdminMy/myLog', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (58, 53, '实用工具合集', 'admin/AdminTool/toolMix', 160, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminTool/strTran', 210, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (71, 53, '缓存设置', 'admin/AdminSetting/settingCache', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (73, 53, '验证码设置', 'admin/AdminSetting/settingVerify', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (75, 111, '验证码', 'admin/AdminLogin/verify', 170, NULL, NULL, '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminTool/byteTran', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminTool/ipQuery', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (88, 0, '权限管理', '', 150, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (111, 0, '登录退出', '', 100, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (29, 4, '管理员信息', 'admin/AdminUser/userInfo', 210, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (30, 4, '管理员是否禁用', 'admin/AdminUser/userDisable', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (31, 4, '管理员权限分配', 'admin/AdminUser/userRule', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (32, 4, '管理员密码重置', 'admin/AdminUser/userPwd', 140, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (33, 5, '角色禁用', 'admin/AdminRole/roleDisable', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (35, 4, '管理员是否超管', 'admin/AdminUser/userAdmin', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (36, 53, '实用工具', '', 110, '', '', '', 0, 1, 1, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminTool/strRand', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminTool/timeTran', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminTool/qrcode', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (41, 88, '管理员日志', '', 140, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (42, 41, '管理员日志列表', 'admin/AdminLog/logList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (43, 41, '管理员日志信息', 'admin/AdminLog/logInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (44, 41, '管理员日志删除', 'admin/AdminLog/logDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (45, 12, '我的信息', 'admin/AdminMy/myInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (46, 12, '修改信息', 'admin/AdminMy/myEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (47, 12, '修改密码', 'admin/AdminMy/myPwd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (48, 12, '更换头像', 'admin/AdminMy/myAvatar', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (49, 1, '控制台', 'admin/AdminIndex/index', 200, '', '', '', 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (50, 53, '地图坐标拾取', 'admin/AdminTool/toolMap', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (51, 111, '登录', 'admin/AdminLogin/login', 160, '', '', '', 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (52, 111, '退出', 'admin/AdminLogin/logout', 150, '', '', '', 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (53, 0, '系统管理', '', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (54, 12, '我的日志', 'admin/AdminMy/myLog', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (58, 53, '实用工具合集', 'admin/AdminTool/toolMix', 160, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminTool/strTran', 210, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (71, 53, '缓存设置', 'admin/AdminSetting/settingCache', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (73, 53, '验证码设置', 'admin/AdminSetting/settingVerify', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (75, 111, '验证码', 'admin/AdminLogin/verify', 170, '', '', '', 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminTool/byteTran', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminTool/ipQuery', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (88, 0, '权限管理', '', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (111, 0, '登录退出', '', 100, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (113, 3, '菜单角色', 'admin/AdminMenu/menuRole', 140, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (114, 3, '菜单用户', 'admin/AdminMenu/menuUser', 130, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (115, 5, '角色用户', 'admin/AdminRole/roleUser', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (116, 41, '日志统计', 'admin/AdminLog/logStatistic', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (117, 12, '我的设置', 'admin/AdminMy/mySetting', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (114, 3, '菜单用户', 'admin/AdminMenu/menuUser', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (115, 5, '角色用户', 'admin/AdminRole/roleUser', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (116, 41, '管理员日志统计', 'admin/AdminLog/logStatistic', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (117, 12, '我的设置', 'admin/AdminMy/mySetting', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/AdminMenu/menuRoleRemove', 135, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/AdminMenu/menuUserRemove', 120, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/AdminRole/roleUserRemove', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (121, 4, '用户更换头像', 'admin/AdminUser/userAvatar', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (122, 53, '服务器信息', 'admin/AdminSetting/serverInfo', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/AdminMenu/menuUserRemove', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/AdminRole/roleUserRemove', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (121, 4, '管理员更换头像', 'admin/AdminUser/userAvatar', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (122, 53, '服务器信息', 'admin/AdminSetting/serverInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (123, 156, '用户管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (124, 123, '用户列表', 'admin/User/userList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (125, 123, '用户信息', 'admin/User/userInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
@@ -155,46 +155,47 @@ INSERT INTO `ya_admin_menu` VALUES (128, 123, '用户删除', 'admin/User/userDe
 INSERT INTO `ya_admin_menu` VALUES (129, 123, '用户密码重置', 'admin/User/userPassword', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (130, 123, '用户是否禁用', 'admin/User/userDisable', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (131, 123, '用户更换头像', 'admin/User/userAvatar', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (132, 159, '接口管理', '', 120, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (133, 132, '接口列表', 'admin/Api/apiList', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (134, 132, '接口信息', 'admin/Api/apiInfo', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (135, 132, '接口添加', 'admin/Api/apiAdd', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (136, 132, '接口修改', 'admin/Api/apiEdit', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (137, 132, '接口删除', 'admin/Api/apiDele', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (138, 132, '接口是否禁用', 'admin/Api/apiDisable', 120, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (139, 132, '接口是否无需权限', 'admin/Api/apiUnauth', 110, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (132, 159, '接口管理', '', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (133, 132, '接口列表', 'admin/Api/apiList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (134, 132, '接口信息', 'admin/Api/apiInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (135, 132, '接口添加', 'admin/Api/apiAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (136, 132, '接口修改', 'admin/Api/apiEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (137, 132, '接口删除', 'admin/Api/apiDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (138, 132, '接口是否禁用', 'admin/Api/apiDisable', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (139, 132, '接口是否无需权限', 'admin/Api/apiUnauth', 110, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (140, 156, '用户日志', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (141, 140, '用户日志列表', 'admin/UserLog/userLogList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (142, 140, '用户日志信息', 'admin/UserLog/userLogInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (143, 140, '用户日志删除', 'admin/UserLog/userLogDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (144, 140, '用户日志统计', 'admin/UserLog/userLogSta', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (145, 50, '高德地图坐标拾取', 'admin/AdminTool/toolMapAmap', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/AdminTool/toolMapBaidu', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/AdminTool/toolMapSogou', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/AdminTool/toolMapTencent', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (149, 50, '北斗地图坐标拾取', 'admin/AdminTool/toolMapBeidou', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (150, 157, '地区管理', '', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/regionList', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/regionInfo', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/regionAdd', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/regionEdit', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/regionDele', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (145, 50, '高德地图坐标拾取', 'admin/AdminTool/toolMapAmap', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/AdminTool/toolMapBaidu', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/AdminTool/toolMapSogou', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/AdminTool/toolMapTencent', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (149, 50, '北斗地图坐标拾取', 'admin/AdminTool/toolMapBeidou', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (150, 157, '地区管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/regionList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/regionInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/regionAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/regionEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/regionDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (156, 0, '用户管理', '', 250, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (157, 0, '应用管理', '', 160, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/menuInfo', 210, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (159, 0, '接口管理', '', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (160, 159, '接口环境', '', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (161, 160, '接口环境列表', 'admin/ApiEnv/apiEnvList', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (162, 160, '接口环境信息', 'admin/ApiEnv/apiEnvInfo', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (163, 160, '接口环境添加', 'admin/ApiEnv/apiEnvAdd', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (164, 160, '接口环境修改', 'admin/ApiEnv/apiEnvEdit', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (165, 160, '接口环境删除', 'admin/ApiEnv/apiEnvDele', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (166, 132, '接口上传图片', 'admin/Api/apiUpload', 150, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_admin_menu` VALUES (167, 132, '接口文档', 'admin/Api/apiDoc', 200, NULL, NULL, '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (157, 0, '应用管理', '', 160, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/menuInfo', 210, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (159, 0, '接口管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (160, 159, '接口环境', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (161, 160, '接口环境列表', 'admin/ApiEnv/apiEnvList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (162, 160, '接口环境信息', 'admin/ApiEnv/apiEnvInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (163, 160, '接口环境添加', 'admin/ApiEnv/apiEnvAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (164, 160, '接口环境修改', 'admin/ApiEnv/apiEnvEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (165, 160, '接口环境删除', 'admin/ApiEnv/apiEnvDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (166, 132, '接口上传图片', 'admin/Api/apiUpload', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (167, 132, '接口文档', 'admin/Api/apiDoc', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (168, 3, '菜单文档', 'admin/AdminMenu/menuDoc', 200, '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选填</td><td>请求参数示例字段</td><td>示例值</td></tr></tbody></table>', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选返</td><td>返回数据示例字段</td><td>示例值</td></tr></tbody></table>', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (169, 3, '菜单上传图片', 'admin/AdminMenu/menuUpload', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (170, 157, '验证码设置', 'admin/Setting/settingVerify', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_admin_menu` VALUES (171, 157, 'Token设置', 'admin/Setting/settingToken', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_admin_menu` VALUES (172, 1, '数据统计（用户）', 'admin/AdminIndex/statisticUser', 200, '', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选返</td><td>返回数据示例字段</td><td>示例值</td></tr></tbody></table>', '', 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_admin_role
@@ -240,14 +241,14 @@ CREATE TABLE `ya_admin_setting`  (
 -- ----------------------------
 -- Records of ya_admin_setting
 -- ----------------------------
-INSERT INTO `ya_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, NULL);
+INSERT INTO `ya_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, '2021-03-20 23:13:11');
 
 -- ----------------------------
 -- Table structure for ya_admin_user
 -- ----------------------------
 DROP TABLE IF EXISTS `ya_admin_user`;
 CREATE TABLE `ya_admin_user`  (
-  `admin_user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id',
+  `admin_user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '管理员id',
   `admin_role_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '角色id',
   `admin_menu_ids` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单id',
   `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
@@ -272,7 +273,7 @@ CREATE TABLE `ya_admin_user`  (
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `email`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ya_admin_user
@@ -4130,22 +4131,15 @@ CREATE TABLE `ya_user`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`user_id`) USING BTREE,
-  INDEX `user_id`(`user_id`) USING BTREE,
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `email`(`email`) USING BTREE,
-  INDEX `phone`(`phone`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1000007 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
+  INDEX `phone`(`phone`) USING BTREE,
+  INDEX `user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ya_user
 -- ----------------------------
-INSERT INTO `ya_user` VALUES (1000000, 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_user` VALUES (1000001, 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_user` VALUES (1000002, 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_user` VALUES (1000003, 'q1-_', 'q1-_', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_user` VALUES (1000004, 'php', 'php', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_user` VALUES (1000005, 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `ya_user` VALUES (1000006, '123', '123', 'e10adc3949ba59abbe56e057f20f883e', '', '', '', '', 0, 10000, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_user_log
@@ -4154,7 +4148,7 @@ DROP TABLE IF EXISTS `ya_user_log`;
 CREATE TABLE `ya_user_log`  (
   `user_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户日志id',
   `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
-  `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
+  `log_type` tinyint(1) NULL DEFAULT 3 COMMENT '1注册2登录3操作4退出',
   `api_id` int(11) NULL DEFAULT 0 COMMENT '接口id',
   `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
   `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求IP',

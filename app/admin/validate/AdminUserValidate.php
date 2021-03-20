@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户验证器
+ * @Description  : 管理员验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\validate;
@@ -26,7 +26,7 @@ class AdminUserValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'admin_user_id.require' => '缺少参数：用户id',
+        'admin_user_id.require' => '缺少参数：管理员ID',
         'username.require'      => '请输入账号',
         'username.length'       => '账号长度为2至32个字符',
         'nickname.require'      => '请输入昵称',
@@ -78,7 +78,7 @@ class AdminUserValidate extends Validate
             ->append('admin_user_id', ['checkAdminUserIsDelete', 'checkAdminUserRoleMenu']);
     }
 
-    // 验证场景定义：是否管理员
+    // 验证场景定义：是否超管
     protected function sceneuser_admin()
     {
         return $this->only(['admin_user_id'])
@@ -106,7 +106,7 @@ class AdminUserValidate extends Validate
             ->append('admin_user_id', ['checkAdminUserIsAdmin']);
     }
 
-    // 自定义验证规则：用户是否存在
+    // 自定义验证规则：管理员是否存在
     protected function checkAdminUser($value, $rule, $data = [])
     {
         $admin_user_id = $value;
@@ -114,7 +114,7 @@ class AdminUserValidate extends Validate
         $admin_user = AdminUserService::info($admin_user_id);
 
         if ($admin_user['is_delete'] == 1) {
-            return '用户已被删除：' . $admin_user_id;
+            return '管理员已被删除：' . $admin_user_id;
         }
 
         return true;
@@ -192,7 +192,7 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否已分配角色或菜单
+    // 自定义验证规则：管理员是否已分配角色或菜单
     protected function checkAdminUserRoleMenu($value, $rule, $data = [])
     {
         $admin_user_id = $value;
@@ -206,11 +206,11 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否系统管理员
+    // 自定义验证规则：管理员是否系统管理员
     protected function checkAdminUserIsAdmin($value, $rule, $data = [])
     {
-        $is_admin_user  = admin_is_admin($value);
-        $is_admin_admin = admin_is_admin(admin_user_id());
+        $is_admin_user  = admin_is_system($value);
+        $is_admin_admin = admin_is_system(admin_user_id());
 
         if ($is_admin_user && !$is_admin_admin) {
             return '无法对系统管理员进行操作';
@@ -219,10 +219,10 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否禁用
+    // 自定义验证规则：管理员是否禁用
     protected function checkAdminUserIsDisable($value, $rule, $data = [])
     {
-        $is_admin_user = admin_is_admin($value);
+        $is_admin_user = admin_is_system($value);
 
         if ($is_admin_user) {
             return '无法对系统管理员进行操作';
@@ -231,10 +231,10 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户删除
+    // 自定义验证规则：管理员删除
     protected function checkAdminUserIsDelete($value, $rule, $data = [])
     {
-        $is_admin_user = admin_is_admin($value);
+        $is_admin_user = admin_is_system($value);
 
         if ($is_admin_user) {
             return '无法对系统管理员进行操作';

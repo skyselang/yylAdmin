@@ -3,7 +3,7 @@
  * @Description  : 接口环境
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-01-15
+ * @LastEditTime : 2021-03-20
  */
 
 namespace app\admin\service;
@@ -95,7 +95,7 @@ class ApiEnvService
      */
     public static function add($param)
     {
-        $param['create_time'] = date('Y-m-d H:i:s');
+        $param['create_time'] = datetime();
 
         $api_env_id = Db::name('api_env')
             ->insertGetId($param);
@@ -127,7 +127,7 @@ class ApiEnvService
         } else {
             unset($param['api_env_id']);
 
-            $param['update_time'] = date('Y-m-d H:i:s');
+            $param['update_time'] = datetime();
 
             $res = Db::name('api_env')
                 ->where('api_env_id', $api_env_id)
@@ -155,7 +155,7 @@ class ApiEnvService
     public static function dele($api_env_id)
     {
         $update['is_delete']   = 1;
-        $update['delete_time'] = date('Y-m-d H:i:s');
+        $update['delete_time'] = datetime();
 
         $res = Db::name('api_env')
             ->where('api_env_id', $api_env_id)
