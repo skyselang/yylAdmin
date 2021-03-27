@@ -3,7 +3,7 @@
  * @Description  : 接口缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-01-15
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -25,7 +25,7 @@ class ApiCache
             $api_id = 'all';
         }
 
-        $key = 'api:' . $api_id;
+        $key = 'Api:' . $api_id;
 
         return $key;
     }

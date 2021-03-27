@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\admin\service;
@@ -12,7 +12,7 @@ use think\facade\Db;
 use think\facade\Filesystem;
 use app\common\cache\AdminMenuCache;
 use app\common\cache\AdminRoleCache;
-use app\common\cache\AdminUserCache;
+use app\common\cache\AdminAdminCache;
 
 class AdminMenuService
 {
@@ -291,18 +291,17 @@ class AdminMenuService
     /**
      * 菜单角色
      *
-     * @param array   $where   条件
-     * @param integer $page    页数
-     * @param integer $limit   数量
-     * @param array   $order   排序
-     * @param string  $field   字段
-     * @param boolean $whereOr OR查询
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
      * 
      * @return array 
      */
-    public static function role($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $whereOr = false)
+    public static function role($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        $data = AdminRoleService::list($where, $page, $limit, $order, $field, $whereOr);
+        $data = AdminRoleService::list($where, $page, $limit, $order, $field);
 
         return $data;
     }
@@ -329,9 +328,9 @@ class AdminMenuService
         }
 
         if (empty($admin_menu_ids)) {
-            $admin_menu_ids = '';
+            $admin_menu_ids = str_join('');
         } else {
-            $admin_menu_ids = implode(',', $admin_menu_ids);
+            $admin_menu_ids = str_join(implode(',', $admin_menu_ids));
         }
 
         $update['update_time']    = datetime();
@@ -356,18 +355,17 @@ class AdminMenuService
     /**
      * 菜单管理员
      *
-     * @param array   $where   条件
-     * @param integer $page    页数
-     * @param integer $limit   数量
-     * @param array   $order   排序
-     * @param string  $field   字段 
-     * @param boolean $whereOr OR查询
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
      *
      * @return array 
      */
-    public static function user($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $whereOr = false)
+    public static function admin($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        $data = AdminUserService::list($where, $page, $limit, $order, $field, $whereOr);
+        $data = AdminAdminService::list($where, $page, $limit, $order, $field);
 
         return $data;
     }
@@ -379,14 +377,14 @@ class AdminMenuService
      *
      * @return array
      */
-    public static function userRemove($param)
+    public static function adminRemove($param)
     {
-        $admin_menu_id = $param['admin_menu_id'];
-        $admin_user_id = $param['admin_user_id'];
+        $admin_menu_id  = $param['admin_menu_id'];
+        $admin_admin_id = $param['admin_admin_id'];
 
-        $admin_user = AdminUserService::info($admin_user_id);
+        $admin_admin = AdminAdminService::info($admin_admin_id);
 
-        $admin_menu_ids = $admin_user['admin_menu_ids'];
+        $admin_menu_ids = $admin_admin['admin_menu_ids'];
         foreach ($admin_menu_ids as $k => $v) {
             if ($admin_menu_id == $v) {
                 unset($admin_menu_ids[$k]);
@@ -394,26 +392,26 @@ class AdminMenuService
         }
 
         if (empty($admin_menu_ids)) {
-            $admin_menu_ids = '';
+            $admin_menu_ids = str_join('');
         } else {
-            $admin_menu_ids = implode(',', $admin_menu_ids);
+            $admin_menu_ids = str_join(implode(',', $admin_menu_ids));
         }
 
         $update['update_time']    = datetime();
         $update['admin_menu_ids'] = $admin_menu_ids;
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_menu_id'] = $admin_menu_id;
-        $update['admin_user_id'] = $admin_user_id;
+        $update['admin_menu_id']  = $admin_menu_id;
+        $update['admin_admin_id'] = $admin_admin_id;
 
-        AdminUserCache::upd($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
 
         return $update;
     }

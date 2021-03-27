@@ -21,7 +21,7 @@ class VerifyCache
      */
     public static function key($verify_id = '')
     {
-        $key = 'verify:' . $verify_id;
+        $key = 'Verify:' . $verify_id;
 
         return $key;
     }

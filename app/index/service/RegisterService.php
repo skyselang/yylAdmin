@@ -3,7 +3,7 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-20
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-27
  */
 
 namespace app\index\service;
@@ -25,8 +25,10 @@ class RegisterService
     {
         $data = UserService::add($param, 'post');
         
-        $user_log['log_type'] = 1;
-        $user_log['user_id']  = $data['user_id'];
+        $user_log['log_type']      = 1;
+        $user_log['user_id']       = $data['user_id'];
+        $user_log['response_code'] = 200;
+        $user_log['response_msg']  = '注册成功';
         UserLogService::add($user_log);
 
         return $data;

@@ -3,7 +3,7 @@
  * @Description  : 用户日志验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\admin\validate;
@@ -20,7 +20,7 @@ class UserLogValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'user_log_id.require' => '缺少参数：用户日志id',
+        'user_log_id.require' => '缺少参数：日志id',
     ];
 
     // 验证场景

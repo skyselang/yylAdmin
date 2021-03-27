@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 日志管理
+ * @Description  : 管理员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\service;
@@ -17,7 +17,7 @@ use app\common\service\IpInfoService;
 class AdminLogService
 {
     /**
-     * 日志列表
+     * 管理员日志列表
      *
      * @param array   $where 条件
      * @param integer $page  分页
@@ -30,7 +30,7 @@ class AdminLogService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'admin_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = 'admin_log_id,admin_admin_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -55,17 +55,15 @@ class AdminLogService
         foreach ($list as $k => $v) {
             $list[$k]['username'] = '';
             $list[$k]['nickname'] = '';
-            $admin_user = AdminUserService::info($v['admin_user_id']);
-
-            if ($admin_user) {
-                $list[$k]['username'] = $admin_user['username'];
-                $list[$k]['nickname'] = $admin_user['nickname'];
+            $admin_admin = AdminAdminService::info($v['admin_admin_id']);
+            if ($admin_admin) {
+                $list[$k]['username'] = $admin_admin['username'];
+                $list[$k]['nickname'] = $admin_admin['nickname'];
             }
 
             $list[$k]['menu_name'] = '';
             $list[$k]['menu_url']  = '';
             $admin_menu = AdminMenuService::info($v['admin_menu_id']);
-
             if ($admin_menu) {
                 $list[$k]['menu_name'] = $admin_menu['menu_name'];
                 $list[$k]['menu_url']  = $admin_menu['menu_url'];
@@ -84,7 +82,7 @@ class AdminLogService
     }
 
     /**
-     * 日志信息
+     * 管理员日志信息
      *
      * @param integer $admin_log_id 日志id
      * 
@@ -109,11 +107,11 @@ class AdminLogService
 
             $admin_log['username'] = '';
             $admin_log['nickname'] = '';
-            $admin_user = AdminUserService::info($admin_log['admin_user_id']);
+            $admin_admin = AdminAdminService::info($admin_log['admin_admin_id']);
 
-            if ($admin_user) {
-                $admin_log['username'] = $admin_user['username'];
-                $admin_log['nickname'] = $admin_user['nickname'];
+            if ($admin_admin) {
+                $admin_log['username'] = $admin_admin['username'];
+                $admin_log['nickname'] = $admin_admin['nickname'];
             }
 
             $admin_log['menu_name'] = '';
@@ -132,7 +130,7 @@ class AdminLogService
     }
 
     /**
-     * 日志添加
+     * 管理员日志添加
      *
      * @param array $param 日志数据
      * 
@@ -170,7 +168,7 @@ class AdminLogService
     }
 
     /**
-     * 日志修改
+     * 管理员日志修改
      *
      * @param array $param 日志数据
      * 
@@ -201,7 +199,7 @@ class AdminLogService
     }
 
     /**
-     * 日志删除
+     * 管理员日志删除
      *
      * @param integer $admin_log_id 日志id
      * 
@@ -228,7 +226,7 @@ class AdminLogService
     }
 
     /**
-     * 日志数量统计
+     * 管理员日志数量统计
      *
      * @param string $date 日期
      *
@@ -293,7 +291,7 @@ class AdminLogService
     }
 
     /**
-     * 日志日期统计
+     * 管理员日志日期统计
      *
      * @param array $date 日期范围
      *
@@ -302,7 +300,7 @@ class AdminLogService
     public static function staDate($date = [])
     {
         if (empty($date)) {
-            $date[0] = Datetime::daysAgo(30);
+            $date[0] = Datetime::daysAgo(29);
             $date[1] = Datetime::today();
         }
 
@@ -316,10 +314,10 @@ class AdminLogService
             $sta_time = Datetime::dateStartTime($sta_date);
             $end_time = Datetime::dateEndTime($end_date);
 
-            $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
+            $field   = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
-            $group = "date_format(create_time,'%Y-%m-%d')";
+            $group   = "date_format(create_time,'%Y-%m-%d')";
 
             $admin_log = Db::name('admin_log')
                 ->field($field)
@@ -350,7 +348,7 @@ class AdminLogService
     }
 
     /**
-     * 日志地区统计
+     * 管理员日志地区统计
      *
      * @param integer $date   日期范围
      * @param string  $region 地区类型
@@ -361,7 +359,7 @@ class AdminLogService
     public static function staRegion($date = [], $region = 'city', $top = 20)
     {
         if (empty($date)) {
-            $date[0] = Datetime::daysAgo(30);
+            $date[0] = Datetime::daysAgo(29);
             $date[1] = Datetime::today();
         }
 

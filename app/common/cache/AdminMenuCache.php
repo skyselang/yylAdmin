@@ -25,7 +25,7 @@ class AdminMenuCache
             $admin_menu_id = 'all';
         }
 
-        $key = 'adminMenu:' . $admin_menu_id;
+        $key = 'AdminMenu:' . $admin_menu_id;
 
         return $key;
     }

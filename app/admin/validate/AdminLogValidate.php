@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 日志验证器
+ * @Description  : 管理员日志验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\admin\validate;

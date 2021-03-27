@@ -1,28 +1,28 @@
 <?php
 /*
- * @Description  : 请求频率缓存
+ * @Description  : 管理员缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2021-03-23
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\common\cache;
 
+use app\admin\service\AdminAdminService;
 use think\facade\Cache;
 
-class AdminThrottleCache
+class AdminAdminCache
 {
     /**
      * 缓存key
      *
      * @param integer $admin_admin_id 管理员id
-     * @param string  $menu_url       菜单url
      * 
      * @return string
      */
-    public static function key($admin_admin_id, $menu_url)
+    public static function key($admin_admin_id)
     {
-        $key = 'AdminThrottle:' . $admin_admin_id . ':' . $menu_url;
+        $key = 'AdminAdmin:' . $admin_admin_id;
 
         return $key;
     }
@@ -31,16 +31,17 @@ class AdminThrottleCache
      * 缓存设置
      *
      * @param integer $admin_admin_id 管理员id
-     * @param string  $menu_url       菜单url
+     * @param array   $admin_admin    管理员信息
      * @param integer $expire         有效时间（秒）
      * 
      * @return bool
      */
-    public static function set($admin_admin_id, $menu_url, $expire = 10)
+    public static function set($admin_admin_id, $admin_admin, $expire = 0)
     {
-        $key = self::key($admin_admin_id, $menu_url);
-        $val = 1;
-        $exp = $expire;
+        $key = self::key($admin_admin_id);
+        $val = $admin_admin;
+        $ttl = 7 * 24 * 60 * 60;
+        $exp = $expire ?: $ttl;
 
         $res = Cache::set($key, $val, $exp);
 
@@ -51,13 +52,12 @@ class AdminThrottleCache
      * 缓存获取
      *
      * @param integer $admin_admin_id 管理员id
-     * @param string  $menu_url       菜单url
      * 
-     * @return string
+     * @return array 管理员信息
      */
-    public static function get($admin_admin_id, $menu_url)
+    public static function get($admin_admin_id)
     {
-        $key = self::key($admin_admin_id, $menu_url);
+        $key = self::key($admin_admin_id);
         $res = Cache::get($key);
 
         return $res;
@@ -67,30 +67,37 @@ class AdminThrottleCache
      * 缓存删除
      *
      * @param integer $admin_admin_id 管理员id
-     * @param string  $menu_url       菜单url
      * 
      * @return bool
      */
-    public static function del($admin_admin_id, $menu_url)
+    public static function del($admin_admin_id)
     {
-        $key = self::key($admin_admin_id, $menu_url);
+        $key = self::key($admin_admin_id);
         $res = Cache::delete($key);
 
         return $res;
     }
 
     /**
-     * 缓存自增
+     * 缓存更新
      *
      * @param integer $admin_admin_id 管理员id
-     * @param string  $menu_url       菜单url
      * 
      * @return bool
      */
-    public static function inc($admin_admin_id, $menu_url)
+    public static function upd($admin_admin_id)
     {
-        $key = self::key($admin_admin_id, $menu_url);
-        $res = Cache::inc($key);
+        $old = AdminAdminService::info($admin_admin_id);
+
+        self::del($admin_admin_id);
+
+        $new = AdminAdminService::info($admin_admin_id);
+
+        unset($new['admin_token']);
+
+        $user = array_merge($old, $new);
+
+        $res = self::set($admin_admin_id, $user);
 
         return $res;
     }

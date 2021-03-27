@@ -3,7 +3,7 @@
  * @Description  : 用户日志缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-03-08
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -21,7 +21,7 @@ class UserLogCache
      */
     public static function key($user_log_id = 0)
     {
-        $key = 'userLog:' . $user_log_id;
+        $key = 'UserLog:' . $user_log_id;
 
         return $key;
     }

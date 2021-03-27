@@ -3,14 +3,14 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
 use app\admin\validate\AdminRoleValidate;
-use app\admin\validate\AdminUserValidate;
+use app\admin\validate\AdminAdminValidate;
 use app\admin\service\AdminRoleService;
 
 class AdminRole
@@ -173,7 +173,7 @@ class AdminRole
      *
      * @return json
      */
-    public function roleUser()
+    public function roleAdmin()
     {
         $page          = Request::param('page/d', 1);
         $limit         = Request::param('limit/d', 10);
@@ -183,21 +183,14 @@ class AdminRole
 
         validate(AdminRoleValidate::class)->scene('role_id')->check(['admin_role_id' => $admin_role_id]);
 
-        $where0 = [['admin_role_ids', 'like', $admin_role_id], ['is_delete', '=', 0]];
-        $where1 = [['admin_role_ids', 'like', $admin_role_id . ',%'], ['is_delete', '=', 0]];
-        $where2 = [['admin_role_ids', 'like', '%,' . $admin_role_id . ',%'], ['is_delete', '=', 0]];
-        $where3 = [['admin_role_ids', 'like', '%,' . $admin_role_id], ['is_delete', '=', 0]];
-        $where  = [$where0, $where1, $where2, $where3];
-        $whereOr = true;
+        $where[] = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
 
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
         }
 
-        $field = '';
-
-        $data = AdminRoleService::user($where, $page, $limit, $order, $field, $whereOr);
+        $data = AdminRoleService::admin($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -209,15 +202,15 @@ class AdminRole
      *
      * @return json
      */
-    public function roleUserRemove()
+    public function roleAdminRemove()
     {
-        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_role_id']  = Request::param('admin_role_id/d', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
 
         validate(AdminRoleValidate::class)->scene('role_id')->check($param);
-        validate(AdminUserValidate::class)->scene('user_id')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_id')->check($param);
 
-        $data = AdminRoleService::userRemove($param);
+        $data = AdminRoleService::adminRemove($param);
 
         return success($data);
     }

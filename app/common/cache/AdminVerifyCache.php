@@ -3,7 +3,7 @@
  * @Description  : 验证码缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -21,7 +21,7 @@ class AdminVerifyCache
      */
     public static function key($verify_id = '')
     {
-        $key = 'adminVerify:' . $verify_id;
+        $key = 'AdminVerify:' . $verify_id;
 
         return $key;
     }

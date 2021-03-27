@@ -3,7 +3,7 @@
  * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-03-10
+ * @LastEditTime : 2021-03-27
  */
 
 return [
@@ -12,10 +12,9 @@ return [
     // 接口白名单
     'whitelist' => [
         'index/',
-        'index/Register/register',
         'index/Login/verify',
         'index/Login/login',
-        'index/Login/weixin',
+        'index/Register/register',
     ],
     // token 
     'token' => [
@@ -32,22 +31,5 @@ return [
     'throttle' => [
         'number' => 3,   //次数,0不限制
         'expire' => 1,   //时间,单位秒
-    ],
-    // 验证码配置
-    'verify' => [
-        // 是否开启验证码
-        'switch' => true,
-        // 是否画混淆曲线
-        'curve' => false,
-        // 是否添加杂点
-        'noise' => true,
-        // 使用背景图片
-        'bgimg' => false,
-        // 验证码类型：1数字，2字母，3数字字母，4算术，5中文
-        'type' => 1,
-        // 验证码位数
-        'length' => 4,
-        // 验证码有效时间
-        'expire' => 180,
     ]
 ];

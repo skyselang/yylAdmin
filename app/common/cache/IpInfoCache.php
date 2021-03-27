@@ -21,7 +21,7 @@ class IpInfoCache
      */
     public static function key($ip = '')
     {
-        $key = 'ipInfo:' . $ip;
+        $key = 'IpInfo:' . $ip;
 
         return $key;
     }

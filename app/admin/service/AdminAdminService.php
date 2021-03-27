@@ -3,7 +3,7 @@
  * @Description  : 管理员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\admin\service;
@@ -11,62 +11,46 @@ namespace app\admin\service;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Filesystem;
-use app\common\cache\AdminUserCache;
+use app\common\cache\AdminAdminCache;
 use app\admin\service\AdminTokenService;
 
-class AdminUserService
+class AdminAdminService
 {
     /**
      * 管理员列表
      *
-     * @param array   $where   条件
-     * @param integer $page    页数
-     * @param integer $limit   数量
-     * @param array   $order   排序
-     * @param string  $field   字段
-     * @param boolean $whereOr OR查询
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $whereOr = false)
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'admin_user_id,username,nickname,email,sort,is_disable,is_admin,login_num,login_ip,login_time';
+            $field = 'admin_admin_id,username,nickname,email,phone,sort,is_disable,is_admin,login_num,login_ip,login_time';
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'admin_user_id' => 'desc'];
+            $order = ['sort' => 'desc', 'admin_admin_id' => 'desc'];
         }
 
-        if ($whereOr) {
-            $count = Db::name('admin_user')
-                ->whereOr($where)
-                ->count('admin_user_id');
+        $where[] = ['is_delete', '=', 0];
 
-            $list = Db::name('admin_user')
-                ->field($field)
-                ->whereOr($where)
-                ->page($page)
-                ->limit($limit)
-                ->order($order)
-                ->select()
-                ->toArray();
-        } else {
-            $where[] = ['is_delete', '=', 0];
+        $count = Db::name('admin_admin')
+            ->where($where)
+            ->count('admin_admin_id');
 
-            $count = Db::name('admin_user')
-                ->where($where)
-                ->count('admin_user_id');
-
-            $list = Db::name('admin_user')
-                ->field($field)
-                ->where($where)
-                ->page($page)
-                ->limit($limit)
-                ->order($order)
-                ->select()
-                ->toArray();
-        }
+        $list = Db::name('admin_admin')
+            ->field($field)
+            ->where($where)
+            ->page($page)
+            ->limit($limit)
+            ->order($order)
+            ->select()
+            ->toArray();
 
         $pages = ceil($count / $limit);
 
@@ -82,26 +66,28 @@ class AdminUserService
     /**
      * 管理员信息
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_admin_id 管理员id
      * 
      * @return array
      */
-    public static function info($admin_user_id)
+    public static function info($admin_admin_id)
     {
-        $admin_user = AdminUserCache::get($admin_user_id);
+        $admin_admin = AdminAdminCache::get($admin_admin_id);
 
-        if (empty($admin_user)) {
-            $admin_user = Db::name('admin_user')
-                ->where('admin_user_id', $admin_user_id)
+        if (empty($admin_admin)) {
+            $admin_admin = Db::name('admin_admin')
+                ->where('admin_admin_id', $admin_admin_id)
                 ->find();
 
-            if (empty($admin_user)) {
-                exception('管理员不存在：' . $admin_user_id);
+            if (empty($admin_admin)) {
+                exception('管理员不存在：' . $admin_admin_id);
             }
 
-            $admin_user['avatar'] = file_url($admin_user['avatar']);
+            $admin_admin['avatar']         = file_url($admin_admin['avatar']);
+            $admin_admin['admin_role_ids'] = str_trim($admin_admin['admin_role_ids']);
+            $admin_admin['admin_menu_ids'] = str_trim($admin_admin['admin_menu_ids']);
 
-            if (admin_is_system($admin_user_id)) {
+            if (admin_is_system($admin_admin_id)) {
                 $admin_menu = Db::name('admin_menu')
                     ->field('admin_menu_id,menu_url')
                     ->where('is_delete', 0)
@@ -111,7 +97,7 @@ class AdminUserService
                 $menu_ids = array_column($admin_menu, 'admin_menu_id');
                 $menu_url = array_column($admin_menu, 'menu_url');
                 $menu_url = array_filter($menu_url);
-            } elseif ($admin_user['is_admin'] == 1) {
+            } elseif ($admin_admin['is_admin'] == 1) {
                 $admin_menu = Db::name('admin_menu')
                     ->field('admin_menu_id,menu_url')
                     ->where('is_delete', 0)
@@ -125,12 +111,12 @@ class AdminUserService
             } else {
                 $menu_ids = Db::name('admin_role')
                     ->field('admin_role_id')
-                    ->where('admin_role_id', 'in', $admin_user['admin_role_ids'])
+                    ->where('admin_role_id', 'in', $admin_admin['admin_role_ids'])
                     ->where('is_delete', 0)
                     ->where('is_disable', 0)
                     ->column('admin_menu_ids');
 
-                $menu_ids[]   = $admin_user['admin_menu_ids'];
+                $menu_ids[]   = $admin_admin['admin_menu_ids'];
                 $menu_ids_str = implode(',', $menu_ids);
                 $menu_ids_arr = explode(',', $menu_ids_str);
                 $menu_ids     = array_unique($menu_ids_arr);
@@ -141,10 +127,10 @@ class AdminUserService
                 $where[] = ['is_disable', '=', 0];
                 $where[] = ['menu_url', '<>', ''];
 
+                $where_un[] = ['is_unauth', '=', 1];
                 $where_un[] = ['is_delete', '=', 0];
                 $where_un[] = ['is_disable', '=', 0];
                 $where_un[] = ['menu_url', '<>', ''];
-                $where_un[] = ['is_unauth', '=', 1];
 
                 $menu_url = Db::name('admin_menu')
                     ->field('menu_url')
@@ -152,21 +138,21 @@ class AdminUserService
                     ->column('menu_url');
             }
 
-            $admin_role_ids = $admin_user['admin_role_ids'];
+            $admin_role_ids = $admin_admin['admin_role_ids'];
             if (empty($admin_role_ids)) {
                 $admin_role_ids = [];
             } else {
-                $admin_role_ids = explode(',', $admin_user['admin_role_ids']);
+                $admin_role_ids = explode(',', $admin_admin['admin_role_ids']);
                 foreach ($admin_role_ids as $k => $v) {
                     $admin_role_ids[$k] = (int) $v;
                 }
             }
 
-            $admin_menu_ids = $admin_user['admin_menu_ids'];
+            $admin_menu_ids = $admin_admin['admin_menu_ids'];
             if (empty($admin_menu_ids)) {
                 $admin_menu_ids = [];
             } else {
-                $admin_menu_ids = explode(',', $admin_user['admin_menu_ids']);
+                $admin_menu_ids = explode(',', $admin_admin['admin_menu_ids']);
                 foreach ($admin_menu_ids as $k => $v) {
                     $admin_menu_ids[$k] = (int) $v;
                 }
@@ -188,16 +174,16 @@ class AdminUserService
 
             sort($menu_url);
 
-            $admin_user['admin_token']    = AdminTokenService::create($admin_user);
-            $admin_user['admin_role_ids'] = $admin_role_ids;
-            $admin_user['admin_menu_ids'] = $admin_menu_ids;
-            $admin_user['menu_ids']       = $menu_ids;
-            $admin_user['roles']          = $menu_url;
+            $admin_admin['admin_token']    = AdminTokenService::create($admin_admin);
+            $admin_admin['admin_role_ids'] = $admin_role_ids;
+            $admin_admin['admin_menu_ids'] = $admin_menu_ids;
+            $admin_admin['menu_ids']       = $menu_ids;
+            $admin_admin['roles']          = $menu_url;
 
-            AdminUserCache::set($admin_user_id, $admin_user);
+            AdminAdminCache::set($admin_admin_id, $admin_admin);
         }
 
-        return $admin_user;
+        return $admin_admin;
     }
 
     /**
@@ -212,14 +198,14 @@ class AdminUserService
         $param['password']    = md5($param['password']);
         $param['create_time'] = datetime();
 
-        $admin_user_id = Db::name('admin_user')
+        $admin_admin_id = Db::name('admin_admin')
             ->insertGetId($param);
 
-        if (empty($admin_user_id)) {
+        if (empty($admin_admin_id)) {
             exception();
         }
 
-        $param['admin_user_id'] = $admin_user_id;
+        $param['admin_admin_id'] = $admin_admin_id;
 
         unset($param['password']);
 
@@ -235,32 +221,32 @@ class AdminUserService
      */
     public static function edit($param, $method = 'get')
     {
-        $admin_user_id = $param['admin_user_id'];
+        $admin_admin_id = $param['admin_admin_id'];
 
         if ($method == 'get') {
-            $admin_user = self::info($admin_user_id);
+            $admin_admin = self::info($admin_admin_id);
 
-            unset($admin_user['admin_token'], $admin_user['password'], $admin_user['menu_ids'], $admin_user['roles']);
+            unset($admin_admin['admin_token'], $admin_admin['password'], $admin_admin['menu_ids'], $admin_admin['roles']);
 
-            $data['admin_user'] = $admin_user;
+            $data['admin_admin'] = $admin_admin;
 
             return $data;
         } else {
-            unset($param['admin_user_id']);
+            unset($param['admin_admin_id']);
 
             $param['update_time'] = datetime();
 
-            $res = Db::name('admin_user')
-                ->where('admin_user_id', $admin_user_id)
+            $res = Db::name('admin_admin')
+                ->where('admin_admin_id', $admin_admin_id)
                 ->update($param);
 
             if (empty($res)) {
                 exception();
             }
 
-            $param['admin_user_id'] = $admin_user_id;
+            $param['admin_admin_id'] = $admin_admin_id;
 
-            AdminUserCache::upd($admin_user_id);
+            AdminAdminCache::upd($admin_admin_id);
 
             return $param;
         }
@@ -269,26 +255,26 @@ class AdminUserService
     /**
      * 管理员删除
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_admin_id 管理员id
      * 
      * @return array
      */
-    public static function dele($admin_user_id)
+    public static function dele($admin_admin_id)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_user_id'] = $admin_user_id;
+        $update['admin_admin_id'] = $admin_admin_id;
 
-        AdminUserCache::upd($admin_user_id);
+        AdminAdminCache::del($admin_admin_id);
 
         return $update;
     }
@@ -302,31 +288,31 @@ class AdminUserService
      */
     public static function avatar($param)
     {
-        $admin_user_id = $param['admin_user_id'];
-        $avatar        = $param['avatar'];
+        $admin_admin_id = $param['admin_admin_id'];
+        $avatar         = $param['avatar'];
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('admin_user', $avatar, function () use ($admin_user_id) {
-                return $admin_user_id . '/' . $admin_user_id . '_avatar';
+            ->putFile('admin_admin', $avatar, function () use ($admin_admin_id) {
+                return $admin_admin_id . '/' . $admin_admin_id . '_avatar';
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        AdminUserCache::upd($admin_user_id);
-        $admin_user = AdminUserService::info($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
+        $admin_admin = AdminAdminService::info($admin_admin_id);
 
-        $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['avatar']        = $admin_user['avatar'];
-        $data['update_time']   = $admin_user['update_time'];
+        $data['admin_admin_id'] = $admin_admin['admin_admin_id'];
+        $data['avatar']         = $admin_admin['avatar'];
+        $data['update_time']    = $admin_admin['update_time'];
 
         return $data;
     }
@@ -340,23 +326,23 @@ class AdminUserService
      */
     public static function pwd($param)
     {
-        $admin_user_id = $param['admin_user_id'];
+        $admin_admin_id = $param['admin_admin_id'];
 
         $update['password']    = md5($param['password']);
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_user_id'] = $admin_user_id;
-        $update['password']      = $res;
+        $update['admin_admin_id'] = $admin_admin_id;
+        $update['password']       = $res;
 
-        AdminUserCache::upd($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
 
         return $update;
     }
@@ -372,15 +358,15 @@ class AdminUserService
     public static function rule($param, $method = 'get')
     {
         if ($method == 'get') {
-            $admin_user_id = $param['admin_user_id'];
+            $admin_admin_id = $param['admin_admin_id'];
 
-            $admin_role = AdminRoleService::list([], 1, 999)['list'];
-            $admin_menu = AdminMenuService::list('list')['list'];
-            $admin_user = AdminUserService::info($admin_user_id);
+            $admin_role  = AdminRoleService::list([], 1, 999)['list'];
+            $admin_menu  = AdminMenuService::list('list')['list'];
+            $admin_admin = AdminAdminService::info($admin_admin_id);
 
-            $menu_ids       = $admin_user['menu_ids'];
-            $admin_menu_ids = $admin_user['admin_menu_ids'];
-            $role_menu_ids  = AdminRoleService::getMenuId($admin_user['admin_role_ids']);
+            $menu_ids       = $admin_admin['menu_ids'];
+            $admin_menu_ids = $admin_admin['admin_menu_ids'];
+            $role_menu_ids  = AdminRoleService::getMenuId($admin_admin['admin_role_ids']);
 
             foreach ($admin_menu as $k => $v) {
                 $admin_menu[$k]['is_check'] = 0;
@@ -405,18 +391,18 @@ class AdminUserService
 
             $admin_menu = AdminMenuService::toTree($admin_menu, 0);
 
-            $data['admin_user_id']  = $admin_user_id;
+            $data['admin_admin_id'] = $admin_admin_id;
             $data['admin_menu_ids'] = $admin_menu_ids;
-            $data['admin_role_ids'] = $admin_user['admin_role_ids'];
-            $data['username']       = $admin_user['username'];
-            $data['nickname']       = $admin_user['nickname'];
+            $data['admin_role_ids'] = $admin_admin['admin_role_ids'];
+            $data['username']       = $admin_admin['username'];
+            $data['nickname']       = $admin_admin['nickname'];
             $data['menu_ids']       = $menu_ids;
             $data['admin_role']     = $admin_role;
             $data['admin_menu']     = $admin_menu;
 
             return $data;
         } else {
-            $admin_user_id  = $param['admin_user_id'];
+            $admin_admin_id = $param['admin_admin_id'];
             $admin_role_ids = $param['admin_role_ids'];
             $admin_menu_ids = $param['admin_menu_ids'];
 
@@ -435,21 +421,21 @@ class AdminUserService
                 }
             }
 
-            $update['admin_role_ids'] = implode(',', $admin_role_ids);
-            $update['admin_menu_ids'] = implode(',', $admin_menu_ids);
+            $update['admin_role_ids'] = str_join(implode(',', $admin_role_ids));
+            $update['admin_menu_ids'] = str_join(implode(',', $admin_menu_ids));
             $update['update_time']    = datetime();
 
-            $res = Db::name('admin_user')
-                ->where('admin_user_id', $admin_user_id)
+            $res = Db::name('admin_admin')
+                ->where('admin_admin_id', $admin_admin_id)
                 ->update($update);
 
             if (empty($res)) {
                 exception();
             }
 
-            $update['admin_user_id'] = $admin_user_id;
+            $update['admin_admin_id'] = $admin_admin_id;
 
-            AdminUserCache::upd($admin_user_id);
+            AdminAdminCache::upd($admin_admin_id);
 
             return $update;
         }
@@ -464,22 +450,22 @@ class AdminUserService
      */
     public static function disable($param)
     {
-        $admin_user_id = $param['admin_user_id'];
+        $admin_admin_id = $param['admin_admin_id'];
 
         $update['is_disable']  = $param['is_disable'];
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_user_id'] = $admin_user_id;
+        $update['admin_admin_id'] = $admin_admin_id;
 
-        AdminUserCache::upd($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
 
         return $update;
     }
@@ -493,22 +479,22 @@ class AdminUserService
      */
     public static function admin($param)
     {
-        $admin_user_id = $param['admin_user_id'];
+        $admin_admin_id = $param['admin_admin_id'];
 
         $update['is_admin']    = $param['is_admin'];
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_user_id'] = $admin_user_id;
+        $update['admin_admin_id'] = $admin_admin_id;
 
-        AdminUserCache::upd($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
 
         return $update;
     }
@@ -523,13 +509,13 @@ class AdminUserService
      */
     public static function likeQuery($keyword, $field = 'username|nickname')
     {
-        $admin_user = Db::name('admin_user')
+        $admin_admin = Db::name('admin_admin')
             ->where('is_delete', '=', 0)
             ->where($field, 'like', '%' . $keyword . '%')
             ->select()
             ->toArray();
 
-        return $admin_user;
+        return $admin_admin;
     }
 
     /**
@@ -542,12 +528,12 @@ class AdminUserService
      */
     public static function etQuery($keyword, $field = 'username|nickname')
     {
-        $admin_user = Db::name('admin_user')
+        $admin_admin = Db::name('admin_admin')
             ->where('is_delete', '=', 0)
             ->where($field, '=', $keyword)
             ->select()
             ->toArray();
 
-        return $admin_user;
+        return $admin_admin;
     }
 }

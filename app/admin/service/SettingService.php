@@ -3,13 +3,14 @@
  * @Description  : 设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-26
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use app\common\cache\SettingCache;
+use app\common\service\VerifyService;
 
 class SettingService
 {
@@ -54,9 +55,7 @@ class SettingService
             }
         }
 
-        $VerifyService = new VerifyService();
-
-        $verify = array_merge($verify, $VerifyService->verify());
+        $verify = array_merge($verify, VerifyService::create($verify));
 
         return $verify;
     }

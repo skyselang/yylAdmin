@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 日志管理
+ * @Description  : 管理员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\controller;
@@ -12,12 +12,12 @@ use think\facade\Request;
 use app\admin\validate\AdminLogValidate;
 use app\admin\service\AdminLogService;
 use app\admin\service\AdminMenuService;
-use app\admin\service\AdminUserService;
+use app\admin\service\AdminAdminService;
 
 class AdminLog
 {
     /**
-     * 日志列表
+     * 管理员日志列表
      *
      * @method GET
      * 
@@ -31,7 +31,7 @@ class AdminLog
         $sort_type       = Request::param('sort_type/s', '');
         $log_type        = Request::param('log_type/d', '');
         $request_keyword = Request::param('request_keyword/s', '');
-        $user_keyword    = Request::param('user_keyword/s', '');
+        $admin_keyword   = Request::param('admin_keyword/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
         $response_code   = Request::param('response_code/s', '');
@@ -43,10 +43,10 @@ class AdminLog
         if ($request_keyword) {
             $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
         }
-        if ($user_keyword) {
-            $admin_user     = AdminUserService::etQuery($user_keyword);
-            $admin_user_ids = array_column($admin_user, 'admin_user_id');
-            $where[]        = ['admin_user_id', 'in', $admin_user_ids];
+        if ($admin_keyword) {
+            $admin_admin     = AdminAdminService::etQuery($admin_keyword);
+            $admin_admin_ids = array_column($admin_admin, 'admin_admin_id');
+            $where[]         = ['admin_admin_id', 'in', $admin_admin_ids];
         }
         if ($menu_keyword) {
             $admin_menu     = AdminMenuService::etQuery($menu_keyword);
@@ -72,7 +72,7 @@ class AdminLog
     }
 
     /**
-     * 日志信息
+     * 管理员日志信息
      *
      * @method GET
      * 
@@ -94,7 +94,7 @@ class AdminLog
     }
 
     /**
-     * 日志删除
+     * 管理员日志删除
      *
      * @method POST
      * 
@@ -112,7 +112,7 @@ class AdminLog
     }
 
     /**
-     * 日志统计
+     * 管理员日志统计
      *
      * @method POST
      *
@@ -124,12 +124,12 @@ class AdminLog
         $date   = Request::param('date/a', []);
         $region = Request::param('region/s', 'city');
 
-        $data     = [];
-        $date_arr = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
+        $data  = [];
+        $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
 
         if ($type == 'number') {
             $number = [];
-            foreach ($date_arr as $k => $v) {
+            foreach ($range as $k => $v) {
                 $number[$v] = AdminLogService::staNumber($v);
             }
             $data['number'] = $number;
@@ -139,7 +139,7 @@ class AdminLog
             $data['region'] = AdminLogService::staRegion($date, $region);
         } else {
             $number = [];
-            foreach ($date_arr as $k => $v) {
+            foreach ($range as $k => $v) {
                 $number[$v] = AdminLogService::staNumber($v);
             }
 

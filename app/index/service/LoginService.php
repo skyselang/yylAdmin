@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-27
  */
 
 namespace app\index\service;
@@ -41,11 +41,11 @@ class LoginService
             ->find();
 
         if (empty($user)) {
-            exception('账号或密码错误');
+            exception('用户名或密码错误');
         }
 
         if ($user['is_disable'] == 1) {
-            exception('账号已被禁用');
+            exception('用户已被禁用');
         }
 
         $ip_info = IpInfoService::info();
@@ -59,8 +59,10 @@ class LoginService
             ->where('user_id', $user_id)
             ->update($update);
 
-        $user_log['log_type'] = 2;
-        $user_log['user_id']  = $user_id;
+        $user_log['log_type']      = 2;
+        $user_log['user_id']       = $user_id;
+        $user_log['response_code'] = 200;
+        $user_log['response_msg']  = '登录成功';
         UserLogService::add($user_log);
 
         UserCache::del($user_id);

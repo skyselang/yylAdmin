@@ -120,14 +120,14 @@ class AdminToolService
             $str = 'https://gitee.com/skyselang/yylAdmin';
         }
 
-        $admin_user_id = admin_user_id();
+        $admin_admin_id = admin_admin_id();
 
-        $file_dir = '/storage/admin_user/' . $admin_user_id;
+        $file_dir = '/storage/admin_admin/' . $admin_admin_id;
         if (!file_exists('.' . $file_dir)) {
             mkdir('.' . $file_dir, 0777, true);
         }
 
-        $file_name = $admin_user_id . '_tool_qrcode.png';
+        $file_name = $admin_admin_id . '_tool_qrcode.png';
         $file_path = $file_dir . '/' . $file_name;
         $QrCode = new QrCode($str);
         $QrCode->writeFile('.' . $file_path);

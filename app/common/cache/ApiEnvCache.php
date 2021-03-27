@@ -3,7 +3,7 @@
  * @Description  : 接口环境缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-01-15
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -21,7 +21,7 @@ class ApiEnvCache
      */
     public static function key($api_env_id = 0)
     {
-        $key = 'apiEnv:' . $api_env_id;
+        $key = 'ApiEnv:' . $api_env_id;
 
         return $key;
     }

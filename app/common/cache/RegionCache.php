@@ -3,7 +3,7 @@
  * @Description  : 地区缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-01-08
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -21,7 +21,7 @@ class RegionCache
      */
     public static function key($region_id = 0)
     {
-        $key = 'region:' . $region_id;
+        $key = 'Region:' . $region_id;
 
         return $key;
     }

@@ -3,7 +3,7 @@
  * @Description  : 控制台
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-18
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\controller;
@@ -39,19 +39,11 @@ class AdminIndex
     {
         $date = Request::param('date/a', []);
 
-        $date_arr = [
-            'total',
-            'today',
-            'yesterday',
-            'thisweek',
-            'lastweek',
-            'thismonth',
-            'lastmonth'
-        ];
+        $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
 
         $number = [];
         $active = [];
-        foreach ($date_arr as $k => $v) {
+        foreach ($range as $k => $v) {
             $number[$v] = UserService::staNumber($v);
             $active[$v] = UserService::staNumber($v, 'act');
         }

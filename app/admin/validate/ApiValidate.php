@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 接口验证器
+ * @Description  : 接口管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-01-15
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\admin\validate;

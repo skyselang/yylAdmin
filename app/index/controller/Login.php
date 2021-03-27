@@ -3,15 +3,17 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-26
  */
 
 namespace app\index\controller;
 
+
 use think\facade\Request;
+use app\common\service\VerifyService;
+use app\admin\service\SettingService;
 use app\admin\validate\UserValidate;
 use app\admin\validate\VerifyValidate;
-use app\admin\service\VerifyService;
 use app\index\service\LoginService;
 
 class Login
@@ -25,9 +27,9 @@ class Login
      */
     public function verify()
     {
-        $VerifyService = new VerifyService();
+        $config = SettingService::verify();
 
-        $data = $VerifyService->verify();
+        $data = VerifyService::create($config);
 
         return success($data);
     }
@@ -46,7 +48,7 @@ class Login
         $param['verify_id']   = Request::param('verify_id/s', '');
         $param['verify_code'] = Request::param('verify_code/s', '');
 
-        $verify_config = VerifyService::config();
+        $verify_config = SettingService::verify();
 
         if ($verify_config['switch']) {
             validate(VerifyValidate::class)->scene('check')->check($param);

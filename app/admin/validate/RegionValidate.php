@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 地区验证器
+ * @Description  : 地区管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\admin\validate;

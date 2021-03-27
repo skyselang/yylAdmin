@@ -3,7 +3,7 @@
  * @Description  : 用户缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-03-16
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -22,7 +22,7 @@ class UserCache
      */
     public static function key($user_id)
     {
-        $key = 'user:' . $user_id;
+        $key = 'User:' . $user_id;
 
         return $key;
     }

@@ -11,7 +11,7 @@ namespace app\admin\service;
 use think\facade\Db;
 use think\facade\App;
 use think\facade\Cache;
-use app\common\cache\AdminUserCache;
+use app\common\cache\AdminAdminCache;
 use app\common\cache\AdminSettingCache;
 
 class AdminSettingService
@@ -67,18 +67,18 @@ class AdminSettingService
 
             return $data;
         } else {
-            $admin_user = Db::name('admin_user')
-                ->field('admin_user_id')
+            $admin_admin = Db::name('admin_admin')
+                ->field('admin_admin_id')
                 ->where('is_delete', 0)
                 ->select();
 
-            $admin_user_cache = [];
-            foreach ($admin_user as $k => $v) {
-                $user_cache = AdminUserCache::get($v['admin_user_id']);
+            $admin_admin_cache = [];
+            foreach ($admin_admin as $k => $v) {
+                $user_cache = AdminAdminCache::get($v['admin_admin_id']);
                 if ($user_cache) {
-                    $user_cache_temp['admin_user_id'] = $user_cache['admin_user_id'];
+                    $user_cache_temp['admin_admin_id'] = $user_cache['admin_admin_id'];
                     $user_cache_temp['admin_token']   = $user_cache['admin_token'];
-                    $admin_user_cache[] = $user_cache_temp;
+                    $admin_admin_cache[] = $user_cache_temp;
                 }
             }
 
@@ -87,10 +87,10 @@ class AdminSettingService
                 exception();
             }
 
-            foreach ($admin_user_cache as $k => $v) {
-                $admin_user_new = AdminUserService::info($v['admin_user_id']);
-                $admin_user_new['admin_token'] = $v['admin_token'];
-                AdminUserCache::set($admin_user_new['admin_user_id'], $admin_user_new);
+            foreach ($admin_admin_cache as $k => $v) {
+                $admin_admin_new = AdminAdminService::info($v['admin_admin_id']);
+                $admin_admin_new['admin_token'] = $v['admin_token'];
+                AdminAdminCache::set($admin_admin_new['admin_admin_id'], $admin_admin_new);
             }
 
             $data['msg']   = '缓存已清空';

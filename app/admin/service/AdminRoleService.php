@@ -3,30 +3,29 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use app\common\cache\AdminRoleCache;
-use app\common\cache\AdminUserCache;
+use app\common\cache\AdminAdminCache;
 
 class AdminRoleService
 {
     /**
      * 角色列表
      *
-     * @param array   $where   条件
-     * @param integer $page    页数
-     * @param integer $limit   数量
-     * @param array   $order   排序
-     * @param string  $field   字段
-     * @param bool    $whereOr OR查询
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $whereOr = false)
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
             $field = 'admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time';
@@ -36,35 +35,20 @@ class AdminRoleService
             $order = ['role_sort' => 'desc', 'admin_role_id' => 'desc'];
         }
 
-        if ($whereOr) {
-            $count = Db::name('admin_role')
-                ->whereOr($where)
-                ->count('admin_role_id');
+        $where[] = ['is_delete', '=', 0];
 
-            $list = Db::name('admin_role')
-                ->field($field)
-                ->whereOr($where)
-                ->page($page)
-                ->limit($limit)
-                ->order($order)
-                ->select()
-                ->toArray();
-        } else {
-            $where[] = ['is_delete', '=', 0];
+        $count = Db::name('admin_role')
+            ->where($where)
+            ->count('admin_role_id');
 
-            $count = Db::name('admin_role')
-                ->where($where)
-                ->count('admin_role_id');
-
-            $list = Db::name('admin_role')
-                ->field($field)
-                ->where($where)
-                ->page($page)
-                ->limit($limit)
-                ->order($order)
-                ->select()
-                ->toArray();
-        }
+        $list = Db::name('admin_role')
+            ->field($field)
+            ->where($where)
+            ->page($page)
+            ->limit($limit)
+            ->order($order)
+            ->select()
+            ->toArray();
 
         $pages = ceil($count / $limit);
 
@@ -97,7 +81,7 @@ class AdminRoleService
                 exception('角色不存在：' . $admin_role_id);
             }
 
-            $admin_menu_ids = $admin_role['admin_menu_ids'];
+            $admin_menu_ids = str_trim($admin_role['admin_menu_ids']);
 
             if (empty($admin_menu_ids)) {
                 $admin_menu_ids = [];
@@ -139,6 +123,7 @@ class AdminRoleService
             }
 
             $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
+            $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
             $param['create_time']    = datetime();
 
             $admin_role_id = Db::name('admin_role')
@@ -182,6 +167,7 @@ class AdminRoleService
             }
 
             $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
+            $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
             $param['update_time']    = datetime();
 
             $res = Db::name('admin_role')
@@ -259,18 +245,17 @@ class AdminRoleService
     /**
      * 角色管理员
      *
-     * @param array   $where   条件
-     * @param integer $page    页数
-     * @param integer $limit   数量
-     * @param array   $order   排序
-     * @param string  $field   字段
-     * @param bool    $whereOr OR查询
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
      * 
      * @return array 
      */
-    public static function user($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $whereOr = false)
+    public static function admin($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        $data = AdminUserService::list($where, $page, $limit, $order, $field, $whereOr);
+        $data = AdminAdminService::list($where, $page, $limit, $order, $field);
 
         return $data;
     }
@@ -282,14 +267,14 @@ class AdminRoleService
      *
      * @return array
      */
-    public static function userRemove($param)
+    public static function adminRemove($param)
     {
-        $admin_role_id = $param['admin_role_id'];
-        $admin_user_id = $param['admin_user_id'];
+        $admin_role_id  = $param['admin_role_id'];
+        $admin_admin_id = $param['admin_admin_id'];
 
-        $admin_user = AdminUserService::info($admin_user_id);
+        $admin_admin = AdminAdminService::info($admin_admin_id);
 
-        $admin_role_ids = $admin_user['admin_role_ids'];
+        $admin_role_ids = $admin_admin['admin_role_ids'];
         foreach ($admin_role_ids as $k => $v) {
             if ($admin_role_id == $v) {
                 unset($admin_role_ids[$k]);
@@ -297,26 +282,26 @@ class AdminRoleService
         }
 
         if (empty($admin_role_ids)) {
-            $admin_role_ids = '';
+            $admin_role_ids = str_join('');
         } else {
-            $admin_role_ids = implode(',', $admin_role_ids);
+            $admin_role_ids = str_join(implode(',', $admin_role_ids));
         }
 
         $update['admin_role_ids'] = $admin_role_ids;
         $update['update_time']    = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_role_id'] = $admin_role_id;
-        $update['admin_user_id'] = $admin_user_id;
+        $update['admin_role_id']  = $admin_role_id;
+        $update['admin_admin_id'] = $admin_admin_id;
 
-        AdminUserCache::upd($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
 
         return $update;
     }
@@ -341,6 +326,7 @@ class AdminRoleService
         } elseif (is_array($admin_role_id)) {
             $admin_role_ids = $admin_role_id;
         } else {
+            $admin_role_id  = str_trim($admin_role_id);
             $admin_role_ids = explode(',', $admin_role_id);
         }
 

@@ -3,10 +3,12 @@
  * @Description  : 验证码配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-09
- * @LastEditTime : 2020-09-09
+ * @LastEditTime : 2021-03-27
  */
 
 return [
+    // 是否开启验证码
+    'switch'   => true,
     // 验证码位数
     'length'   => 4,
     // 验证码字符集合

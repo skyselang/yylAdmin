@@ -3,7 +3,7 @@
  * @Description  : 用户日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-27
  */
 
 namespace app\admin\service;
@@ -30,7 +30,7 @@ class UserLogService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'user_log_id,user_id,api_id,request_method,request_ip,request_region,request_isp,create_time';
+            $field = 'user_log_id,user_id,api_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -55,11 +55,11 @@ class UserLogService
         foreach ($list as $k => $v) {
             $list[$k]['username'] = '';
             $list[$k]['nickname'] = '';
-            $admin_user = UserService::info($v['user_id']);
+            $admin_admin = UserService::info($v['user_id']);
 
-            if ($admin_user) {
-                $list[$k]['username'] = $admin_user['username'];
-                $list[$k]['nickname'] = $admin_user['nickname'];
+            if ($admin_admin) {
+                $list[$k]['username'] = $admin_admin['username'];
+                $list[$k]['nickname'] = $admin_admin['nickname'];
             }
 
             $list[$k]['api_name'] = '';
@@ -109,11 +109,11 @@ class UserLogService
 
             $log['username'] = '';
             $log['nickname'] = '';
-            $admin_user = UserService::info($log['user_id']);
+            $admin_admin = UserService::info($log['user_id']);
 
-            if ($admin_user) {
-                $log['username'] = $admin_user['username'];
-                $log['nickname'] = $admin_user['nickname'];
+            if ($admin_admin) {
+                $log['username'] = $admin_admin['username'];
+                $log['nickname'] = $admin_admin['nickname'];
             }
 
             $log['api_name'] = '';
@@ -301,7 +301,7 @@ class UserLogService
     public static function staDate($date = [])
     {
         if (empty($date)) {
-            $date[0] = Datetime::daysAgo(30);
+            $date[0] = Datetime::daysAgo(29);
             $date[1] = Datetime::today();
         }
 
@@ -315,10 +315,10 @@ class UserLogService
             $sta_time = Datetime::dateStartTime($sta_date);
             $end_time = Datetime::dateEndTime($end_date);
 
-            $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
+            $field   = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
-            $group = "date_format(create_time,'%Y-%m-%d')";
+            $group   = "date_format(create_time,'%Y-%m-%d')";
 
             $user_log = Db::name('user_log')
                 ->field($field)
@@ -360,7 +360,7 @@ class UserLogService
     public static function staRegion($date = [], $region = 'city', $top = 20)
     {
         if (empty($date)) {
-            $date[0] = Datetime::daysAgo(30);
+            $date[0] = Datetime::daysAgo(29);
             $date[1] = Datetime::today();
         }
 

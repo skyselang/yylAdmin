@@ -3,16 +3,16 @@
  * @Description  : 管理员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\AdminUserValidate;
-use app\admin\service\AdminUserService;
+use app\admin\validate\AdminAdminValidate;
+use app\admin\service\AdminAdminService;
 
-class AdminUser
+class AdminAdmin
 {
     /**
      * 管理员列表
@@ -21,7 +21,7 @@ class AdminUser
      * 
      * @return json
      */
-    public function userList()
+    public function adminList()
     {
         $page       = Request::param('page/d', 1);
         $limit      = Request::param('limit/d', 10);
@@ -49,7 +49,7 @@ class AdminUser
 
         $field = '';
 
-        $data = AdminUserService::list($where, $page, $limit, $order, $field);
+        $data = AdminAdminService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
@@ -61,16 +61,16 @@ class AdminUser
      * 
      * @return json
      */
-    public function userInfo()
+    public function adminInfo()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
 
-        validate(AdminUserValidate::class)->scene('user_id')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_id')->check($param);
 
-        $data = AdminUserService::info($param['admin_user_id']);
+        $data = AdminAdminService::info($param['admin_admin_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('管理员已被删除：' . $param['admin_user_id']);
+            exception('管理员已被删除：' . $param['admin_admin_id']);
         }
 
         return success($data);
@@ -83,18 +83,19 @@ class AdminUser
      * 
      * @return json
      */
-    public function userAdd()
+    public function adminAdd()
     {
         $param['username'] = Request::param('username/s', '');
         $param['nickname'] = Request::param('nickname/s', '');
         $param['password'] = Request::param('password/s', '');
         $param['email']    = Request::param('email/s', '');
+        $param['phone']    = Request::param('phone/s', '');
         $param['remark']   = Request::param('remark/s', '');
         $param['sort']     = Request::param('sort/d', 200);
 
-        validate(AdminUserValidate::class)->scene('user_add')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_add')->check($param);
 
-        $data = AdminUserService::add($param);
+        $data = AdminAdminService::add($param);
 
         return success($data);
     }
@@ -106,28 +107,29 @@ class AdminUser
      * 
      * @return json
      */
-    public function userEdit()
+    public function adminEdit()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
 
         if (Request::isGet()) {
-            validate(AdminUserValidate::class)->scene('user_id')->check($param);
+            validate(AdminAdminValidate::class)->scene('admin_id')->check($param);
 
-            $data = AdminUserService::edit($param);
+            $data = AdminAdminService::edit($param);
 
-            if ($data['admin_user']['is_delete'] == 1) {
-                exception('管理员已被删除：' . $param['admin_user_id']);
+            if ($data['admin_admin']['is_delete'] == 1) {
+                exception('管理员已被删除：' . $param['admin_admin_id']);
             }
         } else {
             $param['username'] = Request::param('username/s', '');
             $param['nickname'] = Request::param('nickname/s', '');
             $param['email']    = Request::param('email/s', '');
+            $param['phone']    = Request::param('phone/s', '');
             $param['remark']   = Request::param('remark/s', '');
             $param['sort']     = Request::param('sort/d', 200);
 
-            validate(AdminUserValidate::class)->scene('user_edit')->check($param);
+            validate(AdminAdminValidate::class)->scene('admin_edit')->check($param);
 
-            $data = AdminUserService::edit($param, 'post');
+            $data = AdminAdminService::edit($param, 'post');
         }
 
         return success($data);
@@ -140,13 +142,13 @@ class AdminUser
      * 
      * @return json
      */
-    public function userDele()
+    public function adminDele()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
 
-        validate(AdminUserValidate::class)->scene('user_dele')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_dele')->check($param);
 
-        $data = AdminUserService::dele($param['admin_user_id']);
+        $data = AdminAdminService::dele($param['admin_admin_id']);
 
         return success($data);
     }
@@ -158,14 +160,14 @@ class AdminUser
      * 
      * @return json
      */
-    public function userAvatar()
+    public function adminAvatar()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['avatar']        = Request::file('avatar_file');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['avatar']         = Request::file('avatar_file');
 
-        validate(AdminUserValidate::class)->scene('user_avatar')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_avatar')->check($param);
 
-        $data = AdminUserService::avatar($param);
+        $data = AdminAdminService::avatar($param);
 
         return success($data);
     }
@@ -177,14 +179,14 @@ class AdminUser
      * 
      * @return json
      */
-    public function userPwd()
+    public function adminPwd()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['password']      = Request::param('password/s', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['password']       = Request::param('password/s', '');
 
-        validate(AdminUserValidate::class)->scene('user_pwd')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_pwd')->check($param);
 
-        $data = AdminUserService::pwd($param);
+        $data = AdminAdminService::pwd($param);
 
         return success($data);
     }
@@ -196,21 +198,21 @@ class AdminUser
      * 
      * @return json
      */
-    public function userRule()
+    public function adminRule()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
 
         if (Request::isGet()) {
-            validate(AdminUserValidate::class)->scene('user_id')->check($param);
+            validate(AdminAdminValidate::class)->scene('admin_id')->check($param);
 
-            $data = AdminUserService::rule($param);
+            $data = AdminAdminService::rule($param);
         } else {
             $param['admin_role_ids'] = Request::param('admin_role_ids/a', []);
             $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
-            validate(AdminUserValidate::class)->scene('user_rule')->check($param);
+            validate(AdminAdminValidate::class)->scene('admin_rule')->check($param);
 
-            $data = AdminUserService::rule($param, 'post');
+            $data = AdminAdminService::rule($param, 'post');
         }
 
         return success($data);
@@ -223,14 +225,14 @@ class AdminUser
      * 
      * @return json
      */
-    public function userDisable()
+    public function adminDisable()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['is_disable']    = Request::param('is_disable/d', 0);
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['is_disable']     = Request::param('is_disable/d', 0);
 
-        validate(AdminUserValidate::class)->scene('user_disable')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_disable')->check($param);
 
-        $data = AdminUserService::disable($param);
+        $data = AdminAdminService::disable($param);
 
         return success($data);
     }
@@ -242,14 +244,14 @@ class AdminUser
      * 
      * @return json
      */
-    public function userAdmin()
+    public function adminAdmin()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['is_admin']      = Request::param('is_admin/d', 0);
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['is_admin']       = Request::param('is_admin/d', 0);
 
-        validate(AdminUserValidate::class)->scene('user_admin')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_admin')->check($param);
 
-        $data = AdminUserService::admin($param);
+        $data = AdminAdminService::admin($param);
 
         return success($data);
     }

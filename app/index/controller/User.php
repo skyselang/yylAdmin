@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-03-10
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\index\controller;
@@ -32,7 +32,7 @@ class User
         $user = UserService::info($param['user_id']);
 
         if ($user['is_delete'] == 1) {
-            exception('账户已注销');
+            exception('用户已被注销');
         }
 
         unset($user['password'], $user['remark'], $user['sort'], $user['is_disable'], $user['is_delete'], $user['delete_time']);

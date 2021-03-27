@@ -21,7 +21,7 @@ class SettingCache
      */
     public static function key($setting_id = 0)
     {
-        $key = 'setting:' . $setting_id;
+        $key = 'Setting:' . $setting_id;
 
         return $key;
     }

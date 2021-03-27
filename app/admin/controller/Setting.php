@@ -3,7 +3,7 @@
  * @Description  : 设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-03-10
+ * @LastEditTime : 2021-03-26
  */
 
 namespace app\admin\controller;
@@ -27,10 +27,10 @@ class Setting
         if (Request::isGet()) {
             $data = SettingService::verify();
         } else {
+            $param['switch'] = Request::param('switch/b', false);
             $param['type']   = Request::param('type/d', 1);
             $param['length'] = Request::param('length/d', 4);
             $param['expire'] = Request::param('expire/d', 180);
-            $param['switch'] = Request::param('switch/b', false);
             $param['curve']  = Request::param('curve/b', false);
             $param['noise']  = Request::param('noise/b', false);
             $param['bgimg']  = Request::param('bgimg/b', false);

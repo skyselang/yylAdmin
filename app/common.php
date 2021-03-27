@@ -3,7 +3,7 @@
  * @Description  : 公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-03-17
+ * @LastEditTime : 2021-03-23
  */
 
 use think\facade\Config;
@@ -227,4 +227,34 @@ function user_token()
 function datetime()
 {
     return date('Y-m-d H:i:s');
+}
+
+/**
+ * 去除字符串首尾字符
+ * 
+ * @param string $str  字符串
+ * @param string $char 要去除的字符
+ * 
+ * @return string
+ */
+function str_trim($str, $char = ',')
+{
+    $str = trim($str, $char);
+
+    return $str;
+}
+
+/**
+ * 在字符串首尾拼接字符
+ * 
+ * @param string $str  字符串
+ * @param string $char 要拼接的字符
+ * 
+ * @return string
+ */
+function str_join($str, $char = ',')
+{
+    $str = $char . $str . $char;
+
+    return $str;
 }

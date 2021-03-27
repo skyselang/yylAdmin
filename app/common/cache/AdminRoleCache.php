@@ -3,7 +3,7 @@
  * @Description  : 角色缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-24
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -21,7 +21,7 @@ class AdminRoleCache
      */
     public static function key($admin_role_id = 0)
     {
-        $key = 'adminRole:' . $admin_role_id;
+        $key = 'AdminRole:' . $admin_role_id;
 
         return $key;
     }

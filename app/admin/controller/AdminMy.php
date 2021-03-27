@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-01-04
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\controller;
@@ -24,11 +24,11 @@ class AdminMy
      */
     public function myInfo()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
 
-        validate(AdminMyValidate::class)->scene('user_id')->check($param);
+        validate(AdminMyValidate::class)->scene('admin_id')->check($param);
 
-        $data = AdminMyService::info($param['admin_user_id']);
+        $data = AdminMyService::info($param['admin_admin_id']);
 
         if ($data['is_delete'] == 1) {
             exception('账号信息错误，请重新登录！');
@@ -46,10 +46,10 @@ class AdminMy
      */
     public function myEdit()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
 
         if (Request::isGet()) {
-            validate(AdminMyValidate::class)->scene('user_id')->check($param);
+            validate(AdminMyValidate::class)->scene('admin_id')->check($param);
 
             $data = AdminMyService::edit($param);
 
@@ -60,6 +60,7 @@ class AdminMy
             $param['username'] = Request::param('username/s', '');
             $param['nickname'] = Request::param('nickname/s', '');
             $param['email']    = Request::param('email/s', '');
+            $param['phone']    = Request::param('phone/s', '');
 
             validate(AdminMyValidate::class)->scene('my_edit')->check($param);
 
@@ -78,9 +79,9 @@ class AdminMy
      */
     public function myPwd()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['password_old']  = Request::param('password_old/s', '');
-        $param['password_new']  = Request::param('password_new/s', '');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['password_old']   = Request::param('password_old/s', '');
+        $param['password_new']   = Request::param('password_new/s', '');
 
         validate(AdminMyValidate::class)->scene('my_pwd')->check($param);
 
@@ -98,8 +99,8 @@ class AdminMy
      */
     public function myAvatar()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['avatar']        = Request::file('avatar_file');
+        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['avatar']         = Request::file('avatar_file');
 
         validate(AdminMyValidate::class)->scene('my_avatar')->check($param);
 
@@ -125,13 +126,12 @@ class AdminMy
         $request_keyword = Request::param('request_keyword/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
         $create_time     = Request::param('create_time/a', []);
+        $admin_admin_id  = admin_admin_id();
 
-        $admin_user_id   = admin_user_id();
-
-        validate(AdminMyValidate::class)->scene('user_id')->check(['admin_user_id' => $admin_user_id]);
+        validate(AdminMyValidate::class)->scene('admin_id')->check(['admin_admin_id' => $admin_admin_id]);
 
         $where   = [];
-        $where[] = ['admin_user_id', '=', $admin_user_id];
+        $where[] = ['admin_admin_id', '=', $admin_admin_id];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }

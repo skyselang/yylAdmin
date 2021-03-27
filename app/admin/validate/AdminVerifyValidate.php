@@ -3,13 +3,13 @@
  * @Description  : 验证码验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-15
- * @LastEditTime : 2020-12-01
+ * @LastEditTime : 2021-03-26
  */
 
 namespace app\admin\validate;
 
 use think\Validate;
-use app\admin\service\AdminVerifyService;
+use app\common\service\VerifyService;
 
 class AdminVerifyValidate extends Validate
 {
@@ -23,7 +23,7 @@ class AdminVerifyValidate extends Validate
         'length'      => ['require', 'between:3,6'],
         'expire'      => ['require', 'between:10,3600'],
         'verify_id'   => ['require'],
-        'verify_code' => ['require', 'checkVerify'],
+        'verify_code' => ['require', 'checkCheck'],
     ];
 
     // 错误信息
@@ -53,13 +53,13 @@ class AdminVerifyValidate extends Validate
     ];
 
     // 自定义验证规则：验证码验证
-    protected function checkVerify($value, $rule, $data = [])
+    protected function checkCheck($value, $rule, $data = [])
     {
         $verify_id   = $data['verify_id'];
         $verify_code = $data['verify_code'];
 
-        $AdminVerifyService = new AdminVerifyService();
-        $check_verify = $AdminVerifyService->check($verify_id, $verify_code);
+        $check_verify = VerifyService::check($verify_id, $verify_code);
+        
         if (empty($check_verify)) {
             return '验证码错误';
         }

@@ -3,39 +3,40 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\service;
 
 use think\facade\Db;
 use think\facade\Filesystem;
-use app\common\cache\AdminUserCache;
+use app\common\cache\AdminAdminCache;
 
 class AdminMyService
 {
     /**
      * 我的信息
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_admin_id 管理员id
      * 
      * @return array
      */
-    public static function info($admin_user_id)
+    public static function info($admin_admin_id)
     {
-        $admin_user = AdminUserService::info($admin_user_id);
+        $admin_admin = AdminAdminService::info($admin_admin_id);
 
-        $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['avatar']        = $admin_user['avatar'];
-        $data['username']      = $admin_user['username'];
-        $data['nickname']      = $admin_user['nickname'];
-        $data['email']         = $admin_user['email'];
-        $data['create_time']   = $admin_user['create_time'];
-        $data['update_time']   = $admin_user['update_time'];
-        $data['login_time']    = $admin_user['login_time'];
-        $data['logout_time']   = $admin_user['logout_time'];
-        $data['is_delete']     = $admin_user['is_delete'];
-        $data['roles']         = $admin_user['roles'];
+        $data['admin_admin_id'] = $admin_admin['admin_admin_id'];
+        $data['avatar']        = $admin_admin['avatar'];
+        $data['username']      = $admin_admin['username'];
+        $data['nickname']      = $admin_admin['nickname'];
+        $data['email']         = $admin_admin['email'];
+        $data['phone']         = $admin_admin['phone'];
+        $data['create_time']   = $admin_admin['create_time'];
+        $data['update_time']   = $admin_admin['update_time'];
+        $data['login_time']    = $admin_admin['login_time'];
+        $data['logout_time']   = $admin_admin['logout_time'];
+        $data['is_delete']     = $admin_admin['is_delete'];
+        $data['roles']         = $admin_admin['roles'];
 
         return $data;
     }
@@ -49,34 +50,35 @@ class AdminMyService
      */
     public static function edit($param, $method = 'get')
     {
-        $admin_user_id = $param['admin_user_id'];
+        $admin_admin_id = $param['admin_admin_id'];
 
         if ($method == 'get') {
-            $admin_user = self::info($admin_user_id);
+            $admin_admin = self::info($admin_admin_id);
 
-            $data['admin_user_id'] = $admin_user['admin_user_id'];
-            $data['username']      = $admin_user['username'];
-            $data['nickname']      = $admin_user['nickname'];
-            $data['email']         = $admin_user['email'];
-            $data['is_delete']     = $admin_user['is_delete'];
+            $data['admin_admin_id'] = $admin_admin['admin_admin_id'];
+            $data['username']       = $admin_admin['username'];
+            $data['nickname']       = $admin_admin['nickname'];
+            $data['email']          = $admin_admin['email'];
+            $data['phone']          = $admin_admin['phone'];
+            $data['is_delete']      = $admin_admin['is_delete'];
 
             return $data;
         } else {
-            unset($param['admin_user_id']);
+            unset($param['admin_admin_id']);
 
             $param['update_time'] = datetime();
 
-            $res = Db::name('admin_user')
-                ->where('admin_user_id', $admin_user_id)
+            $res = Db::name('admin_admin')
+                ->where('admin_admin_id', $admin_admin_id)
                 ->update($param);
 
             if (empty($res)) {
                 exception();
             }
 
-            $param['admin_user_id'] = $admin_user_id;
+            $param['admin_admin_id'] = $admin_admin_id;
 
-            AdminUserCache::upd($admin_user_id);
+            AdminAdminCache::upd($admin_admin_id);
 
             return $param;
         }
@@ -91,31 +93,31 @@ class AdminMyService
      */
     public static function pwd($param)
     {
-        $admin_user_id = $param['admin_user_id'];
+        $admin_admin_id = $param['admin_admin_id'];
         $password_old  = $param['password_old'];
         $password_new  = $param['password_new'];
 
-        $admin_user = AdminUserService::info($admin_user_id);
+        $admin_admin = AdminAdminService::info($admin_admin_id);
 
-        if (md5($password_old) != $admin_user['password']) {
+        if (md5($password_old) != $admin_admin['password']) {
             exception('旧密码错误');
         }
 
         $update['password']    = md5($password_new);
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_user_id'] = $admin_user_id;
+        $update['admin_admin_id'] = $admin_admin_id;
         $update['password']      = $res;
 
-        AdminUserCache::upd($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
 
         return $update;
     }
@@ -129,31 +131,31 @@ class AdminMyService
      */
     public static function avatar($param)
     {
-        $admin_user_id = $param['admin_user_id'];
+        $admin_admin_id = $param['admin_admin_id'];
         $avatar        = $param['avatar'];
 
         $avatar_name = Filesystem::disk('public')
-            ->putFile('admin_user', $avatar, function () use ($admin_user_id) {
-                return $admin_user_id . '/' . $admin_user_id . '_avatar';
+            ->putFile('admin_admin', $avatar, function () use ($admin_admin_id) {
+                return $admin_admin_id . '/' . $admin_admin_id . '_avatar';
             });
 
         $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
-            ->where('admin_user_id', $admin_user_id)
+        $res = Db::name('admin_admin')
+            ->where('admin_admin_id', $admin_admin_id)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        AdminUserCache::upd($admin_user_id);
-        $admin_user = AdminUserService::info($admin_user_id);
+        AdminAdminCache::upd($admin_admin_id);
+        $admin_admin = AdminAdminService::info($admin_admin_id);
 
-        $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['update_time']   = $admin_user['update_time'];
-        $data['avatar']        = $admin_user['avatar'];
+        $data['admin_admin_id'] = $admin_admin['admin_admin_id'];
+        $data['update_time']   = $admin_admin['update_time'];
+        $data['avatar']        = $admin_admin['avatar'];
 
         return $data;
     }

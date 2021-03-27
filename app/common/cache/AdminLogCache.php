@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 日志缓存
+ * @Description  : 管理员日志缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2020-12-03
+ * @LastEditTime : 2021-03-23
  */
 
 namespace app\common\cache;
@@ -21,7 +21,7 @@ class AdminLogCache
      */
     public static function key($admin_log_id = '')
     {
-        $key = 'adminLog:' . $admin_log_id;
+        $key = 'AdminLog:' . $admin_log_id;
 
         return $key;
     }

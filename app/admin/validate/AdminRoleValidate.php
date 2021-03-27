@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 角色验证器
+ * @Description  : 角色管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\admin\validate;
@@ -38,7 +38,7 @@ class AdminRoleValidate extends Validate
     protected function scenerole_dele()
     {
         return $this->only(['admin_role_id'])
-            ->append('admin_role_id', 'checkAdminRoleMenuUser');
+            ->append('admin_role_id', 'checkAdminRoleMenuAdmin');
     }
 
     // 自定义验证规则：角色是否存在
@@ -79,28 +79,25 @@ class AdminRoleValidate extends Validate
     }
 
     // 自定义验证规则：角色是否有菜单或管理员
-    protected function checkAdminRoleMenuUser($value, $rule, $data = [])
+    protected function checkAdminRoleMenuAdmin($value, $rule, $data = [])
     {
         $admin_role_id = $value;
 
         $admin_role = AdminRoleService::info($admin_role_id);
-
+        
         if ($admin_role['admin_menu_ids']) {
             return '请在[修改]中取消所有菜单后再删除';
         }
 
-        $where0  = [['admin_role_ids', 'like', $admin_role_id], ['is_delete', '=', 0]];
-        $where1  = [['admin_role_ids', 'like', $admin_role_id . ',%'], ['is_delete', '=', 0]];
-        $where2  = [['admin_role_ids', 'like', '%,' . $admin_role_id . ',%'], ['is_delete', '=', 0]];
-        $where3  = [['admin_role_ids', 'like', '%,' . $admin_role_id], ['is_delete', '=', 0]];
-        $whereOr = [$where0, $where1, $where2, $where3];
+        $where[] = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
+        $where[] = ['is_delete', '=', 0];
 
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->whereOr($whereOr)
+        $admin_admin = Db::name('admin_admin')
+            ->field('admin_admin_id')
+            ->where($where)
             ->find();
 
-        if ($admin_user) {
+        if ($admin_admin) {
             return '请在[管理员]中解除所有管理员后再删除';
         }
 

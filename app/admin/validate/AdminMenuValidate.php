@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 菜单验证器
+ * @Description  : 菜单管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-24
  */
 
 namespace app\admin\validate;
@@ -118,34 +118,32 @@ class AdminMenuValidate extends Validate
             ->where('menu_pid', '=', $admin_menu_id)
             ->where('is_delete', '=', 0)
             ->find();
+
         if ($admin_menu) {
             return '请删除所有子菜单后再删除';
         }
 
-        $where0  = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];
-        $where1  = [['admin_menu_ids', 'like', $admin_menu_id . ',%'], ['is_delete', '=', 0]];
-        $where2  = [['admin_menu_ids', 'like', '%,' . $admin_menu_id . ',%'], ['is_delete', '=', 0]];
-        $where3  = [['admin_menu_ids', 'like', '%,' . $admin_menu_id], ['is_delete', '=', 0]];
-        $whereOr = [$where0, $where1, $where2, $where3];
+        $where_role[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
+        $where_role[] = ['is_delete', '=', 0];
+
         $admin_role = Db::name('admin_role')
             ->field('admin_role_id')
-            ->whereOr($whereOr)
+            ->where($where_role)
             ->find();
 
         if ($admin_role) {
             return '请在[角色]中解除所有角色后再删除';
         }
 
-        $where0  = [['admin_menu_ids', 'like', $admin_menu_id], ['is_delete', '=', 0]];
-        $where1  = [['admin_menu_ids', 'like', $admin_menu_id . ',%'], ['is_delete', '=', 0]];
-        $where2  = [['admin_menu_ids', 'like', '%,' . $admin_menu_id . ',%'], ['is_delete', '=', 0]];
-        $where3  = [['admin_menu_ids', 'like', '%,' . $admin_menu_id], ['is_delete', '=', 0]];
-        $whereOr = [$where0, $where1, $where2, $where3];
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->whereOr($whereOr)
+        $where_admin[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
+        $where_admin[] = ['is_delete', '=', 0];
+
+        $admin_admin = Db::name('admin_admin')
+            ->field('admin_admin_id')
+            ->where($where_admin)
             ->find();
-        if ($admin_user) {
+
+        if ($admin_admin) {
             return '请在[管理员]中解除所有管理员后再删除';
         }
 

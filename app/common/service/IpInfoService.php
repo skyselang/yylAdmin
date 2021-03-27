@@ -3,7 +3,7 @@
  * @Description  : IP信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-26
  */
 
 namespace app\common\service;
@@ -30,7 +30,11 @@ class IpInfoService
 
         if (empty($ip_info)) {
             $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';
-            $res = http_get($url);
+            $par = [
+                'ip' => $ip,
+                'accessKey' => 'alibaba-inc'
+            ];
+            $res = http_post($url, $par);
 
             $ip_info = [
                 'ip'       => $ip,
@@ -42,25 +46,27 @@ class IpInfoService
                 'isp'      => '',
             ];
 
-            if ($res['code'] == 0 && $res['data']) {
-                $data = $res['data'];
+            if ($res) {
+                if ($res['code'] == 0 && $res['data']) {
+                    $data = $res['data'];
 
-                $country  = $data['country'];
-                $province = $data['region'];
-                $city     = $data['city'];
-                $area     = $data['area'];
-                $region   = $country . $province . $city . $area;
-                $isp      = $data['isp'];
+                    $country  = $data['country'];
+                    $province = $data['region'];
+                    $city     = $data['city'];
+                    $area     = $data['area'];
+                    $region   = $country . $province . $city . $area;
+                    $isp      = $data['isp'];
 
-                $ip_info['ip']       = $ip;
-                $ip_info['country']  = $country;
-                $ip_info['province'] = $province;
-                $ip_info['city']     = $city;
-                $ip_info['region']   = $region;
-                $ip_info['area']     = $area;
-                $ip_info['isp']      = $isp;
+                    $ip_info['ip']       = $ip;
+                    $ip_info['country']  = $country;
+                    $ip_info['province'] = $province;
+                    $ip_info['city']     = $city;
+                    $ip_info['region']   = $region;
+                    $ip_info['area']     = $area;
+                    $ip_info['isp']      = $isp;
 
-                IpInfoCache::set($ip, $ip_info);
+                    IpInfoCache::set($ip, $ip_info);
+                }
             }
         }
 

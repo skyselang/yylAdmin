@@ -3,16 +3,17 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-26
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
+use app\common\service\VerifyService;
 use app\admin\validate\AdminVerifyValidate;
-use app\admin\validate\AdminUserValidate;
-use app\admin\service\AdminVerifyService;
+use app\admin\validate\AdminAdminValidate;
 use app\admin\service\AdminLoginService;
+use app\admin\service\AdminSettingService;
 
 class AdminLogin
 {
@@ -25,9 +26,9 @@ class AdminLogin
      */
     public function verify()
     {
-        $AdminVerifyService = new AdminVerifyService();
+        $config = AdminSettingService::settingVerify();
 
-        $data = $AdminVerifyService->verify();
+        $data = VerifyService::create($config);
 
         return success($data);
     }
@@ -46,13 +47,13 @@ class AdminLogin
         $param['verify_id']   = Request::param('verify_id/s', '');
         $param['verify_code'] = Request::param('verify_code/s', '');
 
-        $verify_config = AdminVerifyService::config();
+        $config = AdminSettingService::settingVerify();
         
-        if ($verify_config['switch']) {
+        if ($config['switch']) {
             validate(AdminVerifyValidate::class)->scene('check')->check($param);
         }
 
-        validate(AdminUserValidate::class)->scene('user_login')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_login')->check($param);
 
         $data = AdminLoginService::login($param);
 
@@ -68,11 +69,11 @@ class AdminLogin
      */
     public function logout()
     {
-        $param['admin_user_id'] = admin_user_id();
+        $param['admin_admin_id'] = admin_admin_id();
 
-        validate(AdminUserValidate::class)->scene('user_id')->check($param);
+        validate(AdminAdminValidate::class)->scene('admin_id')->check($param);
 
-        $data = AdminLoginService::logout($param['admin_user_id']);
+        $data = AdminLoginService::logout($param['admin_admin_id']);
 
         return success($data, '退出成功');
     }

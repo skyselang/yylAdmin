@@ -3,7 +3,7 @@
  * @Description  : 用户验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-03-08
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\admin\validate;
@@ -30,9 +30,9 @@ class UserValidate extends Validate
     // 错误信息
     protected $message = [
         'user_id.require'       => '缺少参数：用户id',
-        'username.require'      => '请输入账号',
-        'username.length'       => '账号长度为2至32个字符',
-        'username.alphaDash'    => '账号由字母、数字、下划线、破折号组成',
+        'username.require'      => '请输入用户名',
+        'username.length'       => '用户名长度为2至32个字符',
+        'username.alphaDash'    => '用户名由字母、数字、下划线、破折号组成',
         'nickname.require'      => '请输入昵称',
         'nickname.length'       => '昵称长度为1至32个字符',
         'password.require'      => '请输入密码',
@@ -87,7 +87,7 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：账号是否已存在
+    // 自定义验证规则：用户名是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
         $user_id = isset($data['user_id']) ? $data['user_id'] : '';
@@ -105,7 +105,7 @@ class UserValidate extends Validate
             ->find();
 
         if ($user) {
-            return '账号已存在：' . $username;
+            return '用户名已存在：' . $username;
         }
 
         return true;

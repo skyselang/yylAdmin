@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-25
  */
 
 namespace app\admin\service;
@@ -19,11 +19,11 @@ class UserService
     /**
      * 用户列表
      *
-     * @param array   $where   条件
-     * @param integer $page    页数
-     * @param integer $limit   数量
-     * @param array   $order   排序
-     * @param string  $field   字段
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
      * 
      * @return array 
      */
@@ -220,7 +220,7 @@ class UserService
 
         $update['user_id'] = $user_id;
 
-        UserCache::upd($user_id);
+        UserCache::del($user_id);
 
         return $update;
     }
@@ -434,7 +434,7 @@ class UserService
     public static function staDate($date = [], $type = 'new')
     {
         if (empty($date)) {
-            $date[0] = Datetime::daysAgo(30);
+            $date[0] = Datetime::daysAgo(29);
             $date[1] = Datetime::today();
         }
 
@@ -449,15 +449,15 @@ class UserService
             $end_time = Datetime::dateEndTime($end_date);
 
             if ($type == 'act') {
-                $field = "count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date";
+                $field   = "count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date";
                 $where[] = ['login_time', '>=', $sta_time];
                 $where[] = ['login_time', '<=', $end_time];
-                $group = "date_format(login_time,'%Y-%m-%d')";
+                $group   = "date_format(login_time,'%Y-%m-%d')";
             } else {
-                $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
+                $field   = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
                 $where[] = ['create_time', '>=', $sta_time];
                 $where[] = ['create_time', '<=', $end_time];
-                $group = "date_format(create_time,'%Y-%m-%d')";
+                $group   = "date_format(create_time,'%Y-%m-%d')";
             }
 
             $x_data = Datetime::betweenDates($sta_date, $end_date);

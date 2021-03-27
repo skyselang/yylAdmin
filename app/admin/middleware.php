@@ -3,16 +3,16 @@
  * @Description  : 应用中间件定义文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-01-27
+ * @LastEditTime : 2021-03-27
  */
 
 return [
     // 日志记录
-    \app\admin\middleware\AdminLog::class,
+    \app\admin\middleware\AdminLogMiddleware::class,
     // token验证
-    \app\admin\middleware\AdminTokenVerify::class,
+    \app\admin\middleware\AdminTokenVerifyMiddleware::class,
     // 权限验证
-    \app\admin\middleware\AdminRuleVerify::class,
+    \app\admin\middleware\AdminRuleVerifyMiddleware::class,
     // 请求频率限制
-    \app\admin\middleware\AdminThrottle::class,
+    \app\admin\middleware\AdminThrottleMiddleware::class,
 ];

@@ -21,7 +21,7 @@ class AdminSettingCache
      */
     public static function key($admin_setting_id = 0)
     {
-        $key = 'adminSetting:' . $admin_setting_id;
+        $key = 'AdminSetting:' . $admin_setting_id;
 
         return $key;
     }

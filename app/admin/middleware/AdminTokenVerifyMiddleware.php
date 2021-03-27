@@ -14,7 +14,7 @@ use think\Response;
 use think\facade\Config;
 use app\admin\service\AdminTokenService;
 
-class AdminTokenVerify
+class AdminTokenVerifyMiddleware
 {
     /**
      * 处理请求
@@ -35,13 +35,13 @@ class AdminTokenVerify
                 exception('Requests Headers：AdminToken must');
             }
 
-            $admin_user_id = admin_user_id();
+            $admin_admin_id = admin_admin_id();
 
-            if (empty($admin_user_id)) {
-                exception('Requests Headers：AdminUserId must');
+            if (empty($admin_admin_id)) {
+                exception('Requests Headers：AdminAdminId must');
             }
 
-            AdminTokenService::verify($admin_token, $admin_user_id);
+            AdminTokenService::verify($admin_token, $admin_admin_id);
         }
 
         return $next($request);
