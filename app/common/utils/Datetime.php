@@ -3,7 +3,7 @@
  * @Description  : 日期时间
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-03-30
  */
 
 namespace app\common\utils;
@@ -62,7 +62,7 @@ class Datetime
 
             $weeks[] = $date;
         }
-
+        
         return $weeks;
     }
 
@@ -80,7 +80,7 @@ class Datetime
         $N    = $N - 1;
         $sta  = date('Y-m-d', strtotime("-{$N} day", $time));
         $end  = date('Y-m-d', strtotime("+{$d} day", $time));
-
+        
         return [$sta, $end];
     }
 
@@ -104,7 +104,7 @@ class Datetime
 
             $weeks[] = $date;
         }
-
+        
         return $weeks;
     }
 
@@ -122,7 +122,7 @@ class Datetime
         }
 
         if ($month == 'lastmonth') {
-            $month = date('Y-m', strtotime("-1 month"));
+            $month = date('Y-m', strtotime('-1 month', strtotime(date('Y-m', time()))));
         }
 
         $t    = date('t', strtotime($month));
@@ -132,7 +132,7 @@ class Datetime
         for ($i = 0; $i < $t; $i++) {
             $dates[] = date('Y-m-d', strtotime("+{$i} day", $time));
         }
-
+        
         return $dates;
     }
 
@@ -158,7 +158,7 @@ class Datetime
      */
     public static function lastMonth()
     {
-        $m   = strtotime("-1 month");
+        $m   = strtotime('-1 month', strtotime(date('Y-m', time())));
         $t   = date('t', $m);
         $sta = date('Y-m', $m) . '-01';
         $end = date('Y-m', $m) . '-' . $t;
@@ -177,7 +177,7 @@ class Datetime
         $t   = date('t', $m);
         $sta = date('Y-m', $m) . '-01';
         $end = date('Y-m', $m) . '-' . $t;
-
+        
         return [$sta, $end];
     }
 
@@ -258,7 +258,7 @@ class Datetime
             $dates[] = date('Y-m-d', $dt_sta);
             $dt_sta  = strtotime('+1 day', $dt_sta);
         }
-
+        
         return $dates;
     }
 
