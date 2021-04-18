@@ -1,101 +1,21 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost
+ Source Server         : 127.0.0.1
  Source Server Type    : MySQL
- Source Server Version : 50726
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50529
+ Source Host           : localhost:3306
  Source Schema         : yyladmin
 
  Target Server Type    : MySQL
- Target Server Version : 50726
+ Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 31/03/2021 22:09:59
+ Date: 18/04/2021 22:31:19
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for yyl_admin_admin
--- ----------------------------
-DROP TABLE IF EXISTS `yyl_admin_admin`;
-CREATE TABLE `yyl_admin_admin`  (
-  `admin_admin_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '管理员id',
-  `admin_role_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '角色id',
-  `admin_menu_ids` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单id',
-  `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
-  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
-  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
-  `phone` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机',
-  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'static/img/favicon.ico' COMMENT '头像',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
-  `sort` int(10) NOT NULL DEFAULT 200 COMMENT '排序',
-  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_admin` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否管理员1是0否',
-  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
-  `login_num` int(10) NOT NULL DEFAULT 0 COMMENT '登录次数',
-  `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
-  `login_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录地区',
-  `login_time` datetime NULL DEFAULT NULL COMMENT '登录时间',
-  `logout_time` datetime NULL DEFAULT NULL COMMENT '退出时间',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`admin_admin_id`) USING BTREE,
-  INDEX `admin_admin_id`(`admin_admin_id`) USING BTREE,
-  INDEX `username`(`username`, `password`) USING BTREE,
-  INDEX `email`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of yyl_admin_admin
--- ----------------------------
-INSERT INTO `yyl_admin_admin` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '系统管理员', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_admin` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_admin` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_admin` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_admin` VALUES (5, ',2,', ',,', 'php', '拍簧片', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-
--- ----------------------------
--- Table structure for yyl_admin_log
--- ----------------------------
-DROP TABLE IF EXISTS `yyl_admin_log`;
-CREATE TABLE `yyl_admin_log`  (
-  `admin_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志id',
-  `admin_admin_id` int(11) NOT NULL DEFAULT 0 COMMENT '管理员id',
-  `admin_menu_id` int(11) NULL DEFAULT 0 COMMENT '菜单id',
-  `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
-  `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
-  `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ip',
-  `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
-  `request_province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
-  `request_city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
-  `request_area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
-  `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
-  `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
-  `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
-  `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回码',
-  `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '请求时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`admin_log_id`) USING BTREE,
-  INDEX `admin_log_id`(`admin_log_id`) USING BTREE,
-  INDEX `admin_admin_id`(`admin_admin_id`) USING BTREE,
-  INDEX `request_isp`(`request_isp`) USING BTREE,
-  INDEX `request_city`(`request_city`) USING BTREE,
-  INDEX `request_province`(`request_province`) USING BTREE,
-  INDEX `request_country`(`request_country`) USING BTREE,
-  INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员日志' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of yyl_admin_log
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for yyl_admin_menu
@@ -106,13 +26,10 @@ CREATE TABLE `yyl_admin_menu`  (
   `menu_pid` int(11) NOT NULL DEFAULT 0 COMMENT '菜单父级id',
   `menu_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '菜单名称',
   `menu_url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单链接',
-  `menu_sort` int(10) NOT NULL DEFAULT 200 COMMENT '菜单排序',
-  `menu_request` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
-  `menu_response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '返回参数',
-  `menu_explain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '额外说明',
+  `menu_sort` int(10) NULL DEFAULT 200 COMMENT '菜单排序',
   `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
   `is_unauth` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需权限1是0否',
-  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -120,125 +37,141 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 174 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 190 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
 -- ----------------------------
-INSERT INTO `yyl_admin_menu` VALUES (1, 0, '控制台', '', 300, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (3, 88, '菜单管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (4, 88, '管理员管理', '', 180, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (5, 88, '角色管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (12, 88, '个人中心', '', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (13, 3, '菜单列表', 'admin/AdminMenu/menuList', 220, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (14, 3, '菜单添加', 'admin/AdminMenu/menuAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (15, 3, '菜单修改', 'admin/AdminMenu/menuEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (16, 3, '菜单删除', 'admin/AdminMenu/menuDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (17, 4, '管理员列表', 'admin/AdminAdmin/adminList', 220, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (18, 4, '管理员添加', 'admin/AdminAdmin/adminAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (19, 4, '管理员修改', 'admin/AdminAdmin/adminEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (20, 4, '管理员删除', 'admin/AdminAdmin/adminDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (22, 5, '角色列表', 'admin/AdminRole/roleList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (23, 5, '角色添加', 'admin/AdminRole/roleAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (24, 5, '角色修改', 'admin/AdminRole/roleEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (25, 5, '角色删除', 'admin/AdminRole/roleDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (27, 3, '菜单是否禁用', 'admin/AdminMenu/menuDisable', 160, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (28, 3, '菜单无需权限', 'admin/AdminMenu/menuUnauth', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (29, 4, '管理员信息', 'admin/AdminAdmin/adminInfo', 210, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (30, 4, '管理员是否禁用', 'admin/AdminAdmin/adminDisable', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (31, 4, '管理员权限分配', 'admin/AdminAdmin/adminRule', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (32, 4, '管理员密码重置', 'admin/AdminAdmin/adminPwd', 140, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (33, 5, '角色禁用', 'admin/AdminRole/roleDisable', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (35, 4, '管理员是否超管', 'admin/AdminAdmin/adminAdmin', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (36, 53, '实用工具', '', 110, '', '', '', 0, 1, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminTool/strRand', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminTool/timeTran', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminTool/qrcode', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (41, 88, '管理员日志', '', 140, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (42, 41, '管理员日志列表', 'admin/AdminLog/logList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (43, 41, '管理员日志信息', 'admin/AdminLog/logInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (44, 41, '管理员日志删除', 'admin/AdminLog/logDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/AdminMy/myInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/AdminMy/myEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/AdminMy/myPwd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (48, 12, '更换头像', 'admin/AdminMy/myAvatar', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (49, 1, '控制台', 'admin/AdminIndex/index', 200, '', '', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (50, 53, '地图坐标拾取', 'admin/AdminTool/toolMap', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/AdminLogin/login', 160, '', '', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (52, 111, '退出', 'admin/AdminLogin/logout', 150, '', '', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (53, 0, '系统管理', '', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (54, 12, '我的日志', 'admin/AdminMy/myLog', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (58, 53, '实用工具合集', 'admin/AdminTool/toolMix', 160, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminTool/strTran', 210, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (71, 53, '缓存设置', 'admin/AdminSetting/settingCache', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (73, 53, '验证码设置', 'admin/AdminSetting/settingVerify', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/AdminLogin/verify', 170, '', '', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (85, 53, 'Token设置', 'admin/AdminSetting/settingToken', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminTool/byteTran', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminTool/ipQuery', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (88, 0, '权限管理', '', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (111, 0, '登录退出', '', 100, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (113, 3, '菜单角色', 'admin/AdminMenu/menuRole', 140, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (114, 3, '菜单管理员', 'admin/AdminMenu/menuAdmin', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (115, 5, '角色管理员', 'admin/AdminRole/roleAdmin', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (116, 41, '管理员日志统计', 'admin/AdminLog/logStatistic', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/AdminMy/mySetting', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/AdminMenu/menuRoleRemove', 135, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (119, 3, '菜单管理员解除', 'admin/AdminMenu/menuAdminRemove', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (120, 5, '角色管理员解除', 'admin/AdminRole/roleAdminRemove', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (121, 4, '管理员更换头像', 'admin/AdminAdmin/adminAvatar', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (122, 53, '服务器信息', 'admin/AdminSetting/serverInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (123, 156, '用户管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (124, 123, '用户列表', 'admin/User/userList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (125, 123, '用户信息', 'admin/User/userInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (126, 123, '用户添加', 'admin/User/userAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (127, 123, '用户修改', 'admin/User/userEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (128, 123, '用户删除', 'admin/User/userDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (129, 123, '用户密码重置', 'admin/User/userPassword', 130, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (130, 123, '用户是否禁用', 'admin/User/userDisable', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (131, 123, '用户更换头像', 'admin/User/userAvatar', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (132, 159, '接口管理', '', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (133, 132, '接口列表', 'admin/Api/apiList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (134, 132, '接口信息', 'admin/Api/apiInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (135, 132, '接口添加', 'admin/Api/apiAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (136, 132, '接口修改', 'admin/Api/apiEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (137, 132, '接口删除', 'admin/Api/apiDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (138, 132, '接口是否禁用', 'admin/Api/apiDisable', 120, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (139, 132, '接口是否无需权限', 'admin/Api/apiUnauth', 110, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (140, 156, '用户日志', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (141, 140, '用户日志列表', 'admin/UserLog/userLogList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (142, 140, '用户日志信息', 'admin/UserLog/userLogInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (143, 140, '用户日志删除', 'admin/UserLog/userLogDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (144, 140, '用户日志统计', 'admin/UserLog/userLogSta', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (145, 50, '高德地图坐标拾取', 'admin/AdminTool/toolMapAmap', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/AdminTool/toolMapBaidu', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/AdminTool/toolMapSogou', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/AdminTool/toolMapTencent', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (149, 50, '北斗地图坐标拾取', 'admin/AdminTool/toolMapBeidou', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (150, 157, '地区管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/regionList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/regionInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/regionAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/regionEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/regionDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (156, 0, '用户管理', '', 250, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (157, 0, '应用管理', '', 160, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/menuInfo', 210, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (159, 0, '接口管理', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (160, 159, '接口环境', '', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (161, 160, '接口环境列表', 'admin/ApiEnv/apiEnvList', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (162, 160, '接口环境信息', 'admin/ApiEnv/apiEnvInfo', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (163, 160, '接口环境添加', 'admin/ApiEnv/apiEnvAdd', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (164, 160, '接口环境修改', 'admin/ApiEnv/apiEnvEdit', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (165, 160, '接口环境删除', 'admin/ApiEnv/apiEnvDele', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (166, 132, '接口上传图片', 'admin/Api/apiUpload', 150, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (167, 132, '接口文档', 'admin/Api/apiDoc', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (168, 3, '菜单文档', 'admin/AdminMenu/menuDoc', 200, '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选填</td><td>请求参数示例字段</td><td>示例值</td></tr></tbody></table>', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选返</td><td>返回数据示例字段</td><td>示例值</td></tr></tbody></table>', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (169, 3, '菜单上传图片', 'admin/AdminMenu/menuUpload', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', 'admin/Setting/settingVerify', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', 'admin/Setting/settingToken', 200, '', '', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (172, 1, '数据统计（用户）', 'admin/AdminIndex/statisticUser', 200, '', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选返</td><td>返回数据示例字段</td><td>示例值</td></tr></tbody></table>', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (173, 53, '表单构建', 'admin/AdminTool/toolForm', 210, '', '', '', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (1, 0, '控制台', '', 300, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (3, 88, '菜单管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (4, 88, '管理员管理', '', 180, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (5, 88, '角色管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (12, 88, '个人中心', '', 130, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (13, 3, '菜单列表', 'admin/AdminMenu/list', 220, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (14, 3, '菜单添加', 'admin/AdminMenu/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (15, 3, '菜单修改', 'admin/AdminMenu/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (16, 3, '菜单删除', 'admin/AdminMenu/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (17, 4, '管理员列表', 'admin/AdminUser/list', 220, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (18, 4, '管理员添加', 'admin/AdminUser/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (19, 4, '管理员修改', 'admin/AdminUser/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (20, 4, '管理员删除', 'admin/AdminUser/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (22, 5, '角色列表', 'admin/AdminRole/list', 220, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (23, 5, '角色添加', 'admin/AdminRole/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (24, 5, '角色修改', 'admin/AdminRole/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (25, 5, '角色删除', 'admin/AdminRole/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (27, 3, '菜单是否禁用', 'admin/AdminMenu/disable', 160, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (28, 3, '菜单无需权限', 'admin/AdminMenu/unauth', 150, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (29, 4, '管理员信息', 'admin/AdminUser/info', 210, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (30, 4, '管理员是否禁用', 'admin/AdminUser/disable', 130, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (31, 4, '管理员权限分配', 'admin/AdminUser/rule', 150, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (32, 4, '管理员密码重置', 'admin/AdminUser/pwd', 140, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (33, 5, '角色禁用', 'admin/AdminRole/disable', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (35, 4, '管理员是否超管', 'admin/AdminUser/super', 120, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (36, 53, '实用工具', '', 110, 0, 1, 1, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminUtils/strrand', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminUtils/timestamp', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminUtils/qrcode', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (41, 88, '管理员日志', '', 140, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (42, 41, '管理员日志列表', 'admin/AdminUserLog/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (43, 41, '管理员日志信息', 'admin/AdminUserLog/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (44, 41, '管理员日志删除', 'admin/AdminUserLog/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/AdminUserCenter/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/AdminUserCenter/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/AdminUserCenter/pwd', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (48, 12, '更换头像', 'admin/AdminUserCenter/avatar', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (49, 1, '控制台', 'admin/AdminIndex/index', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (50, 53, '地图坐标拾取', 'admin/AdminUtils/map', 150, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/AdminLogin/login', 160, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (52, 111, '退出', 'admin/AdminLogin/logout', 150, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (53, 0, '系统管理', '', 120, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (54, 12, '我的日志', 'admin/AdminUserCenter/log', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (58, 53, '实用工具合集', 'admin/AdminUtils/tools', 160, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminUtils/strtran', 210, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (71, 188, '缓存设置', 'admin/AdminSetting/cache', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (73, 188, '验证码设置', 'admin/AdminSetting/verify', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/AdminLogin/verify', 170, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (85, 188, 'Token设置', 'admin/AdminSetting/token', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminUtils/bytetran', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP查询', 'admin/AdminUtils/ipinfo', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (88, 0, '权限管理', '', 150, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (111, 0, '登录退出', '', 100, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (113, 3, '菜单角色', 'admin/AdminMenu/role', 140, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (114, 3, '菜单管理员', 'admin/AdminMenu/user', 130, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (115, 5, '角色管理员', 'admin/AdminRole/user', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (116, 41, '管理员日志统计', 'admin/AdminUserLog/stat', 150, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/AdminUserCenter/setting', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/AdminMenu/roleRemove', 135, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (119, 3, '菜单管理员解除', 'admin/AdminMenu/userRemove', 120, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (120, 5, '角色管理员解除', 'admin/AdminRole/userRemove', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (121, 4, '管理员更换头像', 'admin/AdminUser/avatar', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (122, 53, '服务器信息', 'admin/AdminUtils/server', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (123, 156, '会员管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (124, 123, '会员列表', 'admin/Member/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (125, 123, '会员信息', 'admin/Member/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (126, 123, '会员添加', 'admin/Member/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (127, 123, '会员修改', 'admin/Member/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (128, 123, '会员删除', 'admin/Member/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (129, 123, '会员重置密码', 'admin/Member/pwd', 130, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (130, 123, '会员是否禁用', 'admin/Member/disable', 120, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (131, 123, '会员更换头像', 'admin/Member/avatar', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (132, 159, '接口管理', '', 120, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (133, 132, '接口列表', 'admin/Api/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (134, 132, '接口信息', 'admin/Api/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (135, 132, '接口添加', 'admin/Api/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (136, 132, '接口修改', 'admin/Api/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (137, 132, '接口删除', 'admin/Api/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (138, 132, '接口是否禁用', 'admin/Api/disable', 120, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (139, 132, '接口是否无需权限', 'admin/Api/unauth', 110, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (140, 156, '会员日志', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (141, 140, '会员日志列表', 'admin/MemberLog/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (142, 140, '会员日志信息', 'admin/MemberLog/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (143, 140, '会员日志删除', 'admin/MemberLog/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (144, 140, '会员日志统计', 'admin/MemberLog/stat', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (145, 50, '高德地图坐标拾取', 'admin/AdminUtils/mapAmap', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/AdminUtils/mapBaidu', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/AdminUtils/mapSogou', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/AdminUtils/mapTencent', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (149, 50, '北斗地图坐标拾取', 'admin/AdminUtils/mapBeidou', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (150, 157, '地区管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (156, 0, '会员管理', '', 250, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (157, 0, '应用管理', '', 160, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/info', 210, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (159, 0, '接口管理', '', 155, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (160, 159, '接口环境', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (161, 160, '接口环境列表', 'admin/ApiEnv/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (162, 160, '接口环境信息', 'admin/ApiEnv/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (163, 160, '接口环境添加', 'admin/ApiEnv/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (164, 160, '接口环境修改', 'admin/ApiEnv/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (165, 160, '接口环境删除', 'admin/ApiEnv/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (166, 132, '接口上传图片', 'admin/Api/upload', 150, 0, 0, 1, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (167, 132, '接口文档', 'admin/Api/apiDoc', 200, 0, 0, 1, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (168, 3, '菜单文档', 'admin/AdminMenu/doc', 200, 0, 0, 1, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (169, 3, '菜单上传图片', 'admin/AdminMenu/upload', 200, 0, 0, 1, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (170, 186, '验证码设置', 'admin/Setting/verify', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (171, 186, 'Token设置', 'admin/Setting/token', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/AdminIndex/member', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/AdminUtils/apidoc', 250, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (174, 53, '表单构建', 'admin/AdminUtils/form', 230, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (175, 0, '新闻管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (176, 175, '新闻列表', 'admin/News/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (177, 175, '新闻信息', 'admin/News/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (178, 175, '新闻添加', 'admin/News/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (179, 175, '新闻修改', 'admin/News/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (180, 175, '新闻删除', 'admin/News/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (181, 175, '新闻上传文件', 'admin/News/upload', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (182, 175, '新闻是否置顶', 'admin/News/istop', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (183, 175, '新闻是否热门', 'admin/News/ishot', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (184, 175, '新闻是否推荐', 'admin/News/isrec', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (185, 175, '新闻是否隐藏', 'admin/News/ishide', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (186, 157, '设置管理', 'admin/Setting/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (187, 5, '角色信息', 'admin/AdminRole/info', 210, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (188, 53, '系统设置', 'admin/AdminSetting/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (189, 41, '管理员日志清除', 'admin/AdminUserLog/clear', 200, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -248,8 +181,8 @@ CREATE TABLE `yyl_admin_role`  (
   `admin_role_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '角色id',
   `admin_menu_ids` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单id',
   `role_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '角色名称',
-  `role_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '权限描述',
-  `role_sort` int(10) NULL DEFAULT 200 COMMENT '权限排序',
+  `role_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '角色描述',
+  `role_sort` int(10) NULL DEFAULT 200 COMMENT '角色排序',
   `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
   `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
@@ -263,9 +196,9 @@ CREATE TABLE `yyl_admin_role`  (
 -- ----------------------------
 -- Records of yyl_admin_role
 -- ----------------------------
-INSERT INTO `yyl_admin_role` VALUES (1, ',1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,133,134,141,142,144,145,146,147,148,149,151,152,158,161,162,172,173,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (3, ',,', '测试', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (1, ',1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,48,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,161,162,172,173,174,176,177,178,179,181,187,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (3, ',12,45,46,47,48,49,54,117,172,', '前端', '', 200, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_setting
@@ -273,10 +206,10 @@ INSERT INTO `yyl_admin_role` VALUES (3, ',,', '测试', '', 200, 0, 0, NULL, NUL
 DROP TABLE IF EXISTS `yyl_admin_setting`;
 CREATE TABLE `yyl_admin_setting`  (
   `admin_setting_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '设置id',
-  `admin_verify` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '验证码设置',
-  `admin_token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'token设置',
+  `verify` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '验证码设置',
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'token设置',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE,
   INDEX `admin_setting_id`(`admin_setting_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = DYNAMIC;
@@ -287,6 +220,86 @@ CREATE TABLE `yyl_admin_setting`  (
 INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, NULL);
 
 -- ----------------------------
+-- Table structure for yyl_admin_user
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_admin_user`;
+CREATE TABLE `yyl_admin_user`  (
+  `admin_user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '管理员id',
+  `admin_role_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '角色id',
+  `admin_menu_ids` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单id',
+  `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
+  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `phone` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'static/img/favicon.ico' COMMENT '头像',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `sort` int(10) NULL DEFAULT 200 COMMENT '排序',
+  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用1是0否',
+  `is_super` tinyint(1) NULL DEFAULT 0 COMMENT '是否超管1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
+  `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
+  `login_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录地区',
+  `login_time` datetime NULL DEFAULT NULL COMMENT '登录时间',
+  `logout_time` datetime NULL DEFAULT NULL COMMENT '退出时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`admin_user_id`) USING BTREE,
+  INDEX `username`(`username`, `password`) USING BTREE,
+  INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
+  INDEX `email`(`email`(191)) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of yyl_admin_user
+-- ----------------------------
+INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'storage/admin_admin/1/1_avatar.jpg?t=20210407094259', '系统管理员', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (5, ',2,', ',48,', 'php', '拍簧片', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'storage/admin_user/5/5_avatar.png?t=20210415232413', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for yyl_admin_user_log
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_admin_user_log`;
+CREATE TABLE `yyl_admin_user_log`  (
+  `admin_user_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '管理员日志id',
+  `admin_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '管理员id',
+  `admin_menu_id` int(11) NULL DEFAULT 0 COMMENT '菜单id',
+  `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
+  `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
+  `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ip',
+  `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
+  `request_province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
+  `request_city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
+  `request_area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
+  `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
+  `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
+  `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
+  `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '返回码',
+  `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`admin_user_log_id`) USING BTREE,
+  INDEX `request_isp`(`request_isp`) USING BTREE,
+  INDEX `request_city`(`request_city`(191)) USING BTREE,
+  INDEX `request_province`(`request_province`(191)) USING BTREE,
+  INDEX `request_country`(`request_country`(191)) USING BTREE,
+  INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
+  INDEX `admin_user_log_id`(`admin_user_log_id`) USING BTREE,
+  INDEX `admin_user_id`(`admin_user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员日志' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of yyl_admin_user_log
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for yyl_api
 -- ----------------------------
 DROP TABLE IF EXISTS `yyl_api`;
@@ -295,41 +308,37 @@ CREATE TABLE `yyl_api`  (
   `api_pid` int(11) NOT NULL DEFAULT 0 COMMENT '接口pid',
   `api_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接口名称',
   `api_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '接口链接',
-  `api_method` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'POST' COMMENT '接口请求方式',
-  `api_sort` int(10) NOT NULL DEFAULT 200 COMMENT '接口排序',
-  `api_request` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '接口请求参数',
-  `api_response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '接口返回参数',
-  `api_explain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '接口说明',
+  `api_sort` int(10) NULL DEFAULT 200 COMMENT '接口排序',
   `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
   `is_unauth` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需权限1是0否',
-  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`api_id`) USING BTREE,
   INDEX `api_id`(`api_id`) USING BTREE,
-  INDEX `api_pid`(`api_pid`, `api_name`) USING BTREE,
-  INDEX `api_url`(`api_url`) USING BTREE
+  INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
+  INDEX `api_url`(`api_url`(191)) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
 -- ----------------------------
-INSERT INTO `yyl_api` VALUES (1, 0, '登录注册', '', 'POST', 200, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (2, 1, '验证码', 'index/Login/verify', 'GET', 200, '', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，非200失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td><xmp>verify_switch</xmp></td><td>boolean</td><td>必返</td><td>验证码开关，false将不返回验证码id、验证码</td><td>true</td></tr><tr><td><xmp>verify_id</xmp></td><td>string</td><td>选返</td><td>验证码id</td><td>6fa5f47afc5f05</td></tr><tr><td><xmp>verify_src</xmp></td><td>string</td><td>选返</td><td>验证码，base64</td><td>data:image/png;base64,iVBORw0KGgo</td></tr></tbody></table>', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (3, 1, '登录', 'index/Login/login', 'POST', 200, '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>username</td><td>string</td><td>必填</td><td>账号</td><td>yyladmin</td></tr><tr><td>password</td><td>string</td><td>必填</td><td>密码</td><td>123456</td></tr></tbody></table>', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，非200失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>登录成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>member_id</td><td>integer</td><td>必返</td><td>会员id</td><td>1</td></tr><tr><td>username</td><td>string</td><td>必返</td><td>账号</td><td>yyladmin</td></tr><tr><td>nickname</td><td>string</td><td>必返</td><td>昵称</td><td>yyladmin</td></tr><tr><td>avatar</td><td>string</td><td>必返</td><td>头像</td><td><a href=\"https://api.yyladmin.top/storage/member/3/avatar.jpg\" target=\"_blank\">https://api.yyladmin.top/storage/member/1/avatar.jpg</a></td></tr><tr><td>token</td><td>string</td><td>必返</td><td>token</td><td>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOi</td></tr></tbody></table>', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'index/Login/logout', 'POST', 200, '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align: center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>member_id</td><td>integer</td><td>必填</td><td>会员id</td><td>1</td></tr></tbody></table>', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td></tr></tbody></table>', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (5, 0, '个人中心', '', 'POST', 200, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (6, 5, '我的信息', 'index/User/userInfo', 'POST', 200, '<p><br></p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选填</td><td>请求参数示例字段</td><td>示例值</td></tr></tbody></table>', '<p><br></p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选返</td><td>返回数据示例字段</td><td>示例值</td></tr></tbody></table>', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (7, 5, '修改信息', 'index/User/userEdit', 'POST', 200, '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align: center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选填</td><td>请求参数示例字段</td><td>示例值</td></tr></tbody></table>', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选返</td><td>返回数据示例字段</td><td>示例值</td></tr></tbody></table>', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (8, 5, '更换头像', 'index/User/userAvatar', 'POST', 200, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (9, 5, '修改密码', 'index/User/userPwd', 'POST', 200, '<p><br></p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选填</td><td>请求参数示例字段</td><td>示例值</td></tr></tbody></table>', '<p><br></p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>field_name</td><td>string</td><td>选返</td><td>返回数据示例字段</td><td>示例值</td></tr></tbody></table>', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (10, 5, '我的日志', 'index/User/userLog', 'POST', 200, '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>page</td><td>integer</td><td>选填</td><td>分页第几页</td><td>1</td></tr><tr><td>limit</td><td>integer</td><td>选填</td><td>分页每页记录数</td><td>10</td></tr><tr><td>create_time</td><td>array</td><td>选填</td><td>日期范围搜索，[开始日期，结束日期]</td><td>[2020-01-15,2021-01-15]</td></tr></tbody></table>', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，401登录失效，404接口地址错误，500服务器错误，其它失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回描述</td><td>成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据，请看返回数据data</td></tr></tbody></table><p>返回数据data：</p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>说明</th><th>示例</th></tr><tr><td>count</td><td>integer</td><td>总记录数</td><td>16</td></tr><tr><td>pages</td><td>integer</td><td>总页数</td><td>2</td></tr><tr><td>page</td><td>integer</td><td>第几页</td><td>1</td></tr><tr><td>limit</td><td>integer</td><td>每页记录数</td><td>12</td></tr><tr><td>list</td><td>array</td><td>数据列表，请看数据列表list</td><td></td></tr></tbody></table><p><span style=\"font-size: 1em;\">数据列表list：</span><br></p><table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>字段</th><th>类型</th><th>说明</th><th>示例</th></tr><tr><td>member_log_id</td><td>integer</td><td>日志id</td><td>509</td></tr><tr><td>api_name</td><td>string</td><td>操作&nbsp; &nbsp; &nbsp;&nbsp;</td><td>我的日志</td></tr><tr><td>create_time</td><td>datetime</td><td>时间</td><td>2021-01-15 17:16:03</td></tr><tr><td>request_ip</td><td>string</td><td>IP</td><td>113.116.22.145</td></tr><tr><td>request_region</td><td>string</td><td>地区</td><td>中国广东深圳</td></tr><tr><td>request_isp</td><td>string</td><td>ISP</td><td>电信</td></tr></tbody></table>', '', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (11, 1, '注册', 'index/Register/register', 'POST', 200, '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数名</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>username</td><td>string</td><td>必填</td><td>用户名</td><td>yyladmin</td></tr><tr><td>password</td><td>string</td><td>必填</td><td>密码</td><td>123456</td></tr></tbody></table>', '<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"text-align:center;\"><tbody><tr><th>参数名</th><th>类型</th><th>属性</th><th>说明</th><th>示例</th></tr><tr><td>code</td><td>integer</td><td>必返</td><td>返回码，200成功，非200失败</td><td>200</td></tr><tr><td>msg</td><td>string</td><td>必返</td><td>返回提示</td><td>注册成功</td></tr><tr><td>data</td><td>array</td><td>必返</td><td>返回数据</td><td></td></tr></tbody></table>', '', 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (12, 0, '地区', '', 'POST', 200, '', NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'index/Region/regionList', 'POST', 200, NULL, NULL, NULL, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (14, 12, '地区信息', 'index/Region/regionInfo', 'POST', 200, NULL, NULL, NULL, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/regionTree', 'POST', 200, NULL, NULL, NULL, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (1, 0, '登录注册', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (2, 1, '验证码', 'index/Login/verify', 220, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (3, 1, '登录', 'index/Login/login', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'index/Login/logout', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (5, 0, '个人中心', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (6, 5, '我的信息', 'index/Member/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (7, 5, '修改信息', 'index/Member/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (8, 5, '更换头像', 'index/Member/avatar', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (9, 5, '修改密码', 'index/Member/pwd', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (10, 5, '我的日志', 'index/Member/log', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (11, 1, '注册', 'index/Register/register', 210, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (12, 0, '地区管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'index/Region/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (14, 12, '地区信息', 'index/Region/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 200, 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_api_env
@@ -337,26 +346,133 @@ INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/regionTree',
 DROP TABLE IF EXISTS `yyl_api_env`;
 CREATE TABLE `yyl_api_env`  (
   `api_env_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '接口环境id',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
-  `host` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'host',
-  `header` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求头部',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
-  `sort` int(10) NULL DEFAULT 200 COMMENT '排序',
+  `env_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '环境名称',
+  `env_host` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '环境host',
+  `env_header` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '环境请求头部',
+  `env_remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '环境备注',
+  `env_sort` int(10) NULL DEFAULT 200 COMMENT '环境排序',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`api_env_id`) USING BTREE,
   INDEX `api_env_id`(`api_env_id`) USING BTREE,
-  INDEX `name`(`name`) USING BTREE
+  INDEX `env_name`(`env_name`(191)) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口环境' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api_env
 -- ----------------------------
-INSERT INTO `yyl_api_env` VALUES (1, '开发环境', 'http://localhost:9526', 'UserToken', '', 200, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api_env` VALUES (2, '测试环境', 'http://localhost:9526', 'UserToken', '', 200, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api_env` VALUES (3, '正式环境', 'https://api.yyladmin.top', 'UserToken', '', 200, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api_env` VALUES (1, '开发环境', 'http://localhost:9526', 'MemberToken', '', 200, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api_env` VALUES (2, '测试环境', 'http://localhost:9526', 'MemberToken', '', 200, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api_env` VALUES (3, '正式环境', 'https://api.yyladmin.top', 'MemberToken', '', 200, 0, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for yyl_member
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_member`;
+CREATE TABLE `yyl_member`  (
+  `member_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '会员id',
+  `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '会员名',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
+  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `phone` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '头像',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
+  `sort` int(10) NULL DEFAULT 10000 COMMENT '排序',
+  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
+  `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
+  `login_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录地区',
+  `login_time` datetime NULL DEFAULT NULL COMMENT '登录时间',
+  `logout_time` datetime NULL DEFAULT NULL COMMENT '退出时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '注册时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`member_id`) USING BTREE,
+  INDEX `username`(`username`, `password`) USING BTREE,
+  INDEX `phone`(`phone`) USING BTREE,
+  INDEX `email`(`email`(191)) USING BTREE,
+  INDEX `member_id`(`member_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1000000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of yyl_member
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_member_log
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_member_log`;
+CREATE TABLE `yyl_member_log`  (
+  `member_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '会员日志id',
+  `member_id` int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
+  `log_type` tinyint(1) NULL DEFAULT 3 COMMENT '1注册2登录3操作4退出',
+  `api_id` int(11) NULL DEFAULT 0 COMMENT '接口id',
+  `request_method` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
+  `request_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求IP',
+  `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
+  `request_province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
+  `request_city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
+  `request_area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
+  `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
+  `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
+  `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
+  `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '返回码',
+  `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`member_log_id`) USING BTREE,
+  INDEX `request_isp`(`request_isp`) USING BTREE,
+  INDEX `request_city`(`request_city`(191)) USING BTREE,
+  INDEX `request_province`(`request_province`(191)) USING BTREE,
+  INDEX `request_country`(`request_country`(191)) USING BTREE,
+  INDEX `member_log_id`(`member_log_id`) USING BTREE,
+  INDEX `member_id`(`member_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员日志' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of yyl_member_log
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_news
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_news`;
+CREATE TABLE `yyl_news`  (
+  `news_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '新闻id',
+  `admin_user_id` int(11) NULL DEFAULT 0 COMMENT '管理员id',
+  `img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图片',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
+  `intro` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '简介',
+  `author` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '作者',
+  `time` datetime NOT NULL COMMENT '时间',
+  `source` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '来源',
+  `source_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '来源链接',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
+  `sort` int(10) NULL DEFAULT 200 COMMENT '排序',
+  `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`news_id`) USING BTREE,
+  INDEX `news_id`(`news_id`) USING BTREE,
+  INDEX `title`(`title`(191)) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yyl_news
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yyl_region
@@ -368,17 +484,17 @@ CREATE TABLE `yyl_region`  (
   `region_path` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '路径',
   `region_level` tinyint(1) NULL DEFAULT 1 COMMENT '级别',
   `region_name` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
-  `region_pinyin` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '拼音',
-  `region_jianpin` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '简拼',
-  `region_initials` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '首字母',
-  `region_citycode` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '区号',
-  `region_zipcode` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮编',
+  `region_pinyin` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '拼音',
+  `region_jianpin` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '简拼',
+  `region_initials` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '首字母',
+  `region_citycode` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '区号',
+  `region_zipcode` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮编',
   `region_longitude` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '经度',
   `region_latitude` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '纬度',
   `region_sort` int(10) NULL DEFAULT 1000 COMMENT '排序',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '0正常1删除',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`region_id`) USING BTREE,
   INDEX `region_id`(`region_id`) USING BTREE,
@@ -4097,7 +4213,7 @@ CREATE TABLE `yyl_setting`  (
   `verify` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '验证码设置',
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'token设置',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
   INDEX `setting_id`(`setting_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = DYNAMIC;
@@ -4105,79 +4221,6 @@ CREATE TABLE `yyl_setting`  (
 -- ----------------------------
 -- Records of yyl_setting
 -- ----------------------------
-INSERT INTO `yyl_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:0;s:5:\"curve\";b:0;s:5:\"noise\";b:0;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:7200;}', NULL, NULL);
-
--- ----------------------------
--- Table structure for yyl_user
--- ----------------------------
-DROP TABLE IF EXISTS `yyl_user`;
-CREATE TABLE `yyl_user`  (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id',
-  `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名',
-  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
-  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
-  `phone` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机',
-  `email` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
-  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '头像',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
-  `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
-  `sort` int(10) NOT NULL DEFAULT 10000 COMMENT '排序',
-  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
-  `login_num` int(10) NOT NULL DEFAULT 0 COMMENT '登录次数',
-  `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
-  `login_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录地区',
-  `login_time` datetime NULL DEFAULT NULL COMMENT '登录时间',
-  `logout_time` datetime NULL DEFAULT NULL COMMENT '退出时间',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '注册时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`user_id`) USING BTREE,
-  INDEX `username`(`username`, `password`) USING BTREE,
-  INDEX `email`(`email`) USING BTREE,
-  INDEX `phone`(`phone`) USING BTREE,
-  INDEX `user_id`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of yyl_user
--- ----------------------------
-
--- ----------------------------
--- Table structure for yyl_user_log
--- ----------------------------
-DROP TABLE IF EXISTS `yyl_user_log`;
-CREATE TABLE `yyl_user_log`  (
-  `user_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户日志id',
-  `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
-  `log_type` tinyint(1) NULL DEFAULT 3 COMMENT '1注册2登录3操作4退出',
-  `api_id` int(11) NULL DEFAULT 0 COMMENT '接口id',
-  `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
-  `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求IP',
-  `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
-  `request_province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
-  `request_city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
-  `request_area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
-  `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
-  `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
-  `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
-  `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回码',
-  `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '请求时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`user_log_id`) USING BTREE,
-  INDEX `user_log_id`(`user_log_id`) USING BTREE,
-  INDEX `user_id`(`user_id`) USING BTREE,
-  INDEX `request_isp`(`request_isp`) USING BTREE,
-  INDEX `request_city`(`request_city`) USING BTREE,
-  INDEX `request_province`(`request_province`) USING BTREE,
-  INDEX `request_country`(`request_country`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户日志' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of yyl_user_log
--- ----------------------------
+INSERT INTO `yyl_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:720;}', NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

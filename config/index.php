@@ -3,7 +3,7 @@
  * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-03-27
+ * @LastEditTime : 2021-04-07
  */
 
 return [
@@ -26,7 +26,7 @@ return [
         'exp' => 7200,
     ],
     // token key
-    'token_key' => 'UserToken',
+    'token_key' => 'MemberToken',
     // 请求频率限制（次数/时间）
     'throttle' => [
         'number' => 3,   //次数,0不限制

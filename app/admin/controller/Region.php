@@ -3,65 +3,89 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-04-17
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\service\RegionService;
-use app\admin\validate\RegionValidate;
+use app\common\service\RegionService;
+use app\common\validate\RegionValidate;
+use hg\apidoc\annotation as Apidoc;
 
+/**
+ * @Apidoc\Title("地区管理")
+ * @Apidoc\Group("index")
+ */
 class Region
 {
     /**
-     * 地区列表
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("地区列表")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param("type", type="string", default="list", desc="返回的数据类型：list列表，tree树形")
+     * @Apidoc\Param("region_pid", type="string", default="", desc="")
+     * @Apidoc\Param("region_id", type="string", default="", desc="")
+     * @Apidoc\Param("region_name", type="string", default="", desc="")
+     * @Apidoc\Param("region_pinyin", type="string", default="", desc="")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\RegionModel\list")
+     * )
      */
-    public function regionList()
+    public function list()
     {
-        $region_pid    = Request::param('region_pid/d', 0) ?: 0;
-        $region_name   = Request::param('region_name/s', '');
-        $region_pinyin = Request::param('region_pinyin/s', '');
         $sort_field    = Request::param('sort_field/s ', '');
         $sort_type     = Request::param('sort_type/s', '');
+        $type          = Request::param('type/s', 'list');
+        $region_pid    = Request::param('region_pid/d', 0) ?: 0;
+        $region_id     = Request::param('region_id/d', '');
+        $region_name   = Request::param('region_name/s', '');
+        $region_pinyin = Request::param('region_pinyin/s', '');
 
-        if ($region_name || $region_pinyin) {
-            if ($region_name) {
-                $where[] = ['region_name', '=', $region_name];
-            }
-            if ($region_pinyin) {
-                $where[] = ['region_pinyin', '=', $region_pinyin];
-            }
+        if ($type == 'tree') {
+            $data = RegionService::info('tree');
         } else {
-            $where[] = ['region_pid', '=', $region_pid];
-        }
+            if ($region_id || $region_name || $region_pinyin) {
+                if ($region_id) {
+                    $where[] = ['region_id', '=', $region_id];
+                }
+                if ($region_name) {
+                    $where[] = ['region_name', '=', $region_name];
+                }
+                if ($region_pinyin) {
+                    $where[] = ['region_pinyin', '=', $region_pinyin];
+                }
+            } else {
+                $where[] = ['region_pid', '=', $region_pid];
+            }
 
-        $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
-        }
+            $order = [];
+            if ($sort_field && $sort_type) {
+                $order = [$sort_field => $sort_type];
+            }
 
-        $data = RegionService::list($where, $order);
+            $data = RegionService::list($where, $order);
+        }
 
         return success($data);
     }
 
     /**
-     * 地区信息
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("地区信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\id")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", 
+     *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
+     * )
      */
-    public function regionInfo()
+    public function info()
     {
         $param['region_id'] = Request::param('region_id/d', '');
 
-        validate(RegionValidate::class)->scene('region_id')->check($param);
+        validate(RegionValidate::class)->scene('info')->check($param);
 
         $data = RegionService::info($param['region_id']);
 
@@ -73,105 +97,90 @@ class Region
     }
 
     /**
-     * 地区添加
-     *
-     * @method GET|POST
-     * 
-     * @return json
+     * @Apidoc\Title("地区添加")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\add")
+     * @Apidoc\Returned(ref="return")
      */
-    public function regionAdd()
+    public function add()
     {
-        if (Request::isGet()) {
-            $data = RegionService::add();
-        } else {
-            $param['region_pid']       = Request::param('region_pid/d', 0);
-            $param['region_level']     = Request::param('region_level/d', 1);
-            $param['region_name']      = Request::param('region_name/s', '');
-            $param['region_pinyin']    = Request::param('region_pinyin/s', '');
-            $param['region_jianpin']   = Request::param('region_jianpin/s', '');
-            $param['region_initials']  = Request::param('region_initials/s', '');
-            $param['region_citycode']  = Request::param('region_citycode/s', '');
-            $param['region_zipcode']   = Request::param('region_zipcode/s', '');
-            $param['region_longitude'] = Request::param('region_longitude/s', '');
-            $param['region_latitude']  = Request::param('region_latitude/s', '');
-            $param['region_sort']      = Request::param('region_sort/d', 1000);
+        $param['region_pid']       = Request::param('region_pid/d', 0);
+        $param['region_level']     = Request::param('region_level/d', 1);
+        $param['region_name']      = Request::param('region_name/s', '');
+        $param['region_pinyin']    = Request::param('region_pinyin/s', '');
+        $param['region_jianpin']   = Request::param('region_jianpin/s', '');
+        $param['region_initials']  = Request::param('region_initials/s', '');
+        $param['region_citycode']  = Request::param('region_citycode/s', '');
+        $param['region_zipcode']   = Request::param('region_zipcode/s', '');
+        $param['region_longitude'] = Request::param('region_longitude/s', '');
+        $param['region_latitude']  = Request::param('region_latitude/s', '');
+        $param['region_sort']      = Request::param('region_sort/d', 1000);
 
-            if (empty($param['region_pid'])) {
-                $param['region_pid'] = 0;
-            }
-
-            if (empty($param['region_level'])) {
-                $param['region_level'] = 1;
-            }
-
-            validate(RegionValidate::class)->scene('region_add')->check($param);
-
-            $data = RegionService::add($param, 'post');
+        if (empty($param['region_pid'])) {
+            $param['region_pid'] = 0;
         }
+
+        if (empty($param['region_level'])) {
+            $param['region_level'] = 1;
+        }
+
+        validate(RegionValidate::class)->scene('add')->check($param);
+
+        $data = RegionService::add($param);
 
         return success($data);
     }
 
     /**
-     * 地区修改
-     *
-     * @method GET|POST
-     * 
-     * @return json
+     * @Apidoc\Title("地区修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\edit")
+     * @Apidoc\Returned(ref="return")
      */
-    public function regionEdit()
+    public function edit()
     {
-        $param['region_id'] = Request::param('region_id/d', '');
+        $param['region_id']        = Request::param('region_id/d', '');
+        $param['region_pid']       = Request::param('region_pid/d', 0);
+        $param['region_level']     = Request::param('region_level/d', 1);
+        $param['region_name']      = Request::param('region_name/s', '');
+        $param['region_pinyin']    = Request::param('region_pinyin/s', '');
+        $param['region_jianpin']   = Request::param('region_jianpin/s', '');
+        $param['region_initials']  = Request::param('region_initials/s', '');
+        $param['region_citycode']  = Request::param('region_citycode/s', '');
+        $param['region_zipcode']   = Request::param('region_zipcode/s', '');
+        $param['region_longitude'] = Request::param('region_longitude/s', '');
+        $param['region_latitude']  = Request::param('region_latitude/s', '');
+        $param['region_sort']      = Request::param('region_sort/d', 1000);
 
-        if (Request::isGet()) {
-            validate(RegionValidate::class)->scene('region_id')->check($param);
-
-            $data = RegionService::edit($param);
-
-            if ($data['region_info']['is_delete'] == 1) {
-                exception('地区已被删除');
-            }
-        } else {
-            $param['region_pid']       = Request::param('region_pid/d', 0);
-            $param['region_level']     = Request::param('region_level/d', 1);
-            $param['region_name']      = Request::param('region_name/s', '');
-            $param['region_pinyin']    = Request::param('region_pinyin/s', '');
-            $param['region_jianpin']   = Request::param('region_jianpin/s', '');
-            $param['region_initials']  = Request::param('region_initials/s', '');
-            $param['region_citycode']  = Request::param('region_citycode/s', '');
-            $param['region_zipcode']   = Request::param('region_zipcode/s', '');
-            $param['region_longitude'] = Request::param('region_longitude/s', '');
-            $param['region_latitude']  = Request::param('region_latitude/s', '');
-            $param['region_sort']      = Request::param('region_sort/d', 1000);
-
-            if (empty($param['region_pid'])) {
-                $param['region_pid'] = 0;
-            }
-
-            if (empty($param['region_level'])) {
-                $param['region_level'] = 1;
-            }
-
-            validate(RegionValidate::class)->scene('region_edit')->check($param);
-
-            $data = RegionService::edit($param, 'post');
+        if (empty($param['region_pid'])) {
+            $param['region_pid'] = 0;
         }
+
+        if (empty($param['region_level'])) {
+            $param['region_level'] = 1;
+        }
+
+        validate(RegionValidate::class)->scene('edit')->check($param);
+
+        $data = RegionService::edit($param);
 
         return success($data);
     }
 
     /**
-     * 地区删除
-     *
-     * @method POST
-     * 
-     * @return json
+     * @Apidoc\Title("地区删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\dele")
+     * @Apidoc\Returned(ref="return")
      */
-    public function regionDele()
+    public function dele()
     {
         $param['region_id'] = Request::param('region_id/d', '');
 
-        validate(RegionValidate::class)->scene('region_dele')->check($param);
+        validate(RegionValidate::class)->scene('dele')->check($param);
 
         $data = RegionService::dele($param['region_id']);
 

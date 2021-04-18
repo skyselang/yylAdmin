@@ -3,7 +3,7 @@
  * @Description  : 验证码缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-01-08
+ * @LastEditTime : 2021-04-10
  */
 
 namespace app\common\cache;
@@ -31,17 +31,19 @@ class VerifyCache
      *
      * @param string  $verify_id   验证码id
      * @param string  $verify_code 验证码
-     * @param integer $expire      有效时间（秒）
+     * @param integer $ttl         有效时间（秒）
      * 
      * @return bool
      */
-    public static function set($verify_id = '', $verify_code = '', $expire = 0)
+    public static function set($verify_id = '', $verify_code = '', $ttl = 0)
     {
         $key = self::key($verify_id);
         $val = $verify_code;
-        $exp = $expire ?: 180;
+        if (empty($ttl)) {
+            $ttl = 180;
+        }
 
-        $res = Cache::set($key, $val, $exp);
+        $res = Cache::set($key, $val, $ttl);
 
         return $res;
     }

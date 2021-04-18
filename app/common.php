@@ -1,14 +1,14 @@
 <?php
 /*
- * @Description  : 公共文件
+ * @Description  : 公共函数文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-03-23
+ * @LastEditTime : 2021-04-13
  */
 
 use think\facade\Config;
 use think\facade\Request;
-use app\admin\service\TokenService;
+use app\common\service\TokenService;
 
 /**
  * 成功返回
@@ -85,7 +85,7 @@ function server_url()
 
 /**
  * 文件地址
- * 协议，域名，文件路径
+ * 协议/域名/文件路径
  *
  * @param string $file_path 文件路径
  * 
@@ -167,9 +167,9 @@ function http_get($url, $header = [])
  */
 function http_post($url, $param = [], $header = [])
 {
-    $param  = json_encode($param);
+    $param = json_encode($param);
 
-    if (empty($param)) {
+    if (empty($header)) {
         $header = [
             "Content-type:application/json;charset='utf-8'",
             "Accept:application/json"
@@ -192,30 +192,29 @@ function http_post($url, $param = [], $header = [])
 }
 
 /**
- * 获取用户id
+ * 获取会员id
  *
  * @return integer
  */
-function user_id()
+function member_id()
 {
-    $user_token = user_token();
+    $member_token = member_token();
+    $member_id    = TokenService::memberId($member_token);
 
-    $user_id = TokenService::userId($user_token);
-
-    return $user_id;
+    return $member_id;
 }
 
 /**
- * 获取用户token
+ * 获取会员token
  *
  * @return string
  */
-function user_token()
+function member_token()
 {
-    $token_key  = Config::get('index.token_key');
-    $user_token = Request::header($token_key, '');
+    $token_key    = Config::get('index.token_key');
+    $member_token = Request::header($token_key, '');
 
-    return $user_token;
+    return $member_token;
 }
 
 /**

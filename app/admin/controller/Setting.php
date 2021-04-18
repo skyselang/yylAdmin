@@ -1,67 +1,105 @@
 <?php
 /*
- * @Description  : 设置
+ * @Description  : 设置管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-03-26
+ * @LastEditTime : 2021-04-17
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\VerifyValidate;
-use app\admin\validate\TokenValidate;
-use app\admin\service\SettingService;
+use app\common\validate\VerifyValidate;
+use app\common\validate\TokenValidate;
+use app\common\service\SettingService;
+use app\common\service\VerifyService;
+use hg\apidoc\annotation as Apidoc;
 
+/**
+ * @Apidoc\Title("设置管理")
+ * @Apidoc\Group("index")
+ */
 class Setting
 {
+
     /**
-     * 验证码设置
-     *
-     * @method GET|POST
-     *
-     * @return josn
+     * @Apidoc\Title("设置信息")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned("verify", type="object", desc="验证码配置",
+     *          @Apidoc\Returned("switch", type="bool", default="false", desc="验证码是否开启"),
+     *          @Apidoc\Returned("type", type="int", default="1", desc="验证码类型"),
+     *          @Apidoc\Returned("length", type="int", default="4", desc="验证码长度"),
+     *          @Apidoc\Returned("expire", type="int", default="180", desc="验证码有效时间（秒）"),
+     *          @Apidoc\Returned("curve", type="bool", default="false", desc="验证码是否开启曲线"),
+     *          @Apidoc\Returned("noise", type="bool", default="false", desc="验证码是否开启杂点"),
+     *          @Apidoc\Returned("bgimg", type="bool", default="false", desc="验证码是否开启背景图"),
+     *      ),
+     *      @Apidoc\Returned("token", type="object", desc="token配置",
+     *          @Apidoc\Returned("iss", type="bool", default="false", desc="token签发者"),
+     *          @Apidoc\Returned("exp", type="int", default="12", desc="token有效时间（小时）"),
+     *      ),
+     * )
      */
-    public function settingVerify()
+    public function info()
     {
-        if (Request::isGet()) {
-            $data = SettingService::verify();
-        } else {
-            $param['switch'] = Request::param('switch/b', false);
-            $param['type']   = Request::param('type/d', 1);
-            $param['length'] = Request::param('length/d', 4);
-            $param['expire'] = Request::param('expire/d', 180);
-            $param['curve']  = Request::param('curve/b', false);
-            $param['noise']  = Request::param('noise/b', false);
-            $param['bgimg']  = Request::param('bgimg/b', false);
+        $data = SettingService::info();
 
-            validate(VerifyValidate::class)->scene('edit')->check($param);
+        $verify = VerifyService::create($data['verify']);
 
-            $data = SettingService::verify($param, 'post');
-        }
+        $data['verify'] = array_merge($data['verify'], $verify);
 
         return success($data);
     }
 
     /**
-     * Token设置
-     *
-     * @method GET|POST
-     *
-     * @return josn
+     * @Apidoc\Title("验证码设置")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param("switch", type="bool", default="false", desc="验证码是否开启"),
+     * @Apidoc\Param("type", type="int", default="1", desc="验证码类型"),
+     * @Apidoc\Param("length", type="int", default="4", desc="验证码长度"),
+     * @Apidoc\Param("expire", type="int", default="180", desc="验证码有效时间（秒）"),
+     * @Apidoc\Param("curve", type="bool", default="false", desc="验证码是否开启曲线"),
+     * @Apidoc\Param("noise", type="bool", default="false", desc="验证码是否开启杂点"),
+     * @Apidoc\Param("bgimg", type="bool", default="false", desc="验证码是否开启背景图"),
+     * @Apidoc\Returned(ref="return")
      */
-    public function settingToken()
+    public function verify()
     {
-        if (Request::isGet()) {
-            $data = SettingService::token();
-        } else {
-            $param['iss'] = Request::param('iss/s', 'yylAdmin');
-            $param['exp'] = Request::param('exp/d', 7200);
+        $param['switch'] = Request::param('switch/b', false);
+        $param['type']   = Request::param('type/d', 1);
+        $param['length'] = Request::param('length/d', 4);
+        $param['expire'] = Request::param('expire/d', 180);
+        $param['curve']  = Request::param('curve/b', false);
+        $param['noise']  = Request::param('noise/b', false);
+        $param['bgimg']  = Request::param('bgimg/b', false);
 
-            validate(TokenValidate::class)->scene('edit')->check($param);
+        validate(VerifyValidate::class)->scene('edit')->check($param);
 
-            $data = SettingService::token($param, 'post');
-        }
+        $data = SettingService::verify($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("Token设置")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param("iss", type="string", default="", desc="token签发者")
+     * @Apidoc\Param("exp", type="int", default="12", desc="token有效时间（小时）")
+     * @Apidoc\Returned(ref="return")
+     */
+    public function token()
+    {
+        $param['iss'] = Request::param('iss/s', 'yylAdmin');
+        $param['exp'] = Request::param('exp/d', 7200);
+
+        validate(TokenValidate::class)->scene('edit')->check($param);
+
+        $data = SettingService::token($param);
 
         return success($data);
     }

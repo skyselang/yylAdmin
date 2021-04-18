@@ -3,17 +3,17 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-27
+ * @LastEditTime : 2021-04-17
  */
 
 namespace app\index\service;
 
 use think\facade\Db;
-use app\common\cache\UserCache;
+use app\common\cache\MemberCache;
 use app\common\cache\VerifyCache;
-use app\common\service\IpInfoService;
-use app\admin\service\UserLogService;
-use app\admin\service\UserService;
+use app\common\utils\IpInfoUtils;
+use app\common\service\MemberLogService;
+use app\common\service\MemberService;
 
 class LoginService
 {
@@ -29,68 +29,68 @@ class LoginService
         $username = $param['username'];
         $password = md5($param['password']);
 
-        $field = 'user_id,username,nickname,phone,email,login_num,is_disable';
+        $field = 'member_id,username,nickname,phone,email,avatar,login_num,is_disable';
 
         $where[] = ['username|phone|email', '=', $username];
         $where[] = ['password', '=', $password];
         $where[] = ['is_delete', '=', 0];
 
-        $user = Db::name('user')
+        $member = Db::name('member')
             ->field($field)
             ->where($where)
             ->find();
 
-        if (empty($user)) {
-            exception('用户名或密码错误');
+        if (empty($member)) {
+            exception('会员名或密码错误');
         }
 
-        if ($user['is_disable'] == 1) {
-            exception('用户已被禁用');
+        if ($member['is_disable'] == 1) {
+            exception('会员已被禁用');
         }
 
-        $ip_info = IpInfoService::info();
-        $user_id = $user['user_id'];
+        $ip_info   = IpInfoUtils::info();
+        $member_id = $member['member_id'];
 
         $update['login_ip']     = $ip_info['ip'];
         $update['login_region'] = $ip_info['region'];
-        $update['login_num']    = $user['login_num'] + 1;
+        $update['login_num']    = $member['login_num'] + 1;
         $update['login_time']   = datetime();
-        Db::name('user')
-            ->where('user_id', $user_id)
+        Db::name('member')
+            ->where('member_id', $member_id)
             ->update($update);
 
-        $user_log['log_type']      = 2;
-        $user_log['user_id']       = $user_id;
-        $user_log['response_code'] = 200;
-        $user_log['response_msg']  = '登录成功';
-        UserLogService::add($user_log);
+        $member_log['log_type']      = 2;
+        $member_log['member_id']     = $member_id;
+        $member_log['response_code'] = 200;
+        $member_log['response_msg']  = '登录成功';
+        MemberLogService::add($member_log);
 
-        UserCache::del($user_id);
-        $user = UserService::info($user_id);
+        MemberCache::del($member_id);
+        $member = MemberService::info($member_id);
 
         VerifyCache::del($param['verify_id']);
 
-        return $user;
+        return $member;
     }
 
     /**
      * 退出
      *
-     * @param integer $user_id 用户id
+     * @param integer $member_id 会员id
      * 
      * @return array
      */
-    public static function logout($user_id)
+    public static function logout($member_id)
     {
         $update['logout_time'] = datetime();
 
-        Db::name('user')
-            ->where('user_id', $user_id)
+        Db::name('member')
+            ->where('member_id', $member_id)
             ->update($update);
 
-        $update['user_id'] = $user_id;
+        $update['member_id'] = $member_id;
 
-        UserCache::del($user_id);
+        MemberCache::del($member_id);
 
         return $update;
     }

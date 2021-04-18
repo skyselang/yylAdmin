@@ -3,7 +3,7 @@
  * @Description  : 接口中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2020-12-25
+ * @LastEditTime : 2021-04-10
  */
 
 namespace app\index\middleware;
@@ -12,8 +12,8 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Env;
-use app\admin\service\ApiService;
-use app\common\cache\UserCache;
+use app\common\service\ApiService;
+use app\common\cache\MemberCache;
 
 class ApiMiddleware
 {
@@ -30,18 +30,18 @@ class ApiMiddleware
         $whitelist = ApiService::whiteList();
 
         if (!in_array($api_url, $whitelist)) {
-            $user_id = user_id();
-            $user    = UserCache::get($user_id);
+            $member_id = member_id();
+            $member    = MemberCache::get($member_id);
 
-            if (empty($user)) {
+            if (empty($member)) {
                 exception('登录已失效，请重新登录', 401);
             }
 
-            if ($user['is_disable'] == 1) {
+            if ($member['is_disable'] == 1) {
                 exception('账号已禁用，请联系客服', 401);
             }
 
-            if ($user['is_delete'] == 1) {
+            if ($member['is_delete'] == 1) {
                 exception('账号已注销，请重新注册', 401);
             }
 

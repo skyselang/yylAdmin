@@ -3,25 +3,32 @@
  * @Description  : 地区
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-14
- * @LastEditTime : 2020-12-19
+ * @LastEditTime : 2021-04-17
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
-use app\admin\service\RegionService;
-use app\admin\validate\RegionValidate;
+use app\common\service\RegionService;
+use app\common\validate\RegionValidate;
+use hg\apidoc\annotation as Apidoc;
 
+/**
+ * @Apidoc\Title("地区")
+ */
 class Region
 {
     /**
-     * 地区列表
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("地区列表")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\RegionModel\list")
+     * )
      */
-    public function regionList()
+    public function list()
     {
         $region_pid = Request::param('region_pid/d', 0);
 
@@ -36,17 +43,19 @@ class Region
     }
 
     /**
-     * 地区信息
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("地区信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\id")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", 
+     *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
+     * )
      */
-    public function regionInfo()
+    public function info()
     {
         $param['region_id'] = Request::param('region_id/d', '');
 
-        validate(RegionValidate::class)->scene('region_id')->check($param);
+        validate(RegionValidate::class)->scene('info')->check($param);
 
         $data = RegionService::info($param['region_id']);
 
@@ -58,13 +67,14 @@ class Region
     }
 
     /**
-     * 地区树形
-     *
-     * @method GET
-     *
-     * @return json
+     * @Apidoc\Title("地区树形")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", 
+     *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
+     * )
      */
-    public function regionTree()
+    public function tree()
     {
         $data = RegionService::info('tree');
 

@@ -3,7 +3,7 @@
  * @Description  : 菜单缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2021-01-18
+ * @LastEditTime : 2021-04-10
  */
 
 namespace app\common\cache;
@@ -35,18 +35,19 @@ class AdminMenuCache
      *
      * @param integer|string $admin_menu_id 菜单id
      * @param array          $admin_menu    菜单信息
-     * @param integer        $expire        有效时间（秒）
+     * @param integer        $ttl           有效时间（秒）
      * 
      * @return bool
      */
-    public static function set($admin_menu_id = '', $admin_menu = [], $expire = 0)
+    public static function set($admin_menu_id = '', $admin_menu = [], $ttl = 0)
     {
         $key = self::key($admin_menu_id);
         $val = $admin_menu;
-        $ttl = 1 * 24 * 60 * 60;
-        $exp = $expire ?: $ttl;
+        if (empty($ttl)) {
+            $ttl = 1 * 24 * 60 * 60;
+        }
 
-        $res = Cache::set($key, $val, $exp);
+        $res = Cache::set($key, $val, $ttl);
 
         return $res;
     }

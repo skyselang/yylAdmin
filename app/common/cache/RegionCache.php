@@ -3,7 +3,7 @@
  * @Description  : 地区缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-03-23
+ * @LastEditTime : 2021-04-10
  */
 
 namespace app\common\cache;
@@ -31,18 +31,19 @@ class RegionCache
      *
      * @param integer|string $region_id 地区id
      * @param array          $region    地区信息
-     * @param integer        $expire    有效时间（秒）
+     * @param integer        $ttl       有效时间（秒）
      * 
      * @return array 地区信息
      */
-    public static function set($region_id = 0, $region = [], $expire = 0)
+    public static function set($region_id = 0, $region = [], $ttl = 0)
     {
         $key = self::key($region_id);
         $val = $region;
-        $ttl = 7 * 24 * 60 * 60;
-        $exp = $expire ?: $ttl;
+        if (empty($ttl)) {
+            $ttl = 7 * 24 * 60 * 60;
+        }
 
-        $res = Cache::set($key, $val, $exp);
+        $res = Cache::set($key, $val, $ttl);
 
         return $res;
     }

@@ -3,28 +3,36 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-24
+ * @LastEditTime : 2021-04-16
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\AdminMenuValidate;
-use app\admin\validate\AdminRoleValidate;
-use app\admin\validate\AdminAdminValidate;
-use app\admin\service\AdminMenuService;
-use app\admin\service\AdminAdminService;
+use app\common\validate\AdminMenuValidate;
+use app\common\validate\AdminRoleValidate;
+use app\common\validate\AdminUserValidate;
+use app\common\service\AdminMenuService;
+use app\common\service\AdminUserService;
+use hg\apidoc\annotation as Apidoc;
 
+/**
+ * @Apidoc\Title("菜单管理")
+ * @Apidoc\Group("admin")
+ */
 class AdminMenu
 {
     /**
-     * 菜单列表
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("菜单列表")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminMenuModel\list")
+     * )
      */
-    public function menuList()
+    public function list()
     {
         $data = AdminMenuService::list();
 
@@ -32,17 +40,19 @@ class AdminMenu
     }
 
     /**
-     * 菜单信息
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("菜单信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", 
+     *      @Apidoc\Returned(ref="app\common\model\AdminMenuModel\info")
+     * )
      */
-    public function menuInfo()
+    public function info()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
 
-        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('info')->check($param);
 
         $data = AdminMenuService::info($param['admin_menu_id']);
 
@@ -54,23 +64,20 @@ class AdminMenu
     }
 
     /**
-     * 菜单添加
-     *
-     * @method POST
-     * 
-     * @return json
+     * @Apidoc\Title("菜单添加")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\add")
+     * @Apidoc\Returned(ref="return")
      */
-    public function menuAdd()
+    public function add()
     {
-        $param['menu_pid']      = Request::param('menu_pid/d', 0);
-        $param['menu_name']     = Request::param('menu_name/s', '');
-        $param['menu_url']      = Request::param('menu_url/s', '');
-        $param['menu_sort']     = Request::param('menu_sort/d', 200);
-        $param['menu_request']  = Request::param('menu_request/s', '');
-        $param['menu_response'] = Request::param('menu_response/s', '');
-        $param['menu_explain']  = Request::param('menu_explain/s', '');
+        $param['menu_pid']  = Request::param('menu_pid/d', 0);
+        $param['menu_name'] = Request::param('menu_name/s', '');
+        $param['menu_url']  = Request::param('menu_url/s', '');
+        $param['menu_sort'] = Request::param('menu_sort/d', 200);
 
-        validate(AdminMenuValidate::class)->scene('menu_add')->check($param);
+        validate(AdminMenuValidate::class)->scene('add')->check($param);
 
         $data = AdminMenuService::add($param);
 
@@ -78,53 +85,39 @@ class AdminMenu
     }
 
     /**
-     * 菜单修改
-     *
-     * @method GET|POST
-     * 
-     * @return json
+     * @Apidoc\Title("菜单修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\edit")
+     * @Apidoc\Returned(ref="return")
      */
-    public function menuEdit()
+    public function edit()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['menu_pid']      = Request::param('menu_pid/d', 0);
+        $param['menu_name']     = Request::param('menu_name/s', '');
+        $param['menu_url']      = Request::param('menu_url/s', '');
+        $param['menu_sort']     = Request::param('menu_sort/d', 200);
 
-        if (Request::isGet()) {
-            validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('edit')->check($param);
 
-            $data = AdminMenuService::edit($param);
-
-            if ($data['is_delete'] == 1) {
-                exception('菜单已被删除：' . $param['admin_menu_id']);
-            }
-        } else {
-            $param['menu_pid']      = Request::param('menu_pid/d', 0);
-            $param['menu_name']     = Request::param('menu_name/s', '');
-            $param['menu_url']      = Request::param('menu_url/s', '');
-            $param['menu_sort']     = Request::param('menu_sort/d', 200);
-            $param['menu_request']  = Request::param('menu_request/s', '');
-            $param['menu_response'] = Request::param('menu_response/s', '');
-            $param['menu_explain']  = Request::param('menu_explain/s', '');
-
-            validate(AdminMenuValidate::class)->scene('menu_edit')->check($param);
-
-            $data = AdminMenuService::edit($param, 'post');
-        }
+        $data = AdminMenuService::edit($param);
 
         return success($data);
     }
 
     /**
-     * 菜单删除
-     *
-     * @method POST
-     * 
-     * @return json
+     * @Apidoc\Title("菜单删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\dele")
+     * @Apidoc\Returned(ref="return")
      */
-    public function menuDele()
+    public function dele()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
 
-        validate(AdminMenuValidate::class)->scene('menu_dele')->check($param);
+        validate(AdminMenuValidate::class)->scene('dele')->check($param);
 
         $data = AdminMenuService::dele($param['admin_menu_id']);
 
@@ -132,59 +125,18 @@ class AdminMenu
     }
 
     /**
-     * 菜单文档
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("菜单是否禁用")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\disable")
+     * @Apidoc\Returned(ref="return")
      */
-    public function menuDoc()
-    {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-
-        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
-
-        $data = AdminMenuService::info($param['admin_menu_id']);
-
-        if ($data['is_delete'] == 1) {
-            exception('菜单已删除：' . $param['admin_menu_id']);
-        }
-
-        return success($data);
-    }
-
-    /**
-     * 菜单上传图片
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function menuUpload()
-    {
-        $param['image_file']  = Request::file('image_file');
-        $param['image_field'] = Request::param('image_field/s', '');
-
-        validate(AdminMenuValidate::class)->scene('menu_image')->check($param);
-
-        $data = AdminMenuService::upload($param);
-
-        return success($data);
-    }
-
-    /**
-     * 菜单是否禁用
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function menuDisable()
+    public function disable()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
         $param['is_disable']    = Request::param('is_disable/d', 0);
 
-        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('disable')->check($param);
 
         $data = AdminMenuService::disable($param);
 
@@ -192,18 +144,18 @@ class AdminMenu
     }
 
     /**
-     * 菜单是否无需权限
-     *
-     * @method POST
-     * 
-     * @return json
+     * @Apidoc\Title("菜单是否无需权限")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\unauth")
+     * @Apidoc\Returned(ref="return")
      */
-    public function menuUnauth()
+    public function unauth()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
         $param['is_unauth']     = Request::param('is_unauth/d', 0);
 
-        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('unauth')->check($param);
 
         $data = AdminMenuService::unauth($param);
 
@@ -211,13 +163,17 @@ class AdminMenu
     }
 
     /**
-     * 菜单角色
-     *
-     * @method GET
-     *
-     * @return json
+     * @Apidoc\Title("菜单角色")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminRoleModel\role")
+     * )
      */
-    public function menuRole()
+    public function role()
     {
         $page          = Request::param('page/d', 1);
         $limit         = Request::param('limit/d', 10);
@@ -225,7 +181,7 @@ class AdminMenu
         $sort_type     = Request::param('sort_type/s', '');
         $admin_menu_id = Request::param('admin_menu_id/d', '');
 
-        validate(AdminMenuValidate::class)->scene('menu_id')->check(['admin_menu_id' => $admin_menu_id]);
+        validate(AdminMenuValidate::class)->scene('role')->check(['admin_menu_id' => $admin_menu_id]);
 
         $where[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
 
@@ -240,19 +196,20 @@ class AdminMenu
     }
 
     /**
-     * 菜单角色解除
-     *
-     * @method POST
-     *
-     * @return json
+     * @Apidoc\Title("菜单角色解除")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
-    public function menuRoleRemove()
+    public function roleRemove()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
         $param['admin_role_id'] = Request::param('admin_role_id/d', '');
 
-        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
-        validate(AdminRoleValidate::class)->scene('role_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('id')->check($param);
+        validate(AdminRoleValidate::class)->scene('id')->check($param);
 
         $data = AdminMenuService::roleRemove($param);
 
@@ -260,24 +217,28 @@ class AdminMenu
     }
 
     /**
-     * 菜单管理员
-     *
-     * @method GET
-     *
-     * @return json
+     * @Apidoc\Title("菜单管理员")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminUserModel\user")
+     * )
      */
-    public function menuAdmin()
+    public function user()
     {
+        $page          = Request::param('page/d', 1);
+        $limit         = Request::param('limit/d', 10);
+        $sort_field    = Request::param('sort_field/s ', '');
+        $sort_type     = Request::param('sort_type/s', '');
         $admin_role_id = Request::param('admin_role_id/d', '');
         $admin_menu_id = Request::param('admin_menu_id/d', '');
 
         if ($admin_menu_id) {
-            $page       = Request::param('page/d', 1);
-            $limit      = Request::param('limit/d', 10);
-            $sort_field = Request::param('sort_field/s ', '');
-            $sort_type  = Request::param('sort_type/s', '');
-
-            validate(AdminMenuValidate::class)->scene('menu_id')->check(['admin_menu_id' => $admin_menu_id]);
+            validate(AdminMenuValidate::class)->scene('user')->check(['admin_menu_id' => $admin_menu_id]);
 
             $where[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
 
@@ -286,16 +247,11 @@ class AdminMenu
                 $order = [$sort_field => $sort_type];
             }
 
-            $data = AdminAdminService::list($where, $page, $limit, $order);
+            $data = AdminUserService::list($where, $page, $limit, $order);
 
             return success($data);
         } else {
-            $page       = Request::param('page/d', 1);
-            $limit      = Request::param('limit/d', 10);
-            $sort_field = Request::param('sort_field/s ', '');
-            $sort_type  = Request::param('sort_type/s', '');
-
-            validate(AdminRoleValidate::class)->scene('role_id')->check(['admin_role_id' => $admin_role_id]);
+            validate(AdminRoleValidate::class)->scene('id')->check(['admin_role_id' => $admin_role_id]);
 
             $where[] = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
 
@@ -304,28 +260,29 @@ class AdminMenu
                 $order = [$sort_field => $sort_type];
             }
 
-            $data = AdminMenuService::admin($where, $page, $limit, $order);
+            $data = AdminMenuService::user($where, $page, $limit, $order);
 
             return success($data);
         }
     }
 
     /**
-     * 菜单管理员解除
-     *
-     * @method POST
-     *
-     * @return json
-     */
-    public function menuAdminRemove()
+     * @Apidoc\Title("菜单管理员解除")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
+     * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     */ 
+    public function userRemove()
     {
-        $param['admin_menu_id']  = Request::param('admin_menu_id/d', '');
-        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
-        validate(AdminMenuValidate::class)->scene('menu_id')->check($param);
-        validate(AdminAdminValidate::class)->scene('admin_id')->check($param);
+        validate(AdminMenuValidate::class)->scene('id')->check($param);
+        validate(AdminUserValidate::class)->scene('id')->check($param);
 
-        $data = AdminMenuService::adminRemove($param);
+        $data = AdminMenuService::userRemove($param);
 
         return success($data);
     }

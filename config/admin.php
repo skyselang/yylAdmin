@@ -3,20 +3,27 @@
  * @Description  : admin配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-03-23
+ * @LastEditTime : 2021-04-14
  */
 
 return [
-    // 系统管理员id
-    'sys_admin_ids' => [1],
+    // 超级管理员id（所有权限）
+    'super_ids' => [1],
     // 是否记录日志
     'is_log' => true,
-    // token密钥
-    'token_key' => '58o6dAEZ4Jbb',
-    // 请求头部admin_id键名
-    'admin_admin_id_key' => 'AdminAdminId',
-    // 请求头部admin_token键名
-    'admin_token_key' => 'AdminToken',
+    // token 
+    'token' => [
+        // 密钥
+        'key' => '2V81aWjC9k8f',
+        // 签发者
+        'iss' => 'yylAdmin',
+        // 有效时间(小时)
+        'exp' => 7200,
+    ],
+    // admin_user_id key
+    'user_id_key' => 'AdminUserId',
+    // admin_token key
+    'token_key' => 'AdminToken',
     // 接口白名单
     'api_white_list' => [
         'admin/AdminLogin/verify',
@@ -24,9 +31,9 @@ return [
     ],
     // 权限白名单
     'rule_white_list' => [
-        'admin/AdminMy/myInfo',
         'admin/AdminIndex/index',
         'admin/AdminLogin/logout',
+        'admin/AdminUserCenter/info',
     ],
     // 请求频率限制（次数/时间）
     'throttle' => [

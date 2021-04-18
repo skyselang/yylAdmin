@@ -3,7 +3,7 @@
  * @Description  : 接口环境缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-03-23
+ * @LastEditTime : 2021-04-10
  */
 
 namespace app\common\cache;
@@ -31,18 +31,19 @@ class ApiEnvCache
      *
      * @param integer $api_env_id 接口环境id
      * @param array   $api_env    接口环境信息
-     * @param integer $expire     有效时间（秒）
+     * @param integer $ttl        有效时间（秒）
      * 
      * @return bool
      */
-    public static function set($api_env_id = 0, $api_env = [], $expire = 0)
+    public static function set($api_env_id = 0, $api_env = [], $ttl = 0)
     {
         $key = self::key($api_env_id);
         $val = $api_env;
-        $ttl = 1 * 24 * 60 * 60;
-        $exp = $expire ?: $ttl;
+        if (empty($ttl)) {
+            $ttl = 1 * 24 * 60 * 60;
+        }
 
-        $res = Cache::set($key, $val, $exp);
+        $res = Cache::set($key, $val, $ttl);
 
         return $res;
     }

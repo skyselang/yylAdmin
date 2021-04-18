@@ -3,39 +3,49 @@
  * @Description  : 接口环境
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-01-15
+ * @LastEditTime : 2021-04-17
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\ApiEnvValidate;
-use app\admin\service\ApiEnvService;
+use app\common\validate\ApiEnvValidate;
+use app\common\service\ApiEnvService;
+use hg\apidoc\annotation as Apidoc;
 
+/**
+ * @Apidoc\Title("接口环境")
+ * @Apidoc\Group("index")
+ */
 class ApiEnv
 {
     /**
-     * 接口环境列表
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("接口环境列表")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param("env_name", type="string", default="", desc="名称")
+     * @Apidoc\Param("env_host", type="string", default="", desc="host")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\ApiEnvModel\list")
+     * )
      */
-    public function apiEnvList()
+    public function list()
     {
         $page       = Request::param('page/d', 1);
         $limit      = Request::param('limit/d', 10);
         $sort_field = Request::param('sort_field/s', '');
         $sort_type  = Request::param('sort_type/s', '');
-        $name       = Request::param('name/s', '');
-        $host       = Request::param('host/s', '');
+        $env_name   = Request::param('env_name/s', '');
+        $env_host   = Request::param('env_host/s', '');
 
         $where = [];
-        if ($name) {
-            $where[] = ['name', 'like', '%' . $name . '%'];
+        if ($env_name) {
+            $where[] = ['env_name', 'like', '%' . $env_name . '%'];
         }
-        if ($host) {
-            $where[] = ['host', 'like', '%' . $host . '%'];
+        if ($env_host) {
+            $where[] = ['env_host', 'like', '%' . $env_host . '%'];
         }
 
         $order = [];
@@ -49,17 +59,19 @@ class ApiEnv
     }
 
     /**
-     * 接口环境信息
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("接口环境信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\ApiEnvModel\id")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", 
+     *      @Apidoc\Returned(ref="app\common\model\ApiEnvModel\info")
+     * )
      */
-    public function apiEnvInfo()
+    public function info()
     {
         $param['api_env_id'] = Request::param('api_env_id/d', '');
 
-        validate(ApiEnvValidate::class)->scene('id')->check($param);
+        validate(ApiEnvValidate::class)->scene('info')->check($param);
 
         $data = ApiEnvService::info($param['api_env_id']);
 
@@ -71,19 +83,19 @@ class ApiEnv
     }
 
     /**
-     * 接口环境添加
-     *
-     * @method POST
-     * 
-     * @return json
+     * @Apidoc\Title("接口环境添加")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\ApiEnvModel\add")
+     * @Apidoc\Returned(ref="return")
      */
-    public function apiEnvAdd()
+    public function add()
     {
-        $param['name']   = Request::param('name/s', '');
-        $param['host']   = Request::param('host/s', '');
-        $param['header'] = Request::param('header/s', '');
-        $param['remark'] = Request::param('remark/s', '');
-        $param['sort']   = Request::param('sort/d', 200);
+        $param['env_name']   = Request::param('env_name/s', '');
+        $param['env_host']   = Request::param('env_host/s', '');
+        $param['env_header'] = Request::param('env_header/s', '');
+        $param['env_remark'] = Request::param('env_remark/s', '');
+        $param['env_sort']   = Request::param('env_sort/d', 200);
 
         validate(ApiEnvValidate::class)->scene('add')->check($param);
 
@@ -93,43 +105,36 @@ class ApiEnv
     }
 
     /**
-     * 接口环境修改
-     *
-     * @method GET|POST
-     * 
-     * @return json
+     * @Apidoc\Title("接口环境修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\ApiEnvModel\edit")
+     * @Apidoc\Returned(ref="return")
      */
-    public function apiEnvEdit()
+    public function edit()
     {
         $param['api_env_id'] = Request::param('api_env_id/d', '');
+        $param['env_name']   = Request::param('env_name/s', '');
+        $param['env_host']   = Request::param('env_host/s', '');
+        $param['env_header'] = Request::param('env_header/s', '');
+        $param['env_remark'] = Request::param('env_remark/s', '');
+        $param['env_sort']   = Request::param('env_sort/d', 200);
 
-        if (Request::isGet()) {
-            validate(ApiEnvValidate::class)->scene('id')->check($param);
+        validate(ApiEnvValidate::class)->scene('edit')->check($param);
 
-            $data = ApiEnvService::edit($param);
-        } else {
-            $param['name']   = Request::param('name/s', '');
-            $param['host']   = Request::param('host/s', '');
-            $param['header'] = Request::param('header/s', '');
-            $param['remark'] = Request::param('remark/s', '');
-            $param['sort']   = Request::param('sort/d', 200);
-
-            validate(ApiEnvValidate::class)->scene('edit')->check($param);
-
-            $data = ApiEnvService::edit($param, 'post');
-        }
+        $data = ApiEnvService::edit($param);
 
         return success($data);
     }
 
     /**
-     * 接口环境删除
-     *
-     * @method POST
-     * 
-     * @return json
+     * @Apidoc\Title("接口环境删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\ApiEnvModel\dele")
+     * @Apidoc\Returned(ref="return")
      */
-    public function apiEnvDele()
+    public function dele()
     {
         $param['api_env_id'] = Request::param('api_env_id/d', '');
 

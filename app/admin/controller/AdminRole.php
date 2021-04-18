@@ -3,26 +3,36 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2021-03-24
+ * @LastEditTime : 2021-04-16
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\admin\validate\AdminRoleValidate;
-use app\admin\validate\AdminAdminValidate;
-use app\admin\service\AdminRoleService;
+use app\common\validate\AdminRoleValidate;
+use app\common\validate\AdminUserValidate;
+use app\common\service\AdminRoleService;
+use hg\apidoc\annotation as Apidoc;
 
+/**
+ * @Apidoc\Title("角色管理")
+ * @Apidoc\Group("admin")
+ */
 class AdminRole
 {
     /**
-     * 角色列表
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("角色列表")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param("role_name", type="string", default="", desc="角色名称")
+     * @Apidoc\Param("role_desc", type="string", default="", desc="角色描述")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminRoleModel\list")
+     * )
      */
-    public function roleList()
+    public function list()
     {
         $page       = Request::param('page/d', 1);
         $limit      = Request::param('limit/d', 10);
@@ -48,19 +58,21 @@ class AdminRole
 
         return success($data);
     }
-
+    
     /**
-     * 角色信息
-     *
-     * @method GET
-     * 
-     * @return json
+     * @Apidoc\Title("角色信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", 
+     *      @Apidoc\Returned(ref="app\common\model\AdminRoleModel\info")
+     * )
      */
-    public function roleInfo()
+    public function info()
     {
         $param['admin_role_id'] = Request::param('admin_role_id/d', '');
 
-        validate(AdminRoleValidate::class)->scene('role_id')->check($param);
+        validate(AdminRoleValidate::class)->scene('info')->check($param);
 
         $data = AdminRoleService::info($param['admin_role_id']);
 
@@ -72,75 +84,60 @@ class AdminRole
     }
 
     /**
-     * 角色添加
-     *
-     * @method POST
-     * 
-     * @return json
+     * @Apidoc\Title("角色添加")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\add")
+     * @Apidoc\Returned(ref="return")
      */
-    public function roleAdd()
+    public function add()
     {
-        if (Request::isGet()) {
-            $data = AdminRoleService::add();
-        } else {
-            $param['role_name']      = Request::param('role_name/s', '');
-            $param['role_desc']      = Request::param('role_desc/s', '');
-            $param['role_sort']      = Request::param('role_sort/d', 200);
-            $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
+        $param['role_name']      = Request::param('role_name/s', '');
+        $param['role_desc']      = Request::param('role_desc/s', '');
+        $param['role_sort']      = Request::param('role_sort/d', 200);
+        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
-            validate(AdminRoleValidate::class)->scene('role_add')->check($param);
+        validate(AdminRoleValidate::class)->scene('add')->check($param);
 
-            $data = AdminRoleService::add($param, 'post');
-        }
+        $data = AdminRoleService::add($param);
 
         return success($data);
     }
 
     /**
-     * 角色修改
-     *
-     * @method GET|POST
-     * 
-     * @return json
-     */
-    public function roleEdit()
+     * @Apidoc\Title("角色修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\edit")
+     * @Apidoc\Returned(ref="return")
+     */ 
+    public function edit()
     {
-        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
+        $param['admin_role_id']  = Request::param('admin_role_id/d', '');
+        $param['role_name']      = Request::param('role_name/s', '');
+        $param['role_desc']      = Request::param('role_desc/s', '');
+        $param['role_sort']      = Request::param('role_sort/d', 200);
+        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
 
-        if (Request::isGet()) {
-            validate(AdminRoleValidate::class)->scene('role_id')->check($param);
+        validate(AdminRoleValidate::class)->scene('edit')->check($param);
 
-            $data = AdminRoleService::edit($param);
-
-            if ($data['admin_role']['is_delete'] == 1) {
-                exception('角色已被删除：' . $param['admin_role_id']);
-            }
-        } else {
-            $param['role_name']      = Request::param('role_name/s', '');
-            $param['role_desc']      = Request::param('role_desc/s', '');
-            $param['role_sort']      = Request::param('role_sort/d', 200);
-            $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
-
-            validate(AdminRoleValidate::class)->scene('role_edit')->check($param);
-
-            $data = AdminRoleService::edit($param, 'post');
-        }
+        $data = AdminRoleService::edit($param, 'post');
 
         return success($data);
     }
 
     /**
-     * 角色删除
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function roleDele()
+     * @Apidoc\Title("角色删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\dele")
+     * @Apidoc\Returned(ref="return")
+     */ 
+    public function dele()
     {
         $param['admin_role_id'] = Request::param('admin_role_id/d', '');
 
-        validate(AdminRoleValidate::class)->scene('role_dele')->check($param);
+        validate(AdminRoleValidate::class)->scene('dele')->check($param);
 
         $data = AdminRoleService::dele($param['admin_role_id']);
 
@@ -148,18 +145,18 @@ class AdminRole
     }
 
     /**
-     * 角色禁用
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function roleDisable()
+     * @Apidoc\Title("角色是否禁用")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\disable")
+     * @Apidoc\Returned(ref="return")
+     */ 
+    public function disable()
     {
         $param['admin_role_id'] = Request::param('admin_role_id/d', '');
         $param['is_disable']    = Request::param('is_disable/d', 0);
 
-        validate(AdminRoleValidate::class)->scene('role_id')->check($param);
+        validate(AdminRoleValidate::class)->scene('disable')->check($param);
 
         $data = AdminRoleService::disable($param);
 
@@ -167,13 +164,17 @@ class AdminRole
     }
 
     /**
-     * 角色管理员
-     *
-     * @method GET
-     *
-     * @return json
-     */
-    public function roleAdmin()
+     * @Apidoc\Title("角色管理员")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminUserModel\user")
+     * )
+     */ 
+    public function user()
     {
         $page          = Request::param('page/d', 1);
         $limit         = Request::param('limit/d', 10);
@@ -181,7 +182,7 @@ class AdminRole
         $sort_type     = Request::param('sort_type/s', '');
         $admin_role_id = Request::param('admin_role_id/s', '');
 
-        validate(AdminRoleValidate::class)->scene('role_id')->check(['admin_role_id' => $admin_role_id]);
+        validate(AdminRoleValidate::class)->scene('user')->check(['admin_role_id' => $admin_role_id]);
 
         $where[] = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
 
@@ -190,27 +191,28 @@ class AdminRole
             $order = [$sort_field => $sort_type];
         }
 
-        $data = AdminRoleService::admin($where, $page, $limit, $order);
+        $data = AdminRoleService::user($where, $page, $limit, $order);
 
         return success($data);
     }
 
     /**
-     * 角色管理员解除
-     *
-     * @method POST
-     *
-     * @return json
-     */
-    public function roleAdminRemove()
+     * @Apidoc\Title("角色管理员解除")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
+     * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     */  
+    public function userRemove()
     {
-        $param['admin_role_id']  = Request::param('admin_role_id/d', '');
-        $param['admin_admin_id'] = Request::param('admin_admin_id/d', '');
+        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
-        validate(AdminRoleValidate::class)->scene('role_id')->check($param);
-        validate(AdminAdminValidate::class)->scene('admin_id')->check($param);
+        validate(AdminRoleValidate::class)->scene('id')->check($param);
+        validate(AdminUserValidate::class)->scene('id')->check($param);
 
-        $data = AdminRoleService::adminRemove($param);
+        $data = AdminRoleService::userRemove($param);
 
         return success($data);
     }

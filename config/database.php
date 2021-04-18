@@ -27,7 +27,7 @@ return [
             'hostname'          => env('database.hostname', '127.0.0.1'),
             // 数据库名
             'database'          => env('database.database', 'yyladmin'),
-            // 用户名
+            // 会员名
             'username'          => env('database.username', 'yyladmin'),
             // 密码
             'password'          => env('database.password', 'yyladmin'),

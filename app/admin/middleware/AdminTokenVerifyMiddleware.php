@@ -12,7 +12,7 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
-use app\admin\service\AdminTokenService;
+use app\common\service\AdminTokenService;
 
 class AdminTokenVerifyMiddleware
 {
@@ -35,13 +35,13 @@ class AdminTokenVerifyMiddleware
                 exception('Requests Headers：AdminToken must');
             }
 
-            $admin_admin_id = admin_admin_id();
+            $admin_user_id = admin_user_id();
 
-            if (empty($admin_admin_id)) {
-                exception('Requests Headers：AdminAdminId must');
+            if (empty($admin_user_id)) {
+                exception('Requests Headers：AdminUserId must');
             }
 
-            AdminTokenService::verify($admin_token, $admin_admin_id);
+            AdminTokenService::verify($admin_token, $admin_user_id);
         }
 
         return $next($request);
