@@ -3,7 +3,7 @@
  * @Description  : 接口管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-13
+ * @LastEditTime : 2021-04-18
  */
 
 namespace app\common\validate;
@@ -28,11 +28,12 @@ class ApiValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'id'    => ['api_id'],
-        'info'  => ['api_id'],
-        'add'   => ['api_name'],
-        'edit'  => ['api_id', 'api_name'],
-        'dele'  => ['api_id'],
+        'id'     => ['api_id'],
+        'info'   => ['api_id'],
+        'add'    => ['api_name'],
+        'edit'   => ['api_id', 'api_name'],
+        'dele'   => ['api_id'],
+        'unauth' => ['api_id'],
     ];
 
     // 验证场景定义：删除
