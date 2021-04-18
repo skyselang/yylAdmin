@@ -82,7 +82,7 @@ class MemberLog
     /**
      * @Apidoc\Title("会员日志信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\AdminUserlogModel\id")
+     * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\id")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", 
      *      @Apidoc\Returned(ref="app\common\model\MemberLogModel\info")

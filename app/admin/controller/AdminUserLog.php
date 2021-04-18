@@ -3,7 +3,7 @@
  * @Description  : 管理员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-04-18
  */
 
 namespace app\admin\controller;
@@ -86,7 +86,7 @@ class AdminUserLog
     /**
      * @Apidoc\Title("管理员日志信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\AdminUserlogModel\id")
+     * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\id")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", 
      *      @Apidoc\Returned(ref="app\common\model\AdminUserLogModel\info")
