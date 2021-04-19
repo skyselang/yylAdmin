@@ -3,7 +3,7 @@
  * @Description  : 新闻管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-18
+ * @LastEditTime : 2021-04-19
  */
 
 namespace app\common\validate;
@@ -56,6 +56,8 @@ class NewsValidate extends Validate
         'ishide' => ['news_id'],
         'image'  => ['image'],
         'file'   => ['file'],
+        'last'   => ['news_id'],
+        'next'   => ['news_id'],
     ];
 
     // 自定义验证规则：新闻是否存在

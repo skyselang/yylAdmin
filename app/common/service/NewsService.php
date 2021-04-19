@@ -3,7 +3,7 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-04-19
  */
 
 namespace app\common\service;
@@ -311,5 +311,51 @@ class NewsService
         NewsCache::del($news_id);
 
         return $update;
+    }
+
+    /**
+     * 新闻上一条
+     *
+     * @param integer $news_id 新闻id
+     * 
+     * @return int last_news_id 上一条新闻id
+     */
+    public static function last($news_id)
+    {
+        $last_news = Db::name('news')
+            ->field('news_id')
+            ->where('is_delete', 0)
+            ->where('news_id', '<', $news_id)
+            ->order('news_id', 'desc')
+            ->find();
+
+        if (empty($last_news)) {
+            return 0;
+        }
+
+        return $last_news['news_id'];
+    }
+
+    /**
+     * 新闻下一条
+     *
+     * @param integer $news_id 新闻id
+     * 
+     * @return int next_news_id 下一条新闻id
+     */
+    public static function next($news_id)
+    {
+        $next_news = Db::name('news')
+            ->field('news_id')
+            ->where('is_delete', 0)
+            ->where('news_id', '>', $news_id)
+            ->order('news_id', 'asc')
+            ->find();
+
+        if (empty($next_news)) {
+            return 0;
+        }
+
+        return $next_news['news_id'];
     }
 }
