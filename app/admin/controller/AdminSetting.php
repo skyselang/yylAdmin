@@ -3,7 +3,7 @@
  * @Description  : 系统设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-05
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-04-19
  */
 
 namespace app\admin\controller;
@@ -23,7 +23,6 @@ class AdminSetting
 {
     /**
      * @Apidoc\Title("设置信息")
-     * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", desc="返回数据",

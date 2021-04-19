@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2021-04-16
+ * @LastEditTime : 2021-04-19
  */
 
 namespace app\admin\controller;
@@ -198,6 +198,7 @@ class AdminRole
 
     /**
      * @Apidoc\Title("角色管理员解除")
+     * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
