@@ -3,7 +3,7 @@
  * @Description  : 新闻模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-19
+ * @LastEditTime : 2021-04-21
  */
 
 namespace app\common\model;
@@ -41,8 +41,8 @@ class NewsModel extends Model
     /**
      * @WithoutField("admin_user_id,is_delete,delete_time")
      * @AddField("img_url", type="string", default="", desc="图片链接")
-     * @AddField("last_news_id", type="int", default="0", desc="上一条新闻id")
-     * @AddField("next_news_id", type="int", default="0", desc="下一条新闻id")
+     * @AddField("last_news", type="array", default="[]", desc="上一条新闻")
+     * @AddField("next_news", type="array", default="[]", desc="下一条新闻")
      */
     public function infoIndex()
     {

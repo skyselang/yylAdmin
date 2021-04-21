@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 127.0.0.1
+ Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50529
- Source Host           : localhost:3306
+ Source Server Version : 50726
+ Source Host           : 127.0.0.1:3306
  Source Schema         : yyladmin
 
  Target Server Type    : MySQL
- Target Server Version : 50529
+ Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 18/04/2021 22:31:19
+ Date: 21/04/2021 22:52:02
 */
 
 SET NAMES utf8mb4;
@@ -217,7 +217,7 @@ CREATE TABLE `yyl_admin_setting`  (
 -- ----------------------------
 -- Records of yyl_admin_setting
 -- ----------------------------
-INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, NULL);
+INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, '2021-04-21 22:13:01');
 
 -- ----------------------------
 -- Table structure for yyl_admin_user
@@ -319,7 +319,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -335,10 +335,13 @@ INSERT INTO `yyl_api` VALUES (8, 5, '更换头像', 'index/Member/avatar', 200, 
 INSERT INTO `yyl_api` VALUES (9, 5, '修改密码', 'index/Member/pwd', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (10, 5, '我的日志', 'index/Member/log', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (11, 1, '注册', 'index/Register/register', 210, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (12, 0, '地区管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (12, 0, '地区', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'index/Region/list', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (14, 12, '地区信息', 'index/Region/info', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (16, 0, '新闻', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (17, 16, '新闻列表', 'index/News/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (18, 16, '新闻信息', 'index/News/info', 200, 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_api_env
@@ -397,7 +400,7 @@ CREATE TABLE `yyl_member`  (
   INDEX `phone`(`phone`) USING BTREE,
   INDEX `email`(`email`(191)) USING BTREE,
   INDEX `member_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1000000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_member
@@ -468,7 +471,7 @@ CREATE TABLE `yyl_news`  (
   PRIMARY KEY (`news_id`) USING BTREE,
   INDEX `news_id`(`news_id`) USING BTREE,
   INDEX `title`(`title`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_news
@@ -4221,6 +4224,6 @@ CREATE TABLE `yyl_setting`  (
 -- ----------------------------
 -- Records of yyl_setting
 -- ----------------------------
-INSERT INTO `yyl_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:720;}', NULL, NULL);
+INSERT INTO `yyl_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:720;}', NULL, '2021-04-21 22:13:33');
 
 SET FOREIGN_KEY_CHECKS = 1;

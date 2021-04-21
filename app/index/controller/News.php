@@ -3,7 +3,7 @@
  * @Description  : 新闻
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-19
- * @LastEditTime : 2021-04-19
+ * @LastEditTime : 2021-04-21
  */
 
 namespace app\index\controller;
@@ -71,8 +71,8 @@ class News
             exception('新闻已被删除');
         }
 
-        $data['last_news_id'] = NewsService::last($data['news_id']);
-        $data['next_news_id'] = NewsService::next($data['news_id']);
+        $data['last_news'] = NewsService::last($data['news_id']);
+        $data['next_news'] = NewsService::next($data['news_id']);
 
         return success($data);
     }

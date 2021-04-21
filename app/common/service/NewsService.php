@@ -3,7 +3,7 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-19
+ * @LastEditTime : 2021-04-21
  */
 
 namespace app\common\service;
@@ -90,6 +90,8 @@ class NewsService
             NewsCache::set($news_id, $news);
         }
 
+        Db::name('news')->where('news_id', $news_id)->inc('hits')->update();
+
         return $news;
     }
 
@@ -102,7 +104,8 @@ class NewsService
      */
     public static function add($param)
     {
-        $param['create_time'] = datetime();
+        $param['create_time']   = datetime();
+        $param['admin_user_id'] = admin_user_id();
 
         $news_id = Db::name('news')
             ->insertGetId($param);
@@ -129,7 +132,8 @@ class NewsService
 
         unset($param['news_id']);
 
-        $param['update_time'] = datetime();
+        $param['update_time']   = datetime();
+        $param['admin_user_id'] = admin_user_id();
 
         $res = Db::name('news')
             ->where('news_id', $news_id)
@@ -318,22 +322,22 @@ class NewsService
      *
      * @param integer $news_id 新闻id
      * 
-     * @return int last_news_id 上一条新闻id
+     * @return array 上一条新闻
      */
     public static function last($news_id)
     {
-        $last_news = Db::name('news')
-            ->field('news_id')
+        $news = Db::name('news')
+            ->field('news_id,title')
             ->where('is_delete', 0)
             ->where('news_id', '<', $news_id)
             ->order('news_id', 'desc')
             ->find();
 
-        if (empty($last_news)) {
-            return 0;
+        if (empty($news)) {
+            return [];
         }
 
-        return $last_news['news_id'];
+        return $news;
     }
 
     /**
@@ -341,21 +345,21 @@ class NewsService
      *
      * @param integer $news_id 新闻id
      * 
-     * @return int next_news_id 下一条新闻id
+     * @return array 下一条新闻
      */
     public static function next($news_id)
     {
-        $next_news = Db::name('news')
-            ->field('news_id')
+        $news = Db::name('news')
+            ->field('news_id,title')
             ->where('is_delete', 0)
             ->where('news_id', '>', $news_id)
             ->order('news_id', 'asc')
             ->find();
 
-        if (empty($next_news)) {
-            return 0;
+        if (empty($news)) {
+            return [];
         }
 
-        return $next_news['news_id'];
+        return $news;
     }
 }

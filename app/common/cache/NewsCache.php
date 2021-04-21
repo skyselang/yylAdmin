@@ -3,7 +3,7 @@
  * @Description  : 新闻缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-09
+ * @LastEditTime : 2021-04-21
  */
 
 namespace app\common\cache;
@@ -40,7 +40,7 @@ class NewsCache
         $key = self::key($news_id);
         $val = $news;
         if (empty($ttl)) {
-            $ttl = 1 * 24 * 60 * 60;
+            $ttl = 0.5 * 24 * 60 * 60;
         }
 
         $res = Cache::set($key, $val, $ttl);
