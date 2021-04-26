@@ -1,17 +1,21 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 127.0.0.1
+ Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50529
- Source Host           : localhost:3306
+ Source Server Version : 50726
+ Source Host           : 127.0.0.1:3306
  Source Schema         : yyladmin
 
  Target Server Type    : MySQL
- Target Server Version : 50529
+ Target Server Version : 50726
  File Encoding         : 65001
 
+<<<<<<< HEAD:yyladmin.sql
  Date: 26/04/2021 23:01:08
+=======
+ Date: 21/04/2021 22:52:02
+>>>>>>> 126cdb5631274689200614d425c0d3f412f41b90:public/private/yyladmin.sql
 */
 
 SET NAMES utf8mb4;
@@ -223,7 +227,7 @@ CREATE TABLE `yyl_admin_setting`  (
 -- ----------------------------
 -- Records of yyl_admin_setting
 -- ----------------------------
-INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, NULL);
+INSERT INTO `yyl_admin_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:12;}', NULL, '2021-04-21 22:13:01');
 
 -- ----------------------------
 -- Table structure for yyl_admin_user
@@ -325,7 +329,11 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
+<<<<<<< HEAD:yyladmin.sql
 ) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+=======
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+>>>>>>> 126cdb5631274689200614d425c0d3f412f41b90:public/private/yyladmin.sql
 
 -- ----------------------------
 -- Records of yyl_api
@@ -348,7 +356,10 @@ INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 200, 
 INSERT INTO `yyl_api` VALUES (16, 0, '新闻', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (17, 16, '新闻列表', 'index/News/list', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (18, 16, '新闻信息', 'index/News/info', 200, 0, 1, 0, NULL, NULL, NULL);
+<<<<<<< HEAD:yyladmin.sql
 INSERT INTO `yyl_api` VALUES (19, 1, '公众号登录', 'index/Login/offi', 200, 0, 1, 0, NULL, NULL, NULL);
+=======
+>>>>>>> 126cdb5631274689200614d425c0d3f412f41b90:public/private/yyladmin.sql
 
 -- ----------------------------
 -- Table structure for yyl_api_env
@@ -509,7 +520,7 @@ CREATE TABLE `yyl_news`  (
   PRIMARY KEY (`news_id`) USING BTREE,
   INDEX `news_id`(`news_id`) USING BTREE,
   INDEX `title`(`title`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_news
@@ -4262,7 +4273,7 @@ CREATE TABLE `yyl_setting`  (
 -- ----------------------------
 -- Records of yyl_setting
 -- ----------------------------
-INSERT INTO `yyl_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:720;}', NULL, NULL);
+INSERT INTO `yyl_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:720;}', NULL, '2021-04-21 22:13:33');
 
 -- ----------------------------
 -- Table structure for yyl_wechat_config
