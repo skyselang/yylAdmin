@@ -3,7 +3,7 @@
  * @Description  : 会员日志缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-04-22
  */
 
 namespace app\common\cache;
@@ -17,7 +17,7 @@ class MemberLogCache
      *
      * @param integer|string $member_log_id 会员日志id、统计时间
      * 
-     * @return integer
+     * @return string
      */
     public static function key($member_log_id = 0)
     {

@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-04-14
+ * @LastEditTime : 2021-04-24
  */
 
 namespace app\common\service;
@@ -89,6 +89,23 @@ class MemberService
 
             $member['avatar']       = file_url($member['avatar']);
             $member['member_token'] = TokenService::create($member);
+
+            $member_wechat = Db::name('member_wechat')
+                ->where('member_id', $member_id)
+                ->find();
+
+            if ($member_wechat) {
+                if (empty($member['nickname'])) {
+                    $member['nickname'] = $member_wechat['nickname'];
+                }
+                if (empty($member['avatar'])) {
+                    $member['avatar'] = $member_wechat['headimgurl'];
+                }
+                $member_wechat['privilege'] = unserialize($member_wechat['privilege']);
+                $member['wechat'] = $member_wechat;
+            } else {
+                $member['wechat'] = [];
+            }
 
             MemberCache::set($member_id, $member);
         }
@@ -230,7 +247,7 @@ class MemberService
         } else {
             $update['password']    = md5($param['password_new']);
         }
-        
+
         $update['update_time'] = datetime();
 
         $res = Db::name('member')

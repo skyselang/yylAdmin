@@ -3,7 +3,7 @@
  * @Description  : 管理员日志缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-04-22
  */
 
 namespace app\common\cache;
@@ -17,7 +17,7 @@ class AdminUserLogCache
      *
      * @param integer|string $admin_user_log_id 日志id、统计时间
      * 
-     * @return integer
+     * @return string
      */
     public static function key($admin_user_log_id = '')
     {

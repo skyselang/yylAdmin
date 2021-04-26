@@ -3,7 +3,7 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-20
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-04-24
  */
 
 namespace app\index\service;
@@ -24,12 +24,9 @@ class RegisterService
     public static function register($param)
     {
         $data = MemberService::add($param);
-        
-        $member_log['log_type']      = 1;
-        $member_log['member_id']     = $data['member_id'];
-        $member_log['response_code'] = 200;
-        $member_log['response_msg']  = '注册成功';
-        MemberLogService::add($member_log);
+
+        $member_log['member_id'] = $data['member_id'];
+        MemberLogService::add($member_log, 1);
 
         return $data;
     }

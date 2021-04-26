@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 18/04/2021 22:31:19
+ Date: 26/04/2021 23:01:08
 */
 
 SET NAMES utf8mb4;
@@ -37,7 +37,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 190 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 196 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -172,6 +172,12 @@ INSERT INTO `yyl_admin_menu` VALUES (186, 157, '设置管理', 'admin/Setting/in
 INSERT INTO `yyl_admin_menu` VALUES (187, 5, '角色信息', 'admin/AdminRole/info', 210, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (188, 53, '系统设置', 'admin/AdminSetting/info', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (189, 41, '管理员日志清除', 'admin/AdminUserLog/clear', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (190, 157, '微信配置', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (191, 190, '公众号信息', 'admin/WechatConfig/offiInfo', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (192, 190, '公众号修改', 'admin/WechatConfig/offiEdit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (193, 190, '小程序信息', 'admin/WechatConfig/miniInfo', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (194, 190, '小程序修改', 'admin/WechatConfig/miniEdit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (195, 190, '上传二维码', 'admin/WechatConfig/qrcode', 200, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -255,7 +261,7 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'storage/admin_admin/1/1_avatar.jpg?t=20210407094259', '系统管理员', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'storage/admin_user/1/1_avatar.jpg?t=20210423155956', '系统管理员', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
@@ -319,7 +325,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -327,7 +333,7 @@ CREATE TABLE `yyl_api`  (
 INSERT INTO `yyl_api` VALUES (1, 0, '登录注册', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (2, 1, '验证码', 'index/Login/verify', 220, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (3, 1, '登录', 'index/Login/login', 200, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'index/Login/logout', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'index/Login/logout', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (5, 0, '个人中心', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (6, 5, '我的信息', 'index/Member/info', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (7, 5, '修改信息', 'index/Member/edit', 200, 0, 0, 0, NULL, NULL, NULL);
@@ -335,10 +341,14 @@ INSERT INTO `yyl_api` VALUES (8, 5, '更换头像', 'index/Member/avatar', 200, 
 INSERT INTO `yyl_api` VALUES (9, 5, '修改密码', 'index/Member/pwd', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (10, 5, '我的日志', 'index/Member/log', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (11, 1, '注册', 'index/Register/register', 210, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (12, 0, '地区管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (12, 0, '地区', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'index/Region/list', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (14, 12, '地区信息', 'index/Region/info', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (16, 0, '新闻', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (17, 16, '新闻列表', 'index/News/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (18, 16, '新闻信息', 'index/News/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (19, 1, '公众号登录', 'index/Login/offi', 200, 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_api_env
@@ -374,7 +384,7 @@ DROP TABLE IF EXISTS `yyl_member`;
 CREATE TABLE `yyl_member`  (
   `member_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '会员id',
   `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '会员名',
-  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '昵称',
   `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   `phone` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机',
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
@@ -382,6 +392,7 @@ CREATE TABLE `yyl_member`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
   `sort` int(10) NULL DEFAULT 10000 COMMENT '排序',
+  `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道1Web2公众号3小程序',
   `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
@@ -397,7 +408,7 @@ CREATE TABLE `yyl_member`  (
   INDEX `phone`(`phone`) USING BTREE,
   INDEX `email`(`email`(191)) USING BTREE,
   INDEX `member_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1000000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_member
@@ -438,6 +449,36 @@ CREATE TABLE `yyl_member_log`  (
 
 -- ----------------------------
 -- Records of yyl_member_log
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_member_wechat
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_member_wechat`;
+CREATE TABLE `yyl_member_wechat`  (
+  `member_wechat_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '会员微信信息id',
+  `member_id` int(11) NULL DEFAULT 0 COMMENT '会员id',
+  `openid` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'openid',
+  `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '昵称',
+  `sex` tinyint(1) NULL DEFAULT 0 COMMENT '性别：0未知1男2女',
+  `city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '城市',
+  `province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '省份',
+  `country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '国家',
+  `headimgurl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '头像',
+  `privilege` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '特权信息',
+  `language` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '语言',
+  `unionid` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'unionid',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`member_wechat_id`) USING BTREE,
+  INDEX `member_id`(`member_id`) USING BTREE,
+  INDEX `openid`(`openid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员微信信息' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yyl_member_wechat
 -- ----------------------------
 
 -- ----------------------------
@@ -4222,5 +4263,30 @@ CREATE TABLE `yyl_setting`  (
 -- Records of yyl_setting
 -- ----------------------------
 INSERT INTO `yyl_setting` VALUES (1, 'a:7:{s:6:\"switch\";b:1;s:5:\"curve\";b:0;s:5:\"noise\";b:1;s:5:\"bgimg\";b:0;s:4:\"type\";i:1;s:6:\"length\";i:4;s:6:\"expire\";i:180;}', 'a:2:{s:3:\"iss\";s:8:\"yylAdmin\";s:3:\"exp\";i:720;}', NULL, NULL);
+
+-- ----------------------------
+-- Table structure for yyl_wechat_config
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_wechat_config`;
+CREATE TABLE `yyl_wechat_config`  (
+  `wechat_config_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '微信配置id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '名称',
+  `origin_id` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '原始id',
+  `qrcode` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '二维码',
+  `appid` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '开发者ID',
+  `appsecret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '开发者密码',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '服务器地址(URL)',
+  `token` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '令牌(Token)',
+  `encoding_aes_key` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '消息加密密钥',
+  `encoding_aes_type` tinyint(1) NULL DEFAULT 1 COMMENT '消息加解密方式：1明文2兼容3安全',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`wechat_config_id`) USING BTREE,
+  INDEX `wechat_id`(`wechat_config_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '微信设置' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yyl_wechat_config
+-- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

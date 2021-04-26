@@ -3,18 +3,21 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-04-26
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
+use think\facade\Cache;
 use app\common\service\VerifyService;
 use app\common\service\SettingService;
 use app\common\validate\MemberValidate;
 use app\common\validate\VerifyValidate;
 use app\index\service\LoginService;
+use app\common\service\WechatConfigService;
 use hg\apidoc\annotation as Apidoc;
+use EasyWeChat\Factory;
 
 /**
  * @Apidoc\Title("登录退出")
@@ -66,6 +69,66 @@ class Login
         $data = LoginService::login($param);
 
         return success($data, '登录成功');
+    }
+
+    /**
+     * @Apidoc\Title("登录（公众号）")
+     * @Apidoc\Desc("拼接callback参数后打开")
+     * @Apidoc\Method("GET")
+     * @Apidoc\Param("callback", type="string", require=true, desc="登录成功后跳转的页面地址,会携带member_token")
+     */
+    public function offi()
+    {
+        $callback = Request::param('callback/s', '');
+        
+        if (empty($callback)) {
+            die('callback must');
+        }
+        
+        Cache::set('offiLoginCallback', $callback, 15);
+
+        $offi_info = WechatConfigService::offiInfo();
+
+        $config = [
+            'app_id' => $offi_info['appid'],
+            'secret' => $offi_info['appsecret'],
+            'oauth' => [
+                'scopes'   => ['snsapi_userinfo'],
+                'callback' => url('officallback', [], false),
+            ],
+        ];
+
+        $app = Factory::officialAccount($config);
+
+        $oauth = $app->oauth;
+
+        $oauth->redirect()->send();
+    }
+    public function officallback()
+    {
+        $offi_info = WechatConfigService::offiInfo();
+
+        $config = [
+            'app_id' => $offi_info['appid'],
+            'secret' => $offi_info['appsecret'],
+        ];
+
+        $app   = Factory::officialAccount($config);
+        $oauth = $app->oauth;
+        $user  = $oauth->user()->getOriginal();
+
+        if (empty($user) || !isset($user['openid'])) {
+            exception('微信登录失败，请重试！offi');
+        }
+
+        $user['login_ip'] = Request::ip();
+
+        $data = LoginService::offiLogin($user);
+
+        $callback = Cache::get('offiLoginCallback');
+        $callback = $callback . '?member_token=' . $data['member_token'];
+
+        Header("Location:" . $callback);
     }
 
     /**

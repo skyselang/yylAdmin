@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-04-12
+ * @LastEditTime : 2021-04-24
  */
 
 namespace app\common\service;
@@ -132,12 +132,26 @@ class MemberLogService
     /**
      * 会员日志添加
      *
-     * @param array $param 会员日志信息
+     * @param array   $param    会员日志信息
+     * @param integer $log_type 日志类型1注册2登录3操作4退出
      * 
      * @return void
      */
-    public static function add($param = [])
+    public static function add($param = [], $log_type = 3)
     {
+        $param['log_type'] = $log_type;
+
+        if ($log_type == 1) {
+            $param['response_code'] = 200;
+            $param['response_msg']  = '注册成功';
+        } elseif ($log_type == 2) {
+            $param['response_code'] = 200;
+            $param['response_msg']  = '登录成功';
+        } elseif ($log_type == 4) {
+            $param['response_code'] = 200;
+            $param['response_msg']  = '退出成功';
+        }
+
         $api_info      = ApiService::info();
         $ip_info       = IpInfoUtils::info();
         $request_param = Request::param();

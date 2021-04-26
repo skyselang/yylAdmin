@@ -3,7 +3,7 @@
  * @Description  : index配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-07
+ * @LastEditTime : 2021-04-23
  */
 
 return [
@@ -13,8 +13,10 @@ return [
     'whitelist' => [
         'index/',
         'index/Login/verify',
-        'index/Login/login',
         'index/Register/register',
+        'index/Login/login',
+        'index/Login/offi',
+        'index/Login/officallback',
     ],
     // token 
     'token' => [

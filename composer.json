@@ -27,7 +27,8 @@
         "topthink/think-captcha": "^3.0",
         "firebase/php-jwt": "^5.2",
         "overtrue/pinyin": "~4.0",
-        "hg/apidoc": "^2.4"
+        "hg/apidoc": "^2.4",
+        "overtrue/wechat": "~4.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"

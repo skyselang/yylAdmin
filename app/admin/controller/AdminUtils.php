@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-04-23
  */
 
 namespace app\admin\controller;
@@ -31,7 +31,7 @@ class AdminUtils
         $admin_token     = $admin_user['admin_token'];
         $admin_token_sub = substr($admin_token, 0, 16) . '...';
 
-        $data['apidoc_url']      = server_url() . '/apidoc/?t=' . time();
+        $data['apidoc_url']      = server_url() . '/apidoc/index.html?t=' . time();
         $data['apidoc_pwd']      = config('apidoc.auth.password');
         $data['admin_user_id']   = $admin_user['admin_user_id'];
         $data['admin_token']     = $admin_token;

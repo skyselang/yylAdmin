@@ -17,7 +17,7 @@ class SettingCache
      *
      * @param integer $setting_id 设置id
      * 
-     * @return integer
+     * @return string
      */
     public static function key($setting_id = 0)
     {

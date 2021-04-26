@@ -3,7 +3,7 @@
  * @Description  : 系统设置缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-09-07
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-04-22
  */
 
 namespace app\common\cache;
@@ -17,7 +17,7 @@ class AdminSettingCache
      *
      * @param integer $admin_setting_id 设置id
      * 
-     * @return integer
+     * @return string
      */
     public static function key($admin_setting_id = 0)
     {

@@ -12,8 +12,8 @@ return [
     'default_method' => 'GET',
     // 设置应用/版本（必须设置）
     'apps' => [
-        ['title' => 'admin后台', 'path' => 'app\admin\controller', 'folder' => 'admin'],
         ['title' => 'index前台', 'path' => 'app\index\controller', 'folder' => 'index'],
+        ['title' => 'admin后台', 'path' => 'app\admin\controller', 'folder' => 'admin'],
     ],
     // 控制器分组
     'groups' => [],
@@ -39,9 +39,9 @@ return [
         // 是否启用密码验证
         'enable' => true,
         // 验证密码
-        'password' => "30fEyPGwQ00U",
+        'password' => "XFWWDiIB5LlV",
         // 密码加密盐
-        'secret_key' => "5fhWSvCillh5",
+        'secret_key' => "6L6eGcNmD0C8",
     ],
     // 统一的请求Header
     'headers' => [],
