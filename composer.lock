@@ -454,16 +454,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.8.1",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "35ea11d335fd638b5882ff1725228b3d35496ab1"
+                "reference": "dc960a912984efb74d0a90222870c72c87f10c91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/35ea11d335fd638b5882ff1725228b3d35496ab1",
-                "reference": "35ea11d335fd638b5882ff1725228b3d35496ab1",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/dc960a912984efb74d0a90222870c72c87f10c91",
+                "reference": "dc960a912984efb74d0a90222870c72c87f10c91",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -529,22 +529,22 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/1.8.1"
+                "source": "https://github.com/guzzle/psr7/tree/1.8.2"
             },
-            "time": "2021-03-21T16:25:00+00:00"
+            "time": "2021-04-26T09:17:50+00:00"
         },
         {
             "name": "hg/apidoc",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/HGthecode/thinkphp-apidoc.git",
-                "reference": "8326c8cd781a39c200563834b460cb68f20f8325"
+                "reference": "8321cc2439754d3c84ad3bdd0a7622c1cba20517"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/HGthecode/thinkphp-apidoc/zipball/8326c8cd781a39c200563834b460cb68f20f8325",
-                "reference": "8326c8cd781a39c200563834b460cb68f20f8325",
+                "url": "https://api.github.com/repos/HGthecode/thinkphp-apidoc/zipball/8321cc2439754d3c84ad3bdd0a7622c1cba20517",
+                "reference": "8321cc2439754d3c84ad3bdd0a7622c1cba20517",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -596,9 +596,9 @@
             ],
             "support": {
                 "issues": "https://github.com/HGthecode/thinkphp-apidoc/issues",
-                "source": "https://github.com/HGthecode/thinkphp-apidoc/tree/v2.5.0"
+                "source": "https://github.com/HGthecode/thinkphp-apidoc/tree/v2.5.1"
             },
-            "time": "2021-04-23T02:03:24+00:00"
+            "time": "2021-04-27T07:40:55+00:00"
         },
         {
             "name": "league/flysystem",
@@ -2677,16 +2677,16 @@
         },
         {
             "name": "topthink/framework",
-            "version": "v6.0.7",
+            "version": "v6.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "db8fe22520a9660dd5e4c87e304034ac49e39270"
+                "reference": "4789343672aef06d571d556da369c0e156609bce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/db8fe22520a9660dd5e4c87e304034ac49e39270",
-                "reference": "db8fe22520a9660dd5e4c87e304034ac49e39270",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/4789343672aef06d571d556da369c0e156609bce",
+                "reference": "4789343672aef06d571d556da369c0e156609bce",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2742,9 +2742,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/framework/issues",
-                "source": "https://github.com/top-think/framework/tree/v6.0.7"
+                "source": "https://github.com/top-think/framework/tree/v6.0.8"
             },
-            "time": "2021-01-25T14:48:29+00:00"
+            "time": "2021-04-27T00:41:08+00:00"
         },
         {
             "name": "topthink/think-captcha",
@@ -2910,16 +2910,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.39",
+            "version": "v2.0.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "39a9d0a0e52d9b8bad9d98484d8484cdf5b683a7"
+                "reference": "1119d979b850849f3725856460cf108eec1c3eb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/39a9d0a0e52d9b8bad9d98484d8484cdf5b683a7",
-                "reference": "39a9d0a0e52d9b8bad9d98484d8484cdf5b683a7",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/1119d979b850849f3725856460cf108eec1c3eb8",
+                "reference": "1119d979b850849f3725856460cf108eec1c3eb8",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2965,9 +2965,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.39"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.40"
             },
-            "time": "2021-02-26T10:20:00+00:00"
+            "time": "2021-04-19T13:29:37+00:00"
         }
     ],
     "packages-dev": [

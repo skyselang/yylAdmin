@@ -7,3 +7,4 @@
 *.log
 .user.ini
 .env
+composer.lock

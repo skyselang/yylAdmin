@@ -11,11 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
-<<<<<<< HEAD:yyladmin.sql
  Date: 26/04/2021 23:01:08
-=======
- Date: 21/04/2021 22:52:02
->>>>>>> 126cdb5631274689200614d425c0d3f412f41b90:public/private/yyladmin.sql
 */
 
 SET NAMES utf8mb4;
@@ -329,11 +325,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-<<<<<<< HEAD:yyladmin.sql
 ) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
-=======
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
->>>>>>> 126cdb5631274689200614d425c0d3f412f41b90:public/private/yyladmin.sql
 
 -- ----------------------------
 -- Records of yyl_api
@@ -356,10 +348,7 @@ INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 200, 
 INSERT INTO `yyl_api` VALUES (16, 0, '新闻', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (17, 16, '新闻列表', 'index/News/list', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (18, 16, '新闻信息', 'index/News/info', 200, 0, 1, 0, NULL, NULL, NULL);
-<<<<<<< HEAD:yyladmin.sql
 INSERT INTO `yyl_api` VALUES (19, 1, '公众号登录', 'index/Login/offi', 200, 0, 1, 0, NULL, NULL, NULL);
-=======
->>>>>>> 126cdb5631274689200614d425c0d3f412f41b90:public/private/yyladmin.sql
 
 -- ----------------------------
 -- Table structure for yyl_api_env
