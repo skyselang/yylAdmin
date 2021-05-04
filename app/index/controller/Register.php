@@ -3,7 +3,7 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-04-30
  */
 
 namespace app\index\controller;
@@ -17,6 +17,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("注册")
+ * @Apidoc\Sort("2")
  */
 class Register
 {

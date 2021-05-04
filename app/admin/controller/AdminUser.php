@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员管理
+ * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
  * @LastEditTime : 2021-04-17
@@ -14,13 +14,13 @@ use app\common\service\AdminUserService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("管理员管理")
+ * @Apidoc\Title("用户管理")
  * @Apidoc\Group("admin")
  */
 class AdminUser
 {
     /**
-     * @Apidoc\Title("管理员列表")
+     * @Apidoc\Title("用户列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param("username", type="string", default="", desc="账号")
@@ -66,7 +66,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员信息")
+     * @Apidoc\Title("用户信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
      * @Apidoc\Returned(ref="return")
@@ -83,14 +83,14 @@ class AdminUser
         $data = AdminUserService::info($param['admin_user_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('管理员已被删除：' . $param['admin_user_id']);
+            exception('用户已被删除：' . $param['admin_user_id']);
         }
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("管理员添加")
+     * @Apidoc\Title("用户添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\add")
@@ -114,7 +114,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员修改")
+     * @Apidoc\Title("用户修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\edit")
@@ -138,7 +138,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员删除")
+     * @Apidoc\Title("用户删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\dele")
@@ -156,7 +156,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员更换头像")
+     * @Apidoc\Title("用户更换头像")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
@@ -176,7 +176,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员重置密码")
+     * @Apidoc\Title("用户重置密码")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\pwd")
@@ -195,7 +195,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员分配权限")
+     * @Apidoc\Title("用户分配权限")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\rule")
@@ -220,7 +220,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员是否禁用")
+     * @Apidoc\Title("用户是否禁用")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\disable")
@@ -239,7 +239,7 @@ class AdminUser
     }
 
     /**
-     * @Apidoc\Title("管理员是否超管")
+     * @Apidoc\Title("用户是否超管")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\super")

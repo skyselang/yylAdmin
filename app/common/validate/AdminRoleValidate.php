@@ -81,7 +81,7 @@ class AdminRoleValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：角色是否有菜单或管理员
+    // 自定义验证规则：角色是否有菜单或用户
     protected function checkAdminRoleMenuUser($value, $rule, $data = [])
     {
         $admin_role_id = $value;
@@ -101,7 +101,7 @@ class AdminRoleValidate extends Validate
             ->find();
 
         if ($admin_user) {
-            return '请在[管理员]中解除所有管理员后再删除';
+            return '请在[用户]中解除所有用户后再删除';
         }
 
         return true;

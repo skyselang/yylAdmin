@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-23
+ * @LastEditTime : 2021-04-30
  */
 
 namespace app\admin\controller;
@@ -24,7 +24,7 @@ class AdminUtils
      * @Apidoc\Title("接口文档")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
-     */  
+     */
     public function apidoc()
     {
         $admin_user      = AdminUserService::info(admin_user_id());
@@ -43,11 +43,8 @@ class AdminUtils
     /**
      * @Apidoc\Title("服务器信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("type", type="string", default="", desc="类型")
-     * @Apidoc\Param("date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Param("region", type="string", default="", desc="地区")
      * @Apidoc\Returned(ref="return")
-     */  
+     */
     public function server()
     {
         $data = AdminUtilsService::server();
@@ -61,7 +58,7 @@ class AdminUtils
      * @Apidoc\Param("strrand_ids", type="array", default="[1,2,3]", desc="字符类型")
      * @Apidoc\Param("strrand_len", type="int", default="12", desc="字符长度")
      * @Apidoc\Returned(ref="return")
-     */   
+     */
     public function strrand()
     {
         $param['strrand_ids'] = Request::param('ids/a', [1, 2, 3]);
@@ -73,13 +70,13 @@ class AdminUtils
 
         return success($data);
     }
-    
+
     /**
      * @Apidoc\Title("字符串转换")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("str", type="string", default="", desc="字符串")
      * @Apidoc\Returned(ref="return")
-     */  
+     */
     public function strtran()
     {
         $str = Request::param('str/s', '');
@@ -95,7 +92,7 @@ class AdminUtils
      * @Apidoc\Param("type", type="string", default="", desc="转换类型")
      * @Apidoc\Param("value", type="string", default="", desc="时间、时间戳")
      * @Apidoc\Returned(ref="return")
-     */   
+     */
     public function timestamp()
     {
         $param['type']  = Request::param('type', '');
@@ -107,26 +104,12 @@ class AdminUtils
     }
 
     /**
-     * 生成二维码
-     *
-     * @method POST
-     * 
-     * @return json
-     */
-    public function qrcode()
-    {
-        $data = [];
-
-        return success($data);
-    }
-
-    /**
      * @Apidoc\Title("字节转换")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="B", desc="转换类型")
      * @Apidoc\Param("value", type="string", default="1024", desc="数值")
      * @Apidoc\Returned(ref="return")
-     */    
+     */
     public function bytetran()
     {
         $param['type']  = Request::param('type', 'B');
@@ -142,7 +125,7 @@ class AdminUtils
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("ip", type="string", default="", desc="ip")
      * @Apidoc\Returned(ref="return")
-     */ 
+     */
     public function ipinfo()
     {
         $ip = Request::param('ip/s', '');

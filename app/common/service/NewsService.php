@@ -3,7 +3,7 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-21
+ * @LastEditTime : 2021-04-30
  */
 
 namespace app\common\service;
@@ -104,8 +104,7 @@ class NewsService
      */
     public static function add($param)
     {
-        $param['create_time']   = datetime();
-        $param['admin_user_id'] = admin_user_id();
+        $param['create_time'] = datetime();
 
         $news_id = Db::name('news')
             ->insertGetId($param);
@@ -132,8 +131,7 @@ class NewsService
 
         unset($param['news_id']);
 
-        $param['update_time']   = datetime();
-        $param['admin_user_id'] = admin_user_id();
+        $param['update_time'] = datetime();
 
         $res = Db::name('news')
             ->where('news_id', $news_id)

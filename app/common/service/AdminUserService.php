@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员管理
+ * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
  * @LastEditTime : 2021-04-16
@@ -17,7 +17,7 @@ use app\common\service\AdminTokenService;
 class AdminUserService
 {
     /**
-     * 管理员列表
+     * 用户列表
      *
      * @param array   $where 条件
      * @param integer $page  页数
@@ -64,9 +64,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员信息
+     * 用户信息
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return array
      */
@@ -80,7 +80,7 @@ class AdminUserService
                 ->find();
 
             if (empty($admin_user)) {
-                exception('管理员不存在：' . $admin_user_id);
+                exception('用户不存在：' . $admin_user_id);
             }
 
             $admin_user['avatar']         = file_url($admin_user['avatar']);
@@ -187,9 +187,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员添加
+     * 用户添加
      *
-     * @param array $param 管理员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -213,9 +213,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员修改
+     * 用户修改
      *
-     * @param array $param 管理员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -243,9 +243,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员删除
+     * 用户删除
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return array
      */
@@ -270,7 +270,7 @@ class AdminUserService
     }
 
     /**
-     * 管理员修改头像
+     * 用户修改头像
      *
      * @param array $param 头像信息
      * 
@@ -308,9 +308,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员重置密码
+     * 用户重置密码
      *
-     * @param array $param 管理员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -338,9 +338,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员分配权限
+     * 用户分配权限
      *
-     * @param array  $param  管理员信息
+     * @param array  $param  用户信息
      * @param string $method 请求方式
      * 
      * @return array
@@ -432,9 +432,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员是否禁用
+     * 用户是否禁用
      *
-     * @param array $param 管理员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -461,9 +461,9 @@ class AdminUserService
     }
 
     /**
-     * 管理员是否超管
+     * 用户是否超管
      *
-     * @param array $param 管理员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -490,7 +490,7 @@ class AdminUserService
     }
 
     /**
-     * 管理员模糊查询
+     * 用户模糊查询
      *
      * @param string $keyword 关键词
      * @param string $field   字段
@@ -509,7 +509,7 @@ class AdminUserService
     }
 
     /**
-     * 管理员精确查询
+     * 用户精确查询
      *
      * @param string $keyword 关键词
      * @param string $field   字段

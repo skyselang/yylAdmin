@@ -43,7 +43,7 @@ class AdminRuleVerifyMiddleware
                 }
 
                 if ($admin_user['is_disable'] == 1) {
-                    exception('账号已禁用，请联系管理员', 401);
+                    exception('账号已禁用，请联系用户', 401);
                 }
 
                 if (!in_array($menu_url, $admin_user['roles'])) {

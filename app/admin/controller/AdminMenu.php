@@ -217,7 +217,7 @@ class AdminMenu
     }
 
     /**
-     * @Apidoc\Title("菜单管理员")
+     * @Apidoc\Title("菜单用户")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
@@ -267,7 +267,7 @@ class AdminMenu
     }
 
     /**
-     * @Apidoc\Title("菜单管理员解除")
+     * @Apidoc\Title("菜单用户解除")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")

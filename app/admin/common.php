@@ -3,14 +3,14 @@
  * @Description  : admin公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-04
  */
 
 use think\facade\Config;
 use think\facade\Request;
 
 /**
- * 获取请求管理员id
+ * 获取请求用户id
  *
  * @return integer
  */
@@ -23,7 +23,7 @@ function admin_user_id()
 }
 
 /**
- * 获取请求管理员token
+ * 获取请求用户token
  *
  * @return string
  */
@@ -36,9 +36,9 @@ function admin_token()
 }
 
 /**
- * 判断管理员是否超级管理员
+ * 判断用户是否超级管理员
  *
- * @param integer $admin_user_id 管理员id
+ * @param integer $admin_user_id 用户id
  * 
  * @return bool
  */

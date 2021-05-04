@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-26
+ * @LastEditTime : 2021-04-30
  */
 
 namespace app\index\controller;
@@ -21,6 +21,7 @@ use EasyWeChat\Factory;
 
 /**
  * @Apidoc\Title("登录退出")
+ * @Apidoc\Sort("3")
  */
 class Login
 {

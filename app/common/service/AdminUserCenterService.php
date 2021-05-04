@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员个人中心
+ * @Description  : 用户个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
  * @LastEditTime : 2021-04-12
@@ -16,7 +16,7 @@ class AdminUserCenterService
     /**
      * 我的信息
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return array
      */
@@ -43,7 +43,7 @@ class AdminUserCenterService
     /**
      * 修改信息
      *
-     * @param array $param 管理员信息
+     * @param array $param 用户信息
      * 
      * @return array
      */
@@ -73,7 +73,7 @@ class AdminUserCenterService
     /**
      * 修改密码
      *
-     * @param array $param 管理员密码
+     * @param array $param 用户密码
      * 
      * @return array
      */

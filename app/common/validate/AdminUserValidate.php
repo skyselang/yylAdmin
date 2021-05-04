@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员管理验证器
+ * @Description  : 用户管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
  * @LastEditTime : 2021-04-18
@@ -27,7 +27,7 @@ class AdminUserValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'admin_user_id.require' => '缺少参数：管理员ID',
+        'admin_user_id.require' => '缺少参数：用户ID',
         'username.require'      => '请输入账号/邮箱/手机',
         'username.length'       => '账号长度为2至32个字符',
         'nickname.require'      => '请输入昵称',
@@ -109,7 +109,7 @@ class AdminUserValidate extends Validate
             ->append('admin_user_id', ['checkAdminUserIsSuper']);
     }
 
-    // 自定义验证规则：管理员是否存在
+    // 自定义验证规则：用户是否存在
     protected function checkAdminUser($value, $rule, $data = [])
     {
         $admin_user_id = $value;
@@ -117,7 +117,7 @@ class AdminUserValidate extends Validate
         $admin_user = AdminUserService::info($admin_user_id);
 
         if ($admin_user['is_delete'] == 1) {
-            return '管理员已被删除：' . $admin_user_id;
+            return '用户已被删除：' . $admin_user_id;
         }
 
         return true;
@@ -219,7 +219,7 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：管理员是否已分配角色或菜单
+    // 自定义验证规则：用户是否已分配角色或菜单
     protected function checkAdminUserRoleMenu($value, $rule, $data = [])
     {
         $admin_user_id = $value;
@@ -233,38 +233,38 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：管理员是否超管
+    // 自定义验证规则：用户是否超管
     protected function checkAdminUserIsSuper($value, $rule, $data = [])
     {
         $admin_is_super = admin_is_super(admin_user_id());
         $admin_user_id  = admin_is_super($value);
 
         if (!$admin_is_super && $admin_user_id) {
-            return '无法对超级管理员进行操作';
+            return '无法对超级用户进行操作';
         }
 
         return true;
     }
 
-    // 自定义验证规则：管理员是否禁用
+    // 自定义验证规则：用户是否禁用
     protected function checkAdminUserIsDisable($value, $rule, $data = [])
     {
         $admin_is_super = admin_is_super($value);
 
         if ($admin_is_super) {
-            return '无法对超级管理员进行操作';
+            return '无法对超级用户进行操作';
         }
 
         return true;
     }
 
-    // 自定义验证规则：管理员删除
+    // 自定义验证规则：用户删除
     protected function checkAdminUserIsDelete($value, $rule, $data = [])
     {
         $admin_is_super = admin_is_super($value);
 
         if ($admin_is_super) {
-            return '无法对超级管理员进行操作';
+            return '无法对超级用户进行操作';
         }
 
         return true;

@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员模型
+ * @Description  : 用户模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-03
  * @LastEditTime : 2021-04-16

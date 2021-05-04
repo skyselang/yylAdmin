@@ -324,7 +324,7 @@ class AdminMenuService
     }
 
     /**
-     * 菜单管理员
+     * 菜单用户
      *
      * @param array   $where 条件
      * @param integer $page  页数
@@ -342,9 +342,9 @@ class AdminMenuService
     }
 
     /**
-     * 菜单管理员解除
+     * 菜单用户解除
      *
-     * @param array $param 菜单管理员id
+     * @param array $param 菜单用户id
      *
      * @return array
      */

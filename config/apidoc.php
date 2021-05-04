@@ -3,7 +3,7 @@ return [
     // 文档标题
     'title' => '接口文档与调试',
     // 文档描述
-    'desc' => '',
+    'desc' => 'yyladmin',
     // 版权申明
     'copyright' => '',
     // 默认作者

@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员个人中心
+ * @Description  : 用户个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
  * @LastEditTime : 2021-04-17
@@ -15,7 +15,7 @@ use app\common\service\AdminMenuService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("管理员个人中心")
+ * @Apidoc\Title("用户个人中心")
  * @Apidoc\Group("admin")
  */
 class AdminUserCenter
@@ -23,7 +23,7 @@ class AdminUserCenter
     /**
      * @Apidoc\Title("我的信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("admin_user_id", type="int", require=true, desc="管理员id")
+     * @Apidoc\Param("admin_user_id", type="int", require=true, desc="用户id")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", 
      *      @Apidoc\Returned(ref="app\common\model\AdminUserModel\info")

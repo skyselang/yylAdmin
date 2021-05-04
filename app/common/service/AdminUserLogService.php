@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员日志
+ * @Description  : 用户日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
  * @LastEditTime : 2021-04-16
@@ -17,7 +17,7 @@ use app\common\utils\IpInfoUtils;
 class AdminUserLogService
 {
     /**
-     * 管理员日志列表
+     * 用户日志列表
      *
      * @param array   $where 条件
      * @param integer $page  分页
@@ -82,9 +82,9 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志信息
+     * 用户日志信息
      *
-     * @param integer $admin_user_log_id 管理员日志id
+     * @param integer $admin_user_log_id 用户日志id
      * 
      * @return array
      */
@@ -98,7 +98,7 @@ class AdminUserLogService
                 ->find();
 
             if (empty($admin_user_log)) {
-                exception('管理员日志不存在：' . $admin_user_log_id);
+                exception('用户日志不存在：' . $admin_user_log_id);
             }
 
             if ($admin_user_log['request_param']) {
@@ -128,7 +128,7 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志添加
+     * 用户日志添加
      *
      * @param array $param 日志数据
      * 
@@ -166,9 +166,9 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志修改
+     * 用户日志修改
      *
-     * @param array $param 管理员日志
+     * @param array $param 用户日志
      * 
      * @return array
      */
@@ -197,9 +197,9 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志删除
+     * 用户日志删除
      *
-     * @param integer $admin_user_log_id 管理员日志id
+     * @param integer $admin_user_log_id 用户日志id
      * 
      * @return array
      */
@@ -224,7 +224,7 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志清除
+     * 用户日志清除
      *
      * @param integer $param 清除条件
      * 
@@ -262,7 +262,7 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志数量统计
+     * 用户日志数量统计
      *
      * @param string $date 日期
      *
@@ -327,7 +327,7 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志日期统计
+     * 用户日志日期统计
      *
      * @param array $date 日期范围
      *
@@ -384,7 +384,7 @@ class AdminUserLogService
     }
 
     /**
-     * 管理员日志地区统计
+     * 用户日志地区统计
      *
      * @param integer $date   日期范围
      * @param string  $region 地区类型

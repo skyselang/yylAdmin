@@ -3,7 +3,7 @@
  * @Description  : 首页
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-17
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-04-30
  */
 
 namespace app\index\controller;
@@ -13,6 +13,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("首页")
+ * @Apidoc\Sort("1")
  */
 class Index
 {

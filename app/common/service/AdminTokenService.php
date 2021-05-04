@@ -17,7 +17,7 @@ class AdminTokenService
     /**
      * Token生成
      * 
-     * @param array $admin_user 管理员信息
+     * @param array $admin_user 用户信息
      * 
      * @return string
      */
@@ -55,7 +55,7 @@ class AdminTokenService
      * Token验证
      *
      * @param string  $token         token
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return json
      */

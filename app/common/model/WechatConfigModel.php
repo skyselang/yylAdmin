@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  :微信配置模型
+ * @Description  : 微信配置模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-04-23
+ * @LastEditTime : 2021-05-04
  */
 
 namespace app\common\model;

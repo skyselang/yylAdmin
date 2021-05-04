@@ -164,7 +164,7 @@ class AdminRole
     }
 
     /**
-     * @Apidoc\Title("角色管理员")
+     * @Apidoc\Title("角色用户")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
      * @Apidoc\Param(ref="paramPaging")
@@ -197,7 +197,7 @@ class AdminRole
     }
 
     /**
-     * @Apidoc\Title("角色管理员解除")
+     * @Apidoc\Title("角色用户解除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")

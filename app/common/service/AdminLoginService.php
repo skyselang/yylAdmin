@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-04
  */
 
 namespace app\common\service;
@@ -78,7 +78,7 @@ class AdminLoginService
     /**
      * 退出
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return array
      */

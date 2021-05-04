@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-15
+ * @LastEditTime : 2021-04-30
  */
 
 namespace app\common\service;
@@ -21,7 +21,7 @@ class AdminUtilsService
      */
     public static function server()
     {
-        $server_key = 'system:server';
+        $server_key = 'Utils:server';
         $server = Cache::get($server_key);
         if (empty($server)) {
             try {

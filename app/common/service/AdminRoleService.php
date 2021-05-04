@@ -240,7 +240,7 @@ class AdminRoleService
     }
 
     /**
-     * 角色管理员
+     * 角色用户
      *
      * @param array   $where 条件
      * @param integer $page  页数
@@ -258,9 +258,9 @@ class AdminRoleService
     }
 
     /**
-     * 角色管理员解除
+     * 角色用户解除
      *
-     * @param array $param 菜单管理员id
+     * @param array $param 菜单用户id
      *
      * @return array
      */

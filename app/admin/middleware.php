@@ -7,7 +7,7 @@
  */
 
 return [
-    // 管理员日志中间件
+    // 用户日志中间件
     \app\admin\middleware\AdminUserLogMiddleware::class,
     // Token验证中间件
     \app\admin\middleware\AdminTokenVerifyMiddleware::class,

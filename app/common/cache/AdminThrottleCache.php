@@ -3,7 +3,7 @@
  * @Description  : 请求频率缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-04
  */
 
 namespace app\common\cache;
@@ -15,7 +15,7 @@ class AdminThrottleCache
     /**
      * 缓存key
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * @param string  $menu_url      菜单url
      * 
      * @return string
@@ -30,9 +30,9 @@ class AdminThrottleCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * @param string  $menu_url      菜单url
-     * @param integer $ttl        有效时间（秒）
+     * @param integer $ttl           有效时间（秒）
      * 
      * @return bool
      */
@@ -49,7 +49,7 @@ class AdminThrottleCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * @param string  $menu_url      菜单url
      * 
      * @return string
@@ -65,7 +65,7 @@ class AdminThrottleCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * @param string  $menu_url      菜单url
      * 
      * @return bool
@@ -81,7 +81,7 @@ class AdminThrottleCache
     /**
      * 缓存自增
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * @param string  $menu_url      菜单url
      * 
      * @return bool

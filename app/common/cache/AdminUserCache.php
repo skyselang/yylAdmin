@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 管理员缓存
+ * @Description  : 用户缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
  * @LastEditTime : 2021-04-21
@@ -17,7 +17,7 @@ class AdminUserCache
     /**
      * 缓存key
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return string
      */
@@ -31,8 +31,8 @@ class AdminUserCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_user_id 管理员id
-     * @param array   $admin_user    管理员信息
+     * @param integer $admin_user_id 用户id
+     * @param array   $admin_user    用户信息
      * @param integer $ttl           有效时间（秒）
      * 
      * @return bool
@@ -55,9 +55,9 @@ class AdminUserCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
-     * @return array 管理员信息
+     * @return array 用户信息
      */
     public static function get($admin_user_id)
     {
@@ -70,7 +70,7 @@ class AdminUserCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return bool
      */
@@ -85,7 +85,7 @@ class AdminUserCache
     /**
      * 缓存更新
      *
-     * @param integer $admin_user_id 管理员id
+     * @param integer $admin_user_id 用户id
      * 
      * @return bool
      */
