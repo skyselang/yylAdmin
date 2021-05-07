@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-30
+ * @LastEditTime : 2021-05-05
  */
 
 namespace app\common\service;
@@ -14,44 +14,6 @@ use app\common\utils\IpInfoUtils;
 
 class AdminUtilsService
 {
-    /**
-     * 服务器信息
-     *
-     * @return array
-     */
-    public static function server()
-    {
-        $server_key = 'Utils:server';
-        $server = Cache::get($server_key);
-        if (empty($server)) {
-            try {
-                $mysql = Db::query('select version() as version');
-                $server['mysql'] = $mysql[0]['version']; //mysql
-            } catch (\Throwable $th) {
-                $server['mysql'] = '';
-            }
-
-            $server['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
-            $server['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
-            $server['php_version']         = PHP_VERSION;                               //php
-            $server['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //protocol
-            $server['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
-            $server['domain']              = $_SERVER['SERVER_NAME'];                   //domain
-            $server['port']                = $_SERVER['SERVER_PORT'];                   //port
-            $server['php_sapi_name']       = php_sapi_name();                           //php_sapi_name
-            $server['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //max_execution_time
-            $server['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
-            $server['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
-
-            $server_ttl = 12 * 60 * 60;
-            Cache::set($server_key, $server, $server_ttl);
-        }
-
-        $data = $server;
-
-        return $data;
-    }
-
     /**
      * 随机字符串
      *
@@ -223,5 +185,78 @@ class AdminUtilsService
         $ipinfo = IpInfoUtils::info($ip);
 
         return $ipinfo;
+    }
+
+    /**
+     * 服务器信息
+     *
+     * @return array
+     */
+    public static function server()
+    {
+        $server_key = 'Utils:server';
+        $server = Cache::get($server_key);
+        if (empty($server)) {
+            try {
+                $mysql = Db::query('select version() as version');
+                $server['mysql'] = $mysql[0]['version']; //mysql
+            } catch (\Throwable $th) {
+                $server['mysql'] = '';
+            }
+
+            $server['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
+            $server['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
+            $server['php_version']         = PHP_VERSION;                               //php
+            $server['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //protocol
+            $server['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
+            $server['domain']              = $_SERVER['SERVER_NAME'];                   //domain
+            $server['port']                = $_SERVER['SERVER_PORT'];                   //port
+            $server['php_sapi_name']       = php_sapi_name();                           //php_sapi_name
+            $server['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //max_execution_time
+            $server['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
+            $server['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
+
+            $server_ttl = 12 * 60 * 60;
+            Cache::set($server_key, $server, $server_ttl);
+        }
+
+        $cache_key = "Utils:cache";
+        $cache = Cache::get($cache_key);
+        if (empty($cache)) {
+            $config = Cache::getConfig();
+            if ($config['default'] == 'redis') {
+                $Cache = Cache::handler();
+                $cache = $Cache->info();
+
+                $byte['type']  = 'B';
+                $byte['value'] = $cache['used_memory_lua'];
+
+                $cache['used_memory_lua_human'] = AdminUtilsService::bytetran($byte)['KB'] . 'K';
+                $cache['uptime_in_days']        = $cache['uptime_in_days'] . '天';
+            } elseif ($config['default'] == 'memcache') {
+                $Cache = Cache::handler();
+                $cache = $Cache->getstats();
+
+                $cache['time']           = date('Y-m-d H:i:s', $cache['time']);
+                $cache['uptime']         = $cache['uptime'] / (24 * 60 * 60) . ' 天';
+                $cache['bytes_read']     = AdminUtilsService::bytetran(['type' => 'B', 'value' => $cache['bytes_read']])['MB'] . ' MB';
+                $cache['bytes_written']  = AdminUtilsService::bytetran(['type' => 'B', 'value' => $cache['bytes_written']])['MB'] . ' MB';
+                $cache['limit_maxbytes'] = AdminUtilsService::bytetran(['type' => 'B', 'value' => $cache['limit_maxbytes']])['MB'] . ' MB';
+            } elseif ($config['default'] == 'wincache') {
+                $Cache = Cache::handler();
+
+                $cache['wincache_info']['wincache_fcache_meminfo'] = wincache_fcache_meminfo();
+                $cache['wincache_info']['wincache_ucache_meminfo'] = wincache_ucache_meminfo();
+                $cache['wincache_info']['wincache_rplist_meminfo'] = wincache_rplist_meminfo();
+            }
+
+            $cache['type'] = $config['default'];
+
+            Cache::set($cache_key, $cache, 30);
+        }
+
+        $data = array_merge($server, $cache);
+
+        return $data;
     }
 }

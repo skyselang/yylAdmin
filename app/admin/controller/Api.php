@@ -3,7 +3,7 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -26,7 +26,9 @@ class Api
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\ApiModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\ApiModel\list")
+     *      )
      * )
      */
     public function list()

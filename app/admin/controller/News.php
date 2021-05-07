@@ -3,7 +3,7 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -30,7 +30,9 @@ class News
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\NewsModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\NewsModel\list")
+     *      )
      * )
      */
     public function list()

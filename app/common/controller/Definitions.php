@@ -3,7 +3,7 @@
  * @Description  : 接口文档通用注释
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-01
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\controller;
@@ -52,7 +52,7 @@ class Definitions
     /**
      * 返回参数：验证码
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *     @Apidoc\Param("verify_switch", type="bool", default="", desc="验证码是否显示"),
+     *     @Apidoc\Param("verify_switch", type="bool", default="", desc="验证码是否开启"),
      *     @Apidoc\Param("verify_id", type="string", default="", desc="验证码id"),
      *     @Apidoc\Param("verify_src", type="string", default="", desc="验证码图片")
      * )

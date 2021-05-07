@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户个人中心
+ * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-04-12
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\service;

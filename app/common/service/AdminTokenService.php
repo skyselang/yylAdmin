@@ -3,7 +3,7 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-12
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\service;
@@ -21,16 +21,14 @@ class AdminTokenService
      * 
      * @return string
      */
-    public static function create($admin_user = [])
+    public static function create($admin_user)
     {
-        $setting = AdminSettingService::info();
-        $token   = $setting['token'];
+        $setting = AdminSettingService::tokenInfo();
 
-        $key = Config::get('admin.token.key');  //密钥
-        $iss = $token['iss'];                   //签发者
-        $iat = time();                          //签发时间
-        $nbf = time();                          //生效时间
-        $exp = time() + $token['exp'] * 3600;   //过期时间
+        $key = Config::get('admin.token.key');         //密钥
+        $iat = time();                                 //签发时间
+        $nbf = time();                                 //生效时间
+        $exp = time() + $setting['token_exp'] * 3600;  //过期时间
 
         $data = [
             'admin_user_id' => $admin_user['admin_user_id'],
@@ -39,7 +37,6 @@ class AdminTokenService
         ];
 
         $payload = [
-            'iss'  => $iss,
             'iat'  => $iat,
             'nbf'  => $nbf,
             'exp'  => $exp,

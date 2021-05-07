@@ -10,5 +10,7 @@ var config = {
     SHOW_API_URL: true,
     // 是否显示接口请求类型
     SHOW_API_METHOD: true
-  }
+  },
+  // 当字段无默认值时，使用字段类型为默认值
+  USE_TYPE_DEFAULT_VALUE: false
 };

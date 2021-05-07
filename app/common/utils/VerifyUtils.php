@@ -3,18 +3,20 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-03-27
+ * @LastEditTime : 2021-05-07
  */
 
-namespace app\common\service;
+namespace app\common\utils;
 
+use think\facade\Cache;
 use think\facade\Config;
-use app\common\cache\VerifyCache;
 
-class VerifyService
+class VerifyUtils
 {
     // 验证码开关
     protected static $switch = false;
+    // 验证码类型：1数字，2字母，3数字字母，4算术，5中文
+    protected static $type = 1;
     // 验证码配置
     protected static $config = null;
     // 验证码图片实例
@@ -49,126 +51,52 @@ class VerifyService
     protected static $bg = [243, 251, 254];
     // 算术验证码
     protected static $math = false;
+    // 缓存前缀
+    protected static $prefix = 'Verify:';
 
     /**
      * 验证码配置
      * 
-     * @param array $config 验证码配置
-     * 
      * @return void
      */
-    protected static function configure($config = [])
+    protected static function configure()
     {
-        if ($config) {
-            self::$switch = $config['switch'];
-            // 是否画混淆曲线
-            self::$useCurve = $config['curve'];
-            // 是否添加杂点
-            self::$useNoise = $config['noise'];
-            // 使用背景图片
-            self::$useImgBg = $config['bgimg'];
-            // 验证码类型：1数字，2字母，3数字字母，4算术，5中文
-            if ($config['type'] == 1) {
-                self::$codeSet = '0123456789';
-            } elseif ($config['type'] == 2) {
-                self::$codeSet = 'abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-            } elseif ($config['type'] == 3) {
-                self::$codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-            } elseif ($config['type'] == 4) {
-                self::$math = true;
-            } elseif ($config['type'] == 5) {
-                self::$useZh = true;
-            } else {
-                self::$codeSet = '0123456789';
+        $config = Config::get('captcha', []);
+
+        foreach ($config as $key => $val) {
+            if (property_exists(__CLASS__, $key)) {
+                self::${$key} = $val;
             }
-            // 验证码位数
-            self::$length = $config['length'];
-            // 验证码有效时间
-            self::$expire = $config['expire'];
+        }
+
+        // 验证码类型：1数字，2字母，3数字字母，4算术，5中文
+        if ($config['type'] == 1) {
+            self::$codeSet = '0123456789';
+        } elseif ($config['type'] == 2) {
+            self::$codeSet = 'abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
+        } elseif ($config['type'] == 3) {
+            self::$codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
+        } elseif ($config['type'] == 4) {
+            self::$math = true;
+        } elseif ($config['type'] == 5) {
+            self::$useZh = true;
         } else {
-            $config = Config::get('captcha', []);
-            foreach ($config as $key => $val) {
-                if (property_exists(__CLASS__, $key)) {
-                    self::${$key} = $val;
-                }
-            }
+            self::$codeSet = '0123456789';
         }
     }
 
     /**
-     * 验证码创建
+     * 验证码生成
      * 
-     * @return array
+     * @param array $verify 验证码信息
      */
-    protected static function generate()
+    public static function create()
     {
-        $key = md5(uniqid(mt_rand(10, 99), true));
-        $bag = '';
-
-        if (self::$math) {
-            self::$useZh  = false;
-            self::$length = 5;
-
-            $x   = random_int(10, 30);
-            $y   = random_int(1, 9);
-            $bag = "{$x} + {$y} = ";
-            $and = $x + $y;
-
-            VerifyCache::set($key, $and, self::$expire);
-        } else {
-            if (self::$useZh) {
-                $characters = preg_split('/(?<!^)(?!$)/u', self::$zhSet);
-            } else {
-                $characters = str_split(self::$codeSet);
-            }
-
-            for ($i = 0; $i < self::$length; $i++) {
-                $bag .= $characters[rand(0, count($characters) - 1)];
-            }
-
-            $val = mb_strtolower($bag, 'UTF-8');
-
-            VerifyCache::set($key, $val, self::$expire);
-        }
-
-        return [
-            'key' => $key,
-            'val' => $bag,
-        ];
-    }
-
-    /**
-     * 验证码验证
-     * 
-     * @param string $verify_id   验证码id
-     * @param string $verify_code 验证码
-     * 
-     * @return bool 验证码是否正确
-     */
-    public static function check($verify_id, $verify_code)
-    {
-        $verify = VerifyCache::get($verify_id);
-
-        if ($verify && ($verify == $verify_code)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 验证码输出
-     * 并把验证码的值保存到缓存中
-     * 
-     * @param array $config 验证码配置
-     */
-    public static function create($config = [])
-    {
-        self::configure($config);
+        self::configure();
 
         $switch = self::$switch;
 
-        if (!$switch) {
+        if (empty($switch)) {
             $verify['verify_switch'] = $switch;
             $verify['verify_id']     = '';
             $verify['verify_src']    = '';
@@ -242,11 +170,80 @@ class VerifyService
         @unlink($tmpfname);
         imagedestroy(self::$im);
 
-        $verify['verify_switch'] = self::$switch;
+        $verify['verify_switch'] = $switch;
         $verify['verify_id']     = $generator['key'];
         $verify['verify_src']    = $img_base64;
 
         return $verify;
+    }
+
+    /**
+     * 验证码创建
+     * 并把验证码保存到缓存中
+     * 
+     * @return array
+     */
+    protected static function generate()
+    {
+        $id = uniqid('verify');
+        $key = self::$prefix . $id;
+        $bag = '';
+
+        if (self::$math) {
+            self::$useZh  = false;
+            self::$length = 5;
+
+            $x   = random_int(10, 30);
+            $y   = random_int(1, 9);
+            $bag = "{$x} + {$y} = ";
+            $and = $x + $y;
+
+            Cache::set($key, $and, self::$expire);
+        } else {
+            if (self::$useZh) {
+                $characters = preg_split('/(?<!^)(?!$)/u', self::$zhSet);
+            } else {
+                $characters = str_split(self::$codeSet);
+            }
+
+            for ($i = 0; $i < self::$length; $i++) {
+                $bag .= $characters[rand(0, count($characters) - 1)];
+            }
+
+            $val = mb_strtolower($bag, 'UTF-8');
+
+            Cache::set($key, $val, self::$expire);
+        }
+
+        return [
+            'key' => $id,
+            'val' => $bag,
+        ];
+    }
+
+    /**
+     * 验证码验证
+     * 
+     * @param string $verify_id   验证码id
+     * @param string $verify_code 验证码
+     * 
+     * @return bool 验证码是否正确
+     */
+    public static function check($verify_id, $verify_code)
+    {
+        $switch = self::$switch;
+        if (empty($switch)) {
+            return true;
+        }
+
+        $key    = self::$prefix . $verify_id;
+        $verify = Cache::get($key);
+        if ($verify && ($verify == $verify_code)) {
+            Cache::delete($key);
+            return true;
+        }
+
+        return false;
     }
 
     /**

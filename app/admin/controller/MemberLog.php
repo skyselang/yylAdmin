@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -32,7 +32,9 @@ class MemberLog
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\MemberLogModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
+     *      )
      * )
      */
     public function list()

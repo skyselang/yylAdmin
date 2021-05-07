@@ -3,7 +3,7 @@
  * @Description  : 接口管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-18
+ * @LastEditTime : 2021-05-07
  */
 
 namespace app\common\validate;
@@ -16,14 +16,14 @@ class ApiValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'api_id'     => ['require', 'checkApiId'],
-        'api_name'   => ['require', 'checkApi'],
+        'api_id'   => ['require', 'checkApiId'],
+        'api_name' => ['require', 'checkApi'],
     ];
 
     // 错误信息
     protected $message = [
-        'api_id.require'      => '缺少参数：接口id',
-        'api_name.require'    => '请输入接口名称',
+        'api_id.require'   => '缺少参数：接口id',
+        'api_name.require' => '请输入接口名称',
     ];
 
     // 验证场景

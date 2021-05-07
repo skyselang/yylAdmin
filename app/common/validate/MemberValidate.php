@@ -30,9 +30,9 @@ class MemberValidate extends Validate
     // 错误信息
     protected $message = [
         'member_id.require'     => '缺少参数：会员id',
-        'username.require'      => '请输入会员名',
-        'username.length'       => '会员名长度为2至32个字符',
-        'username.alphaDash'    => '会员名由字母、数字、下划线、破折号组成',
+        'username.require'      => '请输入账号',
+        'username.length'       => '账号长度为2至32个字符',
+        'username.alphaDash'    => '账号由字母、数字、下划线、破折号组成',
         'nickname.require'      => '请输入昵称',
         'nickname.length'       => '昵称长度为1至32个字符',
         'password.require'      => '请输入密码',
@@ -89,7 +89,7 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：会员名是否已存在
+    // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
         $member_id = isset($data['member_id']) ? $data['member_id'] : '';
@@ -107,7 +107,7 @@ class MemberValidate extends Validate
             ->find();
 
         if ($member) {
-            return '会员名已存在：' . $username;
+            return '账号已存在：' . $username;
         }
 
         return true;

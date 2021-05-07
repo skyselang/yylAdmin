@@ -3,15 +3,15 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-04-30
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
 use app\common\validate\MemberValidate;
-use app\common\validate\VerifyValidate;
 use app\common\service\SettingService;
+use app\common\utils\VerifyUtils;
 use app\index\service\RegisterService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -21,6 +21,24 @@ use hg\apidoc\annotation as Apidoc;
  */
 class Register
 {
+    /**
+     * @Apidoc\Title("验证码")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnVerify")
+     */
+    public function verify()
+    {
+        $setting = SettingService::verifyInfo();
+
+        if ($setting['verify_register']) {
+            $data = VerifyUtils::create();
+        } else {
+            $data['verify_switch'] = $setting['verify_register'];
+        }
+
+        return success($data);
+    }
+
     /**
      * @Apidoc\Title("注册")
      * @Apidoc\Method("POST")
@@ -39,10 +57,12 @@ class Register
         $param['verify_id']   = Request::param('verify_id/s', '');
         $param['verify_code'] = Request::param('verify_code/s', '');
 
-        $config = SettingService::info();
-        $verify = $config['verify'];
-        if ($verify['switch']) {
-            validate(VerifyValidate::class)->scene('check')->check($param);
+        $setting = SettingService::verifyInfo();
+        if ($setting['verify_register']) {
+            $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
+            if (empty($check)) {
+                exception('验证码错误');
+            }
         }
 
         unset($param['verify_id'], $param['verify_code']);

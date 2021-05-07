@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户日志
+ * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-04-18
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -16,13 +16,13 @@ use app\common\service\AdminUserService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("用户日志")
+ * @Apidoc\Title("日志管理")
  * @Apidoc\Group("admin")
  */
 class AdminUserLog
 {
     /**
-     * @Apidoc\Title("用户日志列表")
+     * @Apidoc\Title("日志管理列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\log")
@@ -32,7 +32,9 @@ class AdminUserLog
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminUserLogModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\AdminUserLogModel\list")
+     *      )
      * )
      */
     public function list()
@@ -84,7 +86,7 @@ class AdminUserLog
     }
 
     /**
-     * @Apidoc\Title("用户日志信息")
+     * @Apidoc\Title("日志管理信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\id")
      * @Apidoc\Returned(ref="return")
@@ -101,14 +103,14 @@ class AdminUserLog
         $data = AdminUserLogService::info($param['admin_user_log_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('用户日志已被删除：' . $param['admin_user_log_id']);
+            exception('日志管理已被删除：' . $param['admin_user_log_id']);
         }
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("用户日志删除")
+     * @Apidoc\Title("日志管理删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\dele")
@@ -126,7 +128,7 @@ class AdminUserLog
     }
 
     /**
-     * @Apidoc\Title("用户日志清除")
+     * @Apidoc\Title("日志管理清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
@@ -146,7 +148,7 @@ class AdminUserLog
     }
 
     /**
-     * @Apidoc\Title("用户日志统计")
+     * @Apidoc\Title("日志管理统计")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")

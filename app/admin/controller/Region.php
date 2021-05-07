@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -24,14 +24,16 @@ class Region
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param("type", type="string", default="list", desc="返回的数据类型：list列表，tree树形")
-     * @Apidoc\Param("region_pid", type="string", default="", desc="")
-     * @Apidoc\Param("region_id", type="string", default="", desc="")
-     * @Apidoc\Param("region_name", type="string", default="", desc="")
-     * @Apidoc\Param("region_pinyin", type="string", default="", desc="")
+     * @Apidoc\Param("region_pid", type="string", default="", desc="pid")
+     * @Apidoc\Param("region_id", type="string", default="", desc="id")
+     * @Apidoc\Param("region_name", type="string", default="", desc="名称")
+     * @Apidoc\Param("region_pinyin", type="string", default="", desc="拼音")
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\RegionModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\RegionModel\list")
+     *      )
      * )
      */
     public function list()

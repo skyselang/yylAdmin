@@ -3,7 +3,7 @@
  * @Description  : 地区
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-14
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\index\controller;
@@ -25,7 +25,9 @@ class Region
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\RegionModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\RegionModel\list")
+     *      )
      * )
      */
     public function list()

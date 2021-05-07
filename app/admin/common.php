@@ -3,7 +3,7 @@
  * @Description  : admin公共文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-05-04
+ * @LastEditTime : 2021-05-06
  */
 
 use think\facade\Config;
@@ -36,7 +36,7 @@ function admin_token()
 }
 
 /**
- * 判断用户是否超级管理员
+ * 判断用户是否超管
  *
  * @param integer $admin_user_id 用户id
  * 

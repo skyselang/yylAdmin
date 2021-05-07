@@ -3,7 +3,7 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-20
- * @LastEditTime : 2021-04-24
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\index\service;
@@ -13,7 +13,6 @@ use app\common\service\MemberLogService;
 
 class RegisterService
 {
-
     /**
      * 注册
      *

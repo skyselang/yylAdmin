@@ -3,14 +3,13 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-04
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\service;
 
 use think\facade\Db;
 use app\common\cache\AdminUserCache;
-use app\common\cache\VerifyCache;
 use app\common\utils\IpInfoUtils;
 
 class AdminLoginService
@@ -69,8 +68,6 @@ class AdminLoginService
 
         $data['admin_user_id'] = $admin_user_id;
         $data['admin_token']   = $admin_user['admin_token'];
-
-        VerifyCache::del($param['verify_id']);
 
         return $data;
     }

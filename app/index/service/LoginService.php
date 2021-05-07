@@ -3,14 +3,13 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-24
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\index\service;
 
 use think\facade\Db;
 use app\common\cache\MemberCache;
-use app\common\cache\VerifyCache;
 use app\common\utils\IpInfoUtils;
 use app\common\service\MemberLogService;
 use app\common\service\MemberService;
@@ -41,7 +40,7 @@ class LoginService
             ->find();
 
         if (empty($member)) {
-            exception('会员名或密码错误');
+            exception('账号或密码错误');
         }
 
         if ($member['is_disable'] == 1) {
@@ -64,8 +63,6 @@ class LoginService
 
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
-
-        VerifyCache::del($param['verify_id']);
 
         return $member;
     }

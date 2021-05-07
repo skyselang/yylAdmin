@@ -39,7 +39,7 @@ return [
         // 是否启用密码验证
         'enable' => true,
         // 验证密码
-        'password' => "XFWWDiIB5LlV",
+        'password' => "WYUtY8UiGNYM",
         // 密码加密盐
         'secret_key' => "6L6eGcNmD0C8",
     ],

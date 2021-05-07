@@ -3,7 +3,7 @@
  * @Description  : 日期时间
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2021-03-30
+ * @LastEditTime : 2021-05-07
  */
 
 namespace app\common\utils;
@@ -37,10 +37,8 @@ class DatetimeUtils
      */
     public static function thisWeek()
     {
-        $N   = date('N');
-        $d   = 7 - $N;
-        $sta = date('Y-m-d', strtotime("-{$N} day"));
-        $end = date('Y-m-d', strtotime("+{$d} day"));
+        $sta = date('Y-m-d', strtotime('this week'));
+        $end = date('Y-m-d', strtotime('last day next week +0 day'));
 
         return [$sta, $end];
     }
@@ -62,7 +60,7 @@ class DatetimeUtils
 
             $weeks[] = $date;
         }
-        
+
         return $weeks;
     }
 
@@ -80,7 +78,7 @@ class DatetimeUtils
         $N    = $N - 1;
         $sta  = date('Y-m-d', strtotime("-{$N} day", $time));
         $end  = date('Y-m-d', strtotime("+{$d} day", $time));
-        
+
         return [$sta, $end];
     }
 
@@ -104,7 +102,7 @@ class DatetimeUtils
 
             $weeks[] = $date;
         }
-        
+
         return $weeks;
     }
 
@@ -119,10 +117,10 @@ class DatetimeUtils
     {
         if ($month == 'thismonth') {
             $month = date('Y-m');
-        }
-
-        if ($month == 'lastmonth') {
+        } elseif ($month == 'lastmonth') {
             $month = date('Y-m', strtotime('-1 month', strtotime(date('Y-m', time()))));
+        } elseif ($month == 'nextmonth') {
+            $month = date('Y-m', strtotime('+1 month', strtotime(date('Y-m', time()))));
         }
 
         $t    = date('t', strtotime($month));
@@ -132,7 +130,7 @@ class DatetimeUtils
         for ($i = 0; $i < $t; $i++) {
             $dates[] = date('Y-m-d', strtotime("+{$i} day", $time));
         }
-        
+
         return $dates;
     }
 
@@ -177,7 +175,7 @@ class DatetimeUtils
         $t   = date('t', $m);
         $sta = date('Y-m', $m) . '-01';
         $end = date('Y-m', $m) . '-' . $t;
-        
+
         return [$sta, $end];
     }
 
@@ -258,7 +256,7 @@ class DatetimeUtils
             $dates[] = date('Y-m-d', $dt_sta);
             $dt_sta  = strtotime('+1 day', $dt_sta);
         }
-        
+
         return $dates;
     }
 

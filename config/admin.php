@@ -3,11 +3,11 @@
  * @Description  : admin配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-14
+ * @LastEditTime : 2021-05-06
  */
 
 return [
-    // 超级管理员id（所有权限）
+    // 超管用户id（所有权限）
     'super_ids' => [1],
     // 是否记录日志
     'is_log' => true,
@@ -15,10 +15,6 @@ return [
     'token' => [
         // 密钥
         'key' => '2V81aWjC9k8f',
-        // 签发者
-        'iss' => 'yylAdmin',
-        // 有效时间(小时)
-        'exp' => 7200,
     ],
     // admin_user_id key
     'user_id_key' => 'AdminUserId',

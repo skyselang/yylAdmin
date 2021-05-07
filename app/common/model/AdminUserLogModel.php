@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户模型
+ * @Description  : 用户日志模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-17
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\model;

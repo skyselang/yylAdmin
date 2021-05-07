@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-30
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -21,42 +21,10 @@ use hg\apidoc\annotation as Apidoc;
 class AdminUtils
 {
     /**
-     * @Apidoc\Title("接口文档")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
-     */
-    public function apidoc()
-    {
-        $admin_user      = AdminUserService::info(admin_user_id());
-        $admin_token     = $admin_user['admin_token'];
-        $admin_token_sub = substr($admin_token, 0, 16) . '...';
-
-        $data['apidoc_url']      = server_url() . '/apidoc/index.html?t=' . time();
-        $data['apidoc_pwd']      = config('apidoc.auth.password');
-        $data['admin_user_id']   = $admin_user['admin_user_id'];
-        $data['admin_token']     = $admin_token;
-        $data['admin_token_sub'] = $admin_token_sub;
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("服务器信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
-     */
-    public function server()
-    {
-        $data = AdminUtilsService::server();
-
-        return success($data);
-    }
-
-    /**
      * @Apidoc\Title("随机字符串")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("strrand_ids", type="array", default="[1,2,3]", desc="字符类型")
-     * @Apidoc\Param("strrand_len", type="int", default="12", desc="字符长度")
+     * @Apidoc\Param("strrand_ids", type="array", require=true, default="[1,2,3]", desc="字符类型")
+     * @Apidoc\Param("strrand_len", type="int", require=true, default="12", desc="字符长度")
      * @Apidoc\Returned(ref="return")
      */
     public function strrand()
@@ -135,6 +103,18 @@ class AdminUtils
         }
 
         $data = AdminUtilsService::ipinfo($ip);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("服务器信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="return")
+     */
+    public function server()
+    {
+        $data = AdminUtilsService::server();
 
         return success($data);
     }

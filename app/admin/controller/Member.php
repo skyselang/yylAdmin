@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -24,7 +24,7 @@ class Member
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param("member_id", type="int", default="", desc="会员ID")
-     * @Apidoc\Param("username", type="string", default="", desc="会员名")
+     * @Apidoc\Param("username", type="string", default="", desc="账号")
      * @Apidoc\Param("phone", type="string", default="", desc="手机")
      * @Apidoc\Param("email", type="string", default="", desc="邮箱")
      * @Apidoc\Param("date_type", type="string", default="", desc="日期类型字段")
@@ -32,7 +32,9 @@ class Member
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\MemberModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\MemberModel\list")
+     *      )
      * )
      */
     public function list()

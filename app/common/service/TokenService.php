@@ -3,7 +3,7 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\service;
@@ -21,16 +21,14 @@ class TokenService
      * 
      * @return string
      */
-    public static function create($member = [])
+    public static function create($member)
     {
-        $setting = SettingService::info();
-        $token   = $setting['token'];
+        $setting = SettingService::tokenInfo();
 
-        $key = Config::get('index.token.key');  //密钥
-        $iss = $token['iss'];                   //签发者
-        $iat = time();                          //签发时间
-        $nbf = time();                          //生效时间
-        $exp = time() + $token['exp'] * 3600;   //过期时间
+        $key = Config::get('index.token.key');         //密钥
+        $iat = time();                                 //签发时间
+        $nbf = time();                                 //生效时间
+        $exp = time() + $setting['token_exp'] * 3600;  //过期时间
 
         $data = [
             'member_id'  => $member['member_id'],
@@ -39,7 +37,6 @@ class TokenService
         ];
 
         $payload = [
-            'iss'  => $iss,
             'iat'  => $iat,
             'nbf'  => $nbf,
             'exp'  => $exp,

@@ -3,7 +3,7 @@
  * @Description  : 用户管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-18
+ * @LastEditTime : 2021-05-07
  */
 
 namespace app\common\validate;
@@ -22,7 +22,7 @@ class AdminUserValidate extends Validate
         'password'      => ['require', 'length' => '6,18'],
         'email'         => ['email', 'checkEmail'],
         'phone'         => ['mobile', 'checkPhone'],
-        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '51200'],
+        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '102400'],
     ];
 
     // 错误信息
@@ -40,7 +40,7 @@ class AdminUserValidate extends Validate
         'avatar.file'           => '请选择图片文件',
         'avatar.image'          => '请选择图片格式文件',
         'avatar.fileExt'        => '请选择jpg、png、gif格式图片',
-        'avatar.fileSize'       => '请选择大小小于50kb图片',
+        'avatar.fileSize'       => '请选择大小小于100kb图片',
     ];
 
     // 验证场景

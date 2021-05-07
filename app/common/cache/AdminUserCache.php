@@ -3,14 +3,14 @@
  * @Description  : 用户缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2021-04-21
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\cache;
 
-use app\common\service\AdminSettingService;
-use app\common\service\AdminUserService;
 use think\facade\Cache;
+use app\common\service\AdminUserService;
+use app\common\service\AdminSettingService;
 
 class AdminUserCache
 {
@@ -42,9 +42,8 @@ class AdminUserCache
         $key = self::key($admin_user_id);
         $val = $admin_user;
         if (empty($ttl)) {
-            $setting = AdminSettingService::info();
-            $token   = $setting['token'];
-            $ttl     = $token['exp'] * 3600;
+            $setting = AdminSettingService::tokenInfo();
+            $ttl     = $setting['token_exp'] * 3600;
         }
 
         $res = Cache::set($key, $val, $ttl);

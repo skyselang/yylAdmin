@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-16
+ * @LastEditTime : 2021-05-07
  */
 
 namespace app\common\service;
@@ -30,7 +30,7 @@ class AdminUserService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'admin_user_id,username,nickname,phone,email,sort,is_disable,is_super,login_num,login_ip,login_time';
+            $field = 'admin_user_id,username,nickname,phone,email,sort,is_disable,is_super,login_num,create_time,login_time';
         }
 
         if (empty($order)) {
@@ -270,7 +270,7 @@ class AdminUserService
     }
 
     /**
-     * 用户修改头像
+     * 用户更换头像
      *
      * @param array $param 头像信息
      * 

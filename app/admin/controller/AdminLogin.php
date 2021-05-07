@@ -3,17 +3,16 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\common\validate\AdminVerifyValidate;
 use app\common\validate\AdminUserValidate;
-use app\common\service\VerifyService;
 use app\common\service\AdminLoginService;
 use app\common\service\AdminSettingService;
+use app\common\utils\VerifyUtils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -30,10 +29,12 @@ class AdminLogin
      */
     public function verify()
     {
-        $config = AdminSettingService::info();
-        $verify = $config['verify'];
-
-        $data = VerifyService::create($verify);
+        $setting = AdminSettingService::verifyInfo();
+        if ($setting['verify_switch']) {
+            $data = VerifyUtils::create();
+        } else {
+            $data['verify_switch'] = $setting['verify_switch'];
+        }
 
         return success($data);
     }
@@ -56,10 +57,12 @@ class AdminLogin
         $param['verify_id']   = Request::param('verify_id/s', '');
         $param['verify_code'] = Request::param('verify_code/s', '');
 
-        $config = AdminSettingService::info();
-        $verify = $config['verify'];
-        if ($verify['switch']) {
-            validate(AdminVerifyValidate::class)->scene('check')->check($param);
+        $setting = AdminSettingService::verifyInfo();
+        if ($setting['verify_switch']) {
+            $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
+            if (empty($check)) {
+                exception('验证码错误');
+            }
         }
 
         validate(AdminUserValidate::class)->scene('login')->check($param);

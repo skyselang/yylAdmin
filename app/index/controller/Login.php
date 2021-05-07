@@ -3,19 +3,18 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-30
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\index\controller;
 
-use think\facade\Request;
 use think\facade\Cache;
-use app\common\service\VerifyService;
+use think\facade\Request;
+use app\index\service\LoginService;
 use app\common\service\SettingService;
 use app\common\validate\MemberValidate;
-use app\common\validate\VerifyValidate;
-use app\index\service\LoginService;
-use app\common\service\WechatConfigService;
+use app\common\service\WechatSettingService;
+use app\common\utils\VerifyUtils;
 use hg\apidoc\annotation as Apidoc;
 use EasyWeChat\Factory;
 
@@ -32,11 +31,13 @@ class Login
      */
     public function verify()
     {
-        $config = SettingService::info();
+        $setting = SettingService::verifyInfo();
 
-        $verify = $config['verify'];
-
-        $data = VerifyService::create($verify);
+        if ($setting['verify_login']) {
+            $data = VerifyUtils::create();
+        } else {
+            $data['verify_switch'] = $setting['verify_login'];
+        }
 
         return success($data);
     }
@@ -59,10 +60,12 @@ class Login
         $param['verify_id']   = Request::param('verify_id/s', '');
         $param['verify_code'] = Request::param('verify_code/s', '');
 
-        $config = SettingService::info();
-        $verify = $config['verify'];
-        if ($verify['switch']) {
-            validate(VerifyValidate::class)->scene('check')->check($param);
+        $setting = SettingService::verifyInfo();
+        if ($setting['verify_login']) {
+            $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
+            if (empty($check)) {
+                exception('验证码错误');
+            }
         }
 
         validate(MemberValidate::class)->scene('login')->check($param);
@@ -81,14 +84,14 @@ class Login
     public function offi()
     {
         $callback = Request::param('callback/s', '');
-        
+
         if (empty($callback)) {
             die('callback must');
         }
-        
+
         Cache::set('offiLoginCallback', $callback, 15);
 
-        $offi_info = WechatConfigService::offiInfo();
+        $offi_info = WechatSettingService::offiInfo();
 
         $config = [
             'app_id' => $offi_info['appid'],
@@ -105,9 +108,10 @@ class Login
 
         $oauth->redirect()->send();
     }
+    // 登录（公众号）回调
     public function officallback()
     {
-        $offi_info = WechatConfigService::offiInfo();
+        $offi_info = WechatSettingService::offiInfo();
 
         $config = [
             'app_id' => $offi_info['appid'],

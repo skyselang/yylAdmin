@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 微信配置模型
+ * @Description  : 微信设置模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-05-04
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\model;
@@ -12,9 +12,9 @@ use think\Model;
 use hg\apidoc\annotation\Field;
 use hg\apidoc\annotation\AddField;
 
-class WechatConfigModel extends Model
+class WechatSettingModel extends Model
 {
-    protected $name = 'wechat_config';
+    protected $name = 'wechat_setting';
 
     /**
      * @Field("name,origin_id,qrcode,appid,appsecret,url,token,encoding_aes_key,encoding_aes_type")

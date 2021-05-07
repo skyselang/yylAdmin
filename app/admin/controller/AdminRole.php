@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2021-04-19
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -29,7 +29,9 @@ class AdminRole
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminRoleModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\AdminRoleModel\list")
+     *      )
      * )
      */
     public function list()
@@ -171,7 +173,9 @@ class AdminRole
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminUserModel\user")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\AdminUserModel\user")
+     *      )
      * )
      */ 
     public function user()

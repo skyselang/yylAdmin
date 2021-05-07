@@ -3,7 +3,7 @@
  * @Description  : 会员中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\index\controller;
@@ -65,7 +65,7 @@ class Member
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
-        $data = MemberService::edit($param, 'post');
+        $data = MemberService::edit($param);
 
         return success($data);
     }
@@ -120,7 +120,9 @@ class Member
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\MemberLogModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
+     *      )
      * )
      */ 
     public function log()

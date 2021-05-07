@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户个人中心验证器
+ * @Description  : 个人中心验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-13
+ * @LastEditTime : 2021-05-07
  */
 
 namespace app\common\validate;
@@ -16,33 +16,33 @@ class AdminUserCenterValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'admin_user_id'  => ['require', 'checkAdminUser'],
-        'username'       => ['require', 'checkUsername', 'length' => '2,32'],
-        'nickname'       => ['require', 'checkNickname', 'length' => '1,32'],
-        'password_old'   => ['require'],
-        'password_new'   => ['require', 'length' => '6,18'],
-        'phone'          => ['mobile', 'checkPhone'],
-        'email'          => ['email', 'checkEmail'],
-        'avatar'         => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif', 'fileSize' => '51200'],
+        'admin_user_id' => ['require', 'checkAdminUser'],
+        'username'      => ['require', 'checkUsername', 'length' => '2,32'],
+        'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
+        'password_old'  => ['require'],
+        'password_new'  => ['require', 'length' => '6,18'],
+        'phone'         => ['mobile', 'checkPhone'],
+        'email'         => ['email', 'checkEmail'],
+        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '102400'],
     ];
 
     // 错误信息
     protected $message = [
-        'admin_user_id.require'  => '缺少参数：用户id',
-        'username.require'       => '请输入账号',
-        'username.length'        => '账号长度为2至32个字符',
-        'nickname.require'       => '请输入昵称',
-        'nickname.length'        => '昵称长度为1至32个字符',
-        'password_old.require'   => '请输入旧密码',
-        'password_new.require'   => '请输入新密码',
-        'password_new.length'    => '新密码长度为6至18个字符',
-        'phone.mobile'           => '请输入正确的手机号码',
-        'email.email'            => '请输入正确的邮箱地址',
-        'avatar.require'         => '请选择图片',
-        'avatar.file'            => '请选择图片文件',
-        'avatar.image'           => '请选择图片格式文件',
-        'avatar.fileExt'         => '请选择jpg、png、gif格式图片',
-        'avatar.fileSize'        => '请选择大小小于50kb的图片',
+        'admin_user_id.require' => '缺少参数：用户id',
+        'username.require'      => '请输入账号',
+        'username.length'       => '账号长度为2至32个字符',
+        'nickname.require'      => '请输入昵称',
+        'nickname.length'       => '昵称长度为1至32个字符',
+        'password_old.require'  => '请输入旧密码',
+        'password_new.require'  => '请输入新密码',
+        'password_new.length'   => '新密码长度为6至18个字符',
+        'phone.mobile'          => '请输入正确的手机号码',
+        'email.email'           => '请输入正确的邮箱地址',
+        'avatar.require'        => '请选择图片',
+        'avatar.file'           => '请选择图片文件',
+        'avatar.image'          => '请选择图片格式文件',
+        'avatar.fileExt'        => '请选择jpg、png、gif格式图片',
+        'avatar.fileSize'       => '请选择大小小于100kb的图片',
     ];
 
     // 验证场景

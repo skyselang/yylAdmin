@@ -3,7 +3,7 @@
  * @Description  : IP信息
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-14
- * @LastEditTime : 2021-04-14
+ * @LastEditTime : 2021-05-07
  */
 
 namespace app\common\utils;
@@ -71,7 +71,7 @@ class IpInfoUtils
                     $ip_info['area']     = $area;
                     $ip_info['isp']      = $isp;
 
-                    $ttl = 15 * 24 * 60 * 60;
+                    $ttl = 7 * 24 * 60 * 60;
 
                     Cache::set($key, $ip_info, $ttl);
                 }

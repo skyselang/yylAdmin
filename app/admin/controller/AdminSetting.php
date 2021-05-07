@@ -1,116 +1,114 @@
 <?php
 /*
- * @Description  : 系统设置
+ * @Description  : 设置管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-05
- * @LastEditTime : 2021-04-19
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\common\validate\AdminVerifyValidate;
-use app\common\validate\AdminTokenValidate;
+use app\common\validate\AdminSettingValidate;
 use app\common\service\AdminSettingService;
-use app\common\service\VerifyService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("系统设置")
+ * @Apidoc\Title("设置管理")
  * @Apidoc\Group("admin")
  */
 class AdminSetting
 {
     /**
-     * @Apidoc\Title("设置信息")
+     * @Apidoc\Title("缓存信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("verify", type="object", desc="验证码配置",
-     *          @Apidoc\Returned("switch", type="bool", default="false", desc="验证码是否开启"),
-     *          @Apidoc\Returned("type", type="int", default="1", desc="验证码类型"),
-     *          @Apidoc\Returned("length", type="int", default="4", desc="验证码长度"),
-     *          @Apidoc\Returned("expire", type="int", default="180", desc="验证码有效时间（秒）"),
-     *          @Apidoc\Returned("curve", type="bool", default="false", desc="验证码是否开启曲线"),
-     *          @Apidoc\Returned("noise", type="bool", default="false", desc="验证码是否开启杂点"),
-     *          @Apidoc\Returned("bgimg", type="bool", default="false", desc="验证码是否开启背景图"),
-     *      ),
-     *      @Apidoc\Returned("token", type="object", desc="token配置",
-     *          @Apidoc\Returned("iss", type="bool", default="false", desc="token签发者"),
-     *          @Apidoc\Returned("exp", type="int", default="12", desc="token有效时间（小时）"),
-     *      ),
+     *    @Apidoc\Returned("type", type="string", default="", desc="缓存类型"),
      * )
      */
-    public function info()
+    public function cacheInfo()
     {
-        $data = AdminSettingService::info();
-
-        $verify = VerifyService::create($data['verify']);
-
-        $data['verify'] = array_merge($data['verify'], $verify);
+        $data = AdminSettingService::cacheInfo();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("缓存设置")
+     * @Apidoc\Title("缓存清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      */
-    public function cache()
+    public function cacheClear()
     {
-        $data = AdminSettingService::cache();
+        $data = AdminSettingService::cacheClear();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("验证码设置")
-     * @Apidoc\Method("POST")
+     * @Apidoc\Title("验证码信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("switch", type="bool", default="false", desc="验证码是否开启"),
-     * @Apidoc\Param("type", type="int", default="1", desc="验证码类型"),
-     * @Apidoc\Param("length", type="int", default="4", desc="验证码长度"),
-     * @Apidoc\Param("expire", type="int", default="180", desc="验证码有效时间（秒）"),
-     * @Apidoc\Param("curve", type="bool", default="false", desc="验证码是否开启曲线"),
-     * @Apidoc\Param("noise", type="bool", default="false", desc="验证码是否开启杂点"),
-     * @Apidoc\Param("bgimg", type="bool", default="false", desc="验证码是否开启背景图"),
      * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *    @Apidoc\Returned("verify_switch", type="int", default="0", desc="验证码是否开启1开启0关闭"),
+     * )
      */
-    public function verify()
+    public function verifyInfo()
     {
-        $param['switch'] = Request::param('switch/b', false);
-        $param['type']   = Request::param('type/d', 1);
-        $param['length'] = Request::param('length/d', 4);
-        $param['expire'] = Request::param('expire/d', 180);
-        $param['curve']  = Request::param('curve/b', false);
-        $param['noise']  = Request::param('noise/b', false);
-        $param['bgimg']  = Request::param('bgimg/b', false);
-
-        validate(AdminVerifyValidate::class)->scene('edit')->check($param);
-
-        $data = AdminSettingService::verify($param);
+        $data = AdminSettingService::verifyInfo();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("Token设置")
+     * @Apidoc\Title("验证码修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("iss", type="string", default="", desc="token签发者")
-     * @Apidoc\Param("exp", type="int", default="12", desc="token有效时间（小时）")
+     * @Apidoc\Param("verify_switch", type="int", default="0", desc="验证码是否开启1开启0关闭")
      * @Apidoc\Returned(ref="return")
      */
-    public function token()
+    public function verifyEdit()
     {
-        $param['iss'] = Request::param('iss/s', 'yylAdmin');
-        $param['exp'] = Request::param('exp/d', 12);
+        $param['verify_switch'] = Request::param('verify_switch/d', 0);
 
-        validate(AdminTokenValidate::class)->scene('edit')->check($param);
+        validate(AdminSettingValidate::class)->scene('verify_edit')->check($param);
 
-        $data = AdminSettingService::token($param);
+        $data = AdminSettingService::verifyEdit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("Token信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *    @Apidoc\Returned("token_exp", type="int", default="12", desc="token有效时间（小时）")
+     * )
+     */
+    public function tokenInfo()
+    {
+        $data = AdminSettingService::tokenInfo();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("Token修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param("token_exp", type="int", default="12", desc="token有效时间（小时）")
+     * @Apidoc\Returned(ref="return")
+     */
+    public function tokenEdit()
+    {
+        $param['token_exp'] = Request::param('token_exp/d', 12);
+
+        validate(AdminSettingValidate::class)->scene('token_edit')->check($param);
+
+        $data = AdminSettingService::tokenEdit($param);
 
         return success($data);
     }

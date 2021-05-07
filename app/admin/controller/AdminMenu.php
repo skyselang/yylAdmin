@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-16
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\admin\controller;
@@ -29,7 +29,9 @@ class AdminMenu
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminMenuModel\list")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表",
+     *          @Apidoc\Returned(ref="app\common\model\AdminMenuModel\list")
+     *      )
      * )
      */
     public function list()
@@ -170,7 +172,9 @@ class AdminMenu
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminRoleModel\role")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\AdminRoleModel\role")
+     *      )
      * )
      */
     public function role()
@@ -225,7 +229,9 @@ class AdminMenu
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", ref="app\common\model\AdminUserModel\user")
+     *      @Apidoc\Returned("list", type="array", desc="数据列表",
+     *          @Apidoc\Returned(ref="app\common\model\AdminUserModel\user")
+     *      )
      * )
      */
     public function user()
@@ -273,7 +279,7 @@ class AdminMenu
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据")
-     */ 
+     */
     public function userRemove()
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');

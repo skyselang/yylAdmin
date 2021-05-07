@@ -1,16 +1,16 @@
 <?php
 /*
- * @Description  : 微信配置验证器
+ * @Description  : 微信设置验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-04-23
+ * @LastEditTime : 2021-05-06
  */
 
 namespace app\common\validate;
 
 use think\Validate;
 
-class WechatConfigValidate extends Validate
+class WechatSettingValidate extends Validate
 {
     // 验证规则
     protected $rule = [
