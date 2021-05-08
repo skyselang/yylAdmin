@@ -36,7 +36,7 @@ return [
             // 数据库连接参数
             'params'            => [],
             // 数据库编码默认采用utf8
-            'charset'           => env('database.charset', 'utf8'),
+            'charset'           => env('database.charset', 'utf8mb4'),
             // 数据库表前缀
             'prefix'            => env('database.prefix', 'yyl_'),
 
@@ -51,7 +51,7 @@ return [
             // 是否严格检查字段是否存在
             'fields_strict'     => env('app_debug', false),
             // 是否需要断线重连
-            'break_reconnect'   => false,
+            'break_reconnect'   => env('database.breakreconnect', false),
             // 监听SQL
             'trigger_sql'       => env('app_debug', false),
             // 开启字段缓存
