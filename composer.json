@@ -24,7 +24,6 @@
         "topthink/framework": "^6.0.0",
         "topthink/think-orm": "^2.0",
         "topthink/think-multi-app": "^1.0",
-        "topthink/think-captcha": "^3.0",
         "firebase/php-jwt": "^5.2",
         "overtrue/pinyin": "~4.0",
         "hg/apidoc": "^2.4",

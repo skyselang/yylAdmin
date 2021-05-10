@@ -3,19 +3,18 @@
  * @Description  : 新闻管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-19
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
 
 use think\Validate;
-use app\common\service\NewsService;
 
 class NewsValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'news_id'    => ['require', 'checkId'],
+        'news_id'    => ['require'],
         'img'        => ['require'],
         'title'      => ['require'],
         'time'       => ['require'],
@@ -59,18 +58,4 @@ class NewsValidate extends Validate
         'last'   => ['news_id'],
         'next'   => ['news_id'],
     ];
-
-    // 自定义验证规则：新闻是否存在
-    protected function checkId($value, $rule, $data = [])
-    {
-        $news_id = $value;
-
-        $news = NewsService::info($news_id);
-
-        if ($news['is_delete'] == 1) {
-            return '新闻已被删除：' . $news_id;
-        }
-
-        return true;
-    }
 }

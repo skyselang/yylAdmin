@@ -3,21 +3,21 @@
  * @Description  : 微信设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\common\validate\WechatSettingValidate;
-use app\common\service\WechatSettingService;
+use app\common\validate\SettingWechatValidate;
+use app\common\service\SettingWechatService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("微信设置")
  * @Apidoc\Group("index")
  */
-class WechatSetting
+class SettingWechat
 {
     /**
      * @Apidoc\Title("公众号信息")
@@ -25,12 +25,12 @@ class WechatSetting
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\WechatSettingModel\offiInfo")
+     *      @Apidoc\Returned(ref="app\common\model\SettingWechatModel\offiInfo")
      * )
      */
     public function offiInfo()
     {
-        $data = WechatSettingService::offiInfo();
+        $data = SettingWechatService::offiInfo();
 
         return success($data);
     }
@@ -39,7 +39,7 @@ class WechatSetting
      * @Apidoc\Title("公众号修改")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\WechatSettingModel\offiEdit")
+     * @Apidoc\Param(ref="app\common\model\SettingWechatModel\offiEdit")
      * @Apidoc\Returned(ref="return")
      */
     public function offiEdit()
@@ -54,9 +54,9 @@ class WechatSetting
         $param['encoding_aes_key']  = Request::param('encoding_aes_key/s', '');
         $param['encoding_aes_type'] = Request::param('encoding_aes_type/d', 1);
 
-        validate(WechatSettingValidate::class)->scene('offiEdit')->check($param);
+        validate(SettingWechatValidate::class)->scene('offiEdit')->check($param);
 
-        $data = WechatSettingService::offiEdit($param);
+        $data = SettingWechatService::offiEdit($param);
 
         return success($data);
     }
@@ -67,12 +67,12 @@ class WechatSetting
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\WechatSettingModel\miniInfo")
+     *      @Apidoc\Returned(ref="app\common\model\SettingWechatModel\miniInfo")
      * )
      */
     public function miniInfo()
     {
-        $data = WechatSettingService::miniInfo();
+        $data = SettingWechatService::miniInfo();
 
         return success($data);
     }
@@ -81,7 +81,7 @@ class WechatSetting
      * @Apidoc\Title("小程序修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\WechatSettingModel\miniEdit")
+     * @Apidoc\Param(ref="app\common\model\SettingWechatModel\miniEdit")
      * @Apidoc\Returned(ref="return")
      */
     public function miniEdit()
@@ -92,9 +92,9 @@ class WechatSetting
         $param['appid']     = Request::param('appid/s', '');
         $param['appsecret'] = Request::param('appsecret/s', '');
 
-        validate(WechatSettingValidate::class)->scene('miniEdit')->check($param);
+        validate(SettingWechatValidate::class)->scene('miniEdit')->check($param);
 
-        $data = WechatSettingService::miniEdit($param);
+        $data = SettingWechatService::miniEdit($param);
 
         return success($data);
     }
@@ -119,9 +119,9 @@ class WechatSetting
         $param['file']   = Request::file('file');
         $param['qrcode'] = $param['file'];
 
-        validate(WechatSettingValidate::class)->scene('qrcode')->check($param);
+        validate(SettingWechatValidate::class)->scene('qrcode')->check($param);
 
-        $data = WechatSettingService::qrcode($param);
+        $data = SettingWechatService::qrcode($param);
 
         return success($data);
     }

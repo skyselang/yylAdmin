@@ -3,20 +3,19 @@
  * @Description  : 个人中心验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-07
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
 
 use think\Validate;
 use think\facade\Db;
-use app\common\service\AdminUserService;
 
 class AdminUserCenterValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'admin_user_id' => ['require', 'checkAdminUser'],
+        'admin_user_id' => ['require'],
         'username'      => ['require', 'checkUsername', 'length' => '2,32'],
         'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
         'password_old'  => ['require'],
@@ -54,20 +53,6 @@ class AdminUserCenterValidate extends Validate
         'avatar' => ['admin_user_id', 'avatar'],
         'log'    => ['admin_user_id'],
     ];
-
-    // 自定义验证规则：用户是否存在
-    protected function checkAdminUser($value, $rule, $data = [])
-    {
-        $admin_user_id = $value;
-
-        $admin_user = AdminUserService::info($admin_user_id);
-
-        if ($admin_user['is_delete'] == 1) {
-            return '用户已被删除：' . $admin_user_id;
-        }
-
-        return true;
-    }
 
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])

@@ -3,7 +3,7 @@
  * @Description  : 角色管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-13
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
@@ -16,7 +16,7 @@ class AdminRoleValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'admin_role_id' => ['require', 'checkAdminRuleId'],
+        'admin_role_id' => ['require'],
         'role_name'     => ['require', 'checkAdminRuleName'],
     ];
 
@@ -42,20 +42,6 @@ class AdminRoleValidate extends Validate
     {
         return $this->only(['admin_role_id'])
             ->append('admin_role_id', 'checkAdminRoleMenuUser');
-    }
-
-    // 自定义验证规则：角色是否存在
-    protected function checkAdminRuleId($value, $rule, $data = [])
-    {
-        $admin_role_id = $value;
-
-        $admin_role = AdminRoleService::info($admin_role_id);
-
-        if ($admin_role['is_delete'] == 1) {
-            return '角色已被删除：' . $admin_role_id;
-        }
-
-        return true;
     }
 
     // 自定义验证规则：角色名称是否已存在

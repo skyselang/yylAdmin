@@ -3,7 +3,7 @@
  * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-03-20
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app;
@@ -70,21 +70,16 @@ class ExceptionHandle extends Handle
             return response($e->getMessage(), $e->getStatusCode(), [], 'json');
         }
 
-        // 手动异常
-        $data['code'] = $e->getCode();
-        $data['msg']  = $e->getMessage();
-        $data['err']  = [];
-
         $debug = Config::get('app.app_debug');
         if ($debug) {
-            $err['message'] = $e->getMessage();
-            $err['trace']   = $e->getTrace();
-
-            $data['err'] = $err;
-
             // 其他错误交给系统处理
             return parent::render($request, $e);
         } else {
+            // 手动异常
+            $data['code'] = $e->getCode();
+            $data['msg']  = $e->getMessage();
+            $data['err']  = [];
+
             return response($data, 200, [], 'json');
         }
     }

@@ -19,7 +19,7 @@ class WechatOffi
      */
     public function __construct()
     {
-        $offi_info = WechatSettingService::offiInfo();
+        $offi_info = SettingWechatService::offiInfo();
 
         $config = [
             'app_id' => $offi_info['appid'],
@@ -38,7 +38,7 @@ class WechatOffi
      */
     public static function login()
     {
-        $offi_info = WechatSettingService::offiInfo();
+        $offi_info = SettingWechatService::offiInfo();
 
         $config = [
             'app_id' => $offi_info['appid'],

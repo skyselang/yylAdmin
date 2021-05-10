@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 07/05/2021 23:32:30
+ Date: 10/05/2021 19:04:15
 */
 
 SET NAMES utf8mb4;
@@ -173,11 +173,11 @@ INSERT INTO `yyl_admin_menu` VALUES (187, 5, '角色信息', 'admin/AdminRole/in
 INSERT INTO `yyl_admin_menu` VALUES (188, 53, '设置管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (189, 41, '日志管理清除', 'admin/AdminUserLog/clear', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (190, 186, '微信设置', '', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (191, 190, '公众号信息', 'admin/WechatSetting/offiInfo', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (192, 190, '公众号修改', 'admin/WechatSetting/offiEdit', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (193, 190, '小程序信息', 'admin/WechatSetting/miniInfo', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (194, 190, '小程序修改', 'admin/WechatSetting/miniEdit', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (195, 190, '上传二维码', 'admin/WechatSetting/qrcode', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (191, 190, '公众号信息', 'admin/SettingWechat/offiInfo', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (192, 190, '公众号修改', 'admin/SettingWechat/offiEdit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (193, 190, '小程序信息', 'admin/SettingWechat/miniInfo', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (194, 190, '小程序修改', 'admin/SettingWechat/miniEdit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (195, 190, '上传二维码', 'admin/SettingWechat/qrcode', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (196, 73, '验证码信息', 'admin/AdminSetting/verifyInfo', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (197, 73, '验证码修改', 'admin/AdminSetting/verifyEdit', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (198, 71, '缓存信息', 'admin/AdminSetting/cacheInfo', 200, 0, 0, 0, NULL, NULL, NULL);
@@ -271,7 +271,7 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '系统管理员', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '系统管理员', 200, 0, 0, 0, 0, '', '', NULL, '2021-05-10 19:02:36', NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
@@ -309,7 +309,7 @@ CREATE TABLE `yyl_admin_user_log`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `admin_user_log_id`(`admin_user_log_id`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户日志' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '日志' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_user_log
@@ -4277,11 +4277,11 @@ CREATE TABLE `yyl_setting`  (
 INSERT INTO `yyl_setting` VALUES (1, 1, 1, 720, NULL, NULL);
 
 -- ----------------------------
--- Table structure for yyl_wechat_setting
+-- Table structure for yyl_setting_wechat
 -- ----------------------------
-DROP TABLE IF EXISTS `yyl_wechat_setting`;
-CREATE TABLE `yyl_wechat_setting`  (
-  `wechat_setting_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '微信设置id',
+DROP TABLE IF EXISTS `yyl_setting_wechat`;
+CREATE TABLE `yyl_setting_wechat`  (
+  `setting_wechat_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '微信设置id',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '名称',
   `origin_id` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '原始id',
   `qrcode` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '二维码',
@@ -4293,14 +4293,14 @@ CREATE TABLE `yyl_wechat_setting`  (
   `encoding_aes_type` tinyint(1) NULL DEFAULT 1 COMMENT '消息加解密方式：1明文2兼容3安全',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`wechat_setting_id`) USING BTREE,
-  INDEX `wechat_setting_id`(`wechat_setting_id`) USING BTREE
+  PRIMARY KEY (`setting_wechat_id`) USING BTREE,
+  INDEX `setting_wechat_id`(`setting_wechat_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '微信设置' ROW_FORMAT = Compact;
 
 -- ----------------------------
--- Records of yyl_wechat_setting
+-- Records of yyl_setting_wechat
 -- ----------------------------
-INSERT INTO `yyl_wechat_setting` VALUES (1, '', '', '', '', '', '', '', '', 1, NULL, NULL);
-INSERT INTO `yyl_wechat_setting` VALUES (2, '', '', '', '', '', '', '', '', 1, NULL, NULL);
+INSERT INTO `yyl_setting_wechat` VALUES (1, '', '', '', '1', '1', '', '', '', 1, NULL, NULL);
+INSERT INTO `yyl_setting_wechat` VALUES (2, '', '', '', '1', '1', '', '', '', 1, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

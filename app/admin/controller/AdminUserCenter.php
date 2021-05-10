@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 用户个人中心
+ * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\admin\controller;
@@ -15,7 +15,7 @@ use app\common\service\AdminMenuService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("用户个人中心")
+ * @Apidoc\Title("个人中心")
  * @Apidoc\Group("admin")
  */
 class AdminUserCenter
@@ -38,7 +38,7 @@ class AdminUserCenter
         $data = AdminUserCenterService::info($param['admin_user_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('账号信息错误，请重新登录！');
+            exception('账号已被删除！');
         }
 
         return success($data);

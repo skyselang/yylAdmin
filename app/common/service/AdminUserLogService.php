@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-04-16
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\service;
@@ -54,11 +54,9 @@ class AdminUserLogService
 
         foreach ($list as $k => $v) {
             $list[$k]['username'] = '';
-            $list[$k]['nickname'] = '';
             $admin_user = AdminUserService::info($v['admin_user_id']);
             if ($admin_user) {
                 $list[$k]['username'] = $admin_user['username'];
-                $list[$k]['nickname'] = $admin_user['nickname'];
             }
 
             $list[$k]['menu_name'] = '';

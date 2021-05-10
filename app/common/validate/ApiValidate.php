@@ -3,21 +3,20 @@
  * @Description  : 接口管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-07
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
 
 use think\Validate;
 use think\facade\Db;
-use app\common\service\ApiService;
 
 class ApiValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'api_id'   => ['require', 'checkApiId'],
-        'api_name' => ['require', 'checkApi'],
+        'api_id'   => ['require'],
+        'api_name' => ['require', 'checkApiExist'],
     ];
 
     // 错误信息
@@ -43,22 +42,8 @@ class ApiValidate extends Validate
             ->append('api_id', 'checkApiChild');
     }
 
-    // 自定义验证规则：接口是否存在
-    protected function checkApiId($value, $rule, $data = [])
-    {
-        $api_id = $value;
-
-        $api = ApiService::info($api_id);
-
-        if ($api['is_delete'] == 1) {
-            return '接口已删除：' . $api_id;
-        }
-
-        return true;
-    }
-
     // 自定义验证规则：接口是否已存在
-    protected function checkApi($value, $rule, $data = [])
+    protected function checkApiExist($value, $rule, $data = [])
     {
         $api_id = isset($data['api_id']) ? $data['api_id'] : '';
 

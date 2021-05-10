@@ -3,26 +3,25 @@
  * @Description  : 地区管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-04-13
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
 
 use think\Validate;
 use think\facade\Db;
-use app\common\service\RegionService;
 
 class RegionValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'region_id'   => ['require', 'checkRegion'],
+        'region_id'   => ['require'],
         'region_name' => ['require', 'checkRegionName'],
     ];
 
     // 错误信息
     protected $message = [
-        'region_id.require'   => 'region_id must',
+        'region_id.require'   => '缺少参数：地区id',
         'region_name.require' => '请输入名称',
     ];
 
@@ -40,20 +39,6 @@ class RegionValidate extends Validate
     {
         return $this->only(['region_id'])
             ->append('region_id', 'checkRegionChild');
-    }
-
-    // 自定义验证规则：地区是否存在
-    protected function checkRegion($value, $rule, $data = [])
-    {
-        $region_id = $value;
-
-        $region = RegionService::info($region_id);
-
-        if ($region['is_delete'] == 1) {
-            return '地区已被删除：' . $region_id;
-        }
-
-        return true;
     }
 
     // 自定义验证规则：地区名称是否已存在

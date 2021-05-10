@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\admin\controller;
@@ -99,7 +99,7 @@ class MemberLog
         $data = MemberLogService::info($param['member_log_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('会员日志已删除：' . $param['member_log_id']);
+            exception('会员日志已被删除：' . $param['member_log_id']);
         }
 
         return success($data);

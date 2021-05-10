@@ -12,9 +12,9 @@ use think\Model;
 use hg\apidoc\annotation\Field;
 use hg\apidoc\annotation\AddField;
 
-class WechatSettingModel extends Model
+class SettingWechatModel extends Model
 {
-    protected $name = 'wechat_setting';
+    protected $name = 'setting_wechat';
 
     /**
      * @Field("name,origin_id,qrcode,appid,appsecret,url,token,encoding_aes_key,encoding_aes_type")

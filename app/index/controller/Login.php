@@ -13,7 +13,7 @@ use think\facade\Request;
 use app\index\service\LoginService;
 use app\common\service\SettingService;
 use app\common\validate\MemberValidate;
-use app\common\service\WechatSettingService;
+use app\common\service\SettingWechatService;
 use app\common\utils\VerifyUtils;
 use hg\apidoc\annotation as Apidoc;
 use EasyWeChat\Factory;
@@ -91,7 +91,7 @@ class Login
 
         Cache::set('offiLoginCallback', $callback, 15);
 
-        $offi_info = WechatSettingService::offiInfo();
+        $offi_info = SettingWechatService::offiInfo();
 
         $config = [
             'app_id' => $offi_info['appid'],
@@ -111,7 +111,7 @@ class Login
     // 登录（公众号）回调
     public function officallback()
     {
-        $offi_info = WechatSettingService::offiInfo();
+        $offi_info = SettingWechatService::offiInfo();
 
         $config = [
             'app_id' => $offi_info['appid'],

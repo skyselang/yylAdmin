@@ -3,7 +3,7 @@
  * @Description  : 用户管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-07
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
@@ -16,7 +16,7 @@ class AdminUserValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'admin_user_id' => ['require', 'checkAdminUser'],
+        'admin_user_id' => ['require'],
         'username'      => ['require', 'checkUsername', 'length' => '2,32'],
         'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
         'password'      => ['require', 'length' => '6,18'],
@@ -107,20 +107,6 @@ class AdminUserValidate extends Validate
     {
         return $this->only(['admin_user_id', 'password'])
             ->append('admin_user_id', ['checkAdminUserIsSuper']);
-    }
-
-    // 自定义验证规则：用户是否存在
-    protected function checkAdminUser($value, $rule, $data = [])
-    {
-        $admin_user_id = $value;
-
-        $admin_user = AdminUserService::info($admin_user_id);
-
-        if ($admin_user['is_delete'] == 1) {
-            return '用户已被删除：' . $admin_user_id;
-        }
-
-        return true;
     }
 
     // 自定义验证规则：账号是否已存在
@@ -240,7 +226,7 @@ class AdminUserValidate extends Validate
         $admin_user_id  = admin_is_super($value);
 
         if (!$admin_is_super && $admin_user_id) {
-            return '无法对超级用户进行操作';
+            return '无法对系统用户进行操作';
         }
 
         return true;
@@ -252,7 +238,7 @@ class AdminUserValidate extends Validate
         $admin_is_super = admin_is_super($value);
 
         if ($admin_is_super) {
-            return '无法对超级用户进行操作';
+            return '无法对系统用户进行操作';
         }
 
         return true;
@@ -264,7 +250,7 @@ class AdminUserValidate extends Validate
         $admin_is_super = admin_is_super($value);
 
         if ($admin_is_super) {
-            return '无法对超级用户进行操作';
+            return '无法对系统用户进行操作';
         }
 
         return true;

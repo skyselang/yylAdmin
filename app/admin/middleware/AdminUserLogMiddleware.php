@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 日志管理中间件
+ * @Description  : 日志中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-04-07
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\admin\middleware;

@@ -3,20 +3,19 @@
  * @Description  : 接口环境验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-04-11
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
 
 use think\Validate;
 use think\facade\Db;
-use app\common\service\ApiEnvService;
 
 class ApiEnvValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'api_env_id' => ['require', 'checkApiEnv'],
+        'api_env_id' => ['require'],
         'env_name'   => ['require', 'checkApiEnvName'],
         'env_host'   => ['require'],
     ];
@@ -36,20 +35,6 @@ class ApiEnvValidate extends Validate
         'edit' => ['api_env_id', 'env_name', 'env_host'],
         'dele' => ['api_env_id'],
     ];
-
-    // 自定义验证规则：接口环境是否存在
-    protected function checkApiEnv($value, $rule, $data = [])
-    {
-        $api_env_id = $value;
-
-        $api_env = ApiEnvService::info($api_env_id);
-
-        if ($api_env['is_delete'] == 1) {
-            return '接口环境已删除：' . $api_env_id;
-        }
-
-        return true;
-    }
 
     // 自定义验证规则：接口环境名称是否已存在
     protected function checkApiEnvName($value, $rule, $data = [])

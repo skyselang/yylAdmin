@@ -3,11 +3,11 @@
  * @Description  : 应用中间件定义文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-04-07
+ * @LastEditTime : 2021-05-10
  */
 
 return [
-    // 日志管理中间件
+    // 日志中间件
     \app\admin\middleware\AdminUserLogMiddleware::class,
     // Token验证中间件
     \app\admin\middleware\AdminTokenVerifyMiddleware::class,

@@ -3,7 +3,7 @@
  * @Description  : 接口环境
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\admin\controller;
@@ -78,7 +78,7 @@ class ApiEnv
         $data = ApiEnvService::info($param['api_env_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('接口环境已删除：' . $param['api_env_id']);
+            exception('接口环境已被删除：' . $param['api_env_id']);
         }
 
         return success($data);

@@ -3,7 +3,7 @@
  * @Description  : 会员管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-04-14
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
@@ -16,7 +16,7 @@ class MemberValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'member_id'    => ['require', 'checkMember'],
+        'member_id'    => ['require'],
         'username'     => ['require', 'alphaDash', 'checkUsername', 'length' => '2,32'],
         'nickname'     => ['checkNickname', 'length' => '1,32'],
         'password'     => ['require', 'alphaNum', 'length' => '6,18'],
@@ -73,20 +73,6 @@ class MemberValidate extends Validate
         return $this->only(['username', 'password'])
             ->remove('username', ['length', 'alphaNum', 'checkUsername'])
             ->remove('password', ['length', 'alphaNum']);
-    }
-
-    // 自定义验证规则：会员是否存在
-    protected function checkMember($value, $rule, $data = [])
-    {
-        $member_id = $value;
-
-        $member = MemberService::info($member_id);
-
-        if ($member['is_delete'] == 1) {
-            return '会员已被删除：' . $member_id;
-        }
-
-        return true;
     }
 
     // 自定义验证规则：账号是否已存在

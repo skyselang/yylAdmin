@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-07
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\utils;
@@ -239,7 +239,6 @@ class VerifyUtils
         $key    = self::$prefix . $verify_id;
         $verify = Cache::get($key);
         if ($verify && ($verify == $verify_code)) {
-            Cache::delete($key);
             return true;
         }
 

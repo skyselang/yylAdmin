@@ -3,20 +3,19 @@
  * @Description  : 菜单管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-14
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\validate;
 
 use think\Validate;
 use think\facade\Db;
-use app\common\service\AdminMenuService;
 
 class AdminMenuValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'admin_menu_id' => ['require', 'checkAdminMenuId'],
+        'admin_menu_id' => ['require'],
         'menu_name'     => ['require', 'checkAdminMenuName'],
     ];
 
@@ -50,20 +49,6 @@ class AdminMenuValidate extends Validate
     {
         return $this->only(['admin_menu_id'])
             ->append('admin_menu_id', 'checkAdminMenuRoleRemove');
-    }
-
-    // 自定义验证规则：菜单是否存在
-    protected function checkAdminMenuId($value, $rule, $data = [])
-    {
-        $admin_menu_id = $value;
-
-        $admin_menu = AdminMenuService::info($admin_menu_id);
-
-        if ($admin_menu['is_delete'] == 1) {
-            return '菜单已被删除：' . $admin_menu_id;
-        }
-
-        return true;
     }
 
     // 自定义验证规则：菜单名称是否已存在

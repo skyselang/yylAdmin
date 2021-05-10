@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 日志管理缓存
+ * @Description  : 日志缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2021-04-22
+ * @LastEditTime : 2021-05-10
  */
 
 namespace app\common\cache;

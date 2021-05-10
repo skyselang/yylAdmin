@@ -56,7 +56,7 @@ class Api
         $data = ApiService::info($param['api_id']);
 
         if ($data['is_delete'] == 1) {
-            exception('接口已删除：' . $param['api_id']);
+            exception('接口已被删除：' . $param['api_id']);
         }
 
         return success($data);
