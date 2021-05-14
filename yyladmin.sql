@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 10/05/2021 19:04:15
+ Date: 14/05/2021 12:40:31
 */
 
 SET NAMES utf8mb4;
@@ -271,7 +271,7 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '系统管理员', 200, 0, 0, 0, 0, '', '', NULL, '2021-05-10 19:02:36', NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '超管', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
@@ -404,7 +404,7 @@ CREATE TABLE `yyl_member`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
   `sort` int(10) NULL DEFAULT 10000 COMMENT '排序',
-  `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道1Web2公众号3小程序',
+  `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道1Web2公众号3小程序4安卓5苹果',
   `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
@@ -492,6 +492,7 @@ CREATE TABLE `yyl_member_wechat`  (
 -- ----------------------------
 -- Records of yyl_member_wechat
 -- ----------------------------
+INSERT INTO `yyl_member_wechat` VALUES (0, 1, 'oyPjE1BWR1PjRch5KQxVEoSRUWss', '', 0, '', '', '', '', '', '', '', 0, '2021-05-13 19:05:09', '2021-05-14 10:29:33', NULL);
 
 -- ----------------------------
 -- Table structure for yyl_news
@@ -4300,7 +4301,7 @@ CREATE TABLE `yyl_setting_wechat`  (
 -- ----------------------------
 -- Records of yyl_setting_wechat
 -- ----------------------------
-INSERT INTO `yyl_setting_wechat` VALUES (1, '', '', '', '1', '1', '', '', '', 1, NULL, NULL);
-INSERT INTO `yyl_setting_wechat` VALUES (2, '', '', '', '1', '1', '', '', '', 1, NULL, NULL);
+INSERT INTO `yyl_setting_wechat` VALUES (1, '', '', '', '', '', '', '', '', 1, NULL, NULL);
+INSERT INTO `yyl_setting_wechat` VALUES (2, '', '', '', '', '', '', '', '', 1, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

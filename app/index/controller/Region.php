@@ -3,7 +3,7 @@
  * @Description  : 地区
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-14
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-13
  */
 
 namespace app\index\controller;
@@ -20,7 +20,7 @@ class Region
 {
     /**
      * @Apidoc\Title("地区列表")
-     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Returned(ref="return"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
@@ -46,7 +46,7 @@ class Region
 
     /**
      * @Apidoc\Title("地区信息")
-     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="app\common\model\RegionModel\id")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", 
@@ -70,7 +70,7 @@ class Region
 
     /**
      * @Apidoc\Title("地区树形")
-     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", 
      *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
