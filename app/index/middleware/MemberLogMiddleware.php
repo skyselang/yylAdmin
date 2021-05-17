@@ -3,7 +3,7 @@
  * @Description  : 会员日志中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\index\middleware;
@@ -12,8 +12,8 @@ use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
-use app\common\service\MemberLogService;
 use app\common\service\ApiService;
+use app\common\service\MemberLogService;
 
 class MemberLogMiddleware
 {

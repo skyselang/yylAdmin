@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-04-24
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\common\service;
@@ -56,7 +56,6 @@ class MemberLogService
             $list[$k]['username'] = '';
             $list[$k]['nickname'] = '';
             $admin_user = MemberService::info($v['member_id']);
-
             if ($admin_user) {
                 $list[$k]['username'] = $admin_user['username'];
                 $list[$k]['nickname'] = $admin_user['nickname'];
@@ -65,7 +64,6 @@ class MemberLogService
             $list[$k]['api_name'] = '';
             $list[$k]['api_url']  = '';
             $api = ApiService::info($v['api_id']);
-
             if ($api) {
                 $list[$k]['api_name'] = $api['api_name'];
                 $list[$k]['api_url']  = $api['api_url'];

@@ -3,7 +3,7 @@
  * @Description  : 会员缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\common\cache;
@@ -44,7 +44,7 @@ class MemberCache
 
         if (is_numeric($member_id)) {
             if (empty($ttl)) {
-                $ttl = 7 * 24 * 60 * 60;
+                $ttl = 1 * 24 * 60 * 60;
             }
         } else {
             if (empty($ttl)) {
@@ -97,18 +97,10 @@ class MemberCache
      */
     public static function upd($member_id)
     {
-        $old = MemberService::info($member_id);
-
         self::del($member_id);
 
-        $new = MemberService::info($member_id);
+        $data = MemberService::info($member_id);
 
-        unset($new['member_token']);
-
-        $user = array_merge($old, $new);
-
-        self::set($member_id, $user);
-
-        return $user;
+        return $data;
     }
 }

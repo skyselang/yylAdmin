@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-04-24
+ * @LastEditTime : 2021-05-14
  */
 
 namespace app\common\service;
@@ -12,7 +12,6 @@ use think\facade\Db;
 use think\facade\Filesystem;
 use app\common\cache\MemberCache;
 use app\common\utils\DatetimeUtils;
-use app\common\service\TokenService;
 
 class MemberService
 {
@@ -87,8 +86,7 @@ class MemberService
                 exception('会员不存在：' . $member_id);
             }
 
-            $member['avatar']       = file_url($member['avatar']);
-            $member['member_token'] = TokenService::create($member);
+            $member['avatar'] = file_url($member['avatar']);
 
             $member_wechat = Db::name('member_wechat')
                 ->where('member_id', $member_id)

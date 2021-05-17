@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-14
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\index\service;
@@ -13,6 +13,7 @@ use app\common\cache\MemberCache;
 use app\common\utils\IpInfoUtils;
 use app\common\service\MemberLogService;
 use app\common\service\MemberService;
+use app\common\service\TokenService;
 
 class LoginService
 {
@@ -64,10 +65,13 @@ class LoginService
         $member_log['member_id'] = $member_id;
         MemberLogService::add($member_log, 2);
 
+        // 会员信息
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
+        $data = self::loginField($member);
+        $data['member_token'] = TokenService::create($member);
 
-        return $member;
+        return $data;
     }
 
     /**
@@ -75,19 +79,26 @@ class LoginService
      *
      * @param array $userinfo 微信用户信息
      *
-     * @return void
+     * @return array
      */
     public static function offiLogin($userinfo)
     {
+        $unionid  = $userinfo['unionid'];
         $openid   = $userinfo['openid'];
         $login_ip = $userinfo['login_ip'];
 
         unset($userinfo['login_ip']);
 
         // 会员微信信息
+        if ($unionid) {
+            $wechat_where[] = ['unionid', '=', $unionid];
+        } else {
+            $wechat_where[] = ['openid', '=', $openid];
+        }
+        $wechat_where[] = ['is_delete', '=', 0];
         $member_wechat = Db::name('member_wechat')
             ->field('member_wechat_id,member_id')
-            ->where(['openid' => $openid, 'is_delete' => 0])
+            ->where($wechat_where)
             ->find();
 
         // 启动事务
@@ -161,8 +172,6 @@ class LoginService
                     ->update(['member_id' => $member_id]);
             }
 
-            MemberCache::del($member_id);
-
             $res = true;
             // 提交事务
             Db::commit();
@@ -176,13 +185,11 @@ class LoginService
             exception($msg);
         }
 
+        // 会员信息
+        MemberCache::del($member_id);
         $member = MemberService::info($member_id);
-
-        $data['member_id']    = $member['member_id'];
-        $data['username']     = $member['username'];
-        $data['nickname']     = $member['nickname'];
-        $data['avatar']       = $member['avatar'];
-        $data['member_token'] = $member['member_token'];
+        $data = self::loginField($member);
+        $data['member_token'] = TokenService::create($member);
 
         return $data;
     }
@@ -192,18 +199,26 @@ class LoginService
      *
      * @param array $userinfo 微信用户信息
      *
-     * @return void
+     * @return array
      */
     public static function miniLogin($userinfo)
     {
+        $unionid  = $userinfo['unionid'];
         $openid   = $userinfo['openid'];
         $login_ip = $userinfo['login_ip'];
 
         unset($userinfo['login_ip']);
 
+        // 会员微信信息
+        if ($unionid) {
+            $wechat_where[] = ['unionid', '=', $unionid];
+        } else {
+            $wechat_where[] = ['openid', '=', $openid];
+        }
+        $wechat_where[] = ['is_delete', '=', 0];
         $member_wechat = Db::name('member_wechat')
             ->field('member_wechat_id,member_id')
-            ->where(['openid' => $openid, 'is_delete' => 0])
+            ->where($wechat_where)
             ->find();
 
         // 启动事务
@@ -275,8 +290,6 @@ class LoginService
                     ->update(['member_id' => $member_id]);
             }
 
-            MemberCache::del($member_id);
-
             $res = true;
             // 提交事务
             Db::commit();
@@ -290,13 +303,29 @@ class LoginService
             exception($msg);
         }
 
+        // 会员信息
+        MemberCache::del($member_id);
         $member = MemberService::info($member_id);
+        $data = self::loginField($member);
+        $data['member_token'] = TokenService::create($member);
 
-        $data['member_id']    = $member['member_id'];
-        $data['username']     = $member['username'];
-        $data['nickname']     = $member['nickname'];
-        $data['avatar']       = $member['avatar'];
-        $data['member_token'] = $member['member_token'];
+        return $data;
+    }
+
+    /**
+     * 登录返回字段
+     *
+     * @param array $member 会员信息
+     *
+     * @return array
+     */
+    public static function loginField($member)
+    {
+        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'avatar', 'login_ip', 'login_time'];
+        $data = [];
+        foreach ($field as $k => $v) {
+            $data[$v] = $member[$v];
+        }
 
         return $data;
     }
@@ -316,9 +345,9 @@ class LoginService
             ->where('member_id', $member_id)
             ->update($update);
 
-        $update['member_id'] = $member_id;
-
         MemberCache::del($member_id);
+
+        $update['member_id'] = $member_id;
 
         return $update;
     }

@@ -40,7 +40,7 @@ class SettingCache
         $key = self::key($setting_id);
         $val = $setting;
         if (empty($ttl)) {
-            $ttl = 7 * 24 * 60 * 60;
+            $ttl = 1 * 24 * 60 * 60;
         }
 
         $res = Cache::set($key, $val, $ttl);

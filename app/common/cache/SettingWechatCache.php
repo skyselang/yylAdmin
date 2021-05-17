@@ -3,7 +3,7 @@
  * @Description  : 微信设置缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\common\cache;
@@ -40,7 +40,7 @@ class SettingWechatCache
         $key = self::key($setting_wechat_id);
         $val = $setting_wechat;
         if (empty($ttl)) {
-            $ttl = 7 * 24 * 60 * 60;
+            $ttl = 1 * 24 * 60 * 60;
         }
 
         $res = Cache::set($key, $val, $ttl);

@@ -3,7 +3,7 @@
  * @Description  : 会员日志缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-04-22
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\common\cache;
@@ -41,7 +41,7 @@ class MemberLogCache
         $val = $member_log;
         if (is_numeric($member_log_id)) {
             if (empty($ttl)) {
-                $ttl = 1 * 24 * 60 * 60;
+                $ttl = 1 * 60 * 60;
             }
         } else {
             if (empty($ttl)) {

@@ -3,7 +3,7 @@
  * @Description  : 地区缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\common\cache;
@@ -40,7 +40,7 @@ class RegionCache
         $key = self::key($region_id);
         $val = $region;
         if (empty($ttl)) {
-            $ttl = 7 * 24 * 60 * 60;
+            $ttl = 1 * 24 * 60 * 60;
         }
 
         $res = Cache::set($key, $val, $ttl);

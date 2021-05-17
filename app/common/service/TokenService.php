@@ -3,13 +3,12 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-15
  */
 
 namespace app\common\service;
 
 use think\facade\Config;
-use app\common\cache\MemberCache;
 use Firebase\JWT\JWT;
 
 class TokenService
@@ -58,28 +57,10 @@ class TokenService
     public static function verify($token)
     {
         try {
-            $key    = Config::get('index.token.key');
-            $decode = JWT::decode($token, $key, array('HS256'));
+            $key = Config::get('index.token.key');
+            JWT::decode($token, $key, array('HS256'));
         } catch (\Exception $e) {
-            exception('登录状态错误', 401);
-        }
-
-        $member_id = $decode->data->member_id;
-        $member    = MemberCache::get($member_id);
-
-        if (empty($member)) {
-            exception('账号登录状态失效', 401);
-        } else {
-            if ($token != $member['member_token']) {
-                exception('账号已在另一处登录', 401);
-            } else {
-                if ($member['is_disable'] == 1) {
-                    exception('账号已被禁用', 401);
-                }
-                if ($member['is_delete'] == 1) {
-                    exception('账号已被删除', 401);
-                }
-            }
+            exception('登录状态已失效', 401);
         }
     }
 
@@ -96,7 +77,7 @@ class TokenService
             $key    = Config::get('index.token.key');
             $decode = JWT::decode($token, $key, array('HS256'));
         } catch (\Exception $e) {
-            exception('会员登录状态已过期', 401);
+            exception('登录状态已失效', 401);
         }
 
         $member_id = $decode->data->member_id;

@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\common\utils;
@@ -231,6 +231,8 @@ class VerifyUtils
      */
     public static function check($verify_id, $verify_code)
     {
+        self::configure();
+        
         $switch = self::$switch;
         if (empty($switch)) {
             return true;

@@ -3,20 +3,19 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-14
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\index\controller;
 
 use think\facade\Cache;
 use think\facade\Request;
+use app\common\utils\VerifyUtils;
 use app\index\service\LoginService;
 use app\common\service\SettingService;
 use app\common\validate\MemberValidate;
-use app\common\service\SettingWechatService;
-use app\common\utils\VerifyUtils;
+use app\common\service\WechatService;
 use hg\apidoc\annotation as Apidoc;
-use EasyWeChat\Factory;
 
 /**
  * @Apidoc\Title("登录退出")
@@ -43,7 +42,7 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录（账号密码）")
+     * @Apidoc\Title("登录（账号）")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
@@ -90,18 +89,14 @@ class Login
 
         Cache::set('offiurl', $offiurl, 15);
 
-        $offi_info = SettingWechatService::offiInfo();
-
         $config = [
-            'app_id' => $offi_info['appid'],
-            'secret' => $offi_info['appsecret'],
             'oauth' => [
                 'scopes'   => ['snsapi_userinfo'],
                 'callback' => (string) url('officallback', [], false),
             ],
         ];
 
-        $app = Factory::officialAccount($config);
+        $app = WechatService::offi($config);
 
         $oauth = $app->oauth;
 
@@ -110,20 +105,14 @@ class Login
     // 登录（公众号）回调
     public function officallback()
     {
-        $offi_info = SettingWechatService::offiInfo();
-
-        $config = [
-            'app_id' => $offi_info['appid'],
-            'secret' => $offi_info['appsecret'],
-        ];
-
-        $app  = Factory::officialAccount($config);
+        $app = WechatService::offi();
         $user = $app->oauth->user()->getOriginal();
 
         if (empty($user) || !isset($user['openid'])) {
-            exception('微信登录失败，请重试！offi');
+            exception('微信登录失败请重试！'.$user['errmsg']);
         }
 
+        $userinfo['unionid'] = isset($user['unionid']) ? $user['unionid'] : '';
         $userinfo['openid'] = $user['openid'];
         if (isset($user['nickname'])) {
             $userinfo['nickname'] = $user['nickname'];
@@ -164,6 +153,9 @@ class Login
      * @Apidoc\Method("POST")
      * @Apidoc\Param("code", type="string", require=true, desc="wx.login()，用户登录凭证")
      * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="app\common\model\MemberModel\login")
+     * )
      */
     public function mini()
     {
@@ -174,20 +166,14 @@ class Login
             die('code must');
         }
 
-        $mini_info = SettingWechatService::miniInfo();
-
-        $config = [
-            'app_id' => $mini_info['appid'],
-            'secret' => $mini_info['appsecret']
-        ];
-
-        $app  = Factory::miniProgram($config);
+        $app  = WechatService::mini();
         $user = $app->auth->session($code);
 
         if (empty($user) || !isset($user['openid'])) {
-            exception('微信登录失败，请重试！mini');
+            exception('微信登录失败请重试！'.$user['errmsg']);
         }
 
+        $userinfo['unionid'] = isset($user['unionid']) ? $user['unionid'] : '';
         $userinfo['openid'] = $user['openid'];
         if (isset($user_info['nickName'])) {
             $userinfo['nickname'] = $user_info['nickName'];
