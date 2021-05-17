@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\admin\controller;
@@ -59,6 +59,9 @@ class AdminLogin
 
         $setting = AdminSettingService::verifyInfo();
         if ($setting['verify_switch']) {
+            if (empty($param['verify_code'])) {
+                exception('请输入验证码');
+            }
             $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
             if (empty($check)) {
                 exception('验证码错误');

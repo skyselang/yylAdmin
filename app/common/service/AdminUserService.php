@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-07
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\common\service;
@@ -166,11 +166,11 @@ class AdminUserService
                 }
             }
 
-            $api_white_list  = Config::get('admin.api_white_list', []);
-            $rule_white_list = Config::get('admin.rule_white_list', []);
-            $white_list      = array_merge($api_white_list, $rule_white_list);
-            $menu_url        = array_merge($menu_url, $white_list);
-            $menu_url        = array_unique($menu_url);
+            $api_whitelist  = Config::get('admin.api_whitelist', []);
+            $rule_whitelist = Config::get('admin.rule_whitelist', []);
+            $whitelist      = array_merge($api_whitelist, $rule_whitelist);
+            $menu_url       = array_merge($menu_url, $whitelist);
+            $menu_url       = array_unique($menu_url);
 
             sort($menu_url);
 

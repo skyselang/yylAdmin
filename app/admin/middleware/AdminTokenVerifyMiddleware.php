@@ -3,7 +3,7 @@
  * @Description  : Token验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2020-12-24
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\admin\middleware;
@@ -25,10 +25,10 @@ class AdminTokenVerifyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $menu_url       = request_pathinfo();
-        $api_white_list = Config::get('admin.api_white_list');
+        $menu_url      = request_pathinfo();
+        $api_whitelist = Config::get('admin.api_whitelist');
 
-        if (!in_array($menu_url, $api_white_list)) {
+        if (!in_array($menu_url, $api_whitelist)) {
             $admin_token = admin_token();
 
             if (empty($admin_token)) {

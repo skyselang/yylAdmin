@@ -3,7 +3,7 @@
  * @Description  : 权限验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-17
  */
 
 namespace app\admin\middleware;
@@ -26,12 +26,12 @@ class AdminRuleVerifyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $menu_url        = request_pathinfo();
-        $api_white_list  = Config::get('admin.api_white_list');
-        $rule_white_list = Config::get('admin.rule_white_list');
-        $white_list      = array_merge($rule_white_list, $api_white_list);
+        $menu_url       = request_pathinfo();
+        $api_whitelist  = Config::get('admin.api_whitelist');
+        $rule_whitelist = Config::get('admin.rule_whitelist');
+        $whitelist      = array_merge($rule_whitelist, $api_whitelist);
 
-        if (!in_array($menu_url, $white_list)) {
+        if (!in_array($menu_url, $whitelist)) {
             $admin_user_id   = admin_user_id();
             $admin_super_ids = Config::get('admin.super_ids');
 

@@ -61,6 +61,9 @@ class Login
 
         $setting = SettingService::verifyInfo();
         if ($setting['verify_login']) {
+            if (empty($param['verify_code'])) {
+                exception('请输入验证码');
+            }
             $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
             if (empty($check)) {
                 exception('验证码错误');

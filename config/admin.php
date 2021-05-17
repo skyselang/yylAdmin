@@ -3,11 +3,11 @@
  * @Description  : admin配置
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-17
  */
 
 return [
-    // 超管用户id（所有权限）
+    // 超管admin_user_id（所有权限）
     'super_ids' => [1],
     // 是否记录日志
     'is_log' => true,
@@ -21,12 +21,12 @@ return [
     // admin_token key
     'token_key' => 'AdminToken',
     // 接口白名单
-    'api_white_list' => [
+    'api_whitelist' => [
         'admin/AdminLogin/verify',
         'admin/AdminLogin/login',
     ],
     // 权限白名单
-    'rule_white_list' => [
+    'rule_whitelist' => [
         'admin/AdminIndex/index',
         'admin/AdminLogin/logout',
         'admin/AdminUserCenter/info',
