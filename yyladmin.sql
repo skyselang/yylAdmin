@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 14/05/2021 12:40:31
+ Date: 18/05/2021 13:24:37
 */
 
 SET NAMES utf8mb4;
@@ -67,7 +67,6 @@ INSERT INTO `yyl_admin_menu` VALUES (31, 4, '用户权限分配', 'admin/AdminUs
 INSERT INTO `yyl_admin_menu` VALUES (32, 4, '用户密码重置', 'admin/AdminUser/pwd', 140, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (33, 5, '角色禁用', 'admin/AdminRole/disable', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (35, 4, '用户是否超管', 'admin/AdminUser/super', 120, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (36, 53, '实用工具', '', 110, 0, 1, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminUtils/strrand', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminUtils/timestamp', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminUtils/qrcode', 200, 0, 0, 0, NULL, NULL, NULL);
@@ -148,15 +147,10 @@ INSERT INTO `yyl_admin_menu` VALUES (162, 160, '接口环境信息', 'admin/ApiE
 INSERT INTO `yyl_admin_menu` VALUES (163, 160, '接口环境添加', 'admin/ApiEnv/add', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (164, 160, '接口环境修改', 'admin/ApiEnv/edit', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (165, 160, '接口环境删除', 'admin/ApiEnv/dele', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (166, 132, '接口上传图片', 'admin/Api/upload', 150, 0, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (167, 132, '接口文档', 'admin/Api/apiDoc', 200, 0, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (168, 3, '菜单文档', 'admin/AdminMenu/doc', 200, 0, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (169, 3, '菜单上传图片', 'admin/AdminMenu/upload', 200, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 150, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/AdminIndex/member', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/AdminApidoc/apidoc', 250, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (174, 53, '表单构建', 'admin/AdminUtils/form', 230, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (175, 0, '新闻管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (176, 175, '新闻列表', 'admin/News/list', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (177, 175, '新闻信息', 'admin/News/info', 200, 0, 0, 0, NULL, NULL, NULL);
@@ -195,7 +189,7 @@ INSERT INTO `yyl_admin_menu` VALUES (205, 170, '验证码修改', 'admin/Setting
 DROP TABLE IF EXISTS `yyl_admin_role`;
 CREATE TABLE `yyl_admin_role`  (
   `admin_role_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '角色id',
-  `admin_menu_ids` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单id',
+  `admin_menu_ids` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '菜单id',
   `role_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '角色名称',
   `role_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '角色描述',
   `role_sort` int(10) NULL DEFAULT 200 COMMENT '角色排序',
@@ -335,14 +329,14 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
 -- ----------------------------
 INSERT INTO `yyl_api` VALUES (1, 0, '登录退出', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (2, 1, '验证码', 'index/Login/verify', 220, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (3, 1, '登录', 'index/Login/login', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (3, 1, '登录(账号)', 'index/Login/login', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'index/Login/logout', 120, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (5, 0, '个人中心', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (6, 5, '我的信息', 'index/Member/info', 200, 0, 0, 0, NULL, NULL, NULL);
@@ -361,6 +355,7 @@ INSERT INTO `yyl_api` VALUES (18, 16, '新闻信息', 'index/News/info', 200, 0,
 INSERT INTO `yyl_api` VALUES (19, 1, '登录(公众号)', 'index/Login/offi', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (20, 11, '验证码', 'index/Register/verify', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (21, 11, '注册', 'index/Register/register', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (22, 1, '登录(小程序)', 'index/Login/mini', 200, 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_api_env
@@ -492,7 +487,6 @@ CREATE TABLE `yyl_member_wechat`  (
 -- ----------------------------
 -- Records of yyl_member_wechat
 -- ----------------------------
-INSERT INTO `yyl_member_wechat` VALUES (0, 1, 'oyPjE1BWR1PjRch5KQxVEoSRUWss', '', 0, '', '', '', '', '', '', '', 0, '2021-05-13 19:05:09', '2021-05-14 10:29:33', NULL);
 
 -- ----------------------------
 -- Table structure for yyl_news

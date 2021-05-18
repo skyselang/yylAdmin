@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-18
  */
 
 namespace app\index\controller;
@@ -42,7 +42,7 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录（账号）")
+     * @Apidoc\Title("登录(账号)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
@@ -78,7 +78,7 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录（公众号）")
+     * @Apidoc\Title("登录(公众号)")
      * @Apidoc\Method("GET")
      * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转的页面地址，会携带member_id,member_token")
      */
@@ -105,7 +105,7 @@ class Login
 
         $oauth->redirect()->send();
     }
-    // 登录（公众号）回调
+    // 登录(公众号)回调
     public function officallback()
     {
         $app = WechatService::offi();
@@ -152,7 +152,7 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录（小程序）")
+     * @Apidoc\Title("登录(小程序)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("code", type="string", require=true, desc="wx.login()，用户登录凭证")
      * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")

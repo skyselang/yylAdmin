@@ -3,7 +3,7 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-18
  */
 
 namespace app\index\controller;
@@ -59,6 +59,9 @@ class Register
 
         $setting = SettingService::verifyInfo();
         if ($setting['verify_register']) {
+            if (empty($param['verify_code'])) {
+                exception('请输入验证码');
+            }
             $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
             if (empty($check)) {
                 exception('验证码错误');
