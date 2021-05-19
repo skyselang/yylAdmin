@@ -3,11 +3,12 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-19
  */
 
 namespace app\admin\controller;
 
+use app\common\service\NewsCategoryService;
 use think\facade\Request;
 use app\common\validate\NewsValidate;
 use app\common\service\NewsService;
@@ -37,14 +38,15 @@ class News
      */
     public function list()
     {
-        $page       = Request::param('page/d', 1);
-        $limit      = Request::param('limit/d', 10);
-        $sort_field = Request::param('sort_field/s ', '');
-        $sort_type  = Request::param('sort_type/s', '');
-        $news_id    = Request::param('news_id/d', '');
-        $title      = Request::param('title/s', '');
-        $date_type  = Request::param('date_type/s', '');
-        $date_range = Request::param('date_range/a', []);
+        $page             = Request::param('page/d', 1);
+        $limit            = Request::param('limit/d', 10);
+        $sort_field       = Request::param('sort_field/s ', '');
+        $sort_type        = Request::param('sort_type/s', '');
+        $news_id          = Request::param('news_id/d', '');
+        $title            = Request::param('title/s', '');
+        $news_category_id = Request::param('news_category_id/d', '');
+        $date_type        = Request::param('date_type/s', '');
+        $date_range       = Request::param('date_range/a', []);
 
         $where = [];
         if ($news_id) {
@@ -52,6 +54,9 @@ class News
         }
         if ($title) {
             $where[] = ['title', 'like', '%' . $title . '%'];
+        }
+        if ($news_category_id !== '') {
+            $where[] = ['news_category_id', '=', $news_category_id];
         }
         if ($date_type && $date_range) {
             $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
@@ -64,6 +69,25 @@ class News
         }
 
         $data = NewsService::list($where, $page, $limit, $order);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("新闻分类列表")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="returnPaging"),
+     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *          @Apidoc\Returned(ref="app\common\model\NewsCategoryModel\list")
+     *      )
+     * )
+     */
+    public function category()
+    {
+        $data = NewsCategoryService::list([], 1, 9999, []);
 
         return success($data);
     }
@@ -101,15 +125,16 @@ class News
      */
     public function add()
     {
-        $param['img']        = Request::param('img/s', '');
-        $param['title']      = Request::param('title/s', '');
-        $param['intro']      = Request::param('intro/s', '');
-        $param['author']     = Request::param('author/s', '');
-        $param['time']       = Request::param('time/s', '');
-        $param['source']     = Request::param('source/s', '');
-        $param['source_url'] = Request::param('source_url/s', '');
-        $param['sort']       = Request::param('sort/d', 200);
-        $param['content']    = Request::param('content/s', '');
+        $param['news_category_id'] = Request::param('news_category_id/d', 0);
+        $param['img']              = Request::param('img/s', '');
+        $param['title']            = Request::param('title/s', '');
+        $param['intro']            = Request::param('intro/s', '');
+        $param['author']           = Request::param('author/s', '');
+        $param['time']             = Request::param('time/s', '');
+        $param['source']           = Request::param('source/s', '');
+        $param['source_url']       = Request::param('source_url/s', '');
+        $param['sort']             = Request::param('sort/d', 200);
+        $param['content']          = Request::param('content/s', '');
 
         validate(NewsValidate::class)->scene('add')->check($param);
 
@@ -127,16 +152,17 @@ class News
      */
     public function edit()
     {
-        $param['news_id']    = Request::param('news_id/d', '');
-        $param['img']        = Request::param('img/s', '');
-        $param['title']      = Request::param('title/s', '');
-        $param['intro']      = Request::param('intro/s', '');
-        $param['author']     = Request::param('author/s', '');
-        $param['time']       = Request::param('time/s', '');
-        $param['source']     = Request::param('source/s', '');
-        $param['source_url'] = Request::param('source_url/s', '');
-        $param['sort']       = Request::param('sort/d', 200);
-        $param['content']    = Request::param('content/s', '');
+        $param['news_id']          = Request::param('news_id/d', '');
+        $param['news_category_id'] = Request::param('news_category_id/d', 0);
+        $param['img']              = Request::param('img/s', '');
+        $param['title']            = Request::param('title/s', '');
+        $param['intro']            = Request::param('intro/s', '');
+        $param['author']           = Request::param('author/s', '');
+        $param['time']             = Request::param('time/s', '');
+        $param['source']           = Request::param('source/s', '');
+        $param['source_url']       = Request::param('source_url/s', '');
+        $param['sort']             = Request::param('sort/d', 200);
+        $param['content']          = Request::param('content/s', '');
 
         validate(NewsValidate::class)->scene('edit')->check($param);
 

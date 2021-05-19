@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 18/05/2021 13:24:37
+ Date: 19/05/2021 18:32:06
 */
 
 SET NAMES utf8mb4;
@@ -37,7 +37,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 215 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -151,7 +151,7 @@ INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 150, 0, 0,
 INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/AdminIndex/member', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/AdminApidoc/apidoc', 250, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (175, 0, '新闻管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (175, 206, '新闻管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (176, 175, '新闻列表', 'admin/News/list', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (177, 175, '新闻信息', 'admin/News/info', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (178, 175, '新闻添加', 'admin/News/add', 200, 0, 0, 0, NULL, NULL, NULL);
@@ -182,6 +182,15 @@ INSERT INTO `yyl_admin_menu` VALUES (202, 171, 'Token信息', 'admin/Setting/tok
 INSERT INTO `yyl_admin_menu` VALUES (203, 171, 'Token修改', 'admin/Setting/tokenEdit', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (204, 170, '验证码信息', 'admin/Setting/verifyInfo', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (205, 170, '验证码修改', 'admin/Setting/verifyEdit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (206, 0, '新闻管理', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (207, 206, '新闻分类', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (208, 207, '新闻分类列表', 'admin/NewsCategory/list', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (209, 207, '新闻分类信息', 'admin/NewsCategory/info', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (210, 207, '新闻分类添加', 'admin/NewsCategory/add', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (211, 207, '新闻分类修改', 'admin/NewsCategory/edit', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (212, 207, '新闻分类删除', 'admin/NewsCategory/dele', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (213, 207, '新闻分类是否隐藏', 'admin/NewsCategory/ishide', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (214, 175, '新闻分类', 'admin/News/category', 225, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -206,8 +215,8 @@ CREATE TABLE `yyl_admin_role`  (
 -- ----------------------------
 -- Records of yyl_admin_role
 -- ----------------------------
-INSERT INTO `yyl_admin_role` VALUES (1, ',1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,170,171,172,173,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,161,162,172,173,176,177,178,179,181,182,183,184,185,187,191,193,196,198,200,202,204,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (1, ',1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,170,171,172,173,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,161,162,172,173,176,177,178,179,181,182,183,184,185,187,191,193,196,198,200,202,204,208,209,210,211,214,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',12,45,46,47,48,49,54,117,133,134,161,162,172,173,', '前端', '', 200, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -265,9 +274,9 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '超管', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '超管', 200, 0, 0, 0, 5, '127.0.0.1', 'XXXX内网IP', '2021-05-19 15:50:22', '2021-05-19 16:32:04', NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 2, '127.0.0.1', 'XXXX内网IP', '2021-05-19 16:51:34', '2021-05-19 18:28:52', NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (5, ',2,', ',48,', 'php', '拍簧片', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
@@ -329,7 +338,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -356,6 +365,7 @@ INSERT INTO `yyl_api` VALUES (19, 1, '登录(公众号)', 'index/Login/offi', 20
 INSERT INTO `yyl_api` VALUES (20, 11, '验证码', 'index/Register/verify', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (21, 11, '注册', 'index/Register/register', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (22, 1, '登录(小程序)', 'index/Login/mini', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (23, 16, '新闻分类列表', 'index/News/category', 250, 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_api_env
@@ -494,6 +504,7 @@ CREATE TABLE `yyl_member_wechat`  (
 DROP TABLE IF EXISTS `yyl_news`;
 CREATE TABLE `yyl_news`  (
   `news_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '新闻id',
+  `news_category_id` int(11) NULL DEFAULT 0 COMMENT '新闻分类id',
   `img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图片',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
   `intro` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '简介',
@@ -519,6 +530,28 @@ CREATE TABLE `yyl_news`  (
 
 -- ----------------------------
 -- Records of yyl_news
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_news_category
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_news_category`;
+CREATE TABLE `yyl_news_category`  (
+  `news_category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '新闻分类id',
+  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
+  `category_sort` int(10) NULL DEFAULT 200 COMMENT '分类排序',
+  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`news_category_id`) USING BTREE,
+  INDEX `news_category_id`(`news_category_id`) USING BTREE,
+  INDEX `category_name`(`category_name`(191)) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻分类' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yyl_news_category
 -- ----------------------------
 
 -- ----------------------------

@@ -3,7 +3,7 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-30
+ * @LastEditTime : 2021-05-19
  */
 
 namespace app\common\service;
@@ -28,7 +28,7 @@ class NewsService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'news_id,img,title,time,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time';
+            $field = 'news_id,news_category_id,img,title,time,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time';
         }
 
         if (empty($order)) {
@@ -52,7 +52,19 @@ class NewsService
 
         $pages = ceil($count / $limit);
 
+        $news_category_ids = array_column($list, 'news_category_id');
+        $news_category_ids = array_unique($news_category_ids);
+        $news_category = Db::name('news_category')
+            ->where('news_category_id', 'in', $news_category_ids)
+            ->select()
+            ->toArray();
+
         foreach ($list as $k => $v) {
+            foreach ($news_category as $kn => $vn) {
+                if ($v['news_category_id'] == $vn['news_category_id']) {
+                    $list[$k]['category_name'] = $vn['category_name'];
+                }
+            }
             $list[$k]['img_url'] = file_url($v['img']);
         }
 

@@ -3,15 +3,15 @@
  * @Description  : 新闻模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-21
+ * @LastEditTime : 2021-05-19
  */
 
 namespace app\common\model;
 
 use think\Model;
 use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\WithoutField;
 use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation\WithoutField;
 
 class NewsModel extends Model
 {
@@ -25,7 +25,7 @@ class NewsModel extends Model
     }
     
     /**
-     * @Field("news_id,img,title,time,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time")
+     * @Field("news_id,news_category_id,img,title,time,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time")
      */
     public function list()
     {
