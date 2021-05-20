@@ -1,4 +1,4 @@
-# yylAdmin 快速、简单、轻量
+# yylAdmin
 
 - [Gitee](https://gitee.com/skyselang/yylAdmin) | [Github](https://github.com/skyselang/yylAdmin)
 
@@ -8,7 +8,7 @@
 
 ## 简介
 
-yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录退出、权限管理、日志管理、接口文档与调试等基础功能；前后台基础框架；你可以在此基础上根据你的业务需求进行开发扩展。简单轻量，开箱即用，前后分离，免费开源。
+yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录退出、权限管理、日志管理、接口文档与调试等基础功能；前后台基础框架；你可以在此基础上根据你的业务需求进行开发扩展。前后分离，简单轻量，免费开源，开箱即用。
 
 - [yylAdmin](https://gitee.com/skyselang/yylAdmin) | [yylAdminWeb](https://gitee.com/skyselang/yylAdminWeb)
 
@@ -18,7 +18,7 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 - 权限管理
 - 日志管理
 - 实用工具
-- 接口文档与调试
+- 接口文档与调试  
 更多功能请安装后体验
 
 ## 演示
