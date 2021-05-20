@@ -3,7 +3,7 @@
  * @Description  : 设置管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-05
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-20
  */
 
 namespace app\admin\controller;
@@ -20,7 +20,7 @@ use hg\apidoc\annotation as Apidoc;
 class AdminSetting
 {
     /**
-     * @Apidoc\Title("缓存信息")
+     * @Apidoc\Title("缓存设置信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
@@ -35,7 +35,7 @@ class AdminSetting
     }
 
     /**
-     * @Apidoc\Title("缓存清除")
+     * @Apidoc\Title("缓存设置清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
@@ -48,11 +48,11 @@ class AdminSetting
     }
 
     /**
-     * @Apidoc\Title("验证码信息")
+     * @Apidoc\Title("验证码设置信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned("verify_switch", type="int", default="0", desc="验证码是否开启1开启0关闭"),
+     *    @Apidoc\Returned(ref="app\common\model\AdminSettingModel\verifyInfo"),
      * )
      */
     public function verifyInfo()
@@ -63,10 +63,10 @@ class AdminSetting
     }
 
     /**
-     * @Apidoc\Title("验证码修改")
+     * @Apidoc\Title("验证码设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("verify_switch", type="int", default="0", desc="验证码是否开启1开启0关闭")
+     * @Apidoc\Param(ref="app\common\model\AdminSettingModel\verifyInfo")
      * @Apidoc\Returned(ref="return")
      */
     public function verifyEdit()
@@ -81,11 +81,11 @@ class AdminSetting
     }
 
     /**
-     * @Apidoc\Title("Token信息")
+     * @Apidoc\Title("Token设置信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="return")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned("token_exp", type="int", default="12", desc="token有效时间（小时）")
+     *    @Apidoc\Returned(ref="app\common\model\AdminSettingModel\tokenInfo")
      * )
      */
     public function tokenInfo()
@@ -96,10 +96,10 @@ class AdminSetting
     }
 
     /**
-     * @Apidoc\Title("Token修改")
+     * @Apidoc\Title("Token设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("token_exp", type="int", default="12", desc="token有效时间（小时）")
+     * @Apidoc\Param(ref="app\common\model\AdminSettingModel\tokenInfo")
      * @Apidoc\Returned(ref="return")
      */
     public function tokenEdit()

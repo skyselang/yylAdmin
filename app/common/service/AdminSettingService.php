@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 系统设置
+ * @Description  : 设置管理业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-20
  */
 
 namespace app\common\service;
@@ -51,7 +51,7 @@ class AdminSettingService
     }
 
     /**
-     * 缓存信息
+     * 缓存设置信息
      *
      * @return array
      */
@@ -65,7 +65,7 @@ class AdminSettingService
     }
 
     /**
-     * 缓存清除
+     * 缓存设置清除
      *
      * @return array
      */
@@ -103,7 +103,7 @@ class AdminSettingService
     }
 
     /**
-     * Token信息
+     * Token设置信息
      *
      * @return array
      */
@@ -117,7 +117,7 @@ class AdminSettingService
     }
 
     /**
-     * Token修改
+     * Token设置修改
      *
      * @param array $param Token信息
      *
@@ -143,7 +143,7 @@ class AdminSettingService
     }
 
     /**
-     * 验证码信息
+     * 验证码设置信息
      *
      * @return array
      */
@@ -157,7 +157,7 @@ class AdminSettingService
     }
 
     /**
-     * 验证码修改
+     * 验证码设置修改
      * 
      * @param array $param 验证码信息
      *

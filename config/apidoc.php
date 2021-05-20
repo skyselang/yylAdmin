@@ -16,7 +16,10 @@ return [
         ['title' => 'admin后台', 'path' => 'app\admin\controller', 'folder' => 'admin'],
     ],
     // 控制器分组
-    'groups' => [],
+    'groups'=>[
+        ['title'=>'index','name'=>'index'],
+        ['title'=>'admin','name'=>'admin'],
+    ],
     // 指定公共注释定义的文件地址
     'definitions' => 'app\common\controller\Definitions',
     //指定生成文档的控制器
