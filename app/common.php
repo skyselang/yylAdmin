@@ -3,12 +3,8 @@
  * @Description  : 公共函数文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-04-13
+ * @LastEditTime : 2021-05-25
  */
-
-use think\facade\Config;
-use think\facade\Request;
-use app\common\service\TokenService;
 
 /**
  * 成功返回
@@ -32,16 +28,16 @@ function success($data = [], string $msg = '操作成功', int $code = 200)
  * 错误返回
  *
  * @param string  $msg  错误提示
- * @param array   $err  错误数据
+ * @param array   $data 错误数据
  * @param integer $code 错误码
  * 
  * @return json
  */
-function error(string $msg = '操作失败', $err = [], int $code = 400)
+function error(string $msg = '操作失败', $data = [], int $code = 400)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
-    $res['err']  = $err;
+    $res['data'] = $data;
 
     print_r(json_encode($res, JSON_UNESCAPED_UNICODE));
 
@@ -54,7 +50,7 @@ function error(string $msg = '操作失败', $err = [], int $code = 400)
  * @param string  $msg  异常提示
  * @param integer $code 错误码
  * 
- * @return json
+ * @return Exception
  */
 function exception(string $msg = '操作失败', int $code = 400)
 {
@@ -110,20 +106,6 @@ function file_url($file_path = '')
     }
 
     return $res;
-}
-
-/**
- * 获取请求pathinfo
- * 应用/控制器/操作 
- * eg：admin/Index/index
- *
- * @return string
- */
-function request_pathinfo()
-{
-    $request_pathinfo = app('http')->getName() . '/' . Request::pathinfo();
-
-    return $request_pathinfo;
 }
 
 /**
@@ -192,32 +174,6 @@ function http_post($url, $param = [], $header = [])
 }
 
 /**
- * 获取会员id
- *
- * @return integer
- */
-function member_id()
-{
-    $member_token = member_token();
-    $member_id    = TokenService::memberId($member_token);
-
-    return $member_id;
-}
-
-/**
- * 获取会员token
- *
- * @return string
- */
-function member_token()
-{
-    $token_key    = Config::get('index.token_key');
-    $member_token = Request::header($token_key, '');
-
-    return $member_token;
-}
-
-/**
  * 获取当前日期时间
  * format：Y-m-d H:i:s
  *
@@ -254,6 +210,30 @@ function str_trim($str, $char = ',')
 function str_join($str, $char = ',')
 {
     $str = $char . $str . $char;
+
+    return $str;
+}
+
+/**
+ * 字符串合拼
+ *
+ * @param string  $str1   字符串1
+ * @param string  $str2   字符串2
+ * @param boolean $is_rep 是否去重
+ *
+ * @return string
+ */
+function str_merge($str1 = '', $str2 = '', $is_rep = true)
+{
+    $str1 = trim($str1, ',');
+    $str2 = trim($str2, ',');
+    $str = $str1 . ',' . $str2;
+
+    if ($is_rep) {
+        $arr = explode(',', $str);
+        $arr = array_unique($arr);
+        $str = implode(',', $arr);
+    }
 
     return $str;
 }

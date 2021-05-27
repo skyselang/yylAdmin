@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\admin\controller;
@@ -18,6 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("日志管理")
  * @Apidoc\Group("admin")
+ * @Apidoc\Sort("40")
  */
 class AdminUserLog
 {
@@ -29,7 +30,7 @@ class AdminUserLog
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
      * @Apidoc\Param("create_time", type="array", default="[]", desc="开始与结束日期eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -89,8 +90,8 @@ class AdminUserLog
      * @Apidoc\Title("日志管理信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\AdminUserLogModel\info")
      * )
      */ 
@@ -114,7 +115,8 @@ class AdminUserLog
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -131,16 +133,21 @@ class AdminUserLog
      * @Apidoc\Title("日志管理清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
-     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
-     * @Apidoc\Param("clear_date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Param(ref="app\common\model\AdminUserModel\id", require=false)
+     * @Apidoc\Param(ref="app\common\model\AdminUserModel\username", require=false)
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id", require=false)
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\menu_url", require=false)
+     * @Apidoc\Param("date_range", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */ 
     public function clear()
     {
         $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['username']      = Request::param('username/s', '');
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['clear_date']    = Request::param('clear_date/a', []);
+        $param['menu_url']      = Request::param('menu_url/s', '');
+        $param['date_range']    = Request::param('date_range/a', []);
 
         $data = AdminUserLogService::clear($param);
 
@@ -153,37 +160,38 @@ class AdminUserLog
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")
      * @Apidoc\Param("date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Param("region", type="string", default="", desc="地区")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Param("field", type="string", default="", desc="统计字段")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */  
     public function stat()
     {
-        $type   = Request::param('type/s', '');
-        $date   = Request::param('date/a', []);
-        $region = Request::param('region/s', 'city');
+        $type  = Request::param('type/s', '');
+        $date  = Request::param('date/a', []);
+        $field = Request::param('field/s', 'user');
 
         $data  = [];
         $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
 
-        if ($type == 'number') {
-            $number = [];
+        if ($type == 'num') {
+            $num = [];
             foreach ($range as $k => $v) {
-                $number[$v] = AdminUserLogService::statNum($v);
+                $num[$v] = AdminUserLogService::statNum($v);
             }
-            $data['number'] = $number;
+            $data['num'] = $num;
         } elseif ($type == 'date') {
             $data['date'] = AdminUserLogService::statDate($date);
-        } elseif ($type == 'region') {
-            $data['region'] = AdminUserLogService::statRegion($date, $region);
+        } elseif ($type == 'field') {
+            $data['field'] = AdminUserLogService::statField($date, $field);
         } else {
-            $number = [];
+            $num = [];
             foreach ($range as $k => $v) {
-                $number[$v] = AdminUserLogService::statNum($v);
+                $num[$v] = AdminUserLogService::statNum($v);
             }
 
-            $data['number'] = $number;
-            $data['date']   = AdminUserLogService::statDate($date);
-            $data['region'] = AdminUserLogService::statRegion($date, $region);
+            $data['num']   = $num;
+            $data['date']  = AdminUserLogService::statDate($date);
+            $data['field'] = AdminUserLogService::statField($date, $field);
         }
 
         return success($data);

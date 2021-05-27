@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 接口缓存
+ * @Description  : 接口管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-24
  */
 
 namespace app\common\cache;
@@ -21,10 +21,6 @@ class ApiCache
      */
     public static function key($api_id = '')
     {
-        if (empty($api_id)) {
-            $api_id = 'all';
-        }
-
         $key = 'Api:' . $api_id;
 
         return $key;
@@ -76,11 +72,12 @@ class ApiCache
      */
     public static function del($api_id = '')
     {
-        $key = self::key($api_id);
-        $res = Cache::delete($key);
-
         if (empty($api_id)) {
-            $key = self::key('whiteList');
+            $res = Cache::delete(self::key('list'));
+            $res = Cache::delete(self::key('urlList'));
+            $res = Cache::delete(self::key('unauthList'));
+        } else {
+            $key = self::key($api_id);
             $res = Cache::delete($key);
         }
 

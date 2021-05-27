@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-12
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\service;
@@ -17,18 +17,44 @@ class AdminMenuService
 {
     /**
      * 菜单列表
-     * 
-     * @param string $type list列表，tree树形，url链接
      *
      * @return array 
      */
-    public static function list($type = 'tree')
+    public static function list()
     {
+        $key  = 'list';
+        $list = AdminMenuCache::get($key);
+        if (empty($list)) {
+            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,is_unauth,is_unlogin';
 
-        $menu = AdminMenuCache::get();
+            $where[] = ['is_delete', '=', 0];
 
-        if (empty($menu)) {
-            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time';
+            $order = ['menu_sort' => 'desc', 'admin_menu_id' => 'asc'];
+
+            $list = Db::name('admin_menu')
+                ->field($field)
+                ->where($where)
+                ->order($order)
+                ->select()
+                ->toArray();
+
+            AdminMenuCache::set($key, $list);
+        }
+
+        return $list;
+    }
+
+    /**
+     * 菜单树形
+     *
+     * @return array
+     */
+    public static function tree()
+    {
+        $key  = 'tree';
+        $tree = AdminMenuCache::get($key);
+        if (empty($tree)) {
+            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,is_unlogin,create_time,update_time';
 
             $where[] = ['is_delete', '=', 0];
 
@@ -42,29 +68,11 @@ class AdminMenuService
                 ->toArray();
 
             $tree = self::toTree($list, 0);
-            $url  = array_filter(array_column($list, 'menu_url'));
 
-            sort($url);
-
-            $menu['tree'] = $tree;
-            $menu['list'] = $list;
-            $menu['url']  = $url;
-
-            AdminMenuCache::set('', $menu);
+            AdminMenuCache::set($key, $tree);
         }
 
-        if ($type == 'list') {
-            $data['count'] = count($menu['list']);
-            $data['list']  = $menu['list'];
-        } elseif ($type == 'url') {
-            $data['count'] = count($menu['url']);
-            $data['list']  = $menu['url'];
-        } else {
-            $data['count'] = count($menu['tree']);
-            $data['list']  = $menu['tree'];
-        }
-
-        return $data;
+        return $tree;
     }
 
     /**
@@ -77,7 +85,7 @@ class AdminMenuService
     public static function info($admin_menu_id = '')
     {
         if (empty($admin_menu_id)) {
-            $admin_menu_id = request_pathinfo();
+            $admin_menu_id = menu_url();
         }
 
         $admin_menu = AdminMenuCache::get($admin_menu_id);
@@ -227,7 +235,7 @@ class AdminMenuService
     }
 
     /**
-     * 菜单是否无需授权
+     * 菜单是否无需权限
      *
      * @param array $param 菜单信息
      * 
@@ -238,6 +246,39 @@ class AdminMenuService
         $admin_menu_id = $param['admin_menu_id'];
 
         $update['is_unauth']   = $param['is_unauth'];
+        $update['update_time'] = datetime();
+
+        $res = Db::name('admin_menu')
+            ->where('admin_menu_id', $admin_menu_id)
+            ->update($update);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        $admin_menu = self::info($admin_menu_id);
+
+        $update['admin_menu_id'] = $admin_menu_id;
+
+        AdminMenuCache::del();
+        AdminMenuCache::del($admin_menu_id);
+        AdminMenuCache::del($admin_menu['menu_url']);
+
+        return $update;
+    }
+
+    /**
+     * 菜单是否无需登录
+     *
+     * @param array $param 菜单信息
+     * 
+     * @return array
+     */
+    public static function unlogin($param)
+    {
+        $admin_menu_id = $param['admin_menu_id'];
+
+        $update['is_unlogin']  = $param['is_unlogin'];
         $update['update_time'] = datetime();
 
         $res = Db::name('admin_menu')
@@ -467,5 +508,93 @@ class AdminMenuService
             ->toArray();
 
         return $data;
+    }
+
+    /**
+     * 菜单url列表
+     *
+     * @return array 
+     */
+    public static function urlList()
+    {
+        $urllist_key = 'urlList';
+        $urllist     = AdminMenuCache::get($urllist_key);
+        if (empty($urllist)) {
+            $list = Db::name('admin_menu')
+                ->field('menu_url')
+                ->where('is_delete', '=', 0)
+                ->where('menu_url', '<>', '')
+                ->order('menu_url', 'asc')
+                ->select()
+                ->toArray();
+
+            $urllist = array_column($list, 'menu_url');
+
+            AdminMenuCache::set($urllist_key, $urllist);
+        }
+
+        return $urllist;
+    }
+
+    /**
+     * 菜单无需权限url列表
+     *
+     * @return array
+     */
+    public static function unauthList()
+    {
+        $unauthlist_key = 'unauthList';
+        $unauthlist     = AdminMenuCache::get($unauthlist_key);
+        if (empty($unauthlist)) {
+            $where_unauth[] = ['is_delete', '=', 0];
+            $where_unauth[] = ['is_unauth', '=', 1];
+            $where_unauth[] = ['menu_url', '<>', ''];
+
+            $where_unlogin[] = ['is_delete', '=', 0];
+            $where_unlogin[] = ['is_unlogin', '=', 1];
+            $where_unlogin[] = ['menu_url', '<>', ''];
+
+            $list = Db::name('admin_menu')
+                ->field('menu_url')
+                ->whereOr([$where_unauth, $where_unlogin])
+                ->order('menu_url', 'asc')
+                ->select()
+                ->toArray();
+
+            $unauthlist = array_column($list, 'menu_url');
+
+            AdminMenuCache::set($unauthlist_key, $unauthlist);
+        }
+
+        return $unauthlist;
+    }
+
+    /**
+     * 菜单无需登录url列表
+     *
+     * @return array
+     */
+    public static function unloginList()
+    {
+        $unloginlist_key = 'unloginList';
+        $unloginlist     = AdminMenuCache::get($unloginlist_key);
+        if (empty($unloginlist)) {
+            $where_unlogin[] = ['is_delete', '=', 0];
+            $where_unlogin[] = ['is_unlogin', '=', 1];
+            $where_unlogin[] = ['menu_url', '<>', ''];
+
+            $list = Db::name('admin_menu')
+                ->field('menu_url')
+                ->where($where_unlogin)
+                ->order('menu_url', 'asc')
+                ->select()
+                ->toArray();
+
+            $unloginlist = array_column($list, 'menu_url');
+
+            AdminMenuCache::set($unloginlist_key, $unloginlist);
+        }
+
+        return $unloginlist;
     }
 }

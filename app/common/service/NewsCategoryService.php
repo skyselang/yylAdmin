@@ -3,7 +3,7 @@
  * @Description  : 新闻分类
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-05-19
- * @LastEditTime : 2021-05-19
+ * @LastEditTime : 2021-05-21
  */
 
 namespace app\common\service;
@@ -25,7 +25,9 @@ class NewsCategoryService
      */
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'news_category_id,category_name');
+        } else {
             $field = 'news_category_id,category_name,category_sort,is_hide,create_time,update_time';
         }
 

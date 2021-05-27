@@ -3,7 +3,7 @@
  * @Description  : 微信设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
@@ -16,6 +16,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("微信设置")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("90")
  */
 class SettingWechat
 {
@@ -23,7 +24,7 @@ class SettingWechat
      * @Apidoc\Title("公众号信息")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\SettingWechatModel\offiInfo")
      * )
@@ -40,7 +41,8 @@ class SettingWechat
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\SettingWechatModel\offiEdit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function offiEdit()
     {
@@ -65,7 +67,7 @@ class SettingWechat
      * @Apidoc\Title("小程序信息")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\SettingWechatModel\miniInfo")
      * )
@@ -82,7 +84,8 @@ class SettingWechat
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\SettingWechatModel\miniEdit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function miniEdit()
     {
@@ -106,7 +109,7 @@ class SettingWechat
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param("type", type="string", require=true, default="offi", desc="offi公众号、mini小程序")
      * @Apidoc\Param("file", type="file", require=true, default="", desc="二维码图片")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned("type", type="string", desc="offi公众号、mini小程序"),
      *      @Apidoc\Returned("file_path", type="string", desc="二维码路径"),

@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-04-14
+ * @LastEditTime : 2021-05-21
  */
 
 namespace app\common\service;
@@ -29,7 +29,9 @@ class RegionService
     public static function list($where = [], $order = [], $field = '')
     {
 
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'region_id,region_pid,region_name');
+        } else {
             $field = 'region_id,region_pid,region_path,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_sort';
         }
 

@@ -3,7 +3,7 @@
  * @Description  : 用户管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\validate;
@@ -20,22 +20,22 @@ class AdminUserValidate extends Validate
         'username'      => ['require', 'checkUsername', 'length' => '2,32'],
         'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
         'password'      => ['require', 'length' => '6,18'],
-        'email'         => ['email', 'checkEmail'],
         'phone'         => ['mobile', 'checkPhone'],
+        'email'         => ['email', 'checkEmail'],
         'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '102400'],
     ];
 
     // 错误信息
     protected $message = [
         'admin_user_id.require' => '缺少参数：用户ID',
-        'username.require'      => '请输入账号/邮箱/手机',
+        'username.require'      => '请输入账号/手机/邮箱',
         'username.length'       => '账号长度为2至32个字符',
         'nickname.require'      => '请输入昵称',
         'nickname.length'       => '昵称长度为1至32个字符',
         'password.require'      => '请输入密码',
         'password.length'       => '密码长度为6至18个字符',
-        'email.email'           => '请输入正确的邮箱地址',
         'phone.mobile'          => '请输入正确的手机号码',
+        'email.email'           => '请输入正确的邮箱地址',
         'avatar.require'        => '请选择图片',
         'avatar.file'           => '请选择图片文件',
         'avatar.image'          => '请选择图片格式文件',
@@ -48,8 +48,8 @@ class AdminUserValidate extends Validate
         'id'      => ['admin_user_id'],
         'info'    => ['admin_user_id'],
         'login'   => ['username', 'password'],
-        'add'     => ['username', 'nickname', 'password', 'email', 'phone'],
-        'edit'    => ['admin_user_id', 'username', 'nickname', 'email', 'phone'],
+        'add'     => ['username', 'nickname', 'password', 'phone', 'email'],
+        'edit'    => ['admin_user_id', 'username', 'nickname', 'phone', 'email'],
         'dele'    => ['admin_user_id'],
         'super'   => ['admin_user_id'],
         'disable' => ['admin_user_id'],
@@ -157,30 +157,6 @@ class AdminUserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：邮箱是否已存在
-    protected function checkEmail($value, $rule, $data = [])
-    {
-        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
-        $email         = $data['email'];
-
-        if ($admin_user_id) {
-            $where[] = ['admin_user_id', '<>', $admin_user_id];
-        }
-        $where[] = ['email', '=', $email];
-        $where[] = ['is_delete', '=', 0];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where($where)
-            ->find();
-
-        if ($admin_user) {
-            return '邮箱已存在：' . $email;
-        }
-
-        return true;
-    }
-
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
@@ -200,6 +176,30 @@ class AdminUserValidate extends Validate
 
         if ($admin_user) {
             return '手机已存在：' . $phone;
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：邮箱是否已存在
+    protected function checkEmail($value, $rule, $data = [])
+    {
+        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
+        $email         = $data['email'];
+
+        if ($admin_user_id) {
+            $where[] = ['admin_user_id', '<>', $admin_user_id];
+        }
+        $where[] = ['email', '=', $email];
+        $where[] = ['is_delete', '=', 0];
+
+        $admin_user = Db::name('admin_user')
+            ->field('admin_user_id')
+            ->where($where)
+            ->find();
+
+        if ($admin_user) {
+            return '邮箱已存在：' . $email;
         }
 
         return true;

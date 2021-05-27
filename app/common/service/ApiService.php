@@ -3,13 +3,12 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-04-13
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\service;
 
 use think\facade\Db;
-use think\facade\Config;
 use app\common\cache\ApiCache;
 
 class ApiService
@@ -17,17 +16,18 @@ class ApiService
     /**
      * 接口列表
      * 
-     * @param string $type list列表，tree树形，url链接
+     * @param string
      *
-     * @return array 
+     * @return array 树形
      */
-    public static function list($type = 'tree')
+    public static function list()
     {
-        $api = ApiCache::get();
+        $key = 'list';
+        $api = ApiCache::get($key);
 
         if (empty($api)) {
-            $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unauth,create_time,update_time';
-
+            $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin,create_time,update_time';
+        
             $where[] = ['is_delete', '=', 0];
 
             $order = ['api_sort' => 'desc', 'api_id' => 'asc'];
@@ -39,28 +39,12 @@ class ApiService
                 ->select()
                 ->toArray();
 
-            $tree = self::toTree($list, 0);
-            $url  = array_filter(array_column($list, 'api_url'));
+            $api['list'] = self::toTree($list, 0);
 
-            $api['tree'] = $tree;
-            $api['list'] = $list;
-            $api['url']  = $url;
-
-            ApiCache::set('', $api);
+            ApiCache::set($key, $api);
         }
 
-        if ($type == 'list') {
-            $data['count'] = count($api['list']);
-            $data['list']  = $api['list'];
-        } elseif ($type == 'url') {
-            $data['count'] = count($api['url']);
-            $data['list']  = $api['url'];
-        } else {
-            $data['count'] = count($api['tree']);
-            $data['list']  = $api['tree'];
-        }
-
-        return $data;
+        return $api;
     }
 
     /**
@@ -73,7 +57,7 @@ class ApiService
     public static function info($api_id = '')
     {
         if (empty($api_id)) {
-            $api_id = request_pathinfo();
+            $api_id = api_url();
         }
 
         $api = ApiCache::get($api_id);
@@ -135,7 +119,7 @@ class ApiService
     public static function edit($param)
     {
         $api_id = $param['api_id'];
-        
+
         unset($param['api_id']);
 
         $api = self::info($api_id);
@@ -224,17 +208,17 @@ class ApiService
     }
 
     /**
-     * 接口是否无需权限
+     * 接口是否无需登录
      *
      * @param array $param 接口信息
      * 
      * @return array
      */
-    public static function unauth($param)
+    public static function unlogin($param)
     {
         $api_id = $param['api_id'];
 
-        $update['is_unauth']   = $param['is_unauth'];
+        $update['is_unlogin']  = $param['is_unlogin'];
         $update['update_time'] = datetime();
 
         $res = Db::name('api')
@@ -279,9 +263,9 @@ class ApiService
     }
 
     /**
-     * 接口转换树形
+     * 接口列表转树形
      *
-     * @param array   $api     所有接口
+     * @param array   $api     接口列表
      * @param integer $api_pid 接口父级id
      * 
      * @return array
@@ -339,33 +323,55 @@ class ApiService
     }
 
     /**
-     * 接口白名单
+     * 接口url列表
+     *
+     * @return array 
+     */
+    public static function urlList()
+    {
+        $url_list_key = 'urlList';
+        $url_list     = ApiCache::get($url_list_key);
+        if (empty($url_list)) {
+            $list = Db::name('api')
+                ->field('api_url')
+                ->where('is_delete', '=', 0)
+                ->where('api_url', '<>', '')
+                ->order('api_url', 'asc')
+                ->select()
+                ->toArray();
+
+            $url_list = array_column($list, 'api_url');
+
+            ApiCache::set($url_list_key, $url_list);
+        }
+
+        return $url_list;
+    }
+
+    /**
+     * 接口无需登录url列表
      *
      * @return array
      */
-    public static function whiteList()
+    public static function unloginList()
     {
-        $key = 'whiteList';
-
-        $whitelist = ApiCache::get($key);
-
-        if (empty($whitelist)) {
-            $where[] = ['is_delete', '=', 0];
-            $where[] = ['is_unauth', '=', 1];
-            $where[] = ['api_url', '<>', ''];
-
-            $api_url = Db::name('api')
+        $unloginlist_key = 'unloginList';
+        $unloginlist     = ApiCache::get($unloginlist_key);
+        if (empty($unloginlist)) {
+            $list = Db::name('api')
                 ->field('api_url')
-                ->where($where)
-                ->column('api_url');
+                ->where('is_delete', '=', 0)
+                ->where('is_unlogin', '=', 1)
+                ->where('api_url', '<>', '')
+                ->order('api_url', 'asc')
+                ->select()
+                ->toArray();
 
-            $whitelist = Config::get('index.whitelist', []);
-            $whitelist = array_merge($api_url, $whitelist);
-            $whitelist = array_unique($whitelist);
+            $unloginlist = array_column($list, 'api_url');
 
-            ApiCache::set($key, $whitelist);
+            ApiCache::set($unloginlist_key, $unloginlist);
         }
 
-        return $whitelist;
+        return $unloginlist;
     }
 }

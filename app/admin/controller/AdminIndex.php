@@ -3,7 +3,7 @@
  * @Description  : 控制台
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\admin\controller;
@@ -16,6 +16,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("控制台")
  * @Apidoc\Group("admin")
+ * @Apidoc\Sort("01")
  */
 class AdminIndex
 {
@@ -23,22 +24,23 @@ class AdminIndex
      * @Apidoc\Title("首页")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function index()
     {
         $data = AdminIndexService::index();
+        $msg  = '后端安装成功，感谢使用，如有帮助，欢迎Star！';
 
-        return success($data);
+        return success($data, $msg);
     }
 
     /**
      * @Apidoc\Title("会员统计")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function member()
     {

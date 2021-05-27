@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\service;
@@ -29,7 +29,9 @@ class MemberLogService
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'member_log_id,member_id,api_id');
+        } else {
             $field = 'member_log_id,member_id,api_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
@@ -237,6 +239,86 @@ class MemberLogService
     }
 
     /**
+     * 会员日志清除
+     *
+     * @param array $param 清除条件
+     * 
+     * @return array
+     */
+    public static function clear($param)
+    {
+        $member_id  = $param['member_id'];
+        $username   = $param['username'];
+        $api_id     = $param['api_id'];
+        $api_url    = $param['api_url'];
+        $date_range = $param['date_range'];
+
+        $where = [];
+        if ($member_id && $username) {
+            $member = Db::name('member')
+                ->field('member_id')
+                ->where('is_delete', '=', 0)
+                ->where('username', '=', $username)
+                ->find();
+            if ($member) {
+                $where[] = ['member_id', 'in', [$member_id, $member['member_id']]];
+            } else {
+                $where[] = ['member_id', '=', $member_id];
+            }
+        } elseif ($member_id) {
+            $where[] = ['member_id', '=', $member_id];
+        } elseif ($username) {
+            $member = Db::name('member')
+                ->field('member_id')
+                ->where('is_delete', '=', 0)
+                ->where('username', '=', $username)
+                ->find();
+            if ($member) {
+                $where[] = ['member_id', '=', $member['member_id']];
+            }
+        }
+        if ($api_id && $api_url) {
+            $api = Db::name('api')
+                ->field('api_id')
+                ->where('is_delete', '=', 0)
+                ->where('api_url', '=', $api_url)
+                ->find();
+            if ($api) {
+                $where[] = ['api_id', 'in', [$api_id, $api['api_id']]];
+            } else {
+                $where[] = ['api_id', '=', $api_id];
+            }
+        } elseif ($api_id) {
+            $where[] = ['api_id', '=', $api_id];
+        } elseif ($api_url) {
+            $api = Db::name('api')
+                ->field('api_id')
+                ->where('is_delete', '=', 0)
+                ->where('api_url', '=', $api_url)
+                ->find();
+            if ($api) {
+                $where[] = ['api_id', '=', $api['api_id']];
+            }
+        }
+        if ($date_range) {
+            $sta_date = $date_range[0];
+            $end_date = $date_range[1];
+
+            $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
+            $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
+        }
+        
+        $res = Db::name('member_log')
+            ->where($where)
+            ->delete(true);
+
+        $data['count'] = $res;
+        $data['param'] = $param;
+
+        return $data;
+    }
+
+    /**
      * 会员日志数量统计
      *
      * @param string $date 日期
@@ -245,7 +327,7 @@ class MemberLogService
      */
     public static function statNum($date = 'total')
     {
-        $key  = $date;
+        $key  = 'num:' . $date;
         $data = MemberLogCache::get($key);
 
         if (empty($data)) {
@@ -359,15 +441,15 @@ class MemberLogService
     }
 
     /**
-     * 会员日志地区统计
+     * 会员日志字段统计
      *
-     * @param integer $date   日期范围
-     * @param string  $region 地区类型
-     * @param integer $top    top排行
+     * @param integer $date 日期范围
+     * @param string  $type 字段类型
+     * @param integer $top  top排行
      *   
      * @return array
      */
-    public static function statRegion($date = [], $region = 'city', $top = 20)
+    public static function statField($date = [], $type = 'city', $top = 20)
     {
         if (empty($date)) {
             $date[0] = DatetimeUtils::daysAgo(29);
@@ -377,26 +459,26 @@ class MemberLogService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = ':' . $sta_date . '-' . $end_date . ':top:' . $top;
+        $key  = 'field:' . 'top' . $top . '-' . $sta_date . '-' . $end_date . $type;
 
-        if ($region == 'country') {
+        if ($type == 'country') {
             $group = 'request_country';
-            $key   = $group . $key;
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
-        } elseif ($region == 'province') {
+        } elseif ($type == 'province') {
             $group = 'request_province';
-            $key   = $group . $key;
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
-        } elseif ($region == 'isp') {
+        } elseif ($type == 'isp') {
             $group = 'request_isp';
-            $key   = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } elseif ($type == 'city') {
+            $group = 'request_city';
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
         } else {
-            $group = 'request_city';
-            $key   = $group . $key;
+            $group = 'member_id';
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
         }
@@ -417,13 +499,31 @@ class MemberLogService
                 ->group($group)
                 ->order('y_data desc')
                 ->limit($top)
-                ->select();
+                ->select()
+                ->toArray();
 
             $x_data = [];
             $y_data = [];
             $p_data = [];
 
+            if ($type == 'member') {
+                $member_ids = array_column($member_log, 'x_data');
+                $member = Db::name('member')
+                    ->field('member_id,username')
+                    ->where('member_id', 'in', $member_ids)
+                    ->select()
+                    ->toArray();
+            }
+
             foreach ($member_log as $k => $v) {
+                if ($type == 'member') {
+                    foreach ($member as $km => $vm) {
+                        if ($v['x_data'] == $vm['member_id']) {
+                            $v['x_data'] = $vm['username'];
+                        }
+                    }
+                }
+
                 $x_data[] = $v['x_data'];
                 $y_data[] = $v['y_data'];
                 $p_data[] = ['value' => $v['y_data'], 'name' => $v['x_data']];

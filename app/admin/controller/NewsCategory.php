@@ -3,7 +3,7 @@
  * @Description  : 新闻分类
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-05-19
- * @LastEditTime : 2021-05-19
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
@@ -16,6 +16,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("新闻分类")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("40")
  */
 class NewsCategory
 {
@@ -27,7 +28,7 @@ class NewsCategory
      * @Apidoc\Param("category_name", type="string", default="", desc="分类名称")
      * @Apidoc\Param("date_type", type="string", default="", desc="时间类型")
      * @Apidoc\Param("date_range", type="array", default="", desc="日期范围")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -72,8 +73,8 @@ class NewsCategory
      * @Apidoc\Title("新闻分类信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\NewsCategoryModel\info")
      * )
      */
@@ -97,7 +98,8 @@ class NewsCategory
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\add")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -116,7 +118,8 @@ class NewsCategory
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -136,7 +139,8 @@ class NewsCategory
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -154,7 +158,8 @@ class NewsCategory
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\ishide")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function ishide()
     {

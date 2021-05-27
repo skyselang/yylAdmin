@@ -18,7 +18,9 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 - 权限管理
 - 日志管理
 - 实用工具
-- 接口文档与调试  
+- 微信管理
+- 接口文档与调试
+- 前台基础功能：登录注册、微信登录、Token认证、接口管理、会员管理...  
 更多功能请安装后体验
 
 ## 演示
@@ -27,6 +29,10 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 - 账号：yyladmin、admin、demo、php  
 - 密码：123456  
 - 提示：演示账号只有部分权限，请安装后体验全部功能
+
+## 安装
+
+- 请查看文档：[安装](https://skyselang.github.io/yylAdminDoc/guide/install/)
 
 ## 预览
 

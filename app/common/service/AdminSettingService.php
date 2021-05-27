@@ -3,7 +3,7 @@
  * @Description  : 设置管理业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-05-20
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\service;
@@ -111,7 +111,23 @@ class AdminSettingService
     {
         $setting = self::info();
 
-        $data['token_exp'] = $setting['token_exp'];
+        // token_name为空则设置token_name
+        if (empty($setting['token_name'])) {
+            $token_name = 'AdminToken';
+            self::tokenEdit(['token_name' => $token_name]);
+            $setting = self::info();
+        }
+
+        // token_key为空则生成token_key
+        if (empty($setting['token_key'])) {
+            $token_key = uniqid();
+            self::tokenEdit(['token_key' => $token_key]);
+            $setting = self::info();
+        }
+
+        $data['token_name'] = $setting['token_name'];
+        $data['token_key']  = $setting['token_key'];
+        $data['token_exp']  = $setting['token_exp'];
 
         return $data;
     }
@@ -147,11 +163,11 @@ class AdminSettingService
      *
      * @return array
      */
-    public static function verifyInfo()
+    public static function captchaInfo()
     {
         $setting = self::info();
 
-        $data['verify_switch'] = $setting['verify_switch'];
+        $data['captcha_switch'] = $setting['captcha_switch'];
 
         return $data;
     }
@@ -163,7 +179,88 @@ class AdminSettingService
      *
      * @return array
      */
-    public static function verifyEdit($param)
+    public static function captchaEdit($param)
+    {
+        $admin_setting_id = self::$admin_setting_id;
+
+        $param['update_time'] = datetime();
+
+        $res = Db::name('admin_setting')
+            ->where('admin_setting_id', $admin_setting_id)
+            ->update($param);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        AdminSettingCache::del($admin_setting_id);
+
+        return $param;
+    }
+
+    /**
+     * 日志设置信息
+     *
+     * @return array
+     */
+    public static function logInfo()
+    {
+        $setting = self::info();
+
+        $data['log_switch'] = $setting['log_switch'];
+
+        return $data;
+    }
+
+    /**
+     * 日志设置修改
+     * 
+     * @param array $param 日志记录信息
+     *
+     * @return array
+     */
+    public static function logEdit($param)
+    {
+        $admin_setting_id = self::$admin_setting_id;
+
+        $param['update_time'] = datetime();
+
+        $res = Db::name('admin_setting')
+            ->where('admin_setting_id', $admin_setting_id)
+            ->update($param);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        AdminSettingCache::del($admin_setting_id);
+
+        return $param;
+    }
+
+    /**
+     * 接口设置信息
+     *
+     * @return array
+     */
+    public static function apiInfo()
+    {
+        $admin_setting = self::info();
+
+        $data['api_rate_num']  = $admin_setting['api_rate_num'];
+        $data['api_rate_time'] = $admin_setting['api_rate_time'];
+
+        return $data;
+    }
+
+    /**
+     * 接口设置修改
+     *
+     * @param array $param API信息
+     *
+     * @return array
+     */
+    public static function apiEdit($param)
     {
         $admin_setting_id = self::$admin_setting_id;
 

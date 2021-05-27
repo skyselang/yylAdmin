@@ -3,7 +3,7 @@
  * @Description  : 接口模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\model;
@@ -23,7 +23,14 @@ class ApiModel extends Model
     }
 
     /**
-     * @Field("api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unauth,create_time,update_time")
+     * @Field("api_url")
+     */
+    public function api_url()
+    {
+    }
+
+    /**
+     * @Field("api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin,create_time,update_time")
      */
     public function list()
     {
@@ -65,9 +72,9 @@ class ApiModel extends Model
     }
 
     /**
-     * @Field("api_id,is_unauth")
+     * @Field("api_id,is_unlogin")
      */
-    public function unauth()
+    public function unlogin()
     {
     }
 }

@@ -3,7 +3,7 @@
  * @Description  : 日志管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-06
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\service;
@@ -29,7 +29,9 @@ class AdminUserLogService
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'admin_user_log_id,admin_user_id,admin_menu_id');
+        } else {
             $field = 'admin_user_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
@@ -224,27 +226,68 @@ class AdminUserLogService
     /**
      * 日志管理清除
      *
-     * @param integer $param 清除条件
+     * @param array $param 清除条件
      * 
      * @return array
      */
     public static function clear($param)
     {
         $admin_user_id = $param['admin_user_id'];
+        $username      = $param['username'];
         $admin_menu_id = $param['admin_menu_id'];
-        $clear_date    = $param['clear_date'];
+        $menu_url      = $param['menu_url'];
+        $date_range    = $param['date_range'];
 
         $where = [];
-        
-        if ($admin_user_id) {
+        if ($admin_user_id && $username) {
+            $admin_user = Db::name('admin_user')
+                ->field('admin_user_id')
+                ->where('is_delete', '=', 0)
+                ->where('username', '=', $username)
+                ->find();
+            if ($admin_user) {
+                $where[] = ['admin_user_id', 'in', [$admin_user_id, $admin_user['admin_user_id']]];
+            } else {
+                $where[] = ['admin_user_id', '=', $admin_user_id];
+            }
+        } elseif ($admin_user_id) {
             $where[] = ['admin_user_id', '=', $admin_user_id];
+        } elseif ($username) {
+            $admin_user = Db::name('admin_user')
+                ->field('admin_user_id')
+                ->where('is_delete', '=', 0)
+                ->where('username', '=', $username)
+                ->find();
+            if ($admin_user) {
+                $where[] = ['admin_user_id', '=', $admin_user['admin_user_id']];
+            }
         }
-        if ($admin_menu_id) {
+        if ($admin_menu_id && $menu_url) {
+            $admin_menu = Db::name('admin_menu')
+                ->field('admin_menu_id')
+                ->where('is_delete', '=', 0)
+                ->where('menu_url', '=', $menu_url)
+                ->find();
+            if ($admin_menu) {
+                $where[] = ['admin_menu_id', 'in', [$admin_menu_id, $admin_menu['admin_menu_id']]];
+            } else {
+                $where[] = ['admin_menu_id', '=', $admin_menu_id];
+            }
+        } elseif ($admin_menu_id) {
             $where[] = ['admin_menu_id', '=', $admin_menu_id];
+        } elseif ($menu_url) {
+            $admin_menu = Db::name('admin_menu')
+                ->field('admin_menu_id')
+                ->where('is_delete', '=', 0)
+                ->where('menu_url', '=', $menu_url)
+                ->find();
+            if ($admin_menu) {
+                $where[] = ['admin_menu_id', '=', $admin_menu['admin_menu_id']];
+            }
         }
-        if ($clear_date) {
-            $sta_date = $clear_date[0];
-            $end_date = $clear_date[1];
+        if ($date_range) {
+            $sta_date = $date_range[0];
+            $end_date = $date_range[1];
 
             $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
@@ -255,6 +298,7 @@ class AdminUserLogService
             ->delete(true);
 
         $data['count'] = $res;
+        $data['param'] = $param;
 
         return $data;
     }
@@ -268,7 +312,7 @@ class AdminUserLogService
      */
     public static function statNum($date = 'total')
     {
-        $key  = $date;
+        $key  = 'num:' . $date;
         $data = AdminUserLogCache::get($key);
 
         if (empty($data)) {
@@ -382,15 +426,15 @@ class AdminUserLogService
     }
 
     /**
-     * 日志管理地区统计
+     * 日志管理字段统计
      *
-     * @param integer $date   日期范围
-     * @param string  $region 地区类型
-     * @param integer $top    top排行
+     * @param integer $date 日期范围
+     * @param string  $type 统计类型
+     * @param integer $top  top排行
      *   
      * @return array
      */
-    public static function statRegion($date = [], $region = 'city', $top = 20)
+    public static function statField($date = [], $type = 'city', $top = 20)
     {
         if (empty($date)) {
             $date[0] = DatetimeUtils::daysAgo(29);
@@ -400,26 +444,26 @@ class AdminUserLogService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = ':' . $sta_date . '-' . $end_date . ':top:' . $top;
+        $key  = 'field:' . 'top' . $top . '-' . $sta_date . '-' . $end_date . $type;
 
-        if ($region == 'country') {
+        if ($type == 'country') {
             $group = 'request_country';
-            $key   = $group . $key;
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
-        } elseif ($region == 'province') {
+        } elseif ($type == 'province') {
             $group = 'request_province';
-            $key   = $group . $key;
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
-        } elseif ($region == 'isp') {
+        } elseif ($type == 'isp') {
             $group = 'request_isp';
-            $key   = $group . $key;
+            $field = $group . ' as x_data';
+            $where[] = [$group, '<>', ''];
+        } elseif ($type == 'city') {
+            $group = 'request_city';
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
         } else {
-            $group = 'request_city';
-            $key   = $group . $key;
+            $group = 'admin_user_id';
             $field = $group . ' as x_data';
             $where[] = [$group, '<>', ''];
         }
@@ -440,13 +484,31 @@ class AdminUserLogService
                 ->group($group)
                 ->order('y_data desc')
                 ->limit($top)
-                ->select();
+                ->select()
+                ->toArray();
 
             $x_data = [];
             $y_data = [];
             $p_data = [];
 
+            if ($type == 'user') {
+                $admin_user_ids = array_column($admin_user_log, 'x_data');
+                $admin_user = Db::name('admin_user')
+                    ->field('admin_user_id,username')
+                    ->where('admin_user_id', 'in', $admin_user_ids)
+                    ->select()
+                    ->toArray();
+            }
+
             foreach ($admin_user_log as $k => $v) {
+                if ($type == 'user') {
+                    foreach ($admin_user as $ka => $va) {
+                        if ($v['x_data'] == $va['admin_user_id']) {
+                            $v['x_data'] = $va['username'];
+                        }
+                    }
+                }
+
                 $x_data[] = $v['x_data'];
                 $y_data[] = $v['y_data'];
                 $p_data[] = ['value' => $v['y_data'], 'name' => $v['x_data']];

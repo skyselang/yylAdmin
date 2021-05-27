@@ -1,16 +1,16 @@
 <?php
 /*
- * @Description  : 请求频率缓存
+ * @Description  : 接口速率缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2021-05-04
+ * @LastEditTime : 2021-05-26
  */
 
 namespace app\common\cache;
 
 use think\facade\Cache;
 
-class AdminThrottleCache
+class AdminApiRateCache
 {
     /**
      * 缓存key
@@ -22,7 +22,7 @@ class AdminThrottleCache
      */
     public static function key($admin_user_id, $menu_url)
     {
-        $key = 'AdminThrottle:' . $admin_user_id . ':' . $menu_url;
+        $key = 'AdminApiRate:' . $admin_user_id . ':' . $menu_url;
 
         return $key;
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 用户缓存
+ * @Description  : 用户管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
  * @LastEditTime : 2021-05-06

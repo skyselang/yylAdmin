@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
@@ -16,6 +16,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("地区管理")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("70")
  */
 class Region
 {
@@ -28,7 +29,7 @@ class Region
      * @Apidoc\Param("region_id", type="string", default="", desc="id")
      * @Apidoc\Param("region_name", type="string", default="", desc="名称")
      * @Apidoc\Param("region_pinyin", type="string", default="", desc="拼音")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -78,8 +79,8 @@ class Region
      * @Apidoc\Title("地区信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\RegionModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
      * )
      */
@@ -103,7 +104,8 @@ class Region
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\RegionModel\add")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -139,7 +141,8 @@ class Region
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\RegionModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -176,7 +179,8 @@ class Region
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\RegionModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {

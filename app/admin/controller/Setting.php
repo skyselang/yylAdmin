@@ -3,7 +3,7 @@
  * @Description  : 基础设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\admin\controller;
@@ -16,51 +16,16 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("基础设置")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("80")
  */
 class Setting
 {
     /**
-     * @Apidoc\Title("验证码信息")
+     * @Apidoc\Title("Token设置信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned("verify_register", type="int", default="0", desc="注册验证码1开启0关闭"),
-     *    @Apidoc\Returned("verify_login", type="int", default="0", desc="登录验证码1开启0关闭"),
-     * )
-     */
-    public function verifyInfo()
-    {
-        $data = SettingService::verifyInfo();
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("验证码修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("verify_register", type="int", default="0", desc="注册验证码1开启0关闭")
-     * @Apidoc\Param("verify_login", type="int", default="0", desc="登录验证码1开启0关闭")
-     * @Apidoc\Returned(ref="return")
-     */
-    public function verifyEdit()
-    {
-        $param['verify_register'] = Request::param('verify_register/d', 0);
-        $param['verify_login']    = Request::param('verify_login/d', 0);
-
-        validate(SettingValidate::class)->scene('verify_edit')->check($param);
-
-        $data = SettingService::verifyEdit($param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("Token信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned("token_exp", type="int", default="12", desc="token有效时间（小时）")
+     *    @Apidoc\Returned(ref="app\common\model\SettingModel\tokenInfo")
      * )
      */
     public function tokenInfo()
@@ -71,19 +36,126 @@ class Setting
     }
 
     /**
-     * @Apidoc\Title("Token修改")
+     * @Apidoc\Title("Token设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("token_exp", type="int", default="720", desc="token有效时间（小时）")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\tokenInfo")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function tokenEdit()
     {
-        $param['token_exp'] = Request::param('token_exp/d', 720);
+        $param['token_name'] = Request::param('token_name/s', '');
+        $param['token_key']  = Request::param('token_key/s', '');
+        $param['token_exp']  = Request::param('token_exp/d', 720);
 
         validate(SettingValidate::class)->scene('token_edit')->check($param);
 
         $data = SettingService::tokenEdit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("验证码设置信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *    @Apidoc\Returned(ref="app\common\model\SettingModel\captchaInfo")
+     * )
+     */
+    public function captchaInfo()
+    {
+        $data = SettingService::captchaInfo();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("验证码设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\captchaInfo")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
+     */
+    public function captchaEdit()
+    {
+        $param['captcha_register'] = Request::param('captcha_register/d', 0);
+        $param['captcha_login']    = Request::param('captcha_login/d', 0);
+
+        validate(SettingValidate::class)->scene('captcha_edit')->check($param);
+
+        $data = SettingService::captchaEdit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("日志设置信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *    @Apidoc\Returned(ref="app\common\model\SettingModel\logInfo")
+     * )
+     */
+    public function logInfo()
+    {
+        $data = SettingService::logInfo();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("日志设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\logInfo")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
+     */
+    public function logEdit()
+    {
+        $param['log_switch'] = Request::param('log_switch/d', 0);
+
+        validate(SettingValidate::class)->scene('log_edit')->check($param);
+
+        $data = SettingService::logEdit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("API设置信息")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *    @Apidoc\Returned(ref="app\common\model\SettingModel\apiInfo")
+     * )
+     */
+    public function apiInfo()
+    {
+        $data = SettingService::apiInfo();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("API设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\apiInfo")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
+     */
+    public function apiEdit()
+    {
+        $param['api_rate_num']  = Request::param('api_rate_num/d', 3);
+        $param['api_rate_time'] = Request::param('api_rate_time/d', 1);
+
+        validate(SettingValidate::class)->scene('api_edit')->check($param);
+
+        $data = SettingService::apiEdit($param);
 
         return success($data);
     }

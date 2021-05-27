@@ -3,7 +3,7 @@
  * @Description  : 菜单管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-24
  */
 
 namespace app\common\validate;
@@ -31,6 +31,10 @@ class AdminMenuValidate extends Validate
         'info'       => ['admin_menu_id'],
         'add'        => ['menu_name'],
         'edit'       => ['admin_menu_id', 'menu_name'],
+        'dele'       => ['admin_menu_id'],
+        'disable'    => ['admin_menu_id'],
+        'unauth'     => ['admin_menu_id'],
+        'unlogin'    => ['admin_menu_id'],
         'role'       => ['admin_menu_id'],
         'roleRemove' => ['admin_menu_id'],
         'user'       => ['admin_menu_id'],

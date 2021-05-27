@@ -1,6 +1,6 @@
 <?php
 /*
- * @Description  : 新闻缓存
+ * @Description  : 新闻管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
  * @LastEditTime : 2021-04-21

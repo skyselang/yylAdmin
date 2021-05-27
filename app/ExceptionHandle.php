@@ -3,7 +3,7 @@
  * @Description  : 应用异常处理类
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app;
@@ -61,7 +61,7 @@ class ExceptionHandle extends Handle
         if ($e instanceof ValidateException) {
             $data['code'] = 400;
             $data['msg']  = $e->getError();
-            $data['err']  = [];
+            $data['data'] = [];
             return response($data, 200, [], 'json');
         }
 
@@ -78,7 +78,7 @@ class ExceptionHandle extends Handle
             // 手动异常
             $data['code'] = $e->getCode();
             $data['msg']  = $e->getMessage();
-            $data['err']  = [];
+            $data['data'] = [];
 
             return response($data, 200, [], 'json');
         }

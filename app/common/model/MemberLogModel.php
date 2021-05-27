@@ -3,7 +3,7 @@
  * @Description  : 会员日志模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-17
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\model;

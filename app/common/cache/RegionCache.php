@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 地区缓存
+ * @Description  : 地区管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\common\cache;

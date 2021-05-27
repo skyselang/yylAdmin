@@ -16,7 +16,7 @@
 
 ### admin
 
-请求头部Headers需带上参数：AdminUserId，AdminToken
+请求头部Headers需带上参数：AdminToken
 
 ### index
 

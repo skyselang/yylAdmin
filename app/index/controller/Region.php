@@ -3,7 +3,7 @@
  * @Description  : 地区
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-14
- * @LastEditTime : 2021-05-13
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\index\controller;
@@ -15,14 +15,14 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("地区")
+ * @Apidoc\Sort("5")
  */
 class Region
 {
     /**
      * @Apidoc\Title("地区列表")
-     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -46,10 +46,9 @@ class Region
 
     /**
      * @Apidoc\Title("地区信息")
-     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="app\common\model\RegionModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
      * )
      */
@@ -70,9 +69,8 @@ class Region
 
     /**
      * @Apidoc\Title("地区树形")
-     * @Apidoc\Header(ref="headerIndex")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
      * )
      */

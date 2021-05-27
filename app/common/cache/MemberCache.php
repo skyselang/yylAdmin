@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 会员缓存
+ * @Description  : 会员管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\common\cache;

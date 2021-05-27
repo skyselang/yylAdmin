@@ -3,7 +3,7 @@
  * @Description  : 接口管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
@@ -16,6 +16,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("接口管理")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("50")
  */
 class Api
 {
@@ -23,7 +24,7 @@ class Api
      * @Apidoc\Title("接口列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -42,8 +43,8 @@ class Api
      * @Apidoc\Title("接口信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\ApiModel\info")
      * )
      */
@@ -67,7 +68,8 @@ class Api
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\add")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -88,7 +90,8 @@ class Api
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -110,7 +113,8 @@ class Api
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -128,7 +132,8 @@ class Api
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\disable")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function disable()
     {
@@ -143,20 +148,21 @@ class Api
     }
 
     /**
-     * @Apidoc\Title("接口是否无需权限")
+     * @Apidoc\Title("接口是否无需登录")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\unauth")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\unlogin")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
-    public function unauth()
+    public function unlogin()
     {
         $param['api_id']    = Request::param('api_id/d', '');
-        $param['is_unauth'] = Request::param('is_unauth/d', 0);
+        $param['is_unlogin'] = Request::param('is_unlogin/d', 0);
 
-        validate(ApiValidate::class)->scene('unauth')->check($param);
+        validate(ApiValidate::class)->scene('unlogin')->check($param);
 
-        $data = ApiService::unauth($param);
+        $data = ApiService::unlogin($param);
 
         return success($data);
     }

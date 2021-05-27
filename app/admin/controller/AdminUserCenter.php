@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-26
  */
 
 namespace app\admin\controller;
@@ -17,21 +17,21 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("个人中心")
  * @Apidoc\Group("admin")
+ * @Apidoc\Sort("50")
  */
 class AdminUserCenter
 {
     /**
      * @Apidoc\Title("我的信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("admin_user_id", type="int", require=true, desc="用户id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\AdminUserModel\info")
      * )
-     */ 
+     */
     public function info()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_user_id'] = admin_user_id();
 
         validate(AdminUserCenterValidate::class)->scene('info')->check($param);
 
@@ -49,11 +49,12 @@ class AdminUserCenter
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_user_id'] = admin_user_id();
         $param['username']      = Request::param('username/s', '');
         $param['nickname']      = Request::param('nickname/s', '');
         $param['phone']         = Request::param('phone/s', '');
@@ -73,11 +74,12 @@ class AdminUserCenter
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
      * @Apidoc\Param("password_old", type="string", require=true, desc="原密码")
      * @Apidoc\Param("password_new", type="string", require=true, desc="新密码")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function pwd()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_user_id'] = admin_user_id();
         $param['password_old']  = Request::param('password_old/s', '');
         $param['password_new']  = Request::param('password_new/s', '');
 
@@ -94,11 +96,12 @@ class AdminUserCenter
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\avatar")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function avatar()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_user_id'] = admin_user_id();
         $param['avatar']        = Request::file('avatar_file');
 
         validate(AdminUserCenterValidate::class)->scene('avatar')->check($param);
@@ -116,7 +119,7 @@ class AdminUserCenter
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
      * @Apidoc\Param("create_time", type="array", default="[]", desc="开始与结束日期eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 

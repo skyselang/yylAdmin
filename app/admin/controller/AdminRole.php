@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-30
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-26
  */
 
 namespace app\admin\controller;
@@ -17,6 +17,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("角色管理")
  * @Apidoc\Group("admin")
+ * @Apidoc\Sort("20")
  */
 class AdminRole
 {
@@ -26,7 +27,7 @@ class AdminRole
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param("role_name", type="string", default="", desc="角色名称")
      * @Apidoc\Param("role_desc", type="string", default="", desc="角色描述")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -65,8 +66,8 @@ class AdminRole
      * @Apidoc\Title("角色信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\AdminRoleModel\info")
      * )
      */
@@ -90,7 +91,8 @@ class AdminRole
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\add")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -111,7 +113,8 @@ class AdminRole
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */ 
     public function edit()
     {
@@ -133,7 +136,8 @@ class AdminRole
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */ 
     public function dele()
     {
@@ -151,7 +155,8 @@ class AdminRole
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\disable")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */ 
     public function disable()
     {
@@ -170,7 +175,7 @@ class AdminRole
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -206,8 +211,8 @@ class AdminRole
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
-     * @Apidoc\Returned(ref="return"),
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */  
     public function userRemove()
     {

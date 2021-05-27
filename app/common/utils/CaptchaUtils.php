@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\utils;
@@ -11,7 +11,7 @@ namespace app\common\utils;
 use think\facade\Cache;
 use think\facade\Config;
 
-class VerifyUtils
+class CaptchaUtils
 {
     // 验证码开关
     protected static $switch = false;
@@ -52,7 +52,7 @@ class VerifyUtils
     // 算术验证码
     protected static $math = false;
     // 缓存前缀
-    protected static $prefix = 'Verify:';
+    protected static $prefix = 'Captcha:';
 
     /**
      * 验证码配置
@@ -88,7 +88,7 @@ class VerifyUtils
     /**
      * 验证码生成
      * 
-     * @param array $verify 验证码信息
+     * @param array $captcha 验证码信息
      */
     public static function create()
     {
@@ -97,11 +97,11 @@ class VerifyUtils
         $switch = self::$switch;
 
         if (empty($switch)) {
-            $verify['verify_switch'] = $switch;
-            $verify['verify_id']     = '';
-            $verify['verify_src']    = '';
+            $captcha['captcha_switch'] = $switch;
+            $captcha['captcha_id']     = '';
+            $captcha['captcha_src']    = '';
 
-            return $verify;
+            return $captcha;
         }
 
         $generator = self::generate();
@@ -119,7 +119,7 @@ class VerifyUtils
         self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
 
         // 验证码使用随机字体
-        $ttfPath = './static/verify/assets/' . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
+        $ttfPath = './static/captcha/assets/' . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
 
         if (empty(self::$fontttf)) {
             $dir  = dir($ttfPath);
@@ -170,11 +170,11 @@ class VerifyUtils
         @unlink($tmpfname);
         imagedestroy(self::$im);
 
-        $verify['verify_switch'] = $switch;
-        $verify['verify_id']     = $generator['key'];
-        $verify['verify_src']    = $img_base64;
+        $captcha['captcha_switch'] = $switch;
+        $captcha['captcha_id']     = $generator['key'];
+        $captcha['captcha_src']    = $img_base64;
 
-        return $verify;
+        return $captcha;
     }
 
     /**
@@ -185,7 +185,7 @@ class VerifyUtils
      */
     protected static function generate()
     {
-        $id = uniqid('verify');
+        $id = uniqid('captcha');
         $key = self::$prefix . $id;
         $bag = '';
 
@@ -224,12 +224,12 @@ class VerifyUtils
     /**
      * 验证码验证
      * 
-     * @param string $verify_id   验证码id
-     * @param string $verify_code 验证码
+     * @param string $captcha_id   验证码id
+     * @param string $captcha_code 验证码
      * 
      * @return bool 验证码是否正确
      */
-    public static function check($verify_id, $verify_code)
+    public static function check($captcha_id, $captcha_code)
     {
         self::configure();
         
@@ -238,9 +238,9 @@ class VerifyUtils
             return true;
         }
 
-        $key    = self::$prefix . $verify_id;
-        $verify = Cache::get($key);
-        if ($verify && ($verify == $verify_code)) {
+        $key    = self::$prefix . $captcha_id;
+        $captcha = Cache::get($key);
+        if ($captcha && ($captcha == $captcha_code)) {
             return true;
         }
 
@@ -330,7 +330,7 @@ class VerifyUtils
      */
     protected static function background(): void
     {
-        $path = './static/verify/assets/bgs/';
+        $path = './static/captcha/assets/bgs/';
         $dir  = dir($path);
 
         $bgs = [];

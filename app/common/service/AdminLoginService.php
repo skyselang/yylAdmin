@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-26
  */
 
 namespace app\common\service;
@@ -26,7 +26,7 @@ class AdminLoginService
         $username = $param['username'];
         $password = md5($param['password']);
 
-        $field = 'admin_user_id,username,nickname,login_num,is_disable';
+        $field = 'admin_user_id,login_num,is_disable';
 
         $where[] = ['username|phone|email', '=', $username];
         $where[] = ['password', '=', $password];

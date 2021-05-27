@@ -3,7 +3,7 @@
  * @Description  : 用户模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-03
- * @LastEditTime : 2021-04-16
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\model;
@@ -20,6 +20,13 @@ class AdminUserModel extends Model
      * @Field("admin_user_id")
      */
     public function id()
+    {
+    }
+
+    /**
+     * @Field("username")
+     */
+    public function username()
     {
     }
 

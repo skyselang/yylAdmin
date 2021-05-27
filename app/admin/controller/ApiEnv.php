@@ -3,7 +3,7 @@
  * @Description  : 接口环境
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
@@ -16,6 +16,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("接口环境")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("60")
  */
 class ApiEnv
 {
@@ -25,7 +26,7 @@ class ApiEnv
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param("env_name", type="string", default="", desc="名称")
      * @Apidoc\Param("env_host", type="string", default="", desc="host")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -64,8 +65,8 @@ class ApiEnv
      * @Apidoc\Title("接口环境信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiEnvModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\ApiEnvModel\info")
      * )
      */
@@ -89,7 +90,8 @@ class ApiEnv
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiEnvModel\add")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -111,7 +113,8 @@ class ApiEnv
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiEnvModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -134,7 +137,8 @@ class ApiEnv
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiEnvModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {

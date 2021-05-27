@@ -3,7 +3,7 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-21
  */
 
 namespace app\index\service;
@@ -46,7 +46,7 @@ class LoginService
         }
 
         if ($member['is_disable'] == 1) {
-            exception('会员已被禁用');
+            exception('账号已被禁用');
         }
 
         $ip_info   = IpInfoUtils::info();
@@ -321,8 +321,8 @@ class LoginService
      */
     public static function loginField($member)
     {
-        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'avatar', 'login_ip', 'login_time'];
         $data = [];
+        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'avatar', 'login_ip', 'login_time'];
         foreach ($field as $k => $v) {
             $data[$v] = $member[$v];
         }

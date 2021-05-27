@@ -3,20 +3,21 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-05-19
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
 
-use app\common\service\NewsCategoryService;
 use think\facade\Request;
 use app\common\validate\NewsValidate;
 use app\common\service\NewsService;
+use app\common\service\NewsCategoryService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("新闻管理")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("30")
  */
 class News
 {
@@ -28,7 +29,7 @@ class News
      * @Apidoc\Param("title", type="string", default="", desc="标题")
      * @Apidoc\Param("date_type", type="string", default="", desc="时间类型")
      * @Apidoc\Param("date_range", type="array", default="", desc="日期范围")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -74,10 +75,10 @@ class News
     }
 
     /**
-     * @Apidoc\Title("新闻分类列表")
+     * @Apidoc\Title("新闻分类")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -96,8 +97,8 @@ class News
      * @Apidoc\Title("新闻信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\NewsModel\info")
      * )
      */
@@ -121,7 +122,8 @@ class News
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\add")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -148,7 +150,8 @@ class News
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -176,7 +179,8 @@ class News
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -196,7 +200,7 @@ class News
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param("type", type="string", require=true, default="", desc="image、file")
      * @Apidoc\Param("file", type="file", require=true, default="", desc="文件")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned("type", type="string", desc="类型"),
      *      @Apidoc\Returned("file_path", type="string", desc="文件路径"),
@@ -226,7 +230,8 @@ class News
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\istop")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function istop()
     {
@@ -245,7 +250,8 @@ class News
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\ishot")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function ishot()
     {
@@ -264,7 +270,8 @@ class News
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\isrec")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function isrec()
     {
@@ -283,7 +290,8 @@ class News
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsModel\ishide")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function ishide()
     {

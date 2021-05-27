@@ -3,7 +3,7 @@
  * @Description  : 权限验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\admin\middleware;
@@ -26,16 +26,24 @@ class AdminRuleVerifyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $menu_url       = request_pathinfo();
-        $api_whitelist  = Config::get('admin.api_whitelist');
-        $rule_whitelist = Config::get('admin.rule_whitelist');
-        $whitelist      = array_merge($rule_whitelist, $api_whitelist);
+        $menu_url = menu_url();
 
-        if (!in_array($menu_url, $whitelist)) {
-            $admin_user_id   = admin_user_id();
-            $admin_super_ids = Config::get('admin.super_ids');
+        // 菜单是否存在
+        if (!menu_is_exist($menu_url)) {
+            $msg   = '接口地址错误';
+            $debug = Config::get('app.app_debug');
+            if ($debug) {
+                $msg .= '：' . $menu_url;
+            }
+            exception($msg, 404);
+        }
 
-            if (!in_array($admin_user_id, $admin_super_ids)) {
+        // 菜单是否无需权限
+        if (!menu_is_unauth($menu_url)) {
+            $admin_user_id = admin_user_id();
+            
+            // 用户是否超管
+            if (!admin_is_super($admin_user_id)) {
                 $admin_user = AdminUserCache::get($admin_user_id);
 
                 if (empty($admin_user)) {
@@ -43,24 +51,13 @@ class AdminRuleVerifyMiddleware
                 }
 
                 if ($admin_user['is_disable'] == 1) {
-                    exception('账号已禁用，请联系用户', 401);
+                    exception('账号已禁用，请联系管理员', 401);
                 }
 
                 if (!in_array($menu_url, $admin_user['roles'])) {
                     $admin_menu = AdminMenuService::info($menu_url);
                     exception('你没有权限操作：' . $admin_menu['menu_name'], 403);
                 }
-            }
-
-            $admin_menu_url = AdminMenuService::list('url')['list'];
-
-            if (!in_array($menu_url, $admin_menu_url)) {
-                $msg   = '接口地址错误';
-                $debug = Config::get('app.app_debug');
-                if ($debug) {
-                    $msg .= '：' . $menu_url;
-                }
-                exception($msg, 404);
             }
         }
 

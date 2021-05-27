@@ -3,7 +3,7 @@
  * @Description  : 新闻管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-05-19
+ * @LastEditTime : 2021-05-22
  */
 
 namespace app\common\service;
@@ -27,7 +27,9 @@ class NewsService
      */
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'news_id,news_category_id,title');
+        } else {
             $field = 'news_id,news_category_id,img,title,time,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time';
         }
 

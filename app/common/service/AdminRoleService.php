@@ -3,7 +3,7 @@
  * @Description  : 角色管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-24
  */
 
 namespace app\common\service;
@@ -27,7 +27,9 @@ class AdminRoleService
      */
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'admin_role_id,role_name');
+        } else {
             $field = 'admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time';
         }
 
@@ -98,7 +100,7 @@ class AdminRoleService
         }
 
         $data['admin_role'] = $admin_role;
-        $data['menu_tree']  = AdminMenuService::list()['list'];
+        $data['menu_tree']  = AdminMenuService::tree();
 
         return $admin_role;
     }
@@ -149,7 +151,7 @@ class AdminRoleService
 
         if (false) {
             $data['admin_role'] = self::info($admin_role_id);
-            $data['menu_tree']  = AdminMenuService::list()['list'];
+            $data['menu_tree']  = AdminMenuService::tree();
 
             return $data;
         } else {

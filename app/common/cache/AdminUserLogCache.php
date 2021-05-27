@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 日志缓存
+ * @Description  : 日志管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-07-15
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\common\cache;
@@ -41,7 +41,7 @@ class AdminUserLogCache
         $val = $admin_user_log;
 
         if (empty($ttl)) {
-            $ttl = 1 * 60 * 60;
+            $ttl = 0.5 * 60 * 60;
         }
 
         $res = Cache::set($key, $val, $ttl);

@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
@@ -19,6 +19,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("菜单管理")
  * @Apidoc\Group("admin")
+ * @Apidoc\Sort("10")
  */
 class AdminMenu
 {
@@ -26,17 +27,17 @@ class AdminMenu
      * @Apidoc\Title("菜单列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表",
+     *      @Apidoc\Returned("list", type="array", desc="树形列表",
      *          @Apidoc\Returned(ref="app\common\model\AdminMenuModel\list")
      *      )
      * )
      */
     public function list()
     {
-        $data = AdminMenuService::list();
+        $data['list'] = AdminMenuService::tree();
 
         return success($data);
     }
@@ -45,7 +46,7 @@ class AdminMenu
      * @Apidoc\Title("菜单信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", 
      *      @Apidoc\Returned(ref="app\common\model\AdminMenuModel\info")
      * )
@@ -70,7 +71,7 @@ class AdminMenu
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\add")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      */
     public function add()
     {
@@ -91,7 +92,7 @@ class AdminMenu
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\edit")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      */
     public function edit()
     {
@@ -113,7 +114,7 @@ class AdminMenu
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      */
     public function dele()
     {
@@ -131,7 +132,7 @@ class AdminMenu
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\disable")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      */
     public function disable()
     {
@@ -150,7 +151,7 @@ class AdminMenu
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\unauth")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      */
     public function unauth()
     {
@@ -165,11 +166,30 @@ class AdminMenu
     }
 
     /**
+     * @Apidoc\Title("菜单是否无需登录")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\AdminMenuModel\unlogin")
+     * @Apidoc\Returned(ref="returnCode")
+     */
+    public function unlogin()
+    {
+        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['is_unlogin']    = Request::param('is_unlogin/d', 0);
+
+        validate(AdminMenuValidate::class)->scene('unlogin')->check($param);
+
+        $data = AdminMenuService::unlogin($param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("菜单角色")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -204,8 +224,8 @@ class AdminMenu
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
-     * @Apidoc\Returned(ref="return"),
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function roleRemove()
     {
@@ -226,7 +246,7 @@ class AdminMenu
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
      * @Apidoc\Param(ref="app\common\model\AdminRoleModel\id")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表",
@@ -277,8 +297,8 @@ class AdminMenu
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminMenuModel\id")
      * @Apidoc\Param(ref="app\common\model\AdminUserModel\id")
-     * @Apidoc\Returned(ref="return"),
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function userRemove()
     {

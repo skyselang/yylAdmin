@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 角色缓存
+ * @Description  : 角色管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-24
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\common\cache;

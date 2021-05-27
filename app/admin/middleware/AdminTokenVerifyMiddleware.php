@@ -3,7 +3,7 @@
  * @Description  : Token验证中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\admin\middleware;
@@ -11,7 +11,6 @@ namespace app\admin\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use think\facade\Config;
 use app\common\service\AdminTokenService;
 
 class AdminTokenVerifyMiddleware
@@ -25,23 +24,16 @@ class AdminTokenVerifyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $menu_url      = request_pathinfo();
-        $api_whitelist = Config::get('admin.api_whitelist');
-
-        if (!in_array($menu_url, $api_whitelist)) {
+        // 菜单是否无需登录
+        if (!menu_is_unlogin()) {
             $admin_token = admin_token();
 
             if (empty($admin_token)) {
                 exception('Requests Headers：AdminToken must');
             }
 
-            $admin_user_id = admin_user_id();
-
-            if (empty($admin_user_id)) {
-                exception('Requests Headers：AdminUserId must');
-            }
-
-            AdminTokenService::verify($admin_token, $admin_user_id);
+            // 用户Token验证
+            AdminTokenService::verify($admin_token);
         }
 
         return $next($request);

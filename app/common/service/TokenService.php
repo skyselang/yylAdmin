@@ -3,16 +3,27 @@
  * @Description  : Token
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-15
+ * @LastEditTime : 2021-05-26
  */
 
 namespace app\common\service;
 
-use think\facade\Config;
 use Firebase\JWT\JWT;
 
 class TokenService
 {
+    /**
+     * Token配置
+     *
+     * @return array
+     */
+    public static function config()
+    {
+        $config = SettingService::tokenInfo();
+
+        return $config;
+    }
+
     /**
      * Token生成
      * 
@@ -22,12 +33,12 @@ class TokenService
      */
     public static function create($member)
     {
-        $setting = SettingService::tokenInfo();
+        $config = self::config();
 
-        $key = Config::get('index.token.key');         //密钥
-        $iat = time();                                 //签发时间
-        $nbf = time();                                 //生效时间
-        $exp = time() + $setting['token_exp'] * 3600;  //过期时间
+        $key = $config['token_key'];                  //密钥
+        $iat = time();                                //签发时间
+        $nbf = time();                                //生效时间
+        $exp = time() + $config['token_exp'] * 3600;  //过期时间
 
         $data = [
             'member_id'  => $member['member_id'],
@@ -52,15 +63,15 @@ class TokenService
      *
      * @param string $token token
      * 
-     * @return json
+     * @return Exception
      */
     public static function verify($token)
     {
         try {
-            $key = Config::get('index.token.key');
-            JWT::decode($token, $key, array('HS256'));
+            $config = self::config();
+            JWT::decode($token, $config['token_key'], array('HS256'));
         } catch (\Exception $e) {
-            exception('登录状态已失效', 401);
+            exception('登录已失效', 401);
         }
     }
 
@@ -69,18 +80,18 @@ class TokenService
      *
      * @param string $token token
      * 
-     * @return integer
+     * @return integer member_id
      */
     public static function memberId($token)
     {
         try {
-            $key    = Config::get('index.token.key');
-            $decode = JWT::decode($token, $key, array('HS256'));
-        } catch (\Exception $e) {
-            exception('登录状态已失效', 401);
-        }
+            $config = self::config();
+            $decode = JWT::decode($token, $config['token_key'], array('HS256'));
 
-        $member_id = $decode->data->member_id;
+            $member_id = $decode->data->member_id;
+        } catch (\Exception $e) {
+            $member_id = 0;
+        }
 
         return $member_id;
     }

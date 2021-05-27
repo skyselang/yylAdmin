@@ -3,15 +3,15 @@
  * @Description  : 注册
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-30
- * @LastEditTime : 2021-05-18
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\index\controller;
 
 use think\facade\Request;
+use app\common\utils\CaptchaUtils;
 use app\common\validate\MemberValidate;
 use app\common\service\SettingService;
-use app\common\utils\VerifyUtils;
 use app\index\service\RegisterService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -23,17 +23,17 @@ class Register
 {
     /**
      * @Apidoc\Title("验证码")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned(ref="returnVerify")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnCaptcha")
      */
-    public function verify()
+    public function captcha()
     {
-        $setting = SettingService::verifyInfo();
+        $setting = SettingService::captchaInfo();
 
-        if ($setting['verify_register']) {
-            $data = VerifyUtils::create();
+        if ($setting['captcha_register']) {
+            $data = CaptchaUtils::create();
         } else {
-            $data['verify_switch'] = $setting['verify_register'];
+            $data['captcha_switch'] = $setting['captcha_register'];
         }
 
         return success($data);
@@ -45,30 +45,30 @@ class Register
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
      * @Apidoc\Param(ref="app\common\model\MemberModel\nickname")
-     * @Apidoc\Param(ref="paramVerify")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Param(ref="paramCaptcha")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
     public function register()
     {
-        $param['username']    = Request::param('username/s', '');
-        $param['password']    = Request::param('password/s', '');
-        $param['nickname']    = Request::param('nickname/s', '');
-        $param['verify_id']   = Request::param('verify_id/s', '');
-        $param['verify_code'] = Request::param('verify_code/s', '');
+        $param['username']     = Request::param('username/s', '');
+        $param['password']     = Request::param('password/s', '');
+        $param['nickname']     = Request::param('nickname/s', '');
+        $param['captcha_id']   = Request::param('captcha_id/s', '');
+        $param['captcha_code'] = Request::param('captcha_code/s', '');
 
-        $setting = SettingService::verifyInfo();
-        if ($setting['verify_register']) {
-            if (empty($param['verify_code'])) {
+        $setting = SettingService::captchaInfo();
+        if ($setting['captcha_register']) {
+            if (empty($param['captcha_code'])) {
                 exception('请输入验证码');
             }
-            $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
+            $check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
             if (empty($check)) {
                 exception('验证码错误');
             }
         }
 
-        unset($param['verify_id'], $param['verify_code']);
+        unset($param['captcha_id'], $param['captcha_code']);
 
         validate(MemberValidate::class)->scene('register')->check($param);
 

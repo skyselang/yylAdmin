@@ -3,7 +3,7 @@
  * @Description  : 实用工具
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\admin\controller;
@@ -11,12 +11,12 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\common\validate\AdminUtilsValidate;
 use app\common\service\AdminUtilsService;
-use app\common\service\AdminUserService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("实用工具")
  * @Apidoc\Group("admin")
+ * @Apidoc\Sort("80")
  */
 class AdminUtils
 {
@@ -25,7 +25,8 @@ class AdminUtils
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("strrand_ids", type="array", require=true, default="[1,2,3]", desc="字符类型")
      * @Apidoc\Param("strrand_len", type="int", require=true, default="12", desc="字符长度")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function strrand()
     {
@@ -43,7 +44,8 @@ class AdminUtils
      * @Apidoc\Title("字符串转换")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("str", type="string", default="", desc="字符串")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function strtran()
     {
@@ -59,7 +61,8 @@ class AdminUtils
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="转换类型")
      * @Apidoc\Param("value", type="string", default="", desc="时间、时间戳")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function timestamp()
     {
@@ -76,7 +79,7 @@ class AdminUtils
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="B", desc="转换类型")
      * @Apidoc\Param("value", type="string", default="1024", desc="数值")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
      */
     public function bytetran()
     {
@@ -92,7 +95,8 @@ class AdminUtils
      * @Apidoc\Title("IP信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("ip", type="string", default="", desc="ip")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function ipinfo()
     {
@@ -110,7 +114,8 @@ class AdminUtils
     /**
      * @Apidoc\Title("服务器信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function server()
     {

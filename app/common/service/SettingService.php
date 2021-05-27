@@ -3,7 +3,7 @@
  * @Description  : 基础设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\service;
@@ -49,7 +49,7 @@ class SettingService
     }
 
     /**
-     * Token信息
+     * Token设置信息
      *
      * @return array
      */
@@ -57,13 +57,29 @@ class SettingService
     {
         $setting = self::info();
 
-        $data['token_exp'] = $setting['token_exp'];
+        // token_name为空则设置token_name
+        if (empty($setting['token_name'])) {
+            $token_name = 'MemberToken';
+            self::tokenEdit(['token_name' => $token_name]);
+            $setting = self::info();
+        }
+
+        // token_key为空则生成token_key
+        if (empty($setting['token_key'])) {
+            $token_key = uniqid();
+            self::tokenEdit(['token_key' => $token_key]);
+            $setting = self::info();
+        }
+
+        $data['token_name'] = $setting['token_name'];
+        $data['token_key']  = $setting['token_key'];
+        $data['token_exp']  = $setting['token_exp'];
 
         return $data;
     }
 
     /**
-     * Token修改
+     * Token设置修改
      *
      * @param array $param Token信息
      *
@@ -89,28 +105,109 @@ class SettingService
     }
 
     /**
-     * 验证码信息
+     * 验证码设置信息
      *
      * @return array
      */
-    public static function verifyInfo()
+    public static function captchaInfo()
     {
         $setting = self::info();
 
-        $data['verify_register'] = $setting['verify_register'];
-        $data['verify_login']    = $setting['verify_login'];
+        $data['captcha_register'] = $setting['captcha_register'];
+        $data['captcha_login']    = $setting['captcha_login'];
 
         return $data;
     }
 
     /**
-     * 验证码修改
+     * 验证码设置修改
      * 
      * @param array $param 验证码信息
      *
      * @return array
      */
-    public static function verifyEdit($param)
+    public static function captchaEdit($param)
+    {
+        $setting_id = self::$setting_id;
+
+        $param['update_time'] = datetime();
+
+        $res = Db::name('setting')
+            ->where('setting_id', $setting_id)
+            ->update($param);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        SettingCache::del($setting_id);
+
+        return $param;
+    }
+
+    /**
+     * 日志设置信息
+     *
+     * @return array
+     */
+    public static function logInfo()
+    {
+        $setting = self::info();
+
+        $data['log_switch'] = $setting['log_switch'];
+
+        return $data;
+    }
+
+    /**
+     * 日志设置修改
+     * 
+     * @param array $param 日志记录信息
+     *
+     * @return array
+     */
+    public static function logEdit($param)
+    {
+        $setting_id = self::$setting_id;
+
+        $param['update_time'] = datetime();
+
+        $res = Db::name('setting')
+            ->where('setting_id', $setting_id)
+            ->update($param);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        SettingCache::del($setting_id);
+
+        return $param;
+    }
+
+    /**
+     * 接口设置信息
+     *
+     * @return array
+     */
+    public static function apiInfo()
+    {
+        $setting = self::info();
+
+        $data['api_rate_num']  = $setting['api_rate_num'];
+        $data['api_rate_time'] = $setting['api_rate_time'];
+
+        return $data;
+    }
+
+    /**
+     * 接口设置修改
+     *
+     * @param array $param API信息
+     *
+     * @return array
+     */
+    public static function apiEdit($param)
     {
         $setting_id = self::$setting_id;
 

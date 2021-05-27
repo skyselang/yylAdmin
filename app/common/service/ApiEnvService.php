@@ -3,7 +3,7 @@
  * @Description  : 接口环境
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-01-14
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-21
  */
 
 namespace app\common\service;
@@ -26,7 +26,9 @@ class ApiEnvService
      */
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'api_env_id,env_name');
+        } else {
             $field = 'api_env_id,env_name,env_host,env_sort,env_header,create_time,update_time';
         }
 
@@ -119,7 +121,7 @@ class ApiEnvService
     public static function edit($param)
     {
         $api_env_id = $param['api_env_id'];
-        
+
         unset($param['api_env_id']);
 
         $param['update_time'] = datetime();

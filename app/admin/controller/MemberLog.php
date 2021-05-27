@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\admin\controller;
@@ -18,6 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("会员日志")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("20")
  */
 class MemberLog
 {
@@ -29,7 +30,7 @@ class MemberLog
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
      * @Apidoc\Param("create_time", type="array", default="[]", desc="开始与结束日期eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -85,8 +86,8 @@ class MemberLog
      * @Apidoc\Title("会员日志信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\MemberLogModel\info")
      * )
      */ 
@@ -110,7 +111,8 @@ class MemberLog
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\dele")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -124,42 +126,68 @@ class MemberLog
     }
 
     /**
+     * @Apidoc\Title("会员日志清除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\id")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\username")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\id")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\api_url")
+     * @Apidoc\Param("date_range", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
+     */ 
+    public function clear()
+    {
+        $param['member_id']  = Request::param('member_id/d', '');
+        $param['username']   = Request::param('username/s', '');
+        $param['api_id']     = Request::param('api_id/d', '');
+        $param['api_url']    = Request::param('api_url/s', '');
+        $param['date_range'] = Request::param('date_range/a', []);
+
+        $data = MemberLogService::clear($param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("会员日志统计")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")
      * @Apidoc\Param("date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Param("region", type="string", default="", desc="地区")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Param("field", type="string", default="", desc="统计字段")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
      */  
     public function stat()
     {
         $type   = Request::param('type/s', '');
         $date   = Request::param('date/a', []);
-        $region = Request::param('region/s', 'city');
+        $field = Request::param('field/s', 'member');
 
         $data  = [];
         $dates = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
 
-        if ($type == 'number') {
-            $number = [];
+        if ($type == 'num') {
+            $num = [];
             foreach ($dates as $k => $v) {
-                $number[$v] = MemberLogService::statNum($v);
+                $num[$v] = MemberLogService::statNum($v);
             }
-            $data['number'] = $number;
+            $data['num'] = $num;
         } elseif ($type == 'date') {
             $data['date'] = MemberLogService::statDate($date);
-        } elseif ($type == 'region') {
-            $data['region'] = MemberLogService::statRegion($date, $region);
+        } elseif ($type == 'field') {
+            $data['field'] = MemberLogService::statField($date, $field);
         } else {
-            $number = [];
+            $num = [];
             foreach ($dates as $k => $v) {
-                $number[$v] = MemberLogService::statNum($v);
+                $num[$v] = MemberLogService::statNum($v);
             }
 
-            $data['number'] = $number;
-            $data['date']   = MemberLogService::statDate($date);
-            $data['region'] = MemberLogService::statRegion($date, $region);
+            $data['num']   = $num;
+            $data['date']  = MemberLogService::statDate($date);
+            $data['field'] = MemberLogService::statField($date, $field);
         }
 
         return success($data);

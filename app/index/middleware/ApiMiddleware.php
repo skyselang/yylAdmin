@@ -3,7 +3,7 @@
  * @Description  : 接口中间件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\index\middleware;
@@ -11,8 +11,7 @@ namespace app\index\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use think\facade\Env;
-use app\common\service\ApiService;
+use think\facade\Config;
 
 class ApiMiddleware
 {
@@ -25,20 +24,24 @@ class ApiMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $api_url   = request_pathinfo();
-        $whitelist = ApiService::whiteList();
+        $debug = Config::get('app.app_debug');
 
-        if (!in_array($api_url, $whitelist)) {
-            $api_list = ApiService::list('url')['list'];
-
-            if (!in_array($api_url, $api_list)) {
-                $msg   = '接口地址错误';
-                $debug = Env::get('app_debug');
-                if ($debug) {
-                    $msg .= '：' . $api_url;
-                }
-                exception($msg, 404);
+        // 接口是否存在
+        if (!api_is_exist()) {
+            $msg = 'api url error';
+            if ($debug) {
+                $msg .= '：' . api_url();
             }
+            exception($msg, 404);
+        }
+
+        // 接口是否已禁用
+        if (api_is_disable()) {
+            $msg = 'api is disable';
+            if ($debug) {
+                $msg .= '：' . api_url();
+            }
+            exception($msg, 404);
         }
 
         return $next($request);

@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 菜单缓存
+ * @Description  : 菜单管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2021-04-10
+ * @LastEditTime : 2021-05-24
  */
 
 namespace app\common\cache;
@@ -76,8 +76,16 @@ class AdminMenuCache
      */
     public static function del($admin_menu_id = '')
     {
-        $key = self::key($admin_menu_id);
-        $res = Cache::delete($key);
+        if (empty($api_id)) {
+            $res = Cache::delete(self::key('list'));
+            $res = Cache::delete(self::key('tree'));
+            $res = Cache::delete(self::key('urlList'));
+            $res = Cache::delete(self::key('unauthList'));
+            $res = Cache::delete(self::key('unloginList'));
+        } else {
+            $key = self::key($admin_menu_id);
+            $res = Cache::delete($key);
+        }
 
         return $res;
     }

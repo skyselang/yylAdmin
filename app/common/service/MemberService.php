@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-05-14
+ * @LastEditTime : 2021-05-24
  */
 
 namespace app\common\service;
@@ -28,7 +28,9 @@ class MemberService
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'member_id,username');
+        } else {
             $field = 'member_id,username,nickname,phone,email,avatar,sort,remark,create_time,login_time,is_disable';
         }
 

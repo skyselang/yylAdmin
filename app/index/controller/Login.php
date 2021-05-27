@@ -3,18 +3,18 @@
  * @Description  : 登录退出
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-18
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\index\controller;
 
 use think\facade\Cache;
 use think\facade\Request;
-use app\common\utils\VerifyUtils;
 use app\index\service\LoginService;
-use app\common\service\SettingService;
+use app\common\utils\CaptchaUtils;
 use app\common\validate\MemberValidate;
 use app\common\service\WechatService;
+use app\common\service\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -25,17 +25,17 @@ class Login
 {
     /**
      * @Apidoc\Title("验证码")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned(ref="returnVerify")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnCaptcha")
      */
-    public function verify()
+    public function captcha()
     {
-        $setting = SettingService::verifyInfo();
+        $setting = SettingService::captchaInfo();
 
-        if ($setting['verify_login']) {
-            $data = VerifyUtils::create();
+        if ($setting['captcha_login']) {
+            $data = CaptchaUtils::create();
         } else {
-            $data['verify_switch'] = $setting['verify_login'];
+            $data['captcha_switch'] = $setting['captcha_login'];
         }
 
         return success($data);
@@ -46,31 +46,31 @@ class Login
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
-     * @Apidoc\Param(ref="paramVerify")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Param(ref="paramCaptcha")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\MemberModel\login")
      * )
      */
     public function login()
     {
-        $param['username']    = Request::param('username/s', '');
-        $param['password']    = Request::param('password/s', '');
-        $param['verify_id']   = Request::param('verify_id/s', '');
-        $param['verify_code'] = Request::param('verify_code/s', '');
+        $param['username']     = Request::param('username/s', '');
+        $param['password']     = Request::param('password/s', '');
+        $param['captcha_id']   = Request::param('captcha_id/s', '');
+        $param['captcha_code'] = Request::param('captcha_code/s', '');
 
-        $setting = SettingService::verifyInfo();
-        if ($setting['verify_login']) {
-            if (empty($param['verify_code'])) {
+        validate(MemberValidate::class)->scene('login')->check($param);
+
+        $setting = SettingService::captchaInfo();
+        if ($setting['captcha_login']) {
+            if (empty($param['captcha_code'])) {
                 exception('请输入验证码');
             }
-            $check = VerifyUtils::check($param['verify_id'], $param['verify_code']);
+            $check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
             if (empty($check)) {
                 exception('验证码错误');
             }
         }
-
-        validate(MemberValidate::class)->scene('login')->check($param);
 
         $data = LoginService::login($param);
 
@@ -154,8 +154,9 @@ class Login
     /**
      * @Apidoc\Title("登录(小程序)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("code", type="string", require=true, desc="wx.login()，用户登录凭证")
+     * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
      * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")
+     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\MemberModel\login")
      * )
@@ -166,7 +167,7 @@ class Login
         $user_info = Request::param('user_info/a', []);
 
         if (empty($code)) {
-            die('code must');
+            exception('code must');
         }
 
         $app  = WechatService::mini();
@@ -210,7 +211,8 @@ class Login
      * @Apidoc\Title("退出")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerIndex")
-     * @Apidoc\Returned(ref="return")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
     public function logout()
     {

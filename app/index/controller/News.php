@@ -3,7 +3,7 @@
  * @Description  : 新闻
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-19
- * @LastEditTime : 2021-05-19
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\index\controller;
@@ -16,13 +16,14 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("新闻")
+ * @Apidoc\Sort("6")
  */
 class News
 {
     /**
      * @Apidoc\Title("分类列表")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -45,7 +46,7 @@ class News
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param("title", type="string", default="", desc="标题")
      * @Apidoc\Param("news_category_id", type="int", default="", desc="分类id")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
@@ -62,7 +63,7 @@ class News
         $news_category_id = Request::param('news_category_id/d', '');
         $title            = Request::param('title/s', '');
 
-        $where = [];
+        $where[] = ['time', '<=', datetime()];
         if ($title) {
             $where[] = ['title', 'like', '%' . $title . '%'];
         }
@@ -83,8 +84,8 @@ class News
     /**
      * @Apidoc\Title("新闻信息")
      * @Apidoc\Param(ref="app\common\model\NewsModel\id")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\NewsModel\infoIndex")
      * )
      */
@@ -98,6 +99,9 @@ class News
 
         if ($data['is_delete'] == 1) {
             exception('新闻已被删除');
+        }
+        if ($data['time'] >= datetime()) {
+            exception('新闻暂未发布');
         }
 
         $data['last_news'] = NewsService::last($data['news_id']);

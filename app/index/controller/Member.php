@@ -3,7 +3,7 @@
  * @Description  : 会员中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-13
+ * @LastEditTime : 2021-05-25
  */
 
 namespace app\index\controller;
@@ -16,17 +16,18 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("会员中心")
+ * @Apidoc\Sort("4")
  */
 class Member
 {
     /**
      * @Apidoc\Title("我的信息")
      * @Apidoc\Header(ref="headerIndex")
-     * @Apidoc\Returned(ref="return")
-     * @Apidoc\Returned("data", type="object", 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\MemberModel\infoIndex")
      * )
-     */ 
+     */
     public function info()
     {
         $param['member_id'] = member_id();
@@ -51,8 +52,9 @@ class Member
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="app\common\model\MemberModel\editIndex")
-     * @Apidoc\Returned(ref="return")
-     */ 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     */
     public function edit()
     {
         $param['member_id'] = member_id();
@@ -75,8 +77,9 @@ class Member
      * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="app\common\model\MemberModel\avatar")
-     * @Apidoc\Returned(ref="return")
-     */ 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     */
     public function avatar()
     {
         $param['member_id'] = member_id();
@@ -95,8 +98,9 @@ class Member
      * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param("password_old", type="string", require=true, desc="原密码")
      * @Apidoc\Param("password_new", type="string", require=true, desc="新密码")
-     * @Apidoc\Returned(ref="return")
-     */ 
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     */
     public function pwd()
     {
         $param['member_id']    = member_id();
@@ -116,14 +120,14 @@ class Member
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log")
      * @Apidoc\Param("create_time", type="array", default="[]", desc="开始与结束日期eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Returned(ref="return"),
+     * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
      *          @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
      *      )
      * )
-     */ 
+     */
     public function log()
     {
         $member_id   = member_id();

@@ -3,7 +3,7 @@
  * @Description  : 菜单模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-04-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\model;
@@ -19,6 +19,13 @@ class AdminMenuModel extends Model
      * @Field("admin_menu_id")
      */
     public function id()
+    {
+    }
+
+    /**
+     * @Field("menu_url")
+     */
+    public function menu_url()
     {
     }
 
@@ -68,6 +75,13 @@ class AdminMenuModel extends Model
      * @Field("admin_menu_id,is_unauth")
      */
     public function unauth()
+    {
+    }
+
+    /**
+     * @Field("admin_menu_id,is_unlogin")
+     */
+    public function unlogin()
     {
     }
 

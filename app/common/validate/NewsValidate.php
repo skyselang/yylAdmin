@@ -3,7 +3,7 @@
  * @Description  : 新闻管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-09
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-05-22
  */
 
 namespace app\common\validate;
@@ -15,7 +15,6 @@ class NewsValidate extends Validate
     // 验证规则
     protected $rule = [
         'news_id'    => ['require'],
-        'img'        => ['require'],
         'title'      => ['require'],
         'time'       => ['require'],
         'source_url' => ['url'],
@@ -29,11 +28,11 @@ class NewsValidate extends Validate
         'news_id.require' => '缺少参数：新闻ID',
         'img.require'     => '请上传图片',
         'title.require'   => '请输入标题',
-        'time.require'    => '请输入时间',
-        'source_url.url'  => '请输入有效的来源链接',   
+        'time.require'    => '请选择发布时间',
+        'source_url.url'  => '请输入有效的来源链接',
         'content.require' => '请输入内容',
         'image.require'   => '请选择图片',
-        'image.file'      => '请选择文件',
+        'image.file'      => '请选择上传图片',
         'image.image'     => '请选择图片格式文件',
         'image.fileExt'   => '请选择jpg、png、gif、jpeg格式图片',
         'image.fileSize'  => '请选择小于200kb的图片',
@@ -46,8 +45,8 @@ class NewsValidate extends Validate
     protected $scene = [
         'id'     => ['news_id'],
         'info'   => ['news_id'],
-        'add'    => ['img', 'title', 'time', 'source_url', 'content'],
-        'edit'   => ['news_id', 'img', 'title', 'time', 'source_url', 'content'],
+        'add'    => ['title', 'time', 'source_url', 'content'],
+        'edit'   => ['news_id', 'time', 'title', 'source_url', 'content'],
         'dele'   => ['news_id'],
         'istop'  => ['news_id'],
         'ishot'  => ['news_id'],

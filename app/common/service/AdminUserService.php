@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-17
+ * @LastEditTime : 2021-05-27
  */
 
 namespace app\common\service;
@@ -29,7 +29,9 @@ class AdminUserService
      */
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        if (empty($field)) {
+        if ($field) {
+            $field = str_merge($field, 'admin_user_id,username');
+        } else {
             $field = 'admin_user_id,username,nickname,phone,email,sort,is_disable,is_super,login_num,create_time,login_time';
         }
 
@@ -351,7 +353,7 @@ class AdminUserService
             $admin_user_id = $param['admin_user_id'];
 
             $admin_role = AdminRoleService::list([], 1, 999)['list'];
-            $admin_menu = AdminMenuService::list('list')['list'];
+            $admin_menu = AdminMenuService::list();
             $admin_user = AdminUserService::info($admin_user_id);
 
             $menu_ids       = $admin_user['menu_ids'];
