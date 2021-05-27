@@ -12,5 +12,15 @@ var config = {
     SHOW_API_METHOD: true
   },
   // 当字段无默认值时，使用字段类型为默认值
-  USE_TYPE_DEFAULT_VALUE: false
+  USE_TYPE_DEFAULT_VALUE: false,
+  HOSTS: [
+    // {
+    //   title: "本地测试",
+    //   host: "http://demo.apidoc.net.cn"
+    // },
+    // {
+    //   title: "正式环境",
+    //   host: "http://www.apidoc.net.cn"
+    // },
+  ]
 };

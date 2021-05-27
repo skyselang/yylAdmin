@@ -57,6 +57,8 @@ class Register
         $param['captcha_id']   = Request::param('captcha_id/s', '');
         $param['captcha_code'] = Request::param('captcha_code/s', '');
 
+        validate(MemberValidate::class)->scene('register')->check($param);
+        
         $setting = SettingService::captchaInfo();
         if ($setting['captcha_register']) {
             if (empty($param['captcha_code'])) {
@@ -69,8 +71,6 @@ class Register
         }
 
         unset($param['captcha_id'], $param['captcha_code']);
-
-        validate(MemberValidate::class)->scene('register')->check($param);
 
         $data = RegisterService::register($param);
 
