@@ -3,7 +3,7 @@
  * @Description  : 菜单管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-06-12
- * @LastEditTime : 2021-05-24
+ * @LastEditTime : 2021-05-31
  */
 
 namespace app\common\cache;
@@ -76,7 +76,7 @@ class AdminMenuCache
      */
     public static function del($admin_menu_id = '')
     {
-        if (empty($api_id)) {
+        if (empty($admin_menu_id)) {
             $res = Cache::delete(self::key('list'));
             $res = Cache::delete(self::key('tree'));
             $res = Cache::delete(self::key('urlList'));
