@@ -1,0 +1,80 @@
+<?php
+/*
+ * @Description  : ${title}缓存
+ * @Author       : https://github.com/skyselang
+ * @Date         : 
+ * @LastEditTime : 2021-06-01
+ */
+
+namespace ${cache.namespace};
+
+use think\facade\Cache;
+
+class ${cache.file_name}
+{
+    /**
+     * 缓存key
+     *
+     * @param integer|string $${main_key.field} ${main_key.desc}
+     * 
+     * @return string
+     */
+    public static function key($${main_key.field} = '')
+    {
+        $key = '${controller.class_name}:' . $${main_key.field};
+
+        return $key;
+    }
+
+    /**
+     * 缓存设置
+     *
+     * @param integer|string $${main_key.field} ${main_key.desc}
+     * @param array          $${model.table_name} ${title}信息
+     * @param integer        $ttl 有效时间（秒）
+     * 
+     * @return bool
+     */
+    public static function set($${main_key.field} = '', $${model.table_name} = [], $ttl = 0)
+    {
+        $key = self::key($${main_key.field});
+        $val = $${model.table_name};
+        if (empty($ttl)) {
+            $ttl = 1 * 24 * 60 * 60;
+        }
+
+        $res = Cache::set($key, $val, $ttl);
+
+        return $res;
+    }
+
+    /**
+     * 缓存获取
+     *
+     * @param integer|string $${main_key.field} ${main_key.desc}
+     * 
+     * @return array
+     */
+    public static function get($${main_key.field} = '')
+    {
+        $key = self::key($${main_key.field});
+        $res = Cache::get($key);
+
+        return $res;
+    }
+
+    /**
+     * 缓存删除
+     *
+     * @param integer|string $${main_key.field} ${main_key.desc}
+     * 
+     * @return bool
+     */
+    public static function del($${main_key.field} = '')
+    {
+        $key = self::key($${main_key.field});
+        $res = Cache::delete($key);
+
+        return $res;
+    }
+}

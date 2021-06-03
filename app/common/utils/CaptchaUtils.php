@@ -3,7 +3,7 @@
  * @Description  : 验证码
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-27
+ * @LastEditTime : 2021-05-31
  */
 
 namespace app\common\utils;
@@ -119,7 +119,7 @@ class CaptchaUtils
         self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
 
         // 验证码使用随机字体
-        $ttfPath = './static/captcha/assets/' . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
+        $ttfPath = '../private/captcha/assets/' . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
 
         if (empty(self::$fontttf)) {
             $dir  = dir($ttfPath);

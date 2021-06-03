@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-27
+ * @LastEditTime : 2021-06-03
  */
 
 namespace app\common\service;
@@ -123,11 +123,77 @@ class AdminMenuService
     {
         $param['create_time'] = datetime();
 
-        $admin_menu_id = Db::name('admin_menu')
-            ->insertGetId($param);
+        $add = false;
+        $add_arr = ['list' => '列表', 'info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
+        foreach ($add_arr as $k => $v) {
+            $add_key = '';
+            $add_key = 'add_' . $k;
+            if ($param[$add_key]) {
+                $add = true;
+            }
+        }
 
-        if (empty($admin_menu_id)) {
-            exception();
+        if ($add) {
+            if (empty($param['menu_url'])) {
+                exception('请输入菜单链接：应用/控制器，不含操作');
+            }
+
+            $res = false;
+            $msg = '添加失败';
+            // 启动事务
+            Db::startTrans();
+            try {
+                $admin_menu_id = Db::name('admin_menu')
+                    ->strict(false)
+                    ->insertGetId($param);
+
+                $add_data = [];
+                foreach ($add_arr as $k => $v) {
+                    $add_key = '';
+                    $add_key = 'add_' . $k;
+                    if ($param[$add_key]) {
+                        $menu_url = '';
+                        $menu_url = $param['menu_url'] . '/' . $k;
+                        $exist = Db::name('admin_menu')
+                            ->field('admin_menu_id')
+                            ->where('is_delete', '=', 0)
+                            ->where('menu_url', '=', $menu_url)
+                            ->find();
+                        if (empty($exist)) {
+                            $add_temp = [];
+                            $add_temp['menu_pid']    = $admin_menu_id;
+                            $add_temp['menu_name']   = $param['menu_name'] . $v;
+                            $add_temp['menu_url']    = $menu_url;
+                            $add_temp['create_time'] = datetime();
+                            $add_data[] = $add_temp;
+                        }
+                    }
+                }
+                if ($add_data) {
+                    $res = Db::name('admin_menu')
+                        ->insertAll($add_data);
+                }
+                $param['add_data'] = $add_data;
+
+                $res = true;
+                // 提交事务
+                Db::commit();
+            } catch (\Exception $e) {
+                $msg = '添加失败：' . $e->getMessage() . ':' . $e->getLine();
+                // 回滚事务
+                Db::rollback();
+            }
+            if (empty($res)) {
+                exception($msg);
+            }
+        } else {
+            $admin_menu_id = Db::name('admin_menu')
+                ->strict(false)
+                ->insertGetId($param);
+
+            if (empty($admin_menu_id)) {
+                exception();
+            }
         }
 
         $param['admin_menu_id'] = $admin_menu_id;
@@ -153,12 +219,117 @@ class AdminMenuService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('admin_menu')
-            ->where('admin_menu_id', '=', $admin_menu_id)
-            ->update($param);
+        $add_arr = $edit_arr = ['list' => '列表', 'info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
 
-        if (empty($res)) {
-            exception();
+        $add = false;
+        foreach ($add_arr as $k => $v) {
+            $add_key = '';
+            $add_key = 'add_' . $k;
+            if ($param[$add_key]) {
+                $add = true;
+            }
+        }
+
+        $edit = false;
+        foreach ($edit_arr as $k => $v) {
+            $edit_key = '';
+            $edit_key = 'edit_' . $k;
+            if ($param[$edit_key]) {
+                $edit = true;
+            }
+        }
+
+        if ($add || $edit) {
+            if (empty($param['menu_url'])) {
+                exception('请输入菜单链接：应用/控制器，不含操作');
+            }
+
+            $res = false;
+            $msg = '修改失败';
+            // 启动事务
+            Db::startTrans();
+            try {
+                Db::name('admin_menu')
+                    ->strict(false)
+                    ->where('admin_menu_id', '=', $admin_menu_id)
+                    ->update($param);
+
+                $edit_data = [];
+                foreach ($edit_arr as $k => $v) {
+                    $edit_key = '';
+                    $edit_key = 'edit_' . $k;
+                    if ($param[$edit_key]) {
+                        $menu_url = '';
+                        $menu_url = $admin_menu['menu_url'] . '/' . $k;
+                        $admin_menu_edit = Db::name('admin_menu')
+                            ->field('admin_menu_id')
+                            ->where('is_delete', '=', 0)
+                            ->where('menu_pid', '=', $admin_menu_id)
+                            ->where('menu_url', '=', $menu_url)
+                            ->find();
+                        if ($admin_menu_edit) {
+                            $edit_temp = [];
+                            $edit_temp['menu_name']   = $param['menu_name'] . $v;
+                            $edit_temp['menu_url']    = $param['menu_url'] . '/' . $k;
+                            $edit_temp['update_time'] = datetime();
+                            $edit_data[] = $edit_temp;
+                            Db::name('admin_menu')
+                                ->where('admin_menu_id', $admin_menu_edit['admin_menu_id'])
+                                ->update($edit_temp);
+                        }
+                    }
+                }
+                $param['edit_data'] = $edit_data;
+
+                $add_data = [];
+                foreach ($add_arr as $k => $v) {
+                    $add_key = '';
+                    $add_key = 'add_' . $k;
+                    if ($param[$add_key]) {
+                        $menu_url = '';
+                        $menu_url = $param['menu_url'] . '/' . $k;
+                        $exist = Db::name('admin_menu')
+                            ->field('admin_menu_id')
+                            ->where('is_delete', '=', 0)
+                            ->where('menu_pid', '=', $admin_menu_id)
+                            ->where('menu_url', '=', $menu_url)
+                            ->find();
+                        if (empty($exist)) {
+                            $add_temp = [];
+                            $add_temp['menu_pid']    = $admin_menu_id;
+                            $add_temp['menu_name']   = $param['menu_name'] . $v;
+                            $add_temp['menu_url']    = $menu_url;
+                            $add_temp['create_time'] = datetime();
+                            $add_data[] = $add_temp;
+                        }
+                    }
+                }
+                if ($add_data) {
+                    $res = Db::name('admin_menu')
+                        ->insertAll($add_data);
+                }
+                $param['add_data'] = $add_data;
+
+                $res = true;
+                // 提交事务
+                Db::commit();
+            } catch (\Exception $e) {
+                $msg = '修改失败：' . $e->getMessage() . ':' . $e->getLine();
+                // 回滚事务
+                Db::rollback();
+            }
+            if (empty($res)) {
+                exception($msg);
+            }
+        } else {
+            $res = Db::name('admin_menu')
+                ->strict(false)
+                ->where('admin_menu_id', '=', $admin_menu_id)
+                ->update($param);
+
+            if (empty($res)) {
+                exception();
+            }
         }
 
         $param['admin_menu_id'] = $admin_menu_id;

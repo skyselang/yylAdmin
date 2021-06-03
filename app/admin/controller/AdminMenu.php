@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-25
+ * @LastEditTime : 2021-06-02
  */
 
 namespace app\admin\controller;
@@ -79,6 +79,11 @@ class AdminMenu
         $param['menu_name'] = Request::param('menu_name/s', '');
         $param['menu_url']  = Request::param('menu_url/s', '');
         $param['menu_sort'] = Request::param('menu_sort/d', 200);
+        $param['add_list'] = Request::param('add_list/b', false);
+        $param['add_info'] = Request::param('add_info/b', false);
+        $param['add_add']  = Request::param('add_add/b', false);
+        $param['add_edit'] = Request::param('add_edit/b', false);
+        $param['add_dele'] = Request::param('add_dele/b', false);
 
         validate(AdminMenuValidate::class)->scene('add')->check($param);
 
@@ -101,6 +106,16 @@ class AdminMenu
         $param['menu_name']     = Request::param('menu_name/s', '');
         $param['menu_url']      = Request::param('menu_url/s', '');
         $param['menu_sort']     = Request::param('menu_sort/d', 200);
+        $param['add_list']      = Request::param('add_list/b', false);
+        $param['add_info']      = Request::param('add_info/b', false);
+        $param['add_add']       = Request::param('add_add/b', false);
+        $param['add_edit']      = Request::param('add_edit/b', false);
+        $param['add_dele']      = Request::param('add_dele/b', false);
+        $param['edit_list']     = Request::param('edit_list/b', false);
+        $param['edit_info']     = Request::param('edit_info/b', false);
+        $param['edit_add']      = Request::param('edit_add/b', false);
+        $param['edit_edit']     = Request::param('edit_edit/b', false);
+        $param['edit_dele']     = Request::param('edit_dele/b', false);
 
         validate(AdminMenuValidate::class)->scene('edit')->check($param);
 

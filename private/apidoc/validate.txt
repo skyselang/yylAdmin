@@ -1,0 +1,28 @@
+<?php
+/*
+ * @Description  : ${title}验证器
+ * @Author       : https://github.com/skyselang
+ * @Date         : 
+ * @LastEditTime : 2021-06-01
+ */
+
+namespace ${validate.namespace};
+
+use think\Validate;
+
+class ${validate.file_name} extends Validate
+{
+    // 验证规则
+    protected $rule = ${validate.rule}
+
+    // 错误信息
+    protected $message = ${validate.message}
+
+    // 验证场景
+    protected $scene = [
+        'info' => ${validate.scene.delete},
+        'add'  => ${validate.scene.add},
+        'edit' => ${validate.scene.edit},
+        'dele' => ${validate.scene.delete},
+    ];
+}

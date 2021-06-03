@@ -1,0 +1,166 @@
+<?php
+/*
+ * @Description  : ${title}业务逻辑
+ * @Author       : https://github.com/skyselang
+ * @Date         : 
+ * @LastEditTime : 2021-06-01
+ */
+ 
+namespace ${service.namespace};
+
+use think\facade\Db;
+use ${cache.use_path};
+
+class ${service.file_name}
+{
+    /**
+     * ${title}列表
+     *
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
+     * 
+     * @return array 
+     */
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    {
+        if ($field) {
+            $field = str_merge($field, '${list.field}');
+        } else {
+            $field = '*';
+        }
+
+        if (empty($order)) {
+            $order = ['${main_key.field}' => 'desc'];
+        }
+
+        $where[] = ['is_delete', '=', 0];
+
+        $count = Db::name('${model.table_name}')
+            ->where($where)
+            ->count('${main_key.field}');
+
+        $list = Db::name('${model.table_name}')
+            ->field($field)
+            ->where($where)
+            ->page($page)
+            ->limit($limit)
+            ->order($order)
+            ->select()
+            ->toArray();
+
+        $pages = ceil($count / $limit);
+
+        $data['count'] = $count;
+        $data['pages'] = $pages;
+        $data['page']  = $page;
+        $data['limit'] = $limit;
+        $data['list']  = $list;
+
+        return $data;
+    }
+
+    /**
+     * ${title}信息
+     * 
+     * @param $${main_key.field} ${main_key.desc}
+     * 
+     * @return array|Exception
+     */
+    public static function info($${main_key.field})
+    {
+        $${model.table_name} = ${cache.file_name}::get($${main_key.field});
+
+        if (empty($${model.table_name})) {
+            $${model.table_name} = Db::name('${model.table_name}')
+                ->where('${main_key.field}', $${main_key.field})
+                ->find();
+
+            if (empty($${model.table_name})) {
+                exception('${title}不存在：' . $${main_key.field});
+            }
+
+            ${cache.file_name}::set($${main_key.field}, $${model.table_name});
+        }
+
+        return $${model.table_name};
+    }
+
+    /**
+     * ${title}添加
+     *
+     * @param $param ${title}信息
+     *
+     * @return array|Exception
+     */
+    public static function add($param)
+    {
+        $param['create_time'] = datetime();
+
+        $${main_key.field} = Db::name('${model.table_name}')
+            ->insertGetId($param);
+
+        if (empty($${main_key.field})) {
+            exception();
+        }
+
+        $param['${main_key.field}'] = $${main_key.field};
+
+        return $param;
+    }
+
+    /**
+     * ${title}修改 
+     *     
+     * @param $param ${title}信息
+     *     
+     * @return array|Exception
+     */
+    public static function edit($param)
+    {
+        $${main_key.field} = $param['${main_key.field}'];
+
+        unset($param['${main_key.field}']);
+
+        $param['update_time'] = datetime();
+
+        $res = Db::name('${model.table_name}')
+            ->where('${main_key.field}', $${main_key.field})
+            ->update($param);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        $param['${main_key.field}'] = $${main_key.field};
+
+        return $param;
+    }
+
+    /**
+     * ${title}删除
+     * 
+     * @param $${main_key.field} ${main_key.desc}
+     * 
+     * @return array|Exception
+     */
+    public static function dele($${main_key.field})
+    {
+        $update['is_delete']   = 1;
+        $update['delete_time'] = datetime();
+
+        $res = Db::name('${model.table_name}')
+            ->where('${main_key.field}', $${main_key.field})
+            ->update($update);
+
+        if (empty($res)) {
+            exception();
+        }
+
+        $update['${main_key.field}'] = $${main_key.field};
+
+        return $update;
+    }
+}

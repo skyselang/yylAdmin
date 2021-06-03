@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 27/05/2021 18:27:35
+ Date: 03/06/2021 10:43:34
 */
 
 SET NAMES utf8mb4;
@@ -114,7 +114,7 @@ INSERT INTO `yyl_admin_menu` VALUES (128, 123, '会员删除', 'admin/Member/del
 INSERT INTO `yyl_admin_menu` VALUES (129, 123, '会员重置密码', 'admin/Member/pwd', 130, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (130, 123, '会员是否禁用', 'admin/Member/disable', 120, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (131, 123, '会员更换头像', 'admin/Member/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (132, 159, '接口管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (132, 186, '接口管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (133, 132, '接口列表', 'admin/Api/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (134, 132, '接口信息', 'admin/Api/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (135, 132, '接口添加', 'admin/Api/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -131,7 +131,7 @@ INSERT INTO `yyl_admin_menu` VALUES (145, 50, '高德地图坐标拾取', 'admin
 INSERT INTO `yyl_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/AdminUtils/mapBaidu', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/AdminUtils/mapSogou', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/AdminUtils/mapTencent', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (149, 50, '北斗地图坐标拾取', 'admin/AdminUtils/mapBeidou', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (149, 50, '北斗卫星导航', 'admin/AdminUtils/mapBeidou', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (150, 186, '地区管理', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -139,15 +139,8 @@ INSERT INTO `yyl_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/add
 INSERT INTO `yyl_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (156, 0, '会员管理', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (157, 186, '基础设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (157, 186, '基础设置', '', 220, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (159, 0, '接口管理', '', 190, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (160, 159, '接口环境', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (161, 160, '接口环境列表', 'admin/ApiEnv/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (162, 160, '接口环境信息', 'admin/ApiEnv/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (163, 160, '接口环境添加', 'admin/ApiEnv/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (164, 160, '接口环境修改', 'admin/ApiEnv/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (165, 160, '接口环境删除', 'admin/ApiEnv/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/AdminIndex/member', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -231,8 +224,8 @@ CREATE TABLE `yyl_admin_role`  (
 -- ----------------------------
 -- Records of yyl_admin_role
 -- ----------------------------
-INSERT INTO `yyl_admin_role` VALUES (1, ',1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,170,171,172,173,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,161,162,172,173,176,177,178,179,181,182,183,184,185,187,191,193,196,198,200,202,204,208,209,210,211,214,216,218,221,224,227,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (1, ',,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,176,177,178,179,181,182,183,184,185,187,191,193,196,198,204,208,209,210,211,214,216,218,221,224,227,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '', 200, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -257,6 +250,7 @@ CREATE TABLE `yyl_admin_setting`  (
 -- ----------------------------
 -- Records of yyl_admin_setting
 -- ----------------------------
+INSERT INTO `yyl_admin_setting` VALUES (1, 'AdminToken', '', 12, 1, 1, 3, 1, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_user
@@ -294,7 +288,7 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, ',1,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '超管', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, ',,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '超管', 200, 0, 0, 0, 19, '127.0.0.1', 'XXXX内网IP', '2021-06-03 10:39:23', '2021-06-03 10:40:04', NULL, '2021-05-29 17:57:48', NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
@@ -390,33 +384,6 @@ INSERT INTO `yyl_api` VALUES (24, 0, '首页', '', 220, 0, 0, 0, NULL, NULL, NUL
 INSERT INTO `yyl_api` VALUES (25, 24, '首页', 'index/Index/index', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (26, 1, '登录(公众号)回调', 'index/Login/officallback', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (27, 24, 'index', 'index/', 200, 0, 1, 0, NULL, NULL, NULL);
-
--- ----------------------------
--- Table structure for yyl_api_env
--- ----------------------------
-DROP TABLE IF EXISTS `yyl_api_env`;
-CREATE TABLE `yyl_api_env`  (
-  `api_env_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '接口环境id',
-  `env_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '环境名称',
-  `env_host` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '环境host',
-  `env_header` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '环境请求头部',
-  `env_remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '环境备注',
-  `env_sort` int(10) NULL DEFAULT 200 COMMENT '环境排序',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
-  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`api_env_id`) USING BTREE,
-  INDEX `api_env_id`(`api_env_id`) USING BTREE,
-  INDEX `env_name`(`env_name`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口环境' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of yyl_api_env
--- ----------------------------
-INSERT INTO `yyl_api_env` VALUES (1, '开发环境', 'http://localhost:9526', 'MemberToken', '', 200, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api_env` VALUES (2, '测试环境', 'https://testapi.yyladmin.top', 'MemberToken', '', 200, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api_env` VALUES (3, '正式环境', 'https://api.yyladmin.top', 'MemberToken', '', 200, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_member
@@ -4331,6 +4298,7 @@ CREATE TABLE `yyl_setting`  (
 -- ----------------------------
 -- Records of yyl_setting
 -- ----------------------------
+INSERT INTO `yyl_setting` VALUES (1, 'MemberToken', '', 720, 1, 0, 1, 3, 1, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_setting_wechat
@@ -4356,5 +4324,7 @@ CREATE TABLE `yyl_setting_wechat`  (
 -- ----------------------------
 -- Records of yyl_setting_wechat
 -- ----------------------------
+INSERT INTO `yyl_setting_wechat` VALUES (1, '', '', '', '', '', '', '', '', 1, NULL, NULL);
+INSERT INTO `yyl_setting_wechat` VALUES (2, '', '', '', '', '', '', '', '', 1, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,0 +1,62 @@
+<?php
+/*
+ * @Description  : ${title}模型
+ * @Author       : https://github.com/skyselang
+ * @Date         : 
+ * @LastEditTime : 2021-06-01
+ */
+
+namespace ${model.namespace};
+
+use think\Model;
+use hg\apidoc\annotation\Field;
+use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation\WithoutField;
+
+class ${model.file_name} extends Model
+{
+    protected $name = '${model.table_name}';
+    protected $pk = '${main_key.field}';
+
+    /**
+     * @Field("${list.field}")
+     */
+    public function list()
+    {
+    }
+
+    /**
+     * @WithoutField("${detail.withoutField}")
+     */
+    public function info()
+    {
+    }
+
+    /**
+     * @Field("${add.field}")
+     */
+    public function add()
+    {
+    }
+
+    /**
+     * @Field("${edit.field}")
+     */
+    public function edit()
+    {
+    }
+
+    /**
+     * @Field("${main_key.field}")
+     */
+    public function dele()
+    {
+    }
+
+    /**
+     * @Field("${main_key.field}")
+     */
+    public function id()
+    {
+    }
+}
