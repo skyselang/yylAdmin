@@ -3,7 +3,7 @@
  * @Description  : 新闻
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-19
- * @LastEditTime : 2021-05-25
+ * @LastEditTime : 2021-06-05
  */
 
 namespace app\index\controller;
@@ -68,7 +68,7 @@ class News
             $where[] = ['title', 'like', '%' . $title . '%'];
         }
         if ($news_category_id) {
-            $where[] = ['news_category_id', '=', $title];
+            $where[] = ['news_category_id', '=', $news_category_id];
         }
 
         $order = [];

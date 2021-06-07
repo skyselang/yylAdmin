@@ -3,7 +3,7 @@
  * @Description  : 接口管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-24
+ * @LastEditTime : 2021-06-04
  */
 
 namespace app\common\cache;
@@ -75,7 +75,7 @@ class ApiCache
         if (empty($api_id)) {
             $res = Cache::delete(self::key('list'));
             $res = Cache::delete(self::key('urlList'));
-            $res = Cache::delete(self::key('unauthList'));
+            $res = Cache::delete(self::key('unloginList'));
         } else {
             $key = self::key($api_id);
             $res = Cache::delete($key);
