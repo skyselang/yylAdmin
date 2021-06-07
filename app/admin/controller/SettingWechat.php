@@ -3,7 +3,7 @@
  * @Description  : 微信设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-05-25
+ * @LastEditTime : 2021-06-04
  */
 
 namespace app\admin\controller;
@@ -51,7 +51,6 @@ class SettingWechat
         $param['qrcode']            = Request::param('qrcode/s', '');
         $param['appid']             = Request::param('appid/s', '');
         $param['appsecret']         = Request::param('appsecret/s', '');
-        $param['url']               = Request::param('url/s', '');
         $param['token']             = Request::param('token/s', '');
         $param['encoding_aes_key']  = Request::param('encoding_aes_key/s', '');
         $param['encoding_aes_type'] = Request::param('encoding_aes_type/d', 1);

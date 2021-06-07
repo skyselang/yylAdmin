@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-05-24
+ * @LastEditTime : 2021-06-05
  */
 
 namespace app\common\service;
@@ -105,6 +105,12 @@ class MemberService
                 $member['wechat'] = $member_wechat;
             } else {
                 $member['wechat'] = [];
+            }
+
+            // 0原密码修改密码，1直接设置新密码
+            $member['pwd_edit_type'] = 0;
+            if (empty($member['password'])) {
+                $member['pwd_edit_type'] = 1;
             }
 
             MemberCache::set($member_id, $member);
@@ -259,7 +265,7 @@ class MemberService
         }
 
         $update['member_id'] = $member_id;
-        $update['password']  = $res;
+        $update['password']  = '';
 
         MemberCache::upd($member_id);
 

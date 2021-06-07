@@ -3,7 +3,7 @@
  * @Description  : 会员管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-05-10
+ * @LastEditTime : 2021-06-05
  */
 
 namespace app\common\validate;
@@ -60,6 +60,7 @@ class MemberValidate extends Validate
         'dele'     => ['member_id'],
         'pwd'      => ['member_id', 'password'],
         'editpwd'  => ['member_id', 'password_old', 'password_new'],
+        'editpwd1' => ['member_id', 'password_new'],
         'disable'  => ['member_id'],
         'avatar'   => ['member_id', 'avatar'],
         'register' => ['username', 'nickname', 'password', 'phone', 'email'],

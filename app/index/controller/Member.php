@@ -3,7 +3,7 @@
  * @Description  : 会员中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-25
+ * @LastEditTime : 2021-06-05
  */
 
 namespace app\index\controller;
@@ -96,8 +96,8 @@ class Member
      * @Apidoc\Title("修改密码")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerIndex")
-     * @Apidoc\Param("password_old", type="string", require=true, desc="原密码")
-     * @Apidoc\Param("password_new", type="string", require=true, desc="新密码")
+     * @Apidoc\Param("password_old", type="string", require=true, desc="原密码,会员信息pwd_edit_type=0需输入原密码")
+     * @Apidoc\Param("password_new", type="string", require=true, desc="新密码,会员信息pwd_edit_type=1直接设置新密码")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
@@ -107,7 +107,12 @@ class Member
         $param['password_old'] = Request::param('password_old/s', '');
         $param['password_new'] = Request::param('password_new/s', '');
 
-        validate(MemberValidate::class)->scene('editpwd')->check($param);
+        $member = MemberService::info($param['member_id']);
+        if ($member['pwd_edit_type']) {
+            validate(MemberValidate::class)->scene('editpwd1')->check($param);
+        } else {
+            validate(MemberValidate::class)->scene('editpwd')->check($param);
+        }
 
         $data = MemberService::pwd($param);
 

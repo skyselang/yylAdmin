@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 03/06/2021 10:43:34
+ Date: 07/06/2021 09:26:34
 */
 
 SET NAMES utf8mb4;
@@ -288,7 +288,7 @@ CREATE TABLE `yyl_admin_user`  (
 -- ----------------------------
 -- Records of yyl_admin_user
 -- ----------------------------
-INSERT INTO `yyl_admin_user` VALUES (1, ',,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '超管', 200, 0, 0, 0, 19, '127.0.0.1', 'XXXX内网IP', '2021-06-03 10:39:23', '2021-06-03 10:40:04', NULL, '2021-05-29 17:57:48', NULL);
+INSERT INTO `yyl_admin_user` VALUES (1, ',,', ',,', 'skyselang', 'skyselang', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '超管', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 'static/img/favicon.ico', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
@@ -352,7 +352,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -361,7 +361,7 @@ INSERT INTO `yyl_api` VALUES (1, 0, '登录退出', '', 200, 0, 0, 0, NULL, NULL
 INSERT INTO `yyl_api` VALUES (2, 1, '验证码', 'index/Login/captcha', 220, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (3, 1, '登录(账号)', 'index/Login/login', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'index/Login/logout', 120, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (5, 0, '个人中心', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (5, 0, '会员中心', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (6, 5, '我的信息', 'index/Member/info', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (7, 5, '修改信息', 'index/Member/edit', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (8, 5, '更换头像', 'index/Member/avatar', 200, 0, 0, 0, NULL, NULL, NULL);
@@ -384,6 +384,8 @@ INSERT INTO `yyl_api` VALUES (24, 0, '首页', '', 220, 0, 0, 0, NULL, NULL, NUL
 INSERT INTO `yyl_api` VALUES (25, 24, '首页', 'index/Index/index', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (26, 1, '登录(公众号)回调', 'index/Login/officallback', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (27, 24, 'index', 'index/', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (28, 0, '微信', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (29, 28, '微信公众号接入', 'index/Wechat/access', 200, 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_member
@@ -4324,7 +4326,5 @@ CREATE TABLE `yyl_setting_wechat`  (
 -- ----------------------------
 -- Records of yyl_setting_wechat
 -- ----------------------------
-INSERT INTO `yyl_setting_wechat` VALUES (1, '', '', '', '', '', '', '', '', 1, NULL, NULL);
-INSERT INTO `yyl_setting_wechat` VALUES (2, '', '', '', '', '', '', '', '', 1, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

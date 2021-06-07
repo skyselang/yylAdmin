@@ -3,7 +3,7 @@
  * @Description  : 微信设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-05-06
+ * @LastEditTime : 2021-06-07
  */
 
 namespace app\common\service;
@@ -11,6 +11,7 @@ namespace app\common\service;
 use think\facade\Db;
 use think\facade\Filesystem;
 use app\common\cache\SettingWechatCache;
+use app\common\utils\StringUtils;
 
 class SettingWechatService
 {
@@ -37,6 +38,8 @@ class SettingWechatService
 
             if (empty($setting_wechat)) {
                 $setting_wechat['setting_wechat_id'] = $setting_wechat_id;
+                $setting_wechat['token']             = StringUtils::random(32);
+                $setting_wechat['encoding_aes_key']  = StringUtils::random(43);
                 $setting_wechat['create_time']       = datetime();
 
                 Db::name('setting_wechat')
@@ -47,6 +50,7 @@ class SettingWechatService
                     ->find();
             }
 
+            $setting_wechat['url']        = server_url() . '/index/Wechat/access';
             $setting_wechat['qrcode_url'] = file_url($setting_wechat['qrcode']);
 
             SettingWechatCache::set($setting_wechat_id, $setting_wechat);
