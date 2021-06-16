@@ -3,7 +3,7 @@
  * @Description  : ${title}缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 
- * @LastEditTime : 2021-06-01
+ * @LastEditTime : 2021-06-12
  */
 
 namespace ${cache.namespace};
@@ -13,9 +13,9 @@ use think\facade\Cache;
 class ${cache.file_name}
 {
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param integer|string $${main_key.field} ${main_key.desc}
+     * @param string $${main_key.field} ${title}id
      * 
      * @return string
      */
@@ -27,11 +27,11 @@ class ${cache.file_name}
     }
 
     /**
-     * 缓存设置
+     * 缓存写入
      *
-     * @param integer|string $${main_key.field} ${main_key.desc}
-     * @param array          $${model.table_name} ${title}信息
-     * @param integer        $ttl 有效时间（秒）
+     * @param string  $${main_key.field} ${title}id
+     * @param mixed   $${model.table_name} ${title}信息
+     * @param integer $ttl 有效时间（秒）
      * 
      * @return bool
      */
@@ -40,7 +40,7 @@ class ${cache.file_name}
         $key = self::key($${main_key.field});
         $val = $${model.table_name};
         if (empty($ttl)) {
-            $ttl = 1 * 24 * 60 * 60;
+            $ttl = 1 * 24 * 60 * 60 + mt_rand(0, 9);
         }
 
         $res = Cache::set($key, $val, $ttl);
@@ -49,11 +49,11 @@ class ${cache.file_name}
     }
 
     /**
-     * 缓存获取
+     * 缓存读取
      *
-     * @param integer|string $${main_key.field} ${main_key.desc}
+     * @param string $${main_key.field} ${title}id
      * 
-     * @return array
+     * @return mixed
      */
     public static function get($${main_key.field} = '')
     {
@@ -66,7 +66,7 @@ class ${cache.file_name}
     /**
      * 缓存删除
      *
-     * @param integer|string $${main_key.field} ${main_key.desc}
+     * @param string $${main_key.field} ${title}id
      * 
      * @return bool
      */

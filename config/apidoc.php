@@ -3,7 +3,7 @@ return [
     // 文档标题
     'title' => '接口文档与调试',
     // 文档描述
-    'desc' => 'yyladmin',
+    'desc' => 'yylAdmin',
     // 版权申明
     'copyright' => '',
     // 默认作者
@@ -22,7 +22,7 @@ return [
     ],
     // 指定公共注释定义的文件地址
     'definitions' => 'app\common\controller\Definitions',
-    //指定生成文档的控制器
+    // 指定生成文档的控制器
     'controllers' => [],
     // 过滤，不解析的控制器
     'filter_controllers' => [],
@@ -35,7 +35,7 @@ return [
         // 是否显示更新缓存按钮
         'reload' => true,
         // 最大缓存文件数
-        'max' => 5,   //最大缓存数量
+        'max' => 5,
     ],
     // 权限认证配置
     'auth' => [
@@ -44,7 +44,7 @@ return [
         // 验证密码
         'password' => "WYUtY8UiGNYM",
         // 密码加密盐
-        'secret_key' => "6L6eGcNmD0C8",
+        'secret_key' => "yyladmin",
     ],
     // 统一的请求Header
     'headers' => [],
@@ -56,7 +56,7 @@ return [
     'docs' => [
         'menu_title' => '开发文档',
         'menus'      => [
-            ['title' => '接口说明', 'path' => '../private/apidoc/apidocs'],
+            ['title' => '接口说明', 'path' => './private/apidoc/apidocs'],
         ]
     ],
     // 快速生成CRUD

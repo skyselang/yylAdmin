@@ -3,7 +3,7 @@
  * @Description  : ${title}控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 
- * @LastEditTime : 2021-06-01
+ * @LastEditTime : 2021-06-09
  */
  
 namespace ${controller.namespace};
@@ -25,6 +25,9 @@ class ${controller.class_name}
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param("${main_key.field}", type="int", default="", desc="${title}ID")
+     * @Apidoc\Param("date_type", type="string", default="", desc="时间类型")
+     * @Apidoc\Param("date_range", type="array", default="", desc="日期范围")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
@@ -35,12 +38,22 @@ class ${controller.class_name}
      */
     public function list()
     {
-        $page       = Request::param('page/d', 1);
-        $limit      = Request::param('limit/d', 10);
-        $sort_field = Request::param('sort_field/s ', '');
-        $sort_type  = Request::param('sort_type/s', '');
+        $page           = Request::param('page/d', 1);
+        $limit          = Request::param('limit/d', 10);
+        $sort_field     = Request::param('sort_field/s ', '');
+        $sort_type      = Request::param('sort_type/s', '');
+        $${main_key.field} = Request::param('${main_key.field}/d', '');
+        $date_type      = Request::param('date_type/s', '');
+        $date_range     = Request::param('date_range/a', []);
 
         $where = [];
+        if ($${main_key.field}) {
+            $where[] = ['${main_key.field}', '=', $${main_key.field}];
+        }
+        if ($date_type && $date_range) {
+            $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
+            $where[] = [$date_type, '<=', $date_range[1] . ' 23:59:59'];
+        }
 
         $order = [];
         if ($sort_field && $sort_type) {
@@ -102,7 +115,7 @@ class ${controller.class_name}
      * @Apidoc\Title("${title}修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="${model.use_path}\id")
+     * @Apidoc\Param(ref="${model.use_path}\edit")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -112,7 +125,7 @@ class ${controller.class_name}
 
         validate(${validate.file_name}::class)->scene('edit')->check($param);
 
-        $data = ${service.file_name}::add($param);
+        $data = ${service.file_name}::edit($param);
 
         return success($data);
     }
@@ -121,7 +134,7 @@ class ${controller.class_name}
      * @Apidoc\Title("${title}删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="${model.use_path}\id")
+     * @Apidoc\Param(ref="${model.use_path}\dele")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -131,7 +144,7 @@ class ${controller.class_name}
 
         validate(${validate.file_name}::class)->scene('dele')->check($param);
 
-        $data = ${service.file_name}::add($param);
+        $data = ${service.file_name}::dele($param['${main_key.field}']);
 
         return success($data);
     }

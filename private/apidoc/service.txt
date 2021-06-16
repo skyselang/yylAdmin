@@ -3,7 +3,7 @@
  * @Description  : ${title}业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 
- * @LastEditTime : 2021-06-01
+ * @LastEditTime : 2021-06-08
  */
  
 namespace ${service.namespace};
@@ -65,7 +65,7 @@ class ${service.file_name}
     /**
      * ${title}信息
      * 
-     * @param $${main_key.field} ${main_key.desc}
+     * @param $${main_key.field} ${title}id
      * 
      * @return array|Exception
      */
@@ -136,13 +136,15 @@ class ${service.file_name}
 
         $param['${main_key.field}'] = $${main_key.field};
 
+        ${cache.file_name}::del($${main_key.field});
+
         return $param;
     }
 
     /**
      * ${title}删除
      * 
-     * @param $${main_key.field} ${main_key.desc}
+     * @param $${main_key.field} ${title}id
      * 
      * @return array|Exception
      */
@@ -160,6 +162,8 @@ class ${service.file_name}
         }
 
         $update['${main_key.field}'] = $${main_key.field};
+
+        ${cache.file_name}::del($${main_key.field});
 
         return $update;
     }
