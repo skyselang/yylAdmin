@@ -3,7 +3,7 @@
  * @Description  : 菜单管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-05-05
- * @LastEditTime : 2021-06-03
+ * @LastEditTime : 2021-07-03
  */
 
 namespace app\common\service;
@@ -260,7 +260,7 @@ class AdminMenuService
                     $edit_key = 'edit_' . $k;
                     if ($param[$edit_key]) {
                         $menu_url = '';
-                        $menu_url = $admin_menu['menu_url'] . '/' . $k;
+                        $menu_url = $param['menu_url'] . '/' . $k;
                         $admin_menu_edit = Db::name('admin_menu')
                             ->field('admin_menu_id')
                             ->where('is_delete', '=', 0)

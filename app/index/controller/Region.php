@@ -3,7 +3,7 @@
  * @Description  : 地区
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-14
- * @LastEditTime : 2021-05-25
+ * @LastEditTime : 2021-07-03
  */
 
 namespace app\index\controller;
@@ -21,7 +21,7 @@ class Region
 {
     /**
      * @Apidoc\Title("地区列表")
-     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param("region_id", type="int", require=false, default="0", desc="地区id")
      * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
@@ -32,7 +32,7 @@ class Region
      */
     public function list()
     {
-        $region_pid = Request::param('region_pid/d', 0);
+        $region_pid = Request::param('region_id/d', 0);
 
         $where[] = ['is_delete', '=', 0];
         $where[] = ['region_pid', '=', $region_pid];
@@ -40,6 +40,20 @@ class Region
         $order = [];
 
         $data = RegionService::list($where, $order);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("地区树形")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
+     * )
+     */
+    public function tree()
+    {
+        $data = RegionService::info('tree');
 
         return success($data);
     }
@@ -63,20 +77,6 @@ class Region
         if ($data['is_delete'] == 1) {
             exception('地区已被删除');
         }
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("地区树形")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\RegionModel\info")
-     * )
-     */
-    public function tree()
-    {
-        $data = RegionService::info('tree');
 
         return success($data);
     }

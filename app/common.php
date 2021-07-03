@@ -3,7 +3,7 @@
  * @Description  : 公共函数文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-05-25
+ * @LastEditTime : 2021-06-30
  */
 
 /**
@@ -106,6 +106,50 @@ function file_url($file_path = '')
     }
 
     return $res;
+}
+
+/**
+ * 文件序列化
+ *
+ * @param array $files 文件数组 [['name'=>'名称','path'=>'路径','uid'=>'uid','size'=>'大小']]
+ *
+ * @return string
+ */
+function file_ser($files = [])
+{
+    if (empty($files)) {
+        return serialize([]);
+    }
+
+    $files_arr = [];
+    foreach ($files as $k => $v) {
+        unset($v['status'], $v['uid']);
+        $files_arr[] = $v;
+    }
+
+    return serialize($files_arr);
+}
+
+/**
+ * 文件反序列化
+ *
+ * @param string $files 序列化后的文件数组
+ *
+ * @return array
+ */
+function file_unser($files)
+{
+    $files = unserialize($files);
+
+    if (empty($files)) {
+        return [];
+    }
+
+    foreach ($files as $k => $v) {
+        $files[$k]['url'] = file_url($v['path']);
+    }
+
+    return $files;
 }
 
 /**

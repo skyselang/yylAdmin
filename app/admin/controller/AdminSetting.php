@@ -3,7 +3,7 @@
  * @Description  : 设置管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-08-05
- * @LastEditTime : 2021-05-27
+ * @LastEditTime : 2021-07-01
  */
 
 namespace app\admin\controller;
@@ -45,7 +45,7 @@ class AdminSetting
     {
         $data = AdminSettingService::cacheClear();
 
-        return success($data);
+        return success($data, '缓存已清除');
     }
 
     /**

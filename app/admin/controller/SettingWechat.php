@@ -111,8 +111,8 @@ class SettingWechat
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned("type", type="string", desc="offi公众号、mini小程序"),
-     *      @Apidoc\Returned("file_path", type="string", desc="二维码路径"),
-     *      @Apidoc\Returned("file_url", type="string", desc="二维码链接"),
+     *      @Apidoc\Returned("path", type="string", desc="二维码路径"),
+     *      @Apidoc\Returned("url", type="string", desc="二维码链接"),
      * )
      */
     public function qrcode()

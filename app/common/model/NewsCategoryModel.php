@@ -2,8 +2,8 @@
 /*
  * @Description  : 新闻分类模型
  * @Author       : https://github.com/skyselang
- * @Date         : 2021-05-19
- * @LastEditTime : 2021-05-19
+ * @Date         : 2021-06-08
+ * @LastEditTime : 2021-06-19
  */
 
 namespace app\common\model;
@@ -16,6 +16,42 @@ use hg\apidoc\annotation\WithoutField;
 class NewsCategoryModel extends Model
 {
     protected $name = 'news_category';
+    protected $pk = 'news_category_id';
+
+    /**
+     * @Field("news_category_id,news_category_pid,category_name,keywords,description,img,sort,is_hide,create_time,update_time")
+     */
+    public function list()
+    {
+    }
+
+    /**
+     * @WithoutField("is_delete,delete_time")
+     */
+    public function info()
+    {
+    }
+
+    /**
+     * @Field("news_category_pid,category_name,title,keywords,description,img,sort")
+     */
+    public function add()
+    {
+    }
+
+    /**
+     * @Field("news_category_id,news_category_pid,category_name,title,keywords,description,img,sort")
+     */
+    public function edit()
+    {
+    }
+
+    /**
+     * @Field("is_hide")
+     */
+    public function ishide()
+    {
+    }
 
     /**
      * @Field("news_category_id")
@@ -23,46 +59,25 @@ class NewsCategoryModel extends Model
     public function id()
     {
     }
-    
+
     /**
-     * @Field("news_category_id,category_name,category_sort,is_hide,create_time,update_time")
+     * @Field("news_category_pid")
      */
-    public function list()
+    public function pid()
     {
     }
 
     /**
-     * 
+     * @Field("category_name")
      */
-    public function info()
+    public function category_name()
     {
     }
 
     /**
-     * @Field("category_name,category_sort")
+     * @Field("news_category_id,news_category_pid,category_name,sort")
      */
-    public function add()
-    {
-    }
-
-    /**
-     * @Field("news_category_id,category_name,category_sort")
-     */
-    public function edit()
-    {
-    }
-
-    /**
-     * @Field("news_category_id")
-     */
-    public function dele()
-    {
-    }
-
-    /**
-     * @Field("news_category_id,is_hide")
-     */
-    public function ishide()
+    public function category()
     {
     }
 }

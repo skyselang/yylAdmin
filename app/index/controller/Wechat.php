@@ -3,7 +3,7 @@
  * @Description  : 微信
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-04
- * @LastEditTime : 2021-06-05
+ * @LastEditTime : 2021-07-03
  */
 
 namespace app\index\controller;
@@ -13,7 +13,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("微信")
- * @Apidoc\Sort("9")
+ * @Apidoc\Sort("6")
  */
 class Wechat
 {

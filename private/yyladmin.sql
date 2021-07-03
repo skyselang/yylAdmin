@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 07/06/2021 09:26:34
+ Date: 03/07/2021 17:46:28
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 230 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 390 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -145,7 +145,7 @@ INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 150, 0, 0,
 INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/AdminIndex/member', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/AdminApidoc/apidoc', 180, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (175, 206, '新闻管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (175, 230, '新闻管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (176, 175, '新闻列表', 'admin/News/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (177, 175, '新闻信息', 'admin/News/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (178, 175, '新闻添加', 'admin/News/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -156,7 +156,7 @@ INSERT INTO `yyl_admin_menu` VALUES (182, 175, '新闻是否置顶', 'admin/News
 INSERT INTO `yyl_admin_menu` VALUES (183, 175, '新闻是否热门', 'admin/News/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (184, 175, '新闻是否推荐', 'admin/News/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (185, 175, '新闻是否隐藏', 'admin/News/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (186, 0, '设置管理', '', 170, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (186, 0, '设置管理', '', 155, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (187, 5, '角色信息', 'admin/AdminRole/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (188, 53, '设置管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (189, 41, '日志管理清除', 'admin/AdminUserLog/clear', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -176,14 +176,13 @@ INSERT INTO `yyl_admin_menu` VALUES (202, 171, 'Token设置信息', 'admin/Setti
 INSERT INTO `yyl_admin_menu` VALUES (203, 171, 'Token设置修改', 'admin/Setting/tokenEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (204, 170, '验证码设置信息', 'admin/Setting/captchaInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (205, 170, '验证码设置修改', 'admin/Setting/captchaEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (206, 0, '新闻管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (207, 206, '新闻分类', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (207, 230, '新闻分类', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (208, 207, '新闻分类列表', 'admin/NewsCategory/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (209, 207, '新闻分类信息', 'admin/NewsCategory/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (210, 207, '新闻分类添加', 'admin/NewsCategory/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (211, 207, '新闻分类修改', 'admin/NewsCategory/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (212, 207, '新闻分类删除', 'admin/NewsCategory/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (213, 207, '新闻分类是否隐藏', 'admin/NewsCategory/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (213, 207, '新闻分类是否隐藏', 'admin/NewsCategory/ishide', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (214, 175, '新闻分类', 'admin/News/category', 225, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (215, 3, '菜单是否无需登录', 'admin/AdminMenu/unlogin', 145, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (216, 58, '在线工具', 'admin/AdminUtils/toollu', 110, 0, 1, 0, 0, NULL, NULL, NULL);
@@ -200,6 +199,166 @@ INSERT INTO `yyl_admin_menu` VALUES (226, 188, '接口设置', '', 110, 0, 0, 0,
 INSERT INTO `yyl_admin_menu` VALUES (227, 226, '接口设置信息', 'admin/AdminSetting/apiInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (228, 226, '接口设置修改', 'admin/AdminSetting/apiEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (229, 140, '会员日志清除', 'admin/MemberLog/clear', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (230, 0, '内容管理', '', 160, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (231, 230, '产品管理', '', 300, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (232, 231, '产品列表', 'admin/Product/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (233, 231, '产品信息', 'admin/Product/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (234, 231, '产品添加', 'admin/Product/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (235, 231, '产品修改', 'admin/Product/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (236, 231, '产品删除', 'admin/Product/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (237, 230, '产品分类', '', 280, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (238, 237, '产品分类列表', 'admin/ProductCategory/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (239, 237, '产品分类信息', 'admin/ProductCategory/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (240, 237, '产品分类添加', 'admin/ProductCategory/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (241, 237, '产品分类修改', 'admin/ProductCategory/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (242, 237, '产品分类删除', 'admin/ProductCategory/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (243, 237, '产品分类是否隐藏', 'admin/ProductCategory/ishide', 150, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (244, 231, '产品分类', 'admin/Product/category', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (245, 231, '产品上传文件', 'admin/Product/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (246, 231, '产品是否置顶', 'admin/Product/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (247, 231, '产品是否热门', 'admin/Product/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (248, 231, '产品是否推荐', 'admin/Product/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (249, 231, '产品是否隐藏', 'admin/Product/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (250, 237, '产品分类上传图片', 'admin/ProductCategory/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (251, 230, '内容设置', '', 120, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (252, 251, '内容设置信息', 'admin/SettingCms/cmsInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (253, 251, '内容设置修改', 'admin/SettingCms/cmsEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (254, 251, '内容设置上传', 'admin/SettingCms/cmsUpload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (255, 231, '产品回收站', 'admin/Product/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (256, 231, '产品回收站恢复', 'admin/Product/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (257, 231, '产品回收站删除', 'admin/Product/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (258, 175, '新闻回收站', 'admin/News/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (259, 175, '新闻回收站恢复', 'admin/News/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (260, 175, '新闻回收站删除', 'admin/News/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (261, 230, '案例管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (262, 261, '案例列表', 'admin/Project/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (263, 261, '案例信息', 'admin/Project/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (264, 261, '案例添加', 'admin/Project/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (265, 261, '案例修改', 'admin/Project/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (266, 261, '案例删除', 'admin/Project/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (267, 261, '案例分类', 'admin/Project/category', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (268, 261, '案例上传文件', 'admin/Project/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (269, 261, '案例是否置顶', 'admin/Project/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (270, 261, '案例是否热门', 'admin/Project/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (271, 261, '案例是否推荐', 'admin/Project/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (272, 261, '案例是否隐藏', 'admin/Project/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (273, 261, '案例回收站', 'admin/Project/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (274, 261, '案例回收站恢复', 'admin/Project/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (275, 261, '案例回收站删除', 'admin/Project/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (276, 230, '案例分类', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (277, 276, '案例分类列表', 'admin/ProjectCategory/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (278, 276, '案例分类信息', 'admin/ProjectCategory/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (279, 276, '案例分类添加', 'admin/ProjectCategory/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (280, 276, '案例分类修改', 'admin/ProjectCategory/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (281, 276, '案例分类删除', 'admin/ProjectCategory/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (282, 276, '案例分类是否隐藏', 'admin/ProjectCategory/ishide', 150, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (283, 230, '文章管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (284, 283, '文章列表', 'admin/Article/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (285, 283, '文章信息', 'admin/Article/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (286, 283, '文章添加', 'admin/Article/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (287, 283, '文章修改', 'admin/Article/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (288, 283, '文章删除', 'admin/Article/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (289, 283, '文章分类', 'admin/Article/category', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (290, 283, '文章上传文件', 'admin/Article/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (291, 283, '文章是否置顶', 'admin/Article/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (292, 283, '文章是否热门', 'admin/Article/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (293, 283, '文章是否推荐', 'admin/Article/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (294, 283, '文章是否隐藏', 'admin/Article/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (295, 283, '文章回收站', 'admin/Article/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (296, 283, '文章回收站恢复', 'admin/Article/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (297, 283, '文章回收站删除', 'admin/Article/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (298, 230, '文章分类', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (299, 298, '文章分类列表', 'admin/ArticleCategory/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (300, 298, '文章分类信息', 'admin/ArticleCategory/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (301, 298, '文章分类添加', 'admin/ArticleCategory/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (302, 298, '文章分类修改', 'admin/ArticleCategory/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (303, 298, '文章分类删除', 'admin/ArticleCategory/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (304, 298, '文章分类是否隐藏', 'admin/ArticleCategory/ishide', 150, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (305, 207, '新闻分类上传文件', 'admin/NewsCategory/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (306, 276, '案例分类上传文件', 'admin/ProjectCategory/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (307, 298, '文章分类上传文件', 'admin/ArticleCategory/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (308, 230, '下载管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (309, 230, '下载分类', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (310, 308, '下载分类', 'admin/Download/category', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (311, 308, '下载列表', 'admin/Download/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (312, 308, '下载信息', 'admin/Download/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (313, 308, '下载添加', 'admin/Download/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (314, 308, '下载修改', 'admin/Download/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (315, 308, '下载删除', 'admin/Download/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (316, 308, '下载上传文件', 'admin/Download/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (317, 308, '下载是否置顶', 'admin/Download/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (318, 308, '下载是否热门', 'admin/Download/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (319, 308, '下载是否推荐', 'admin/Download/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (320, 308, '下载是否隐藏', 'admin/Download/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (321, 308, '下载回收站', 'admin/Download/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (322, 308, '下载回收站恢复', 'admin/Download/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (323, 308, '下载回收站删除', 'admin/Download/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (324, 309, '下载分类列表', 'admin/DownloadCategory/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (325, 309, '下载分类信息', 'admin/DownloadCategory/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (326, 309, '下载分类添加', 'admin/DownloadCategory/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (327, 309, '下载分类修改', 'admin/DownloadCategory/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (328, 309, '下载分类删除', 'admin/DownloadCategory/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (329, 309, '下载分类上传文件', 'admin/DownloadCategory/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (330, 309, '下载分类是否隐藏', 'admin/DownloadCategory/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (331, 230, '视频管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (332, 230, '视频分类', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (333, 331, '视频分类', 'admin/Video/category', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (334, 331, '视频列表', 'admin/Video/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (335, 331, '视频信息', 'admin/Video/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (336, 331, '视频添加', 'admin/Video/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (337, 331, '视频修改', 'admin/Video/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (338, 331, '视频删除', 'admin/Video/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (339, 331, '视频上传文件', 'admin/Video/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (340, 331, '视频是否置顶', 'admin/Video/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (341, 331, '视频是否热门', 'admin/Video/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (342, 331, '视频是否推荐', 'admin/Video/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (343, 331, '视频是否隐藏', 'admin/Video/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (344, 331, '视频回收站', 'admin/Video/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (345, 331, '视频回收站恢复', 'admin/Video/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (346, 331, '视频回收站删除', 'admin/Video/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (347, 332, '视频分类列表', 'admin/VideoCategory/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (348, 332, '视频分类信息', 'admin/VideoCategory/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (349, 332, '视频分类添加', 'admin/VideoCategory/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (350, 332, '视频分类修改', 'admin/VideoCategory/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (351, 332, '视频分类删除', 'admin/VideoCategory/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (352, 332, '视频分类上传文件', 'admin/VideoCategory/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (353, 332, '视频分类是否隐藏', 'admin/VideoCategory/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (354, 230, '友链管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (355, 354, '友链列表', 'admin/Links/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (356, 354, '友链信息', 'admin/Links/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (357, 354, '友链添加', 'admin/Links/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (358, 354, '友链修改', 'admin/Links/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (359, 354, '友链删除', 'admin/Links/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (360, 354, '友链上传文件', 'admin/Links/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (361, 354, '友链是否置顶', 'admin/Links/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (362, 354, '友链是否热门', 'admin/Links/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (363, 354, '友链是否推荐', 'admin/Links/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (364, 354, '友链是否隐藏', 'admin/Links/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (365, 354, '友链回收站', 'admin/Links/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (366, 354, '友链回收站恢复', 'admin/Links/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (367, 354, '友链回收站删除', 'admin/Links/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (368, 230, '轮播管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (369, 368, '轮播列表', 'admin/Carousel/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (370, 368, '轮播信息', 'admin/Carousel/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (371, 368, '轮播添加', 'admin/Carousel/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (372, 368, '轮播修改', 'admin/Carousel/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (373, 368, '轮播删除', 'admin/Carousel/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (374, 368, '轮播上传文件', 'admin/Carousel/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (375, 368, '轮播是否置顶', 'admin/Carousel/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (376, 368, '轮播是否热门', 'admin/Carousel/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (377, 368, '轮播是否推荐', 'admin/Carousel/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (378, 368, '轮播是否隐藏', 'admin/Carousel/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (379, 368, '轮播回收站', 'admin/Carousel/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (380, 368, '轮播回收站恢复', 'admin/Carousel/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (381, 368, '轮播回收站删除', 'admin/Carousel/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (382, 230, '留言管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (383, 382, '留言列表', 'admin/Comment/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (384, 382, '留言信息', 'admin/Comment/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (385, 382, '留言删除', 'admin/Comment/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (386, 382, '留言已读', 'admin/Comment/isread', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (387, 382, '留言回收站', 'admin/Comment/recover', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (388, 382, '留言回收站恢复', 'admin/Comment/recoverReco', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (389, 382, '留言回收站删除', 'admin/Comment/recoverDele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -225,7 +384,7 @@ CREATE TABLE `yyl_admin_role`  (
 -- Records of yyl_admin_role
 -- ----------------------------
 INSERT INTO `yyl_admin_role` VALUES (1, ',,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,176,177,178,179,181,182,183,184,185,187,191,193,196,198,204,208,209,210,211,214,216,218,221,224,227,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,176,177,178,179,180,181,182,183,184,185,187,191,193,196,198,204,208,209,210,211,213,214,216,218,221,224,227,232,233,234,235,236,238,239,240,241,243,244,245,246,247,248,249,250,252,255,256,258,259,262,263,264,265,266,267,268,269,270,271,272,273,274,277,278,279,280,282,284,285,286,287,288,289,290,291,292,293,294,295,296,299,300,301,302,304,305,306,307,310,311,312,313,314,315,316,317,318,319,320,321,322,324,325,326,327,329,330,333,334,335,336,337,338,339,340,341,342,343,344,345,347,348,349,350,352,353,355,356,357,358,359,360,361,362,363,364,365,366,369,370,371,372,373,374,375,376,377,378,379,380,383,384,385,386,387,388,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '', 200, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -250,7 +409,6 @@ CREATE TABLE `yyl_admin_setting`  (
 -- ----------------------------
 -- Records of yyl_admin_setting
 -- ----------------------------
-INSERT INTO `yyl_admin_setting` VALUES (1, 'AdminToken', '', 12, 1, 1, 3, 1, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_user
@@ -352,7 +510,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -372,7 +530,7 @@ INSERT INTO `yyl_api` VALUES (12, 0, '地区', '', 200, 0, 0, 0, NULL, NULL, NUL
 INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'index/Region/list', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (14, 12, '地区信息', 'index/Region/info', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 200, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (16, 0, '新闻', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (16, 34, '新闻', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (17, 16, '新闻列表', 'index/News/list', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (18, 16, '新闻信息', 'index/News/info', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (19, 1, '登录(公众号)', 'index/Login/offi', 200, 0, 1, 0, NULL, NULL, NULL);
@@ -386,6 +544,238 @@ INSERT INTO `yyl_api` VALUES (26, 1, '登录(公众号)回调', 'index/Login/off
 INSERT INTO `yyl_api` VALUES (27, 24, 'index', 'index/', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (28, 0, '微信', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (29, 28, '微信公众号接入', 'index/Wechat/access', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (30, 34, '产品', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (31, 30, '产品分类', 'index/Product/category', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (32, 30, '产品列表', 'index/Product/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (33, 30, '产品信息', 'index/Product/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (34, 0, '内容管理', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (35, 34, '文章', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (36, 34, '下载', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (37, 34, '友链', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (38, 34, '案例', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (39, 34, '视频', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (40, 34, '轮播', '', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (41, 35, '分类列表', 'index/Article/category', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (42, 35, '文章列表', 'index/Article/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (43, 35, '文章信息', 'index/Article/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (44, 36, '分类列表', 'index/Download/category', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (45, 36, '下载列表', 'index/Download/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (46, 36, '下载信息', 'index/Download/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (47, 37, '友链列表', 'index/Links/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (49, 38, '分类列表', 'index/Project/category', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (50, 38, '案例列表', 'index/Project/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (51, 38, '案例信息', 'index/Project/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (52, 39, '分类列表', 'index/Video/category', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (53, 39, '视频列表', 'index/Video/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (54, 39, '视频信息', 'index/Video/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (55, 40, '轮播列表', 'index/Carousel/list', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (57, 34, '留言', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (58, 57, '留言', 'index/Comment/add', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (59, 34, '设置', '', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (60, 59, '设置信息', 'index/Setting/cmsInfo', 200, 0, 0, 0, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for yyl_article
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_article`;
+CREATE TABLE `yyl_article`  (
+  `article_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文章id',
+  `article_category_id` int(11) NULL DEFAULT 0 COMMENT '文章分类id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`article_id`) USING BTREE,
+  INDEX `name`(`name`(191)) USING BTREE,
+  INDEX `article_id`(`article_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_article
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_article_category
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_article_category`;
+CREATE TABLE `yyl_article_category`  (
+  `article_category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文章分类id',
+  `article_category_pid` int(11) NULL DEFAULT 0 COMMENT '文章分类父级id',
+  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`article_category_id`) USING BTREE,
+  INDEX `category_name`(`category_name`(191)) USING BTREE,
+  INDEX `article_category_id`(`article_category_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章分类' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_article_category
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_carousel
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_carousel`;
+CREATE TABLE `yyl_carousel`  (
+  `carousel_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '轮播id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '链接',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`carousel_id`) USING BTREE,
+  INDEX `name`(`name`(191)) USING BTREE,
+  INDEX `carousel_id`(`carousel_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '轮播' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_carousel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_comment
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_comment`;
+CREATE TABLE `yyl_comment`  (
+  `comment_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '留言id',
+  `call` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '称呼',
+  `mobile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机',
+  `tel` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '电话',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
+  `qq` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'QQ',
+  `wechat` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '微信',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `is_read` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否已读1是0否',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `read_time` datetime NULL DEFAULT NULL COMMENT '已读时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`comment_id`) USING BTREE,
+  INDEX `comment_id`(`comment_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '留言' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_comment
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_download
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_download`;
+CREATE TABLE `yyl_download`  (
+  `download_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '下载id',
+  `download_category_id` int(11) NULL DEFAULT 0 COMMENT '下载分类id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`download_id`) USING BTREE,
+  INDEX `name`(`name`(191)) USING BTREE,
+  INDEX `download_id`(`download_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '下载' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_download
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_download_category
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_download_category`;
+CREATE TABLE `yyl_download_category`  (
+  `download_category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '下载分类id',
+  `download_category_pid` int(11) NULL DEFAULT 0 COMMENT '下载分类父级id',
+  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`download_category_id`) USING BTREE,
+  INDEX `category_name`(`category_name`(191)) USING BTREE,
+  INDEX `download_category_id`(`download_category_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '下载分类' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_download_category
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_links
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_links`;
+CREATE TABLE `yyl_links`  (
+  `links_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '友链id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '链接',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`links_id`) USING BTREE,
+  INDEX `name`(`name`(191)) USING BTREE,
+  INDEX `links_id`(`links_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '友链' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_links
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yyl_member
@@ -498,15 +888,14 @@ DROP TABLE IF EXISTS `yyl_news`;
 CREATE TABLE `yyl_news`  (
   `news_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '新闻id',
   `news_category_id` int(11) NULL DEFAULT 0 COMMENT '新闻分类id',
-  `img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图片',
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
-  `intro` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '简介',
-  `author` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '作者',
-  `time` datetime NOT NULL COMMENT '时间',
-  `source` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '来源',
-  `source_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '来源链接',
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
-  `sort` int(10) NULL DEFAULT 200 COMMENT '排序',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
   `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
   `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
   `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
@@ -518,7 +907,7 @@ CREATE TABLE `yyl_news`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`news_id`) USING BTREE,
   INDEX `news_id`(`news_id`) USING BTREE,
-  INDEX `title`(`title`(191)) USING BTREE
+  INDEX `name`(`name`(191)) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
@@ -531,20 +920,145 @@ CREATE TABLE `yyl_news`  (
 DROP TABLE IF EXISTS `yyl_news_category`;
 CREATE TABLE `yyl_news_category`  (
   `news_category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '新闻分类id',
+  `news_category_pid` int(11) NULL DEFAULT 0 COMMENT '新闻分类父级id',
   `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
-  `category_sort` int(10) NULL DEFAULT 200 COMMENT '分类排序',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
   `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`news_category_id`) USING BTREE,
-  INDEX `news_category_id`(`news_category_id`) USING BTREE,
-  INDEX `category_name`(`category_name`(191)) USING BTREE
+  INDEX `category_name`(`category_name`(191)) USING BTREE,
+  INDEX `news_category_id`(`news_category_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '新闻分类' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_news_category
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_product
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_product`;
+CREATE TABLE `yyl_product`  (
+  `product_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '产品id',
+  `product_category_id` int(11) NULL DEFAULT 0 COMMENT '产品分类id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`product_id`) USING BTREE,
+  INDEX `product_id`(`product_id`) USING BTREE,
+  INDEX `name`(`name`(191)) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_product
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_product_category
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_product_category`;
+CREATE TABLE `yyl_product_category`  (
+  `product_category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '产品分类id',
+  `product_category_pid` int(11) NULL DEFAULT 0 COMMENT '产品分类父级id',
+  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`product_category_id`) USING BTREE,
+  INDEX `category_name`(`category_name`(191)) USING BTREE,
+  INDEX `product_category_id`(`product_category_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品分类' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_product_category
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_project
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_project`;
+CREATE TABLE `yyl_project`  (
+  `project_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '案例id',
+  `project_category_id` int(11) NULL DEFAULT 0 COMMENT '案例分类id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`project_id`) USING BTREE,
+  INDEX `name`(`name`(191)) USING BTREE,
+  INDEX `project_id`(`project_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '案例' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_project
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_project_category
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_project_category`;
+CREATE TABLE `yyl_project_category`  (
+  `project_category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '案例分类id',
+  `project_category_pid` int(11) NULL DEFAULT 0 COMMENT '案例分类父级id',
+  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`project_category_id`) USING BTREE,
+  INDEX `category_name`(`category_name`(191)) USING BTREE,
+  INDEX `project_category_id`(`project_category_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '案例分类' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_project_category
 -- ----------------------------
 
 -- ----------------------------
@@ -4300,7 +4814,36 @@ CREATE TABLE `yyl_setting`  (
 -- ----------------------------
 -- Records of yyl_setting
 -- ----------------------------
-INSERT INTO `yyl_setting` VALUES (1, 'MemberToken', '', 720, 1, 0, 1, 3, 1, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for yyl_setting_cms
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_setting_cms`;
+CREATE TABLE `yyl_setting_cms`  (
+  `setting_cms_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'logo',
+  `icp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备案号',
+  `copyright` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '版权',
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '地址',
+  `tel` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '电话',
+  `mobile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
+  `qq` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'QQ',
+  `wechat` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '微信',
+  `off_acc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '公众号',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`setting_cms_id`) USING BTREE,
+  INDEX `setting_cms_id`(`setting_cms_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容设置' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yyl_setting_cms
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yyl_setting_wechat
@@ -4325,6 +4868,67 @@ CREATE TABLE `yyl_setting_wechat`  (
 
 -- ----------------------------
 -- Records of yyl_setting_wechat
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_video
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_video`;
+CREATE TABLE `yyl_video`  (
+  `video_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '视频id',
+  `video_category_id` int(11) NULL DEFAULT 0 COMMENT '视频分类id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `videos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '视频',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`video_id`) USING BTREE,
+  INDEX `name`(`name`(191)) USING BTREE,
+  INDEX `video_id`(`video_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '视频' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_video
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for yyl_video_category
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_video_category`;
+CREATE TABLE `yyl_video_category`  (
+  `video_category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '视频分类id',
+  `video_category_pid` int(11) NULL DEFAULT 0 COMMENT '视频分类父级id',
+  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `imgs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '图片',
+  `sort` int(11) NULL DEFAULT 200 COMMENT '排序',
+  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`video_category_id`) USING BTREE,
+  INDEX `category_name`(`category_name`(191)) USING BTREE,
+  INDEX `video_category_id`(`video_category_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '视频分类' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_video_category
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -19,9 +19,11 @@ return [
     'groups' => [
         ['title' => 'index', 'name' => 'index'],
         ['title' => 'admin', 'name' => 'admin'],
+        ['title' => '内容管理', 'name' => 'adminCms'],
+        ['title' => '内容CMS', 'name' => 'indexCms'],
     ],
     // 指定公共注释定义的文件地址
-    'definitions' => 'app\common\controller\Definitions',
+    'definitions' => 'app\common\controller\ApiDocDefinitions',
     // 指定生成文档的控制器
     'controllers' => [],
     // 过滤，不解析的控制器
@@ -31,7 +33,7 @@ return [
         // 是否开启缓存
         'enable' => true,
         // 缓存文件路径
-        'path' => '../runtime/cache/',
+        'path' => '../runtime/apidoc/',
         // 是否显示更新缓存按钮
         'reload' => true,
         // 最大缓存文件数

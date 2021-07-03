@@ -1,36 +1,31 @@
 <?php
 /*
- * @Description  : 新闻分类
+ * @Description  : 新闻分类控制器
  * @Author       : https://github.com/skyselang
- * @Date         : 2021-05-19
- * @LastEditTime : 2021-05-25
+ * @Date         : 2021-06-08
+ * @LastEditTime : 2021-07-03
  */
 
 namespace app\admin\controller;
 
 use think\facade\Request;
+use hg\apidoc\annotation as Apidoc;
 use app\common\validate\NewsCategoryValidate;
 use app\common\service\NewsCategoryService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("新闻分类")
- * @Apidoc\Group("index")
- * @Apidoc\Sort("40")
+ * @Apidoc\Group("adminCms")
+ * @Apidoc\Sort("999")
  */
 class NewsCategory
 {
     /**
      * @Apidoc\Title("新闻分类列表")
+     * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param("news_category_id", type="int", default="", desc="ID")
-     * @Apidoc\Param("category_name", type="string", default="", desc="分类名称")
-     * @Apidoc\Param("date_type", type="string", default="", desc="时间类型")
-     * @Apidoc\Param("date_range", type="array", default="", desc="日期范围")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
      *          @Apidoc\Returned(ref="app\common\model\NewsCategoryModel\list")
      *      )
@@ -38,39 +33,14 @@ class NewsCategory
      */
     public function list()
     {
-        $page             = Request::param('page/d', 1);
-        $limit            = Request::param('limit/d', 10);
-        $sort_field       = Request::param('sort_field/s ', '');
-        $sort_type        = Request::param('sort_type/s', '');
-        $news_category_id = Request::param('news_category_id/d', '');
-        $category_name    = Request::param('category_name/s', '');
-        $date_type        = Request::param('date_type/s', '');
-        $date_range       = Request::param('date_range/a', []);
-
-        $where = [];
-        if ($news_category_id) {
-            $where[] = ['news_category_id', '=', $news_category_id];
-        }
-        if ($category_name) {
-            $where[] = ['category_name', 'like', '%' . $category_name . '%'];
-        }
-        if ($date_type && $date_range) {
-            $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
-            $where[] = [$date_type, '<=', $date_range[1] . ' 23:59:59'];
-        }
-
-        $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
-        }
-
-        $data = NewsCategoryService::list($where, $page, $limit, $order);
+        $data['list'] = NewsCategoryService::list();
 
         return success($data);
     }
 
     /**
      * @Apidoc\Title("新闻分类信息")
+     * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\id")
      * @Apidoc\Returned(ref="returnCode")
@@ -85,7 +55,6 @@ class NewsCategory
         validate(NewsCategoryValidate::class)->scene('info')->check($param);
 
         $data = NewsCategoryService::info($param['news_category_id']);
-
         if ($data['is_delete'] == 1) {
             exception('新闻分类已被删除：' . $param['news_category_id']);
         }
@@ -103,8 +72,13 @@ class NewsCategory
      */
     public function add()
     {
-        $param['category_name'] = Request::param('category_name/s', '');
-        $param['category_sort'] = Request::param('category_sort/d', 200);
+        $param['news_category_pid'] = Request::param('news_category_pid/d', 0);
+        $param['category_name']     = Request::param('category_name/s', '');
+        $param['title']             = Request::param('title/s', '');
+        $param['keywords']          = Request::param('keywords/s', '');
+        $param['description']       = Request::param('description/s', '');
+        $param['imgs']              = Request::param('imgs/a', []);
+        $param['sort']              = Request::param('sort/d', 200);
 
         validate(NewsCategoryValidate::class)->scene('add')->check($param);
 
@@ -123,9 +97,14 @@ class NewsCategory
      */
     public function edit()
     {
-        $param['news_category_id'] = Request::param('news_category_id/d', '');
-        $param['category_name']    = Request::param('category_name/s', '');
-        $param['category_sort']    = Request::param('category_sort/d', 200);
+        $param['news_category_id']  = Request::param('news_category_id/d', '');
+        $param['news_category_pid'] = Request::param('news_category_pid/d', 0);
+        $param['category_name']     = Request::param('category_name/s', '');
+        $param['title']             = Request::param('title/s', '');
+        $param['keywords']          = Request::param('keywords/s', '');
+        $param['description']       = Request::param('description/s', '');
+        $param['imgs']              = Request::param('imgs/a', []);
+        $param['sort']              = Request::param('sort/d', 200);
 
         validate(NewsCategoryValidate::class)->scene('edit')->check($param);
 
@@ -138,33 +117,62 @@ class NewsCategory
      * @Apidoc\Title("新闻分类删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\dele")
+     * @Apidoc\Param("news_category", type="array", require=true, desc="新闻分类列表")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
-        $param['news_category_id'] = Request::param('news_category_id/d', '');
+        $param['news_category'] = Request::param('news_category/a', '');
 
         validate(NewsCategoryValidate::class)->scene('dele')->check($param);
 
-        $data = NewsCategoryService::dele($param['news_category_id']);
+        $data = NewsCategoryService::dele($param['news_category']);
 
         return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("新闻分类上传图片")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\ParamType("formdata")
+     * @Apidoc\Param(ref="ParamFile")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnFile")
+     */
+    public function upload()
+    {
+        $param['type'] = Request::param('type/s', 'image');
+        $param['file'] = Request::file('file');
+
+        $param[$param['type']] = $param['file'];
+        if ($param['type'] == 'image') {
+            validate(NewsCategoryValidate::class)->scene('image')->check($param);
+        } elseif ($param['type'] == 'video') {
+            validate(NewsCategoryValidate::class)->scene('video')->check($param);
+        } else {
+            validate(NewsCategoryValidate::class)->scene('file')->check($param);
+        }
+
+        $data = NewsCategoryService::upload($param);
+
+        return success($data, '上传成功');
     }
 
     /**
      * @Apidoc\Title("新闻分类是否隐藏")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Param("news_category", type="array", require=true, desc="新闻分类列表")
      * @Apidoc\Param(ref="app\common\model\NewsCategoryModel\ishide")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function ishide()
     {
-        $param['news_category_id'] = Request::param('news_category_id/d', '');
-        $param['is_hide']          = Request::param('is_hide/d', 0);
+        $param['news_category'] = Request::param('news_category/a', '');
+        $param['is_hide']       = Request::param('is_hide/d', 0);
 
         validate(NewsCategoryValidate::class)->scene('ishide')->check($param);
 
