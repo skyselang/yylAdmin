@@ -3,14 +3,14 @@
  * @Description  : 内容分类缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-08
- * @LastEditTime : 2021-07-07
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\cache;
+namespace app\common\cache\cms;
 
 use think\facade\Cache;
 
-class CmsCategoryCache
+class CategoryCache
 {
     /**
      * 缓存键名
@@ -21,7 +21,7 @@ class CmsCategoryCache
      */
     public static function key($category_id = '')
     {
-        $key = 'CmsCategory:' . $category_id;
+        $key = 'cms:category:' . $category_id;
 
         return $key;
     }
@@ -40,7 +40,7 @@ class CmsCategoryCache
         $key = self::key($category_id);
         $val = $category;
         if (empty($ttl)) {
-            $ttl = 1 * 24 * 60 * 60;
+            $ttl = 1 * 24 * 60 * 60 + mt_rand(0, 99);
         }
 
         $res = Cache::set($key, $val, $ttl);

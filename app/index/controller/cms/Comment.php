@@ -1,29 +1,30 @@
 <?php
 /*
- * @Description  : 内容留言
+ * @Description  : 留言
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-10
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\index\controller;
+namespace app\index\controller\cms;
 
 use think\facade\Request;
-use app\common\validate\CmsCommentValidate;
-use app\common\service\CmsCommentService;
+use app\common\validate\cms\CommentValidate;
+use app\common\service\cms\CommentService;
 use hg\apidoc\annotation as Apidoc;
+use think\facade\Cache;
 
 /**
  * @Apidoc\Title("留言")
  * @Apidoc\Sort("66")
  * @Apidoc\Group("indexCms")
  */
-class CmsComment
+class Comment
 {
     /**
      * @Apidoc\Title("留言")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\CmsCommentModel\add")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\add")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -38,9 +39,17 @@ class CmsComment
         $param['title']   = Request::param('title/s', '');
         $param['content'] = Request::param('content/s', '');
 
-        validate(CmsCommentValidate::class)->scene('add')->check($param);
+        validate(CommentValidate::class)->scene('add')->check($param);
 
-        $data = CmsCommentService::add($param);
+        $key = 'cms:comment:' . $param['mobile'];
+        $cache = Cache::get($key);
+        if ($cache) {
+            return error('请稍后再试');
+        } else {
+            Cache::set($key, $param['call'], 10);
+        }
+
+        $data = CommentService::add($param);
 
         return success($data);
     }

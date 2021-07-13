@@ -3,10 +3,10 @@
  * @Description  : 内容分类模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-08
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\model;
+namespace app\common\model\cms;
 
 use think\Model;
 use hg\apidoc\annotation\Field;
@@ -14,7 +14,7 @@ use hg\apidoc\annotation\AddField;
 use hg\apidoc\annotation\WithoutField;
 use hg\apidoc\annotation\Param;
 
-class CmsCategoryModel extends Model
+class CategoryModel extends Model
 {
     protected $name = 'cms_category';
     protected $pk = 'category_id';
@@ -90,7 +90,7 @@ class CmsCategoryModel extends Model
 
     /**
      * @Field("category")
-     * @AddField("category_id", type="array", require=true, default="", desc="内容分类列表")
+     * @AddField("category", type="array", require=true, default="", desc="内容分类列表")
      */
     public function category()
     {

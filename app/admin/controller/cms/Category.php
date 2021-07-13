@@ -3,14 +3,14 @@
  * @Description  : 内容分类控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-08
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\admin\controller;
+namespace app\admin\controller\cms;
 
 use think\facade\Request;
-use app\common\validate\CmsCategoryValidate;
-use app\common\service\CmsCategoryService;
+use app\common\validate\cms\CategoryValidate;
+use app\common\service\cms\CategoryService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -18,7 +18,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("999")
  */
-class CmsCategory
+class Category
 {
     /**
      * @Apidoc\Title("内容分类列表")
@@ -27,13 +27,13 @@ class CmsCategory
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsCategoryModel\list")
+     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
      *      )
      * )
      */
     public function list()
     {
-        $data['list'] = CmsCategoryService::list('tree');
+        $data['list'] = CategoryService::list('tree');
 
         return success($data);
     }
@@ -42,20 +42,20 @@ class CmsCategory
      * @Apidoc\Title("内容分类信息")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\id")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\id")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\CmsCategoryModel\info"),
-     *      @Apidoc\Returned(ref="app\common\model\CmsCategoryModel\imgs"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\info"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\imgs"),
      * )
      */
     public function info()
     {
         $param['category_id'] = Request::param('category_id/d', '');
 
-        validate(CmsCategoryValidate::class)->scene('info')->check($param);
+        validate(CategoryValidate::class)->scene('info')->check($param);
 
-        $data = CmsCategoryService::info($param['category_id']);
+        $data = CategoryService::info($param['category_id']);
         if ($data['is_delete'] == 1) {
             exception('内容分类已被删除：' . $param['category_id']);
         }
@@ -67,8 +67,8 @@ class CmsCategory
      * @Apidoc\Title("内容分类添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\add")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\imgs")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\add")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -82,9 +82,9 @@ class CmsCategory
         $param['imgs']          = Request::param('imgs/a', []);
         $param['sort']          = Request::param('sort/d', 200);
 
-        validate(CmsCategoryValidate::class)->scene('add')->check($param);
+        validate(CategoryValidate::class)->scene('add')->check($param);
 
-        $data = CmsCategoryService::add($param);
+        $data = CategoryService::add($param);
 
         return success($data);
     }
@@ -93,8 +93,8 @@ class CmsCategory
      * @Apidoc\Title("内容分类修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\edit")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\imgs")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\edit")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -109,9 +109,9 @@ class CmsCategory
         $param['imgs']          = Request::param('imgs/a', []);
         $param['sort']          = Request::param('sort/d', 200);
 
-        validate(CmsCategoryValidate::class)->scene('edit')->check($param);
+        validate(CategoryValidate::class)->scene('edit')->check($param);
 
-        $data = CmsCategoryService::edit($param);
+        $data = CategoryService::edit($param);
 
         return success($data);
     }
@@ -120,7 +120,7 @@ class CmsCategory
      * @Apidoc\Title("内容分类删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\category")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -128,9 +128,9 @@ class CmsCategory
     {
         $param['category'] = Request::param('category/a', '');
 
-        validate(CmsCategoryValidate::class)->scene('dele')->check($param);
+        validate(CategoryValidate::class)->scene('dele')->check($param);
 
-        $data = CmsCategoryService::dele($param['category']);
+        $data = CategoryService::dele($param['category']);
 
         return success($data);
     }
@@ -151,14 +151,14 @@ class CmsCategory
 
         $param[$param['type']] = $param['file'];
         if ($param['type'] == 'image') {
-            validate(CmsCategoryValidate::class)->scene('image')->check($param);
+            validate(CategoryValidate::class)->scene('image')->check($param);
         } elseif ($param['type'] == 'video') {
-            validate(CmsCategoryValidate::class)->scene('video')->check($param);
+            validate(CategoryValidate::class)->scene('video')->check($param);
         } else {
-            validate(CmsCategoryValidate::class)->scene('file')->check($param);
+            validate(CategoryValidate::class)->scene('file')->check($param);
         }
 
-        $data = CmsCategoryService::upload($param['file'], $param['type']);
+        $data = CategoryService::upload($param['file'], $param['type']);
 
         return success($data, '上传成功');
     }
@@ -167,8 +167,8 @@ class CmsCategory
      * @Apidoc\Title("内容分类是否隐藏")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\category")
-     * @Apidoc\Param(ref="app\common\model\CmsCategoryModel\ishide")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\ishide")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -177,9 +177,9 @@ class CmsCategory
         $param['category'] = Request::param('category/a', '');
         $param['is_hide']  = Request::param('is_hide/d', 0);
 
-        validate(CmsCategoryValidate::class)->scene('ishide')->check($param);
+        validate(CategoryValidate::class)->scene('ishide')->check($param);
 
-        $data = CmsCategoryService::ishide($param['category'], $param['is_hide']);
+        $data = CategoryService::ishide($param['category'], $param['is_hide']);
 
         return success($data);
     }

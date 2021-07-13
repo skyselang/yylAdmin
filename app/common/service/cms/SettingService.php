@@ -3,19 +3,21 @@
  * @Description  : 内容设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-17
- * @LastEditTime : 2021-07-12
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\service;
+namespace app\common\service\cms;
 
 use think\facade\Db;
 use think\facade\Filesystem;
-use app\common\cache\CmsSettingCache;
+use app\common\cache\cms\SettingCache;
 
-class CmsSettingService
+class SettingService
 {
+    // 内容设置表名
+    protected static $db_name = 'cms_setting';
     // 内容设置id
-    private static $setting_id = 1;
+    protected static $setting_id = 1;
 
     /**
      * 内容设置信息
@@ -26,19 +28,19 @@ class CmsSettingService
     {
         $setting_id = self::$setting_id;
 
-        $setting = CmsSettingCache::get($setting_id);
+        $setting = SettingCache::get($setting_id);
         if (empty($setting)) {
-            $setting = Db::name('cms_setting')
+            $setting = Db::name(self::$db_name)
                 ->where('setting_id', $setting_id)
                 ->find();
 
             if (empty($setting)) {
-                $setting['setting_id'] = $setting_id;
-                $setting['create_time']    = datetime();
-                Db::name('cms_setting')
+                $setting['setting_id']  = $setting_id;
+                $setting['create_time'] = datetime();
+                Db::name(self::$db_name)
                     ->insert($setting);
 
-                $setting = Db::name('cms_setting')
+                $setting = Db::name(self::$db_name)
                     ->where('setting_id', $setting_id)
                     ->find();
             }
@@ -46,7 +48,7 @@ class CmsSettingService
             $setting['logo_url']    = file_url($setting['logo']);
             $setting['off_acc_url'] = file_url($setting['off_acc']);
 
-            CmsSettingCache::set($setting_id, $setting);
+            SettingCache::set($setting_id, $setting);
         }
 
         return $setting;
@@ -65,7 +67,7 @@ class CmsSettingService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('cms_setting')
+        $res = Db::name(self::$db_name)
             ->where('setting_id', $setting_id)
             ->update($param);
 
@@ -73,7 +75,7 @@ class CmsSettingService
             exception();
         }
 
-        CmsSettingCache::del($setting_id);
+        SettingCache::del($setting_id);
 
         return $param;
     }

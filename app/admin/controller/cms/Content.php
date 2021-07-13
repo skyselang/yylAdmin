@@ -3,15 +3,15 @@
  * @Description  : 内容管理控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\admin\controller;
+namespace app\admin\controller\cms;
 
 use think\facade\Request;
-use app\common\validate\CmsValidate;
-use app\common\service\CmsService;
-use app\common\service\CmsCategoryService;
+use app\common\validate\cms\ContentValidate;
+use app\common\service\cms\ContentService;
+use app\common\service\cms\CategoryService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -19,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("999")
  */
-class Cms
+class Content
 {
     /**
      * @Apidoc\Title("内容分类")
@@ -27,13 +27,13 @@ class Cms
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsCategoryModel\list")
+     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
      *      )
      * )
      */
     public function category()
     {
-        $data['list'] = CmsCategoryService::list('tree');
+        $data['list'] = CategoryService::list('tree');
 
         return success($data);
     }
@@ -43,14 +43,14 @@ class Cms
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\search")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\search")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsModel\list"),
-     *          @Apidoc\Returned(ref="app\common\model\CmsCategoryModel\name")
+     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list"),
+     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\name")
      *      )
      * )
      */
@@ -60,17 +60,17 @@ class Cms
         $limit       = Request::param('limit/d', 10);
         $sort_field  = Request::param('sort_field/s ', '');
         $sort_type   = Request::param('sort_type/s', '');
-        $cms_id      = Request::param('cms_id/d', '');
+        $content_id  = Request::param('content_id/d', '');
         $name        = Request::param('name/s', '');
         $category_id = Request::param('category_id/d', '');
         $date_type   = Request::param('date_type/s', '');
         $date_range  = Request::param('date_range/a', []);
 
-        validate(CmsValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
+        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
 
         $where[] = ['is_delete', '=', 0];
-        if ($cms_id) {
-            $where[] = ['cms_id', '=', $cms_id];
+        if ($content_id) {
+            $where[] = ['content_id', '=', $content_id];
         }
         if ($name) {
             $where[] = ['name', 'like', '%' . $name . '%'];
@@ -90,7 +90,7 @@ class Cms
 
         $field = '';
 
-        $data = CmsService::list($where, $page, $limit, $order, $field);
+        $data = ContentService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
@@ -99,24 +99,24 @@ class Cms
      * @Apidoc\Title("内容信息")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\id")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\id")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\CmsModel\info"),
-     *      @Apidoc\Returned(ref="app\common\model\CmsModel\imgs"),
-     *      @Apidoc\Returned(ref="app\common\model\CmsModel\files"),
-     *      @Apidoc\Returned(ref="app\common\model\CmsModel\videos"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\info"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\imgs"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\files"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\videos"),
      * )
      */
     public function info()
     {
-        $param['cms_id'] = Request::param('cms_id/d', '');
+        $param['content_id'] = Request::param('content_id/d', '');
 
-        validate(CmsValidate::class)->scene('info')->check($param);
+        validate(ContentValidate::class)->scene('info')->check($param);
 
-        $data = CmsService::info($param['cms_id']);
+        $data = ContentService::info($param['content_id']);
         if ($data['is_delete'] == 1) {
-            exception('内容已被删除：' . $param['cms_id']);
+            exception('内容已被删除：' . $param['content_id']);
         }
 
         return success($data);
@@ -126,10 +126,10 @@ class Cms
      * @Apidoc\Title("内容添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\add")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\imgs")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\files")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\videos")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\add")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\imgs")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\files")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\videos")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -147,9 +147,9 @@ class Cms
         $param['url']         = Request::param('url/s', '');
         $param['sort']        = Request::param('sort/d', 200);
 
-        validate(CmsValidate::class)->scene('add')->check($param);
+        validate(ContentValidate::class)->scene('add')->check($param);
 
-        $data = CmsService::add($param);
+        $data = ContentService::add($param);
 
         return success($data);
     }
@@ -158,16 +158,16 @@ class Cms
      * @Apidoc\Title("内容修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\edit")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\imgs")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\files")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\videos")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\edit")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\imgs")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\files")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\videos")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
-        $param['cms_id']      = Request::param('cms_id/d', '');
+        $param['content_id']  = Request::param('content_id/d', '');
         $param['category_id'] = Request::param('category_id/d', '');
         $param['name']        = Request::param('name/s', '');
         $param['title']       = Request::param('title/s', '');
@@ -180,9 +180,9 @@ class Cms
         $param['url']         = Request::param('url/s', '');
         $param['sort']        = Request::param('sort/d', 200);
 
-        validate(CmsValidate::class)->scene('edit')->check($param);
+        validate(ContentValidate::class)->scene('edit')->check($param);
 
-        $data = CmsService::edit($param);
+        $data = ContentService::edit($param);
 
         return success($data);
     }
@@ -191,17 +191,17 @@ class Cms
      * @Apidoc\Title("内容删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\cms")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
-        $param['cms'] = Request::param('cms/a', '');
+        $param['content'] = Request::param('content/a', '');
 
-        validate(CmsValidate::class)->scene('dele')->check($param);
+        validate(ContentValidate::class)->scene('dele')->check($param);
 
-        $data = CmsService::dele($param['cms']);
+        $data = ContentService::dele($param['content']);
 
         return success($data);
     }
@@ -222,14 +222,14 @@ class Cms
 
         $param[$param['type']] = $param['file'];
         if ($param['type'] == 'image') {
-            validate(CmsValidate::class)->scene('image')->check($param);
+            validate(ContentValidate::class)->scene('image')->check($param);
         } elseif ($param['type'] == 'video') {
-            validate(CmsValidate::class)->scene('video')->check($param);
+            validate(ContentValidate::class)->scene('video')->check($param);
         } else {
-            validate(CmsValidate::class)->scene('file')->check($param);
+            validate(ContentValidate::class)->scene('file')->check($param);
         }
 
-        $data = CmsService::upload($param['file'], $param['type']);
+        $data = ContentService::upload($param['file'], $param['type']);
 
         return success($data, '上传成功');
     }
@@ -238,19 +238,19 @@ class Cms
      * @Apidoc\Title("内容是否置顶")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\cms")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\istop")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\istop")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function istop()
     {
-        $param['cms']    = Request::param('cms/a', '');
-        $param['is_top'] = Request::param('is_top/d', 0);
+        $param['content'] = Request::param('content/a', '');
+        $param['is_top']  = Request::param('is_top/d', 0);
 
-        validate(CmsValidate::class)->scene('istop')->check($param);
+        validate(ContentValidate::class)->scene('istop')->check($param);
 
-        $data = CmsService::istop($param['cms'], $param['is_top']);
+        $data = ContentService::istop($param['content'], $param['is_top']);
 
         return success($data);
     }
@@ -259,19 +259,19 @@ class Cms
      * @Apidoc\Title("内容是否热门")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\cms")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\ishot")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\ishot")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function ishot()
     {
-        $param['cms']    = Request::param('cms/a', '');
-        $param['is_hot'] = Request::param('is_hot/d', 0);
+        $param['content'] = Request::param('content/a', '');
+        $param['is_hot']  = Request::param('is_hot/d', 0);
 
-        validate(CmsValidate::class)->scene('ishot')->check($param);
+        validate(ContentValidate::class)->scene('ishot')->check($param);
 
-        $data = CmsService::ishot($param['cms'], $param['is_hot']);
+        $data = ContentService::ishot($param['content'], $param['is_hot']);
 
         return success($data);
     }
@@ -280,19 +280,19 @@ class Cms
      * @Apidoc\Title("内容是否推荐")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\cms")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\isrec")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\isrec")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function isrec()
     {
-        $param['cms']    = Request::param('cms/a', '');
-        $param['is_rec'] = Request::param('is_rec/d', 0);
+        $param['content'] = Request::param('content/a', '');
+        $param['is_rec']  = Request::param('is_rec/d', 0);
 
-        validate(CmsValidate::class)->scene('isrec')->check($param);
+        validate(ContentValidate::class)->scene('isrec')->check($param);
 
-        $data = CmsService::isrec($param['cms'], $param['is_rec']);
+        $data = ContentService::isrec($param['content'], $param['is_rec']);
 
         return success($data);
     }
@@ -301,19 +301,19 @@ class Cms
      * @Apidoc\Title("内容是否隐藏")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\cms")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\ishide")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\ishide")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function ishide()
     {
-        $param['cms']     = Request::param('cms/a', '');
+        $param['content'] = Request::param('content/a', '');
         $param['is_hide'] = Request::param('is_hide/d', 0);
 
-        validate(CmsValidate::class)->scene('ishide')->check($param);
+        validate(ContentValidate::class)->scene('ishide')->check($param);
 
-        $data = CmsService::ishide($param['cms'], $param['is_hide']);
+        $data = ContentService::ishide($param['content'], $param['is_hide']);
 
         return success($data);
     }
@@ -323,14 +323,14 @@ class Cms
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\search")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\search")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsModel\list"),
-     *          @Apidoc\Returned(ref="app\common\model\CmsCategoryModel\name"),
+     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list"),
+     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\name"),
      *      )
      * )
      */
@@ -340,17 +340,17 @@ class Cms
         $limit       = Request::param('limit/d', 10);
         $sort_field  = Request::param('sort_field/s ', '');
         $sort_type   = Request::param('sort_type/s', '');
-        $cms_id      = Request::param('cms_id/d', '');
+        $content_id  = Request::param('content_id/d', '');
         $name        = Request::param('name/s', '');
         $category_id = Request::param('category_id/d', '');
         $date_type   = Request::param('date_type/s', '');
         $date_range  = Request::param('date_range/a', []);
 
-        validate(CmsValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
+        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
 
         $where[] = ['is_delete', '=', 1];
-        if ($cms_id) {
-            $where[] = ['cms_id', '=', $cms_id];
+        if ($content_id) {
+            $where[] = ['content_id', '=', $content_id];
         }
         if ($name) {
             $where[] = ['name', 'like', '%' . $name . '%'];
@@ -370,9 +370,9 @@ class Cms
             $order = ['delete_time' => 'desc'];
         }
 
-        $field = 'delete_time';
+        $field = '';
 
-        $data = CmsService::list($where, $page, $limit, $order, $field);
+        $data = ContentService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
@@ -381,17 +381,17 @@ class Cms
      * @Apidoc\Title("内容回收站恢复")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\cms")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function recoverReco()
     {
-        $param['cms'] = Request::param('cms/a', '');
+        $param['content'] = Request::param('content/a', '');
 
-        validate(CmsValidate::class)->scene('dele')->check($param);
+        validate(ContentValidate::class)->scene('dele')->check($param);
 
-        $data = CmsService::recoverReco($param['cms']);
+        $data = ContentService::recoverReco($param['content']);
 
         return success($data);
     }
@@ -400,17 +400,17 @@ class Cms
      * @Apidoc\Title("内容回收站删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\cms")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function recoverDele()
     {
-        $param['cms'] = Request::param('cms/a', '');
+        $param['content'] = Request::param('content/a', '');
 
-        validate(CmsValidate::class)->scene('dele')->check($param);
+        validate(ContentValidate::class)->scene('dele')->check($param);
 
-        $data = CmsService::recoverDele($param['cms']);
+        $data = ContentService::recoverDele($param['content']);
 
         return success($data);
     }

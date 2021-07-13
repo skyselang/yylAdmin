@@ -3,10 +3,10 @@
  * @Description  : 内容管理模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-12
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\model;
+namespace app\common\model\cms;
 
 use think\Model;
 use hg\apidoc\annotation\Field;
@@ -14,13 +14,13 @@ use hg\apidoc\annotation\AddField;
 use hg\apidoc\annotation\WithoutField;
 use hg\apidoc\annotation\Param;
 
-class CmsModel extends Model
+class ContentModel extends Model
 {
-    protected $name = 'cms';
-    protected $pk = 'cms_id';
+    protected $name = 'cms_content';
+    protected $pk = 'content_id';
 
     /**
-     * @Field("cms_id,name,category_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time")
+     * @Field("content_id,name,category_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time")
      * @AddField("img_url", type="string", require=true, default="", desc="图片链接")
      */
     public function list()
@@ -28,7 +28,7 @@ class CmsModel extends Model
     }
 
     /**
-     * @WithoutField("is_delete,delete_time")
+     * 
      */
     public function info()
     {
@@ -42,7 +42,7 @@ class CmsModel extends Model
     }
 
     /**
-     * @Field("cms_id,category_id,name,title,keywords,description,content,url,sort")
+     * @Field("content_id,category_id,name,title,keywords,description,content,url,sort")
      */
     public function edit()
     {
@@ -77,15 +77,15 @@ class CmsModel extends Model
     }
 
     /**
-     * @Field("cms")
-     * @AddField("cms", type="array", require=true, default="", desc="内容列表")
+     * @Field("content")
+     * @AddField("content", type="array", require=true, default="", desc="内容列表")
      */
-    public function cms()
+    public function content()
     {
     }
 
     /**
-     * @Field("cms_id")
+     * @Field("content_id")
      */
     public function id()
     {
@@ -138,8 +138,8 @@ class CmsModel extends Model
     }
 
     /**
-     * @Field("cms_id,name,category_id")
-     * @AddField("cms_id", type="int", require=false, default="", desc="id")
+     * @Field("content_id,name,category_id")
+     * @AddField("content_id", type="int", require=false, default="", desc="id")
      * @AddField("name", type="string", require=false, default="", desc="名称")
      * @AddField("category_id", type="int", require=false, default="", desc="分类id")
      */
@@ -157,7 +157,7 @@ class CmsModel extends Model
     }
 
     /**
-     * @Field("cms_id,category_id")
+     * @Field("content_id,category_id")
      */
     public function indexInfo()
     {

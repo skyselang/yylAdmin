@@ -3,14 +3,14 @@
  * @Description  : 留言管理缓存
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\cache;
+namespace app\common\cache\cms;
 
 use think\facade\Cache;
 
-class CmsCommentCache
+class CommentCache
 {
     /**
      * 缓存键名
@@ -21,7 +21,7 @@ class CmsCommentCache
      */
     public static function key($comment_id = '')
     {
-        $key = 'CmsComment:' . $comment_id;
+        $key = 'cms:comment:' . $comment_id;
 
         return $key;
     }
@@ -40,7 +40,7 @@ class CmsCommentCache
         $key = self::key($comment_id);
         $val = $comment;
         if (empty($ttl)) {
-            $ttl = 1 * 24 * 60 * 60 + mt_rand(0, 9);
+            $ttl = 1 * 24 * 60 * 60 + mt_rand(0, 99);
         }
 
         $res = Cache::set($key, $val, $ttl);

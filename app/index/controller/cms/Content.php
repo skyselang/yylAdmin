@@ -3,15 +3,15 @@
  * @Description  : 内容
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-19
- * @LastEditTime : 2021-07-12
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\index\controller;
+namespace app\index\controller\cms;
 
 use think\facade\Request;
-use app\common\validate\CmsValidate;
-use app\common\service\CmsService;
-use app\common\service\CmsCategoryService;
+use app\common\validate\cms\ContentValidate;
+use app\common\service\cms\ContentService;
+use app\common\service\cms\CategoryService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -19,28 +19,27 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Sort("66")
  * @Apidoc\Group("indexCms")
  */
-class Cms
+class Content
 {
     /**
      * @Apidoc\Title("内容分类")
      * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsCategoryModel\list")
+     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
      *      )
      * )
      */
     public function category()
     {
         $data = [];
-        $list = CmsCategoryService::list('list');
+        $list = CategoryService::list('list');
         foreach ($list as $k => $v) {
             if ($v['is_hide'] == 0) {
                 $data[] = $v;
             }
         }
-        $data = CmsCategoryService::toTree($data, 0);
+        $data = CategoryService::toTree($data, 0);
 
         return success($data);
     }
@@ -48,12 +47,12 @@ class Cms
     /**
      * @Apidoc\Title("内容列表")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\indexList")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\indexList")
      * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsModel\list")
+     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list")
      *      )
      * )
      */
@@ -78,37 +77,39 @@ class Cms
         $order = [];
         if ($sort_field && $sort_type) {
             $order = [$sort_field => $sort_type];
+        } else {
+            $order = ['is_top' => 'desc', 'is_hot' => 'desc', 'is_rec' => 'desc', 'sort' => 'desc', 'create_time' => 'desc'];
         }
 
-        $data = CmsService::list($where, $page, $limit, $order);
+        $data = ContentService::list($where, $page, $limit, $order);
 
         return success($data);
     }
 
     /**
      * @Apidoc\Title("内容信息")
-     * @Apidoc\Param(ref="app\common\model\CmsModel\indexInfo")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\indexInfo")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\CmsModel\info"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\info"),
      *      @Apidoc\Returned("prev_info", type="object", desc="上一条",
-     *          @Apidoc\Returned(ref="app\common\model\CmsModel\id"),
-     *          @Apidoc\Returned(ref="app\common\model\CmsModel\name")
+     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\id"),
+     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\name")
      *      ),
      *      @Apidoc\Returned("next_info", type="object", desc="下一条",
-     *          @Apidoc\Returned(ref="app\common\model\CmsModel\id"),
-     *          @Apidoc\Returned(ref="app\common\model\CmsModel\name")
+     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\id"),
+     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\name")
      *      )
      * )
      */
     public function info()
     {
-        $param['cms_id']      = Request::param('cms_id/d', '');
+        $param['content_id']  = Request::param('content_id/d', '');
         $param['category_id'] = Request::param('category_id/d', 0);
 
-        validate(CmsValidate::class)->scene('info')->check($param);
+        validate(ContentValidate::class)->scene('info')->check($param);
 
-        $data = CmsService::info($param['cms_id']);
+        $data = ContentService::info($param['content_id']);
 
         if ($data['is_delete'] == 1) {
             exception('内容已被删除');
@@ -118,8 +119,8 @@ class Cms
             $data['title'] = $data['name'];
         }
 
-        $data['prev_info'] = CmsService::prev($data['cms_id'], $param['category_id']);
-        $data['next_info'] = CmsService::next($data['cms_id'], $param['category_id']);
+        $data['prev_info'] = ContentService::prev($data['content_id'], $param['category_id']);
+        $data['next_info'] = ContentService::next($data['content_id'], $param['category_id']);
 
         return success($data);
     }

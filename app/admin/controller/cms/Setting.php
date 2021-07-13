@@ -1,16 +1,16 @@
 <?php
 /*
- * @Description  : 内容设置
+ * @Description  : 内容设置控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-17
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\admin\controller;
+namespace app\admin\controller\cms;
 
 use think\facade\Request;
-use app\common\validate\CmsSettingValidate;
-use app\common\service\CmsSettingService;
+use app\common\validate\cms\SettingValidate;
+use app\common\service\cms\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -18,19 +18,19 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("999")
  */
-class CmsSetting
+class Setting
 {
     /**
      * @Apidoc\Title("内容设置信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned(ref="app\common\model\CmsSettingModel\Info")
+     *    @Apidoc\Returned(ref="app\common\model\cms\SettingModel\Info")
      * )
      */
     public function info()
     {
-        $data = CmsSettingService::info();
+        $data = SettingService::info();
 
         return success($data);
     }
@@ -39,7 +39,7 @@ class CmsSetting
      * @Apidoc\Title("内容设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsSettingModel\edit")
+     * @Apidoc\Param(ref="app\common\model\cms\SettingModel\edit")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -60,9 +60,9 @@ class CmsSetting
         $param['wechat']      = Request::param('wechat/s', '');
         $param['off_acc']     = Request::param('off_acc/s', '');
 
-        validate(CmsSettingValidate::class)->scene('edit')->check($param);
+        validate(SettingValidate::class)->scene('edit')->check($param);
 
-        $data = CmsSettingService::edit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
@@ -84,9 +84,9 @@ class CmsSetting
         $param['file']  = Request::file('file');
         $param['image'] = $param['file'];
 
-        validate(CmsSettingValidate::class)->scene('image')->check($param);
+        validate(SettingValidate::class)->scene('image')->check($param);
 
-        $data = CmsSettingService::upload($param);
+        $data = SettingService::upload($param);
 
         return success($data);
     }

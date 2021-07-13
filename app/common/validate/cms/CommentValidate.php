@@ -3,15 +3,15 @@
  * @Description  : 留言管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\validate;
+namespace app\common\validate\cms;
 
 use think\Validate;
-use app\common\service\CmsCommentService;
+use app\common\service\cms\CommentService;
 
-class CmsCommentValidate extends Validate
+class CommentValidate extends Validate
 {
     // 验证规则
     protected $rule = [
@@ -27,12 +27,11 @@ class CmsCommentValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'comment_id.require' => 'comment_id must',
-        'call.require'       => '请输入称呼',
-        'mobile.require'     => '请输入手机',
-        'mobile.mobile'      => '请输入正确手机号',
-        'title.require'      => '请输入标题',
-        'content.require'    => '请输入内容',
+        'call.require'    => '请输入称呼',
+        'mobile.require'  => '请输入手机',
+        'mobile.mobile'   => '请输入正确手机号',
+        'title.require'   => '请输入标题',
+        'content.require' => '请输入内容',
     ];
 
     // 验证场景
@@ -51,7 +50,7 @@ class CmsCommentValidate extends Validate
         $sort_field = $data['sort_field'];
         $sort_type  = $data['sort_type'];
 
-        $field_exist = CmsCommentService::tableFieldExist($sort_field);
+        $field_exist = CommentService::tableFieldExist($sort_field);
         if (!$field_exist) {
             return '排序字段sort_field：' . $sort_field . ' 不存在';
         }

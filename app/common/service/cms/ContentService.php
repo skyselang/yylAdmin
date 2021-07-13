@@ -3,20 +3,20 @@
  * @Description  : 内容管理业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\service;
+namespace app\common\service\cms;
 
 use think\facade\Db;
 use think\facade\Filesystem;
 use app\common\utils\ByteUtils;
-use app\common\cache\CmsCache;
+use app\common\cache\cms\ContentCache;
 
-class CmsService
+class ContentService
 {
     // 内容分类表名
-    protected static $db_name = 'cms';
+    protected static $db_name = 'cms_content';
 
     /**
      * 内容列表
@@ -32,18 +32,16 @@ class CmsService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'cms_id,category_id,name,imgs,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time';
-        } else {
-            $field = str_merge($field, 'cms_id,category_id,name,imgs,sort,hits,is_top,is_hot,is_rec,is_hide,create_time');
+            $field = 'content_id,category_id,name,imgs,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'cms_id' => 'desc'];
+            $order = ['sort' => 'desc', 'content_id' => 'desc'];
         }
 
         $count = Db::name(self::$db_name)
             ->where($where)
-            ->count('cms_id');
+            ->count('content_id');
 
         $list = Db::name(self::$db_name)
             ->field($field)
@@ -56,21 +54,25 @@ class CmsService
 
         $pages = ceil($count / $limit);
 
-        $category = CmsCategoryService::list('list');
+        $category = CategoryService::list('list');
         foreach ($list as $k => $v) {
             $list[$k]['category_name'] = '';
-            foreach ($category as $kp => $vp) {
-                if ($v['category_id'] == $vp['category_id']) {
-                    $list[$k]['category_name'] = $vp['category_name'];
+            if (isset($v['category_id'])) {
+                foreach ($category as $kp => $vp) {
+                    if ($v['category_id'] == $vp['category_id']) {
+                        $list[$k]['category_name'] = $vp['category_name'];
+                    }
                 }
             }
 
             $list[$k]['img_url'] = '';
-            $imgs = file_unser($v['imgs']);
-            if ($imgs) {
-                $list[$k]['img_url'] = $imgs[0]['url'];
+            if (isset($v['imgs'])) {
+                $imgs = file_unser($v['imgs']);
+                if ($imgs) {
+                    $list[$k]['img_url'] = $imgs[0]['url'];
+                }
+                unset($list[$k]['imgs']);
             }
-            unset($list[$k]['imgs']);
         }
 
         $data['count'] = $count;
@@ -85,54 +87,54 @@ class CmsService
     /**
      * 内容信息
      * 
-     * @param $cms_id 内容id
+     * @param $content_id 内容id
      * 
      * @return array|Exception
      */
-    public static function info($cms_id)
+    public static function info($content_id)
     {
-        $cms = CmsCache::get($cms_id);
+        $content = ContentCache::get($content_id);
 
-        if (empty($cms)) {
-            $where[] = ['cms_id', '=', $cms_id];
-            $cms = Db::name(self::$db_name)
+        if (empty($content)) {
+            $where[] = ['content_id', '=', $content_id];
+            $content = Db::name(self::$db_name)
                 ->where($where)
                 ->find();
-            if (empty($cms)) {
-                exception('内容不存在：' . $cms_id);
+            if (empty($content)) {
+                exception('内容不存在：' . $content_id);
             }
 
-            $category = CmsCategoryService::info($cms['category_id']);
+            $category = CategoryService::info($content['category_id']);
 
-            $cms['category_name'] = $category['category_name'];
-            $cms['imgs']          = file_unser($cms['imgs']);
-            $cms['files']         = file_unser($cms['files']);
-            $cms['videos']        = file_unser($cms['videos']);
+            $content['category_name'] = $category['category_name'];
+            $content['imgs']          = file_unser($content['imgs']);
+            $content['files']         = file_unser($content['files']);
+            $content['videos']        = file_unser($content['videos']);
 
-            CmsCache::set($cms_id, $cms);
+            ContentCache::set($content_id, $content);
         }
 
         // 点击量
         $gate = 10;
-        $key = $cms['cms_id'] . 'Hits';
-        $hits = CmsCache::get($key);
+        $key = $content['content_id'] . 'hits';
+        $hits = ContentCache::get($key);
         if ($hits) {
             if ($hits >= $gate) {
                 $res = Db::name(self::$db_name)
-                    ->where('cms_id', '=', $cms['cms_id'])
+                    ->where('content_id', '=', $content['content_id'])
                     ->inc('hits', $hits)
                     ->update();
                 if ($res) {
-                    CmsCache::del($key);
+                    ContentCache::del($key);
                 }
             } else {
-                CmsCache::inc($key, 1);
+                ContentCache::inc($key, 1);
             }
         } else {
-            CmsCache::set($key, 1);
+            ContentCache::set($key, 1);
         }
 
-        return $cms;
+        return $content;
     }
 
     /**
@@ -149,13 +151,13 @@ class CmsService
         $param['videos']      = file_ser($param['videos']);
         $param['create_time'] = datetime();
 
-        $cms_id = Db::name(self::$db_name)
+        $content_id = Db::name(self::$db_name)
             ->insertGetId($param);
-        if (empty($cms_id)) {
+        if (empty($content_id)) {
             exception();
         }
 
-        $param['cms_id'] = $cms_id;
+        $param['content_id'] = $content_id;
         $param['imgs']   = file_unser($param['imgs']);
         $param['files']  = file_unser($param['files']);
         $param['videos'] = file_unser($param['videos']);
@@ -172,9 +174,9 @@ class CmsService
      */
     public static function edit($param)
     {
-        $cms_id = $param['cms_id'];
+        $content_id = $param['content_id'];
 
-        unset($param['cms_id']);
+        unset($param['content_id']);
 
         $param['imgs']        = file_ser($param['imgs']);
         $param['files']       = file_ser($param['files']);
@@ -182,15 +184,15 @@ class CmsService
         $param['update_time'] = datetime();
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', $cms_id)
+            ->where('content_id', $content_id)
             ->update($param);
         if (empty($res)) {
             exception();
         }
 
-        CmsCache::del($cms_id);
+        ContentCache::del($content_id);
 
-        $param['cms_id'] = $cms_id;
+        $param['content_id'] = $content_id;
 
         return $param;
     }
@@ -198,29 +200,29 @@ class CmsService
     /**
      * 内容删除
      * 
-     * @param array $cms 内容列表
+     * @param array $content 内容列表
      * 
      * @return array|Exception
      */
-    public static function dele($cms)
+    public static function dele($content)
     {
-        $cms_ids = array_column($cms, 'cms_id');
+        $content_ids = array_column($content, 'content_id');
 
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', 'in', $cms_ids)
+            ->where('content_id', 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($cms_ids as $k => $v) {
-            CmsCache::del($v);
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
         }
 
-        $update['cms_ids'] = $cms_ids;
+        $update['content_ids'] = $content_ids;
 
         return $update;
     }
@@ -236,7 +238,7 @@ class CmsService
     public static function upload($file, $type)
     {
         $file_name = Filesystem::disk('public')
-            ->putFile('cms/cms', $file, function () use ($type) {
+            ->putFile('cms/content', $file, function () use ($type) {
                 return date('Ymd') . '/' . date('YmdHis') . '_' . $type;
             });
 
@@ -252,31 +254,31 @@ class CmsService
     /**
      * 内容是否置顶
      *
-     * @param array $cms    内容信息
-     * @param int   $is_top 是否置顶
+     * @param array $content 内容列表
+     * @param int   $is_top  是否置顶
      * 
      * @return array
      */
-    public static function istop($cms, $is_top = 0)
+    public static function istop($content, $is_top = 0)
     {
-        $cms_ids = array_column($cms, 'cms_id');
+        $content_ids = array_column($content, 'content_id');
 
         $update['is_top']      = $is_top;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', 'in', $cms_ids)
+            ->where('content_id', 'in', $content_ids)
             ->update($update);
 
         if (empty($res)) {
             exception();
         }
 
-        foreach ($cms_ids as $k => $v) {
-            CmsCache::del($v);
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
         }
 
-        $update['cms_ids'] = $cms_ids;
+        $update['content_ids'] = $content_ids;
 
         return $update;
     }
@@ -284,30 +286,30 @@ class CmsService
     /**
      * 内容是否热门
      *
-     * @param array $cms    内容信息
-     * @param int   $is_hot 是否热门
+     * @param array $content 内容列表
+     * @param int   $is_hot  是否热门
      * 
      * @return array
      */
-    public static function ishot($cms, $is_hot = 0)
+    public static function ishot($content, $is_hot = 0)
     {
-        $cms_ids = array_column($cms, 'cms_id');
+        $content_ids = array_column($content, 'content_id');
 
         $update['is_hot']      = $is_hot;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', 'in', $cms_ids)
+            ->where('content_id', 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($cms_ids as $k => $v) {
-            CmsCache::del($v);
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
         }
 
-        $update['cms_ids'] = $cms_ids;
+        $update['content_ids'] = $content_ids;
 
         return $update;
     }
@@ -315,30 +317,30 @@ class CmsService
     /**
      * 内容是否推荐
      *
-     * @param array $cms    内容信息
+     * @param array $content    内容信息
      * @param int   $is_rec 是否推荐
      * 
      * @return array
      */
-    public static function isrec($cms, $is_rec = 0)
+    public static function isrec($content, $is_rec = 0)
     {
-        $cms_ids = array_column($cms, 'cms_id');
+        $content_ids = array_column($content, 'content_id');
 
         $update['is_rec']      = $is_rec;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', 'in', $cms_ids)
+            ->where('content_id', 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($cms_ids as $k => $v) {
-            CmsCache::del($v);
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
         }
 
-        $update['cms_ids'] = $cms_ids;
+        $update['content_ids'] = $content_ids;
 
         return $update;
     }
@@ -346,30 +348,30 @@ class CmsService
     /**
      * 内容是否隐藏
      *
-     * @param array $cms    内容信息
+     * @param array $content 内容列表
      * @param int   $is_hide 是否隐藏
      * 
      * @return array
      */
-    public static function ishide($cms, $is_hide = 0)
+    public static function ishide($content, $is_hide = 0)
     {
-        $cms_ids = array_column($cms, 'cms_id');
+        $content_ids = array_column($content, 'content_id');
 
         $update['is_hide']     = $is_hide;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', 'in', $cms_ids)
+            ->where('content_id', 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($cms_ids as $k => $v) {
-            CmsCache::del($v);
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
         }
 
-        $update['cms_ids'] = $cms_ids;
+        $update['content_ids'] = $content_ids;
 
         return $update;
     }
@@ -377,87 +379,87 @@ class CmsService
     /**
      * 内容上一条
      *
-     * @param integer $cms_id      内容id
+     * @param integer $content_id  内容id
      * @param integer $is_category 是否当前分类
      * 
      * @return array 上一条内容
      */
-    public static function prev($cms_id, $is_category = 0)
+    public static function prev($content_id, $is_category = 0)
     {
-        $where[] = ['cms_id', '<', $cms_id];
+        $where[] = ['content_id', '<', $content_id];
         $where[] = ['is_delete', '=', 0];
         if ($is_category) {
-            $cms = self::info($cms_id);
-            $where[] = ['category_id', '=', $cms['category_id']];
+            $content = self::info($content_id);
+            $where[] = ['category_id', '=', $content['category_id']];
         }
 
-        $cms = Db::name(self::$db_name)
-            ->field('cms_id,name')
+        $content = Db::name(self::$db_name)
+            ->field('content_id,name')
             ->where($where)
-            ->order('cms_id', 'desc')
+            ->order('content_id', 'desc')
             ->find();
-        if (empty($cms)) {
+        if (empty($content)) {
             return [];
         }
 
-        return $cms;
+        return $content;
     }
 
     /**
      * 内容下一条
      *
-     * @param integer $cms_id      内容id
+     * @param integer $content_id  内容id
      * @param integer $is_category 是否当前分类
      * 
      * @return array 下一条内容
      */
-    public static function next($cms_id, $is_category = 0)
+    public static function next($content_id, $is_category = 0)
     {
-        $where[] = ['cms_id', '>', $cms_id];
+        $where[] = ['content_id', '>', $content_id];
         $where[] = ['is_delete', '=', 0];
         if ($is_category) {
-            $cms = self::info($cms_id);
-            $where[] = ['category_id', '=', $cms['category_id']];
+            $content = self::info($content_id);
+            $where[] = ['category_id', '=', $content['category_id']];
         }
 
-        $cms = Db::name(self::$db_name)
-            ->field('cms_id,name')
+        $content = Db::name(self::$db_name)
+            ->field('content_id,name')
             ->where($where)
-            ->order('cms_id', 'asc')
+            ->order('content_id', 'asc')
             ->find();
-        if (empty($cms)) {
+        if (empty($content)) {
             return [];
         }
 
-        return $cms;
+        return $content;
     }
 
     /**
      * 内容回收站恢复
      * 
-     * @param array $cms 内容列表
+     * @param array $content 内容列表
      * 
      * @return array|Exception
      */
-    public static function recoverReco($cms)
+    public static function recoverReco($content)
     {
-        $cms_ids = array_column($cms, 'cms_id');
+        $content_ids = array_column($content, 'content_id');
 
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', 'in', $cms_ids)
+            ->where('content_id', 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($cms_ids as $k => $v) {
-            CmsCache::del($v);
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
         }
 
-        $update['cms_ids'] = $cms_ids;
+        $update['content_ids'] = $content_ids;
 
         return $update;
     }
@@ -465,26 +467,26 @@ class CmsService
     /**
      * 内容回收站删除
      * 
-     * @param array $cms 内容列表
+     * @param array $content 内容列表
      * 
      * @return array|Exception
      */
-    public static function recoverDele($cms)
+    public static function recoverDele($content)
     {
-        $cms_ids = array_column($cms, 'cms_id');
+        $content_ids = array_column($content, 'content_id');
 
         $res = Db::name(self::$db_name)
-            ->where('cms_id', 'in', $cms_ids)
+            ->where('content_id', 'in', $content_ids)
             ->delete();
         if (empty($res)) {
             exception();
         }
 
-        foreach ($cms_ids as $k => $v) {
-            CmsCache::del($v);
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
         }
 
-        $update['cms_ids'] = $cms_ids;
+        $update['content_ids'] = $content_ids;
 
         return $update;
     }
@@ -497,7 +499,7 @@ class CmsService
     public static function tableField()
     {
         $key = 'field';
-        $field = CmsCache::get($key);
+        $field = ContentCache::get($key);
         if (empty($field)) {
             $sql = Db::name(self::$db_name)
                 ->field('show COLUMNS')
@@ -508,7 +510,7 @@ class CmsService
             $field = Db::query($sql);
             $field = array_column($field, 'Field');
 
-            CmsCache::set($key, $field);
+            ContentCache::set($key, $field);
         }
 
         return $field;

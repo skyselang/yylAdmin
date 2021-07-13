@@ -3,14 +3,14 @@
  * @Description  : 内容设置验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-17
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\validate;
+namespace app\common\validate\cms;
 
 use think\Validate;
 
-class CmsSettingValidate extends Validate
+class SettingValidate extends Validate
 {
     // 验证规则
     protected $rule = [

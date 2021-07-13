@@ -3,16 +3,16 @@
  * @Description  : 内容分类验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-08
- * @LastEditTime : 2021-07-08
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\validate;
+namespace app\common\validate\cms;
 
 use think\Validate;
-use app\common\service\CmsService;
-use app\common\service\CmsCategoryService;
+use app\common\service\cms\ContentService;
+use app\common\service\cms\CategoryService;
 
-class CmsCategoryValidate extends Validate
+class CategoryValidate extends Validate
 {
     // 验证规则
     protected $rule = [
@@ -25,11 +25,11 @@ class CmsCategoryValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'category_name.require' => '请输入内容分类名称',
+        'category_name.require' => '请输入分类名称',
         'image.require'         => '请选择图片',
         'image.file'            => '请选择上传图片',
         'image.image'           => '请选择图片格式文件',
-        'image.fileExt'         => '请选择jpg、png、gif、jpeg格式图片',
+        'image.fileExt'         => '请选择jpg、png、jpeg格式图片',
         'image.fileSize'        => '请选择小于500kb的图片',
         'is_hide.in'            => '是否隐藏 1是0否',
     ];
@@ -44,50 +44,49 @@ class CmsCategoryValidate extends Validate
         'image'  => ['image'],
     ];
 
-    // 验证场景定义：内容分类删除
+    // 验证场景定义：分类删除
     protected function scenedele()
     {
         return $this->only(['category'])
-            ->append('category', ['checkCategory', 'check']);
+            ->append('category', ['checkCategoryPid', 'checkCategoryContent']);
     }
 
-    // 自定义验证规则：内容分类名称是否已存在
+    // 自定义验证规则：分类名称是否已存在
     protected function checkCategoryName($value, $rule, $data = [])
     {
-        $check = CmsCategoryService::checkCategoryName($data);
+        $check = CategoryService::checkCategoryName($data);
 
         return $check;
     }
 
-    // 自定义验证规则：内容分类下是否存在内容
-    protected function checkCategoryCms($value, $rule, $data = [])
+    // 自定义验证规则：分类下是否存在子分类
+    protected function checkCategoryPid($value, $rule, $data = [])
     {
         $category_ids = array_column($value, 'category_id');
-        $cms_type     = $data['cms_type'];
 
-        $where[] = ['category_id', 'in', $category_ids];
-        $where[] = ['is_delete', '=', 0];
-
-        $article = CmsService::list($where, 1, 1, [], 'cms_id,category_id,imgs');
-        if ($article['list']) {
-            return '内容分类下存在内容，无法删除';
+        $category = CategoryService::list('list');
+        foreach ($category as $k => $v) {
+            foreach ($category_ids as $kc => $vc) {
+                if ($v['category_pid'] == $vc) {
+                    return '分类下存在子分类，无法删除';
+                }
+            }
         }
 
         return true;
     }
 
-    // 自定义验证规则：内容分类下是否存在子内容分类
-    protected function checkCategory($value, $rule, $data = [])
+    // 自定义验证规则：分类下是否存在内容
+    protected function checkCategoryContent($value, $rule, $data = [])
     {
         $category_ids = array_column($value, 'category_id');
 
-        $category = CmsCategoryService::list('list');
-        foreach ($category as $k => $v) {
-            foreach ($category_ids as $ka => $va) {
-                if ($v['category_id'] == $va) {
-                    return '内容分类下存在子内容分类，无法删除';
-                }
-            }
+        $where[] = ['category_id', 'in', $category_ids];
+        $where[] = ['is_delete', '=', 0];
+
+        $content = ContentService::list($where, 1, 1, [], 'content_id,category_id');
+        if ($content['list']) {
+            return '分类下存在内容，无法删除';
         }
 
         return true;

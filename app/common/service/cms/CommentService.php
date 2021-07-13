@@ -3,16 +3,19 @@
  * @Description  : 留言管理业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-12
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\service;
+namespace app\common\service\cms;
 
 use think\facade\Db;
-use app\common\cache\CmsCommentCache;
+use app\common\cache\cms\CommentCache;
 
-class CmsCommentService
+class CommentService
 {
+    // 留言表名
+    protected static $db_name = 'cms_comment';
+
     /**
      * 留言列表
      *
@@ -27,20 +30,18 @@ class CmsCommentService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time';
-        } else {
-            $field = str_merge($field, 'comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time');
+            $field = 'comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time';
         }
 
         if (empty($order)) {
             $order = ['comment_id' => 'desc'];
         }
 
-        $count = Db::name('cms_comment')
+        $count = Db::name(self::$db_name)
             ->where($where)
             ->count('comment_id');
 
-        $list = Db::name('cms_comment')
+        $list = Db::name(self::$db_name)
             ->field($field)
             ->where($where)
             ->page($page)
@@ -69,9 +70,9 @@ class CmsCommentService
      */
     public static function info($comment_id)
     {
-        $comment = CmsCommentCache::get($comment_id);
+        $comment = CommentCache::get($comment_id);
         if (empty($comment)) {
-            $comment = Db::name('cms_comment')
+            $comment = Db::name(self::$db_name)
                 ->where('comment_id', $comment_id)
                 ->find();
             if (empty($comment)) {
@@ -80,7 +81,7 @@ class CmsCommentService
             if (empty($comment['is_read'])) {
                 $update['is_read']   = 1;
                 $update['read_time'] = $comment['read_time'] = datetime();
-                Db::name('cms_comment')->where('comment_id', $comment_id)->update($update);
+                Db::name(self::$db_name)->where('comment_id', $comment_id)->update($update);
             }
         }
 
@@ -97,7 +98,7 @@ class CmsCommentService
     public static function add($param)
     {
         $param['create_time'] = datetime();
-        $comment_id = Db::name('cms_comment')
+        $comment_id = Db::name(self::$db_name)
             ->insertGetId($param);
         if (empty($comment_id)) {
             exception();
@@ -122,7 +123,7 @@ class CmsCommentService
         unset($param['comment_id']);
 
         $param['update_time'] = datetime();
-        $res = Db::name('cms_comment')
+        $res = Db::name(self::$db_name)
             ->where('comment_id', $comment_id)
             ->update($param);
         if (empty($res)) {
@@ -148,7 +149,7 @@ class CmsCommentService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name('cms_comment')
+        $res = Db::name(self::$db_name)
             ->where('comment_id', 'in', $comment_ids)
             ->update($update);
         if (empty($res)) {
@@ -163,19 +164,18 @@ class CmsCommentService
     /**
      * 留言已读
      *
-     * @param array $param 留言信息
+     * @param array $comment 留言列表
      * 
      * @return array
      */
-    public static function isread($param)
+    public static function isread($comment)
     {
-        $comment     = $param['comment'];
         $comment_ids = array_column($comment, 'comment_id');
 
         $update['is_read']   = 1;
         $update['read_time'] = datetime();
 
-        $res = Db::name('cms_comment')
+        $res = Db::name(self::$db_name)
             ->where('comment_id', 'in', $comment_ids)
             ->where('is_read', '=', 0)
             ->update($update);
@@ -203,7 +203,7 @@ class CmsCommentService
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
 
-        $res = Db::name('cms_comment')
+        $res = Db::name(self::$db_name)
             ->where('comment_id', 'in', $comment_ids)
             ->update($update);
         if (empty($res)) {
@@ -226,7 +226,7 @@ class CmsCommentService
     {
         $comment_ids = array_column($comment, 'comment_id');
 
-        $res = Db::name('cms_comment')
+        $res = Db::name(self::$db_name)
             ->where('comment_id', 'in', $comment_ids)
             ->delete();
         if (empty($res)) {
@@ -246,9 +246,9 @@ class CmsCommentService
     public static function tableField()
     {
         $key = 'field';
-        $field = CmsCommentCache::get($key);
+        $field = CommentCache::get($key);
         if (empty($field)) {
-            $sql = Db::name('cms_comment')
+            $sql = Db::name(self::$db_name)
                 ->field('show COLUMNS')
                 ->fetchSql(true)
                 ->select();
@@ -257,7 +257,7 @@ class CmsCommentService
             $field = Db::query($sql);
             $field = array_column($field, 'Field');
 
-            CmsCommentCache::set($key, $field);
+            CommentCache::set($key, $field);
         }
 
         return $field;

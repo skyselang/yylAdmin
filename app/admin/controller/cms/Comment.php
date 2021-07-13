@@ -3,14 +3,14 @@
  * @Description  : 留言管理控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\admin\controller;
+namespace app\admin\controller\cms;
 
 use think\facade\Request;
-use app\common\validate\CmsCommentValidate;
-use app\common\service\CmsCommentService;
+use app\common\validate\cms\CommentValidate;
+use app\common\service\cms\CommentService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -18,20 +18,20 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("999")
  */
-class CmsComment
+class Comment
 {
     /**
      * @Apidoc\Title("留言列表")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\CmsCommentModel\search")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\search")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsCommentModel\list")
+     *          @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
      *      )
      * )
      */
@@ -47,7 +47,7 @@ class CmsComment
         $date_type  = Request::param('date_type/s', '');
         $date_range = Request::param('date_range/a', []);
 
-        validate(CmsCommentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
+        validate(CommentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
 
         $where[] = ['is_delete', '=', 0];
         if ($comment_id) {
@@ -71,7 +71,7 @@ class CmsComment
 
         $field = '';
 
-        $data = CmsCommentService::list($where, $page, $limit, $order, $field);
+        $data = CommentService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
@@ -80,19 +80,19 @@ class CmsComment
      * @Apidoc\Title("留言信息")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsCommentModel\id")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\id")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\CmsCommentModel\info")
+     *      @Apidoc\Returned(ref="app\common\model\cms\CommentModel\info")
      * )
      */
     public function info()
     {
         $param['comment_id'] = Request::param('comment_id/d', '');
 
-        validate(CmsCommentValidate::class)->scene('info')->check($param);
+        validate(CommentValidate::class)->scene('info')->check($param);
 
-        $data = CmsCommentService::info($param['comment_id']);
+        $data = CommentService::info($param['comment_id']);
         if ($data['is_delete'] == 1) {
             exception('留言已被删除：' . $param['comment_id']);
         }
@@ -104,7 +104,7 @@ class CmsComment
      * @Apidoc\Title("留言修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\CmsCommentModel\edit")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\edit")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -113,9 +113,9 @@ class CmsComment
         $param['comment_id'] = Request::param('comment_id/d', '');
         $param['remark']     = Request::param('remark/s', '');
 
-        validate(CmsCommentValidate::class)->scene('edit')->check($param);
+        validate(CommentValidate::class)->scene('edit')->check($param);
 
-        $data = CmsCommentService::edit($param);
+        $data = CommentService::edit($param);
 
         return success($data);
     }
@@ -124,7 +124,7 @@ class CmsComment
      * @Apidoc\Title("留言删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("comment", type="array", require=true, desc="留言列表")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -132,9 +132,9 @@ class CmsComment
     {
         $param['comment'] = Request::param('comment/a', '');
 
-        validate(CmsCommentValidate::class)->scene('dele')->check($param);
+        validate(CommentValidate::class)->scene('dele')->check($param);
 
-        $data = CmsCommentService::dele($param['comment']);
+        $data = CommentService::dele($param['comment']);
 
         return success($data);
     }
@@ -143,7 +143,7 @@ class CmsComment
      * @Apidoc\Title("留言已读")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("comment", type="array", require=true, desc="留言列表")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -151,9 +151,9 @@ class CmsComment
     {
         $param['comment'] = Request::param('comment/a', '');
 
-        validate(CmsCommentValidate::class)->scene('isread')->check($param);
+        validate(CommentValidate::class)->scene('isread')->check($param);
 
-        $data = CmsCommentService::isread($param);
+        $data = CommentService::isread($param['comment']);
 
         return success($data);
     }
@@ -163,13 +163,13 @@ class CmsComment
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\CmsCommentModel\search")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\search")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\CmsCommentModel\list")
+     *          @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
      *      )
      * )
      */
@@ -185,7 +185,7 @@ class CmsComment
         $date_type  = Request::param('date_type/s', '');
         $date_range = Request::param('date_range/a', []);
 
-        validate(CmsCommentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
+        validate(CommentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
 
         $where[] = ['is_delete', '=', 1];
         if ($comment_id) {
@@ -209,9 +209,9 @@ class CmsComment
             $order = ['delete_time' => 'desc'];
         }
 
-        $field = 'delete_time';
+        $field = '';
 
-        $data = CmsCommentService::list($where, $page, $limit, $order, $field);
+        $data = CommentService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
@@ -220,7 +220,7 @@ class CmsComment
      * @Apidoc\Title("留言回收站恢复")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("comment", type="array", require=true, desc="留言列表")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -228,9 +228,9 @@ class CmsComment
     {
         $param['comment'] = Request::param('comment/a', '');
 
-        validate(CmsCommentValidate::class)->scene('dele')->check($param);
+        validate(CommentValidate::class)->scene('dele')->check($param);
 
-        $data = CmsCommentService::recoverReco($param['comment']);
+        $data = CommentService::recoverReco($param['comment']);
 
         return success($data);
     }
@@ -239,7 +239,7 @@ class CmsComment
      * @Apidoc\Title("留言回收站删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param("comment", type="array", require=true, desc="留言列表")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -247,9 +247,9 @@ class CmsComment
     {
         $param['comment'] = Request::param('comment/a', '');
 
-        validate(CmsCommentValidate::class)->scene('dele')->check($param);
+        validate(CommentValidate::class)->scene('dele')->check($param);
 
-        $data = CmsCommentService::recoverDele($param['comment']);
+        $data = CommentService::recoverDele($param['comment']);
 
         return success($data);
     }

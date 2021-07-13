@@ -3,25 +3,25 @@
  * @Description  : 内容分类业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-08
- * @LastEditTime : 2021-07-09
+ * @LastEditTime : 2021-07-13
  */
 
-namespace app\common\service;
+namespace app\common\service\cms;
 
 use think\facade\Db;
 use think\facade\Filesystem;
 use app\common\utils\ByteUtils;
-use app\common\cache\CmsCategoryCache;
+use app\common\cache\cms\CategoryCache;
 
-class CmsCategoryService
+class CategoryService
 {
-    // 内容分类表名
+    // 分类表名
     protected static $db_name = 'cms_category';
-    // 内容分类缓存key
+    // 分类缓存key
     protected static $all_key = 'all';
 
     /**
-     * 内容分类列表
+     * 分类列表
      * 
      * @param string $type tree树形list列表
      * 
@@ -30,7 +30,7 @@ class CmsCategoryService
     public static function list($type = 'tree')
     {
         $key = self::$all_key;
-        $data = CmsCategoryCache::get($key);
+        $data = CategoryCache::get($key);
         if (empty($data)) {
             $field = 'category_id,category_pid,category_name,sort,is_hide,create_time,update_time';
 
@@ -48,7 +48,7 @@ class CmsCategoryService
             $data['list'] = $list;
             $data['tree'] = self::toTree($list, 0);
 
-            CmsCategoryCache::set($key, $data);
+            CategoryCache::set($key, $data);
         }
 
         if ($type == 'list') {
@@ -59,35 +59,35 @@ class CmsCategoryService
     }
 
     /**
-     * 内容分类信息
+     * 分类信息
      * 
-     * @param integer $category_id 内容分类id
+     * @param integer $category_id 分类id
      * 
      * @return array|Exception
      */
     public static function info($category_id)
     {
-        $category = CmsCategoryCache::get($category_id);
+        $category = CategoryCache::get($category_id);
         if (empty($category)) {
             $category = Db::name(self::$db_name)
                 ->where('category_id', $category_id)
                 ->find();
             if (empty($category)) {
-                exception('内容分类不存在：' . $category_id);
+                exception('分类不存在：' . $category_id);
             }
 
             $category['imgs'] = file_unser($category['imgs']);
 
-            CmsCategoryCache::set($category_id, $category);
+            CategoryCache::set($category_id, $category);
         }
 
         return $category;
     }
 
     /**
-     * 内容分类添加
+     * 分类添加
      *
-     * @param array $param 内容分类信息
+     * @param array $param 分类信息
      *
      * @return array|Exception
      */
@@ -102,7 +102,7 @@ class CmsCategoryService
             exception();
         }
 
-        CmsCategoryCache::del(self::$all_key);
+        CategoryCache::del(self::$all_key);
 
         $param['category_id'] = $category_id;
 
@@ -110,9 +110,9 @@ class CmsCategoryService
     }
 
     /**
-     * 内容分类修改 
+     * 分类修改 
      *     
-     * @param array $param 内容分类信息
+     * @param array $param 分类信息
      *     
      * @return array|Exception
      */
@@ -132,8 +132,8 @@ class CmsCategoryService
             exception();
         }
 
-        CmsCategoryCache::del(self::$all_key);
-        CmsCategoryCache::del($category_id);
+        CategoryCache::del(self::$all_key);
+        CategoryCache::del($category_id);
 
         $param['category_id'] = $category_id;
 
@@ -141,9 +141,9 @@ class CmsCategoryService
     }
 
     /**
-     * 内容分类删除
+     * 分类删除
      * 
-     * @param array $category 内容分类
+     * @param array $category 分类列表
      * 
      * @return array|Exception
      */
@@ -162,9 +162,9 @@ class CmsCategoryService
         }
 
         foreach ($category_ids as $k => $v) {
-            CmsCategoryCache::del($v);
+            CategoryCache::del($v);
         }
-        CmsCategoryCache::del(self::$all_key);
+        CategoryCache::del(self::$all_key);
 
         $update['category_ids'] = $category_ids;
 
@@ -172,7 +172,7 @@ class CmsCategoryService
     }
 
     /**
-     * 内容分类上传图片
+     * 分类上传图片
      *
      * @param file   $param 文件
      * @param string $param 类型
@@ -196,10 +196,10 @@ class CmsCategoryService
     }
 
     /**
-     * 内容分类是否隐藏
+     * 分类是否隐藏
      *
-     * @param array $cms     内容分类
-     * @param int   $is_hide 是否隐藏
+     * @param array $category 分类列表
+     * @param int   $is_hide  是否隐藏
      * 
      * @return array|Exception
      */
@@ -218,9 +218,9 @@ class CmsCategoryService
         }
 
         foreach ($category_ids as $k => $v) {
-            CmsCategoryCache::del($v);
+            CategoryCache::del($v);
         }
-        CmsCategoryCache::del(self::$all_key);
+        CategoryCache::del(self::$all_key);
 
         $update['category_ids'] = $category_ids;
 
@@ -228,10 +228,10 @@ class CmsCategoryService
     }
 
     /**
-     * 内容分类列表转树形
+     * 分类列表转树形
      *
-     * @param array   $category     内容分类列表
-     * @param integer $category_pid 内容分类父级id
+     * @param array   $category     分类列表
+     * @param integer $category_pid 分类父级id
      * 
      * @return array
      */
@@ -250,9 +250,9 @@ class CmsCategoryService
     }
 
     /**
-     * 内容分类名称是否已存在
+     * 分类名称是否已存在
      *
-     * @param array $data 内容分类数据
+     * @param array $data 分类数据
      *
      * @return bool
      */
@@ -263,7 +263,7 @@ class CmsCategoryService
         $category_name = $data['category_name'];
         if ($category_id) {
             if ($category_id == $category_pid) {
-                return '内容分类父级不能等于内容分类本身';
+                return '分类父级不能等于分类本身';
             }
             $where[] = ['category_id', '<>', $category_id];
         }
@@ -277,7 +277,7 @@ class CmsCategoryService
             ->where($where)
             ->find();
         if ($res) {
-            return '内容分类名称已存在：' . $category_name;
+            return '分类名称已存在：' . $category_name;
         }
 
         return true;
