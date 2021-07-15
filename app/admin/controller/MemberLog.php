@@ -3,7 +3,7 @@
  * @Description  : 会员日志
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-01
- * @LastEditTime : 2021-05-27
+ * @LastEditTime : 2021-07-14
  */
 
 namespace app\admin\controller;
@@ -29,7 +29,7 @@ class MemberLog
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log")
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
-     * @Apidoc\Param("create_time", type="array", default="[]", desc="开始与结束日期eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
@@ -85,7 +85,7 @@ class MemberLog
     /**
      * @Apidoc\Title("会员日志信息")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="app\common\model\AdminUserLogModel\id")
+     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\id")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\MemberLogModel\info")
@@ -133,7 +133,7 @@ class MemberLog
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
      * @Apidoc\Param(ref="app\common\model\ApiModel\api_url")
-     * @Apidoc\Param("date_range", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */ 
@@ -155,7 +155,7 @@ class MemberLog
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")
-     * @Apidoc\Param("date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Param("field", type="string", default="", desc="统计字段")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")

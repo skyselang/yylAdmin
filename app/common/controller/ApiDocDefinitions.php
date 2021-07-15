@@ -3,14 +3,14 @@
  * @Description  : 接口文档公共注释定义
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-01
- * @LastEditTime : 2021-07-01
+ * @LastEditTime : 2021-07-14
  */
 
 namespace app\common\controller;
 
 use hg\apidoc\annotation as Apidoc;
 
-class ApiDocDefinitions
+class ApidocDefinitions
 {
     /**
      * 请求头部：admin
@@ -42,7 +42,7 @@ class ApiDocDefinitions
     /**
      * 请求参数：日期
      * @Apidoc\Param("date_type", type="string", default="", desc="时间类型eg：create_time")
-     * @Apidoc\Param("date_range", type="array", default="", desc="日期范围eg：[2020-02-02,2020-02-22]")
+     * @Apidoc\Param("date_range", type="array", default="", desc="日期范围eg：['2020-02-02','2020-02-22']")
      */
     public function paramDate()
     {

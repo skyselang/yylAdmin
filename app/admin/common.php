@@ -3,14 +3,14 @@
  * @Description  : admin公共函数文件
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-04-16
- * @LastEditTime : 2021-05-26
+ * @LastEditTime : 2021-07-14
  */
 
 use think\facade\Config;
 use think\facade\Request;
-use app\common\service\AdminMenuService;
-use app\common\service\AdminSettingService;
-use app\common\service\AdminTokenService;
+use app\common\service\admin\MenuService;
+use app\common\service\admin\SettingService;
+use app\common\service\admin\TokenService;
 
 /**
  * 菜单url获取
@@ -39,7 +39,7 @@ function menu_is_exist($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $url_list = AdminMenuService::urlList();
+    $url_list = MenuService::urlList();
     if (in_array($menu_url, $url_list)) {
         return true;
     }
@@ -60,7 +60,7 @@ function menu_is_disable($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $menu_info = AdminMenuService::info($menu_url);
+    $menu_info = MenuService::info($menu_url);
 
     if ($menu_info['is_disable'] == 1) {
         return true;
@@ -82,7 +82,7 @@ function menu_is_unauth($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $unauthlist = AdminMenuService::unauthList();
+    $unauthlist = MenuService::unauthList();
     if (in_array($menu_url, $unauthlist)) {
         return true;
     }
@@ -103,7 +103,7 @@ function menu_is_unlogin($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $unloginlist = AdminMenuService::unloginList();
+    $unloginlist = MenuService::unloginList();
     if (in_array($menu_url, $unloginlist)) {
         return true;
     }
@@ -120,7 +120,7 @@ function menu_is_unlogin($menu_url = '')
  */
 function admin_token_has()
 {
-    $token_info = AdminSettingService::tokenInfo();
+    $token_info = SettingService::tokenInfo();
 
     $token_name = $token_info['token_name'];
     $token_name = strtolower($token_name);
@@ -140,7 +140,7 @@ function admin_token_has()
  */
 function admin_token()
 {
-    $token_info = AdminSettingService::tokenInfo();
+    $token_info = SettingService::tokenInfo();
 
     $token_name  = $token_info['token_name'];
     $admin_token = Request::header($token_name, '');
@@ -156,7 +156,7 @@ function admin_token()
 function admin_user_id()
 {
     $admin_token   = admin_token();
-    $admin_user_id = AdminTokenService::adminUserId($admin_token);
+    $admin_user_id = TokenService::adminUserId($admin_token);
 
     return $admin_user_id;
 }
@@ -193,7 +193,7 @@ function admin_is_super($admin_user_id = 0)
  */
 function admin_log_switch()
 {
-    $log_info = AdminSettingService::logInfo();
+    $log_info = SettingService::logInfo();
     if ($log_info['log_switch']) {
         return true;
     } else {

@@ -23,7 +23,7 @@ return [
         ['title' => '内容CMS', 'name' => 'indexCms'],
     ],
     // 指定公共注释定义的文件地址
-    'definitions' => 'app\common\controller\ApiDocDefinitions',
+    'definitions' => 'app\common\controller\ApidocDefinitions',
     // 指定生成文档的控制器
     'controllers' => [],
     // 过滤，不解析的控制器

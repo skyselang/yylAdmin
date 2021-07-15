@@ -3,7 +3,7 @@
  * @Description  : 内容管理业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-15
  */
 
 namespace app\common\service\cms;
@@ -11,6 +11,7 @@ namespace app\common\service\cms;
 use think\facade\Db;
 use think\facade\Filesystem;
 use app\common\utils\ByteUtils;
+use app\common\utils\DatetimeUtils;
 use app\common\cache\cms\ContentCache;
 
 class ContentService
@@ -534,5 +535,19 @@ class ContentService
         }
 
         return false;
+    }
+
+    /**
+     * 内容统计
+     *
+     * @return array
+     */
+    public static function statistics()
+    {
+        $data['category'] = Db::name('cms_category')->where('is_delete', 0)->count('category_id');
+        $data['content']  = Db::name('cms_content')->where('is_delete', 0)->count('content_id');
+        $data['hits']     = Db::name('cms_content')->where('is_delete', 0)->sum('hits');
+
+        return $data;
     }
 }

@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 13/07/2021 17:49:58
+ Date: 15/07/2021 15:39:37
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 396 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 397 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -48,63 +48,63 @@ INSERT INTO `yyl_admin_menu` VALUES (3, 88, '菜单管理', '', 200, 0, 0, 0, 0,
 INSERT INTO `yyl_admin_menu` VALUES (4, 88, '用户管理', '', 180, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (5, 88, '角色管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (12, 88, '个人中心', '', 130, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (13, 3, '菜单列表', 'admin/AdminMenu/list', 220, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (14, 3, '菜单添加', 'admin/AdminMenu/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (15, 3, '菜单修改', 'admin/AdminMenu/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (16, 3, '菜单删除', 'admin/AdminMenu/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (17, 4, '用户列表', 'admin/AdminUser/list', 220, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (18, 4, '用户添加', 'admin/AdminUser/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (19, 4, '用户修改', 'admin/AdminUser/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (20, 4, '用户删除', 'admin/AdminUser/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (22, 5, '角色列表', 'admin/AdminRole/list', 220, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (23, 5, '角色添加', 'admin/AdminRole/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (24, 5, '角色修改', 'admin/AdminRole/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (25, 5, '角色删除', 'admin/AdminRole/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (27, 3, '菜单是否禁用', 'admin/AdminMenu/disable', 160, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (28, 3, '菜单是否无需权限', 'admin/AdminMenu/unauth', 150, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (29, 4, '用户信息', 'admin/AdminUser/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (30, 4, '用户是否禁用', 'admin/AdminUser/disable', 130, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (31, 4, '用户权限分配', 'admin/AdminUser/rule', 150, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (32, 4, '用户密码重置', 'admin/AdminUser/pwd', 140, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (33, 5, '角色禁用', 'admin/AdminRole/disable', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (35, 4, '用户是否超管', 'admin/AdminUser/super', 120, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/AdminUtils/strrand', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/AdminUtils/timestamp', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/AdminUtils/qrcode', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (13, 3, '菜单列表', 'admin/admin.Menu/list', 220, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (14, 3, '菜单添加', 'admin/admin.Menu/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (15, 3, '菜单修改', 'admin/admin.Menu/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (16, 3, '菜单删除', 'admin/admin.Menu/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (17, 4, '用户列表', 'admin/admin.User/list', 220, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (18, 4, '用户添加', 'admin/admin.User/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (19, 4, '用户修改', 'admin/admin.User/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (20, 4, '用户删除', 'admin/admin.User/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (22, 5, '角色列表', 'admin/admin.Role/list', 220, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (23, 5, '角色添加', 'admin/admin.Role/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (24, 5, '角色修改', 'admin/admin.Role/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (25, 5, '角色删除', 'admin/admin.Role/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (27, 3, '菜单是否禁用', 'admin/admin.Menu/disable', 160, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (28, 3, '菜单是否无需权限', 'admin/admin.Menu/unauth', 150, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (29, 4, '用户信息', 'admin/admin.User/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (30, 4, '用户是否禁用', 'admin/admin.User/disable', 130, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (31, 4, '用户权限分配', 'admin/admin.User/rule', 150, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (32, 4, '用户密码重置', 'admin/admin.User/pwd', 140, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (33, 5, '角色禁用', 'admin/admin.Role/disable', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (35, 4, '用户是否超管', 'admin/admin.User/super', 120, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (37, 58, '随机字符串', 'admin/admin.Utils/strrand', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (38, 58, '时间戳转换', 'admin/admin.Utils/timestamp', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (40, 58, '生成二维码', 'admin/admin.Utils/qrcode', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (41, 88, '日志管理', '', 140, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (42, 41, '日志管理列表', 'admin/AdminUserLog/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (43, 41, '日志管理信息', 'admin/AdminUserLog/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (44, 41, '日志管理删除', 'admin/AdminUserLog/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/AdminUserCenter/info', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/AdminUserCenter/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/AdminUserCenter/pwd', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (48, 12, '更换头像', 'admin/AdminUserCenter/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (49, 1, '首页', 'admin/AdminIndex/index', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (50, 58, '地图坐标', 'admin/AdminUtils/map', 150, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/AdminLogin/login', 160, 0, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (52, 111, '退出', 'admin/AdminLogin/logout', 150, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (42, 41, '日志管理列表', 'admin/admin.UserLog/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (43, 41, '日志管理信息', 'admin/admin.UserLog/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (44, 41, '日志管理删除', 'admin/admin.UserLog/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/admin.UserCenter/info', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/admin.UserCenter/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/admin.UserCenter/pwd', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (48, 12, '更换头像', 'admin/admin.UserCenter/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (49, 1, '首页', 'admin/admin.Index/index', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (50, 58, '地图坐标', 'admin/admin.Utils/map', 150, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/admin.Login/login', 160, 0, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (52, 111, '退出', 'admin/admin.Login/logout', 150, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (53, 0, '系统管理', '', 120, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (54, 12, '我的日志', 'admin/AdminUserCenter/log', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (58, 53, '实用工具', 'admin/AdminUtils/utils', 160, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/AdminUtils/strtran', 210, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (54, 12, '我的日志', 'admin/admin.UserCenter/log', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (58, 53, '实用工具', 'admin/admin.Utils/utils', 160, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/admin.Utils/strtran', 210, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (71, 188, '缓存设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (73, 188, '验证码设置', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/AdminLogin/captcha', 170, 0, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/admin.Login/captcha', 170, 0, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (85, 188, 'Token设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/AdminUtils/bytetran', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP信息', 'admin/AdminUtils/ipinfo', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/admin.Utils/bytetran', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP信息', 'admin/admin.Utils/ipinfo', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (88, 0, '权限管理', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (111, 0, '登录退出', '', 100, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (113, 3, '菜单角色', 'admin/AdminMenu/role', 140, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (114, 3, '菜单用户', 'admin/AdminMenu/user', 130, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (115, 5, '角色用户', 'admin/AdminRole/user', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (116, 41, '日志管理统计', 'admin/AdminUserLog/stat', 150, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/AdminUserCenter/setting', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/AdminMenu/roleRemove', 135, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/AdminMenu/userRemove', 120, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/AdminRole/userRemove', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (121, 4, '用户更换头像', 'admin/AdminUser/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (122, 58, '服务器信息', 'admin/AdminUtils/server', 120, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (113, 3, '菜单角色', 'admin/admin.Menu/role', 140, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (114, 3, '菜单用户', 'admin/admin.Menu/user', 130, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (115, 5, '角色用户', 'admin/admin.Role/user', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (116, 41, '日志管理统计', 'admin/admin.UserLog/stat', 150, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/admin.UserCenter/setting', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/admin.Menu/roleRemove', 135, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/admin.Menu/userRemove', 120, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/admin.Role/userRemove', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (121, 4, '用户更换头像', 'admin/admin.User/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (122, 58, '服务器信息', 'admin/admin.Utils/server', 120, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (123, 156, '会员管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (124, 123, '会员列表', 'admin/Member/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (125, 123, '会员信息', 'admin/Member/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -127,11 +127,11 @@ INSERT INTO `yyl_admin_menu` VALUES (141, 140, '会员日志列表', 'admin/Memb
 INSERT INTO `yyl_admin_menu` VALUES (142, 140, '会员日志信息', 'admin/MemberLog/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (143, 140, '会员日志删除', 'admin/MemberLog/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (144, 140, '会员日志统计', 'admin/MemberLog/stat', 150, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (145, 50, '高德地图坐标拾取', 'admin/AdminUtils/mapAmap', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/AdminUtils/mapBaidu', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/AdminUtils/mapSogou', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/AdminUtils/mapTencent', 200, 0, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (149, 50, '北斗卫星导航', 'admin/AdminUtils/mapBeidou', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (145, 50, '高德地图坐标拾取', 'admin/admin.Utils/mapAmap', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (146, 50, '百度地图坐标拾取', 'admin/admin.Utils/mapBaidu', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (147, 50, '搜狗地图坐标拾取', 'admin/admin.Utils/mapSogou', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (148, 50, '腾讯地图坐标拾取', 'admin/admin.Utils/mapTencent', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (149, 50, '北斗卫星导航', 'admin/admin.Utils/mapBeidou', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (150, 186, '地区管理', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (151, 150, '地区列表', 'admin/Region/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (152, 150, '地区信息', 'admin/Region/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -140,36 +140,36 @@ INSERT INTO `yyl_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/edi
 INSERT INTO `yyl_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (156, 0, '会员管理', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (157, 186, '基础设置', '', 220, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (158, 3, '菜单信息', 'admin/AdminMenu/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (158, 3, '菜单信息', 'admin/admin.Menu/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/AdminIndex/member', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/AdminApidoc/apidoc', 180, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/admin.Index/member', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/admin.Apidoc/apidoc', 180, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (186, 0, '设置管理', '', 155, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (187, 5, '角色信息', 'admin/AdminRole/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (187, 5, '角色信息', 'admin/admin.Role/info', 210, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (188, 53, '设置管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (189, 41, '日志管理清除', 'admin/AdminUserLog/clear', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (189, 41, '日志管理清除', 'admin/admin.UserLog/clear', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (190, 186, '微信设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (191, 190, '公众号设置信息', 'admin/SettingWechat/offiInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (192, 190, '公众号设置修改', 'admin/SettingWechat/offiEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (193, 190, '小程序设置信息', 'admin/SettingWechat/miniInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (194, 190, '小程序设置修改', 'admin/SettingWechat/miniEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (195, 190, '上传二维码', 'admin/SettingWechat/qrcode', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (196, 73, '验证码设置信息', 'admin/AdminSetting/captchaInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (197, 73, '验证码设置修改', 'admin/AdminSetting/captchaEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (198, 71, '缓存设置信息', 'admin/AdminSetting/cacheInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (199, 71, '缓存设置清除', 'admin/AdminSetting/cacheClear', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (200, 85, 'Token设置信息', 'admin/AdminSetting/tokenInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (201, 85, 'Token设置修改', 'admin/AdminSetting/tokenEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (196, 73, '验证码设置信息', 'admin/admin.Setting/captchaInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (197, 73, '验证码设置修改', 'admin/admin.Setting/captchaEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (198, 71, '缓存设置信息', 'admin/admin.Setting/cacheInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (199, 71, '缓存设置清除', 'admin/admin.Setting/cacheClear', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (200, 85, 'Token设置信息', 'admin/admin.Setting/tokenInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (201, 85, 'Token设置修改', 'admin/admin.Setting/tokenEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (202, 171, 'Token设置信息', 'admin/Setting/tokenInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (203, 171, 'Token设置修改', 'admin/Setting/tokenEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (204, 170, '验证码设置信息', 'admin/Setting/captchaInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (205, 170, '验证码设置修改', 'admin/Setting/captchaEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (215, 3, '菜单是否无需登录', 'admin/AdminMenu/unlogin', 145, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (216, 58, '在线工具', 'admin/AdminUtils/toollu', 110, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (215, 3, '菜单是否无需登录', 'admin/admin.Menu/unlogin', 145, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (216, 58, '在线工具', 'admin/admin.Utils/toollu', 110, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (217, 188, '日志设置', '', 120, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (218, 217, '日志设置信息', 'admin/AdminSetting/logInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (219, 217, '日志设置修改', 'admin/AdminSetting/logEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (218, 217, '日志设置信息', 'admin/admin.Setting/logInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (219, 217, '日志设置修改', 'admin/admin.Setting/logEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (220, 157, '日志设置', '', 120, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (221, 220, '日志设置信息', 'admin/Setting/logInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (222, 220, '日志设置修改', 'admin/Setting/logEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -177,8 +177,8 @@ INSERT INTO `yyl_admin_menu` VALUES (223, 157, '接口设置', '', 100, 0, 0, 0,
 INSERT INTO `yyl_admin_menu` VALUES (224, 223, '接口设置信息', 'admin/Setting/apiInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (225, 223, '接口设置修改', 'admin/Setting/apiEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (226, 188, '接口设置', '', 110, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (227, 226, '接口设置信息', 'admin/AdminSetting/apiInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (228, 226, '接口设置修改', 'admin/AdminSetting/apiEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (227, 226, '接口设置信息', 'admin/admin.Setting/apiInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (228, 226, '接口设置修改', 'admin/admin.Setting/apiEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (229, 140, '会员日志清除', 'admin/MemberLog/clear', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (230, 0, '内容管理', '', 160, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (283, 230, '内容管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -217,6 +217,7 @@ INSERT INTO `yyl_admin_menu` VALUES (391, 230, '内容设置', '', 200, 0, 0, 0,
 INSERT INTO `yyl_admin_menu` VALUES (392, 391, '内容设置信息', 'admin/cms.Setting/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (393, 391, '内容设置修改', 'admin/cms.Setting/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (395, 391, '内容设置上传', 'admin/cms.Setting/upload', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (396, 1, '内容统计', 'admin/admin.Index/cms', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -242,7 +243,7 @@ CREATE TABLE `yyl_admin_role`  (
 -- Records of yyl_admin_role
 -- ----------------------------
 INSERT INTO `yyl_admin_role` VALUES (1, ',,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,187,191,193,196,198,204,216,218,221,224,227,284,285,286,287,288,289,290,291,292,293,294,295,296,299,300,301,302,307,308,383,384,385,386,387,388,389,391,392,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,187,191,193,196,198,204,216,218,221,224,227,284,285,286,287,288,289,290,291,292,293,294,295,296,299,300,301,302,307,308,383,384,385,386,387,388,389,391,392,396,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '', 200, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -429,7 +430,7 @@ CREATE TABLE `yyl_cms_category`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`category_id`) USING BTREE,
   INDEX `cms_category_id`(`category_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容分类' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容分类' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_category
@@ -474,7 +475,7 @@ CREATE TABLE `yyl_cms_comment`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`comment_id`) USING BTREE,
   INDEX `comment_id`(`comment_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '留言' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '留言' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_comment
@@ -4429,7 +4430,7 @@ CREATE TABLE `yyl_setting_wechat`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_wechat_id`) USING BTREE,
   INDEX `setting_wechat_id`(`setting_wechat_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '微信设置' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '微信设置' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_setting_wechat
