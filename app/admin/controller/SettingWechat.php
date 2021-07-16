@@ -3,7 +3,7 @@
  * @Description  : 微信设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-06-04
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\admin\controller;
@@ -11,6 +11,7 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\common\validate\SettingWechatValidate;
 use app\common\service\SettingWechatService;
+use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -106,24 +107,17 @@ class SettingWechat
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param("type", type="string", require=true, default="offi", desc="offi公众号、mini小程序")
-     * @Apidoc\Param("file", type="file", require=true, default="", desc="二维码图片")
+     * @Apidoc\Param(ref="paramFile")
      * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("type", type="string", desc="offi公众号、mini小程序"),
-     *      @Apidoc\Returned("path", type="string", desc="二维码路径"),
-     *      @Apidoc\Returned("url", type="string", desc="二维码链接"),
-     * )
+     * @Apidoc\Returned(ref="returnFile")
      */
     public function qrcode()
     {
-        $param['type']   = Request::param('type/s', 'offi');
-        $param['file']   = Request::file('file');
-        $param['qrcode'] = $param['file'];
+        $param['qrcode'] = Request::file('file');
 
         validate(SettingWechatValidate::class)->scene('qrcode')->check($param);
 
-        $data = SettingWechatService::qrcode($param);
+        $data = UploadService::upload($param['qrcode'], 'setting/wechat');
 
         return success($data);
     }

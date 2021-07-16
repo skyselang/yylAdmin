@@ -3,13 +3,12 @@
  * @Description  : 微信设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-22
- * @LastEditTime : 2021-06-07
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\common\service;
 
 use think\facade\Db;
-use think\facade\Filesystem;
 use app\common\cache\SettingWechatCache;
 use app\common\utils\StringUtils;
 
@@ -145,29 +144,5 @@ class SettingWechatService
         SettingWechatCache::del($setting_wechat_id);
 
         return $param;
-    }
-
-    /**
-     * 上传二维码
-     *
-     * @param array $param 二维码图片
-     * 
-     * @return array
-     */
-    public static function qrcode($param)
-    {
-        $type = $param['type'];
-        $file = $param['file'];
-
-        $file_name = Filesystem::disk('public')
-            ->putFile('wechat', $file, function () use ($type) {
-                return $type . '/qrcode';
-            });
-
-        $data['type']      = $type;
-        $data['file_path'] = 'storage/' . $file_name . '?t=' . date('YmdHis');
-        $data['file_url']  = file_url($data['file_path']);
-
-        return $data;
     }
 }

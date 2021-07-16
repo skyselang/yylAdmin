@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 15/07/2021 15:39:37
+ Date: 16/07/2021 18:20:36
 */
 
 SET NAMES utf8mb4;
@@ -78,7 +78,7 @@ INSERT INTO `yyl_admin_menu` VALUES (44, 41, '日志管理删除', 'admin/admin.
 INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/admin.UserCenter/info', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/admin.UserCenter/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/admin.UserCenter/pwd', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (48, 12, '更换头像', 'admin/admin.UserCenter/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (48, 12, '上传头像', 'admin/admin.UserCenter/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (49, 1, '首页', 'admin/admin.Index/index', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (50, 58, '地图坐标', 'admin/admin.Utils/map', 150, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/admin.Login/login', 160, 0, 0, 1, 0, NULL, NULL, NULL);
@@ -103,7 +103,7 @@ INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/admin.UserC
 INSERT INTO `yyl_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/admin.Menu/roleRemove', 135, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/admin.Menu/userRemove', 120, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/admin.Role/userRemove', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (121, 4, '用户更换头像', 'admin/admin.User/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (121, 4, '用户上传头像', 'admin/admin.User/avatar', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (122, 58, '服务器信息', 'admin/admin.Utils/server', 120, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (123, 156, '会员管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (124, 123, '会员列表', 'admin/Member/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -381,7 +381,7 @@ INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'index/Login/logout', 120, 0, 0, 0
 INSERT INTO `yyl_api` VALUES (5, 0, '会员中心', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (6, 5, '我的信息', 'index/Member/info', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (7, 5, '修改信息', 'index/Member/edit', 200, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (8, 5, '更换头像', 'index/Member/avatar', 200, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (8, 5, '上传头像', 'index/Member/avatar', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (9, 5, '修改密码', 'index/Member/pwd', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (10, 5, '我的日志', 'index/Member/log', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (11, 0, '注册', '', 210, 0, 1, 0, NULL, NULL, NULL);
@@ -430,7 +430,7 @@ CREATE TABLE `yyl_cms_category`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`category_id`) USING BTREE,
   INDEX `cms_category_id`(`category_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容分类' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容分类' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_category
@@ -475,7 +475,7 @@ CREATE TABLE `yyl_cms_comment`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`comment_id`) USING BTREE,
   INDEX `comment_id`(`comment_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '留言' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '留言' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_comment
@@ -509,7 +509,7 @@ CREATE TABLE `yyl_cms_content`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`content_id`) USING BTREE,
   INDEX `content_id`(`content_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_content

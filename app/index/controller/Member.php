@@ -3,7 +3,7 @@
  * @Description  : 会员中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-24
- * @LastEditTime : 2021-06-05
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\index\controller;
@@ -12,6 +12,7 @@ use think\facade\Request;
 use app\common\validate\MemberValidate;
 use app\common\service\MemberService;
 use app\common\service\MemberLogService;
+use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -58,6 +59,7 @@ class Member
     public function edit()
     {
         $param['member_id'] = member_id();
+        $param['avatar']    = Request::param('avatar/s', '');
         $param['username']  = Request::param('username/s', '');
         $param['nickname']  = Request::param('nickname/s', '');
         $param['phone']     = Request::param('phone/s', '');
@@ -72,22 +74,21 @@ class Member
     }
 
     /**
-     * @Apidoc\Title("更换头像")
+     * @Apidoc\Title("上传头像")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\avatar")
+     * @Apidoc\Param(ref="paramFile")
      * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
+     * @Apidoc\Returned(ref="returnFile")
      */
     public function avatar()
     {
-        $param['member_id'] = member_id();
-        $param['avatar']    = Request::file('avatar_file');
+        $param['avatar'] = Request::file('file');
 
         validate(MemberValidate::class)->scene('avatar')->check($param);
 
-        $data = MemberService::avatar($param);
+        $data = UploadService::upload($param['avatar'], 'member/avatar');
 
         return success($data);
     }
@@ -124,7 +125,7 @@ class Member
      * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log")
-     * @Apidoc\Param("create_time", type="array", default="[]", desc="开始与结束日期eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),

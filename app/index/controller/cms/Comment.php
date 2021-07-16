@@ -3,16 +3,16 @@
  * @Description  : 留言
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\index\controller\cms;
 
 use think\facade\Request;
+use think\facade\Cache;
 use app\common\validate\cms\CommentValidate;
 use app\common\service\cms\CommentService;
 use hg\apidoc\annotation as Apidoc;
-use think\facade\Cache;
 
 /**
  * @Apidoc\Title("留言")

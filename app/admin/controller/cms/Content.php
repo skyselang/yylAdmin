@@ -3,7 +3,7 @@
  * @Description  : 内容管理控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-15
  */
 
 namespace app\admin\controller\cms;
@@ -12,6 +12,7 @@ use think\facade\Request;
 use app\common\validate\cms\ContentValidate;
 use app\common\service\cms\ContentService;
 use app\common\service\cms\CategoryService;
+use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -229,7 +230,7 @@ class Content
             validate(ContentValidate::class)->scene('file')->check($param);
         }
 
-        $data = ContentService::upload($param['file'], $param['type']);
+        $data = UploadService::upload($param['file'], 'cms/content');
 
         return success($data, '上传成功');
     }

@@ -3,7 +3,7 @@
  * @Description  : 会员管理验证器
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-06-05
+ * @LastEditTime : 2021-07-15
  */
 
 namespace app\common\validate;
@@ -29,7 +29,6 @@ class MemberValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'member_id.require'     => '缺少参数：会员id',
         'username.require'      => '请输入账号',
         'username.length'       => '账号长度为2至32个字符',
         'username.alphaDash'    => '账号由字母、数字、下划线、破折号组成',
@@ -62,7 +61,7 @@ class MemberValidate extends Validate
         'editpwd'  => ['member_id', 'password_old', 'password_new'],
         'editpwd1' => ['member_id', 'password_new'],
         'disable'  => ['member_id'],
-        'avatar'   => ['member_id', 'avatar'],
+        'avatar'   => ['avatar'],
         'register' => ['username', 'nickname', 'password', 'phone', 'email'],
         'login'    => ['username', 'password'],
         'logout'   => ['member_id'],

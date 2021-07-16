@@ -1,37 +1,38 @@
 <?php
 /*
- * @Description  : ${title}控制器
+ * @Description  : 测试控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 
- * @LastEditTime : 2021-07-16
+ * @LastEditTime : 2021-06-09
  */
  
-namespace ${controller.namespace};
+namespace app\admin\controller;
 
 use think\facade\Request;
-use ${validate.use_path};
-use ${service.use_path};
+use app\common\validate\TestValidate;
+use app\common\service\TestService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("${title}")
- * ${api_group}
+ * @Apidoc\Title("测试")
+ * @Apidoc\Group("admin")
  * @Apidoc\Sort("999")
  */
-class ${controller.class_name}
+class Test
 {
     /**
-     * @Apidoc\Title("${title}列表")
+     * @Apidoc\Title("测试列表")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param("${main_key.field}", type="int", default="", desc="${title}ID")
-     * @Apidoc\Param(ref="paramDate")
+     * @Apidoc\Param("id", type="int", default="", desc="测试ID")
+     * @Apidoc\Param("date_type", type="string", default="", desc="时间类型")
+     * @Apidoc\Param("date_range", type="array", default="", desc="日期范围")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="${model.use_path}\list")
+     *          @Apidoc\Returned(ref="app\common\model\TestModel\list")
      *      )
      * )
      */
@@ -41,13 +42,13 @@ class ${controller.class_name}
         $limit          = Request::param('limit/d', 10);
         $sort_field     = Request::param('sort_field/s ', '');
         $sort_type      = Request::param('sort_type/s', '');
-        $${main_key.field} = Request::param('${main_key.field}/d', '');
+        $id = Request::param('id/d', '');
         $date_type      = Request::param('date_type/s', '');
         $date_range     = Request::param('date_range/a', []);
 
         $where = [];
-        if ($${main_key.field}) {
-            $where[] = ['${main_key.field}', '=', $${main_key.field}];
+        if ($id) {
+            $where[] = ['id', '=', $id];
         }
         if ($date_type && $date_range) {
             $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
@@ -61,41 +62,41 @@ class ${controller.class_name}
 
         $field = '';
 
-        $data = ${service.file_name}::list($where, $page, $limit, $order, $field);
+        $data = TestService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("${title}信息")
+     * @Apidoc\Title("测试信息")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="${model.use_path}\id")
+     * @Apidoc\Param(ref="app\common\model\TestModel\id")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="${model.use_path}\info")
+     *      @Apidoc\Returned(ref="app\common\model\TestModel\info")
      * )
      */
     public function info()
     {
-        $param['${main_key.field}'] = Request::param('${main_key.field}/d', '');
+        $param['id'] = Request::param('id/d', '');
 
-        validate(${validate.file_name}::class)->scene('info')->check($param);
+        validate(TestValidate::class)->scene('info')->check($param);
 
-        $data = ${service.file_name}::info($param['${main_key.field}']);
+        $data = TestService::info($param['id']);
 
         if ($data['is_delete'] == 1) {
-            exception('${title}已被删除：' . $param['${main_key.field}']);
+            exception('测试已被删除：' . $param['id']);
         }
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("${title}添加")
+     * @Apidoc\Title("测试添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="${model.use_path}\add")
+     * @Apidoc\Param(ref="app\common\model\TestModel\add")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
@@ -103,47 +104,47 @@ class ${controller.class_name}
     {
         $param = Request::param();
 
-        validate(${validate.file_name}::class)->scene('add')->check($param);
+        validate(TestValidate::class)->scene('add')->check($param);
 
-        $data = ${service.file_name}::add($param);
+        $data = TestService::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("${title}修改")
+     * @Apidoc\Title("测试修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="${model.use_path}\edit")
+     * @Apidoc\Param(ref="app\common\model\TestModel\edit")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
-        $param['${main_key.field}'] = Request::param('${main_key.field}/d', '');
+        $param['id'] = Request::param('id/d', '');
 
-        validate(${validate.file_name}::class)->scene('edit')->check($param);
+        validate(TestValidate::class)->scene('edit')->check($param);
 
-        $data = ${service.file_name}::edit($param);
+        $data = TestService::edit($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("${title}删除")
+     * @Apidoc\Title("测试删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="${model.use_path}\dele")
+     * @Apidoc\Param(ref="app\common\model\TestModel\dele")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
-        $param['${main_key.field}'] = Request::param('${main_key.field}/d', '');
+        $param['id'] = Request::param('id/d', '');
 
-        validate(${validate.file_name}::class)->scene('dele')->check($param);
+        validate(TestValidate::class)->scene('dele')->check($param);
 
-        $data = ${service.file_name}::dele($param['${main_key.field}']);
+        $data = TestService::dele($param['id']);
 
         return success($data);
     }

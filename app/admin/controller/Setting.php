@@ -1,9 +1,9 @@
 <?php
 /*
- * @Description  : 基础设置
+ * @Description  : 设置管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-03-09
- * @LastEditTime : 2021-05-27
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\admin\controller;

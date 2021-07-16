@@ -3,7 +3,7 @@
  * @Description  : 个人中心
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-10-12
- * @LastEditTime : 2021-07-14
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\admin\controller\admin;
@@ -93,13 +93,13 @@ class UserCenter
     }
 
     /**
-     * @Apidoc\Title("更换头像")
+     * @Apidoc\Title("上传头像")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\avatar")
+     * @Apidoc\Param(ref="paramFile")
      * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
+     * @Apidoc\Returned(ref="returnFile")
      */
     public function avatar()
     {

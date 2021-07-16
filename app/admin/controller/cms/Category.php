@@ -3,7 +3,7 @@
  * @Description  : 内容分类控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-08
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\admin\controller\cms;
@@ -11,6 +11,7 @@ namespace app\admin\controller\cms;
 use think\facade\Request;
 use app\common\validate\cms\CategoryValidate;
 use app\common\service\cms\CategoryService;
+use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -136,7 +137,7 @@ class Category
     }
 
     /**
-     * @Apidoc\Title("内容分类上传图片")
+     * @Apidoc\Title("内容分类上传文件")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
@@ -158,7 +159,7 @@ class Category
             validate(CategoryValidate::class)->scene('file')->check($param);
         }
 
-        $data = CategoryService::upload($param['file'], $param['type']);
+        $data = UploadService::upload($param['file'], 'cms/category', $param['type']);
 
         return success($data, '上传成功');
     }

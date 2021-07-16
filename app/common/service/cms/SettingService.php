@@ -3,13 +3,12 @@
  * @Description  : 内容设置
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-17
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\common\service\cms;
 
 use think\facade\Db;
-use think\facade\Filesystem;
 use app\common\cache\cms\SettingCache;
 
 class SettingService
@@ -78,27 +77,5 @@ class SettingService
         SettingCache::del($setting_id);
 
         return $param;
-    }
-
-    /**
-     * 内容设置上传
-     *
-     * @param array $param 文件
-     * 
-     * @return array
-     */
-    public static function upload($param)
-    {
-        $file = $param['file'];
-
-        $name = Filesystem::disk('public')
-            ->putFile('cms/setting', $file, function () use ($file) {
-                return date('Ymd') . '/' . date('YmdHis');
-            });
-
-        $data['path'] = 'storage/' . $name;
-        $data['url']  = file_url($data['path']);
-
-        return $data;
     }
 }

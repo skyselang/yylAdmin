@@ -3,7 +3,7 @@
  * @Description  : 地区管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-12-08
- * @LastEditTime : 2021-05-21
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\common\service;
@@ -28,7 +28,6 @@ class RegionService
      */
     public static function list($where = [], $order = [], $field = '')
     {
-
         if ($field) {
             $field = str_merge($field, 'region_id,region_pid,region_name');
         } else {

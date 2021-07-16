@@ -11,7 +11,6 @@ namespace app\common\model\cms;
 use think\Model;
 use hg\apidoc\annotation\Field;
 use hg\apidoc\annotation\AddField;
-use hg\apidoc\annotation\WithoutField;
 use hg\apidoc\annotation\Param;
 
 class ContentModel extends Model

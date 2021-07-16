@@ -3,7 +3,7 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-05-25
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\admin\controller;
@@ -11,6 +11,7 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\common\validate\MemberValidate;
 use app\common\service\MemberService;
+use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -28,8 +29,7 @@ class Member
      * @Apidoc\Param("username", type="string", default="", desc="账号")
      * @Apidoc\Param("phone", type="string", default="", desc="手机")
      * @Apidoc\Param("email", type="string", default="", desc="邮箱")
-     * @Apidoc\Param("date_type", type="string", default="", desc="日期类型字段")
-     * @Apidoc\Param("date_range", type="array", default="[]", desc="日期范围")
+     * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
@@ -115,6 +115,7 @@ class Member
      */
     public function add()
     {
+        $param['avatar']    = Request::param('avatar/s', '');
         $param['username']  = Request::param('username/s', '');
         $param['nickname']  = Request::param('nickname/s', '');
         $param['password']  = Request::param('password/s', '');
@@ -142,6 +143,7 @@ class Member
     public function edit()
     {
         $param['member_id'] = Request::param('member_id/d', '');
+        $param['avatar']    = Request::param('avatar/s', '');
         $param['username']  = Request::param('username/s', '');
         $param['nickname']  = Request::param('nickname/s', '');
         $param['phone']     = Request::param('phone/s', '');
@@ -177,22 +179,21 @@ class Member
     }
 
     /**
-     * @Apidoc\Title("会员更换头像")
+     * @Apidoc\Title("会员上传头像")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\avatar")
+     * @Apidoc\Param(ref="paramFile")
      * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
+     * @Apidoc\Returned(ref="returnFile")
      */
     public function avatar()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
-        $param['avatar']    = Request::file('avatar_file');
+        $param['avatar'] = Request::file('file');
 
         validate(MemberValidate::class)->scene('avatar')->check($param);
 
-        $data = MemberService::avatar($param);
+        $data = UploadService::upload($param['avatar'], 'member/avatar');
 
         return success($data);
     }

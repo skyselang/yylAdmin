@@ -3,7 +3,7 @@
  * @Description  : 内容设置控制器
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-17
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\admin\controller\cms;
@@ -11,6 +11,7 @@ namespace app\admin\controller\cms;
 use think\facade\Request;
 use app\common\validate\cms\SettingValidate;
 use app\common\service\cms\SettingService;
+use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -72,21 +73,17 @@ class Setting
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param("file", type="file", require=true, default="", desc="file")
+     * @Apidoc\Param(ref="paramFile")
      * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("path", type="string", desc="路径"),
-     *      @Apidoc\Returned("url", type="string", desc="链接"),
-     * )
+     * @Apidoc\Returned(ref="returnFile")
      */
     public function upload()
     {
-        $param['file']  = Request::file('file');
-        $param['image'] = $param['file'];
+        $param['image'] = Request::file('file');
 
         validate(SettingValidate::class)->scene('image')->check($param);
 
-        $data = SettingService::upload($param);
+        $data = UploadService::upload($param['image'], 'cms/setting');
 
         return success($data);
     }

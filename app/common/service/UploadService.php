@@ -8,6 +8,7 @@
 
 namespace app\common\service;
 
+use think\UploadedFile;
 use think\facade\Filesystem;
 use app\common\utils\ByteUtils;
 
@@ -16,20 +17,18 @@ class UploadService
     /**
      * 上传文件
      *
-     * @param file   $param   文件信息
-     * @param string $savedir 保存目录
-     * @param string $param   类型file、image、video
+     * @param UploadedFile File $file 文件
+     * @param string $path 保存路径
      *
      * @return array
      */
-    public static function upload($file, $savedir = 'upload', $type = 'image')
+    public static function upload($file, $path = 'upload')
     {
         $file_name = Filesystem::disk('public')
-            ->putFile($savedir, $file, function () use ($type) {
-                return date('Ymd') . '/' . date('YmdHis') . '_' . $type;
+            ->putFile($path, $file, function () use ($file) {
+                return date('Ymd') . '/' . $file->hash('sha1');
             });
 
-        $data['type'] = $type;
         $data['path'] = 'storage/' . $file_name;
         $data['url']  = file_url($data['path']);
         $data['name'] = $file->getOriginalName();

@@ -3,7 +3,7 @@
  * @Description  : 接口文档公共注释定义
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-04-01
- * @LastEditTime : 2021-07-14
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\common\controller;
@@ -41,7 +41,7 @@ class ApidocDefinitions
 
     /**
      * 请求参数：日期
-     * @Apidoc\Param("date_type", type="string", default="", desc="时间类型eg：create_time")
+     * @Apidoc\Param("date_type", type="string", default="create_time", desc="日期类型eg：create_time")
      * @Apidoc\Param("date_range", type="array", default="", desc="日期范围eg：['2020-02-02','2020-02-22']")
      */
     public function paramDate()
@@ -100,8 +100,8 @@ class ApidocDefinitions
     
     /**
      * 请求参数：上传文件
-     * @Apidoc\Param("type", type="string", require=true, default="file", desc="image、video、file")
      * @Apidoc\Param("file", type="file", require=true, default="", desc="图片、视频、文件")
+     * @Apidoc\Param("type", type="string", require=false, default="image", desc="image、video、file")
      */
     public function paramFile()
     {
@@ -110,7 +110,6 @@ class ApidocDefinitions
     /**
      * 返回参数：上传文件
      * @Apidoc\Returned("data", type="object", desc="文件信息",
-     *      @Apidoc\Returned("type", type="string", desc="类型"),
      *      @Apidoc\Returned("name", type="string", desc="名称"),
      *      @Apidoc\Returned("path", type="string", desc="路径"),
      *      @Apidoc\Returned("url", type="string", desc="链接"),

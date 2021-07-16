@@ -3,7 +3,7 @@
  * @Description  : 留言管理模型
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\common\model\cms;
@@ -11,8 +11,6 @@ namespace app\common\model\cms;
 use think\Model;
 use hg\apidoc\annotation\Field;
 use hg\apidoc\annotation\AddField;
-use hg\apidoc\annotation\WithoutField;
-use hg\apidoc\annotation\Param;
 
 class CommentModel extends Model
 {

@@ -3,7 +3,7 @@
  * @Description  : 用户管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-03-26
- * @LastEditTime : 2021-07-14
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\admin\controller\admin;
@@ -168,9 +168,9 @@ class User
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\avatar")
+     * @Apidoc\Param(ref="paramFile")
      * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
+     * @Apidoc\Returned(ref="returnFile")
      */
     public function avatar()
     {

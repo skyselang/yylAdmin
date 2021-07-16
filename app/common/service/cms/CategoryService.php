@@ -3,14 +3,12 @@
  * @Description  : 内容分类业务逻辑
  * @Author       : https://github.com/skyselang
  * @Date         : 2021-06-08
- * @LastEditTime : 2021-07-13
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\common\service\cms;
 
 use think\facade\Db;
-use think\facade\Filesystem;
-use app\common\utils\ByteUtils;
 use app\common\cache\cms\CategoryCache;
 
 class CategoryService
@@ -169,30 +167,6 @@ class CategoryService
         $update['category_ids'] = $category_ids;
 
         return $update;
-    }
-
-    /**
-     * 分类上传图片
-     *
-     * @param file   $param 文件
-     * @param string $param 类型
-     * 
-     * @return array
-     */
-    public static function upload($file, $type)
-    {
-        $file_name = Filesystem::disk('public')
-            ->putFile('cms/category', $file, function () use ($type) {
-                return date('Ymd') . '/' . date('YmdHis') . '_' . $type;
-            });
-
-        $data['type'] = $type;
-        $data['path'] = 'storage/' . $file_name;
-        $data['url']  = file_url($data['path']);
-        $data['name'] = $file->getOriginalName();
-        $data['size'] = ByteUtils::format($file->getSize());
-
-        return $data;
     }
 
     /**

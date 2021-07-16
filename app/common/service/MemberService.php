@@ -3,13 +3,12 @@
  * @Description  : 会员管理
  * @Author       : https://github.com/skyselang
  * @Date         : 2020-11-23
- * @LastEditTime : 2021-06-05
+ * @LastEditTime : 2021-07-16
  */
 
 namespace app\common\service;
 
 use think\facade\Db;
-use think\facade\Filesystem;
 use app\common\cache\MemberCache;
 use app\common\utils\DatetimeUtils;
 
@@ -56,7 +55,10 @@ class MemberService
         $pages = ceil($count / $limit);
 
         foreach ($list as $k => $v) {
-            $list[$k]['avatar'] = file_url($v['avatar']);
+            $list[$k]['avatar_url'] = '';
+            if (isset($v['avatar'])) {
+                $list[$k]['avatar_url'] = file_url($v['avatar']);
+            }
         }
 
         $data['count'] = $count;
@@ -88,7 +90,7 @@ class MemberService
                 exception('会员不存在：' . $member_id);
             }
 
-            $member['avatar'] = file_url($member['avatar']);
+            $member['avatar_url'] = file_url($member['avatar']);
 
             $member_wechat = Db::name('member_wechat')
                 ->where('member_id', $member_id)
@@ -98,8 +100,8 @@ class MemberService
                 if (empty($member['nickname'])) {
                     $member['nickname'] = $member_wechat['nickname'];
                 }
-                if (empty($member['avatar'])) {
-                    $member['avatar'] = $member_wechat['headimgurl'];
+                if (empty($member['avatar_url'])) {
+                    $member['avatar_url'] = $member_wechat['headimgurl'];
                 }
                 $member_wechat['privilege'] = unserialize($member_wechat['privilege']);
                 $member['wechat'] = $member_wechat;
@@ -203,41 +205,6 @@ class MemberService
     }
 
     /**
-     * 会员更换头像
-     *
-     * @param array $param 头像信息
-     * 
-     * @return array
-     */
-    public static function avatar($param)
-    {
-        $member_id = $param['member_id'];
-        $avatar    = $param['avatar'];
-
-        $avatar_name = Filesystem::disk('public')
-            ->putFile('member', $avatar, function () use ($member_id) {
-                return $member_id . '/' . $member_id . '_avatar';
-            });
-
-        $update['avatar']      = 'storage/' . $avatar_name . '?t=' . date('YmdHis');
-        $update['update_time'] = datetime();
-
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
-            ->update($update);
-
-        if (empty($res)) {
-            exception();
-        }
-
-        $update['avatar'] = file_url($update['avatar']);
-
-        MemberCache::upd($member_id);
-
-        return $update;
-    }
-
-    /**
      * 会员修改密码
      *
      * @param array $param 密码信息
@@ -249,9 +216,9 @@ class MemberService
         $member_id = $param['member_id'];
 
         if (isset($param['password'])) {
-            $update['password']    = md5($param['password']);
+            $update['password'] = md5($param['password']);
         } else {
-            $update['password']    = md5($param['password_new']);
+            $update['password'] = md5($param['password_new']);
         }
 
         $update['update_time'] = datetime();
