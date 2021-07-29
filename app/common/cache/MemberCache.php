@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 会员管理缓存
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-23
- * @LastEditTime : 2021-05-25
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员管理缓存
 namespace app\common\cache;
 
 use think\facade\Cache;
@@ -22,7 +24,7 @@ class MemberCache
      */
     public static function key($member_id)
     {
-        $key = 'Member:' . $member_id;
+        $key = 'member:' . $member_id;
 
         return $key;
     }

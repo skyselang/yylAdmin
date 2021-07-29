@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 留言管理验证器
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-13
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 留言管理验证器
 namespace app\common\validate\cms;
 
 use think\Validate;
@@ -22,7 +24,7 @@ class CommentValidate extends Validate
         'title'      => ['require'],
         'content'    => ['require'],
         'sort_field' => ['checkSort'],
-        'sort_type'  => ['checkSort'],
+        'sort_value' => ['checkSort'],
     ];
 
     // 错误信息
@@ -41,22 +43,22 @@ class CommentValidate extends Validate
         'edit'   => ['comment_id'],
         'dele'   => ['comment'],
         'isread' => ['comment'],
-        'sort'   => ['sort_field', 'sort_type'],
+        'sort'   => ['sort_field', 'sort_value'],
     ];
 
     // 自定义验证规则：排序字段是否存在，排序类型是否为asc、desc
     protected function checkSort($value, $rule, $data = [])
     {
         $sort_field = $data['sort_field'];
-        $sort_type  = $data['sort_type'];
+        $sort_value = $data['sort_value'];
 
         $field_exist = CommentService::tableFieldExist($sort_field);
         if (!$field_exist) {
             return '排序字段sort_field：' . $sort_field . ' 不存在';
         }
 
-        if (!empty($sort_type) && $sort_type != 'asc' && $sort_type != 'desc') {
-            return '排序类型sort_type只能为asc升序或desc降序';
+        if (!empty($sort_value) && $sort_value != 'asc' && $sort_value != 'desc') {
+            return '排序类型sort_value只能为asc升序或desc降序';
         }
 
         return true;

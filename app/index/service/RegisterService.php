@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 注册
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-03-20
- * @LastEditTime : 2021-05-06
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 注册
 namespace app\index\service;
 
 use app\common\service\MemberService;

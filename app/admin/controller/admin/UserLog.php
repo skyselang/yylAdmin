@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 日志管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-06
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 日志管理控制器
 namespace app\admin\controller\admin;
 
 use think\facade\Request;
@@ -26,7 +28,7 @@ class UserLog
      * @Apidoc\Title("日志管理列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log")
+     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log_type")
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
      * @Apidoc\Param(ref="paramDate")
@@ -42,8 +44,8 @@ class UserLog
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $sort_field      = Request::param('sort_field/s ', '');
-        $sort_type       = Request::param('sort_type/s', '');
+        $sort_field      = Request::param('sort_field/s', '');
+        $sort_value      = Request::param('sort_value/s', '');
         $log_type        = Request::param('log_type/d', '');
         $request_keyword = Request::param('request_keyword/s', '');
         $user_keyword    = Request::param('user_keyword/s', '');
@@ -77,8 +79,8 @@ class UserLog
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         }
 
         $data = UserLogService::list($where, $page, $limit, $order);
@@ -137,7 +139,7 @@ class UserLog
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\username", require=false)
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id", require=false)
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_url", require=false)
-     * @Apidoc\Param("date_range", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Param("date_value", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
      */ 
@@ -147,7 +149,7 @@ class UserLog
         $param['username']      = Request::param('username/s', '');
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
         $param['menu_url']      = Request::param('menu_url/s', '');
-        $param['date_range']    = Request::param('date_range/a', []);
+        $param['date_value']    = Request::param('date_value/a', '');
 
         $data = UserLogService::clear($param);
 

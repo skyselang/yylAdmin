@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : index公共函数文件
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-10-12
- * @LastEditTime : 2021-05-27
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// index公共函数文件
 use think\facade\Request;
 use app\common\service\ApiService;
 use app\common\service\SettingService;

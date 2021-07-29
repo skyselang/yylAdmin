@@ -1,8 +1,13 @@
 <?php
 // +----------------------------------------------------------------------
-// | 缓存设置
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
+// 缓存设置
 use think\facade\Env;
 
 return [
@@ -19,7 +24,7 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
             // 缓存前缀
-            'prefix'     => Env::get('cache.prefix', 'yyl'),
+            'prefix'     => Env::get('cache.prefix', 'yylAdmin'),
             // 缓存保存目录
             'path'       => '',
             // 缓存标签前缀
@@ -33,7 +38,7 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
             // 缓存前缀
-            'prefix'     => Env::get('cache.prefix', 'yyl:'),
+            'prefix'     => Env::get('cache.prefix', 'yylAdmin:'),
             // 主机
             'host'       => Env::get('cache.host', '127.0.0.1'),
             // 端口
@@ -49,7 +54,7 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
             // 缓存前缀
-            'prefix'     => Env::get('cache.prefix', 'yyl:'),
+            'prefix'     => Env::get('cache.prefix', 'yylAdmin:'),
             // 主机
             'host'       => Env::get('cache.host', '127.0.0.1'),
             // 端口
@@ -65,7 +70,7 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
             // 缓存前缀
-            'prefix'     => Env::get('cache.prefix', 'yyl'),
+            'prefix'     => Env::get('cache.prefix', 'yylAdmin'),
             // 缓存标签前缀
             'tag_prefix' => 'tag:',
         ],

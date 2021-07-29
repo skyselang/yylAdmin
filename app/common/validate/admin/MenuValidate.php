@@ -1,15 +1,19 @@
 <?php
-/*
- * @Description  : 菜单管理验证器
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-05
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 菜单管理验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
-use think\facade\Db;
+use app\common\service\admin\MenuService;
+use app\common\service\admin\RoleService;
+use app\common\service\admin\UserService;
 
 class MenuValidate extends Validate
 {
@@ -31,7 +35,7 @@ class MenuValidate extends Validate
         'add'        => ['menu_name'],
         'edit'       => ['admin_menu_id', 'menu_name'],
         'dele'       => ['admin_menu_id'],
-        'disable'    => ['admin_menu_id'],
+        'disable'    => ['admin_menu_id', 'is_disable'],
         'unauth'     => ['admin_menu_id'],
         'unlogin'    => ['admin_menu_id'],
         'role'       => ['admin_menu_id'],
@@ -65,28 +69,25 @@ class MenuValidate extends Validate
             }
         }
 
-        $menu_name = Db::name('admin_menu')
-            ->field('admin_menu_id')
-            ->where('admin_menu_id', '<>', $admin_menu_id)
-            ->where('menu_pid', '=', $data['menu_pid'])
-            ->where('menu_name', '=', $data['menu_name'])
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($menu_name) {
-            return '菜单名称已存在：' . $data['menu_name'];
-        }
-
-        $menu_url = Db::name('admin_menu')
-            ->field('admin_menu_id')
-            ->where('admin_menu_id', '<>', $admin_menu_id)
-            ->where('menu_url', '=', $data['menu_url'])
-            ->where('menu_url', '<>', '')
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($menu_url) {
-            return '菜单链接已存在：' . $data['menu_url'];
+        $menu = MenuService::list();
+        $menu_name_msg = '菜单名称已存在：' . $data['menu_name'];
+        $menu_url_msg  = '菜单链接已存在：' . $data['menu_url'];
+        foreach ($menu as $k => $v) {
+            if ($admin_menu_id) {
+                if ($v['menu_pid'] == $data['menu_pid'] && $v['menu_name'] == $data['menu_name'] && $v['admin_menu_id'] != $admin_menu_id) {
+                    return $menu_name_msg;
+                }
+                if ($v['menu_url'] == $data['menu_url'] && $v['menu_url'] != '' && $v['admin_menu_id'] != $admin_menu_id) {
+                    return $menu_url_msg;
+                }
+            } else {
+                if ($v['menu_pid'] == $data['menu_pid'] && $v['menu_name'] == $data['menu_name']) {
+                    return $menu_name_msg;
+                }
+                if ($v['menu_url'] == $data['menu_url'] && $v['menu_url'] != '') {
+                    return $menu_url_msg;
+                }
+            }
         }
 
         return true;
@@ -95,39 +96,24 @@ class MenuValidate extends Validate
     // 自定义验证规则：菜单是否有子菜单或分配有角色或分配有用户
     protected function checkAdminMenuRole($value, $rule, $data = [])
     {
-        $admin_menu_id = $value;
+        $admin_menu_id = $data['admin_menu_id'];
 
-        $admin_menu = Db::name('admin_menu')
-            ->field('admin_menu_id')
-            ->where('menu_pid', '=', $admin_menu_id)
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($admin_menu) {
-            return '请删除所有子菜单后再删除';
+        $menu = MenuService::list();
+        foreach ($menu as $k => $v) {
+            if ($v['menu_pid'] == $admin_menu_id) {
+                return '请删除所有子菜单后再删除';
+            }
         }
 
         $where_role[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
-        $where_role[] = ['is_delete', '=', 0];
-
-        $admin_role = Db::name('admin_role')
-            ->field('admin_role_id')
-            ->where($where_role)
-            ->find();
-
-        if ($admin_role) {
+        $admin_role = RoleService::list($where_role, 1, 1, [], 'admin_role_id');
+        if ($admin_role['list']) {
             return '请在[角色]中解除所有角色后再删除';
         }
 
-        $where_admin[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
-        $where_admin[] = ['is_delete', '=', 0];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where($where_admin)
-            ->find();
-
-        if ($admin_user) {
+        $where_user[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
             return '请在[用户]中解除所有用户后再删除';
         }
 

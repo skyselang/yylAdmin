@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 字符串
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-06-04
- * @LastEditTime : 2021-06-05
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 字符串
 namespace app\common\utils;
 
 class StringUtils
@@ -14,7 +16,7 @@ class StringUtils
      * 随机字符串
      *
      * @param integer $length    字符长度
-     * @param array   $character 所用字符：1数字，2小写字符，3大写字母，4标点符号
+     * @param array   $character 所用字符：1数字，2小写字母，3大写字母，4标点符号
      * 
      * @return string
      */

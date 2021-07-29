@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 会员中心
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-24
- * @LastEditTime : 2021-07-16
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员中心控制器
 namespace app\index\controller;
 
 use think\facade\Request;
@@ -90,7 +92,7 @@ class Member
 
         $data = UploadService::upload($param['avatar'], 'member/avatar');
 
-        return success($data);
+        return success($data, '上传成功');
     }
 
     /**
@@ -124,7 +126,7 @@ class Member
      * @Apidoc\Title("我的日志")
      * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\MemberLogModel\log")
+     * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
@@ -140,8 +142,8 @@ class Member
         $page        = Request::param('page/d', 1);
         $limit       = Request::param('limit/d', 10);
         $log_type    = Request::param('log_type/d', '');
-        $sort_field  = Request::param('sort_field/s ', '');
-        $sort_type   = Request::param('sort_type/s', '');
+        $sort_field  = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
         $create_time = Request::param('create_time/a', []);
 
         $where[] = ['member_id', '=', $member_id];
@@ -154,8 +156,8 @@ class Member
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         }
 
         $data = MemberLogService::list($where, $page, $limit, $order);

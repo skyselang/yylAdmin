@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 接口速率缓存
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-06-12
- * @LastEditTime : 2021-05-26
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 接口速率缓存
 namespace app\common\cache;
 
 use think\facade\Cache;
@@ -22,7 +24,7 @@ class ApiRateCache
      */
     public static function key($member_id, $api_url)
     {
-        $key = 'ApiRate:' . $member_id . ':' . $api_url;
+        $key = 'apirate:' . $member_id . ':' . $api_url;
 
         return $key;
     }

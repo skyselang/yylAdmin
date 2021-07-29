@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 个人中心
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-10-12
- * @LastEditTime : 2021-07-16
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 个人中心控制器
 namespace app\admin\controller\admin;
 
 use think\facade\Request;
@@ -109,14 +111,15 @@ class UserCenter
 
         $data = UploadService::upload($param['avatar'], 'admin/user');
 
-        return success($data);
+        return success($data, '上传成功');
     }
 
     /**
      * @Apidoc\Title("我的日志")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log")
+     * @Apidoc\Param(ref="paramSort")
+     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log_type")
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
      * @Apidoc\Param(ref="paramDate")
@@ -132,8 +135,8 @@ class UserCenter
     {
         $page            = Request::param('page/d', 1);
         $limit           = Request::param('limit/d', 10);
-        $sort_field      = Request::param('sort_field/s ', '');
-        $sort_type       = Request::param('sort_type/s', '');
+        $sort_field      = Request::param('sort_field/s', '');
+        $sort_value      = Request::param('sort_value/s', '');
         $log_type        = Request::param('log_type/d', '');
         $request_keyword = Request::param('request_keyword/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
@@ -161,8 +164,8 @@ class UserCenter
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         }
 
         $data = UserCenterService::log($where, $page, $limit, $order);

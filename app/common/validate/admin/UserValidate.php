@@ -1,15 +1,16 @@
 <?php
-/*
- * @Description  : 用户管理验证器
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-05
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 用户管理验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
-use think\facade\Db;
 use app\common\service\admin\UserService;
 
 class UserValidate extends Validate
@@ -111,22 +112,13 @@ class UserValidate extends Validate
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
-        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
-        $username      = $data['username'];
-
-        if ($admin_user_id) {
-            $where[] = ['admin_user_id', '<>', $admin_user_id];
+        if (isset($data['admin_user_id'])) {
+            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
         }
-        $where[] = ['username', '=', $username];
-        $where[] = ['is_delete', '=', 0];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where($where)
-            ->find();
-
-        if ($admin_user) {
-            return '账号已存在：' . $username;
+        $where_user[] = ['username', '=', $data['username']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '账号已存在：' . $data['username'];
         }
 
         return true;
@@ -135,22 +127,13 @@ class UserValidate extends Validate
     // 自定义验证规则：昵称是否已存在
     protected function checkNickname($value, $rule, $data = [])
     {
-        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
-        $nickname      = $data['nickname'];
-
-        if ($admin_user_id) {
-            $where[] = ['admin_user_id', '<>', $admin_user_id];
+        if (isset($data['admin_user_id'])) {
+            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
         }
-        $where[] = ['nickname', '=', $nickname];
-        $where[] = ['is_delete', '=', 0];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where($where)
-            ->find();
-
-        if ($admin_user) {
-            return '昵称已存在：' . $nickname;
+        $where_user[] = ['nickname', '=', $data['nickname']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '昵称已存在：' . $data['nickname'];
         }
 
         return true;
@@ -159,22 +142,13 @@ class UserValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
-        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
-        $phone         = $data['phone'];
-
-        if ($admin_user_id) {
-            $where[] = ['admin_user_id', '<>', $admin_user_id];
+        if (isset($data['admin_user_id'])) {
+            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
         }
-        $where[] = ['phone', '=', $phone];
-        $where[] = ['is_delete', '=', 0];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where($where)
-            ->find();
-
-        if ($admin_user) {
-            return '手机已存在：' . $phone;
+        $where_user[] = ['phone', '=', $data['phone']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '手机已存在：' . $data['phone'];
         }
 
         return true;
@@ -183,22 +157,13 @@ class UserValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmail($value, $rule, $data = [])
     {
-        $admin_user_id = isset($data['admin_user_id']) ? $data['admin_user_id'] : '';
-        $email         = $data['email'];
-
-        if ($admin_user_id) {
-            $where[] = ['admin_user_id', '<>', $admin_user_id];
+        if (isset($data['admin_user_id'])) {
+            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
         }
-        $where[] = ['email', '=', $email];
-        $where[] = ['is_delete', '=', 0];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where($where)
-            ->find();
-
-        if ($admin_user) {
-            return '邮箱已存在：' . $email;
+        $where_user[] = ['email', '=', $data['email']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '邮箱已存在：' . $data['email'];
         }
 
         return true;
@@ -207,10 +172,7 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否已分配角色或菜单
     protected function checkAdminUserRoleMenu($value, $rule, $data = [])
     {
-        $admin_user_id = $value;
-
-        $admin_user = UserService::info($admin_user_id);
-
+        $admin_user = UserService::info($data['admin_user_id']);
         if ($admin_user['admin_role_ids'] || $admin_user['admin_menu_ids']) {
             return '请在[权限]中取消所有角色和菜单后再删除';
         }
@@ -222,8 +184,7 @@ class UserValidate extends Validate
     protected function checkAdminUserIsSuper($value, $rule, $data = [])
     {
         $admin_is_super = admin_is_super(admin_user_id());
-        $admin_user_id  = admin_is_super($value);
-
+        $admin_user_id  = admin_is_super($data['admin_user_id']);
         if (!$admin_is_super && $admin_user_id) {
             return '无法对系统用户进行操作';
         }
@@ -234,8 +195,7 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否禁用
     protected function checkAdminUserIsDisable($value, $rule, $data = [])
     {
-        $admin_is_super = admin_is_super($value);
-
+        $admin_is_super = admin_is_super($data['admin_user_id']);
         if ($admin_is_super) {
             return '无法对系统用户进行操作';
         }
@@ -246,8 +206,7 @@ class UserValidate extends Validate
     // 自定义验证规则：用户删除
     protected function checkAdminUserIsDelete($value, $rule, $data = [])
     {
-        $admin_is_super = admin_is_super($value);
-
+        $admin_is_super = admin_is_super($data['admin_user_id']);
         if ($admin_is_super) {
             return '无法对系统用户进行操作';
         }

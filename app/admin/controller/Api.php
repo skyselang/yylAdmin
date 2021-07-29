@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 接口管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-25
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 接口管理控制器
 namespace app\admin\controller;
 
 use think\facade\Request;
@@ -23,18 +25,16 @@ class Api
     /**
      * @Apidoc\Title("接口列表")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *      @Apidoc\Returned("list", type="array", desc="树形列表", 
      *          @Apidoc\Returned(ref="app\common\model\ApiModel\list")
      *      )
      * )
      */
     public function list()
     {
-        $data = ApiService::list();
+        $data['list'] = ApiService::tree();
 
         return success($data);
     }
@@ -157,7 +157,7 @@ class Api
      */
     public function unlogin()
     {
-        $param['api_id']    = Request::param('api_id/d', '');
+        $param['api_id']     = Request::param('api_id/d', '');
         $param['is_unlogin'] = Request::param('is_unlogin/d', 0);
 
         validate(ApiValidate::class)->scene('unlogin')->check($param);

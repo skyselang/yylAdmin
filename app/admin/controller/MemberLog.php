@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 会员日志
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-12-01
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员日志控制器
 namespace app\admin\controller;
 
 use think\facade\Request;
@@ -26,10 +28,10 @@ class MemberLog
      * @Apidoc\Title("会员日志列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\MemberLogModel\log")
-     * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
-     * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
+     * @Apidoc\Param(ref="paramSort")
+     * @Apidoc\Param(ref="paramSearch")
      * @Apidoc\Param(ref="paramDate")
+     * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="returnPaging"),
@@ -40,41 +42,45 @@ class MemberLog
      */
     public function list()
     {
-        $page            = Request::param('page/d', 1);
-        $limit           = Request::param('limit/d', 10);
-        $sort_field      = Request::param('sort_field/s ', '');
-        $sort_type       = Request::param('sort_type/s', '');
-        $log_type        = Request::param('log_type/d', '');
-        $member_keyword  = Request::param('member_keyword/s', '');
-        $request_keyword = Request::param('request_keyword/s', '');
-        $api_keyword     = Request::param('api_keyword/s', '');
-        $create_time     = Request::param('create_time/a', []);
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $log_type     = Request::param('log_type/d', '');
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', 'create_time');
+        $date_value   = Request::param('date_value/a', '');
 
         $where = [];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($member_keyword) {
-            $member     = MemberService::equQuery($member_keyword);
-            $member_ids = array_column($member, 'member_id');
-            $where[]    = ['member_id', 'in', $member_ids];
+        if ($search_field && $search_value) {
+            if ($search_field == 'member_id' || $search_field == 'username') {
+                $where_member[] = ['is_delete', '=', 0];
+                $where_member[] = [$search_field, '=', $search_value];
+                $member     = MemberService::list($where_member, 1, 9999, [], 'member_id');
+                $member_ids = array_column($member['list'], 'member_id');
+                $where[]    = ['member_id', 'in', $member_ids];
+            } elseif ($search_field == 'api_url' || $search_field == 'api_name') {
+                $where_api[] = ['is_delete', '=', 0];
+                $where_api[] = [$search_field, '=', $search_value];
+                $api     = ApiService::list($where_api, 1, 9999, [], 'api_id');
+                $api_ids = array_column($api['list'], 'api_id');
+                $where[] = ['api_id', 'in', $api_ids];
+            } else {
+                $where[] = [$search_field, '=', $search_value];
+            }
         }
-        if ($request_keyword) {
-            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
-        }
-        if ($api_keyword) {
-            $api     = ApiService::equQuery($api_keyword);
-            $api_ids = array_column($api, 'api_id');
-            $where[] = ['api_id', 'in', $api_ids];
-        }
-        if ($create_time) {
-            $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
-            $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         }
 
         $data = MemberLogService::list($where, $page, $limit, $order);
@@ -90,7 +96,7 @@ class MemberLog
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\MemberLogModel\info")
      * )
-     */ 
+     */
     public function info()
     {
         $param['member_log_id'] = Request::param('member_log_id/d', '');
@@ -136,14 +142,14 @@ class MemberLog
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
-     */ 
+     */
     public function clear()
     {
         $param['member_id']  = Request::param('member_id/d', '');
         $param['username']   = Request::param('username/s', '');
         $param['api_id']     = Request::param('api_id/d', '');
         $param['api_url']    = Request::param('api_url/s', '');
-        $param['date_range'] = Request::param('date_range/a', []);
+        $param['date_value'] = Request::param('date_value/a', '');
 
         $data = MemberLogService::clear($param);
 
@@ -159,11 +165,11 @@ class MemberLog
      * @Apidoc\Param("field", type="string", default="", desc="统计字段")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnData")
-     */  
+     */
     public function stat()
     {
-        $type   = Request::param('type/s', '');
-        $date   = Request::param('date/a', []);
+        $type  = Request::param('type/s', '');
+        $date  = Request::param('date/a', []);
         $field = Request::param('field/s', 'member');
 
         $data  = [];

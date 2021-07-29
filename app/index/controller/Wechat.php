@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 微信
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-06-04
- * @LastEditTime : 2021-07-03
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 微信控制器
 namespace app\index\controller;
 
 use app\common\service\WechatService;

@@ -1,15 +1,17 @@
 <?php
-/*
- * @Description  : 个人中心验证器
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-05
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 个人中心验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
-use think\facade\Db;
+use app\common\service\admin\UserService;
 
 class UserCenterValidate extends Validate
 {
@@ -56,18 +58,11 @@ class UserCenterValidate extends Validate
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
-        $admin_user_id = $data['admin_user_id'];
-        $username      = $data['username'];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('admin_user_id', '<>', $admin_user_id)
-            ->where('username', '=', $username)
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($admin_user) {
-            return '账号已存在：' . $username;
+        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $where_user[] = ['username', '=', $data['username']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '账号已存在：' . $data['username'];
         }
 
         return true;
@@ -76,18 +71,11 @@ class UserCenterValidate extends Validate
     // 自定义验证规则：昵称是否已存在
     protected function checkNickname($value, $rule, $data = [])
     {
-        $admin_user_id = $data['admin_user_id'];
-        $nickname      = $data['nickname'];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('admin_user_id', '<>', $admin_user_id)
-            ->where('nickname', '=', $nickname)
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($admin_user) {
-            return '昵称已存在：' . $nickname;
+        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $where_user[] = ['nickname', '=', $data['nickname']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '昵称已存在：' . $data['nickname'];
         }
 
         return true;
@@ -96,18 +84,11 @@ class UserCenterValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
-        $admin_user_id = $data['admin_user_id'];
-        $phone         = $data['phone'];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('admin_user_id', '<>', $admin_user_id)
-            ->where('phone', '=', $phone)
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($admin_user) {
-            return '手机已存在：' . $phone;
+        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $where_user[] = ['phone', '=', $data['phone']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '手机已存在：' . $data['phone'];
         }
 
         return true;
@@ -116,18 +97,11 @@ class UserCenterValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmail($value, $rule, $data = [])
     {
-        $admin_user_id = $data['admin_user_id'];
-        $email         = $data['email'];
-
-        $admin_user = Db::name('admin_user')
-            ->field('admin_user_id')
-            ->where('admin_user_id', '<>', $admin_user_id)
-            ->where('email', '=', $email)
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($admin_user) {
-            return '邮箱已存在：' . $email;
+        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $where_user[] = ['email', '=', $data['email']];
+        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+        if ($admin_user['list']) {
+            return '邮箱已存在：' . $data['email'];
         }
 
         return true;

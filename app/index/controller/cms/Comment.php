@@ -1,17 +1,19 @@
 <?php
-/*
- * @Description  : 留言
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-16
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 留言控制器
 namespace app\index\controller\cms;
 
 use think\facade\Request;
-use think\facade\Cache;
 use app\common\validate\cms\CommentValidate;
 use app\common\service\cms\CommentService;
+use app\common\cache\cms\CommentCache;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -41,12 +43,11 @@ class Comment
 
         validate(CommentValidate::class)->scene('add')->check($param);
 
-        $key = 'cms:comment:' . $param['mobile'];
-        $cache = Cache::get($key);
-        if ($cache) {
-            return error('请稍后再试');
+        $comment = CommentCache::get($param['mobile']);
+        if ($comment) {
+            return error('请勿重复提交');
         } else {
-            Cache::set($key, $param['call'], 10);
+            CommentCache::set($param['mobile'], $param['call'], 10);
         }
 
         $data = CommentService::add($param);

@@ -1,15 +1,17 @@
 <?php
-/*
- * @Description  : 接口管理验证器
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-25
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 接口管理验证器
 namespace app\common\validate;
 
 use think\Validate;
-use think\facade\Db;
+use app\common\service\ApiService;
 
 class ApiValidate extends Validate
 {
@@ -47,35 +49,27 @@ class ApiValidate extends Validate
     protected function checkApiExist($value, $rule, $data = [])
     {
         $api_id = isset($data['api_id']) ? $data['api_id'] : '';
-
         if ($api_id) {
             if ($data['api_pid'] == $data['api_id']) {
-                return '接口父级不能等于接口本身';
+                return '接口父级不能等于接口自己';
             }
         }
 
-        $api_name = Db::name('api')
-            ->field('api_id')
-            ->where('api_id', '<>', $api_id)
-            ->where('api_pid', '=', $data['api_pid'])
-            ->where('api_name', '=', $data['api_name'])
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($api_name) {
+        $where_name[] = ['api_id', '<>', $api_id];
+        $where_name[] = ['api_pid', '=', $data['api_pid']];
+        $where_name[] = ['api_name', '=', $data['api_name']];
+        $where_name[] = ['is_delete', '=', 0];
+        $api_name = ApiService::list($where_name, 1, 1, [], 'api_id');
+        if ($api_name['list']) {
             return '接口名称已存在：' . $data['api_name'];
         }
 
         if ($data['api_url']) {
-            $api_url = Db::name('api')
-                ->field('api_id')
-                ->where('api_id', '<>', $api_id)
-                ->where('api_url', '=', $data['api_url'])
-                ->where('api_url', '<>', '')
-                ->where('is_delete', '=', 0)
-                ->find();
-
-            if ($api_url) {
+            $where_url[] = ['api_id', '<>', $api_id];
+            $where_url[] = ['api_url', '=', $data['api_url']];
+            $where_url[] = ['is_delete', '=', 0];
+            $api_url = ApiService::list($where_url, 1, 1, [], 'api_id');
+            if ($api_url['list']) {
                 return '接口链接已存在：' . $data['api_url'];
             }
         }
@@ -86,15 +80,10 @@ class ApiValidate extends Validate
     // 自定义验证规则：接口是否有子级接口
     protected function checkApiChild($value, $rule, $data = [])
     {
-        $api_id = $value;
-
-        $api = Db::name('api')
-            ->field('api_id')
-            ->where('api_pid', '=', $api_id)
-            ->where('is_delete', '=', 0)
-            ->find();
-
-        if ($api) {
+        $where_pid[] = ['api_pid', '=', $data['api_id']];
+        $where_pid[] = ['is_delete', '=', 0];
+        $api_pid = ApiService::list($where_pid, 1, 1, [], 'api_id');
+        if ($api_pid['list']) {
             return '请删除所有子级接口后再删除';
         }
 

@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 内容设置缓存
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-06-17
- * @LastEditTime : 2021-07-13
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 内容设置缓存
 namespace app\common\cache\cms;
 
 use think\facade\Cache;
@@ -21,7 +23,7 @@ class SettingCache
      */
     public static function key($setting_id = 0)
     {
-        $key = 'cms:setting:' . $setting_id;
+        $key = 'cms_setting:' . $setting_id;
 
         return $key;
     }

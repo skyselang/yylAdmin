@@ -1,15 +1,18 @@
 <?php
-/*
- * @Description  : 日志模型
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-04-17
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 日志管理模型
 namespace app\common\model\admin;
 
 use think\Model;
 use hg\apidoc\annotation\Field;
+use hg\apidoc\annotation\AddField;
 
 class UserLogModel extends Model
 {
@@ -45,8 +48,9 @@ class UserLogModel extends Model
 
     /**
      * @Field("log_type")
+     * @AddField("log_type", type="int", desc="日志类型1登录2操作3退出")
      */
-    public function log()
+    public function log_type()
     {
     }
 }

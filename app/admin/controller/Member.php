@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 会员管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-23
- * @LastEditTime : 2021-07-16
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员管理控制器
 namespace app\admin\controller;
 
 use think\facade\Request;
@@ -25,10 +27,8 @@ class Member
      * @Apidoc\Title("会员列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param("member_id", type="int", default="", desc="会员ID")
-     * @Apidoc\Param("username", type="string", default="", desc="账号")
-     * @Apidoc\Param("phone", type="string", default="", desc="手机")
-     * @Apidoc\Param("email", type="string", default="", desc="邮箱")
+     * @Apidoc\Param(ref="paramSort")
+     * @Apidoc\Param(ref="paramSearch")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
@@ -40,38 +40,31 @@ class Member
      */
     public function list()
     {
-        $page       = Request::param('page/d', 1);
-        $limit      = Request::param('limit/d', 10);
-        $sort_field = Request::param('sort_field/s ', '');
-        $sort_type  = Request::param('sort_type/s', '');
-        $member_id  = Request::param('member_id/d', '');
-        $username   = Request::param('username/s', '');
-        $phone      = Request::param('phone/s', '');
-        $email      = Request::param('email/s', '');
-        $date_type  = Request::param('date_type/s', '');
-        $date_range = Request::param('date_range/a', []);
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
-        $where = [];
-        if ($member_id) {
-            $where[] = ['member_id', '=', $member_id];
+        $where[] = ['is_delete', '=', 0];
+        if ($search_field && $search_value) {
+            if ($search_field == 'member_id') {
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
         }
-        if ($username) {
-            $where[] = ['username', 'like', '%' . $username . '%'];
-        }
-        if ($phone) {
-            $where[] = ['phone', 'like', '%' . $phone . '%'];
-        }
-        if ($email) {
-            $where[] = ['email', 'like', '%' . $email . '%'];
-        }
-        if ($date_type && $date_range) {
-            $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
-            $where[] = [$date_type, '<=', $date_range[1] . ' 23:59:59'];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         }
 
         $data = MemberService::list($where, $page, $limit, $order);
@@ -123,7 +116,7 @@ class Member
         $param['email']     = Request::param('email/s', '');
         $param['region_id'] = Request::param('region_id/d', 0);
         $param['remark']    = Request::param('remark/s', '');
-        $param['sort']      = Request::param('sort/d', 10000);
+        $param['sort']      = Request::param('sort/d', 250);
 
         validate(MemberValidate::class)->scene('add')->check($param);
 
@@ -150,7 +143,7 @@ class Member
         $param['email']     = Request::param('email/s', '');
         $param['region_id'] = Request::param('region_id/d', 0);
         $param['remark']    = Request::param('remark/s', '');
-        $param['sort']      = Request::param('sort/d', 10000);
+        $param['sort']      = Request::param('sort/d', 250);
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
@@ -195,7 +188,7 @@ class Member
 
         $data = UploadService::upload($param['avatar'], 'member/avatar');
 
-        return success($data);
+        return success($data, '上传成功');
     }
 
     /**

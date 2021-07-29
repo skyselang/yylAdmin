@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 日志管理验证器
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-06
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 日志管理验证器
 namespace app\common\validate\admin;
 
 use think\Validate;

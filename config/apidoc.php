@@ -1,4 +1,13 @@
 <?php
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
+
+// 接口文档配置
 return [
     // 文档标题
     'title' => '接口文档与调试',
@@ -19,8 +28,8 @@ return [
     'groups' => [
         ['title' => 'index', 'name' => 'index'],
         ['title' => 'admin', 'name' => 'admin'],
-        ['title' => '内容管理', 'name' => 'adminCms'],
-        ['title' => '内容CMS', 'name' => 'indexCms'],
+        ['title' => 'CMS', 'name' => 'adminCms'],
+        ['title' => 'CMS', 'name' => 'indexCms'],
     ],
     // 指定公共注释定义的文件地址
     'definitions' => 'app\common\controller\ApidocDefinitions',

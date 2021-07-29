@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 留言管理缓存
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-13
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 留言管理缓存
 namespace app\common\cache\cms;
 
 use think\facade\Cache;
@@ -21,7 +23,7 @@ class CommentCache
      */
     public static function key($comment_id = '')
     {
-        $key = 'cms:comment:' . $comment_id;
+        $key = 'cms_comment:' . $comment_id;
 
         return $key;
     }

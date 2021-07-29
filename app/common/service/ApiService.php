@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 接口管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-27
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 接口管理
 namespace app\common\service;
 
 use think\facade\Db;
@@ -15,19 +17,64 @@ class ApiService
 {
     /**
      * 接口列表
+     *
+     * @param array   $where 条件
+     * @param integer $page  页数
+     * @param integer $limit 数量
+     * @param array   $order 排序
+     * @param string  $field 字段
+     * 
+     * @return array 
+     */
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
+    {
+        if (empty($field)) {
+            $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+        }
+
+        if (empty($order)) {
+            $order = ['api_sort' => 'desc', 'api_id' => 'desc'];
+        }
+
+        $count = Db::name('api')
+            ->where($where)
+            ->count('api_id');
+
+        $list = Db::name('api')
+            ->field($field)
+            ->where($where)
+            ->page($page)
+            ->limit($limit)
+            ->order($order)
+            ->select()
+            ->toArray();
+
+        $pages = ceil($count / $limit);
+
+        $data['count'] = $count;
+        $data['pages'] = $pages;
+        $data['page']  = $page;
+        $data['limit'] = $limit;
+        $data['list']  = $list;
+
+        return $data;
+    }
+
+    /**
+     * 接口树形
      * 
      * @param string
      *
      * @return array 树形
      */
-    public static function list()
+    public static function tree()
     {
-        $key = 'list';
+        $key = 'tree';
         $api = ApiCache::get($key);
 
         if (empty($api)) {
-            $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin,create_time,update_time';
-        
+            $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+
             $where[] = ['is_delete', '=', 0];
 
             $order = ['api_sort' => 'desc', 'api_id' => 'asc'];
@@ -39,7 +86,7 @@ class ApiService
                 ->select()
                 ->toArray();
 
-            $api['list'] = self::toTree($list, 0);
+            $api = self::toTree($list, 0);
 
             ApiCache::set($key, $api);
         }
@@ -112,7 +159,7 @@ class ApiService
     /**
      * 接口修改
      *
-     * @param array  $param  接口信息
+     * @param array $param 接口信息
      * 
      * @return array
      */
@@ -282,44 +329,6 @@ class ApiService
         }
 
         return $tree;
-    }
-
-    /**
-     * 接口模糊查询
-     *
-     * @param string $keyword 关键词
-     * @param string $field   字段
-     *
-     * @return array
-     */
-    public static function likeQuery($keyword, $field = 'api_url|api_name')
-    {
-        $api = Db::name('api')
-            ->where('is_delete', '=', 0)
-            ->where($field, 'like', '%' . $keyword . '%')
-            ->select()
-            ->toArray();
-
-        return $api;
-    }
-
-    /**
-     * 接口精确查询
-     *
-     * @param string $keyword 关键词
-     * @param string $field   字段
-     *
-     * @return array
-     */
-    public static function equQuery($keyword, $field = 'api_url|api_name')
-    {
-        $api = Db::name('api')
-            ->where('is_delete', '=', 0)
-            ->where($field, '=', $keyword)
-            ->select()
-            ->toArray();
-
-        return $api;
     }
 
     /**

@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 微信设置缓存
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-04-22
- * @LastEditTime : 2021-05-17
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 微信设置缓存
 namespace app\common\cache;
 
 use think\facade\Cache;
@@ -21,7 +23,7 @@ class SettingWechatCache
      */
     public static function key($setting_wechat_id = 0)
     {
-        $key = 'SettingWechat:' . $setting_wechat_id;
+        $key = 'setting_wechat:' . $setting_wechat_id;
 
         return $key;
     }

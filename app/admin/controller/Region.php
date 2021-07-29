@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 地区管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-12-08
- * @LastEditTime : 2021-05-25
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 地区管理控制器
 namespace app\admin\controller;
 
 use think\facade\Request;
@@ -23,15 +25,13 @@ class Region
     /**
      * @Apidoc\Title("地区列表")
      * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param("type", type="string", default="list", desc="返回的数据类型：list列表，tree树形")
-     * @Apidoc\Param("region_pid", type="string", default="", desc="pid")
+     * @Apidoc\Param("region_pid", type="string", default="0", desc="pid")
      * @Apidoc\Param("region_id", type="string", default="", desc="id")
      * @Apidoc\Param("region_name", type="string", default="", desc="名称")
      * @Apidoc\Param("region_pinyin", type="string", default="", desc="拼音")
      * @Apidoc\Returned(ref="returnCode"),
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
      *      @Apidoc\Returned("list", type="array", desc="数据列表", 
      *          @Apidoc\Returned(ref="app\common\model\RegionModel\list")
      *      )
@@ -39,10 +39,10 @@ class Region
      */
     public function list()
     {
-        $sort_field    = Request::param('sort_field/s ', '');
-        $sort_type     = Request::param('sort_type/s', '');
         $type          = Request::param('type/s', 'list');
-        $region_pid    = Request::param('region_pid/d', 0) ?: 0;
+        $sort_field    = Request::param('sort_field/s', '');
+        $sort_value    = Request::param('sort_value/s', '');
+        $region_pid    = Request::param('region_pid/d', 0);
         $region_id     = Request::param('region_id/d', '');
         $region_name   = Request::param('region_name/s', '');
         $region_pinyin = Request::param('region_pinyin/s', '');
@@ -65,8 +65,8 @@ class Region
             }
 
             $order = [];
-            if ($sort_field && $sort_type) {
-                $order = [$sort_field => $sort_type];
+            if ($sort_field && $sort_value) {
+                $order = [$sort_field => $sort_value];
             }
 
             $data = RegionService::list($where, $order);

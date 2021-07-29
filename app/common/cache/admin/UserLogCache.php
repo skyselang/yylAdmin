@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 日志管理缓存
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-07-15
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 日志管理缓存
 namespace app\common\cache\admin;
 
 use think\facade\Cache;
@@ -21,7 +23,7 @@ class UserLogCache
      */
     public static function key($admin_user_log_id = '')
     {
-        $key = 'admin:userLog:' . $admin_user_log_id;
+        $key = 'admin_user_log:' . $admin_user_log_id;
 
         return $key;
     }

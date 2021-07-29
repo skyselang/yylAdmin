@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 控制台
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-05
- * @LastEditTime : 2021-07-15
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 控制台控制器
 namespace app\admin\controller\admin;
 
 use think\facade\Request;
@@ -31,7 +33,7 @@ class Index
     public function index()
     {
         $data = IndexService::index();
-        $msg  = '后端安装成功，感谢使用，如有帮助，欢迎Star！';
+        $msg  = 'yylAdmin后端安装成功，感谢使用，如有帮助，欢迎Star！';
 
         return success($data, $msg);
     }

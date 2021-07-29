@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 会员管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-23
- * @LastEditTime : 2021-07-16
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员管理
 namespace app\common\service;
 
 use think\facade\Db;
@@ -27,13 +29,9 @@ class MemberService
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
-        if ($field) {
-            $field = str_merge($field, 'member_id,username');
-        } else {
-            $field = 'member_id,username,nickname,phone,email,avatar,sort,remark,create_time,login_time,is_disable';
+        if (empty($field)) {
+            $field = 'member_id,username,nickname,phone,email,avatar,sort,remark,create_time,is_disable';
         }
-
-        $where[] = ['is_delete', '=', 0];
 
         if (empty($order)) {
             $order = ['sort' => 'desc', 'member_id' => 'desc'];
@@ -266,44 +264,6 @@ class MemberService
         MemberCache::upd($member_id);
 
         return $update;
-    }
-
-    /**
-     * 会员模糊查询
-     *
-     * @param string $keyword 关键词
-     * @param string $field   字段
-     *
-     * @return array
-     */
-    public static function likeQuery($keyword, $field = 'username|nickname|phone|email')
-    {
-        $member = Db::name('member')
-            ->where('is_delete', '=', 0)
-            ->where($field, 'like', '%' . $keyword . '%')
-            ->select()
-            ->toArray();
-
-        return $member;
-    }
-
-    /**
-     * 会员精确查询
-     *
-     * @param string $keyword 关键词
-     * @param string $field   字段
-     *
-     * @return array
-     */
-    public static function equQuery($keyword, $field = 'username|nickname|phone|email')
-    {
-        $member = Db::name('member')
-            ->where('is_delete', '=', 0)
-            ->where($field, '=', $keyword)
-            ->select()
-            ->toArray();
-
-        return $member;
     }
 
     /**

@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 菜单管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-05
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 菜单管理
 namespace app\common\service\admin;
 
 use think\facade\Db;
@@ -54,7 +56,7 @@ class MenuService
         $key  = 'tree';
         $tree = MenuCache::get($key);
         if (empty($tree)) {
-            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,is_unlogin,create_time,update_time';
+            $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,is_unlogin';
 
             $where[] = ['is_delete', '=', 0];
 
@@ -389,7 +391,6 @@ class MenuService
         $res = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -422,7 +423,6 @@ class MenuService
         $res = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -455,7 +455,6 @@ class MenuService
         $res = Db::name('admin_menu')
             ->where('admin_menu_id', $admin_menu_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -509,7 +508,6 @@ class MenuService
                 unset($admin_menu_ids[$k]);
             }
         }
-
         if (empty($admin_menu_ids)) {
             $admin_menu_ids = str_join('');
         } else {
@@ -573,7 +571,6 @@ class MenuService
                 unset($admin_menu_ids[$k]);
             }
         }
-
         if (empty($admin_menu_ids)) {
             $admin_menu_ids = str_join('');
         } else {
@@ -586,7 +583,6 @@ class MenuService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }

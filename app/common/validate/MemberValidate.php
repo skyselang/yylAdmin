@@ -1,15 +1,16 @@
 <?php
-/*
- * @Description  : 会员管理验证器
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-23
- * @LastEditTime : 2021-07-15
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员管理验证器
 namespace app\common\validate;
 
 use think\Validate;
-use think\facade\Db;
 use app\common\service\MemberService;
 
 class MemberValidate extends Validate
@@ -78,22 +79,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
-        $member_id = isset($data['member_id']) ? $data['member_id'] : '';
-        $username  = $data['username'];
-
-        if ($member_id) {
-            $where[] = ['member_id', '<>', $member_id];
+        if (isset($data['member_id'])) {
+            $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['username', '=', $username];
         $where[] = ['is_delete', '=', 0];
-
-        $member = Db::name('member')
-            ->field('member_id')
-            ->where($where)
-            ->find();
-
-        if ($member) {
-            return '账号已存在：' . $username;
+        $where[] = ['username', '=', $data['username']];
+        $member = MemberService::list($where, 1, 1, [], 'member_id');
+        if ($member['list']) {
+            return '账号已存在：' . $data['username'];
         }
 
         return true;
@@ -102,22 +95,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：昵称是否已存在
     protected function checkNickname($value, $rule, $data = [])
     {
-        $member_id = isset($data['member_id']) ? $data['member_id'] : '';
-        $nickname  = $data['nickname'];
-
-        if ($member_id) {
-            $where[] = ['member_id', '<>', $member_id];
+        if (isset($data['member_id'])) {
+            $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['nickname', '=', $nickname];
         $where[] = ['is_delete', '=', 0];
-
-        $member = Db::name('member')
-            ->field('member_id')
-            ->where($where)
-            ->find();
-
-        if ($member) {
-            return '昵称已存在：' . $nickname;
+        $where[] = ['nickname', '=', $data['nickname']];
+        $member = MemberService::list($where, 1, 1, [], 'member_id');
+        if ($member['list']) {
+            return '昵称已存在：' . $data['nickname'];
         }
 
         return true;
@@ -126,22 +111,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
-        $member_id = isset($data['member_id']) ? $data['member_id'] : '';
-        $phone     = $data['phone'];
-
-        if ($member_id) {
-            $where[] = ['member_id', '<>', $member_id];
+        if (isset($data['member_id'])) {
+            $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['phone', '=', $phone];
         $where[] = ['is_delete', '=', 0];
-
-        $member = Db::name('member')
-            ->field('member_id')
-            ->where($where)
-            ->find();
-
-        if ($member) {
-            return '手机已存在：' . $phone;
+        $where[] = ['phone', '=', $data['phone']];
+        $member = MemberService::list($where, 1, 1, [], 'member_id');
+        if ($member['list']) {
+            return '手机已存在：' . $data['phone'];
         }
 
         return true;
@@ -150,22 +127,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmail($value, $rule, $data = [])
     {
-        $member_id = isset($data['member_id']) ? $data['member_id'] : '';
-        $email     = $data['email'];
-
-        if ($member_id) {
-            $where[] = ['member_id', '<>', $member_id];
+        if (isset($data['member_id'])) {
+            $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['email', '=', $email];
         $where[] = ['is_delete', '=', 0];
-
-        $member = Db::name('member')
-            ->field('member_id')
-            ->where($where)
-            ->find();
-
-        if ($member) {
-            return '邮箱已存在：' . $email;
+        $where[] = ['email', '=', $data['email']];
+        $member = MemberService::list($where, 1, 1, [], 'member_id');
+        if ($member['list']) {
+            return '邮箱已存在：' . $data['email'];
         }
 
         return true;
@@ -174,13 +143,13 @@ class MemberValidate extends Validate
     // 自定义验证规则：旧密码是否正确
     protected function checkPwdOld($value, $rule, $data = [])
     {
-        $member_id    = isset($data['member_id']) ? $data['member_id'] : '';
-        $member       = MemberService::info($member_id);
-        $password     = $member['password'];
-        $password_old = md5($data['password_old']);
-
-        if ($password != $password_old) {
-            return '旧密码错误';
+        if (isset($data['member_id'])) {
+            $member       = MemberService::info($data['member_id']);
+            $password     = $member['password'];
+            $password_old = md5($data['password_old']);
+            if ($password != $password_old) {
+                return '旧密码错误';
+            }
         }
 
         return true;

@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 日期时间
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-07-15
- * @LastEditTime : 2021-05-07
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 日期时间
 namespace app\common\utils;
 
 class DatetimeUtils

@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 内容
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-04-19
- * @LastEditTime : 2021-07-13
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 内容控制器
 namespace app\index\controller\cms;
 
 use think\facade\Request;
@@ -60,8 +62,8 @@ class Content
     {
         $page        = Request::param('page/d', 1);
         $limit       = Request::param('limit/d', 10);
-        $sort_field  = Request::param('sort_field/s ', '');
-        $sort_type   = Request::param('sort_type/s', '');
+        $sort_field  = Request::param('sort_field/s', '');
+        $sort_value  = Request::param('sort_value/s', '');
         $name        = Request::param('name/s', '');
         $category_id = Request::param('category_id/d', '');
 
@@ -75,8 +77,8 @@ class Content
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         } else {
             $order = ['is_top' => 'desc', 'is_hot' => 'desc', 'is_rec' => 'desc', 'sort' => 'desc', 'create_time' => 'desc'];
         }

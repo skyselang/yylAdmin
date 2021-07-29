@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 角色管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-05
- * @LastEditTime : 2021-05-24
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 角色管理
 namespace app\common\service\admin;
 
 use think\facade\Db;
@@ -27,9 +29,7 @@ class RoleService
      */
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        if ($field) {
-            $field = str_merge($field, 'admin_role_id,role_name');
-        } else {
+        if (empty($field)) {
             $field = 'admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time';
         }
 

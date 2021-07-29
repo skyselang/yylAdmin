@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 会员日志
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-12-01
- * @LastEditTime : 2021-05-27
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员日志
 namespace app\common\service;
 
 use think\facade\Db;
@@ -29,10 +31,8 @@ class MemberLogService
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
-        if ($field) {
-            $field = str_merge($field, 'member_log_id,member_id,api_id');
-        } else {
-            $field = 'member_log_id,member_id,api_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+        if (empty($field)) {
+            $field = 'member_log_id,member_id,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -55,20 +55,24 @@ class MemberLogService
             ->toArray();
 
         foreach ($list as $k => $v) {
-            $list[$k]['username'] = '';
-            $list[$k]['nickname'] = '';
-            $admin_user = MemberService::info($v['member_id']);
-            if ($admin_user) {
-                $list[$k]['username'] = $admin_user['username'];
-                $list[$k]['nickname'] = $admin_user['nickname'];
+            if (isset($v['member_id'])) {
+                $list[$k]['username'] = '';
+                $list[$k]['nickname'] = '';
+                $admin_user = MemberService::info($v['member_id']);
+                if ($admin_user) {
+                    $list[$k]['username'] = $admin_user['username'];
+                    $list[$k]['nickname'] = $admin_user['nickname'];
+                }
             }
 
-            $list[$k]['api_name'] = '';
-            $list[$k]['api_url']  = '';
-            $api = ApiService::info($v['api_id']);
-            if ($api) {
-                $list[$k]['api_name'] = $api['api_name'];
-                $list[$k]['api_url']  = $api['api_url'];
+            if (isset($v['api_id'])) {
+                $list[$k]['api_name'] = '';
+                $list[$k]['api_url']  = '';
+                $api = ApiService::info($v['api_id']);
+                if ($api) {
+                    $list[$k]['api_name'] = $api['api_name'];
+                    $list[$k]['api_url']  = $api['api_url'];
+                }
             }
         }
 
@@ -251,7 +255,7 @@ class MemberLogService
         $username   = $param['username'];
         $api_id     = $param['api_id'];
         $api_url    = $param['api_url'];
-        $date_range = $param['date_range'];
+        $date_value = $param['date_value'];
 
         $where = [];
         if ($member_id && $username) {
@@ -300,14 +304,14 @@ class MemberLogService
                 $where[] = ['api_id', '=', $api['api_id']];
             }
         }
-        if ($date_range) {
-            $sta_date = $date_range[0];
-            $end_date = $date_range[1];
+        if ($date_value) {
+            $sta_date = $date_value[0];
+            $end_date = $date_value[1];
 
             $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
         }
-        
+
         $res = Db::name('member_log')
             ->where($where)
             ->delete(true);
@@ -459,7 +463,7 @@ class MemberLogService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = 'field:' . 'top' . $top . '-' . $sta_date . '-' . $end_date . $type;
+        $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
 
         if ($type == 'country') {
             $group = 'request_country';

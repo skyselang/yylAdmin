@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : admin公共函数文件
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-04-16
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// admin公共函数文件
 use think\facade\Config;
 use think\facade\Request;
 use app\common\service\admin\MenuService;

@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 用户管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-03-26
- * @LastEditTime : 2021-07-16
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 用户管理控制器
 namespace app\admin\controller\admin;
 
 use think\facade\Request;
@@ -25,6 +27,7 @@ class User
      * @Apidoc\Title("用户列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param("username", type="string", default="", desc="账号")
      * @Apidoc\Param("nickname", type="string", default="", desc="昵称")
      * @Apidoc\Param("email", type="string", default="", desc="邮箱")
@@ -40,8 +43,8 @@ class User
     {
         $page       = Request::param('page/d', 1);
         $limit      = Request::param('limit/d', 10);
-        $sort_field = Request::param('sort_field/s ', '');
-        $sort_type  = Request::param('sort_type/s', '');
+        $sort_field = Request::param('sort_field/s', '');
+        $sort_value = Request::param('sort_value/s', '');
         $username   = Request::param('username/s', '');
         $nickname   = Request::param('nickname/s', '');
         $email      = Request::param('email/s', '');
@@ -58,8 +61,8 @@ class User
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         }
 
         $field = '';
@@ -103,6 +106,7 @@ class User
      */
     public function add()
     {
+        $param['avatar']   = Request::param('avatar/s', '');
         $param['username'] = Request::param('username/s', '');
         $param['nickname'] = Request::param('nickname/s', '');
         $param['password'] = Request::param('password/s', '');
@@ -180,7 +184,7 @@ class User
 
         $data = UploadService::upload($param['avatar'], 'admin/user');
 
-        return success($data);
+        return success($data, '上传成功');
     }
 
     /**

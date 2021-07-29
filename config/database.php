@@ -1,8 +1,13 @@
 <?php
 // +----------------------------------------------------------------------
-// | 数据库配置
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
+// 数据库配置
 return [
     // 默认使用的数据库连接配置
     'default'         => env('database.driver', 'mysql'),
@@ -55,7 +60,7 @@ return [
             // 监听SQL
             'trigger_sql'       => env('app_debug', false),
             // 开启字段缓存
-            'fields_cache'      => env('database.fieldscache', false),
+            'fields_cache'      => env('database.fieldscache', true),
             // 字段缓存路径
             'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
         ],

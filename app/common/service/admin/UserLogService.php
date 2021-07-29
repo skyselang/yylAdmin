@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 日志管理
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-05-06
- * @LastEditTime : 2021-07-14
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 日志管理
 namespace app\common\service\admin;
 
 use think\facade\Db;
@@ -29,9 +31,7 @@ class UserLogService
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
-        if ($field) {
-            $field = str_merge($field, 'admin_user_log_id,admin_user_id,admin_menu_id');
-        } else {
+        if (empty($field)) {
             $field = 'admin_user_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
@@ -55,18 +55,22 @@ class UserLogService
             ->toArray();
 
         foreach ($list as $k => $v) {
-            $list[$k]['username'] = '';
-            $admin_user = UserService::info($v['admin_user_id']);
-            if ($admin_user) {
-                $list[$k]['username'] = $admin_user['username'];
+            if (isset($v['admin_user_id'])) {
+                $list[$k]['username'] = '';
+                $admin_user = UserService::info($v['admin_user_id']);
+                if ($admin_user) {
+                    $list[$k]['username'] = $admin_user['username'];
+                }
             }
 
-            $list[$k]['menu_name'] = '';
-            $list[$k]['menu_url']  = '';
-            $admin_menu = MenuService::info($v['admin_menu_id']);
-            if ($admin_menu) {
-                $list[$k]['menu_name'] = $admin_menu['menu_name'];
-                $list[$k]['menu_url']  = $admin_menu['menu_url'];
+            if (isset($v['admin_menu_id'])) {
+                $list[$k]['menu_name'] = '';
+                $list[$k]['menu_url']  = '';
+                $admin_menu = MenuService::info($v['admin_menu_id']);
+                if ($admin_menu) {
+                    $list[$k]['menu_name'] = $admin_menu['menu_name'];
+                    $list[$k]['menu_url']  = $admin_menu['menu_url'];
+                }
             }
         }
 
@@ -236,7 +240,7 @@ class UserLogService
         $username      = $param['username'];
         $admin_menu_id = $param['admin_menu_id'];
         $menu_url      = $param['menu_url'];
-        $date_range    = $param['date_range'];
+        $date_value    = $param['date_value'];
 
         $where = [];
         if ($admin_user_id && $username) {
@@ -285,9 +289,9 @@ class UserLogService
                 $where[] = ['admin_menu_id', '=', $admin_menu['admin_menu_id']];
             }
         }
-        if ($date_range) {
-            $sta_date = $date_range[0];
-            $end_date = $date_range[1];
+        if ($date_value) {
+            $sta_date = $date_value[0];
+            $end_date = $date_value[1];
 
             $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
@@ -444,7 +448,7 @@ class UserLogService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = 'field:' . 'top' . $top . '-' . $sta_date . '-' . $end_date . $type;
+        $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
 
         if ($type == 'country') {
             $group = 'request_country';

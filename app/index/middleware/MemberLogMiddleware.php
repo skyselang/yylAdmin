@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 会员日志中间件
- * @Author       : https://github.com/skyselang
- * @Date         : 2020-11-24
- * @LastEditTime : 2021-05-27
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 会员日志中间件
 namespace app\index\middleware;
 
 use Closure;

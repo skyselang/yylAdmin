@@ -1,11 +1,13 @@
 <?php
-/*
- * @Description  : 内容管理控制器
- * @Author       : https://github.com/skyselang
- * @Date         : 2021-06-09
- * @LastEditTime : 2021-07-15
- */
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
 
+// 内容管理控制器
 namespace app\admin\controller\cms;
 
 use think\facade\Request;
@@ -27,7 +29,7 @@ class Content
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *      @Apidoc\Returned("list", type="array", desc="树形列表", 
      *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
      *      )
      * )
@@ -44,6 +46,7 @@ class Content
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\search")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Returned(ref="returnCode")
@@ -57,36 +60,44 @@ class Content
      */
     public function list()
     {
-        $page        = Request::param('page/d', 1);
-        $limit       = Request::param('limit/d', 10);
-        $sort_field  = Request::param('sort_field/s ', '');
-        $sort_type   = Request::param('sort_type/s', '');
-        $content_id  = Request::param('content_id/d', '');
-        $name        = Request::param('name/s', '');
-        $category_id = Request::param('category_id/d', '');
-        $date_type   = Request::param('date_type/s', '');
-        $date_range  = Request::param('date_range/a', []);
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $category_id  = Request::param('category_id/d', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
-        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
+        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
         $where[] = ['is_delete', '=', 0];
-        if ($content_id) {
-            $where[] = ['content_id', '=', $content_id];
-        }
-        if ($name) {
-            $where[] = ['name', 'like', '%' . $name . '%'];
-        }
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
         }
-        if ($date_type && $date_range) {
-            $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
-            $where[] = [$date_type, '<=', $date_range[1] . ' 23:59:59'];
+        if ($search_field && $search_value) {
+            if ($search_field == 'content_id') {
+                $where[] = [$search_field, '=', $search_value];
+            } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
+        }
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         }
 
         $field = '';
@@ -337,36 +348,44 @@ class Content
      */
     public function recover()
     {
-        $page        = Request::param('page/d', 1);
-        $limit       = Request::param('limit/d', 10);
-        $sort_field  = Request::param('sort_field/s ', '');
-        $sort_type   = Request::param('sort_type/s', '');
-        $content_id  = Request::param('content_id/d', '');
-        $name        = Request::param('name/s', '');
-        $category_id = Request::param('category_id/d', '');
-        $date_type   = Request::param('date_type/s', '');
-        $date_range  = Request::param('date_range/a', []);
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $category_id  = Request::param('category_id/d', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
-        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_type' => $sort_type]);
+        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
         $where[] = ['is_delete', '=', 1];
-        if ($content_id) {
-            $where[] = ['content_id', '=', $content_id];
-        }
-        if ($name) {
-            $where[] = ['name', 'like', '%' . $name . '%'];
-        }
-        if ($category_id !== '') {
+        if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
         }
-        if ($date_type && $date_range) {
-            $where[] = [$date_type, '>=', $date_range[0] . ' 00:00:00'];
-            $where[] = [$date_type, '<=', $date_range[1] . ' 23:59:59'];
+        if ($search_field && $search_value) {
+            if ($search_field == 'content_id') {
+                $where[] = [$search_field, '=', $search_value];
+            } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
+        }
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
-        if ($sort_field && $sort_type) {
-            $order = [$sort_field => $sort_type];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
         } else {
             $order = ['delete_time' => 'desc'];
         }
