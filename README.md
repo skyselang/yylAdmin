@@ -4,7 +4,7 @@
 
 ## 文档
 
-- [yylAdmin文档](https://skyselang.github.io/yylAdminDoc/)
+- [yylAdmin文档](http://skyselang.gitee.io/yyladmindoc/)
 
 ## 简介
 
