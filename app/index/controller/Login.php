@@ -22,6 +22,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("登录退出")
  * @Apidoc\Sort("3")
+ * @Apidoc\Group("login")
  */
 class Login
 {

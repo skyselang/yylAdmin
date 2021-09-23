@@ -21,6 +21,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("会员中心")
  * @Apidoc\Sort("4")
+ * @Apidoc\Group("member")
  */
 class Member
 {

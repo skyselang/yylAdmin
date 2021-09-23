@@ -10,9 +10,9 @@
 // 接口文档配置
 return [
     // 文档标题
-    'title' => '接口文档与调试',
+    'title' => 'yylAdmin-接口文档与调试',
     // 文档描述
-    'desc' => 'yylAdmin',
+    'desc' => 'yylAdmin ApiDoc',
     // 版权申明
     'copyright' => '',
     // 默认作者
@@ -21,8 +21,28 @@ return [
     'default_method' => 'GET',
     // 设置应用/版本（必须设置）
     'apps' => [
-        ['title' => 'index前台', 'path' => 'app\index\controller', 'folder' => 'index'],
-        ['title' => 'admin后台', 'path' => 'app\admin\controller', 'folder' => 'admin'],
+        [
+            'title' => 'index前台',
+            'path' => 'app\index\controller',
+            'folder' => 'index',
+            'groups' => [
+                ['title' => '首页', 'name' => 'index'],
+                ['title' => '登录注册', 'name' => 'login'],
+                ['title' => '微信', 'name' => 'wechat'],
+                ['title' => '地区', 'name' => 'region'],
+                ['title' => '内容管理', 'name' => 'indexCms']
+            ],
+        ],
+        [
+            'title' => 'admin后台',
+            'path' => 'app\admin\controller',
+            'folder' => 'admin',
+            'groups' => [
+                ['title' => 'admin', 'name' => 'admin'],
+                ['title' => '文件管理', 'name' => 'adminFile'],
+                ['title' => '内容管理', 'name' => 'adminCms']
+            ]
+        ]
     ],
     // 控制器分组
     'groups' => [
@@ -41,13 +61,7 @@ return [
     // 缓存配置
     'cache' => [
         // 是否开启缓存
-        'enable' => true,
-        // 缓存文件路径
-        'path' => '../runtime/apidoc/',
-        // 是否显示更新缓存按钮
-        'reload' => true,
-        // 最大缓存文件数
-        'max' => 5,
+        'enable' => false,
     ],
     // 权限认证配置
     'auth' => [
@@ -57,6 +71,8 @@ return [
         'password' => "WYUtY8UiGNYM",
         // 密码加密盐
         'secret_key' => "yyladmin",
+        // 密码访问有效期
+        'expire' => 30 * 24 * 60 * 60
     ],
     // 统一的请求Header
     'headers' => [],
@@ -66,10 +82,7 @@ return [
     'responses' => [],
     // md文档
     'docs' => [
-        'menu_title' => '开发文档',
-        'menus'      => [
-            ['title' => '接口说明', 'path' => './private/apidoc/apidocs'],
-        ]
+        ['title' => '接口说明', 'path' => './private/apidoc/apidocs']
     ],
     // 快速生成CRUD
     'crud' => [

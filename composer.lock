@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7989e7f9c95ca79fe1d299ef7100365",
+    "content-hash": "b514fa89ea7ea0408902e8f9e2f16719",
     "packages": [
         {
             "name": "aliyuncs/oss-sdk-php",
@@ -692,16 +692,16 @@
         },
         {
             "name": "hg/apidoc",
-            "version": "v2.6.1",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/HGthecode/thinkphp-apidoc.git",
-                "reference": "31f9b3b60b08003de7aac3428a39d3a1bf43451f"
+                "reference": "e2d561947c85e565ce004ec475a966ffde007352"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/HGthecode/thinkphp-apidoc/zipball/31f9b3b60b08003de7aac3428a39d3a1bf43451f",
-                "reference": "31f9b3b60b08003de7aac3428a39d3a1bf43451f",
+                "url": "https://api.github.com/repos/HGthecode/thinkphp-apidoc/zipball/e2d561947c85e565ce004ec475a966ffde007352",
+                "reference": "e2d561947c85e565ce004ec475a966ffde007352",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -745,18 +745,19 @@
             "keywords": [
                 "apidoc",
                 "api文档",
+                "markdown",
+                "php api文档",
                 "php接口文档",
-                "swagger",
                 "thinkphp",
                 "接口文档",
                 "注释生成",
-                "自动生成"
+                "自动生成api"
             ],
             "support": {
                 "issues": "https://github.com/HGthecode/thinkphp-apidoc/issues",
-                "source": "https://github.com/HGthecode/thinkphp-apidoc/tree/v2.6.1"
+                "source": "https://github.com/HGthecode/thinkphp-apidoc/tree/v3.0.3"
             },
-            "time": "2021-05-31T14:50:26+00:00"
+            "time": "2021-09-14T10:02:54+00:00"
         },
         {
             "name": "league/flysystem",
@@ -1717,16 +1718,16 @@
         },
         {
             "name": "qcloud/cos-sdk-v5",
-            "version": "v2.3.1",
+            "version": "v2.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tencentyun/cos-php-sdk-v5.git",
-                "reference": "c28623a375e175e116e0826316064a2b99bc1e35"
+                "reference": "98168d18078381f7c1e2ba717f3de35e16760909"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tencentyun/cos-php-sdk-v5/zipball/c28623a375e175e116e0826316064a2b99bc1e35",
-                "reference": "c28623a375e175e116e0826316064a2b99bc1e35",
+                "url": "https://api.github.com/repos/tencentyun/cos-php-sdk-v5/zipball/98168d18078381f7c1e2ba717f3de35e16760909",
+                "reference": "98168d18078381f7c1e2ba717f3de35e16760909",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1736,9 +1737,10 @@
                 ]
             },
             "require": {
-                "guzzlehttp/guzzle": "~6.3",
-                "guzzlehttp/guzzle-services": "~1.1",
-                "php": ">=5.3.0"
+                "guzzlehttp/guzzle": ">=6.2.1",
+                "guzzlehttp/guzzle-services": ">=1.1",
+                "guzzlehttp/psr7": "<2.0",
+                "php": ">=5.6"
             },
             "type": "library",
             "autoload": {
@@ -1775,9 +1777,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tencentyun/cos-php-sdk-v5/issues",
-                "source": "https://github.com/tencentyun/cos-php-sdk-v5/tree/v2.3.1"
+                "source": "https://github.com/tencentyun/cos-php-sdk-v5/tree/v2.3.2"
             },
-            "time": "2021-09-13T02:40:54+00:00"
+            "time": "2021-09-16T08:53:08+00:00"
         },
         {
             "name": "qiniu/php-sdk",

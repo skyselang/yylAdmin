@@ -18,6 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("地区")
  * @Apidoc\Sort("5")
+ * @Apidoc\Group("region")
  */
 class Region
 {

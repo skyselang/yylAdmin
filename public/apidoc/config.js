@@ -1,26 +1,101 @@
 // eslint-disable-next-line no-unused-vars
-var config = {
-  // 请求host
-  HOST: "",
-  // 菜单配置
-  MENU: {
-    // 是否显示控制器类名
-    SHOW_CONTROLLER_CLASS: true,
-    // 是否显示接口url
-    SHOW_API_URL: true,
-    // 是否显示接口请求类型
-    SHOW_API_METHOD: true
+const config = {
+  // 标题
+  TITLE: "Apidoc",
+  // 缓存配置
+  CACHE: {
+    // 缓存前缀
+    PREFIX: "apidoc_",
   },
-  // 当字段无默认值时，使用字段类型为默认值
-  USE_TYPE_DEFAULT_VALUE: false,
-  HOSTS: [
-    // {
-    //   title: "本地测试",
-    //   host: "http://demo.apidoc.net.cn"
-    // },
-    // {
-    //   title: "正式环境",
-    //   host: "http://www.apidoc.net.cn"
-    // },
-  ]
+  // 请求配置
+  HTTP: {
+    // 接口响应超时时间
+    TIMEOUT: 30000,
+    // 多个可切换的host
+    HOSTS: [],
+  },
+  // 多语言
+  LANG: [
+    {
+      title: "简体中文",
+      lang: "zh-cn",
+      messages: {
+        "app.title": "Apidoc",
+        "home.title": "首页",
+        "home.appCount": "应用数",
+        "home.apiCount": "API数量",
+        "home.docsCount": "文档数量",
+        "common.ok": "确认",
+        "common.cancel": "取消",
+        "common.clear": "清空",
+        "common.desc": "说明",
+        "common.action": "操作",
+        "common.field": "字段",
+        "common.type": "类型",
+        "common.require": "必填",
+        "common.defaultValue": "默认值",
+        "common.value": "值",
+        "common.api": "API",
+        "common.docs": "文档",
+        "common.close": "关闭",
+        "common.view": "查看",
+        "common.copySuccess": "复制成功",
+        "common.page.404": "404-未知页面",
+        "common.notdata": "暂无数据",
+        "common.group": "分组",
+        "common.notGroup": "未分组",
+        "common.currentApp": "当前应用",
+        "lang.change.confirm.title": "您确认切换语言为 {langTitle} 吗？",
+        "lang.change.confirm.content": "确认后将刷新页面，并回到首页",
+        "host.change.confirm.title": "您确认切换Host为 {hostTitle} 吗？",
+        "auth.title": "授权访问",
+        "auth.input.placeholder": "请输入访问密码",
+        "apiPage.update.tip": "该接口有更新",
+        "apiPage.update.button": "点击此处更新",
+        "apiPage.author": "作者",
+        "apiPage.tag": "标签",
+        "apiPage.docs": "文档",
+        "apiPage.json": "Json",
+        "apiPage.debug": "调试",
+        "apiPage.title.header": "请求头",
+        "apiPage.title.params": "请求参数",
+        "apiPage.title.responses": "响应结果",
+        "apiPage.mdDetail.title": "{name} 字段的说明",
+        "apiPage.debug.mock.reload": "更新Mock",
+        "apiPage.debug.excute": "执行 Excute",
+        "layout.menu.reload": "更新菜单",
+        "layout.menu.openAll": "展开全部",
+        "layout.menu.hideAll": "收起全部",
+        "layout.cache.reload": "更新缓存",
+        "layout.tabs.leftSide": "左侧",
+        "layout.tabs.rightSide": "右侧",
+        "layout.tabs.notTab": "没有标签",
+        "layout.tabs.closeCurrent": "关闭当前",
+        "layout.tabs.closeLeft": "关闭左侧",
+        "layout.tabs.closeRight": "关闭右侧",
+        "layout.tabs.closeAll": "关闭全部",
+        "globalParam.title": "全局参数",
+        "globalParam.header": "Header",
+        "globalParam.header.message": "发送请求时，所有接口将自动携带以下Header参数。",
+        "globalParam.params": "Params",
+        "globalParam.params.message": "发送请求时，所有接口将自动携带以下Params参数。",
+        "globalParam.cancel.confirm": "确认清空以上所有参数吗?",
+        "globalParam.add": "添加参数",
+        "apiPage.json.formatError": "json 参数格式化错误",
+        "apiPage.debug.event.before": "请求前事件",
+        "apiPage.debug.event.after": "响应后事件",
+        "apiPage.debug.event.setHeader": "设置请求头参数",
+        "apiPage.debug.event.setGlobalHeader": "设置全局请求头参数",
+        "apiPage.debug.event.setGlobalParam": "设置全局请求参数",
+        "apiPage.debug.event.clearGlobalHeader": "清除全局请求头参数",
+        "apiPage.debug.event.clearGlobalParam": "清除全局请求参数",
+        "apiPage.debug.event.setParam": "设置请求参数",
+        "apiPage.debug.event.clearParam": "清除请求参数",
+        "apiPage.debug.event.handleParam": "处理请求参数",
+        "apiPage.debug.event.ajax": "发送请求",
+      },
+    },
+  ],
 };
+
+localStorage.APIDOC_CONFIG = JSON.stringify(config);

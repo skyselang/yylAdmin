@@ -20,6 +20,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("注册")
  * @Apidoc\Sort("2")
+ * @Apidoc\Group("login")
  */
 class Register
 {

@@ -16,6 +16,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("微信")
  * @Apidoc\Sort("6")
+ * @Apidoc\Group("wechat")
  */
 class Wechat
 {
