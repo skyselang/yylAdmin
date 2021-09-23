@@ -13,7 +13,6 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\common\validate\MemberValidate;
 use app\common\service\MemberService;
-use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -78,6 +77,7 @@ class Member
      * @Apidoc\Param(ref="app\common\model\MemberModel\id")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url"),
      *      @Apidoc\Returned(ref="app\common\model\MemberModel\info")
      * )
      */
@@ -88,7 +88,6 @@ class Member
         validate(MemberValidate::class)->scene('info')->check($param);
 
         $data = MemberService::info($param['member_id']);
-
         if ($data['is_delete'] == 1) {
             exception('会员已被删除：' . $param['member_id']);
         }
@@ -108,7 +107,7 @@ class Member
      */
     public function add()
     {
-        $param['avatar']    = Request::param('avatar/s', '');
+        $param['avatar_id'] = Request::param('avatar_id/d', 0);
         $param['username']  = Request::param('username/s', '');
         $param['nickname']  = Request::param('nickname/s', '');
         $param['password']  = Request::param('password/s', '');
@@ -136,7 +135,7 @@ class Member
     public function edit()
     {
         $param['member_id'] = Request::param('member_id/d', '');
-        $param['avatar']    = Request::param('avatar/s', '');
+        $param['avatar_id'] = Request::param('avatar_id/d', 0);
         $param['username']  = Request::param('username/s', '');
         $param['nickname']  = Request::param('nickname/s', '');
         $param['phone']     = Request::param('phone/s', '');
@@ -169,26 +168,6 @@ class Member
         $data = MemberService::dele($param['member_id']);
 
         return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("会员上传头像")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnFile")
-     */
-    public function avatar()
-    {
-        $param['avatar'] = Request::file('file');
-
-        validate(MemberValidate::class)->scene('avatar')->check($param);
-
-        $data = UploadService::upload($param['avatar'], 'member/avatar');
-
-        return success($data, '上传成功');
     }
 
     /**

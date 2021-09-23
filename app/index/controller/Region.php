@@ -75,7 +75,6 @@ class Region
         validate(RegionValidate::class)->scene('info')->check($param);
 
         $data = RegionService::info($param['region_id']);
-
         if ($data['is_delete'] == 1) {
             exception('地区已被删除');
         }

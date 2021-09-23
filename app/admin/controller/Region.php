@@ -91,7 +91,6 @@ class Region
         validate(RegionValidate::class)->scene('info')->check($param);
 
         $data = RegionService::info($param['region_id']);
-
         if ($data['is_delete'] == 1) {
             exception('地区已被删除：' . $param['region_id']);
         }
@@ -124,7 +123,6 @@ class Region
         if (empty($param['region_pid'])) {
             $param['region_pid'] = 0;
         }
-
         if (empty($param['region_level'])) {
             $param['region_level'] = 1;
         }
@@ -162,7 +160,6 @@ class Region
         if (empty($param['region_pid'])) {
             $param['region_pid'] = 0;
         }
-
         if (empty($param['region_level'])) {
             $param['region_level'] = 1;
         }

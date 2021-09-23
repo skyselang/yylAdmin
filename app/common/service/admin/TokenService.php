@@ -80,7 +80,6 @@ class TokenService
         }
 
         $admin_user = UserCache::get($admin_user_id);
-
         if (empty($admin_user)) {
             exception('账号登录状态已失效', 401);
         } else {

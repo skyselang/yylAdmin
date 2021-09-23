@@ -14,7 +14,6 @@ use think\facade\Request;
 use app\common\validate\admin\UserCenterValidate;
 use app\common\service\admin\UserCenterService;
 use app\common\service\admin\MenuService;
-use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -29,6 +28,7 @@ class UserCenter
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url"),
      *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
      * )
      */
@@ -39,7 +39,6 @@ class UserCenter
         validate(UserCenterValidate::class)->scene('info')->check($param);
 
         $data = UserCenterService::info($param['admin_user_id']);
-
         if ($data['is_delete'] == 1) {
             exception('账号已被删除！');
         }
@@ -58,7 +57,7 @@ class UserCenter
     public function edit()
     {
         $param['admin_user_id'] = admin_user_id();
-        $param['avatar']        = Request::param('avatar/s', '');
+        $param['avatar_id']     = Request::param('avatar_id/d', 0);
         $param['username']      = Request::param('username/s', '');
         $param['nickname']      = Request::param('nickname/s', '');
         $param['phone']         = Request::param('phone/s', '');
@@ -95,26 +94,6 @@ class UserCenter
     }
 
     /**
-     * @Apidoc\Title("上传头像")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnFile")
-     */
-    public function avatar()
-    {
-        $param['avatar'] = Request::file('file');
-
-        validate(UserCenterValidate::class)->scene('avatar')->check($param);
-
-        $data = UploadService::upload($param['avatar'], 'admin/user');
-
-        return success($data, '上传成功');
-    }
-
-    /**
      * @Apidoc\Title("我的日志")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
@@ -145,7 +124,6 @@ class UserCenter
 
         validate(UserCenterValidate::class)->scene('log')->check(['admin_user_id' => $admin_user_id]);
 
-        $where   = [];
         $where[] = ['admin_user_id', '=', $admin_user_id];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];

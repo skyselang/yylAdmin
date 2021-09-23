@@ -34,7 +34,6 @@ class SettingService
             $admin_setting = Db::name('admin_setting')
                 ->where('admin_setting_id', $admin_setting_id)
                 ->find();
-
             if (empty($admin_setting)) {
                 $admin_setting['admin_setting_id'] = $admin_setting_id;
                 $admin_setting['create_time']      = datetime();
@@ -150,7 +149,6 @@ class SettingService
         $res = Db::name('admin_setting')
             ->where('admin_setting_id', $admin_setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -190,7 +188,6 @@ class SettingService
         $res = Db::name('admin_setting')
             ->where('admin_setting_id', $admin_setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -230,7 +227,6 @@ class SettingService
         $res = Db::name('admin_setting')
             ->where('admin_setting_id', $admin_setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -271,7 +267,6 @@ class SettingService
         $res = Db::name('admin_setting')
             ->where('admin_setting_id', $admin_setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }

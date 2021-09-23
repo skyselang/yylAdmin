@@ -21,6 +21,13 @@ class ContentModel extends Model
     protected $pk = 'content_id';
 
     /**
+     * @Field("content_id")
+     */
+    public function id()
+    {
+    }
+
+    /**
      * @Field("content_id,name,category_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time")
      * @AddField("img_url", type="string", require=true, default="", desc="图片链接")
      */
@@ -86,13 +93,6 @@ class ContentModel extends Model
     }
 
     /**
-     * @Field("content_id")
-     */
-    public function id()
-    {
-    }
-
-    /**
      * @Field("name")
      */
     public function name()
@@ -102,10 +102,10 @@ class ContentModel extends Model
     /**
      * @Field("imgs")
      * @AddField("imgs", type="array", require=false, default="[]", desc="图片",
-     *      @Param("name", type="string", require=true, default="", desc="名称"),
-     *      @Param("path", type="string", require=true, default="", desc="路径"),
-     *      @Param("url", type="string", require=true, default="", desc="链接"),
-     *      @Param("size", type="string", require=true, default="", desc="大小"),
+     *      @Param("file_name", type="string", require=true, default="", desc="图片名称"),
+     *      @Param("file_path", type="string", require=true, default="", desc="图片路径"),
+     *      @Param("file_url", type="string", require=true, default="", desc="图片链接"),
+     *      @Param("file_size", type="string", require=true, default="", desc="图片大小"),
      * )
      */
     public function imgs()
@@ -115,10 +115,10 @@ class ContentModel extends Model
     /**
      * @Field("files")
      * @AddField("files", type="array", require=false, default="[]", desc="附件",
-     *      @Param("name", type="string", require=true, default="", desc="名称"),
-     *      @Param("path", type="string", require=true, default="", desc="路径"),
-     *      @Param("url", type="string", require=true, default="", desc="链接"),
-     *      @Param("size", type="string", require=true, default="", desc="大小"),
+     *      @Param("file_name", type="string", require=true, default="", desc="附件名称"),
+     *      @Param("file_path", type="string", require=true, default="", desc="附件路径"),
+     *      @Param("file_url", type="string", require=true, default="", desc="附件链接"),
+     *      @Param("file_size", type="string", require=true, default="", desc="附件大小"),
      * )
      */
     public function files()
@@ -128,10 +128,10 @@ class ContentModel extends Model
     /**
      * @Field("videos")
      * @AddField("videos", type="array", require=false, default="[]", desc="视频",
-     *      @Param("name", type="string", require=true, default="", desc="名称"),
-     *      @Param("path", type="string", require=true, default="", desc="路径"),
-     *      @Param("url", type="string", require=true, default="", desc="链接"),
-     *      @Param("size", type="string", require=true, default="", desc="大小"),
+     *      @Param("file_name", type="string", require=true, default="", desc="视频名称"),
+     *      @Param("file_path", type="string", require=true, default="", desc="视频路径"),
+     *      @Param("file_url", type="string", require=true, default="", desc="视频链接"),
+     *      @Param("file_size", type="string", require=true, default="", desc="视频大小"),
      * )
      */
     public function videos()

@@ -112,11 +112,9 @@ class Content
         validate(ContentValidate::class)->scene('info')->check($param);
 
         $data = ContentService::info($param['content_id']);
-
         if ($data['is_delete'] == 1) {
             exception('内容已被删除');
         }
-
         if (empty($data['title'])) {
             $data['title'] = $data['name'];
         }

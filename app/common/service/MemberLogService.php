@@ -102,11 +102,9 @@ class MemberLogService
             $member_log = Db::name('member_log')
                 ->where('member_log_id', $member_log_id)
                 ->find();
-
             if (empty($member_log)) {
                 exception('会员日志不存在：' . $member_log_id);
             }
-
             if ($member_log['request_param']) {
                 $member_log['request_param'] = unserialize($member_log['request_param']);
             }
@@ -143,8 +141,6 @@ class MemberLogService
      */
     public static function add($param = [], $log_type = 3)
     {
-        $param['log_type'] = $log_type;
-
         if ($log_type == 1) {
             $param['response_code'] = 200;
             $param['response_msg']  = '注册成功';
@@ -159,7 +155,6 @@ class MemberLogService
         $api_info      = ApiService::info();
         $ip_info       = IpInfoUtils::info();
         $request_param = Request::param();
-
         if (isset($request_param['password'])) {
             unset($request_param['password']);
         }
@@ -171,6 +166,7 @@ class MemberLogService
         }
 
         $param['api_id']           = $api_info['api_id'];
+        $param['log_type']         = $log_type;
         $param['request_ip']       = $ip_info['ip'];
         $param['request_country']  = $ip_info['country'];
         $param['request_province'] = $ip_info['province'];
@@ -203,7 +199,6 @@ class MemberLogService
         $res = Db::name('member_log')
             ->where('member_log_id', $member_log_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -230,7 +225,6 @@ class MemberLogService
         $res = Db::name('member_log')
             ->where('member_log_id', $member_log_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -281,6 +275,7 @@ class MemberLogService
                 $where[] = ['member_id', '=', $member['member_id']];
             }
         }
+
         if ($api_id && $api_url) {
             $api = Db::name('api')
                 ->field('api_id')
@@ -304,6 +299,7 @@ class MemberLogService
                 $where[] = ['api_id', '=', $api['api_id']];
             }
         }
+
         if ($date_value) {
             $sta_date = $date_value[0];
             $end_date = $date_value[1];
@@ -333,10 +329,8 @@ class MemberLogService
     {
         $key  = 'num:' . $date;
         $data = MemberLogCache::get($key);
-
         if (empty($data)) {
             $where[] = ['is_delete', '=', 0];
-
             if ($date == 'total') {
                 $where[] = ['member_log_id', '>', 0];
             } else {
@@ -406,7 +400,6 @@ class MemberLogService
 
         $key  = 'date:' . $sta_date . '-' . $end_date;
         $data = MemberLogCache::get($key);
-
         if (empty($data)) {
             $sta_time = DatetimeUtils::dateStartTime($sta_date);
             $end_time = DatetimeUtils::dateEndTime($end_date);
@@ -424,7 +417,6 @@ class MemberLogService
 
             $x_data = DatetimeUtils::betweenDates($sta_date, $end_date);
             $y_data = [];
-
             foreach ($x_data as $k => $v) {
                 $y_data[$k] = 0;
                 foreach ($member_log as $ku => $vu) {
@@ -460,11 +452,6 @@ class MemberLogService
             $date[1] = DatetimeUtils::today();
         }
 
-        $sta_date = $date[0];
-        $end_date = $date[1];
-
-        $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
-
         if ($type == 'country') {
             $group = 'request_country';
             $field = $group . ' as x_data';
@@ -487,8 +474,11 @@ class MemberLogService
             $where[] = [$group, '<>', ''];
         }
 
-        $data = MemberLogCache::get($key);
+        $sta_date = $date[0];
+        $end_date = $date[1];
 
+        $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
+        $data = MemberLogCache::get($key);
         if (empty($data)) {
             $sta_time = DatetimeUtils::dateStartTime($date[0]);
             $end_time = DatetimeUtils::dateEndTime($date[1]);
@@ -506,10 +496,6 @@ class MemberLogService
                 ->select()
                 ->toArray();
 
-            $x_data = [];
-            $y_data = [];
-            $p_data = [];
-
             if ($type == 'member') {
                 $member_ids = array_column($member_log, 'x_data');
                 $member = Db::name('member')
@@ -519,6 +505,9 @@ class MemberLogService
                     ->toArray();
             }
 
+            $x_data = [];
+            $y_data = [];
+            $p_data = [];
             foreach ($member_log as $k => $v) {
                 if ($type == 'member') {
                     foreach ($member as $km => $vm) {

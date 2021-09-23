@@ -12,6 +12,7 @@ namespace app\common\service\cms;
 
 use think\facade\Db;
 use app\common\cache\cms\CategoryCache;
+use app\common\service\file\FileService;
 
 class CategoryService
 {
@@ -29,7 +30,7 @@ class CategoryService
      */
     public static function list($type = 'tree')
     {
-        $key = self::$all_key;
+        $key  = self::$all_key;
         $data = CategoryCache::get($key);
         if (empty($data)) {
             $field = 'category_id,category_pid,category_name,sort,is_hide,create_time,update_time';
@@ -76,7 +77,7 @@ class CategoryService
                 exception('分类不存在：' . $category_id);
             }
 
-            $category['imgs'] = file_unser($category['imgs']);
+            $category['imgs'] = FileService::fileArray($category['img_ids']);
 
             CategoryCache::set($category_id, $category);
         }
@@ -93,7 +94,7 @@ class CategoryService
      */
     public static function add($param)
     {
-        $param['imgs']        = file_ser($param['imgs']);
+        $param['img_ids']     = file_ids($param['imgs']);
         $param['create_time'] = datetime();
 
         $category_id = Db::name(self::$db_name)
@@ -122,7 +123,7 @@ class CategoryService
 
         unset($param['category_id']);
 
-        $param['imgs']        = file_ser($param['imgs']);
+        $param['img_ids']     = file_ids($param['imgs']);
         $param['update_time'] = datetime();
 
         $res = Db::name(self::$db_name)

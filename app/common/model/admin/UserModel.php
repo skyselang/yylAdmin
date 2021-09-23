@@ -26,13 +26,6 @@ class UserModel extends Model
     }
 
     /**
-     * @Field("username")
-     */
-    public function username()
-    {
-    }
-
-    /**
      * @Field("admin_user_id,username,nickname,phone,email,sort,is_disable,is_super,login_num,login_ip,login_time")
      */
     public function list()
@@ -47,14 +40,14 @@ class UserModel extends Model
     }
 
     /**
-     * @Field("username,nickname,password,phone,email,remark,sort")
+     * @Field("avatar_id,username,nickname,password,phone,email,remark,sort")
      */
     public function add()
     {
     }
 
     /**
-     * @Field("admin_user_id,username,nickname,phone,email,remark,sort")
+     * @Field("admin_user_id,avatar_id,username,nickname,phone,email,remark,sort")
      */
     public function edit()
     {
@@ -68,10 +61,10 @@ class UserModel extends Model
     }
 
     /**
-     * @Field("admin_user_id")
-     * @AddField("avatar_file", type="file", require=true, desc="头像文件")
+     * @Field("avatar_url")
+     * @AddField("avatar_url", type="string", require=false, desc="头像链接")
      */
-    public function avatar()
+    public function avatar_url()
     {
     }
 
@@ -117,6 +110,13 @@ class UserModel extends Model
      * @Field("admin_user_id,username,nickname,phone,email,sort,is_disable,is_super")
      */
     public function user()
+    {
+    }
+
+    /**
+     * @Field("username")
+     */
+    public function username()
     {
     }
 }

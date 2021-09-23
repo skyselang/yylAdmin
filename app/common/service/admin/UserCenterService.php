@@ -27,7 +27,7 @@ class UserCenterService
         $admin_user = UserService::info($admin_user_id);
 
         $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['avatar']        = $admin_user['avatar'];
+        $data['avatar_id']     = $admin_user['avatar_id'];
         $data['avatar_url']    = $admin_user['avatar_url'];
         $data['username']      = $admin_user['username'];
         $data['nickname']      = $admin_user['nickname'];
@@ -61,7 +61,6 @@ class UserCenterService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -87,7 +86,6 @@ class UserCenterService
         $password_new  = $param['password_new'];
 
         $admin_user = UserService::info($admin_user_id);
-
         if (md5($password_old) != $admin_user['password']) {
             exception('旧密码错误');
         }
@@ -98,7 +96,6 @@ class UserCenterService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }

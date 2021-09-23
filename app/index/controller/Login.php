@@ -10,8 +10,8 @@
 // 登录退出控制器
 namespace app\index\controller;
 
-use think\facade\Cache;
 use think\facade\Request;
+use think\facade\Cache;
 use app\index\service\LoginService;
 use app\common\utils\CaptchaUtils;
 use app\common\validate\MemberValidate;
@@ -33,7 +33,6 @@ class Login
     public function captcha()
     {
         $setting = SettingService::captchaInfo();
-
         if ($setting['captcha_login']) {
             $data = CaptchaUtils::create();
         } else {
@@ -87,7 +86,6 @@ class Login
     public function offi()
     {
         $offiurl = Request::param('offiurl/s', '');
-
         if (empty($offiurl)) {
             exception('offiurl must');
         }
@@ -110,9 +108,8 @@ class Login
     // 登录(公众号)回调
     public function officallback()
     {
-        $app = WechatService::offi();
+        $app  = WechatService::offi();
         $user = $app->oauth->user()->getOriginal();
-
         if (empty($user) || !isset($user['openid'])) {
             exception('微信登录失败请重试！'.$user['errmsg']);
         }
@@ -165,16 +162,14 @@ class Login
      */
     public function mini()
     {
-        $code = Request::param('code/s', '');
+        $code      = Request::param('code/s', '');
         $user_info = Request::param('user_info/a', []);
-
         if (empty($code)) {
             exception('code must');
         }
 
         $app  = WechatService::mini();
         $user = $app->auth->session($code);
-
         if (empty($user) || !isset($user['openid'])) {
             exception('微信登录失败请重试！'.$user['errmsg']);
         }

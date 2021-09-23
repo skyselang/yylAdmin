@@ -27,6 +27,7 @@ class RegisterService
         $data = MemberService::add($param);
 
         $member_log['member_id'] = $data['member_id'];
+        
         MemberLogService::add($member_log, 1);
 
         return $data;

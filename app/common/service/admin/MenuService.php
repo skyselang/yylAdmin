@@ -91,7 +91,6 @@ class MenuService
         }
 
         $admin_menu = MenuCache::get($admin_menu_id);
-
         if (empty($admin_menu)) {
             if (is_numeric($admin_menu_id)) {
                 $where[] = ['admin_menu_id', '=',  $admin_menu_id];
@@ -360,7 +359,6 @@ class MenuService
         $res = Db::name('admin_menu')
             ->where('admin_menu_id', '=', $admin_menu_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -520,7 +518,6 @@ class MenuService
         $res = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }

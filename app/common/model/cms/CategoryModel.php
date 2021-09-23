@@ -22,6 +22,13 @@ class CategoryModel extends Model
     protected $pk = 'category_id';
 
     /**
+     * @Field("category_id")
+     */
+    public function id()
+    {
+    }
+
+    /**
      * @Field("category_id,category_pid,category_name,sort,is_hide,create_time,update_time")
      */
     public function list()
@@ -57,13 +64,6 @@ class CategoryModel extends Model
     }
 
     /**
-     * @Field("category_id")
-     */
-    public function id()
-    {
-    }
-
-    /**
      * @Field("category_pid")
      */
     public function pid()
@@ -80,10 +80,10 @@ class CategoryModel extends Model
     /**
      * @Field("imgs")
      * @AddField("imgs", type="array", require=false, default="[]", desc="图片",
-     *      @Param("name", type="string", require=true, default="", desc="名称"),
-     *      @Param("path", type="string", require=true, default="", desc="路径"),
-     *      @Param("url", type="string", require=true, default="", desc="链接"),
-     *      @Param("size", type="string", require=true, default="", desc="大小")
+     *      @Param("file_name", type="string", require=true, default="", desc="图片名称"),
+     *      @Param("file_path", type="string", require=true, default="", desc="图片路径"),
+     *      @Param("file_url", type="string", require=true, default="", desc="图片链接"),
+     *      @Param("file_size", type="string", require=true, default="", desc="图片大小")
      * )
      */
     public function imgs()

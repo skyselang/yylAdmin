@@ -13,7 +13,6 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\common\validate\SettingWechatValidate;
 use app\common\service\SettingWechatService;
-use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -51,7 +50,7 @@ class SettingWechat
     {
         $param['name']              = Request::param('name/s', '');
         $param['origin_id']         = Request::param('origin_id/s', '');
-        $param['qrcode']            = Request::param('qrcode/s', '');
+        $param['qrcode_id']         = Request::param('qrcode_id/d', 0);
         $param['appid']             = Request::param('appid/s', '');
         $param['appsecret']         = Request::param('appsecret/s', '');
         $param['token']             = Request::param('token/s', '');
@@ -93,33 +92,13 @@ class SettingWechat
     {
         $param['name']      = Request::param('name/s', '');
         $param['origin_id'] = Request::param('origin_id/s', '');
-        $param['qrcode']    = Request::param('qrcode/s', '');
+        $param['qrcode_id'] = Request::param('qrcode_id/d', 0);
         $param['appid']     = Request::param('appid/s', '');
         $param['appsecret'] = Request::param('appsecret/s', '');
 
         validate(SettingWechatValidate::class)->scene('miniEdit')->check($param);
 
         $data = SettingWechatService::miniEdit($param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("上传二维码")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnFile")
-     */
-    public function qrcode()
-    {
-        $param['qrcode'] = Request::file('file');
-
-        validate(SettingWechatValidate::class)->scene('qrcode')->check($param);
-
-        $data = UploadService::upload($param['qrcode'], 'setting/wechat');
 
         return success($data);
     }

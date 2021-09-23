@@ -85,7 +85,6 @@ class CategoryValidate extends Validate
 
         $where[] = ['category_id', 'in', $category_ids];
         $where[] = ['is_delete', '=', 0];
-
         $content = ContentService::list($where, 1, 1, [], 'content_id,category_id');
         if ($content['list']) {
             return '分类下存在内容，无法删除';

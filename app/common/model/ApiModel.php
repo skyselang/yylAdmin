@@ -25,13 +25,6 @@ class ApiModel extends Model
     }
 
     /**
-     * @Field("api_url")
-     */
-    public function api_url()
-    {
-    }
-
-    /**
      * @Field("api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin,create_time,update_time")
      */
     public function list()
@@ -77,6 +70,13 @@ class ApiModel extends Model
      * @Field("api_id,is_unlogin")
      */
     public function unlogin()
+    {
+    }
+
+    /**
+     * @Field("api_url")
+     */
+    public function api_url()
     {
     }
 }

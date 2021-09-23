@@ -108,7 +108,6 @@ class ApiService
         }
 
         $api = ApiCache::get($api_id);
-
         if (empty($api)) {
             if (is_numeric($api_id)) {
                 $where[] = ['api_id', '=',  $api_id];
@@ -120,7 +119,6 @@ class ApiService
             $api = Db::name('api')
                 ->where($where)
                 ->find();
-
             if (empty($api)) {
                 exception('接口不存在：' . $api_id);
             }
@@ -144,7 +142,6 @@ class ApiService
 
         $api_id = Db::name('api')
             ->insertGetId($param);
-
         if (empty($api_id)) {
             exception();
         }
@@ -176,7 +173,6 @@ class ApiService
         $update = Db::name('api')
             ->where('api_id', '=', $api_id)
             ->update($param);
-
         if (empty($update)) {
             exception();
         }
@@ -207,7 +203,6 @@ class ApiService
         $res = Db::name('api')
             ->where('api_id', '=', $api_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -238,7 +233,6 @@ class ApiService
         $res = Db::name('api')
             ->where('api_id', $api_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -271,7 +265,6 @@ class ApiService
         $res = Db::name('api')
             ->where('api_id', $api_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }

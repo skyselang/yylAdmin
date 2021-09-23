@@ -58,7 +58,6 @@ class Menu
         validate(MenuValidate::class)->scene('info')->check($param);
 
         $data = MenuService::info($param['admin_menu_id']);
-
         if ($data['is_delete'] == 1) {
             exception('菜单已被删除：' . $param['admin_menu_id']);
         }

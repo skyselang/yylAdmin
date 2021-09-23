@@ -104,7 +104,6 @@ class MemberLog
         validate(MemberLogValidate::class)->scene('info')->check($param);
 
         $data = MemberLogService::info($param['member_log_id']);
-
         if ($data['is_delete'] == 1) {
             exception('会员日志已被删除：' . $param['member_log_id']);
         }

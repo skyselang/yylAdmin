@@ -31,7 +31,6 @@ class Register
     public function captcha()
     {
         $setting = SettingService::captchaInfo();
-
         if ($setting['captcha_register']) {
             $data = CaptchaUtils::create();
         } else {

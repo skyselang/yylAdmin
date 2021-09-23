@@ -81,7 +81,6 @@ class Role
         validate(RoleValidate::class)->scene('info')->check($param);
 
         $data = RoleService::info($param['admin_role_id']);
-
         if ($data['is_delete'] == 1) {
             exception('角色已被删除：' . $param['admin_role_id']);
         }

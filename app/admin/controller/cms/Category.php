@@ -13,7 +13,6 @@ namespace app\admin\controller\cms;
 use think\facade\Request;
 use app\common\validate\cms\CategoryValidate;
 use app\common\service\cms\CategoryService;
-use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -49,7 +48,7 @@ class Category
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
      *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\info"),
-     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\imgs"),
+     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\imgs")
      * )
      */
     public function info()
@@ -136,34 +135,6 @@ class Category
         $data = CategoryService::dele($param['category']);
 
         return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("内容分类上传文件")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="ParamFile")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnFile")
-     */
-    public function upload()
-    {
-        $param['type'] = Request::param('type/s', 'image');
-        $param['file'] = Request::file('file');
-
-        $param[$param['type']] = $param['file'];
-        if ($param['type'] == 'image') {
-            validate(CategoryValidate::class)->scene('image')->check($param);
-        } elseif ($param['type'] == 'video') {
-            validate(CategoryValidate::class)->scene('video')->check($param);
-        } else {
-            validate(CategoryValidate::class)->scene('file')->check($param);
-        }
-
-        $data = UploadService::upload($param['file'], 'cms/category', $param['type']);
-
-        return success($data, '上传成功');
     }
 
     /**

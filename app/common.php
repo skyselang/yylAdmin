@@ -134,6 +134,25 @@ function file_ser($files = [])
 }
 
 /**
+ * 文件id
+ *
+ * @param array $files 文件数组 [['file_id'=>'文件id']]
+ *
+ * @return string
+ */
+function file_ids($files = [])
+{
+    if (empty($files)) {
+        return 0;
+    }
+
+    $file_ids = array_column($files, 'file_id');
+    $file_ids = implode(',', $file_ids);
+
+    return $file_ids;
+}
+
+/**
  * 文件反序列化
  *
  * @param string $files 序列化后的文件数组

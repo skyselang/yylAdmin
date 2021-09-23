@@ -61,16 +61,14 @@ class RegionService
 
     /**
      * 地区信息
-     * region_id=tree：树形
      *
-     * @param integer|string $region_id 地区id
+     * @param integer|string $region_id 地区id（tree树形）
      * 
      * @return array
      */
     public static function info($region_id)
     {
         $region = RegionCache::get($region_id);
-
         if (empty($region)) {
             if ($region_id == self::$tree_key) {
                 $region = Db::name('region')
@@ -84,7 +82,6 @@ class RegionService
                 $region = Db::name('region')
                     ->where('region_id', $region_id)
                     ->find();
-
                 if (empty($region)) {
                     exception('地区不存在：' . $region_id);
                 }
@@ -128,7 +125,6 @@ class RegionService
     public static function add($param)
     {
         $param = self::pinyin($param);
-
         $param['create_time'] = datetime();
 
         $res = false;
@@ -251,7 +247,6 @@ class RegionService
         $res = Db::name('region')
             ->where('region_id', '=', $region_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -322,7 +317,6 @@ class RegionService
         $region_pinyin   = '';
         $region_jianpin  = '';
         $region_initials = '';
-
         foreach ($region_py as $k => $v) {
             $region_py_i = '';
             $region_py_e = '';

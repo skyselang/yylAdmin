@@ -12,9 +12,10 @@ namespace app\index\controller;
 
 use think\facade\Request;
 use app\common\validate\MemberValidate;
+use app\common\validate\file\FileValidate;
 use app\common\service\MemberService;
 use app\common\service\MemberLogService;
-use app\common\service\UploadService;
+use app\common\service\file\FileService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -28,7 +29,9 @@ class Member
      * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url"),
      *      @Apidoc\Returned(ref="app\common\model\MemberModel\infoIndex")
+     *      
      * )
      */
     public function info()
@@ -38,7 +41,6 @@ class Member
         validate(MemberValidate::class)->scene('info')->check($param);
 
         $member = MemberService::info($param['member_id']);
-
         if ($member['is_delete'] == 1) {
             exception('会员已被注销');
         }
@@ -61,7 +63,7 @@ class Member
     public function edit()
     {
         $param['member_id'] = member_id();
-        $param['avatar']    = Request::param('avatar/s', '');
+        $param['avatar_id'] = Request::param('avatar_id/d', 0);
         $param['username']  = Request::param('username/s', '');
         $param['nickname']  = Request::param('nickname/s', '');
         $param['phone']     = Request::param('phone/s', '');
@@ -86,11 +88,15 @@ class Member
      */
     public function avatar()
     {
-        $param['avatar'] = Request::file('file');
+        $param['file']      = Request::file('file');
+        $param['group_id']  = Request::param('group_id/d', 0);
+        $param['file_type'] = Request::param('file_type/s', 'image');
+        $param['file_name'] = Request::param('file_name/s', '');
+        $param['is_front']  = 1;
 
-        validate(MemberValidate::class)->scene('avatar')->check($param);
+        validate(FileValidate::class)->scene('add')->check($param);
 
-        $data = UploadService::upload($param['avatar'], 'member/avatar');
+        $data = FileService::add($param);
 
         return success($data, '上传成功');
     }
@@ -143,7 +149,7 @@ class Member
         $limit       = Request::param('limit/d', 10);
         $log_type    = Request::param('log_type/d', '');
         $sort_field  = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
+        $sort_value  = Request::param('sort_value/s', '');
         $create_time = Request::param('create_time/a', []);
 
         $where[] = ['member_id', '=', $member_id];

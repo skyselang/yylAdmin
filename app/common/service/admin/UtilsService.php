@@ -69,7 +69,6 @@ class UtilsService
 
         $rev = '';
         $len = mb_strlen($str, 'utf-8');
-
         for ($i = $len - 1; $i >= 0; $i--) {
             $rev = $rev . mb_substr($str, $i, 1, 'utf-8');
         }
@@ -95,10 +94,6 @@ class UtilsService
     {
         $type  = $param['type'] ?: 'timestamp';
         $value = $param['value'] ?: time();
-
-        $data['type']  = $type;
-        $data['value'] = $value;
-
         if ($type == 'timestamp') {
             $data['datetime']  = date('Y-m-d H:i:s', $value);
             $data['timestamp'] = $value;
@@ -106,6 +101,9 @@ class UtilsService
             $data['datetime']  = $value;
             $data['timestamp'] = strtotime($value);
         }
+
+        $data['type']  = $type;
+        $data['value'] = $value;
 
         return $data;
     }
@@ -124,9 +122,6 @@ class UtilsService
 
         $hex_b = 8;
         $hex_B = 1024;
-
-        $data['type']  = $type;
-        $data['value'] = $value;
 
         if ($type == 'B') {
             $data['B']  = $value;
@@ -172,6 +167,9 @@ class UtilsService
             $data['TB'] = $data['GB'] / $hex_B;
         }
 
+        $data['type']  = $type;
+        $data['value'] = $value;
+
         return $data;
     }
 
@@ -197,7 +195,7 @@ class UtilsService
     public static function server()
     {
         $server_key = 'utils:server';
-        $server = Cache::get($server_key);
+        $server     = Cache::get($server_key);
         if (empty($server)) {
             try {
                 $mysql = Db::query('select version() as version');
@@ -223,7 +221,7 @@ class UtilsService
         }
 
         $cache_key = "utils:cache";
-        $cache = Cache::get($cache_key);
+        $cache     = Cache::get($cache_key);
         if (empty($cache)) {
             $config = Cache::getConfig();
             if ($config['default'] == 'redis') {

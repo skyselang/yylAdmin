@@ -13,7 +13,6 @@ namespace app\admin\controller\cms;
 use think\facade\Request;
 use app\common\validate\cms\SettingValidate;
 use app\common\service\cms\SettingService;
-use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -48,7 +47,7 @@ class Setting
      */
     public function edit()
     {
-        $param['logo']        = Request::param('logo/s', '');
+        $param['logo_id']     = Request::param('logo_id/d', 0);
         $param['name']        = Request::param('name/s', '');
         $param['title']       = Request::param('title/s', '');
         $param['keywords']    = Request::param('keywords/s', '');
@@ -61,31 +60,11 @@ class Setting
         $param['email']       = Request::param('email/s', '');
         $param['qq']          = Request::param('qq/s', '');
         $param['wechat']      = Request::param('wechat/s', '');
-        $param['off_acc']     = Request::param('off_acc/s', '');
+        $param['off_acc_id']  = Request::param('off_acc_id/d', 0);
 
         validate(SettingValidate::class)->scene('edit')->check($param);
 
         $data = SettingService::edit($param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("内容设置上传")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnFile")
-     */
-    public function upload()
-    {
-        $param['image'] = Request::file('file');
-
-        validate(SettingValidate::class)->scene('image')->check($param);
-
-        $data = UploadService::upload($param['image'], 'cms/setting');
 
         return success($data);
     }

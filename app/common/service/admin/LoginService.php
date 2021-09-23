@@ -38,11 +38,9 @@ class LoginService
             ->field($field)
             ->where($where)
             ->find();
-
         if (empty($admin_user)) {
             exception('账号或密码错误');
         }
-
         if ($admin_user['is_disable'] == 1) {
             exception('账号已被禁用，请联系管理员');
         }

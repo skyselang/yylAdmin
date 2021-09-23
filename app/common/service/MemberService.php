@@ -13,6 +13,7 @@ namespace app\common\service;
 use think\facade\Db;
 use app\common\cache\MemberCache;
 use app\common\utils\DatetimeUtils;
+use app\common\service\file\FileService;
 
 class MemberService
 {
@@ -30,7 +31,7 @@ class MemberService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'member_id,username,nickname,phone,email,avatar,sort,remark,create_time,is_disable';
+            $field = 'member_id,username,nickname,phone,email,avatar_id,sort,remark,create_time,is_disable';
         }
 
         if (empty($order)) {
@@ -54,8 +55,8 @@ class MemberService
 
         foreach ($list as $k => $v) {
             $list[$k]['avatar_url'] = '';
-            if (isset($v['avatar'])) {
-                $list[$k]['avatar_url'] = file_url($v['avatar']);
+            if (isset($v['avatar_id'])) {
+                $list[$k]['avatar_url'] = FileService::fileUrl($v['avatar_id']);
             }
         }
 
@@ -78,22 +79,18 @@ class MemberService
     public static function info($member_id)
     {
         $member = MemberCache::get($member_id);
-
         if (empty($member)) {
             $member = Db::name('member')
                 ->where('member_id', $member_id)
                 ->find();
-
             if (empty($member)) {
                 exception('会员不存在：' . $member_id);
             }
-
-            $member['avatar_url'] = file_url($member['avatar']);
+            $member['avatar_url'] = FileService::fileUrl($member['avatar_id']);
 
             $member_wechat = Db::name('member_wechat')
                 ->where('member_id', $member_id)
                 ->find();
-
             if ($member_wechat) {
                 if (empty($member['nickname'])) {
                     $member['nickname'] = $member_wechat['nickname'];
@@ -133,7 +130,6 @@ class MemberService
 
         $member_id = Db::name('member')
             ->insertGetId($param);
-
         if (empty($member_id)) {
             exception();
         }
@@ -163,7 +159,6 @@ class MemberService
         $res = Db::name('member')
             ->where('member_id', $member_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -190,7 +185,6 @@ class MemberService
         $res = Db::name('member')
             ->where('member_id', $member_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -212,7 +206,6 @@ class MemberService
     public static function pwd($param)
     {
         $member_id = $param['member_id'];
-
         if (isset($param['password'])) {
             $update['password'] = md5($param['password']);
         } else {
@@ -224,7 +217,6 @@ class MemberService
         $res = Db::name('member')
             ->where('member_id', $member_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -254,7 +246,6 @@ class MemberService
         $res = Db::name('member')
             ->where('member_id', $member_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -278,10 +269,8 @@ class MemberService
     {
         $key  = $date . ':' . $type;
         $data = MemberCache::get($key);
-
         if (empty($data)) {
             $where[] = ['is_delete', '=', 0];
-
             if ($date == 'total') {
                 $where[] = ['member_id', '>', 0];
             } else {
@@ -357,7 +346,6 @@ class MemberService
 
         $key  = 'date:' . $sta_date . '-' . $end_date . ':' . $type;
         $data = MemberCache::get($key);
-
         if (empty($data)) {
             $sta_time = DatetimeUtils::dateStartTime($sta_date);
             $end_time = DatetimeUtils::dateEndTime($end_date);
@@ -374,15 +362,14 @@ class MemberService
                 $group   = "date_format(create_time,'%Y-%m-%d')";
             }
 
-            $x_data = DatetimeUtils::betweenDates($sta_date, $end_date);
-            $y_data = [];
-
             $member = Db::name('member')
                 ->field($field)
                 ->where($where)
                 ->group($group)
                 ->select();
 
+            $x_data = DatetimeUtils::betweenDates($sta_date, $end_date);
+            $y_data = [];
             foreach ($x_data as $k => $v) {
                 $y_data[$k] = 0;
                 foreach ($member as $ku => $vu) {

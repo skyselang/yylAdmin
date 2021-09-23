@@ -25,13 +25,6 @@ class MenuModel extends Model
     }
 
     /**
-     * @Field("menu_url")
-     */
-    public function menu_url()
-    {
-    }
-
-    /**
      * @Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time")
      */
     public function list()
@@ -98,6 +91,13 @@ class MenuModel extends Model
      * @Field("admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time")
      */
     public function roleRemove()
+    {
+    }
+
+    /**
+     * @Field("menu_url")
+     */
+    public function menu_url()
     {
     }
 }

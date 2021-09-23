@@ -49,7 +49,6 @@ class RoleValidate extends Validate
     protected function checkAdminRuleName($value, $rule, $data = [])
     {
         $admin_role_id = isset($data['admin_role_id']) ? $data['admin_role_id'] : '';
-
         if ($admin_role_id) {
             $where_role[] = ['admin_role_id', '<>', $admin_role_id];
         }
@@ -68,7 +67,6 @@ class RoleValidate extends Validate
         $admin_role_id = $value;
 
         $admin_role = RoleService::info($admin_role_id);
-
         if ($admin_role['admin_menu_ids']) {
             return '请在[修改]中取消所有菜单后再删除';
         }

@@ -52,7 +52,6 @@ class RegionValidate extends Validate
             }
             $where[] = ['region_id', '<>', $data['region_id']];
         }
-
         $where[] = ['region_pid', '=', $data['region_pid']];
         $where[] = ['region_name', '=', $data['region_name']];
         $region = RegionService::list($where, [], 'region_id');

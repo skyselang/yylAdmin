@@ -32,7 +32,6 @@ class SettingService
             $setting = Db::name('setting')
                 ->where('setting_id', $setting_id)
                 ->find();
-
             if (empty($setting)) {
                 $setting['setting_id']  = $setting_id;
                 $setting['create_time'] = datetime();
@@ -96,7 +95,6 @@ class SettingService
         $res = Db::name('setting')
             ->where('setting_id', $setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -137,7 +135,6 @@ class SettingService
         $res = Db::name('setting')
             ->where('setting_id', $setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -177,7 +174,6 @@ class SettingService
         $res = Db::name('setting')
             ->where('setting_id', $setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -218,7 +214,6 @@ class SettingService
         $res = Db::name('setting')
             ->where('setting_id', $setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }

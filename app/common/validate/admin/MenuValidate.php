@@ -62,7 +62,6 @@ class MenuValidate extends Validate
     protected function checkAdminMenuName($value, $rule, $data = [])
     {
         $admin_menu_id = isset($data['admin_menu_id']) ? $data['admin_menu_id'] : '';
-
         if ($admin_menu_id) {
             if ($data['menu_pid'] == $data['admin_menu_id']) {
                 return '菜单父级不能等于菜单本身';

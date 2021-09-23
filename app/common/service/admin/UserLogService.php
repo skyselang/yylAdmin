@@ -100,11 +100,9 @@ class UserLogService
             $admin_user_log = Db::name('admin_user_log')
                 ->where('admin_user_log_id', $admin_user_log_id)
                 ->find();
-
             if (empty($admin_user_log)) {
                 exception('日志管理不存在：' . $admin_user_log_id);
             }
-
             if ($admin_user_log['request_param']) {
                 $admin_user_log['request_param'] = unserialize($admin_user_log['request_param']);
             }
@@ -188,7 +186,6 @@ class UserLogService
         $res = Db::name('admin_user_log')
             ->where('admin_user_log_id', $admin_user_log_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -215,7 +212,6 @@ class UserLogService
         $res = Db::name('admin_user_log')
             ->where('admin_user_log_id', $admin_user_log_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -266,6 +262,7 @@ class UserLogService
                 $where[] = ['admin_user_id', '=', $admin_user['admin_user_id']];
             }
         }
+
         if ($admin_menu_id && $menu_url) {
             $admin_menu = Db::name('admin_menu')
                 ->field('admin_menu_id')
@@ -289,6 +286,7 @@ class UserLogService
                 $where[] = ['admin_menu_id', '=', $admin_menu['admin_menu_id']];
             }
         }
+
         if ($date_value) {
             $sta_date = $date_value[0];
             $end_date = $date_value[1];
@@ -318,7 +316,6 @@ class UserLogService
     {
         $key  = 'num:' . $date;
         $data = UserLogCache::get($key);
-
         if (empty($data)) {
             $where[] = ['is_delete', '=', 0];
 
@@ -391,7 +388,6 @@ class UserLogService
 
         $key  = 'date:' . $sta_date . '-' . $end_date;
         $data = UserLogCache::get($key);
-
         if (empty($data)) {
             $sta_time = DatetimeUtils::dateStartTime($sta_date);
             $end_time = DatetimeUtils::dateEndTime($end_date);
@@ -449,7 +445,6 @@ class UserLogService
         $end_date = $date[1];
 
         $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
-
         if ($type == 'country') {
             $group = 'request_country';
             $field = $group . ' as x_data';
@@ -473,7 +468,6 @@ class UserLogService
         }
 
         $data = UserLogCache::get($key);
-
         if (empty($data)) {
             $sta_time = DatetimeUtils::dateStartTime($date[0]);
             $end_time = DatetimeUtils::dateEndTime($date[1]);

@@ -55,7 +55,6 @@ class Api
         validate(ApiValidate::class)->scene('info')->check($param);
 
         $data = ApiService::info($param['api_id']);
-
         if ($data['is_delete'] == 1) {
             exception('接口已被删除：' . $param['api_id']);
         }

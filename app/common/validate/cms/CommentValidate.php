@@ -51,12 +51,10 @@ class CommentValidate extends Validate
     {
         $sort_field = $data['sort_field'];
         $sort_value = $data['sort_value'];
-
         $field_exist = CommentService::tableFieldExist($sort_field);
         if (!$field_exist) {
             return '排序字段sort_field：' . $sort_field . ' 不存在';
         }
-
         if (!empty($sort_value) && $sort_value != 'asc' && $sort_value != 'desc') {
             return '排序类型sort_value只能为asc升序或desc降序';
         }

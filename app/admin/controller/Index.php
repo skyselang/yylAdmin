@@ -8,11 +8,12 @@
 // +----------------------------------------------------------------------
 
 // 控制台控制器
-namespace app\admin\controller\admin;
+namespace app\admin\controller;
 
 use think\facade\Request;
 use app\common\service\admin\IndexService;
 use app\common\service\cms\ContentService;
+use app\common\service\file\FileService;
 use app\common\service\MemberService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -75,6 +76,20 @@ class Index
     public function cms()
     {
         $data = ContentService::statistics();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("文件统计")
+     * @Apidoc\Method("GET")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
+     */
+    public function file()
+    {
+        $data = FileService::statistics();
 
         return success($data);
     }

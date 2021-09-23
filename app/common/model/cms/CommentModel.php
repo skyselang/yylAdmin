@@ -20,6 +20,13 @@ class CommentModel extends Model
     protected $pk = 'comment_id';
 
     /**
+     * @Field("comment_id")
+     */
+    public function id()
+    {
+    }
+
+    /**
      * @Field("comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time")
      */
     public function list()
@@ -44,13 +51,6 @@ class CommentModel extends Model
      * @Field("comment_id,remark")
      */
     public function edit()
-    {
-    }
-
-    /**
-     * @Field("comment_id")
-     */
-    public function id()
     {
     }
 

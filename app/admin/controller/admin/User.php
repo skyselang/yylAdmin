@@ -13,7 +13,6 @@ namespace app\admin\controller\admin;
 use think\facade\Request;
 use app\common\validate\admin\UserValidate;
 use app\common\service\admin\UserService;
-use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -78,6 +77,7 @@ class User
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
      * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned("data", type="object", desc="返回数据",
+     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url"),
      *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
      * )
      */
@@ -88,7 +88,6 @@ class User
         validate(UserValidate::class)->scene('info')->check($param);
 
         $data = UserService::info($param['admin_user_id']);
-
         if ($data['is_delete'] == 1) {
             exception('用户已被删除：' . $param['admin_user_id']);
         }
@@ -106,14 +105,14 @@ class User
      */
     public function add()
     {
-        $param['avatar']   = Request::param('avatar/s', '');
-        $param['username'] = Request::param('username/s', '');
-        $param['nickname'] = Request::param('nickname/s', '');
-        $param['password'] = Request::param('password/s', '');
-        $param['email']    = Request::param('email/s', '');
-        $param['phone']    = Request::param('phone/s', '');
-        $param['remark']   = Request::param('remark/s', '');
-        $param['sort']     = Request::param('sort/d', 200);
+        $param['avatar_id'] = Request::param('avatar_id/d', 0);
+        $param['username']  = Request::param('username/s', '');
+        $param['nickname']  = Request::param('nickname/s', '');
+        $param['password']  = Request::param('password/s', '');
+        $param['email']     = Request::param('email/s', '');
+        $param['phone']     = Request::param('phone/s', '');
+        $param['remark']    = Request::param('remark/s', '');
+        $param['sort']      = Request::param('sort/d', 200);
 
         validate(UserValidate::class)->scene('add')->check($param);
 
@@ -133,7 +132,7 @@ class User
     public function edit()
     {
         $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['avatar']        = Request::param('avatar/s', '');
+        $param['avatar_id']     = Request::param('avatar_id/d', 0);
         $param['username']      = Request::param('username/s', '');
         $param['nickname']      = Request::param('nickname/s', '');
         $param['email']         = Request::param('email/s', '');
@@ -165,26 +164,6 @@ class User
         $data = UserService::dele($param['admin_user_id']);
 
         return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("用户上传头像")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnFile")
-     */
-    public function avatar()
-    {
-        $param['avatar'] = Request::file('file');
-
-        validate(UserValidate::class)->scene('avatar')->check($param);
-
-        $data = UploadService::upload($param['avatar'], 'admin/user');
-
-        return success($data, '上传成功');
     }
 
     /**

@@ -247,7 +247,7 @@ class CommentService
      */
     public static function tableField()
     {
-        $key = 'field';
+        $key   = 'field';
         $field = CommentCache::get($key);
         if (empty($field)) {
             $sql = Db::name(self::$db_name)
@@ -255,7 +255,7 @@ class CommentService
                 ->fetchSql(true)
                 ->select();
 
-            $sql = str_replace('SELECT', '', $sql);
+            $sql   = str_replace('SELECT', '', $sql);
             $field = Db::query($sql);
             $field = array_column($field, 'Field');
 

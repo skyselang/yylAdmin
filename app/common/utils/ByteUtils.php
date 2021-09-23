@@ -17,7 +17,7 @@ class ByteUtils
      *
      * @param integer $num 字节数值
      *
-     * @return integer
+     * @return string
      */
     public static function format($num = 0)
     {
@@ -46,21 +46,20 @@ class ByteUtils
 
         $num /= pow(1024, $p);
 
-        return number_format($num, 2) . ' ' . $format;
+        return number_format($num, 2) . $format;
     }
 
     /**
      * 字节转换
      *
-     * @param array $param 类型、数值
+     * @param int    $value  字节数值
+     * @param string $type   字节类型
+     * @param string $target 目标字节类型
      *
-     * @return array
+     * @return int 目标字节数值
      */
-    public static function tran($param)
+    public static function shift($value, $type = 'b', $target = 'MB')
     {
-        $type  = $param['type'] ?: 'B';
-        $value = $param['value'] ?: 1024;
-
         $hex_b = 8;
         $hex_B = 1024;
 
@@ -109,6 +108,8 @@ class ByteUtils
             $data['MB'] = $data['KB'] / $hex_B;
             $data['GB'] = $data['MB'] / $hex_B;
             $data['TB'] = $data['GB'] / $hex_B;
+
+            return $data['MB'];
         }
 
         return $data;

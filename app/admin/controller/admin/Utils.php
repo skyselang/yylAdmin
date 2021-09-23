@@ -103,7 +103,6 @@ class Utils
     public function ipinfo()
     {
         $ip = Request::param('ip/s', '');
-
         if (empty($ip)) {
             $ip = Request::ip();
         }

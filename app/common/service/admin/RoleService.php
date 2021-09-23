@@ -78,13 +78,11 @@ class RoleService
             $admin_role = Db::name('admin_role')
                 ->where('admin_role_id', $admin_role_id)
                 ->find();
-
             if (empty($admin_role)) {
                 exception('角色不存在：' . $admin_role_id);
             }
 
             $admin_menu_ids = str_trim($admin_role['admin_menu_ids']);
-
             if (empty($admin_menu_ids)) {
                 $admin_menu_ids = [];
             } else {
@@ -128,7 +126,6 @@ class RoleService
 
         $admin_role_id = Db::name('admin_role')
             ->insertGetId($param);
-
         if (empty($admin_role_id)) {
             exception();
         }
@@ -172,7 +169,6 @@ class RoleService
             $res = Db::name('admin_role')
                 ->where('admin_role_id', $admin_role_id)
                 ->update($param);
-
             if (empty($res)) {
                 exception();
             }
@@ -200,7 +196,6 @@ class RoleService
         $res = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -229,7 +224,6 @@ class RoleService
         $res = Db::name('admin_role')
             ->where('admin_role_id', $admin_role_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -292,7 +286,6 @@ class RoleService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }

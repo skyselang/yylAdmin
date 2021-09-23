@@ -127,10 +127,10 @@ class ApidocDefinitions
     /**
      * 返回参数：上传文件
      * @Apidoc\Returned("data", type="object", default="", desc="文件信息",
-     *      @Apidoc\Returned("name", type="string", default="", desc="名称"),
-     *      @Apidoc\Returned("path", type="string", default="", desc="路径"),
-     *      @Apidoc\Returned("url", type="string", default="", desc="链接"),
-     *      @Apidoc\Returned("size", type="string", default="", desc="大小"),
+     *      @Apidoc\Returned("file_name", type="string", default="", desc="文件名称"),
+     *      @Apidoc\Returned("file_path", type="string", default="", desc="文件路径"),
+     *      @Apidoc\Returned("file_url", type="string", default="", desc="文件链接"),
+     *      @Apidoc\Returned("file_size", type="string", default="", desc="文件大小"),
      * )
      */
     public function returnFile()

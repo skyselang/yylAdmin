@@ -14,6 +14,7 @@ use think\facade\Db;
 use think\facade\Config;
 use app\common\cache\admin\UserCache;
 use app\common\service\admin\TokenService;
+use app\common\service\file\FileService;
 
 class UserService
 {
@@ -74,20 +75,17 @@ class UserService
     public static function info($admin_user_id)
     {
         $admin_user = UserCache::get($admin_user_id);
-
         if (empty($admin_user)) {
             $admin_user = Db::name('admin_user')
                 ->where('admin_user_id', $admin_user_id)
                 ->find();
-
             if (empty($admin_user)) {
                 exception('用户不存在：' . $admin_user_id);
             }
 
-            $admin_user['avatar_url']     = file_url($admin_user['avatar']);
+            $admin_user['avatar_url']     = FileService::fileUrl($admin_user['avatar_id']);
             $admin_user['admin_role_ids'] = str_trim($admin_user['admin_role_ids']);
             $admin_user['admin_menu_ids'] = str_trim($admin_user['admin_menu_ids']);
-
             if (admin_is_super($admin_user_id)) {
                 $admin_menu = Db::name('admin_menu')
                     ->field('admin_menu_id,menu_url')
@@ -201,7 +199,6 @@ class UserService
 
         $admin_user_id = Db::name('admin_user')
             ->insertGetId($param);
-
         if (empty($admin_user_id)) {
             exception();
         }
@@ -220,7 +217,7 @@ class UserService
      * 
      * @return array
      */
-    public static function edit($param, $method = 'get')
+    public static function edit($param)
     {
         $admin_user_id = $param['admin_user_id'];
 
@@ -231,7 +228,6 @@ class UserService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }
@@ -258,7 +254,6 @@ class UserService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -287,13 +282,12 @@ class UserService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
 
         $update['admin_user_id'] = $admin_user_id;
-        $update['password']       = $res;
+        $update['password']      = $res;
 
         UserCache::upd($admin_user_id);
 
@@ -381,7 +375,6 @@ class UserService
             $res = Db::name('admin_user')
                 ->where('admin_user_id', $admin_user_id)
                 ->update($update);
-
             if (empty($res)) {
                 exception();
             }
@@ -411,7 +404,6 @@ class UserService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -440,7 +432,6 @@ class UserService
         $res = Db::name('admin_user')
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }

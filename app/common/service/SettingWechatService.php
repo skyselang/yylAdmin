@@ -12,6 +12,7 @@ namespace app\common\service;
 
 use think\facade\Db;
 use app\common\cache\SettingWechatCache;
+use app\common\service\file\FileService;
 use app\common\utils\StringUtils;
 
 class SettingWechatService
@@ -31,12 +32,10 @@ class SettingWechatService
         $setting_wechat_id = self::$offi_id;
 
         $setting_wechat = SettingWechatCache::get($setting_wechat_id);
-
         if (empty($setting_wechat)) {
             $setting_wechat = Db::name('setting_wechat')
                 ->where('setting_wechat_id', $setting_wechat_id)
                 ->find();
-
             if (empty($setting_wechat)) {
                 $setting_wechat['setting_wechat_id'] = $setting_wechat_id;
                 $setting_wechat['token']             = StringUtils::random(32);
@@ -51,8 +50,8 @@ class SettingWechatService
                     ->find();
             }
 
-            $setting_wechat['url']        = server_url() . '/index/Wechat/access';
-            $setting_wechat['qrcode_url'] = file_url($setting_wechat['qrcode']);
+            $setting_wechat['server_url'] = server_url() . '/index/Wechat/access';
+            $setting_wechat['qrcode_url'] = FileService::fileUrl($setting_wechat['qrcode_id']);
 
             SettingWechatCache::set($setting_wechat_id, $setting_wechat);
         }
@@ -76,7 +75,6 @@ class SettingWechatService
         $setting_wechat = Db::name('setting_wechat')
             ->where('setting_wechat_id', $setting_wechat_id)
             ->update($param);
-
         if (empty($setting_wechat)) {
             exception();
         }
@@ -96,12 +94,10 @@ class SettingWechatService
         $setting_wechat_id = self::$mini_id;
 
         $setting_wechat = SettingWechatCache::get($setting_wechat_id);
-
         if (empty($setting_wechat)) {
             $setting_wechat = Db::name('setting_wechat')
                 ->where('setting_wechat_id', $setting_wechat_id)
                 ->find();
-
             if (empty($setting_wechat)) {
                 $setting_wechat['setting_wechat_id'] = $setting_wechat_id;
                 $setting_wechat['create_time']       = datetime();
@@ -114,7 +110,7 @@ class SettingWechatService
                     ->find();
             }
 
-            $setting_wechat['qrcode_url'] = file_url($setting_wechat['qrcode']);
+            $setting_wechat['qrcode_url'] = FileService::fileUrl($setting_wechat['qrcode_id']);
 
             SettingWechatCache::set($setting_wechat_id, $setting_wechat);
         }
@@ -138,7 +134,6 @@ class SettingWechatService
         $setting_wechat = Db::name('setting_wechat')
             ->where('setting_wechat_id', $setting_wechat_id)
             ->update($param);
-
         if (empty($setting_wechat)) {
             exception();
         }

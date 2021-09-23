@@ -104,7 +104,6 @@ class UserLog
         validate(UserLogValidate::class)->scene('info')->check($param);
 
         $data = UserLogService::info($param['admin_user_log_id']);
-
         if ($data['is_delete'] == 1) {
             exception('日志已被删除：' . $param['admin_user_log_id']);
         }
@@ -174,7 +173,6 @@ class UserLog
 
         $data  = [];
         $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-
         if ($type == 'num') {
             $num = [];
             foreach ($range as $k => $v) {

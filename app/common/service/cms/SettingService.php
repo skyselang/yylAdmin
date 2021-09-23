@@ -12,6 +12,7 @@ namespace app\common\service\cms;
 
 use think\facade\Db;
 use app\common\cache\cms\SettingCache;
+use app\common\service\file\FileService;
 
 class SettingService
 {
@@ -34,7 +35,6 @@ class SettingService
             $setting = Db::name(self::$db_name)
                 ->where('setting_id', $setting_id)
                 ->find();
-
             if (empty($setting)) {
                 $setting['setting_id']  = $setting_id;
                 $setting['create_time'] = datetime();
@@ -46,8 +46,8 @@ class SettingService
                     ->find();
             }
 
-            $setting['logo_url']    = file_url($setting['logo']);
-            $setting['off_acc_url'] = file_url($setting['off_acc']);
+            $setting['logo_url']    = FileService::fileUrl($setting['logo_id']);
+            $setting['off_acc_url'] = FileService::fileUrl($setting['off_acc_id']);
 
             SettingCache::set($setting_id, $setting);
         }
@@ -71,7 +71,6 @@ class SettingService
         $res = Db::name(self::$db_name)
             ->where('setting_id', $setting_id)
             ->update($param);
-
         if (empty($res)) {
             exception();
         }

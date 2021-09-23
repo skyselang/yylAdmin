@@ -28,8 +28,9 @@ return [
     'groups' => [
         ['title' => 'index', 'name' => 'index'],
         ['title' => 'admin', 'name' => 'admin'],
-        ['title' => 'CMS', 'name' => 'adminCms'],
-        ['title' => 'CMS', 'name' => 'indexCms'],
+        ['title' => '文件管理', 'name' => 'adminFile'],
+        ['title' => '内容管理', 'name' => 'adminCms'],
+        ['title' => '内容管理', 'name' => 'indexCms'],
     ],
     // 指定公共注释定义的文件地址
     'definitions' => 'app\common\controller\ApidocDefinitions',

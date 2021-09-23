@@ -14,7 +14,6 @@ use think\facade\Request;
 use app\common\validate\cms\ContentValidate;
 use app\common\service\cms\ContentService;
 use app\common\service\cms\CategoryService;
-use app\common\service\UploadService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -216,34 +215,6 @@ class Content
         $data = ContentService::dele($param['content']);
 
         return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("内容上传文件")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="ParamFile")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnFile")
-     */
-    public function upload()
-    {
-        $param['type'] = Request::param('type/s', 'file');
-        $param['file'] = Request::file('file');
-
-        $param[$param['type']] = $param['file'];
-        if ($param['type'] == 'image') {
-            validate(ContentValidate::class)->scene('image')->check($param);
-        } elseif ($param['type'] == 'video') {
-            validate(ContentValidate::class)->scene('video')->check($param);
-        } else {
-            validate(ContentValidate::class)->scene('file')->check($param);
-        }
-
-        $data = UploadService::upload($param['file'], 'cms/content');
-
-        return success($data, '上传成功');
     }
 
     /**

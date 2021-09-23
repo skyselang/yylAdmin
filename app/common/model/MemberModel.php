@@ -69,21 +69,21 @@ class MemberModel extends Model
     }
 
     /**
-     * @Field("username,nickname,password,phone,email,region_id,remark,sort")
+     * @Field("avatar_id,username,nickname,password,phone,email,region_id,remark,sort")
      */
     public function add()
     {
     }
 
     /**
-     * @Field("member_id,username,nickname,phone,email,region_id,remark,sort")
+     * @Field("member_id,avatar_id,username,nickname,phone,email,region_id,remark,sort")
      */
     public function edit()
     {
     }
 
     /**
-     * @Field("member_id,username,nickname,phone,email,region_id")
+     * @Field("member_id,avatar_id,username,nickname,phone,email,region_id")
      */
     public function editIndex()
     {
@@ -97,10 +97,10 @@ class MemberModel extends Model
     }
 
     /**
-     * @Field("member_id")
-     * @AddField("avatar_file", type="file", require=true, desc="头像文件")
+     * @Field("avatar_url")
+     * @AddField("avatar_url", type="string", require=false, desc="头像链接")
      */
-    public function avatar()
+    public function avatar_url()
     {
     }
 
@@ -119,7 +119,7 @@ class MemberModel extends Model
     }
 
     /**
-     * @Field("member_id,username,nickname,phone,email,avatar,login_ip,login_time")
+     * @Field("member_id,username,nickname,phone,email,avatar_id,login_ip,login_time")
      * @AddField("menber_token", type="string", desc="MemberToken")
      */
     public function login()

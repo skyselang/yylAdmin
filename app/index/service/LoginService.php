@@ -31,7 +31,7 @@ class LoginService
         $username = $param['username'];
         $password = md5($param['password']);
 
-        $field = 'member_id,username,nickname,phone,email,avatar,login_num,is_disable';
+        $field = 'member_id,username,nickname,phone,email,login_num,is_disable';
 
         // 通过 账号、手机、邮箱 登录
         $where[] = ['username|phone|email', '=', $username];
@@ -42,11 +42,9 @@ class LoginService
             ->field($field)
             ->where($where)
             ->find();
-
         if (empty($member)) {
             exception('账号或密码错误');
         }
-
         if ($member['is_disable'] == 1) {
             exception('账号已被禁用');
         }
@@ -247,7 +245,6 @@ class LoginService
                         ->field('member_id,login_num')
                         ->where(['member_id' => $member_id, 'is_delete' => 0])
                         ->find();
-
                     if ($member) {
                         $update['login_num']    = $member['login_num'] + 1;
                         $update['login_ip']     = $login_ip;
@@ -324,7 +321,7 @@ class LoginService
     public static function loginField($member)
     {
         $data = [];
-        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'avatar', 'login_ip', 'login_time'];
+        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time'];
         foreach ($field as $k => $v) {
             $data[$v] = $member[$v];
         }
