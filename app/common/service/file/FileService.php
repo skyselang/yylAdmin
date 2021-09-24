@@ -349,8 +349,12 @@ class FileService
      */
     public static function fileUrl($file_id)
     {
+        $file_url = '';
+        
         $file = self::info($file_id);
-        $file_url = $file['file_url'];
+        if ($file) {
+            $file_url = $file['file_url'];
+        }
 
         return $file_url;
     }
