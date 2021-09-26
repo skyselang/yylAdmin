@@ -1,0 +1,20 @@
+/* clear data sql */
+UPDATE yyl_admin_menu SET create_time=null, update_time=null, delete_time=null;
+UPDATE yyl_admin_role SET create_time=null, update_time=null, delete_time=null;
+TRUNCATE yyl_admin_setting;
+UPDATE yyl_admin_user SET create_time=null, update_time=null, delete_time=null, avatar_id=0, login_num=0,login_ip='', login_region='', login_time=null, logout_time=null;
+TRUNCATE yyl_admin_user_log;
+UPDATE yyl_api SET create_time=null, update_time=null, delete_time=null;
+TRUNCATE yyl_cms_category;
+TRUNCATE yyl_cms_comment;
+TRUNCATE yyl_cms_content;
+TRUNCATE yyl_cms_setting;
+TRUNCATE yyl_file;
+TRUNCATE yyl_file_group;
+TRUNCATE yyl_file_setting;
+TRUNCATE yyl_member;
+TRUNCATE yyl_member_log;
+TRUNCATE yyl_member_wechat;
+UPDATE yyl_region SET create_time=null, update_time=null, delete_time=null;
+TRUNCATE yyl_setting;
+TRUNCATE yyl_setting_wechat;

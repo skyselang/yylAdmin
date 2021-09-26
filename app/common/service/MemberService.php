@@ -258,7 +258,7 @@ class MemberService
     }
 
     /**
-     * 会员数量统计
+     * 会员统计（数量）
      *
      * @param string $date 日期
      * @param string $type 类型：new新增，act活跃
@@ -327,64 +327,110 @@ class MemberService
     }
 
     /**
-     * 会员日期统计
+     * 会员统计（日期）
      *
-     * @param array  $date 日期范围
-     * @param string $type 类型：new新增，act活跃
+     * @param array $date 日期范围
      * 
      * @return array
      */
-    public static function statDate($date = [], $type = 'new')
+    public static function statDate($date = [])
     {
         if (empty($date)) {
             $date[0] = DatetimeUtils::daysAgo(29);
             $date[1] = DatetimeUtils::today();
         }
-
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = 'date:' . $sta_date . '-' . $end_date . ':' . $type;
+        $key  = 'date:' . $sta_date . '-' . $end_date;
         $data = MemberCache::get($key);
         if (empty($data)) {
+            $data['date'] = $date;
+            $dates = DatetimeUtils::betweenDates($sta_date, $end_date);
             $sta_time = DatetimeUtils::dateStartTime($sta_date);
             $end_time = DatetimeUtils::dateEndTime($end_date);
 
-            if ($type == 'act') {
-                $field   = "count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date";
-                $where[] = ['login_time', '>=', $sta_time];
-                $where[] = ['login_time', '<=', $end_time];
-                $group   = "date_format(login_time,'%Y-%m-%d')";
-            } else {
-                $field   = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
-                $where[] = ['create_time', '>=', $sta_time];
-                $where[] = ['create_time', '<=', $end_time];
-                $group   = "date_format(create_time,'%Y-%m-%d')";
-            }
-
-            $member = Db::name('member')
-                ->field($field)
-                ->where($where)
-                ->group($group)
-                ->select();
-
-            $x_data = DatetimeUtils::betweenDates($sta_date, $end_date);
-            $y_data = [];
-            foreach ($x_data as $k => $v) {
-                $y_data[$k] = 0;
-                foreach ($member as $ku => $vu) {
-                    if ($v == $vu['date']) {
-                        $y_data[$k] = $vu['num'];
+            // 新增会员
+            $new = Db::name('member')
+                ->field("count(create_time) as num, date_format(login_time,'%Y-%m-%d') as date")
+                ->where('create_time', '>=', $sta_time)
+                ->where('create_time', '<=', $end_time)
+                ->group("date_format(login_time,'%Y-%m-%d')")
+                ->select()
+                ->toArray();
+            $new_x = $new_s = [];
+            foreach ($dates as $k => $v) {
+                $new_x[$k] = $v;
+                $new_s[$k] = 0;
+                foreach ($new as $kn => $vn) {
+                    if ($v == $vn['date']) {
+                        $new_s[$k] = $vn['num'];
                     }
                 }
             }
+            $data['new'] = ['x' => $new_x, 's' => $new_s];
 
-            $data['x_data'] = $x_data;
-            $data['y_data'] = $y_data;
-            $data['date']   = $date;
+            // 活跃会员
+            $act = Db::name('member')
+                ->field("count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date")
+                ->where('login_time', '>=', $sta_time)
+                ->where('login_time', '<=', $end_time)
+                ->group("date_format(login_time,'%Y-%m-%d')")
+                ->select()
+                ->toArray();
+            $act_x = $act_s = [];
+            foreach ($dates as $k => $v) {
+                $act_x[$k] = $v;
+                $act_s[$k] = 0;
+                foreach ($act as $ka => $va) {
+                    if ($v == $va['date']) {
+                        $act_s[$k] = $va['num'];
+                    }
+                }
+            }
+            $data['act'] = ['x' => $act_x, 's' => $act_s];
+
+            // 会员总数
+            $count_x = $count_s = [];
+            foreach ($dates as $k => $v) {
+                $count_t = DatetimeUtils::dateEndTime($v);
+                $count_x[] = $v;
+                $count_s[] = Db::name('member')
+                    ->where('is_delete', 0)
+                    ->where('create_time', '<=', $count_t)
+                    ->count('member_id');
+            }
+            $data['count'] = ['x' => $count_x, 's' => $count_s];
 
             MemberCache::set($key, $data);
         }
+
+        return $data;
+    }
+
+    /**
+     * 会员统计（总数）
+     *
+     * @return integer
+     */
+    public static function statCount()
+    {
+        $x = $s = [];
+        $months = DatetimeUtils::months();
+        foreach ($months as $k => $v) {
+            $time = [];
+            $time = DatetimeUtils::monthStartEnd($v);
+            $time[1] = DatetimeUtils::dateEndTime($time[1]);
+
+            $x[] = $v;
+            $s[] = Db::name('member')
+                ->where('is_delete', 0)
+                ->where('create_time', '<=', $time[1])
+                ->count('member_id');
+        }
+
+        $data['x'] = $x;
+        $data['s'] = $s;
 
         return $data;
     }

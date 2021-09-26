@@ -209,4 +209,30 @@ class Member
 
         return success($data);
     }
+
+    /**
+     * @Apidoc\Title("会员统计")
+     * @Apidoc\Method("GET")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
+     */
+    public function stat()
+    {
+        $date = Request::param('date/a', []);
+
+        $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
+
+        $number = $active = [];
+        foreach ($range as $k => $v) {
+            $number[$v] = MemberService::statNum($v);
+            $active[$v] = MemberService::statNum($v, 'act');
+        }
+        $data['number'] = $number;
+        $data['active'] = $active;
+        $data['date']   = MemberService::statDate($date);
+        $data['count']  = MemberService::statCount();
+
+        return success($data);
+    }
 }

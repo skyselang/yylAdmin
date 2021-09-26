@@ -11,7 +11,7 @@
 namespace app\admin\controller;
 
 use think\facade\Request;
-use app\common\service\admin\IndexService;
+use app\common\service\IndexService;
 use app\common\service\cms\ContentService;
 use app\common\service\file\FileService;
 use app\common\service\MemberService;
@@ -40,6 +40,20 @@ class Index
     }
 
     /**
+     * @Apidoc\Title("总数统计")
+     * @Apidoc\Method("GET")
+     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Returned(ref="returnCode")
+     * @Apidoc\Returned(ref="returnData")
+     */
+    public function count()
+    {
+        $data = IndexService::count();
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("会员统计")
      * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
@@ -50,18 +64,7 @@ class Index
     {
         $date = Request::param('date/a', []);
 
-        $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-
-        $number = [];
-        $active = [];
-        foreach ($range as $k => $v) {
-            $number[$v] = MemberService::statNum($v);
-            $active[$v] = MemberService::statNum($v, 'act');
-        }
-        $data['number']   = $number;
-        $data['active']   = $active;
-        $data['date_new'] = MemberService::statDate($date);
-        $data['date_act'] = MemberService::statDate($date, 'act');
+        $data = MemberService::statDate($date);
 
         return success($data);
     }

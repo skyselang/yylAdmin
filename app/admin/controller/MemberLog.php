@@ -157,7 +157,7 @@ class MemberLog
 
     /**
      * @Apidoc\Title("会员日志统计")
-     * @Apidoc\Method("POST")
+     * @Apidoc\Method("GET")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")
      * @Apidoc\Param(ref="paramDate")

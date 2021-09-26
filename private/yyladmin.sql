@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 23/09/2021 16:01:45
+ Date: 26/09/2021 17:14:12
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 424 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 427 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -78,7 +78,7 @@ INSERT INTO `yyl_admin_menu` VALUES (44, 41, '日志管理删除', 'admin/admin.
 INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/admin.UserCenter/info', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/admin.UserCenter/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/admin.UserCenter/pwd', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (48, 12, '上传头像', 'admin/admin.UserCenter/avatar', 200, 0, 0, 0, 1, NULL, NULL, '2021-09-22 16:42:27');
+INSERT INTO `yyl_admin_menu` VALUES (48, 12, '上传头像', 'admin/admin.UserCenter/avatar', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (49, 1, '首页', 'admin/Index/index', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (50, 58, '地图坐标', 'admin/admin.Utils/map', 150, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/admin.Login/login', 160, 0, 0, 1, 0, NULL, NULL, NULL);
@@ -103,7 +103,7 @@ INSERT INTO `yyl_admin_menu` VALUES (117, 12, '我的设置', 'admin/admin.UserC
 INSERT INTO `yyl_admin_menu` VALUES (118, 3, '菜单角色解除', 'admin/admin.Menu/roleRemove', 135, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (119, 3, '菜单用户解除', 'admin/admin.Menu/userRemove', 120, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (120, 5, '角色用户解除', 'admin/admin.Role/userRemove', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (121, 4, '用户上传头像', 'admin/admin.User/avatar', 200, 0, 0, 0, 1, NULL, NULL, '2021-09-22 16:40:50');
+INSERT INTO `yyl_admin_menu` VALUES (121, 4, '用户上传头像', 'admin/admin.User/avatar', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (122, 58, '服务器信息', 'admin/admin.Utils/server', 120, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (123, 156, '会员管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (124, 123, '会员列表', 'admin/Member/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -113,7 +113,7 @@ INSERT INTO `yyl_admin_menu` VALUES (127, 123, '会员修改', 'admin/Member/edi
 INSERT INTO `yyl_admin_menu` VALUES (128, 123, '会员删除', 'admin/Member/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (129, 123, '会员重置密码', 'admin/Member/pwd', 130, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (130, 123, '会员是否禁用', 'admin/Member/disable', 120, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (131, 123, '会员更换头像', 'admin/Member/avatar', 200, 0, 0, 0, 1, NULL, NULL, '2021-09-22 16:39:27');
+INSERT INTO `yyl_admin_menu` VALUES (131, 123, '会员更换头像', 'admin/Member/avatar', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (132, 186, '接口管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (133, 132, '接口列表', 'admin/Api/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (134, 132, '接口信息', 'admin/Api/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -154,7 +154,7 @@ INSERT INTO `yyl_admin_menu` VALUES (191, 190, '公众号设置信息', 'admin/S
 INSERT INTO `yyl_admin_menu` VALUES (192, 190, '公众号设置修改', 'admin/SettingWechat/offiEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (193, 190, '小程序设置信息', 'admin/SettingWechat/miniInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (194, 190, '小程序设置修改', 'admin/SettingWechat/miniEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (195, 190, '上传二维码', 'admin/SettingWechat/qrcode', 200, 0, 0, 0, 1, NULL, NULL, '2021-09-22 16:40:28');
+INSERT INTO `yyl_admin_menu` VALUES (195, 190, '上传二维码', 'admin/SettingWechat/qrcode', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (196, 73, '验证码设置信息', 'admin/admin.Setting/captchaInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (197, 73, '验证码设置修改', 'admin/admin.Setting/captchaEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (198, 71, '缓存设置信息', 'admin/admin.Setting/cacheInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -188,7 +188,7 @@ INSERT INTO `yyl_admin_menu` VALUES (286, 283, '内容添加', 'admin/cms.Conten
 INSERT INTO `yyl_admin_menu` VALUES (287, 283, '内容修改', 'admin/cms.Content/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (288, 283, '内容删除', 'admin/cms.Content/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (289, 283, '内容分类', 'admin/cms.Content/category', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (290, 283, '内容上传文件', 'admin/cms.Content/upload', 200, 0, 0, 0, 1, NULL, NULL, '2021-09-22 16:43:48');
+INSERT INTO `yyl_admin_menu` VALUES (290, 283, '内容上传文件', 'admin/cms.Content/upload', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (291, 283, '内容是否置顶', 'admin/cms.Content/istop', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (292, 283, '内容是否热门', 'admin/cms.Content/ishot', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (293, 283, '内容是否推荐', 'admin/cms.Content/isrec', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -202,7 +202,7 @@ INSERT INTO `yyl_admin_menu` VALUES (300, 298, '内容分类信息', 'admin/cms.
 INSERT INTO `yyl_admin_menu` VALUES (301, 298, '内容分类添加', 'admin/cms.Category/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (302, 298, '内容分类修改', 'admin/cms.Category/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (303, 298, '内容分类删除', 'admin/cms.Category/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (307, 298, '内容分类上传文件', 'admin/cms.Category/upload', 200, 0, 0, 0, 1, NULL, NULL, '2021-09-22 16:44:39');
+INSERT INTO `yyl_admin_menu` VALUES (307, 298, '内容分类上传文件', 'admin/cms.Category/upload', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (308, 298, '内容分类是否隐藏', 'admin/cms.Category/ishide', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (381, 230, '留言管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (382, 381, '留言列表', 'admin/cms.Comment/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -217,7 +217,7 @@ INSERT INTO `yyl_admin_menu` VALUES (390, 381, '留言回收站删除', 'admin/c
 INSERT INTO `yyl_admin_menu` VALUES (391, 230, '内容设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (392, 391, '内容设置信息', 'admin/cms.Setting/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (393, 391, '内容设置修改', 'admin/cms.Setting/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (395, 391, '内容设置上传', 'admin/cms.Setting/upload', 200, 0, 0, 0, 1, NULL, NULL, '2021-09-22 16:40:04');
+INSERT INTO `yyl_admin_menu` VALUES (395, 391, '内容设置上传', 'admin/cms.Setting/upload', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (396, 1, '内容统计', 'admin/Index/cms', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (397, 0, '文件管理', '', 157, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (398, 397, '文件管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -244,6 +244,9 @@ INSERT INTO `yyl_admin_menu` VALUES (420, 1, '文件统计', 'admin/Index/file',
 INSERT INTO `yyl_admin_menu` VALUES (421, 397, '文件设置', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (422, 421, '文件设置信息', 'admin/file.Setting/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (423, 421, '文件设置修改', 'admin/file.Setting/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (424, 1, '总数统计', 'admin/Index/count', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (425, 156, '会员统计', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (426, 425, '会员统计', 'admin/Member/stat', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -269,7 +272,7 @@ CREATE TABLE `yyl_admin_role`  (
 -- Records of yyl_admin_role
 -- ----------------------------
 INSERT INTO `yyl_admin_role` VALUES (1, ',,', '超管', '', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,187,191,193,196,198,204,216,218,221,224,227,284,285,286,287,288,289,291,292,293,294,295,296,299,300,301,302,308,382,383,384,385,386,387,388,389,391,392,396,399,400,401,411,412,417,422,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,187,191,193,196,198,204,216,218,221,224,227,284,285,286,287,288,289,291,292,293,294,295,296,299,300,301,302,308,382,383,384,385,386,387,388,389,391,392,396,399,400,401,411,412,417,420,422,424,426,', '演示', '', 200, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '', 200, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -289,7 +292,7 @@ CREATE TABLE `yyl_admin_setting`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE,
   INDEX `admin_setting_id`(`admin_setting_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_setting
@@ -456,27 +459,11 @@ CREATE TABLE `yyl_cms_category`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`category_id`) USING BTREE,
   INDEX `cms_category_id`(`category_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容分类' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容分类' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_category
 -- ----------------------------
-INSERT INTO `yyl_cms_category` VALUES (1, 0, '文章', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (2, 0, '轮播', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (3, 0, '下载', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (4, 0, '友链', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (5, 0, '新闻', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (6, 0, '产品', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (7, 0, '案例', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (8, 0, '视频', '123', '123', '123', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (9, 8, 'yylAdmin视频', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (10, 7, 'yylAdmin案例', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (11, 6, 'yylAdmin产品', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (12, 5, 'yylAdmin新闻', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (13, 4, 'yylAdmin友链', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (14, 3, 'yylAdmin下载', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (15, 2, 'yylAdmin轮播', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_category` VALUES (16, 1, 'yylAdmin文章', '', '', '', '', 'a:0:{}', 200, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_cms_comment
@@ -538,19 +525,11 @@ CREATE TABLE `yyl_cms_content`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`content_id`) USING BTREE,
   INDEX `content_id`(`content_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_content
 -- ----------------------------
-INSERT INTO `yyl_cms_content` VALUES (1, 9, 'yylAdmin', '', '', '', '<p><a href=\"https://gitee.com/skyselang/yylAdmin\" target=\"_blank\">https://gitee.com/skyselang/yylAdmin</a><br/></p>', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_content` VALUES (2, 10, 'yylAdmin', '', '', '', '<p><a href=\"https://gitee.com/skyselang/yylAdmin\" target=\"_blank\">https://gitee.com/skyselang/yylAdmin</a><br/></p>', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_content` VALUES (3, 11, 'yylAdmin', '', '', '', '<p><a href=\"https://gitee.com/skyselang/yylAdmin\" target=\"_blank\">https://gitee.com/skyselang/yylAdmin</a><br/></p>', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_content` VALUES (4, 12, 'yylAdmin', '', '', '', '<p><a href=\"https://gitee.com/skyselang/yylAdmin\" target=\"_blank\">https://gitee.com/skyselang/yylAdmin</a><br/></p>', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_content` VALUES (5, 13, 'yylAdmin', '', '', '', '<p><a href=\"https://gitee.com/skyselang/yylAdmin\" target=\"_blank\">https://gitee.com/skyselang/yylAdmin</a><br/></p>', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_content` VALUES (6, 14, 'yylAdmin', '', '', '', '<p><a href=\"https://gitee.com/skyselang/yylAdmin\" target=\"_blank\">https://gitee.com/skyselang/yylAdmin</a><br/></p>', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_content` VALUES (7, 15, 'yylAdmin', '', '', '', '<p><a href=\"https://gitee.com/skyselang/yylAdmin\" target=\"_blank\">https://gitee.com/skyselang/yylAdmin</a><br/></p>', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_cms_content` VALUES (8, 16, 'yylAdmin', '', '', '', '', '', '', '', '', '', '', '', 200, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_cms_setting
@@ -576,7 +555,7 @@ CREATE TABLE `yyl_cms_setting`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
   INDEX `setting_cms_id`(`setting_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容设置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容设置' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_cms_setting
@@ -629,12 +608,11 @@ CREATE TABLE `yyl_file_group`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`group_id`) USING BTREE,
   INDEX `file_group_id`(`group_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件分组' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件分组' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_file_group
 -- ----------------------------
-INSERT INTO `yyl_file_group` VALUES (1, '默认', '默认分组', 50, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_file_setting
@@ -662,13 +640,13 @@ CREATE TABLE `yyl_file_setting`  (
   `baidu_bucket` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，Bucket 名称',
   `baidu_endpoint` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，所属地域',
   `baidu_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，官方域名',
-  `image_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '允许上传的图片后缀，多个逗号\",\"隔开，为空不限制',
+  `image_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'jpg,png,jpeg' COMMENT '允许上传的图片后缀，多个逗号\",\"隔开，为空不限制',
   `image_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '1' COMMENT '允许上传的图片大小，单位MB，为0不限制',
-  `video_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '允许上传的视频后缀，多个逗号\",\"隔开，为空不限制',
+  `video_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'mp4,avi,mkv' COMMENT '允许上传的视频后缀，多个逗号\",\"隔开，为空不限制',
   `video_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '50' COMMENT '允许上传的视频大小，单位MB，为0不限制',
-  `audio_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '允许上传的音频后缀，多个逗号\",\"隔开，为空不限制',
+  `audio_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'mp3,aac' COMMENT '允许上传的音频后缀，多个逗号\",\"隔开，为空不限制',
   `audio_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '10' COMMENT '允许上传的音频大小，单位MB，为0不限制',
-  `word_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '允许上传的文档后缀，多个逗号\",\"隔开，为空不限制',
+  `word_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'docx,xlsx,pptx' COMMENT '允许上传的文档后缀，多个逗号\",\"隔开，为空不限制',
   `word_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '5' COMMENT '允许上传的文档大小，单位MB，为0不限制',
   `other_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '允许上传的其它文件后缀，多个逗号\",\"隔开，为空不限制',
   `other_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '30' COMMENT '允许上传的其它文件大小，单位MB，为0不限制',
@@ -676,7 +654,7 @@ CREATE TABLE `yyl_file_setting`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
   INDEX `setting_cms_id`(`setting_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件设置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件设置' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_file_setting
@@ -711,9 +689,9 @@ CREATE TABLE `yyl_member`  (
   PRIMARY KEY (`member_id`) USING BTREE,
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `phone`(`phone`) USING BTREE,
-  INDEX `email`(`email`(191)) USING BTREE,
-  INDEX `member_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = DYNAMIC;
+  INDEX `member_id`(`member_id`) USING BTREE,
+  INDEX `email`(`email`(191)) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_member
@@ -745,12 +723,12 @@ CREATE TABLE `yyl_member_log`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`member_log_id`) USING BTREE,
   INDEX `request_isp`(`request_isp`) USING BTREE,
+  INDEX `member_log_id`(`member_log_id`) USING BTREE,
+  INDEX `member_id`(`member_id`) USING BTREE,
   INDEX `request_city`(`request_city`(191)) USING BTREE,
   INDEX `request_province`(`request_province`(191)) USING BTREE,
-  INDEX `request_country`(`request_country`(191)) USING BTREE,
-  INDEX `member_log_id`(`member_log_id`) USING BTREE,
-  INDEX `member_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员日志' ROW_FORMAT = DYNAMIC;
+  INDEX `request_country`(`request_country`(191)) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员日志' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_member_log
@@ -4534,7 +4512,7 @@ CREATE TABLE `yyl_setting`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
   INDEX `setting_id`(`setting_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_setting
@@ -4559,7 +4537,7 @@ CREATE TABLE `yyl_setting_wechat`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_wechat_id`) USING BTREE,
   INDEX `setting_wechat_id`(`setting_wechat_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '微信设置' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '微信设置' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_setting_wechat

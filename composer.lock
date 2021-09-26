@@ -918,16 +918,16 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.7.0",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3"
+                "reference": "b38b25d7b372e9fddb00335400467b223349fd7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3",
-                "reference": "3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/b38b25d7b372e9fddb00335400467b223349fd7e",
+                "reference": "b38b25d7b372e9fddb00335400467b223349fd7e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -964,7 +964,7 @@
             "description": "Mime-type detection for Flysystem",
             "support": {
                 "issues": "https://github.com/thephpleague/mime-type-detection/issues",
-                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.7.0"
+                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.8.0"
             },
             "funding": [
                 {
@@ -976,7 +976,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-18T20:58:21+00:00"
+            "time": "2021-09-25T08:23:19+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1718,16 +1718,16 @@
         },
         {
             "name": "qcloud/cos-sdk-v5",
-            "version": "v2.3.2",
+            "version": "v2.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tencentyun/cos-php-sdk-v5.git",
-                "reference": "98168d18078381f7c1e2ba717f3de35e16760909"
+                "reference": "9690eb289f5aa3c158a50e4061abfe9b9ad32421"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tencentyun/cos-php-sdk-v5/zipball/98168d18078381f7c1e2ba717f3de35e16760909",
-                "reference": "98168d18078381f7c1e2ba717f3de35e16760909",
+                "url": "https://api.github.com/repos/tencentyun/cos-php-sdk-v5/zipball/9690eb289f5aa3c158a50e4061abfe9b9ad32421",
+                "reference": "9690eb289f5aa3c158a50e4061abfe9b9ad32421",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1739,7 +1739,7 @@
             "require": {
                 "guzzlehttp/guzzle": ">=6.2.1",
                 "guzzlehttp/guzzle-services": ">=1.1",
-                "guzzlehttp/psr7": "<2.0",
+                "guzzlehttp/psr7": "<=2.0",
                 "php": ">=5.6"
             },
             "type": "library",
@@ -1777,22 +1777,22 @@
             ],
             "support": {
                 "issues": "https://github.com/tencentyun/cos-php-sdk-v5/issues",
-                "source": "https://github.com/tencentyun/cos-php-sdk-v5/tree/v2.3.2"
+                "source": "https://github.com/tencentyun/cos-php-sdk-v5/tree/v2.3.3"
             },
-            "time": "2021-09-16T08:53:08+00:00"
+            "time": "2021-09-23T09:30:18+00:00"
         },
         {
             "name": "qiniu/php-sdk",
-            "version": "v7.4.0",
+            "version": "v7.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qiniu/php-sdk.git",
-                "reference": "1c6bc89166e524a40ee42bf516fb99ffc6401c82"
+                "reference": "10c7ead8357743b4b987a335c14964fb07700d57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qiniu/php-sdk/zipball/1c6bc89166e524a40ee42bf516fb99ffc6401c82",
-                "reference": "1c6bc89166e524a40ee42bf516fb99ffc6401c82",
+                "url": "https://api.github.com/repos/qiniu/php-sdk/zipball/10c7ead8357743b4b987a335c14964fb07700d57",
+                "reference": "10c7ead8357743b4b987a335c14964fb07700d57",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1805,6 +1805,7 @@
                 "php": ">=5.3.3"
             },
             "require-dev": {
+                "paragonie/random_compat": ">=2",
                 "phpunit/phpunit": "~4.0",
                 "squizlabs/php_codesniffer": "~3.6"
             },
@@ -1838,9 +1839,9 @@
             ],
             "support": {
                 "issues": "https://github.com/qiniu/php-sdk/issues",
-                "source": "https://github.com/qiniu/php-sdk/tree/v7.4.0"
+                "source": "https://github.com/qiniu/php-sdk/tree/v7.4.1"
             },
-            "time": "2021-07-19T07:41:36+00:00"
+            "time": "2021-09-24T09:39:16+00:00"
         },
         {
             "name": "ralouphie/getallheaders",

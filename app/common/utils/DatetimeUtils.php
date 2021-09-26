@@ -368,4 +368,48 @@ class DatetimeUtils
 
         return $datetime;
     }
+
+    /**
+     * 获取过去或将来的月份
+     *
+     * @param integer $number 月份数
+     * @param boolean $future 是否将来
+     *
+     * @return array
+     */
+    public static function months($number = 12, $future = false)
+    {
+        $months = [];
+        $symbol = '-';
+        if ($future) {
+            $symbol = '+';
+        }
+        for ($i = $number; $i >= 0; $i--) {
+            $months[] = date('Y-m', strtotime($symbol . $i . ' month'));
+        }
+
+        return $months;
+    }
+
+    /**
+     * 获取月份的开始和结束日期
+     *
+     * @param string $month 月份
+     *
+     * @return array
+     */
+    public static function monthStartEnd($month = '')
+    {
+        if (empty($month)) {
+            $month = date('Y-m');
+        }
+
+        $sta = $month . '-01';
+        $t = date('t', strtotime($sta));
+        $end = $month . '-' . $t;
+        $date[] = $sta;
+        $date[] = $end;
+
+        return $date;
+    }
 }

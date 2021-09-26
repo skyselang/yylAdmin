@@ -61,7 +61,7 @@ return [
     // 缓存配置
     'cache' => [
         // 是否开启缓存
-        'enable' => false,
+        'enable' => !env('app.debug', false),
     ],
     // 权限认证配置
     'auth' => [
