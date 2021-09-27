@@ -1,9 +1,14 @@
 # https://git-scm.com/book/zh/v2
 /.idea
 /.vscode
+.DS_Store
 /public/.well-known
 /public/storage
 /vendor
 *.log
 .user.ini
 .env
+.htaccess
+nginx.htaccess
+composer.lock
+.history
