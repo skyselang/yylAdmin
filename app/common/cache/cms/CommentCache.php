@@ -17,11 +17,11 @@ class CommentCache
     /**
      * 缓存键名
      *
-     * @param string $comment_id 留言id
+     * @param int $comment_id 留言id
      * 
      * @return string
      */
-    public static function key($comment_id = '')
+    public static function key($comment_id)
     {
         $key = 'cms_comment:' . $comment_id;
 
@@ -31,18 +31,18 @@ class CommentCache
     /**
      * 缓存写入
      *
-     * @param string  $comment_id 留言id
-     * @param mixed   $comment    留言信息
-     * @param integer $ttl        有效时间（秒）
+     * @param int      $comment_id 留言id
+     * @param array    $comment    留言信息
+     * @param int|null $ttl        有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($comment_id = '', $comment, $ttl = 0)
+    public static function set($comment_id, $comment, $ttl = null)
     {
         $key = self::key($comment_id);
         $val = $comment;
-        if (empty($ttl)) {
-            $ttl = 1 * 24 * 60 * 60 + mt_rand(0, 99);
+        if ($ttl === null) {
+            $ttl = 1 * 24 * 60 * 60;
         }
 
         $res = Cache::set($key, $val, $ttl);
@@ -53,11 +53,11 @@ class CommentCache
     /**
      * 缓存读取
      *
-     * @param string $comment_id 留言id
+     * @param int $comment_id 留言id
      * 
      * @return mixed
      */
-    public static function get($comment_id = '')
+    public static function get($comment_id)
     {
         $key = self::key($comment_id);
         $res = Cache::get($key);
@@ -68,30 +68,14 @@ class CommentCache
     /**
      * 缓存删除
      *
-     * @param string $comment_id 留言id
+     * @param int $comment_id 留言id
      * 
      * @return bool
      */
-    public static function del($comment_id = '')
+    public static function del($comment_id)
     {
         $key = self::key($comment_id);
         $res = Cache::delete($key);
-
-        return $res;
-    }
-
-    /**
-     * 缓存自增
-     *
-     * @param string  $comment_id 留言id
-     * @param integer $step       步长
-     *
-     * @return bool
-     */
-    public static function inc($comment_id = '', $step = 1)
-    {
-        $key = self::key($comment_id);
-        $res = Cache::inc($key, $step);
 
         return $res;
     }

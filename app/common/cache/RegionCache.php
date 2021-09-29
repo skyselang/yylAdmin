@@ -17,11 +17,11 @@ class RegionCache
     /**
      * 缓存key
      *
-     * @param integer|string $region_id 地区id
+     * @param int|string $region_id 地区id
      * 
      * @return string
      */
-    public static function key($region_id = 0)
+    public static function key($region_id)
     {
         $key = 'region:' . $region_id;
 
@@ -31,17 +31,17 @@ class RegionCache
     /**
      * 缓存设置
      *
-     * @param integer|string $region_id 地区id
-     * @param array          $region    地区信息
-     * @param integer        $ttl       有效时间（秒）
+     * @param int|string $region_id 地区id
+     * @param array      $region    地区信息
+     * @param int|null   $ttl       有效时间（秒）0永久
      * 
      * @return array 地区信息
      */
-    public static function set($region_id = 0, $region = [], $ttl = 0)
+    public static function set($region_id, $region, $ttl = null)
     {
         $key = self::key($region_id);
         $val = $region;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60;
         }
 
@@ -53,11 +53,11 @@ class RegionCache
     /**
      * 缓存获取
      *
-     * @param integer|string $region_id 地区id
+     * @param int|string $region_id 地区id
      * 
      * @return array 地区信息
      */
-    public static function get($region_id = 0)
+    public static function get($region_id)
     {
         $key = self::key($region_id);
         $res = Cache::get($key);
@@ -68,11 +68,11 @@ class RegionCache
     /**
      * 缓存删除
      *
-     * @param integer|string $region_id 地区id
+     * @param int|string $region_id 地区id
      * 
      * @return bool
      */
-    public static function del($region_id = 0)
+    public static function del($region_id)
     {
         $key = self::key($region_id);
         $res = Cache::delete($key);

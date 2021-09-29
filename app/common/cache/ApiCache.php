@@ -17,11 +17,11 @@ class ApiCache
     /**
      * 缓存key
      *
-     * @param integer|string $api_id 接口id
+     * @param int|string $api_id 接口id
      * 
      * @return string
      */
-    public static function key($api_id = '')
+    public static function key($api_id)
     {
         $key = 'api:' . $api_id;
 
@@ -31,17 +31,17 @@ class ApiCache
     /**
      * 缓存设置
      *
-     * @param integer|string $api_id 接口id
-     * @param array          $api    接口信息
-     * @param integer        $ttl    有效时间（秒）
+     * @param int|string $api_id 接口id
+     * @param array      $api    接口信息
+     * @param int|null   $ttl    有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($api_id = '', $api = [], $ttl = 0)
+    public static function set($api_id = '', $api = [], $ttl = null)
     {
         $key = self::key($api_id);
         $val = $api;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60;
         }
 
@@ -53,7 +53,7 @@ class ApiCache
     /**
      * 缓存获取
      *
-     * @param integer|string $api_id 接口id
+     * @param int|string $api_id 接口id
      * 
      * @return array
      */
@@ -68,7 +68,7 @@ class ApiCache
     /**
      * 缓存删除
      *
-     * @param integer|string $api_id 接口id
+     * @param int|string $api_id 接口id
      * 
      * @return bool
      */

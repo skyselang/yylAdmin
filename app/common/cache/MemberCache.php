@@ -18,7 +18,7 @@ class MemberCache
     /**
      * 缓存key
      *
-     * @param integer|string $member_id 会员id、统计时间
+     * @param int|string $member_id 会员id、统计时间
      * 
      * @return string
      */
@@ -32,28 +32,25 @@ class MemberCache
     /**
      * 缓存设置
      *
-     * @param integer|string $member_id 会员id、统计时间
-     * @param array          $user      会员信息
-     * @param integer        $ttl       有效时间（秒）
+     * @param int|string $member_id 会员id、统计时间
+     * @param array      $member    会员信息
+     * @param int|null   $ttl       有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($member_id, $user, $ttl = 0)
+    public static function set($member_id, $member, $ttl = null)
     {
         $key = self::key($member_id);
-        $val = $user;
-
-
+        $val = $member;
         if (is_numeric($member_id)) {
-            if (empty($ttl)) {
+            if ($ttl === null) {
                 $ttl = 1 * 24 * 60 * 60;
             }
         } else {
-            if (empty($ttl)) {
+            if ($ttl === null) {
                 $ttl = 1 * 60 * 60;
             }
         }
-
 
         $res = Cache::set($key, $val, $ttl);
 
@@ -63,7 +60,7 @@ class MemberCache
     /**
      * 缓存获取
      *
-     * @param integer|string $member_id 会员id、统计时间
+     * @param int|string $member_id 会员id、统计时间
      * 
      * @return array 会员信息
      */
@@ -78,7 +75,7 @@ class MemberCache
     /**
      * 缓存删除
      *
-     * @param integer|string $member_id 会员id、统计时间
+     * @param int|string $member_id 会员id、统计时间
      * 
      * @return bool
      */
@@ -93,7 +90,7 @@ class MemberCache
     /**
      * 缓存更新
      *
-     * @param integer $member_id 会员id
+     * @param int $member_id 会员id
      * 
      * @return array 会员信息
      */

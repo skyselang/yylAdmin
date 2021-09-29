@@ -506,36 +506,43 @@ class ContentService
      */
     public static function statistics()
     {
-        $x_data = $s_data = $xs_data = [];
+        $key  = 'count';
+        $data = ContentCache::get($key);
+        if (empty($data)) {
+            $x_data = $s_data = $xs_data = [];
 
-        $count = Db::name('cms_content')
-            ->where('is_delete', 0)
-            ->count('content_id');
-
-        $category = Db::name('cms_category')
-            ->field('category_id,category_name')
-            ->where('is_delete', 0)
-            ->select()
-            ->toArray();
-        foreach ($category as $k => $v) {
-            $temp = [];
-            $temp['x'] = $v['category_name'];
-            $temp['s'] = Db::name('cms_content')
-                ->where('category_id', $v['category_id'])
+            $count = Db::name('cms_content')
                 ->where('is_delete', 0)
                 ->count('content_id');
-            $xs_data[] = $temp;
-        }
-        $ss = array_column($xs_data, 's');
-        array_multisort($ss,  SORT_DESC, $xs_data);
-        foreach ($xs_data as $k => $v) {
-            $x_data[] = $v['x'];
-            $s_data[] = $v['s'];
-        }
 
-        $data['count']  = $count;
-        $data['x_data'] = $x_data;
-        $data['s_data'] = $s_data;
+            $category = Db::name('cms_category')
+                ->field('category_id,category_name')
+                ->where('is_delete', 0)
+                ->select()
+                ->toArray();
+            foreach ($category as $k => $v) {
+                $temp = [];
+                $temp['x'] = $v['category_name'];
+                $temp['s'] = Db::name('cms_content')
+                    ->where('category_id', $v['category_id'])
+                    ->where('is_delete', 0)
+                    ->count('content_id');
+                $xs_data[] = $temp;
+            }
+
+            $ss = array_column($xs_data, 's');
+            array_multisort($ss,  SORT_DESC, $xs_data);
+            foreach ($xs_data as $k => $v) {
+                $x_data[] = $v['x'];
+                $s_data[] = $v['s'];
+            }
+
+            $data['count']  = $count;
+            $data['x_data'] = $x_data;
+            $data['s_data'] = $s_data;
+
+            ContentCache::set($key, $data);
+        }
 
         return $data;
     }

@@ -17,11 +17,11 @@ class CategoryCache
     /**
      * 缓存键名
      *
-     * @param string $category_id 内容分类id
+     * @param int|string $category_id 内容分类id、all
      * 
      * @return string
      */
-    public static function key($category_id = '')
+    public static function key($category_id)
     {
         $key = 'cms_category:' . $category_id;
 
@@ -31,18 +31,18 @@ class CategoryCache
     /**
      * 缓存写入
      *
-     * @param string  $category_id 内容分类id
-     * @param mixed   $category    内容分类信息
-     * @param integer $ttl         有效时间（秒）
+     * @param int|string $category_id 内容分类id、all
+     * @param array      $category    内容分类信息
+     * @param int|null   $ttl         有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($category_id = '', $category = [], $ttl = 0)
+    public static function set($category_id, $category, $ttl = null)
     {
         $key = self::key($category_id);
         $val = $category;
-        if (empty($ttl)) {
-            $ttl = 1 * 24 * 60 * 60 + mt_rand(0, 99);
+        if ($ttl === null) {
+            $ttl = 1 * 24 * 60 * 60;
         }
 
         $res = Cache::set($key, $val, $ttl);
@@ -53,11 +53,11 @@ class CategoryCache
     /**
      * 缓存读取
      *
-     * @param string $category_id 内容分类id
+     * @param int|string $category_id 内容分类id、all
      * 
      * @return mixed
      */
-    public static function get($category_id = '')
+    public static function get($category_id)
     {
         $key = self::key($category_id);
         $res = Cache::get($key);
@@ -68,11 +68,11 @@ class CategoryCache
     /**
      * 缓存删除
      *
-     * @param string $category_id 内容分类id
+     * @param int|string $category_id 内容分类id、all
      * 
      * @return bool
      */
-    public static function del($category_id = '')
+    public static function del($category_id)
     {
         $key = self::key($category_id);
         $res = Cache::delete($key);

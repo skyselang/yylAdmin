@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 日志管理控制器
+// 用户日志控制器
 namespace app\admin\controller\admin;
 
 use think\facade\Request;
@@ -18,14 +18,14 @@ use app\common\service\admin\UserService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("日志管理")
+ * @Apidoc\Title("用户日志")
  * @Apidoc\Group("admin")
  * @Apidoc\Sort("40")
  */
 class UserLog
 {
     /**
-     * @Apidoc\Title("日志管理列表")
+     * @Apidoc\Title("用户日志列表")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log_type")
@@ -89,7 +89,7 @@ class UserLog
     }
 
     /**
-     * @Apidoc\Title("日志管理信息")
+     * @Apidoc\Title("用户日志信息")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\id")
      * @Apidoc\Returned(ref="returnCode")
@@ -112,7 +112,7 @@ class UserLog
     }
 
     /**
-     * @Apidoc\Title("日志管理删除")
+     * @Apidoc\Title("用户日志删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\dele")
@@ -131,7 +131,7 @@ class UserLog
     }
 
     /**
-     * @Apidoc\Title("日志管理清除")
+     * @Apidoc\Title("用户日志清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id", require=false)
@@ -156,7 +156,7 @@ class UserLog
     }
 
     /**
-     * @Apidoc\Title("日志管理统计")
+     * @Apidoc\Title("用户日志统计")
      * @Apidoc\Method("POST")
      * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")

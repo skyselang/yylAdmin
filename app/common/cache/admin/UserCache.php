@@ -19,7 +19,7 @@ class UserCache
     /**
      * 缓存key
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return string
      */
@@ -33,17 +33,17 @@ class UserCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_user_id 用户id
-     * @param array   $admin_user    用户信息
-     * @param integer $ttl           有效时间（秒）
+     * @param int      $admin_user_id 用户id
+     * @param array    $admin_user    用户信息
+     * @param int|null $ttl           有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($admin_user_id, $admin_user, $ttl = 0)
+    public static function set($admin_user_id, $admin_user, $ttl = null)
     {
         $key = self::key($admin_user_id);
         $val = $admin_user;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $setting = SettingService::tokenInfo();
             $ttl     = $setting['token_exp'] * 3600;
         }
@@ -56,7 +56,7 @@ class UserCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return array 用户信息
      */
@@ -71,7 +71,7 @@ class UserCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return bool
      */
@@ -86,23 +86,20 @@ class UserCache
     /**
      * 缓存更新
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return bool
      */
     public static function upd($admin_user_id)
     {
         $old = UserService::info($admin_user_id);
-
         self::del($admin_user_id);
 
         $new = UserService::info($admin_user_id);
-
         unset($new['admin_token']);
 
         $user = array_merge($old, $new);
-
-        $res = self::set($admin_user_id, $user);
+        $res  = self::set($admin_user_id, $user);
 
         return $res;
     }

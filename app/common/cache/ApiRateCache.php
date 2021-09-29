@@ -17,8 +17,8 @@ class ApiRateCache
     /**
      * 缓存key
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
      * @return string
      */
@@ -32,16 +32,19 @@ class ApiRateCache
     /**
      * 缓存设置
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
-     * @param integer $ttl       有效时间（秒）
+     * @param int      $member_id 会员id
+     * @param string   $api_url   接口url
+     * @param int|null $ttl       有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($member_id, $api_url, $ttl = 10)
+    public static function set($member_id, $api_url, $ttl = null)
     {
         $key = self::key($member_id, $api_url);
         $val = 1;
+        if ($ttl === null) {
+            $ttl = 60;
+        }
 
         $res = Cache::set($key, $val, $ttl);
 
@@ -51,8 +54,8 @@ class ApiRateCache
     /**
      * 缓存获取
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
      * @return string
      */
@@ -67,8 +70,8 @@ class ApiRateCache
     /**
      * 缓存删除
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
      * @return bool
      */
@@ -83,8 +86,8 @@ class ApiRateCache
     /**
      * 缓存自增
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
      * @return bool
      */

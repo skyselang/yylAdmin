@@ -17,11 +17,11 @@ class SettingWechatCache
     /**
      * 缓存key
      *
-     * @param integer $setting_wechat_id 微信设置id
+     * @param int $setting_wechat_id 微信设置id
      * 
      * @return string
      */
-    public static function key($setting_wechat_id = 0)
+    public static function key($setting_wechat_id)
     {
         $key = 'setting_wechat:' . $setting_wechat_id;
 
@@ -31,17 +31,17 @@ class SettingWechatCache
     /**
      * 缓存设置
      *
-     * @param integer $setting_wechat_id 微信设置id
-     * @param array   $setting_wechat    微信设置信息
-     * @param integer $ttl               有效时间（秒）
+     * @param int      $setting_wechat_id 微信设置id
+     * @param array    $setting_wechat    微信设置信息
+     * @param int|null $ttl               有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($setting_wechat_id = 0, $setting_wechat = [], $ttl = 0)
+    public static function set($setting_wechat_id, $setting_wechat, $ttl = null)
     {
         $key = self::key($setting_wechat_id);
         $val = $setting_wechat;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60;
         }
 
@@ -53,11 +53,11 @@ class SettingWechatCache
     /**
      * 缓存获取
      *
-     * @param integer $setting_wechat_id 微信设置id
+     * @param int $setting_wechat_id 微信设置id
      * 
      * @return array 微信设置信息
      */
-    public static function get($setting_wechat_id = 0)
+    public static function get($setting_wechat_id)
     {
         $key = self::key($setting_wechat_id);
         $res = Cache::get($key);
@@ -68,11 +68,11 @@ class SettingWechatCache
     /**
      * 缓存删除
      *
-     * @param integer $setting_wechat_id 微信设置id
+     * @param int $setting_wechat_id 微信设置id
      * 
      * @return bool
      */
-    public static function del($setting_wechat_id = 0)
+    public static function del($setting_wechat_id)
     {
         $key = self::key($setting_wechat_id);
         $res = Cache::delete($key);

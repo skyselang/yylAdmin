@@ -17,11 +17,11 @@ class ContentCache
     /**
      * 缓存键名
      *
-     * @param string $content_id 内容id
+     * @param int|string $content_id 内容id
      * 
      * @return string
      */
-    public static function key($content_id = '')
+    public static function key($content_id)
     {
         $key = 'cms_content:' . $content_id;
 
@@ -31,17 +31,17 @@ class ContentCache
     /**
      * 缓存写入
      *
-     * @param string  $content_id 内容id
-     * @param mixed   $content    内容信息
-     * @param integer $ttl        有效时间（秒）
+     * @param int|string $content_id 内容id
+     * @param mixed      $content    内容信息
+     * @param int|null   $ttl        有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($content_id = '', $content, $ttl = 0)
+    public static function set($content_id, $content, $ttl = null)
     {
         $key = self::key($content_id);
         $val = $content;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60 + mt_rand(0, 99);
         }
 
@@ -53,11 +53,11 @@ class ContentCache
     /**
      * 缓存读取
      *
-     * @param string $content_id 内容id
+     * @param int|string $content_id 内容id
      * 
      * @return mixed
      */
-    public static function get($content_id = '')
+    public static function get($content_id)
     {
         $key = self::key($content_id);
         $res = Cache::get($key);
@@ -68,11 +68,11 @@ class ContentCache
     /**
      * 缓存删除
      *
-     * @param string $content_id 内容id
+     * @param int|string $content_id 内容id
      * 
      * @return bool
      */
-    public static function del($content_id = '')
+    public static function del($content_id)
     {
         $key = self::key($content_id);
         $res = Cache::delete($key);
@@ -83,14 +83,14 @@ class ContentCache
     /**
      * 缓存自增
      *
-     * @param string  $content_id 内容id
-     * @param integer $step       步长
+     * @param string $content_id 内容key
+     * @param int     $step      步长
      *
      * @return bool
      */
-    public static function inc($content_id = '', $step = 1)
+    public static function inc($content_key, $step = 1)
     {
-        $key = self::key($content_id);
+        $key = self::key($content_key);
         $res = Cache::inc($key, $step);
 
         return $res;

@@ -28,7 +28,7 @@ class IpInfoUtils
             $ip = Request::ip();
         }
 
-        $key     = 'IpInfo:' . $ip;
+        $key     = 'ip_info:' . $ip;
         $ip_info = Cache::get($key);
         if (empty($ip_info)) {
             $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';

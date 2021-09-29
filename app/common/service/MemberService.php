@@ -415,22 +415,25 @@ class MemberService
      */
     public static function statCount()
     {
-        $x = $s = [];
-        $months = DatetimeUtils::months();
-        foreach ($months as $k => $v) {
-            $time = [];
-            $time = DatetimeUtils::monthStartEnd($v);
-            $time[1] = DatetimeUtils::dateEndTime($time[1]);
+        $month = DatetimeUtils::months();
+        $key   = 'count:' . reset($month) . '-' . end($month);
+        $data  = MemberCache::get($key);
+        if (empty($data)) {
+            $x = $s = [];
+            foreach ($month as $k => $v) {
+                $time = DatetimeUtils::monthStartEnd($v);
+                $time = DatetimeUtils::dateEndTime($time[1]);
+                $x[] = $v;
+                $s[] = Db::name('member')
+                    ->where('is_delete', 0)
+                    ->where('create_time', '<=', $time)
+                    ->count('member_id');
+            }
+            $data['x'] = $x;
+            $data['s'] = $s;
 
-            $x[] = $v;
-            $s[] = Db::name('member')
-                ->where('is_delete', 0)
-                ->where('create_time', '<=', $time[1])
-                ->count('member_id');
+            MemberCache::set($key, $data);
         }
-
-        $data['x'] = $x;
-        $data['s'] = $s;
 
         return $data;
     }

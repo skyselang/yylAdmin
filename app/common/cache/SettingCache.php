@@ -17,11 +17,11 @@ class SettingCache
     /**
      * 缓存key
      *
-     * @param integer $setting_id 设置id
+     * @param int $setting_id 设置id
      * 
      * @return string
      */
-    public static function key($setting_id = 0)
+    public static function key($setting_id)
     {
         $key = 'setting:' . $setting_id;
 
@@ -31,17 +31,17 @@ class SettingCache
     /**
      * 缓存设置
      *
-     * @param integer $setting_id 设置id
-     * @param array   $setting    设置信息
-     * @param integer $ttl        有效时间（秒）
+     * @param int      $setting_id 设置id
+     * @param array    $setting    设置信息
+     * @param int|null $ttl        有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($setting_id = 0, $setting = [], $ttl = 0)
+    public static function set($setting_id, $setting, $ttl = null)
     {
         $key = self::key($setting_id);
         $val = $setting;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60;
         }
 
@@ -53,11 +53,11 @@ class SettingCache
     /**
      * 缓存获取
      *
-     * @param integer $setting_id 设置id
+     * @param int $setting_id 设置id
      * 
      * @return array 设置信息
      */
-    public static function get($setting_id = 0)
+    public static function get($setting_id)
     {
         $key = self::key($setting_id);
         $res = Cache::get($key);
@@ -68,11 +68,11 @@ class SettingCache
     /**
      * 缓存删除
      *
-     * @param integer $setting_id 设置id
+     * @param int $setting_id 设置id
      * 
      * @return bool
      */
-    public static function del($setting_id = 0)
+    public static function del($setting_id)
     {
         $key = self::key($setting_id);
         $res = Cache::delete($key);

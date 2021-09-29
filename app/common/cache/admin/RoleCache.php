@@ -17,11 +17,11 @@ class RoleCache
     /**
      * 缓存key
      *
-     * @param integer $admin_role_id 角色id
+     * @param int $admin_role_id 角色id
      * 
      * @return string
      */
-    public static function key($admin_role_id = 0)
+    public static function key($admin_role_id)
     {
         $key = 'admin_role:' . $admin_role_id;
 
@@ -31,17 +31,17 @@ class RoleCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_role_id 角色id
-     * @param array   $admin_role    角色信息
-     * @param integer $ttl           有效时间（秒）
+     * @param int      $admin_role_id 角色id
+     * @param array    $admin_role    角色信息
+     * @param int|null $ttl           有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($admin_role_id = 0, $admin_role = [], $ttl = 0)
+    public static function set($admin_role_id, $admin_role, $ttl = null)
     {
         $key = self::key($admin_role_id);
         $val = $admin_role;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60;
         }
 
@@ -53,11 +53,11 @@ class RoleCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_role_id 角色id
+     * @param int $admin_role_id 角色id
      * 
      * @return array 角色信息
      */
-    public static function get($admin_role_id = 0)
+    public static function get($admin_role_id)
     {
         $key = self::key($admin_role_id);
         $res = Cache::get($key);
@@ -68,11 +68,11 @@ class RoleCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_role_id 角色id
+     * @param int $admin_role_id 角色id
      * 
      * @return bool
      */
-    public static function del($admin_role_id = 0)
+    public static function del($admin_role_id)
     {
         $key = self::key($admin_role_id);
         $res = Cache::delete($key);

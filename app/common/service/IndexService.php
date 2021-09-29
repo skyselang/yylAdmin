@@ -11,6 +11,7 @@
 namespace app\common\service;
 
 use think\facade\Db;
+use think\facade\Cache;
 
 class IndexService
 {
@@ -36,13 +37,18 @@ class IndexService
      */
     public static function count()
     {
-        $data = [];
-        $table = ['member' => '会员', 'cms_content' => '内容', 'file' => '文件', 'api' => '接口', 'region' => '地区'];
-        foreach ($table as $k => $v) {
-            $temp = [];
-            $temp['name'] = $v;
-            $temp['count'] = Db::name($k)->where('is_delete', 0)->count();
-            $data[] = $temp;
+        $key  = 'statistics:count';
+        $data = Cache::get($key);
+        if (empty($data)) {
+            $data  = [];
+            $table = ['member' => '会员', 'cms_content' => '内容', 'file' => '文件', 'api' => '接口', 'region' => '地区'];
+            foreach ($table as $k => $v) {
+                $temp = [];
+                $temp['name']  = $v;
+                $temp['count'] = Db::name($k)->where('is_delete', 0)->count();
+                $data[] = $temp;
+            }
+            Cache::set($key, $data, 60);
         }
 
         return $data;

@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 日志管理
+// 用户日志
 namespace app\common\service\admin;
 
 use think\facade\Db;
@@ -19,7 +19,7 @@ use app\common\cache\admin\UserLogCache;
 class UserLogService
 {
     /**
-     * 日志管理列表
+     * 用户日志列表
      *
      * @param array   $where 条件
      * @param integer $page  分页
@@ -86,9 +86,9 @@ class UserLogService
     }
 
     /**
-     * 日志管理信息
+     * 用户日志信息
      *
-     * @param integer $admin_user_log_id 日志管理id
+     * @param integer $admin_user_log_id 用户日志id
      * 
      * @return array
      */
@@ -101,7 +101,7 @@ class UserLogService
                 ->where('admin_user_log_id', $admin_user_log_id)
                 ->find();
             if (empty($admin_user_log)) {
-                exception('日志管理不存在：' . $admin_user_log_id);
+                exception('用户日志不存在：' . $admin_user_log_id);
             }
             if ($admin_user_log['request_param']) {
                 $admin_user_log['request_param'] = unserialize($admin_user_log['request_param']);
@@ -130,7 +130,7 @@ class UserLogService
     }
 
     /**
-     * 日志管理添加
+     * 用户日志添加
      *
      * @param array $param 日志数据
      * 
@@ -168,9 +168,9 @@ class UserLogService
     }
 
     /**
-     * 日志管理修改
+     * 用户日志修改
      *
-     * @param array $param 日志管理
+     * @param array $param 用户日志
      * 
      * @return array
      */
@@ -198,9 +198,9 @@ class UserLogService
     }
 
     /**
-     * 日志管理删除
+     * 用户日志删除
      *
-     * @param integer $admin_user_log_id 日志管理id
+     * @param integer $admin_user_log_id 用户日志id
      * 
      * @return array
      */
@@ -224,7 +224,7 @@ class UserLogService
     }
 
     /**
-     * 日志管理清除
+     * 用户日志清除
      *
      * @param array $param 清除条件
      * 
@@ -306,7 +306,7 @@ class UserLogService
     }
 
     /**
-     * 日志管理数量统计
+     * 用户日志数量统计
      *
      * @param string $date 日期
      *
@@ -370,7 +370,7 @@ class UserLogService
     }
 
     /**
-     * 日志管理日期统计
+     * 用户日志日期统计
      *
      * @param array $date 日期范围
      *
@@ -403,21 +403,21 @@ class UserLogService
                 ->group($group)
                 ->select();
 
-            $x_data = DatetimeUtils::betweenDates($sta_date, $end_date);
-            $y_data = [];
+            $x = DatetimeUtils::betweenDates($sta_date, $end_date);
+            $s = [];
 
-            foreach ($x_data as $k => $v) {
-                $y_data[$k] = 0;
+            foreach ($x as $k => $v) {
+                $s[$k] = 0;
                 foreach ($admin_user_log as $ka => $va) {
                     if ($v == $va['date']) {
-                        $y_data[$k] = $va['num'];
+                        $s[$k] = $va['num'];
                     }
                 }
             }
 
-            $data['x_data'] = $x_data;
-            $data['y_data'] = $y_data;
-            $data['date']   = $date;
+            $data['x']    = $x;
+            $data['s']    = $s;
+            $data['date'] = $date;
 
             UserLogCache::set($key, $data);
         }
@@ -426,7 +426,7 @@ class UserLogService
     }
 
     /**
-     * 日志管理字段统计
+     * 用户日志字段统计
      *
      * @param integer $date 日期范围
      * @param string  $type 统计类型
@@ -447,23 +447,23 @@ class UserLogService
         $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
         if ($type == 'country') {
             $group = 'request_country';
-            $field = $group . ' as x_data';
+            $field = $group . ' as x';
             $where[] = [$group, '<>', ''];
         } elseif ($type == 'province') {
             $group = 'request_province';
-            $field = $group . ' as x_data';
+            $field = $group . ' as x';
             $where[] = [$group, '<>', ''];
         } elseif ($type == 'isp') {
             $group = 'request_isp';
-            $field = $group . ' as x_data';
+            $field = $group . ' as x';
             $where[] = [$group, '<>', ''];
         } elseif ($type == 'city') {
             $group = 'request_city';
-            $field = $group . ' as x_data';
+            $field = $group . ' as x';
             $where[] = [$group, '<>', ''];
         } else {
             $group = 'admin_user_id';
-            $field = $group . ' as x_data';
+            $field = $group . ' as x';
             $where[] = [$group, '<>', ''];
         }
 
@@ -477,20 +477,18 @@ class UserLogService
             $where[] = ['create_time', '<=', $end_time];
 
             $admin_user_log = Db::name('admin_user_log')
-                ->field($field . ', COUNT(admin_user_log_id) as y_data')
+                ->field($field . ', COUNT(admin_user_log_id) as s')
                 ->where($where)
                 ->group($group)
-                ->order('y_data desc')
+                ->order('s desc')
                 ->limit($top)
                 ->select()
                 ->toArray();
 
-            $x_data = [];
-            $y_data = [];
-            $p_data = [];
+            $x = $s = $sp = [];
 
             if ($type == 'user') {
-                $admin_user_ids = array_column($admin_user_log, 'x_data');
+                $admin_user_ids = array_column($admin_user_log, 'x');
                 $admin_user = Db::name('admin_user')
                     ->field('admin_user_id,username')
                     ->where('admin_user_id', 'in', $admin_user_ids)
@@ -501,21 +499,21 @@ class UserLogService
             foreach ($admin_user_log as $k => $v) {
                 if ($type == 'user') {
                     foreach ($admin_user as $ka => $va) {
-                        if ($v['x_data'] == $va['admin_user_id']) {
-                            $v['x_data'] = $va['username'];
+                        if ($v['x'] == $va['admin_user_id']) {
+                            $v['x'] = $va['username'];
                         }
                     }
                 }
 
-                $x_data[] = $v['x_data'];
-                $y_data[] = $v['y_data'];
-                $p_data[] = ['value' => $v['y_data'], 'name' => $v['x_data']];
+                $x[] = $v['x'];
+                $s[] = $v['s'];
+                $sp[] = ['value' => $v['s'], 'name' => $v['x']];
             }
 
-            $data['x_data'] = $x_data;
-            $data['y_data'] = $y_data;
-            $data['p_data'] = $p_data;
-            $data['date']   = $date;
+            $data['x']    = $x;
+            $data['s']    = $s;
+            $data['sp']   = $sp;
+            $data['date'] = $date;
 
             UserLogCache::set($key, $data);
         }

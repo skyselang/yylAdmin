@@ -17,8 +17,8 @@ class ApiRateCache
     /**
      * 缓存key
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
      * 
      * @return string
      */
@@ -32,16 +32,19 @@ class ApiRateCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
-     * @param integer $ttl           有效时间（秒）
+     * @param int      $admin_user_id 用户id
+     * @param string   $menu_url      菜单url
+     * @param int|null $ttl           有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($admin_user_id, $menu_url, $ttl = 10)
+    public static function set($admin_user_id, $menu_url, $ttl = null)
     {
         $key = self::key($admin_user_id, $menu_url);
         $val = 1;
+        if ($ttl === null) {
+            $ttl = 60;
+        }
 
         $res = Cache::set($key, $val, $ttl);
 
@@ -51,8 +54,8 @@ class ApiRateCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
      * 
      * @return string
      */
@@ -67,8 +70,8 @@ class ApiRateCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
      * 
      * @return bool
      */
@@ -83,15 +86,16 @@ class ApiRateCache
     /**
      * 缓存自增
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
+     * @param int    $step          步长
      * 
      * @return bool
      */
-    public static function inc($admin_user_id, $menu_url)
+    public static function inc($admin_user_id, $menu_url, $step = 1)
     {
         $key = self::key($admin_user_id, $menu_url);
-        $res = Cache::inc($key);
+        $res = Cache::inc($key, $step);
 
         return $res;
     }

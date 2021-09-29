@@ -350,7 +350,7 @@ class FileService
     public static function fileUrl($file_id)
     {
         $file_url = '';
-        
+
         $file = self::info($file_id);
         if ($file) {
             $file_url = $file['file_url'];
@@ -503,14 +503,19 @@ class FileService
      */
     public static function statistics()
     {
-        $data = [];
-        $data['count'] = Db::name('file')->where('is_delete', 0)->count('file_id');
+        $key  = 'count';
+        $data = FileCache::get($key);
+        if (empty($data)) {
+            $data['count'] = Db::name('file')->where('is_delete', 0)->count('file_id');
 
-        $file_type = self::fileType();
-        foreach ($file_type as $k => $v) {
-            $tmp['name']  = $v;
-            $tmp['value'] = Db::name('file')->where('file_type', $k)->where('is_delete', 0)->count('file_id');
-            $data['data'][] = $tmp;
+            $file_type = self::fileType();
+            foreach ($file_type as $k => $v) {
+                $temp['name']  = $v;
+                $temp['value'] = Db::name('file')->where('file_type', $k)->where('is_delete', 0)->count('file_id');
+                $data['data'][] = $temp;
+            }
+
+            FileCache::set($key, $data);
         }
 
         return $data;

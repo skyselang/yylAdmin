@@ -17,11 +17,11 @@ class FileCache
     /**
      * 缓存key
      *
-     * @param int|string $file_id 文件id
+     * @param int|string $file_id 文件id、文件统计key
      * 
      * @return string
      */
-    public static function key($file_id = '')
+    public static function key($file_id)
     {
         $key = 'file:' . $file_id;
 
@@ -31,17 +31,17 @@ class FileCache
     /**
      * 缓存设置
      *
-     * @param int|string $file_id 文件id
+     * @param int|string $file_id 文件id、文件统计key
      * @param array      $file    文件信息
-     * @param int        $ttl     有效时间（秒）0永久
+     * @param int|null   $ttl     有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($file_id = '', $file = [], $ttl = '')
+    public static function set($file_id, $file, $ttl = null)
     {
         $key = self::key($file_id);
         $val = $file;
-        if ($ttl == '') {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60;
         }
 
@@ -53,11 +53,11 @@ class FileCache
     /**
      * 缓存获取
      *
-     * @param int|string $file_id 文件id
+     * @param int|string $file_id 文件id、文件统计key
      * 
      * @return array
      */
-    public static function get($file_id = '')
+    public static function get($file_id)
     {
         $key = self::key($file_id);
         $res = Cache::get($key);
@@ -68,11 +68,11 @@ class FileCache
     /**
      * 缓存删除
      *
-     * @param int|string $file_id 文件id
+     * @param int|string $file_id 文件id、文件统计key
      * 
      * @return bool
      */
-    public static function del($file_id = '')
+    public static function del($file_id)
     {
         $key = self::key($file_id);
         $res = Cache::delete($key);

@@ -17,7 +17,7 @@ class MenuCache
     /**
      * 缓存key
      *
-     * @param integer|string $admin_menu_id 菜单id
+     * @param int|string $admin_menu_id 菜单id、菜单all
      * 
      * @return string
      */
@@ -35,17 +35,17 @@ class MenuCache
     /**
      * 缓存设置
      *
-     * @param integer|string $admin_menu_id 菜单id
-     * @param array          $admin_menu    菜单信息
-     * @param integer        $ttl           有效时间（秒）
+     * @param int|string $admin_menu_id 菜单id、菜单all
+     * @param array      $admin_menu    菜单信息
+     * @param int|null   $ttl           有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($admin_menu_id = '', $admin_menu = [], $ttl = 0)
+    public static function set($admin_menu_id = '', $admin_menu = [], $ttl = null)
     {
         $key = self::key($admin_menu_id);
         $val = $admin_menu;
-        if (empty($ttl)) {
+        if ($ttl === null) {
             $ttl = 1 * 24 * 60 * 60;
         }
 
@@ -57,7 +57,7 @@ class MenuCache
     /**
      * 缓存获取
      *
-     * @param integer|string $admin_menu_id 菜单id
+     * @param int|string $admin_menu_id 菜单id、菜单all
      * 
      * @return array 菜单信息
      */
@@ -72,7 +72,7 @@ class MenuCache
     /**
      * 缓存删除
      *
-     * @param integer|string $admin_menu_id 菜单id
+     * @param int|string $admin_menu_id 菜单id、菜单all
      * 
      * @return bool
      */

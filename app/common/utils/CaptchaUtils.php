@@ -54,7 +54,7 @@ class CaptchaUtils
     // 算术验证码
     protected static $math = false;
     // 缓存前缀
-    protected static $prefix = 'Captcha:';
+    protected static $prefix = 'captcha:';
 
     /**
      * 验证码配置
