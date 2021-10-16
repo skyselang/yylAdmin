@@ -27,13 +27,8 @@ class Member
 {
     /**
      * @Apidoc\Title("我的信息")
-     * @Apidoc\Header(ref="headerIndex")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url"),
-     *      @Apidoc\Returned(ref="app\common\model\MemberModel\infoIndex")
-     *      
-     * )
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url")
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\infoIndex")
      */
     public function info()
     {
@@ -56,10 +51,7 @@ class Member
     /**
      * @Apidoc\Title("修改信息")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="app\common\model\MemberModel\editIndex")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
     public function edit()
     {
@@ -81,10 +73,8 @@ class Member
     /**
      * @Apidoc\Title("上传头像")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnFile")
      */
     public function avatar()
@@ -105,11 +95,8 @@ class Member
     /**
      * @Apidoc\Title("修改密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param("password_old", type="string", require=true, desc="原密码,会员信息pwd_edit_type=0需输入原密码")
      * @Apidoc\Param("password_new", type="string", require=true, desc="新密码,会员信息pwd_edit_type=1直接设置新密码")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
     public function pwd()
     {
@@ -131,16 +118,12 @@ class Member
 
     /**
      * @Apidoc\Title("我的日志")
-     * @Apidoc\Header(ref="headerIndex")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode"),
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
      * )
      */
     public function log()

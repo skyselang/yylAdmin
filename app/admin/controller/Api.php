@@ -24,12 +24,8 @@ class Api
 {
     /**
      * @Apidoc\Title("接口列表")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("list", type="array", desc="树形列表", 
-     *          @Apidoc\Returned(ref="app\common\model\ApiModel\list")
-     *      )
+     * @Apidoc\Returned("list", type="array", desc="树形列表", 
+     *     @Apidoc\Returned(ref="app\common\model\ApiModel\list")
      * )
      */
     public function list()
@@ -41,12 +37,8 @@ class Api
 
     /**
      * @Apidoc\Title("接口信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\ApiModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\ApiModel\info")
      */
     public function info()
     {
@@ -65,10 +57,7 @@ class Api
     /**
      * @Apidoc\Title("接口添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\add")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -87,10 +76,7 @@ class Api
     /**
      * @Apidoc\Title("接口修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -110,10 +96,7 @@ class Api
     /**
      * @Apidoc\Title("接口删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\dele")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -129,10 +112,7 @@ class Api
     /**
      * @Apidoc\Title("接口是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\disable")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function disable()
     {
@@ -149,10 +129,7 @@ class Api
     /**
      * @Apidoc\Title("接口是否无需登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\ApiModel\unlogin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function unlogin()
     {

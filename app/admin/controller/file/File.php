@@ -25,15 +25,11 @@ class File
 {
     /**
      * @Apidoc\Title("分组列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\file\GroupModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\list")
      * )
      */
     public function group()
@@ -59,17 +55,13 @@ class File
 
     /**
      * @Apidoc\Title("文件列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="paramSearch")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\file\FileModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\list")
      * )
      */
     public function list()
@@ -127,12 +119,8 @@ class File
 
     /**
      * @Apidoc\Title("文件信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\file\FileModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\info")
      */
     public function info()
     {
@@ -151,10 +139,8 @@ class File
     /**
      * @Apidoc\Title("文件添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnFile")
      */
     public function add()
@@ -175,10 +161,7 @@ class File
     /**
      * @Apidoc\Title("文件修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -198,10 +181,7 @@ class File
     /**
      * @Apidoc\Title("文件删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -217,10 +197,7 @@ class File
     /**
      * @Apidoc\Title("文件是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\disable")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function disable()
     {
@@ -237,11 +214,8 @@ class File
     /**
      * @Apidoc\Title("文件分组")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function grouping()
     {
@@ -257,17 +231,13 @@ class File
 
     /**
      * @Apidoc\Title("文件回收站")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="paramSearch")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\file\FileModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\list")
      * )
      */
     public function recover()
@@ -319,10 +289,7 @@ class File
     /**
      * @Apidoc\Title("文件回收站恢复")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function recoverReco()
     {
@@ -338,10 +305,7 @@ class File
     /**
      * @Apidoc\Title("文件回收站删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function recoverDele()
     {

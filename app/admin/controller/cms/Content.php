@@ -25,12 +25,8 @@ class Content
 {
     /**
      * @Apidoc\Title("内容分类")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("list", type="array", desc="树形列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
-     *      )
+     * @Apidoc\Returned("list", type="array", desc="树形列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
      * )
      */
     public function category()
@@ -42,19 +38,14 @@ class Content
 
     /**
      * @Apidoc\Title("内容列表")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\search")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list"),
-     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\name")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging"),
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list"),
+     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\name")
      * )
      */
     public function list()
@@ -108,16 +99,11 @@ class Content
 
     /**
      * @Apidoc\Title("内容信息")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\info"),
-     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\imgs"),
-     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\files"),
-     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\videos"),
-     * )
+     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\info")
+     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\imgs")
+     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\files")
+     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\videos")
      */
     public function info()
     {
@@ -136,13 +122,10 @@ class Content
     /**
      * @Apidoc\Title("内容添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\add")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\imgs")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\files")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\videos")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -168,13 +151,10 @@ class Content
     /**
      * @Apidoc\Title("内容修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\edit")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\imgs")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\files")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\videos")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -201,10 +181,7 @@ class Content
     /**
      * @Apidoc\Title("内容删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -220,11 +197,8 @@ class Content
     /**
      * @Apidoc\Title("内容是否置顶")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\istop")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function istop()
     {
@@ -241,11 +215,8 @@ class Content
     /**
      * @Apidoc\Title("内容是否热门")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\ishot")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function ishot()
     {
@@ -262,11 +233,8 @@ class Content
     /**
      * @Apidoc\Title("内容是否推荐")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\isrec")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function isrec()
     {
@@ -283,11 +251,8 @@ class Content
     /**
      * @Apidoc\Title("内容是否隐藏")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\ishide")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function ishide()
     {
@@ -303,18 +268,13 @@ class Content
 
     /**
      * @Apidoc\Title("内容回收站")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\search")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list"),
-     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\name"),
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list"),
+     *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\name"),
      * )
      */
     public function recover()
@@ -371,10 +331,7 @@ class Content
     /**
      * @Apidoc\Title("内容回收站恢复")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function recoverReco()
     {
@@ -390,10 +347,7 @@ class Content
     /**
      * @Apidoc\Title("内容回收站删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function recoverDele()
     {

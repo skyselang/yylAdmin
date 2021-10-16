@@ -15,7 +15,10 @@ use hg\apidoc\annotation\Field;
 
 class RegionModel extends Model
 {
+    // 表名
     protected $name = 'region';
+    // 主键
+    protected $pk = 'region_id';
 
     /**
      * @Field("region_id")

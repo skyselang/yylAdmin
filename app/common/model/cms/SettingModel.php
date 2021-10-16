@@ -15,7 +15,9 @@ use hg\apidoc\annotation\WithoutField;
 
 class SettingModel extends Model
 {
+    // 表名
     protected $name = 'cms_setting';
+    // 主键
     protected $pk = 'setting_id';
 
     /**

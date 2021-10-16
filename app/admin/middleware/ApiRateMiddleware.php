@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 
 // 接口速率中间件
-namespace app\admin\middleware\admin;
+namespace app\admin\middleware;
 
 use Closure;
 use think\Request;

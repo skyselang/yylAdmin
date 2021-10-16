@@ -15,7 +15,10 @@ use hg\apidoc\annotation\Field;
 
 class ApiModel extends Model
 {
+    // 表名
     protected $name = 'api';
+    // 主键
+    protected $pk = 'api_id';
 
     /**
      * @Field("api_id")

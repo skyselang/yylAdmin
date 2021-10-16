@@ -24,18 +24,13 @@ class Comment
 {
     /**
      * @Apidoc\Title("留言列表")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\search")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
      * )
      */
     public function list()
@@ -85,13 +80,8 @@ class Comment
 
     /**
      * @Apidoc\Title("留言信息")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\cms\CommentModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\cms\CommentModel\info")
      */
     public function info()
     {
@@ -111,8 +101,6 @@ class Comment
      * @Apidoc\Title("留言添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\add")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -136,10 +124,7 @@ class Comment
     /**
      * @Apidoc\Title("留言修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -164,10 +149,7 @@ class Comment
     /**
      * @Apidoc\Title("留言删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -183,10 +165,7 @@ class Comment
     /**
      * @Apidoc\Title("留言已读")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function isread()
     {
@@ -201,17 +180,12 @@ class Comment
 
     /**
      * @Apidoc\Title("留言回收站")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\search")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging"),
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
      * )
      */
     public function recover()
@@ -264,10 +238,7 @@ class Comment
     /**
      * @Apidoc\Title("留言回收站恢复")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function recoverReco()
     {
@@ -283,10 +254,7 @@ class Comment
     /**
      * @Apidoc\Title("留言回收站删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function recoverDele()
     {

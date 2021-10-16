@@ -17,7 +17,9 @@ use hg\apidoc\annotation\Param;
 
 class ContentModel extends Model
 {
+    // 表名
     protected $name = 'cms_content';
+    // 主键
     protected $pk = 'content_id';
 
     /**

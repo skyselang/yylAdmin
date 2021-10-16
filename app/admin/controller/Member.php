@@ -24,17 +24,13 @@ class Member
 {
     /**
      * @Apidoc\Title("会员列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="paramSearch")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\MemberModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\MemberModel\list")
      * )
      */
     public function list()
@@ -73,13 +69,9 @@ class Member
 
     /**
      * @Apidoc\Title("会员信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url"),
-     *      @Apidoc\Returned(ref="app\common\model\MemberModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url")
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\info")
      */
     public function info()
     {
@@ -100,10 +92,7 @@ class Member
     /**
      * @Apidoc\Title("会员添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberModel\add")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -127,10 +116,7 @@ class Member
     /**
      * @Apidoc\Title("会员修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -154,10 +140,7 @@ class Member
     /**
      * @Apidoc\Title("会员删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberModel\dele")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -173,10 +156,7 @@ class Member
     /**
      * @Apidoc\Title("会员重置密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberModel\pwd")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function pwd()
     {
@@ -193,10 +173,7 @@ class Member
     /**
      * @Apidoc\Title("会员是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberModel\disable")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function disable()
     {
@@ -212,10 +189,6 @@ class Member
 
     /**
      * @Apidoc\Title("会员统计")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function stat()
     {

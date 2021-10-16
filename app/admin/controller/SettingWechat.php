@@ -24,12 +24,7 @@ class SettingWechat
 {
     /**
      * @Apidoc\Title("公众号信息")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\SettingWechatModel\offiInfo")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\offiInfo")
      */
     public function offiInfo()
     {
@@ -40,11 +35,8 @@ class SettingWechat
 
     /**
      * @Apidoc\Title("公众号修改")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
+     * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\SettingWechatModel\offiEdit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function offiEdit()
     {
@@ -66,12 +58,7 @@ class SettingWechat
 
     /**
      * @Apidoc\Title("小程序信息")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\SettingWechatModel\miniInfo")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\miniInfo")
      */
     public function miniInfo()
     {
@@ -83,10 +70,7 @@ class SettingWechat
     /**
      * @Apidoc\Title("小程序修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\SettingWechatModel\miniEdit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function miniEdit()
     {

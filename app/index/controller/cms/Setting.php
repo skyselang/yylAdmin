@@ -22,10 +22,7 @@ class Setting
 {
     /**
      * @Apidoc\Title("设置信息")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned(ref="app\common\model\cms\SettingModel\Info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\Info")
      */
     public function info()
     {

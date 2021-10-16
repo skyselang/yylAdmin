@@ -24,11 +24,7 @@ class Setting
 {
     /**
      * @Apidoc\Title("内容设置信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned(ref="app\common\model\cms\SettingModel\Info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\Info")
      */
     public function info()
     {
@@ -40,10 +36,7 @@ class Setting
     /**
      * @Apidoc\Title("内容设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\SettingModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {

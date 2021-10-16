@@ -26,18 +26,14 @@ class UserLog
 {
     /**
      * @Apidoc\Title("用户日志列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log_type")
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\list")
      * )
      */
     public function list()
@@ -90,12 +86,8 @@ class UserLog
 
     /**
      * @Apidoc\Title("用户日志信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\info")
      */ 
     public function info()
     {
@@ -114,10 +106,7 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\dele")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -133,14 +122,11 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志清除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id", require=false)
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\username", require=false)
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id", require=false)
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_url", require=false)
      * @Apidoc\Param("date_value", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */ 
     public function clear()
     {
@@ -158,12 +144,9 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志统计")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")
      * @Apidoc\Param("date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
      * @Apidoc\Param("field", type="string", default="", desc="统计字段")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */  
     public function stat()
     {

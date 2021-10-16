@@ -26,10 +26,6 @@ class Index
 {
     /**
      * @Apidoc\Title("首页")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function index()
     {
@@ -41,10 +37,6 @@ class Index
 
     /**
      * @Apidoc\Title("总数统计")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function count()
     {
@@ -55,10 +47,6 @@ class Index
 
     /**
      * @Apidoc\Title("会员统计")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function member()
     {
@@ -71,10 +59,6 @@ class Index
 
     /**
      * @Apidoc\Title("内容统计")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function cms()
     {
@@ -85,10 +69,6 @@ class Index
 
     /**
      * @Apidoc\Title("文件统计")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function file()
     {

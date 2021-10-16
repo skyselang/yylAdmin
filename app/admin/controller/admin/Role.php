@@ -25,17 +25,13 @@ class Role
 {
     /**
      * @Apidoc\Title("角色列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param("role_name", type="string", default="", desc="角色名称")
      * @Apidoc\Param("role_desc", type="string", default="", desc="角色描述")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\admin\RoleModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging"),
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *      @Apidoc\Returned(ref="app\common\model\admin\RoleModel\list")
      * )
      */
     public function list()
@@ -67,12 +63,8 @@ class Role
 
     /**
      * @Apidoc\Title("角色信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\admin\RoleModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\admin\RoleModel\info")
      */
     public function info()
     {
@@ -91,10 +83,7 @@ class Role
     /**
      * @Apidoc\Title("角色添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\add")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -113,10 +102,7 @@ class Role
     /**
      * @Apidoc\Title("角色修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -136,10 +122,7 @@ class Role
     /**
      * @Apidoc\Title("角色删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\dele")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -155,10 +138,7 @@ class Role
     /**
      * @Apidoc\Title("角色是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\disable")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function disable()
     {
@@ -174,17 +154,10 @@ class Role
 
     /**
      * @Apidoc\Title("角色用户")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\admin\UserModel\user")
-     *      )
-     * )
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\user")
      */
     public function user()
     {
@@ -211,11 +184,8 @@ class Role
     /**
      * @Apidoc\Title("角色用户解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function userRemove()
     {

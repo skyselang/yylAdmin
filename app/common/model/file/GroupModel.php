@@ -16,7 +16,10 @@ use hg\apidoc\annotation\AddField;
 
 class GroupModel extends Model
 {
+    // 表名
     protected $name = 'file_group';
+    // 主键
+    protected $pk = 'group_id';
 
     /**
      * @Field("group_id")

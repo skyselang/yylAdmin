@@ -16,8 +16,10 @@ use hg\apidoc\annotation\AddField;
 
 class RoleModel extends Model
 {
+    // 表名
     protected $name = 'admin_role';
-
+    // 主键
+    protected $pk = 'admin_role_id';
     /**
      * @Field("admin_role_id")
      */

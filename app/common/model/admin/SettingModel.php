@@ -15,7 +15,10 @@ use hg\apidoc\annotation\Field;
 
 class SettingModel extends Model
 {
+    // 表名
     protected $name = 'admin_setting';
+    // 主键
+    protected $pk = 'admin_setting_id';
 
     /**
      * @Field("token_name,token_key,token_exp")

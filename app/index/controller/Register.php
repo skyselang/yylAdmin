@@ -26,7 +26,6 @@ class Register
 {
     /**
      * @Apidoc\Title("验证码")
-     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnCaptcha")
      */
     public function captcha()
@@ -48,8 +47,6 @@ class Register
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
      * @Apidoc\Param(ref="app\common\model\MemberModel\nickname")
      * @Apidoc\Param(ref="paramCaptcha")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
     public function register()
     {

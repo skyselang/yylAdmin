@@ -22,8 +22,6 @@ class Index
 {
     /**
      * @Apidoc\Title("首页")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
     public function index()
     {

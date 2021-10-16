@@ -16,7 +16,10 @@ use hg\apidoc\annotation\AddField;
 
 class FileModel extends Model
 {
+    // 表名
     protected $name = 'file';
+    // 主键
+    protected $pk = 'file_id';
 
     /**
      * @Field("file_id,group_id,storage,file_type,file_name,sort,is_disable,create_time,update_time")

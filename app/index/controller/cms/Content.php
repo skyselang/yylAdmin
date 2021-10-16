@@ -25,11 +25,8 @@ class Content
 {
     /**
      * @Apidoc\Title("内容分类")
-     * @Apidoc\Returned(ref="returnCode"),
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
-     *      )
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
      * )
      */
     public function category()
@@ -50,12 +47,9 @@ class Content
      * @Apidoc\Title("内容列表")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\indexList")
-     * @Apidoc\Returned(ref="returnCode"),
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list")
      * )
      */
     public function list()
@@ -91,17 +85,14 @@ class Content
     /**
      * @Apidoc\Title("内容信息")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\indexInfo")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\cms\ContentModel\info"),
-     *      @Apidoc\Returned("prev_info", type="object", desc="上一条",
-     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\id"),
-     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\name")
-     *      ),
-     *      @Apidoc\Returned("next_info", type="object", desc="下一条",
-     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\id"),
-     *          @Apidoc\Returned(ref="app\common\model\cms\ContentModel\name")
-     *      )
+     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\info")
+     * @Apidoc\Returned("prev_info", type="object", desc="上一条",
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\id"),
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\name")
+     * )
+     * @Apidoc\Returned("next_info", type="object", desc="下一条",
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\id"),
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\name")
      * )
      */
     public function info()

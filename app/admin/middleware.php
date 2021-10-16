@@ -10,11 +10,11 @@
 // 应用中间件定义文件
 return [
     // 日志记录中间件
-    \app\admin\middleware\admin\UserLogMiddleware::class,
+    \app\admin\middleware\UserLogMiddleware::class,
     // Token验证中间件
-    \app\admin\middleware\admin\TokenVerifyMiddleware::class,
+    \app\admin\middleware\TokenVerifyMiddleware::class,
     // 权限验证中间件
-    \app\admin\middleware\admin\RuleVerifyMiddleware::class,
+    \app\admin\middleware\RuleVerifyMiddleware::class,
     // 接口速率中间件
-    \app\admin\middleware\admin\ApiRateMiddleware::class,
+    \app\admin\middleware\ApiRateMiddleware::class,
 ];

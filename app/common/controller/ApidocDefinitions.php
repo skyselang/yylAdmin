@@ -15,22 +15,6 @@ use hg\apidoc\annotation as Apidoc;
 class ApidocDefinitions
 {
     /**
-     * 请求头部：admin
-     * @Apidoc\Header("AdminToken", type="string", require=true, default="", desc="admin_token")
-     */
-    public function headerAdmin()
-    {
-    }
-
-    /**
-     * 请求头部：index
-     * @Apidoc\Header("MemberToken", type="string", require=true, default="", desc="member_token")
-     */
-    public function headerIndex()
-    {
-    }
-
-    /**
      * 请求参数：分页
      * @Apidoc\Param("page", type="int", default="1", desc="分页第几页")
      * @Apidoc\Param("limit", type="int", default="10", desc="分页每页数量")
@@ -88,30 +72,11 @@ class ApidocDefinitions
 
     /**
      * 返回参数：验证码
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *     @Apidoc\Returned("captcha_switch", type="bool", default="", desc="验证码是否开启"),
-     *     @Apidoc\Returned("captcha_id", type="string", default="", desc="验证码id"),
-     *     @Apidoc\Returned("captcha_src", type="string", default="", desc="验证码图片")
-     * )
+     * @Apidoc\Returned("captcha_switch", type="bool", default="", desc="验证码是否开启")
+     * @Apidoc\Returned("captcha_id", type="string", default="", desc="验证码id")
+     * @Apidoc\Returned("captcha_src", type="string", default="", desc="验证码图片")
      */
     public function returnCaptcha()
-    {
-    }
-
-    /**
-     * 返回参数：返回码、描述
-     * @Apidoc\Returned("code", type="int", default="200", desc="返回码")
-     * @Apidoc\Returned("msg", type="string", default="操作成功", desc="返回描述")
-     */
-    public function returnCode()
-    {
-    }
-
-    /**
-     * 返回参数：返回数据
-     * @Apidoc\Returned("data", type="object", default="", desc="返回数据")
-     */
-    public function returnData()
     {
     }
 
@@ -126,12 +91,10 @@ class ApidocDefinitions
 
     /**
      * 返回参数：上传文件
-     * @Apidoc\Returned("data", type="object", default="", desc="文件信息",
-     *      @Apidoc\Returned("file_name", type="string", default="", desc="文件名称"),
-     *      @Apidoc\Returned("file_path", type="string", default="", desc="文件路径"),
-     *      @Apidoc\Returned("file_url", type="string", default="", desc="文件链接"),
-     *      @Apidoc\Returned("file_size", type="string", default="", desc="文件大小"),
-     * )
+     * @Apidoc\Returned("file_name", type="string", default="", desc="文件名称")
+     * @Apidoc\Returned("file_path", type="string", default="", desc="文件路径")
+     * @Apidoc\Returned("file_url", type="string", default="", desc="文件链接")
+     * @Apidoc\Returned("file_size", type="string", default="", desc="文件大小")
      */
     public function returnFile()
     {

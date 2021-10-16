@@ -17,7 +17,10 @@ use hg\apidoc\annotation\WithoutField;
 
 class MemberModel extends Model
 {
+    // 表名
     protected $name = 'member';
+    // 主键
+    protected $pk = 'member_id';
 
     /**
      * @Field("member_id")

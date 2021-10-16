@@ -27,12 +27,8 @@ class Menu
 {
     /**
      * @Apidoc\Title("菜单列表")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("list", type="array", desc="树形列表",
-     *          @Apidoc\Returned(ref="app\common\model\admin\MenuModel\list")
-     *      )
+     * @Apidoc\Returned("list", type="array", desc="树形列表",
+     *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\list")
      * )
      */
     public function list()
@@ -44,12 +40,8 @@ class Menu
 
     /**
      * @Apidoc\Title("菜单信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", 
-     *      @Apidoc\Returned(ref="app\common\model\admin\MenuModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\admin\MenuModel\info")
      */
     public function info()
     {
@@ -68,9 +60,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\add")
-     * @Apidoc\Returned(ref="returnCode")
      */
     public function add()
     {
@@ -94,9 +84,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
      */
     public function edit()
     {
@@ -126,9 +114,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\dele")
-     * @Apidoc\Returned(ref="returnCode")
      */
     public function dele()
     {
@@ -144,9 +130,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\disable")
-     * @Apidoc\Returned(ref="returnCode")
      */
     public function disable()
     {
@@ -163,9 +147,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否无需权限")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unauth")
-     * @Apidoc\Returned(ref="returnCode")
      */
     public function unauth()
     {
@@ -182,9 +164,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否无需登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unlogin")
-     * @Apidoc\Returned(ref="returnCode")
      */
     public function unlogin()
     {
@@ -200,16 +180,12 @@ class Menu
 
     /**
      * @Apidoc\Title("菜单角色")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\admin\RoleModel\role")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *      @Apidoc\Returned(ref="app\common\model\admin\RoleModel\role")
      * )
      */
     public function role()
@@ -236,11 +212,8 @@ class Menu
 
     /**
      * @Apidoc\Title("菜单角色解除")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function roleRemove()
     {
@@ -257,17 +230,13 @@ class Menu
 
     /**
      * @Apidoc\Title("菜单用户")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表",
-     *          @Apidoc\Returned(ref="app\common\model\admin\UserModel\user")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表",
+     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\user")
      * )
      */
     public function user()
@@ -310,11 +279,8 @@ class Menu
 
     /**
      * @Apidoc\Title("菜单用户解除")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function userRemove()
     {

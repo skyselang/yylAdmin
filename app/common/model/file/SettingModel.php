@@ -16,7 +16,10 @@ use hg\apidoc\annotation\AddField;
 
 class SettingModel extends Model
 {
+    // 表名
     protected $name = 'file_setting';
+    // 主键
+    protected $pk = 'setting_id';
 
     /**
      * 信息

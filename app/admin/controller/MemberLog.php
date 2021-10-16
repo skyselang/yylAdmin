@@ -26,18 +26,14 @@ class MemberLog
 {
     /**
      * @Apidoc\Title("会员日志列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="paramSearch")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
      * )
      */
     public function list()
@@ -90,12 +86,8 @@ class MemberLog
 
     /**
      * @Apidoc\Title("会员日志信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\MemberLogModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\MemberLogModel\info")
      */
     public function info()
     {
@@ -114,10 +106,7 @@ class MemberLog
     /**
      * @Apidoc\Title("会员日志删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\dele")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -133,14 +122,11 @@ class MemberLog
     /**
      * @Apidoc\Title("会员日志清除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\MemberModel\id")
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
      * @Apidoc\Param(ref="app\common\model\ApiModel\api_url")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function clear()
     {
@@ -157,13 +143,9 @@ class MemberLog
 
     /**
      * @Apidoc\Title("会员日志统计")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param("type", type="string", default="", desc="类型")
      * @Apidoc\Param(ref="paramDate")
      * @Apidoc\Param("field", type="string", default="", desc="统计字段")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function stat()
     {

@@ -25,12 +25,8 @@ class UserCenter
 {
     /**
      * @Apidoc\Title("我的信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url"),
-     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url")
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
      */
     public function info()
     {
@@ -49,10 +45,7 @@ class UserCenter
     /**
      * @Apidoc\Title("修改信息")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -73,12 +66,9 @@ class UserCenter
     /**
      * @Apidoc\Title("修改密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
      * @Apidoc\Param("password_old", type="string", require=true, desc="原密码")
      * @Apidoc\Param("password_new", type="string", require=true, desc="新密码")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function pwd()
     {
@@ -95,19 +85,15 @@ class UserCenter
 
     /**
      * @Apidoc\Title("我的日志")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log_type")
      * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
      * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
      * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging"),
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\list")
      * )
      */
     public function log()

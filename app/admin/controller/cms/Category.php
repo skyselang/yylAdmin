@@ -24,13 +24,8 @@ class Category
 {
     /**
      * @Apidoc\Title("内容分类列表")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned("list", type="array", desc="树形列表", 
-     *          @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
-     *      )
+     * @Apidoc\Returned("list", type="array", desc="树形列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
      * )
      */
     public function list()
@@ -42,14 +37,9 @@ class Category
 
     /**
      * @Apidoc\Title("内容分类信息")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\info"),
-     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\imgs")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\info")
+     * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\imgs")
      */
     public function info()
     {
@@ -68,11 +58,8 @@ class Category
     /**
      * @Apidoc\Title("内容分类添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\add")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -94,11 +81,8 @@ class Category
     /**
      * @Apidoc\Title("内容分类修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\edit")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -121,10 +105,7 @@ class Category
     /**
      * @Apidoc\Title("内容分类删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -140,11 +121,8 @@ class Category
     /**
      * @Apidoc\Title("内容分类是否隐藏")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\ishide")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function ishide()
     {

@@ -27,7 +27,6 @@ class Login
     /**
      * @Apidoc\Title("验证码")
      * @Apidoc\Method("GET")
-     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnCaptcha")
      */
     public function captcha()
@@ -48,10 +47,7 @@ class Login
      * @Apidoc\Param("username", type="string", require=true, desc="账号/手机/邮箱")
      * @Apidoc\Param("password", type="string", require=true, desc="密码")
      * @Apidoc\Param(ref="paramCaptcha")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Param(ref="app\common\model\admin\UserModel\login")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\login")
      */
     public function login()
     {
@@ -81,9 +77,6 @@ class Login
     /**
      * @Apidoc\Title("退出")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function logout()
     {

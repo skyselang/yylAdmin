@@ -16,7 +16,10 @@ use hg\apidoc\annotation\AddField;
 
 class UserLogModel extends Model
 {
+    // 表名
     protected $name = 'admin_user_log';
+    // 主键
+    protected $pk = 'admin_user_log_id';
 
     /**
      * @Field("admin_user_log_id")

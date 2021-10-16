@@ -22,9 +22,6 @@ class Apidoc
 {
     /**
      * @Apidocs\Title("接口文档")
-     * @Apidocs\Header(ref="headerAdmin")
-     * @Apidocs\Returned(ref="returnCode")
-     * @Apidocs\Returned(ref="returnData")
      */
     public function apidoc()
     {

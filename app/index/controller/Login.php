@@ -28,7 +28,6 @@ class Login
 {
     /**
      * @Apidoc\Title("验证码")
-     * @Apidoc\Returned(ref="returnCode")
      * @Apidoc\Returned(ref="returnCaptcha")
      */
     public function captcha()
@@ -49,10 +48,7 @@ class Login
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
      * @Apidoc\Param(ref="paramCaptcha")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\MemberModel\login")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\login")
      */
     public function login()
     {
@@ -81,7 +77,6 @@ class Login
 
     /**
      * @Apidoc\Title("登录(公众号)")
-     * @Apidoc\Method("GET")
      * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转的页面地址，会携带member_id,member_token")
      */
     public function offi()
@@ -156,10 +151,7 @@ class Login
      * @Apidoc\Method("POST")
      * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
      * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\MemberModel\login")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\login")
      */
     public function mini()
     {
@@ -208,9 +200,6 @@ class Login
     /**
      * @Apidoc\Title("退出")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerIndex")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据")
      */
     public function logout()
     {

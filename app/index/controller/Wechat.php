@@ -32,7 +32,7 @@ class Wechat
         });
 
         $response = $app->server->serve();
-        
+
         $response->send();
 
         exit;

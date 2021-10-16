@@ -24,17 +24,13 @@ class Group
 {
     /**
      * @Apidoc\Title("文件分组列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param("group_name", type="string", default="", desc="文件分组名称")
      * @Apidoc\Param("group_desc", type="string", default="", desc="文件分组描述")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\file\GroupModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\list")
      * )
      */
     public function list()
@@ -68,12 +64,8 @@ class Group
 
     /**
      * @Apidoc\Title("文件分组信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\file\GroupModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\file\GroupModel\info")
      */
     public function info()
     {
@@ -92,10 +84,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\add")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -114,10 +103,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -137,10 +123,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\group")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -156,11 +139,8 @@ class Group
     /**
      * @Apidoc\Title("文件分组是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\group")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\disable")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function disable()
     {

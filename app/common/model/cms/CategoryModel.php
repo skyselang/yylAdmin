@@ -18,7 +18,9 @@ use hg\apidoc\annotation\Param;
 
 class CategoryModel extends Model
 {
+    // 表名
     protected $name = 'cms_category';
+    // 主键
     protected $pk = 'category_id';
 
     /**

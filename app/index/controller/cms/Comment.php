@@ -27,8 +27,6 @@ class Comment
      * @Apidoc\Title("留言")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\add")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {

@@ -16,7 +16,9 @@ use hg\apidoc\annotation\AddField;
 
 class CommentModel extends Model
 {
+    // 表名
     protected $name = 'cms_comment';
+    // 主键
     protected $pk = 'comment_id';
 
     /**

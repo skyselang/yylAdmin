@@ -28,6 +28,7 @@ return [
             'groups' => [
                 ['title' => '首页', 'name' => 'index'],
                 ['title' => '登录注册', 'name' => 'login'],
+                ['title' => '会员中心', 'name' => 'member'],
                 ['title' => '微信', 'name' => 'wechat'],
                 ['title' => '地区', 'name' => 'region'],
                 ['title' => '内容管理', 'name' => 'indexCms']
@@ -74,12 +75,19 @@ return [
         // 密码访问有效期
         'expire' => 30 * 24 * 60 * 60
     ],
-    // 统一的请求Header
-    'headers' => [],
-    // 统一的请求参数Parameters
+    // 全局的请求头参数
+    'headers' => [
+        ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token'],
+        ['name' => 'MemberToken', 'type' => 'string', 'require' => true, 'desc' => 'member_token'],
+    ],
+    // 全局的请求参数
     'parameters' => [],
-    // 统一的请求响应体，仅显示在文档提示中
-    'responses' => [],
+    // 统一的请求响应体
+    'responses' => [
+        ['name' => 'code', 'type' => 'int', 'desc' => '返回码'],
+        ['name' => 'msg', 'type' => 'string', 'desc' => '返回描述'],
+        ['name' => 'data', 'type' => 'object', 'desc' => '返回数据', 'main' => true],
+    ],
     // md文档
     'docs' => [
         ['title' => '接口说明', 'path' => './private/apidoc/apidocs']

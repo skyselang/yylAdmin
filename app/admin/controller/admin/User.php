@@ -24,18 +24,14 @@ class User
 {
     /**
      * @Apidoc\Title("用户列表")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="paramPaging")
      * @Apidoc\Param(ref="paramSort")
      * @Apidoc\Param("username", type="string", default="", desc="账号")
      * @Apidoc\Param("nickname", type="string", default="", desc="昵称")
      * @Apidoc\Param("email", type="string", default="", desc="邮箱")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="returnPaging"),
-     *      @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *          @Apidoc\Returned(ref="app\common\model\admin\UserModel\list")
-     *      )
+     * @Apidoc\Returned(ref="returnPaging"),
+     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\list")
      * )
      */
     public function list()
@@ -73,13 +69,9 @@ class User
 
     /**
      * @Apidoc\Title("用户信息")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url"),
-     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url")
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
      */
     public function info()
     {
@@ -98,10 +90,7 @@ class User
     /**
      * @Apidoc\Title("用户添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\add")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function add()
     {
@@ -124,10 +113,7 @@ class User
     /**
      * @Apidoc\Title("用户修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\edit")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function edit()
     {
@@ -150,10 +136,7 @@ class User
     /**
      * @Apidoc\Title("用户删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\dele")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function dele()
     {
@@ -169,10 +152,7 @@ class User
     /**
      * @Apidoc\Title("用户重置密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\pwd")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function pwd()
     {
@@ -189,10 +169,7 @@ class User
     /**
      * @Apidoc\Title("用户分配权限")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\rule")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function rule()
     {
@@ -215,10 +192,7 @@ class User
     /**
      * @Apidoc\Title("用户是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\disable")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function disable()
     {
@@ -235,10 +209,7 @@ class User
     /**
      * @Apidoc\Title("用户是否超管")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\super")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function super()
     {

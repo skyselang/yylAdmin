@@ -16,7 +16,10 @@ use hg\apidoc\annotation\AddField;
 
 class UserModel extends Model
 {
+    // 表名
     protected $name = 'admin_user';
+    // 主键
+    protected $pk = 'admin_user_id';
 
     /**
      * @Field("admin_user_id")

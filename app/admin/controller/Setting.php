@@ -24,11 +24,7 @@ class Setting
 {
     /**
      * @Apidoc\Title("Token设置信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned(ref="app\common\model\SettingModel\tokenInfo")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\tokenInfo")
      */
     public function tokenInfo()
     {
@@ -40,10 +36,7 @@ class Setting
     /**
      * @Apidoc\Title("Token设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\SettingModel\tokenInfo")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function tokenEdit()
     {
@@ -60,11 +53,7 @@ class Setting
 
     /**
      * @Apidoc\Title("验证码设置信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned(ref="app\common\model\SettingModel\captchaInfo")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\captchaInfo")
      */
     public function captchaInfo()
     {
@@ -76,10 +65,7 @@ class Setting
     /**
      * @Apidoc\Title("验证码设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\SettingModel\captchaInfo")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function captchaEdit()
     {
@@ -95,11 +81,7 @@ class Setting
 
     /**
      * @Apidoc\Title("日志设置信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned(ref="app\common\model\SettingModel\logInfo")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\logInfo")
      */
     public function logInfo()
     {
@@ -111,10 +93,7 @@ class Setting
     /**
      * @Apidoc\Title("日志设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\SettingModel\logInfo")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function logEdit()
     {
@@ -129,11 +108,7 @@ class Setting
 
     /**
      * @Apidoc\Title("API设置信息")
-     * @Apidoc\Header(ref="headerAdmin")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned("data", type="object", desc="返回数据",
-     *    @Apidoc\Returned(ref="app\common\model\SettingModel\apiInfo")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\apiInfo")
      */
     public function apiInfo()
     {
@@ -145,10 +120,7 @@ class Setting
     /**
      * @Apidoc\Title("API设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Header(ref="headerAdmin")
      * @Apidoc\Param(ref="app\common\model\SettingModel\apiInfo")
-     * @Apidoc\Returned(ref="returnCode")
-     * @Apidoc\Returned(ref="returnData")
      */
     public function apiEdit()
     {
