@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 29/09/2021 14:59:57
+ Date: 19/10/2021 11:20:06
 */
 
 SET NAMES utf8mb4;
@@ -555,7 +555,7 @@ CREATE TABLE `yyl_cms_setting`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
   INDEX `setting_cms_id`(`setting_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容设置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容设置' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_cms_setting
@@ -586,7 +586,7 @@ CREATE TABLE `yyl_file`  (
   PRIMARY KEY (`file_id`) USING BTREE,
   INDEX `file_id`(`file_id`) USING BTREE,
   INDEX `file_hash`(`file_hash`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_file
@@ -608,7 +608,7 @@ CREATE TABLE `yyl_file_group`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`group_id`) USING BTREE,
   INDEX `file_group_id`(`group_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件分组' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件分组' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_file_group
@@ -640,21 +640,21 @@ CREATE TABLE `yyl_file_setting`  (
   `baidu_bucket` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，Bucket 名称',
   `baidu_endpoint` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，所属地域',
   `baidu_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，官方域名',
-  `image_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'jpg,png,jpeg' COMMENT '允许上传的图片后缀，多个逗号\",\"隔开，为空不限制',
-  `image_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '1' COMMENT '允许上传的图片大小，单位MB，为0不限制',
-  `video_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'mp4,avi,mkv' COMMENT '允许上传的视频后缀，多个逗号\",\"隔开，为空不限制',
-  `video_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '50' COMMENT '允许上传的视频大小，单位MB，为0不限制',
-  `audio_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'mp3,aac' COMMENT '允许上传的音频后缀，多个逗号\",\"隔开，为空不限制',
-  `audio_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '10' COMMENT '允许上传的音频大小，单位MB，为0不限制',
-  `word_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'docx,xlsx,pptx' COMMENT '允许上传的文档后缀，多个逗号\",\"隔开，为空不限制',
-  `word_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '5' COMMENT '允许上传的文档大小，单位MB，为0不限制',
-  `other_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '允许上传的其它文件后缀，多个逗号\",\"隔开，为空不限制',
-  `other_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '30' COMMENT '允许上传的其它文件大小，单位MB，为0不限制',
+  `image_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'jpg,png,jpeg' COMMENT '允许上传的图片后缀，多个逗号\",\"隔开',
+  `image_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '1' COMMENT '允许上传的图片大小，单位MB',
+  `video_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'mp4,avi,mkv' COMMENT '允许上传的视频后缀，多个逗号\",\"隔开',
+  `video_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '50' COMMENT '允许上传的视频大小，单位MB',
+  `audio_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'mp3,aac' COMMENT '允许上传的音频后缀，多个逗号\",\"隔开',
+  `audio_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '10' COMMENT '允许上传的音频大小，单位MB',
+  `word_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'docx,xlsx,pptx' COMMENT '允许上传的文档后缀，多个逗号\",\"隔开',
+  `word_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '5' COMMENT '允许上传的文档大小，单位MB',
+  `other_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '允许上传的其它文件后缀，多个逗号\",\"隔开',
+  `other_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '30' COMMENT '允许上传的其它文件大小，单位MB',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
   INDEX `setting_cms_id`(`setting_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件设置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件设置' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_file_setting
@@ -691,7 +691,7 @@ CREATE TABLE `yyl_member`  (
   INDEX `phone`(`phone`) USING BTREE,
   INDEX `member_id`(`member_id`) USING BTREE,
   INDEX `email`(`email`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_member
@@ -728,7 +728,7 @@ CREATE TABLE `yyl_member_log`  (
   INDEX `request_city`(`request_city`(191)) USING BTREE,
   INDEX `request_province`(`request_province`(191)) USING BTREE,
   INDEX `request_country`(`request_country`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员日志' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员日志' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_member_log
