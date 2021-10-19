@@ -16,7 +16,7 @@ return [
     // 版权申明
     'copyright' => '',
     // 默认作者
-    'default_author' => '',
+    'default_author' => 'skyselang',
     // 默认请求类型
     'default_method' => 'GET',
     // 设置应用/版本（必须设置）
