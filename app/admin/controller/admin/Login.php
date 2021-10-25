@@ -19,15 +19,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("登录退出")
- * @Apidoc\Group("admin")
- * @Apidoc\Sort("90")
+ * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Sort("660")
  */
 class Login
 {
     /**
      * @Apidoc\Title("验证码")
      * @Apidoc\Method("GET")
-     * @Apidoc\Returned(ref="returnCaptcha")
+     * @Apidoc\Returned(ref="captchaReturn")
      */
     public function captcha()
     {
@@ -44,10 +44,9 @@ class Login
     /**
      * @Apidoc\Title("登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("username", type="string", require=true, desc="账号/手机/邮箱")
-     * @Apidoc\Param("password", type="string", require=true, desc="密码")
-     * @Apidoc\Param(ref="paramCaptcha")
-     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\login")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\loginParam")
+     * @Apidoc\Param(ref="captchaParam")
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\loginReturn")
      */
     public function login()
     {

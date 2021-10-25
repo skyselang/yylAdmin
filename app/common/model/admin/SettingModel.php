@@ -11,7 +11,7 @@
 namespace app\common\model\admin;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
+use hg\apidoc\annotation as Apidoc;
 
 class SettingModel extends Model
 {
@@ -21,30 +21,30 @@ class SettingModel extends Model
     protected $pk = 'admin_setting_id';
 
     /**
-     * @Field("token_name,token_key,token_exp")
+     * @Apidoc\Field("token_name,token_key,token_exp")
      */
-    public function tokenInfo()
+    public function tokenInfoParam()
     {
     }
 
     /**
-     * @Field("captcha_switch")
+     * @Apidoc\Field("captcha_switch")
      */
-    public function captchaInfo()
+    public function captchaInfoParam()
     {
     }
 
     /**
-     * @Field("log_switch")
+     * @Apidoc\Field("log_switch")
      */
-    public function logInfo()
+    public function logInfoParam()
     {
     }
 
     /**
-     * @Field("api_rate_num,api_rate_time")
+     * @Apidoc\Field("api_rate_num,api_rate_time")
      */
-    public function apiInfo()
+    public function apiInfoParam()
     {
     }
 }

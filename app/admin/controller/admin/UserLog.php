@@ -19,21 +19,20 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("用户日志")
- * @Apidoc\Group("admin")
- * @Apidoc\Sort("40")
+ * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Sort("640")
  */
 class UserLog
 {
     /**
      * @Apidoc\Title("用户日志列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log_type")
-     * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
-     * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\listParam")
+     * @Apidoc\Param("log_type", require=false, default=" ")
+     * @Apidoc\Param("response_code", require=false, default=" ")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="日志列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
      * )
      */
     public function list()
@@ -42,19 +41,20 @@ class UserLog
         $limit           = Request::param('limit/d', 10);
         $sort_field      = Request::param('sort_field/s', '');
         $sort_value      = Request::param('sort_value/s', '');
+        $date_field      = Request::param('date_field/s', 'create_time');
+        $date_value      = Request::param('date_value/a', '');
         $log_type        = Request::param('log_type/d', '');
-        $request_keyword = Request::param('request_keyword/s', '');
+        $response_code   = Request::param('response_code/s', '');
         $user_keyword    = Request::param('user_keyword/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
-        $create_time     = Request::param('create_time/a', []);
-        $response_code   = Request::param('response_code/s', '');
+        $request_keyword = Request::param('request_keyword/s', '');
 
         $where = [];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($request_keyword) {
-            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        if ($response_code) {
+            $where[] = ['response_code', '=', $response_code];
         }
         if ($user_keyword) {
             $admin_user     = UserService::equQuery($user_keyword);
@@ -66,12 +66,12 @@ class UserLog
             $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
             $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
         }
-        if ($create_time) {
-            $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
-            $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
+        if ($request_keyword) {
+            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
         }
-        if ($response_code) {
-            $where[] = ['response_code', '=', $response_code];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
@@ -87,8 +87,8 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志信息")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\id")
-     * @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\info")
-     */ 
+     * @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\infoReturn")
+     */
     public function info()
     {
         $param['admin_user_log_id'] = Request::param('admin_user_log_id/d', '');
@@ -106,7 +106,7 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\dele")
+     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\deleParam")
      */
     public function dele()
     {
@@ -122,12 +122,16 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志清除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\id", require=false)
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\username", require=false)
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id", require=false)
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_url", require=false)
-     * @Apidoc\Param("date_value", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     */ 
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
+     * @Apidoc\Param("admin_user_id", require=false,default=" ")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\username")
+     * @Apidoc\Param("username", require=false,default=" ")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
+     * @Apidoc\Param("admin_menu_id", require=false,default=" ")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_url")
+     * @Apidoc\Param("menu_url", require=false,default=" ")
+     * @Apidoc\Param("date_value", type="array", default=" ", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     */
     public function clear()
     {
         $param['admin_user_id'] = Request::param('admin_user_id/d', '');
@@ -144,10 +148,10 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志统计")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("type", type="string", default="", desc="类型")
+     * @Apidoc\Param("type", type="string", default=" ", desc="类型")
      * @Apidoc\Param("date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Param("field", type="string", default="", desc="统计字段")
-     */  
+     * @Apidoc\Param("field", type="string", default=" ", desc="统计字段")
+     */
     public function stat()
     {
         $type  = Request::param('type/s', '');

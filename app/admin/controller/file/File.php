@@ -19,17 +19,17 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("文件管理")
  * @Apidoc\Group("adminFile")
- * @Apidoc\Sort("90")
+ * @Apidoc\Sort("410")
  */
 class File
 {
     /**
      * @Apidoc\Title("分组列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="分组列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
      * )
      */
     public function group()
@@ -55,13 +55,18 @@ class File
 
     /**
      * @Apidoc\Title("文件列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param(ref="paramSearch")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\listParam")
+     * @Apidoc\Param("group_id", require=false, default=" ")
+     * @Apidoc\Param("file_type", require=false, default=" ")
+     * @Apidoc\Param("is_disable", require=false, default=" ")
+     * @Apidoc\Param("is_front", require=false, default=" ")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="文件列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
      * )
      */
     public function list()
@@ -120,7 +125,7 @@ class File
     /**
      * @Apidoc\Title("文件信息")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\id")
-     * @Apidoc\Returned(ref="app\common\model\file\FileModel\info")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\infoReturn")
      */
     public function info()
     {
@@ -140,8 +145,8 @@ class File
      * @Apidoc\Title("文件添加")
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnFile")
+     * @Apidoc\Param(ref="fileParam")
+     * @Apidoc\Returned(ref="fileReturn")
      */
     public function add()
     {
@@ -161,7 +166,7 @@ class File
     /**
      * @Apidoc\Title("文件修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\edit")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\editParam")
      */
     public function edit()
     {
@@ -197,7 +202,8 @@ class File
     /**
      * @Apidoc\Title("文件是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\disable")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\is_disable")
      */
     public function disable()
     {
@@ -231,13 +237,13 @@ class File
 
     /**
      * @Apidoc\Title("文件回收站")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param(ref="paramSearch")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="文件列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
      * )
      */
     public function recover()

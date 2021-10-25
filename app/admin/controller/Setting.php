@@ -17,14 +17,14 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("基础设置")
- * @Apidoc\Group("index")
- * @Apidoc\Sort("80")
+ * @Apidoc\Group("adminSetting")
+ * @Apidoc\Sort("540")
  */
 class Setting
 {
     /**
      * @Apidoc\Title("Token设置信息")
-     * @Apidoc\Returned(ref="app\common\model\SettingModel\tokenInfo")
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\tokenInfoParam")
      */
     public function tokenInfo()
     {
@@ -36,7 +36,7 @@ class Setting
     /**
      * @Apidoc\Title("Token设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\SettingModel\tokenInfo")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\tokenInfoParam")
      */
     public function tokenEdit()
     {
@@ -53,7 +53,7 @@ class Setting
 
     /**
      * @Apidoc\Title("验证码设置信息")
-     * @Apidoc\Returned(ref="app\common\model\SettingModel\captchaInfo")
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\captchaInfoParam")
      */
     public function captchaInfo()
     {
@@ -65,7 +65,7 @@ class Setting
     /**
      * @Apidoc\Title("验证码设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\SettingModel\captchaInfo")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\captchaInfoParam")
      */
     public function captchaEdit()
     {
@@ -81,7 +81,7 @@ class Setting
 
     /**
      * @Apidoc\Title("日志设置信息")
-     * @Apidoc\Returned(ref="app\common\model\SettingModel\logInfo")
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\logInfoParam")
      */
     public function logInfo()
     {
@@ -93,7 +93,7 @@ class Setting
     /**
      * @Apidoc\Title("日志设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\SettingModel\logInfo")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\logInfoParam")
      */
     public function logEdit()
     {
@@ -108,7 +108,7 @@ class Setting
 
     /**
      * @Apidoc\Title("API设置信息")
-     * @Apidoc\Returned(ref="app\common\model\SettingModel\apiInfo")
+     * @Apidoc\Returned(ref="app\common\model\SettingModel\apiInfoParam")
      */
     public function apiInfo()
     {
@@ -120,7 +120,7 @@ class Setting
     /**
      * @Apidoc\Title("API设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\SettingModel\apiInfo")
+     * @Apidoc\Param(ref="app\common\model\SettingModel\apiInfoParam")
      */
     public function apiEdit()
     {

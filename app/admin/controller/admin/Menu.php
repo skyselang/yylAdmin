@@ -20,15 +20,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("菜单管理")
- * @Apidoc\Group("admin")
- * @Apidoc\Sort("10")
+ * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Sort("610")
  */
 class Menu
 {
     /**
      * @Apidoc\Title("菜单列表")
      * @Apidoc\Returned("list", type="array", desc="树形列表",
-     *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\list")
+     *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\listReturn")
      * )
      */
     public function list()
@@ -41,7 +41,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单信息")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
-     * @Apidoc\Returned(ref="app\common\model\admin\MenuModel\info")
+     * @Apidoc\Returned(ref="app\common\model\admin\MenuModel\infoReturn")
      */
     public function info()
     {
@@ -60,7 +60,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\add")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\addParam")
      */
     public function add()
     {
@@ -84,7 +84,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\edit")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\editParam")
      */
     public function edit()
     {
@@ -114,7 +114,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\dele")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
      */
     public function dele()
     {
@@ -130,7 +130,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\disable")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\disableParam")
      */
     public function disable()
     {
@@ -147,7 +147,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否无需权限")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unauth")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unauthParam")
      */
     public function unauth()
     {
@@ -164,7 +164,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否无需登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unlogin")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unloginParam")
      */
     public function unlogin()
     {
@@ -180,12 +180,12 @@ class Menu
 
     /**
      * @Apidoc\Title("菜单角色")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *      @Apidoc\Returned(ref="app\common\model\admin\RoleModel\role")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="角色列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\RoleModel\listReturn")
      * )
      */
     public function role()
@@ -230,13 +230,13 @@ class Menu
 
     /**
      * @Apidoc\Title("菜单用户")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表",
-     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\user")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="用户列表",
+     *     @Apidoc\Returned(ref="app\common\model\admin\UserModel\listReturn")
      * )
      */
     public function user()

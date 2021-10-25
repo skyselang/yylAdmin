@@ -18,15 +18,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("留言")
- * @Apidoc\Sort("66")
- * @Apidoc\Group("indexCms")
+ * @Apidoc\Sort("620")
+ * @Apidoc\Group("cms")
  */
 class Comment
 {
     /**
      * @Apidoc\Title("留言")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\add")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\addParam")
      */
     public function add()
     {

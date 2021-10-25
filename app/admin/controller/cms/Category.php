@@ -18,14 +18,14 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("内容分类")
  * @Apidoc\Group("adminCms")
- * @Apidoc\Sort("999")
+ * @Apidoc\Sort("320")
  */
 class Category
 {
     /**
      * @Apidoc\Title("内容分类列表")
      * @Apidoc\Returned("list", type="array", desc="树形列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
+     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )
      */
     public function list()
@@ -38,7 +38,7 @@ class Category
     /**
      * @Apidoc\Title("内容分类信息")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\id")
-     * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\info")
+     * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\infoReturn")
      * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\imgs")
      */
     public function info()
@@ -58,7 +58,7 @@ class Category
     /**
      * @Apidoc\Title("内容分类添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\add")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\addParam")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
      */
     public function add()
@@ -81,7 +81,7 @@ class Category
     /**
      * @Apidoc\Title("内容分类修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\edit")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\editParam")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
      */
     public function edit()
@@ -122,7 +122,7 @@ class Category
      * @Apidoc\Title("内容分类是否隐藏")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\ishide")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\is_hide")
      */
     public function ishide()
     {

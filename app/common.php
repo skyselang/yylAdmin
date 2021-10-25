@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 
 // 公共函数文件
+use think\facade\Request;
 
 /**
  * 成功返回
@@ -68,18 +69,7 @@ function exception(string $msg = '操作失败', int $code = 400)
  */
 function server_url()
 {
-    if (isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))) {
-        $http = 'https://';
-    } elseif (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) {
-        $http = 'https://';
-    } else {
-        $http = 'http://';
-    }
-
-    $host = $_SERVER['HTTP_HOST'];
-    $res  = $http . $host;
-
-    return $res;
+    return Request::domain();
 }
 
 /**

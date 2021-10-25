@@ -11,7 +11,7 @@
 namespace app\common\model\admin;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
+use hg\apidoc\annotation as Apidoc;
 
 class MenuModel extends Model
 {
@@ -21,86 +21,64 @@ class MenuModel extends Model
     protected $pk = 'admin_menu_id';
 
     /**
-     * @Field("admin_menu_id")
+     * @Apidoc\Field("admin_menu_id")
      */
     public function id()
     {
     }
+    /**
+     * @Apidoc\Field("menu_url")
+     */
+    public function menu_url()
+    {
+    }
 
     /**
-     * @Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time")
+     * @Apidoc\Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time")
      */
-    public function list()
+    public function listReturn()
     {
     }
 
     /**
      * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("menu_pid,menu_name,menu_url,menu_sort")
+     * @Apidoc\Field("menu_pid,menu_name,menu_url,menu_sort")
      */
-    public function add()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort")
+     * @Apidoc\Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort")
      */
-    public function edit()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("admin_menu_id")
+     * @Apidoc\Field("admin_menu_id,is_disable")
      */
-    public function dele()
+    public function disableParam()
     {
     }
 
     /**
-     * @Field("admin_menu_id,is_disable")
+     * @Apidoc\Field("admin_menu_id,is_unauth")
      */
-    public function disable()
+    public function unauthParam()
     {
     }
 
     /**
-     * @Field("admin_menu_id,is_unauth")
+     * @Apidoc\Field("admin_menu_id,is_unlogin")
      */
-    public function unauth()
-    {
-    }
-
-    /**
-     * @Field("admin_menu_id,is_unlogin")
-     */
-    public function unlogin()
-    {
-    }
-
-    /**
-     * @Field("admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time")
-     */
-    public function role()
-    {
-    }
-
-    /**
-     * @Field("admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time")
-     */
-    public function roleRemove()
-    {
-    }
-
-    /**
-     * @Field("menu_url")
-     */
-    public function menu_url()
+    public function unloginParam()
     {
     }
 }

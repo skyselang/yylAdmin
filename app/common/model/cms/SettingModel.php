@@ -11,7 +11,7 @@
 namespace app\common\model\cms;
 
 use think\Model;
-use hg\apidoc\annotation\WithoutField;
+use hg\apidoc\annotation as Apidoc;
 
 class SettingModel extends Model
 {
@@ -21,16 +21,16 @@ class SettingModel extends Model
     protected $pk = 'setting_id';
 
     /**
-     * @WithoutField("setting_id")
+     * @Apidoc\WithoutField("setting_id")
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @WithoutField("setting_id,create_time,update_time")
+     * @Apidoc\WithoutField("setting_id,create_time,update_time")
      */
-    public function edit()
+    public function editParam()
     {
     }
 }

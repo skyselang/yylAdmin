@@ -17,14 +17,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("微信设置")
- * @Apidoc\Group("index")
- * @Apidoc\Sort("90")
+ * @Apidoc\Group("adminSetting")
+ * @Apidoc\Sort("520")
  */
 class SettingWechat
 {
     /**
      * @Apidoc\Title("公众号信息")
-     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\offiInfo")
+     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\offiInfoParam")
+     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\qrcode_url")
      */
     public function offiInfo()
     {
@@ -36,7 +37,7 @@ class SettingWechat
     /**
      * @Apidoc\Title("公众号修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\SettingWechatModel\offiEdit")
+     * @Apidoc\Param(ref="app\common\model\SettingWechatModel\offiInfoParam")
      */
     public function offiEdit()
     {
@@ -58,7 +59,8 @@ class SettingWechat
 
     /**
      * @Apidoc\Title("小程序信息")
-     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\miniInfo")
+     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\miniInfoParam")
+     * @Apidoc\Returned(ref="app\common\model\SettingWechatModel\qrcode_url")
      */
     public function miniInfo()
     {
@@ -70,7 +72,7 @@ class SettingWechat
     /**
      * @Apidoc\Title("小程序修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\SettingWechatModel\miniEdit")
+     * @Apidoc\Param(ref="app\common\model\SettingWechatModel\miniInfoParam")
      */
     public function miniEdit()
     {

@@ -17,21 +17,22 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("用户管理")
- * @Apidoc\Group("admin")
- * @Apidoc\Sort("30")
+ * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Sort("630")
  */
 class User
 {
     /**
      * @Apidoc\Title("用户列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param("username", type="string", default="", desc="账号")
-     * @Apidoc\Param("nickname", type="string", default="", desc="昵称")
-     * @Apidoc\Param("email", type="string", default="", desc="邮箱")
-     * @Apidoc\Returned(ref="returnPaging"),
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *      @Apidoc\Returned(ref="app\common\model\admin\UserModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\listParam")
+     * @Apidoc\Param("username", require=false)
+     * @Apidoc\Param("nickname", require=false)
+     * @Apidoc\Param("email", require=false)
+     * @Apidoc\Returned(ref="pagingReturn"),
+     * @Apidoc\Returned("list", type="array", desc="用户列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\UserModel\listReturn")
      * )
      */
     public function list()
@@ -60,9 +61,7 @@ class User
             $order = [$sort_field => $sort_value];
         }
 
-        $field = '';
-
-        $data = UserService::list($where, $page, $limit, $order, $field);
+        $data = UserService::list($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -70,8 +69,7 @@ class User
     /**
      * @Apidoc\Title("用户信息")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
-     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\infoReturn")
      */
     public function info()
     {
@@ -90,7 +88,7 @@ class User
     /**
      * @Apidoc\Title("用户添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\add")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\addParam")
      */
     public function add()
     {
@@ -113,7 +111,7 @@ class User
     /**
      * @Apidoc\Title("用户修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\edit")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\editParam")
      */
     public function edit()
     {
@@ -136,7 +134,7 @@ class User
     /**
      * @Apidoc\Title("用户删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\dele")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\deleParam")
      */
     public function dele()
     {
@@ -152,7 +150,7 @@ class User
     /**
      * @Apidoc\Title("用户重置密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\pwd")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\pwdParam")
      */
     public function pwd()
     {
@@ -169,7 +167,7 @@ class User
     /**
      * @Apidoc\Title("用户分配权限")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\rule")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\ruleParam")
      */
     public function rule()
     {
@@ -192,7 +190,7 @@ class User
     /**
      * @Apidoc\Title("用户是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\disable")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\disableParam")
      */
     public function disable()
     {
@@ -209,7 +207,7 @@ class User
     /**
      * @Apidoc\Title("用户是否超管")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\super")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\superParam")
      */
     public function super()
     {

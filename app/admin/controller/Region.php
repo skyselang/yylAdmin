@@ -17,20 +17,20 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("地区管理")
- * @Apidoc\Group("index")
- * @Apidoc\Sort("70")
+ * @Apidoc\Group("adminSetting")
+ * @Apidoc\Sort("530")
  */
 class Region
 {
     /**
      * @Apidoc\Title("地区列表")
-     * @Apidoc\Param("type", type="string", default="list", desc="返回的数据类型：list列表，tree树形")
-     * @Apidoc\Param("region_pid", type="string", default="0", desc="pid")
-     * @Apidoc\Param("region_id", type="string", default="", desc="id")
-     * @Apidoc\Param("region_name", type="string", default="", desc="名称")
-     * @Apidoc\Param("region_pinyin", type="string", default="", desc="拼音")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\RegionModel\list")
+     * @Apidoc\Param("type", type="string", default="list", desc="数据类型：list列表，tree树形")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\id")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\region_pid")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\region_name")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\region_pinyin")
+     * @Apidoc\Returned("list", type="array", desc="地区列表", 
+     *     @Apidoc\Returned(ref="app\common\model\RegionModel\listReturn")
      * )
      */
     public function list()
@@ -74,7 +74,7 @@ class Region
     /**
      * @Apidoc\Title("地区信息")
      * @Apidoc\Param(ref="app\common\model\RegionModel\id")
-     * @Apidoc\Returned(ref="app\common\model\RegionModel\info")
+     * @Apidoc\Returned(ref="app\common\model\RegionModel\infoReturn")
      */
     public function info()
     {
@@ -93,7 +93,7 @@ class Region
     /**
      * @Apidoc\Title("地区添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\RegionModel\add")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\addParam")
      */
     public function add()
     {
@@ -126,7 +126,7 @@ class Region
     /**
      * @Apidoc\Title("地区修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\RegionModel\edit")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\editParam")
      */
     public function edit()
     {
@@ -160,7 +160,7 @@ class Region
     /**
      * @Apidoc\Title("地区删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\RegionModel\dele")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\deleParam")
      */
     public function dele()
     {

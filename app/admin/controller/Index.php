@@ -19,8 +19,8 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("控制台")
- * @Apidoc\Group("admin")
- * @Apidoc\Sort("01")
+ * @Apidoc\Group("adminConsole")
+ * @Apidoc\Sort("150")
  */
 class Index
 {

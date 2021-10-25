@@ -11,7 +11,7 @@
 namespace app\common\model;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
+use hg\apidoc\annotation as Apidoc;
 
 class ApiModel extends Model
 {
@@ -21,63 +21,63 @@ class ApiModel extends Model
     protected $pk = 'api_id';
 
     /**
-     * @Field("api_id")
+     * @Apidoc\Field("api_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin,create_time,update_time")
+     * @Apidoc\Field("api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin,create_time,update_time")
      */
-    public function list()
+    public function listReturn()
     {
     }
 
     /**
      * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("api_pid,api_name,api_url,api_sort")
+     * @Apidoc\Field("api_pid,api_name,api_url,api_sort")
      */
-    public function add()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("api_id,api_pid,api_name,api_url,api_sort")
+     * @Apidoc\Field("api_id,api_pid,api_name,api_url,api_sort")
      */
-    public function edit()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("api_id")
+     * @Apidoc\Field("api_id")
      */
-    public function dele()
+    public function deleParam()
     {
     }
 
     /**
-     * @Field("api_id,is_disable")
+     * @Apidoc\Field("api_id,is_disable")
      */
-    public function disable()
+    public function disableParam()
     {
     }
 
     /**
-     * @Field("api_id,is_unlogin")
+     * @Apidoc\Field("api_id,is_unlogin")
      */
-    public function unlogin()
+    public function unloginParam()
     {
     }
 
     /**
-     * @Field("api_url")
+     * @Apidoc\Field("api_url")
      */
     public function api_url()
     {

@@ -15,14 +15,14 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("设置")
- * @Apidoc\Sort("69")
- * @Apidoc\Group("indexCms")
+ * @Apidoc\Sort("630")
+ * @Apidoc\Group("cms")
  */
 class Setting
 {
     /**
      * @Apidoc\Title("设置信息")
-     * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\Info")
+     * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\infoReturn")
      */
     public function info()
     {

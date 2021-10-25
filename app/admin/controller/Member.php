@@ -17,20 +17,20 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("会员管理")
- * @Apidoc\Group("index")
- * @Apidoc\Sort("10")
+ * @Apidoc\Group("adminMember")
+ * @Apidoc\Sort("210")
  */
 class Member
 {
     /**
      * @Apidoc\Title("会员列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param(ref="paramSearch")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\MemberModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="会员列表", 
+     *     @Apidoc\Returned(ref="app\common\model\MemberModel\listReturn")
      * )
      */
     public function list()
@@ -71,7 +71,7 @@ class Member
      * @Apidoc\Title("会员信息")
      * @Apidoc\Param(ref="app\common\model\MemberModel\id")
      * @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\MemberModel\info")
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\infoReturn")
      */
     public function info()
     {
@@ -92,7 +92,7 @@ class Member
     /**
      * @Apidoc\Title("会员添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\add")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\addParam")
      */
     public function add()
     {
@@ -116,7 +116,7 @@ class Member
     /**
      * @Apidoc\Title("会员修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\edit")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\editParam")
      */
     public function edit()
     {
@@ -140,7 +140,7 @@ class Member
     /**
      * @Apidoc\Title("会员删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\dele")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\deleParam")
      */
     public function dele()
     {
@@ -156,7 +156,7 @@ class Member
     /**
      * @Apidoc\Title("会员重置密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\pwd")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\pwdParam")
      */
     public function pwd()
     {
@@ -173,7 +173,7 @@ class Member
     /**
      * @Apidoc\Title("会员是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\disable")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\disableParam")
      */
     public function disable()
     {

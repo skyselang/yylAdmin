@@ -19,21 +19,22 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("会员日志")
- * @Apidoc\Group("index")
- * @Apidoc\Sort("20")
+ * @Apidoc\Group("adminMember")
+ * @Apidoc\Sort("220")
  */
 class MemberLog
 {
     /**
      * @Apidoc\Title("会员日志列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param(ref="paramSearch")
-     * @Apidoc\Param(ref="paramDate")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
+     * @Apidoc\Param("log_type", require=false, default=" ")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="会员日志列表", 
+     *     @Apidoc\Returned(ref="app\common\model\MemberLogModel\listReturn")
      * )
      */
     public function list()
@@ -45,7 +46,7 @@ class MemberLog
         $sort_value   = Request::param('sort_value/s', '');
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', 'create_time');
+        $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
         $where = [];
@@ -87,7 +88,7 @@ class MemberLog
     /**
      * @Apidoc\Title("会员日志信息")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\id")
-     * @Apidoc\Returned(ref="app\common\model\MemberLogModel\info")
+     * @Apidoc\Returned(ref="app\common\model\MemberLogModel\infoReturn")
      */
     public function info()
     {
@@ -106,7 +107,7 @@ class MemberLog
     /**
      * @Apidoc\Title("会员日志删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberLogModel\dele")
+     * @Apidoc\Param(ref="app\common\model\MemberLogModel\deleParam")
      */
     public function dele()
     {
@@ -126,7 +127,7 @@ class MemberLog
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
      * @Apidoc\Param(ref="app\common\model\ApiModel\api_url")
-     * @Apidoc\Param(ref="paramDate")
+     * @Apidoc\Param(ref="dateParam")
      */
     public function clear()
     {
@@ -143,9 +144,9 @@ class MemberLog
 
     /**
      * @Apidoc\Title("会员日志统计")
-     * @Apidoc\Param("type", type="string", default="", desc="类型")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Param("field", type="string", default="", desc="统计字段")
+     * @Apidoc\Param("type", type="string", default=" ", desc="类型")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Param("field", type="string", default=" ", desc="统计字段")
      */
     public function stat()
     {

@@ -10,22 +10,22 @@
 // 文件设置控制器
 namespace app\admin\controller\file;
 
-use app\common\service\file\FileService;
 use think\facade\Request;
 use app\common\validate\file\SettingValidate;
 use app\common\service\file\SettingService;
+use app\common\service\file\FileService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("文件设置")
  * @Apidoc\Group("adminFile")
- * @Apidoc\Sort("92")
+ * @Apidoc\Sort("430")
  */
 class Setting
 {
     /**
      * @Apidoc\Title("文件设置信息")
-     * @Apidoc\Returned(ref="app\common\model\file\SettingModel\info")
+     * @Apidoc\Returned(ref="app\common\model\file\SettingModel\infoReturn")
      */
     public function info()
     {
@@ -38,7 +38,7 @@ class Setting
     /**
      * @Apidoc\Title("文件设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\SettingModel\edit")
+     * @Apidoc\Param(ref="app\common\model\file\SettingModel\editParam")
      */
     public function edit()
     {

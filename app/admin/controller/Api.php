@@ -17,15 +17,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("接口管理")
- * @Apidoc\Group("index")
- * @Apidoc\Sort("50")
+ * @Apidoc\Group("adminSetting")
+ * @Apidoc\Sort("510")
  */
 class Api
 {
     /**
      * @Apidoc\Title("接口列表")
      * @Apidoc\Returned("list", type="array", desc="树形列表", 
-     *     @Apidoc\Returned(ref="app\common\model\ApiModel\list")
+     *     @Apidoc\Returned(ref="app\common\model\ApiModel\listReturn")
      * )
      */
     public function list()
@@ -38,7 +38,7 @@ class Api
     /**
      * @Apidoc\Title("接口信息")
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
-     * @Apidoc\Returned(ref="app\common\model\ApiModel\info")
+     * @Apidoc\Returned(ref="app\common\model\ApiModel\infoReturn")
      */
     public function info()
     {
@@ -57,7 +57,7 @@ class Api
     /**
      * @Apidoc\Title("接口添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\add")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\addParam")
      */
     public function add()
     {
@@ -76,7 +76,7 @@ class Api
     /**
      * @Apidoc\Title("接口修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\edit")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\editParam")
      */
     public function edit()
     {
@@ -96,7 +96,7 @@ class Api
     /**
      * @Apidoc\Title("接口删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\dele")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\deleParam")
      */
     public function dele()
     {
@@ -112,7 +112,7 @@ class Api
     /**
      * @Apidoc\Title("接口是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\disable")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\disableParam")
      */
     public function disable()
     {
@@ -129,7 +129,7 @@ class Api
     /**
      * @Apidoc\Title("接口是否无需登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\unlogin")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\unloginParam")
      */
     public function unlogin()
     {

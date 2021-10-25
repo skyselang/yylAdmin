@@ -20,7 +20,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("会员中心")
- * @Apidoc\Sort("4")
+ * @Apidoc\Sort("310")
  * @Apidoc\Group("member")
  */
 class Member
@@ -28,7 +28,7 @@ class Member
     /**
      * @Apidoc\Title("我的信息")
      * @Apidoc\Returned(ref="app\common\model\MemberModel\avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\MemberModel\infoIndex")
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\indexInfoReturn")
      */
     public function info()
     {
@@ -36,14 +36,11 @@ class Member
 
         validate(MemberValidate::class)->scene('info')->check($param);
 
-        $member = MemberService::info($param['member_id']);
-        if ($member['is_delete'] == 1) {
+        $data = MemberService::info($param['member_id']);
+        if ($data['is_delete'] == 1) {
             exception('会员已被注销');
         }
-
-        unset($member['password'], $member['remark'], $member['sort'], $member['is_disable'], $member['is_delete'], $member['delete_time']);
-
-        $data = $member;
+        unset($data['password'], $data['remark'], $data['sort'], $data['is_disable'], $data['is_delete'], $data['delete_time']);
 
         return success($data);
     }
@@ -51,7 +48,7 @@ class Member
     /**
      * @Apidoc\Title("修改信息")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\editIndex")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\indexEditParam")
      */
     public function edit()
     {
@@ -74,8 +71,8 @@ class Member
      * @Apidoc\Title("上传头像")
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="paramFile")
-     * @Apidoc\Returned(ref="returnFile")
+     * @Apidoc\Param(ref="fileParam")
+     * @Apidoc\Returned(ref="fileReturn")
      */
     public function avatar()
     {
@@ -118,12 +115,13 @@ class Member
 
     /**
      * @Apidoc\Title("我的日志")
-     * @Apidoc\Param(ref="paramPaging")
+     * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\MemberLogModel\list")
+     * @Apidoc\Param("log_type", require=false, default=" ")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="日志列表", 
+     *     @Apidoc\Returned(ref="app\common\model\MemberLogModel\listReturn")
      * )
      */
     public function log()

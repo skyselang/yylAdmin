@@ -18,15 +18,14 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("个人中心")
- * @Apidoc\Group("admin")
- * @Apidoc\Sort("50")
+ * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Sort("650")
  */
 class UserCenter
 {
     /**
      * @Apidoc\Title("我的信息")
-     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\info")
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\infoReturn")
      */
     public function info()
     {
@@ -45,7 +44,7 @@ class UserCenter
     /**
      * @Apidoc\Title("修改信息")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\edit")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\editParam")
      */
     public function edit()
     {
@@ -85,15 +84,15 @@ class UserCenter
 
     /**
      * @Apidoc\Title("我的日志")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\log_type")
-     * @Apidoc\Param("request_keyword", type="string", default="", desc="请求地区/ip/isp")
-     * @Apidoc\Param("menu_keyword", type="string", default="", desc="菜单链接/名称")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging"),
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\listParam")
+     * @Apidoc\Param("log_type", require=false, default=" ")
+     * @Apidoc\Param("response_code", require=false, default=" ")
+     * @Apidoc\Returned(ref="pagingReturn"),
+     * @Apidoc\Returned("list", type="array", desc="日志列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
      * )
      */
     public function log()
@@ -102,10 +101,12 @@ class UserCenter
         $limit           = Request::param('limit/d', 10);
         $sort_field      = Request::param('sort_field/s', '');
         $sort_value      = Request::param('sort_value/s', '');
+        $date_field      = Request::param('date_field/s', 'create_time');
+        $date_value      = Request::param('date_value/a', '');
         $log_type        = Request::param('log_type/d', '');
-        $request_keyword = Request::param('request_keyword/s', '');
+        $response_code   = Request::param('response_code/s', '');
         $menu_keyword    = Request::param('menu_keyword/s', '');
-        $create_time     = Request::param('create_time/a', []);
+        $request_keyword = Request::param('request_keyword/s', '');
         $admin_user_id   = admin_user_id();
 
         validate(UserCenterValidate::class)->scene('log')->check(['admin_user_id' => $admin_user_id]);
@@ -114,17 +115,20 @@ class UserCenter
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($request_keyword) {
-            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        if ($response_code) {
+            $where[] = ['response_code', '=', $response_code];
         }
         if ($menu_keyword) {
             $admin_menu     = MenuService::likeQuery($menu_keyword);
             $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
             $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
         }
-        if ($create_time) {
-            $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
-            $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
+        if ($request_keyword) {
+            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        }
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];

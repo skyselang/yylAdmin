@@ -11,8 +11,7 @@
 namespace app\common\model\admin;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class UserLogModel extends Model
 {
@@ -22,38 +21,40 @@ class UserLogModel extends Model
     protected $pk = 'admin_user_log_id';
 
     /**
-     * @Field("admin_user_log_id")
+     * @Apidoc\Field("admin_user_log_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("admin_user_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time")
+     * @Apidoc\Field("log_type,response_code")
+     * @Apidoc\AddField("request_keyword", type="string", default=" ", desc="请求地区/IP/ISP")
+     * @Apidoc\AddField("menu_keyword", type="string", default=" ", desc="菜单链接/名称")
+     * @Apidoc\AddField("user_keyword", type="string", default=" ", desc="用户账号/昵称")
      */
-    public function list()
+    public function listParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("admin_user_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time")
+     */
+    public function listReturn()
     {
     }
 
     /**
      * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("admin_user_log_id")
+     * @Apidoc\Field("admin_user_log_id")
      */
-    public function dele()
-    {
-    }
-
-    /**
-     * @Field("log_type")
-     * @AddField("log_type", type="int", desc="日志类型1登录2操作3退出")
-     */
-    public function log_type()
+    public function deleParam()
     {
     }
 }

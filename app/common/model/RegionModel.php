@@ -11,7 +11,7 @@
 namespace app\common\model;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
+use hg\apidoc\annotation as Apidoc;
 
 class RegionModel extends Model
 {
@@ -21,44 +21,65 @@ class RegionModel extends Model
     protected $pk = 'region_id';
 
     /**
-     * @Field("region_id")
+     * @Apidoc\Field("region_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("region_id,region_pid,region_path,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_sort")
+     * @Apidoc\withoutField("region_level,is_delete,create_time,update_time,delete_time")
      */
-    public function list()
+    public function listReturn()
     {
     }
 
     /**
      * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("region_pid,region_level,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort")
+     * @Apidoc\withoutField("region_id,is_delete,create_time,update_time,delete_time")
      */
-    public function add()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("region_id,region_pid,region_level,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort")
+     * @Apidoc\withoutField("is_delete,create_time,update_time,delete_time")
      */
-    public function edit()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("region_id")
+     * @Apidoc\Field("region_id")
      */
-    public function dele()
+    public function deleParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("region_pid")
+     */
+    public function region_pid()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("region_name")
+     */
+    public function region_name()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("region_pinyin")
+     */
+    public function region_pinyin()
     {
     }
 }

@@ -11,10 +11,7 @@
 namespace app\common\model\cms;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
-use hg\apidoc\annotation\WithoutField;
-use hg\apidoc\annotation\Param;
+use hg\apidoc\annotation as Apidoc;
 
 class CategoryModel extends Model
 {
@@ -24,68 +21,68 @@ class CategoryModel extends Model
     protected $pk = 'category_id';
 
     /**
-     * @Field("category_id")
+     * @Apidoc\Field("category_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("category_id,category_pid,category_name,sort,is_hide,create_time,update_time")
+     * @Apidoc\Field("category_id,category_pid,category_name,sort,is_hide,create_time,update_time")
      */
-    public function list()
+    public function listReturn()
     {
     }
 
     /**
-     * @WithoutField("is_delete,delete_time")
+     * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("category_id,category_pid,category_name,title,keywords,description,sort")
+     * @Apidoc\Field("category_id,category_pid,category_name,title,keywords,description,sort")
      */
-    public function add()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("category_id,category_pid,category_name,title,keywords,description,sort")
+     * @Apidoc\Field("category_id,category_pid,category_name,title,keywords,description,sort")
      */
-    public function edit()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("is_hide")
+     * @Apidoc\Field("category_pid")
      */
-    public function ishide()
+    public function category_pid()
     {
     }
 
     /**
-     * @Field("category_pid")
+     * @Apidoc\Field("category_name")
      */
-    public function pid()
+    public function category_name()
     {
     }
 
     /**
-     * @Field("category_name")
+     * @Apidoc\Field("is_hide")
      */
-    public function name()
+    public function is_hide()
     {
     }
 
     /**
-     * @Field("imgs")
-     * @AddField("imgs", type="array", require=false, default="[]", desc="图片",
-     *      @Param("file_name", type="string", require=true, default="", desc="图片名称"),
-     *      @Param("file_path", type="string", require=true, default="", desc="图片路径"),
-     *      @Param("file_url", type="string", require=true, default="", desc="图片链接"),
-     *      @Param("file_size", type="string", require=true, default="", desc="图片大小")
+     * @Apidoc\Field("imgs")
+     * @Apidoc\AddField("imgs", type="array", require=false, default="[]", desc="图片",
+     *    @Apidoc\Param("file_name", type="string", require=true, default=" ", desc="图片名称"),
+     *    @Apidoc\Param("file_size", type="string", require=true, default=" ", desc="图片大小"),
+     *    @Apidoc\Param("file_path", type="string", require=true, default=" ", desc="图片路径"),
+     *    @Apidoc\Param("file_url", type="string", require=true, default=" ", desc="图片链接")
      * )
      */
     public function imgs()
@@ -93,8 +90,8 @@ class CategoryModel extends Model
     }
 
     /**
-     * @Field("category")
-     * @AddField("category", type="array", require=true, default="", desc="内容分类列表")
+     * @Apidoc\Field("category")
+     * @Apidoc\AddField("category", type="array", require=true, default=" ", desc="内容分类列表")
      */
     public function category()
     {

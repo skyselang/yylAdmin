@@ -15,8 +15,8 @@ use hg\apidoc\annotation as Apidocs;
 
 /**
  * @Apidocs\Title("接口文档")
- * @Apidocs\Group("admin")
- * @Apidocs\Sort("60")
+ * @Apidocs\Group("adminSystem")
+ * @Apidocs\Sort("710")
  */
 class Apidoc
 {

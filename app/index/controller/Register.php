@@ -19,14 +19,14 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("注册")
- * @Apidoc\Sort("2")
+ * @Apidoc\Sort("220")
  * @Apidoc\Group("login")
  */
 class Register
 {
     /**
      * @Apidoc\Title("验证码")
-     * @Apidoc\Returned(ref="returnCaptcha")
+     * @Apidoc\Returned(ref="captchaReturn")
      */
     public function captcha()
     {
@@ -46,7 +46,7 @@ class Register
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
      * @Apidoc\Param(ref="app\common\model\MemberModel\nickname")
-     * @Apidoc\Param(ref="paramCaptcha")
+     * @Apidoc\Param(ref="captchaParam")
      */
     public function register()
     {
@@ -57,7 +57,7 @@ class Register
         $param['captcha_code'] = Request::param('captcha_code/s', '');
 
         validate(MemberValidate::class)->scene('register')->check($param);
-        
+
         $setting = SettingService::captchaInfo();
         if ($setting['captcha_register']) {
             if (empty($param['captcha_code'])) {

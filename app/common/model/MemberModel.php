@@ -11,9 +11,7 @@
 namespace app\common\model;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
-use hg\apidoc\annotation\WithoutField;
+use hg\apidoc\annotation as Apidoc;
 
 class MemberModel extends Model
 {
@@ -23,109 +21,109 @@ class MemberModel extends Model
     protected $pk = 'member_id';
 
     /**
-     * @Field("member_id")
+     * @Apidoc\Field("member_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("username")
+     * @Apidoc\Field("member_id,username,nickname,phone,email,avatar,remark,sort,create_time,login_time,is_disable")
      */
-    public function username()
-    {
-    }
-
-    /**
-     * @Field("nickname")
-     */
-    public function nickname()
-    {
-    }
-
-    /**
-     * @Field("password")
-     */
-    public function password()
-    {
-    }
-    
-    /**
-     * @Field("member_id,username,nickname,phone,email,avatar,remark,sort,create_time,login_time,is_disable")
-     */
-    public function list()
+    public function listReturn()
     {
     }
 
     /**
      * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @WithoutField("password,remark,sort,is_disable,is_delete,logout_time,delete_time")
+     * @Apidoc\WithoutField("password,remark,sort,is_disable,is_delete,logout_time,delete_time")
      */
-    public function infoIndex()
+    public function indexInfoReturn()
     {
     }
 
     /**
-     * @Field("avatar_id,username,nickname,password,phone,email,region_id,remark,sort")
+     * @Apidoc\Field("avatar_id,username,nickname,password,phone,email,region_id,remark,sort")
      */
-    public function add()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("member_id,avatar_id,username,nickname,phone,email,region_id,remark,sort")
+     * @Apidoc\Field("member_id,avatar_id,username,nickname,phone,email,region_id,remark,sort")
      */
-    public function edit()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("member_id,avatar_id,username,nickname,phone,email,region_id")
+     * @Apidoc\Field("member_id,avatar_id,username,nickname,phone,email,region_id")
      */
-    public function editIndex()
+    public function indexEditParam()
     {
     }
 
     /**
-     * @Field("member_id")
+     * @Apidoc\Field("member_id")
      */
-    public function dele()
+    public function deleParam()
     {
     }
 
     /**
-     * @Field("avatar_url")
-     * @AddField("avatar_url", type="string", require=false, desc="头像链接")
+     * @Apidoc\Field("member_id,password")
+     */
+    public function pwdParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("member_id,is_disable")
+     */
+    public function disableParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("member_id,username,nickname,phone,email,avatar_id,login_ip,login_time")
+     * @Apidoc\AddField("menber_token", type="string", require=true, desc="MemberToken")
+     */
+    public function loginReturn()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("username")
+     */
+    public function username()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("nickname")
+     */
+    public function nickname()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("password")
+     */
+    public function password()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("avatar_url")
+     * @Apidoc\AddField("avatar_url", type="string", require=false, desc="头像链接")
      */
     public function avatar_url()
-    {
-    }
-
-    /**
-     * @Field("member_id,password")
-     */
-    public function pwd()
-    {
-    }
-
-    /**
-     * @Field("member_id,is_disable")
-     */
-    public function disable()
-    {
-    }
-
-    /**
-     * @Field("member_id,username,nickname,phone,email,avatar_id,login_ip,login_time")
-     * @AddField("menber_token", type="string", desc="MemberToken")
-     */
-    public function login()
     {
     }
 }

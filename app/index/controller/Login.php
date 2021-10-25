@@ -21,14 +21,14 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("登录退出")
- * @Apidoc\Sort("3")
+ * @Apidoc\Sort("210")
  * @Apidoc\Group("login")
  */
 class Login
 {
     /**
      * @Apidoc\Title("验证码")
-     * @Apidoc\Returned(ref="returnCaptcha")
+     * @Apidoc\Returned(ref="captchaReturn")
      */
     public function captcha()
     {
@@ -47,8 +47,8 @@ class Login
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
-     * @Apidoc\Param(ref="paramCaptcha")
-     * @Apidoc\Returned(ref="app\common\model\MemberModel\login")
+     * @Apidoc\Param(ref="captchaParam")
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\loginReturn")
      */
     public function login()
     {
@@ -77,7 +77,7 @@ class Login
 
     /**
      * @Apidoc\Title("登录(公众号)")
-     * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转的页面地址，会携带member_id,member_token")
+     * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转的页面地址，会携带member_id、member_token")
      */
     public function offi()
     {
@@ -151,7 +151,7 @@ class Login
      * @Apidoc\Method("POST")
      * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
      * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")
-     * @Apidoc\Returned(ref="app\common\model\MemberModel\login")
+     * @Apidoc\Returned(ref="app\common\model\MemberModel\loginReturn")
      */
     public function mini()
     {

@@ -18,20 +18,21 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("角色管理")
- * @Apidoc\Group("admin")
- * @Apidoc\Sort("20")
+ * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Sort("620")
  */
 class Role
 {
     /**
      * @Apidoc\Title("角色列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param("role_name", type="string", default="", desc="角色名称")
-     * @Apidoc\Param("role_desc", type="string", default="", desc="角色描述")
-     * @Apidoc\Returned(ref="returnPaging"),
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *      @Apidoc\Returned(ref="app\common\model\admin\RoleModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\listParam")
+     * @Apidoc\Param("role_name", require=false)
+     * @Apidoc\Param("role_desc", require=false)
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="角色列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\RoleModel\listReturn")
      * )
      */
     public function list()
@@ -64,7 +65,7 @@ class Role
     /**
      * @Apidoc\Title("角色信息")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
-     * @Apidoc\Returned(ref="app\common\model\admin\RoleModel\info")
+     * @Apidoc\Returned(ref="app\common\model\admin\RoleModel\infoReturn")
      */
     public function info()
     {
@@ -83,7 +84,7 @@ class Role
     /**
      * @Apidoc\Title("角色添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\add")
+     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\addParam")
      */
     public function add()
     {
@@ -102,7 +103,7 @@ class Role
     /**
      * @Apidoc\Title("角色修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\edit")
+     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\editParam")
      */
     public function edit()
     {
@@ -122,7 +123,7 @@ class Role
     /**
      * @Apidoc\Title("角色删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\dele")
+     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\deleParam")
      */
     public function dele()
     {
@@ -138,7 +139,7 @@ class Role
     /**
      * @Apidoc\Title("角色是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\disable")
+     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\disableParam")
      */
     public function disable()
     {
@@ -154,10 +155,10 @@ class Role
 
     /**
      * @Apidoc\Title("角色用户")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
-     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\user")
+     * @Apidoc\Returned(ref="app\common\model\admin\UserModel\listReturn")
      */
     public function user()
     {

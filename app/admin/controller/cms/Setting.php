@@ -18,13 +18,13 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("内容设置")
  * @Apidoc\Group("adminCms")
- * @Apidoc\Sort("999")
+ * @Apidoc\Sort("340")
  */
 class Setting
 {
     /**
      * @Apidoc\Title("内容设置信息")
-     * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\Info")
+     * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\InfoReturn")
      */
     public function info()
     {
@@ -36,7 +36,7 @@ class Setting
     /**
      * @Apidoc\Title("内容设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\SettingModel\edit")
+     * @Apidoc\Param(ref="app\common\model\cms\SettingModel\editParam")
      */
     public function edit()
     {

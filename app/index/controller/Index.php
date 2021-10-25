@@ -15,7 +15,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("首页")
- * @Apidoc\Sort("1")
+ * @Apidoc\Sort("110")
  * @Apidoc\Group("index")
  */
 class Index

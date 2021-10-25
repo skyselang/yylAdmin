@@ -11,8 +11,7 @@
 namespace app\common\model\admin;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class RoleModel extends Model
 {
@@ -20,68 +19,69 @@ class RoleModel extends Model
     protected $name = 'admin_role';
     // 主键
     protected $pk = 'admin_role_id';
+
     /**
-     * @Field("admin_role_id")
+     * @Apidoc\Field("admin_role_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time")
+     * @Apidoc\Field("role_name,role_desc")
      */
-    public function list()
+    public function listParam()
     {
     }
 
     /**
-     * @Field("admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time")
+     * @Apidoc\Field("admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time")
      */
-    public function info()
+    public function listReturn()
     {
     }
 
     /**
-     * @Field("role_name,role_desc,role_sort")
-     * @AddField("admin_menu_ids", type="array", default="[]", desc="菜单id，eg:[1,2]")
+     * 
      */
-    public function add()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("admin_role_id,role_name,role_desc,role_sort")
-     * @AddField("admin_menu_ids", type="array", default="[]", desc="菜单id，eg:[1,2]")
+     * @Apidoc\Field("role_name,role_desc,role_sort")
+     * @Apidoc\AddField("admin_menu_ids", type="array", default="[]", desc="菜单id，eg:[1,2]")
      */
-    public function edit()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("admin_role_id")
+     * @Apidoc\Field("admin_role_id,role_name,role_desc,role_sort")
+     * @Apidoc\AddField("admin_menu_ids", type="array", default="[]", desc="菜单id，eg:[1,2]")
      */
-    public function dele()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("admin_role_id,is_disable")
+     * @Apidoc\Field("admin_role_id")
      */
-    public function disable()
+    public function deleParam()
     {
     }
 
     /**
-     * @Field("admin_role_id,is_unauth")
+     * @Apidoc\Field("admin_role_id,is_disable")
      */
-    public function unauth()
+    public function disableParam()
     {
     }
 
     /**
-     * @Field("admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time")
+     * @Apidoc\Field("admin_role_id,is_unauth")
      */
-    public function role()
+    public function unauthParam()
     {
     }
 }

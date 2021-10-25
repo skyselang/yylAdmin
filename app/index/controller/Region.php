@@ -17,7 +17,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("地区")
- * @Apidoc\Sort("5")
+ * @Apidoc\Sort("510")
  * @Apidoc\Group("region")
  */
 class Region
@@ -25,9 +25,9 @@ class Region
     /**
      * @Apidoc\Title("地区列表")
      * @Apidoc\Param("region_id", type="int", require=false, default="0", desc="地区id")
-     * @Apidoc\Returned(ref="returnPaging")
+     * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\RegionModel\list")
+     *     @Apidoc\Returned(ref="app\common\model\RegionModel\listReturn")
      * )
      */
     public function list()
@@ -46,7 +46,7 @@ class Region
 
     /**
      * @Apidoc\Title("地区树形")
-     * @Apidoc\Returned(ref="app\common\model\RegionModel\info")
+     * @Apidoc\Returned(ref="app\common\model\RegionModel\infoReturn")
      */
     public function tree()
     {
@@ -58,7 +58,7 @@ class Region
     /**
      * @Apidoc\Title("地区信息")
      * @Apidoc\Param(ref="app\common\model\RegionModel\id")
-     * @Apidoc\Returned(ref="app\common\model\RegionModel\info")
+     * @Apidoc\Returned(ref="app\common\model\RegionModel\infoReturn")
      */
     public function info()
     {

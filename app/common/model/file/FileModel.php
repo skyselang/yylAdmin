@@ -11,8 +11,7 @@
 namespace app\common\model\file;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class FileModel extends Model
 {
@@ -22,65 +21,65 @@ class FileModel extends Model
     protected $pk = 'file_id';
 
     /**
-     * @Field("file_id,group_id,storage,file_type,file_name,sort,is_disable,create_time,update_time")
-     */
-    public function list()
-    {
-    }
-
-    /**
-     * 
-     */
-    public function info()
-    {
-    }
-
-    /**
-     * @Field("group_id,file_name")
-     */
-    public function add()
-    {
-    }
-
-    /**
-     * @Field("file_id,group_id,file_name,sort")
-     */
-    public function edit()
-    {
-    }
-
-    /**
-     * @Field("file_id")
-     */
-    public function dele()
-    {
-    }
-
-    /**
-     * @Field("file_id,is_disable")
-     */
-    public function disable()
-    {
-    }
-
-    /**
-     * @Field("file_id")
+     * @Apidoc\Field("file_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("file_url")
-     * @AddField("file_url", type="string", require=false, default="", desc="文件链接")
+     * @Apidoc\Field("group_id,file_type,is_disable,is_front")
+     */
+    public function listParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("file_id,group_id,storage,file_type,file_name,sort,is_disable,create_time,update_time")
+     */
+    public function listReturn()
+    {
+    }
+
+    /**
+     * 
+     */
+    public function infoReturn()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("group_id,file_name")
+     */
+    public function addParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("file_id,group_id,file_name,sort")
+     */
+    public function editParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("is_disable")
+     */
+    public function is_disable()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("file_url")
+     * @Apidoc\AddField("file_url", type="string", require=false, default=" ", desc="文件链接")
      */
     public function file_url()
     {
     }
 
     /**
-     * @Field("file_ids")
-     * @AddField("file_ids", type="array", require=true, default="[]", desc="文件id数组")
+     * @Apidoc\Field("file_ids")
+     * @Apidoc\AddField("file_ids", type="array", require=true, default="[]", desc="文件id数组")
      */
     public function file_ids()
     {

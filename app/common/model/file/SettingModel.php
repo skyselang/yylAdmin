@@ -11,8 +11,7 @@
 namespace app\common\model\file;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class SettingModel extends Model
 {
@@ -22,16 +21,14 @@ class SettingModel extends Model
     protected $pk = 'setting_id';
 
     /**
-     * 信息
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * 修改
      */
-    public function edit()
+    public function editParam()
     {
     }
 }

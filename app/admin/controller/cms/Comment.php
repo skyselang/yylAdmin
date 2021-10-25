@@ -18,19 +18,19 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("留言管理")
  * @Apidoc\Group("adminCms")
- * @Apidoc\Sort("999")
+ * @Apidoc\Sort("330")
  */
 class Comment
 {
     /**
      * @Apidoc\Title("留言列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\search")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="留言列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\listReturn")
      * )
      */
     public function list()
@@ -71,9 +71,7 @@ class Comment
             $order = [$sort_field => $sort_value];
         }
 
-        $field = '';
-
-        $data = CommentService::list($where, $page, $limit, $order, $field);
+        $data = CommentService::list($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -81,7 +79,7 @@ class Comment
     /**
      * @Apidoc\Title("留言信息")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\id")
-     * @Apidoc\Returned(ref="app\common\model\cms\CommentModel\info")
+     * @Apidoc\Returned(ref="app\common\model\cms\CommentModel\infoReturn")
      */
     public function info()
     {
@@ -100,7 +98,7 @@ class Comment
     /**
      * @Apidoc\Title("留言添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\add")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\addParam")
      */
     public function add()
     {
@@ -124,7 +122,7 @@ class Comment
     /**
      * @Apidoc\Title("留言修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\edit")
+     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\editParam")
      */
     public function edit()
     {
@@ -180,12 +178,12 @@ class Comment
 
     /**
      * @Apidoc\Title("留言回收站")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\search")
-     * @Apidoc\Param(ref="paramDate")
-     * @Apidoc\Returned(ref="returnPaging"),
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn"),
+     * @Apidoc\Returned("list", type="array", desc="留言列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\listReturn")
      * )
      */
     public function recover()
@@ -228,9 +226,7 @@ class Comment
             $order = ['delete_time' => 'desc'];
         }
 
-        $field = '';
-
-        $data = CommentService::list($where, $page, $limit, $order, $field);
+        $data = CommentService::list($where, $page, $limit, $order);
 
         return success($data);
     }

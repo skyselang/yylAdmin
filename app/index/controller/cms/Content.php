@@ -18,15 +18,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("内容")
- * @Apidoc\Sort("66")
- * @Apidoc\Group("indexCms")
+ * @Apidoc\Sort("610")
+ * @Apidoc\Group("cms")
  */
 class Content
 {
     /**
      * @Apidoc\Title("内容分类")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\list")
+     * @Apidoc\Returned("list", type="array", desc="分类列表", 
+     *      @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )
      */
     public function category()
@@ -45,11 +45,16 @@ class Content
 
     /**
      * @Apidoc\Title("内容列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\indexList")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\name")
+     * @Apidoc\Param("name", require=false)
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
+     * @Apidoc\Param("category_id", require=false, default=" ")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="内容列表", 
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
+     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
      */
     public function list()
@@ -58,16 +63,16 @@ class Content
         $limit       = Request::param('limit/d', 10);
         $sort_field  = Request::param('sort_field/s', '');
         $sort_value  = Request::param('sort_value/s', '');
-        $name        = Request::param('name/s', '');
         $category_id = Request::param('category_id/d', '');
+        $name        = Request::param('name/s', '');
 
         $where[] = ['is_hide', '=', 0];
         $where[] = ['is_delete', '=', 0];
-        if ($name) {
-            $where[] = ['name', 'like', '%' . $name . '%'];
-        }
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
+        }
+        if ($name) {
+            $where[] = ['name', 'like', '%' . $name . '%'];
         }
 
         $order = [];
@@ -84,8 +89,10 @@ class Content
 
     /**
      * @Apidoc\Title("内容信息")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\indexInfo")
-     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\info")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\id")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id", require=false)
+     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\infoReturn")
+     * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * @Apidoc\Returned("prev_info", type="object", desc="上一条",
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\id"),
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\name")

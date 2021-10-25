@@ -11,8 +11,7 @@
 namespace app\common\model;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class MemberLogModel extends Model
 {
@@ -22,36 +21,35 @@ class MemberLogModel extends Model
     protected $pk = 'member_log_id';
 
     /**
-     * @Field("member_log_id")
+     * @Apidoc\Field("member_log_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("member_log_id,member_id,api_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time")
+     * @Apidoc\Field("member_log_id,member_id,api_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time")
      */
-    public function list()
+    public function listReturn()
     {
     }
 
     /**
      * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("member_log_id")
+     * @Apidoc\Field("member_log_id")
      */
-    public function dele()
+    public function deleParam()
     {
     }
 
     /**
-     * @Field("log_type")
-     * @AddField("log_type", type="int", require=false, desc="日志类型1注册2登录3操作4退出")
+     * @Apidoc\Field("log_type")
      */
     public function log_type()
     {

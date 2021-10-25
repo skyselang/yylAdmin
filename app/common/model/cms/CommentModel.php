@@ -11,8 +11,7 @@
 namespace app\common\model\cms;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class CommentModel extends Model
 {
@@ -22,53 +21,45 @@ class CommentModel extends Model
     protected $pk = 'comment_id';
 
     /**
-     * @Field("comment_id")
+     * @Apidoc\Field("comment_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time")
+     * @Apidoc\Field("comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time")
      */
-    public function list()
+    public function listReturn()
     {
     }
 
     /**
      * 
      */
-    public function info()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("call,mobile,tel,email,qq,wechat,title,content")
+     * @Apidoc\Field("call,mobile,tel,email,qq,wechat,title,content")
      */
-    public function add()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("comment_id,remark")
+     * @Apidoc\Field("comment_id,remark")
      */
-    public function edit()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("comment")
-     * @AddField("comment", type="array", require=true, default="", desc="留言列表")
+     * @Apidoc\Field("comment")
+     * @Apidoc\AddField("comment", type="array", require=true, default=" ", desc="留言列表")
      */
     public function comment()
-    {
-    }
-
-    /**
-     * @Field("comment_id")
-     * @AddField("comment_id", type="int", require=false, default="", desc="留言ID")
-     */
-    public function search()
     {
     }
 }

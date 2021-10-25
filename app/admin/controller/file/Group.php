@@ -18,19 +18,20 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("文件分组")
  * @Apidoc\Group("adminFile")
- * @Apidoc\Sort("91")
+ * @Apidoc\Sort("420")
  */
 class Group
 {
     /**
      * @Apidoc\Title("文件分组列表")
-     * @Apidoc\Param(ref="paramPaging")
-     * @Apidoc\Param(ref="paramSort")
-     * @Apidoc\Param("group_name", type="string", default="", desc="文件分组名称")
-     * @Apidoc\Param("group_desc", type="string", default="", desc="文件分组描述")
-     * @Apidoc\Returned(ref="returnPaging")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\list")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel\listParam")
+     * @Apidoc\Param("group_name", require=false)
+     * @Apidoc\Param("group_desc", require=false)
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="文件分组列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
      * )
      */
     public function list()
@@ -65,7 +66,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组信息")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
-     * @Apidoc\Returned(ref="app\common\model\file\GroupModel\info")
+     * @Apidoc\Returned(ref="app\common\model\file\GroupModel\infoReturn")
      */
     public function info()
     {
@@ -84,7 +85,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\add")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel\addParam")
      */
     public function add()
     {
@@ -103,7 +104,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\edit")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel\editParam")
      */
     public function edit()
     {
@@ -140,7 +141,7 @@ class Group
      * @Apidoc\Title("文件分组是否禁用")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\group")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\disable")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel\is_disable")
      */
     public function disable()
     {

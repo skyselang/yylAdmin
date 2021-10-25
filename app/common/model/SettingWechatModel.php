@@ -11,8 +11,7 @@
 namespace app\common\model;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class SettingWechatModel extends Model
 {
@@ -22,32 +21,24 @@ class SettingWechatModel extends Model
     protected $pk = 'setting_wechat_id';
 
     /**
-     * @Field("name,origin_id,qrcode,appid,appsecret,url,token,encoding_aes_key,encoding_aes_type")
-     * @AddField("qrcode_url",type="string",default="",desc="二维码链接")
+     * @Apidoc\Field("name,origin_id,qrcode,appid,appsecret,url,token,encoding_aes_key,encoding_aes_type")
      */
-    public function offiInfo()
+    public function offiInfoParam()
     {
     }
 
     /**
-     * @Field("name,origin_id,qrcode,appid,appsecret,url,token,encoding_aes_key,encoding_aes_type")
+     * @Apidoc\Field("name,origin_id,qrcode,appid,appsecret")
      */
-    public function offiEdit()
+    public function miniInfoParam()
     {
     }
 
     /**
-     * @Field("name,origin_id,qrcode,appid,appsecret")
-     * @AddField("qrcode_url",type="string",default="",desc="二维码链接")
+     * @Apidoc\Field("qrcode_url")
+     * @Apidoc\AddField("qrcode_url",type="string",default=" ",desc="二维码链接")
      */
-    public function miniInfo()
-    {
-    }
-
-    /**
-     * @Field("name,origin_id,qrcode,appid,appsecret")
-     */
-    public function miniEdit()
+    public function qrcode_url()
     {
     }
 }

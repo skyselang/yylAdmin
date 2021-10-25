@@ -11,8 +11,7 @@
 namespace app\common\model\admin;
 
 use think\Model;
-use hg\apidoc\annotation\Field;
-use hg\apidoc\annotation\AddField;
+use hg\apidoc\annotation as Apidoc;
 
 class UserModel extends Model
 {
@@ -22,102 +21,104 @@ class UserModel extends Model
     protected $pk = 'admin_user_id';
 
     /**
-     * @Field("admin_user_id")
+     * @Apidoc\Field("admin_user_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Field("admin_user_id,username,nickname,phone,email,sort,is_disable,is_super,login_num,login_ip,login_time")
+     * @Apidoc\Field("username,nickname,email")
      */
-    public function list()
+    public function listParam()
     {
     }
 
     /**
-     * @AddField("admin_token", type="string", desc="AdminToken")
+     * @Apidoc\Field("admin_user_id,username,nickname,phone,email,sort,is_disable,is_super,login_num,login_ip,login_time")
      */
-    public function info()
+    public function listReturn()
     {
     }
 
     /**
-     * @Field("avatar_id,username,nickname,password,phone,email,remark,sort")
+     * @Apidoc\AddField("admin_token", type="string", require=true, desc="AdminToken")
+     * @Apidoc\AddField("avatar_url", type="string", require=true, desc="头像链接")
      */
-    public function add()
+    public function infoReturn()
     {
     }
 
     /**
-     * @Field("admin_user_id,avatar_id,username,nickname,phone,email,remark,sort")
+     * @Apidoc\Field("avatar_id,username,nickname,password,phone,email,remark,sort")
      */
-    public function edit()
+    public function addParam()
     {
     }
 
     /**
-     * @Field("admin_user_id")
+     * @Apidoc\Field("admin_user_id,avatar_id,username,nickname,phone,email,remark,sort")
      */
-    public function dele()
+    public function editParam()
     {
     }
 
     /**
-     * @Field("avatar_url")
-     * @AddField("avatar_url", type="string", require=false, desc="头像链接")
+     * @Apidoc\Field("admin_user_id")
      */
-    public function avatar_url()
+    public function deleParam()
     {
     }
 
     /**
-     * @Field("admin_user_id,password")
+     * @Apidoc\Field("admin_user_id,password")
      */
-    public function pwd()
+    public function pwdParam()
     {
     }
 
     /**
-     * @Field("admin_user_id")
-     * @AddField("admin_role_ids", type="array", require=true, desc="角色id,eg:[1,2]")
-     * @AddField("admin_menu_ids", type="array", require=true, desc="菜单id,eg:[1,2]")
+     * @Apidoc\Field("admin_user_id")
+     * @Apidoc\AddField("admin_role_ids", type="array", require=true, desc="角色id,eg:[1,2]")
+     * @Apidoc\AddField("admin_menu_ids", type="array", require=true, desc="菜单id,eg:[1,2]")
      */
-    public function rule()
+    public function ruleParam()
     {
     }
 
     /**
-     * @Field("admin_user_id,is_disable")
+     * @Apidoc\Field("admin_user_id,is_disable")
      */
-    public function disable()
+    public function disableParam()
     {
     }
 
     /**
-     * @Field("admin_user_id,is_super")
+     * @Apidoc\Field("admin_user_id,is_super")
      */
-    public function super()
+    public function superParam()
     {
     }
 
     /**
-     * @Field("admin_user_id")
-     * @AddField("admin_token", type="string", desc="AdminToken")
+     * @Apidoc\Field("username,password")
+     * @Apidoc\AddField("username", type="string", require=true, desc="账号/手机/邮箱")
+     * @Apidoc\AddField("password", type="string", require=true, desc="密码")
      */
-    public function login()
+    public function loginParam()
     {
     }
 
     /**
-     * @Field("admin_user_id,username,nickname,phone,email,sort,is_disable,is_super")
+     * @Apidoc\Field("admin_user_id")
+     * @Apidoc\AddField("admin_token", type="string", require=true, desc="AdminToken")
      */
-    public function user()
+    public function loginReturn()
     {
     }
 
     /**
-     * @Field("username")
+     * @Apidoc\Field("username")
      */
     public function username()
     {

@@ -9,17 +9,15 @@
 
 // 接口文档配置
 return [
-    // 文档标题
+    // 页面标题
     'title' => 'yylAdmin-接口文档与调试',
-    // 文档描述
+    // 文档说明
     'desc' => 'yylAdmin ApiDoc',
-    // 版权申明
-    'copyright' => '',
-    // 默认作者
-    'default_author' => 'skyselang',
     // 默认请求类型
     'default_method' => 'GET',
-    // 设置应用/版本（必须设置）
+    // 默认作者名称
+    'default_author' => 'skyselang',
+    // 多应用/多版本管理配置
     'apps' => [
         [
             'title' => 'index前台',
@@ -31,56 +29,51 @@ return [
                 ['title' => '会员中心', 'name' => 'member'],
                 ['title' => '微信', 'name' => 'wechat'],
                 ['title' => '地区', 'name' => 'region'],
-                ['title' => '内容管理', 'name' => 'indexCms']
+                ['title' => '内容管理', 'name' => 'cms']
             ],
+            'headers' => [
+                ['name' => 'MemberToken', 'type' => 'string', 'require' => true, 'desc' => 'member_token']
+            ]
         ],
         [
             'title' => 'admin后台',
             'path' => 'app\admin\controller',
             'folder' => 'admin',
             'groups' => [
-                ['title' => 'admin', 'name' => 'admin'],
+                ['title' => '控制台', 'name' => 'adminConsole'],
+                ['title' => '会员管理', 'name' => 'adminMember'],
+                ['title' => '内容管理', 'name' => 'adminCms'],
                 ['title' => '文件管理', 'name' => 'adminFile'],
-                ['title' => '内容管理', 'name' => 'adminCms']
+                ['title' => '设置管理', 'name' => 'adminSetting'],
+                ['title' => '权限管理', 'name' => 'adminAuthority'],
+                ['title' => '系统管理', 'name' => 'adminSystem']
+            ],
+            'headers' => [
+                ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token']
             ]
         ]
     ],
-    // 控制器分组
-    'groups' => [
-        ['title' => 'index', 'name' => 'index'],
-        ['title' => 'admin', 'name' => 'admin'],
-        ['title' => '文件管理', 'name' => 'adminFile'],
-        ['title' => '内容管理', 'name' => 'adminCms'],
-        ['title' => '内容管理', 'name' => 'indexCms'],
-    ],
-    // 指定公共注释定义的文件地址
+    // 指定公共注释定义的控制器地址
     'definitions' => 'app\common\controller\ApidocDefinitions',
-    // 指定生成文档的控制器
-    'controllers' => [],
-    // 过滤，不解析的控制器
-    'filter_controllers' => [],
     // 缓存配置
     'cache' => [
         // 是否开启缓存
-        'enable' => !env('app.debug', false),
+        'enable' => !env('app.debug', false)
     ],
-    // 权限认证配置
+    // 进入接口问页面的权限认证配置
     'auth' => [
-        // 是否启用密码验证
+        // 是否启用权限认证，启用则需登录
         'enable' => true,
-        // 验证密码
+        // 进入接口文档页面的登录密码
         'password' => "WYUtY8UiGNYM",
-        // 密码加密盐
+        // 密码加密的盐，请务必更改
         'secret_key' => "yyladmin",
-        // 密码访问有效期
+        // 密码访问有效期，超过本时间需重新输入访问密码
         'expire' => 30 * 24 * 60 * 60
     ],
-    // 全局的请求头参数
-    'headers' => [
-        ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token'],
-        ['name' => 'MemberToken', 'type' => 'string', 'require' => true, 'desc' => 'member_token'],
-    ],
-    // 全局的请求参数
+    // 全局请求头参数
+    'headers' => [],
+    // 全局请求参数
     'parameters' => [],
     // 统一的请求响应体
     'responses' => [
@@ -88,7 +81,7 @@ return [
         ['name' => 'msg', 'type' => 'string', 'desc' => '返回描述'],
         ['name' => 'data', 'type' => 'object', 'desc' => '返回数据', 'main' => true],
     ],
-    // md文档
+    // Markdown文档配置
     'docs' => [
         ['title' => '接口说明', 'path' => './private/apidoc/apidocs']
     ],
