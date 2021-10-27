@@ -62,14 +62,14 @@ return [
     ],
     // 进入接口问页面的权限认证配置
     'auth' => [
-        // 是否启用权限认证，启用则需登录
-        'enable' => true,
-        // 进入接口文档页面的登录密码
-        'password' => "WYUtY8UiGNYM",
-        // 密码加密的盐，请务必更改
-        'secret_key' => "yyladmin",
-        // 密码访问有效期，超过本时间需重新输入访问密码
-        'expire' => 30 * 24 * 60 * 60
+        // 是否密码登录
+        'enable' => env('apidoc.auth_enable', false),
+        // 登录密码
+        'password' => env('apidoc.auth_password', 'yyladmin'),
+        // 密码加密的盐
+        'secret_key' => env('apidoc.auth_secret_key', 'yyladmin'),
+        // 密码访问有效期
+        'expire' => env('apidoc.auth_expire', 86400)
     ],
     // 全局请求头参数
     'headers' => [],
