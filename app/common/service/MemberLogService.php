@@ -54,6 +54,8 @@ class MemberLogService
             ->select()
             ->toArray();
 
+        $pages = ceil($count / $limit);
+
         foreach ($list as $k => $v) {
             if (isset($v['member_id'])) {
                 $list[$k]['username'] = '';
@@ -76,8 +78,6 @@ class MemberLogService
             }
         }
 
-        $pages = ceil($count / $limit);
-
         $data['count'] = $count;
         $data['pages'] = $pages;
         $data['page']  = $page;
@@ -97,7 +97,6 @@ class MemberLogService
     public static function info($member_log_id)
     {
         $member_log = MemberLogCache::get($member_log_id);
-
         if (empty($member_log)) {
             $member_log = Db::name('member_log')
                 ->where('member_log_id', $member_log_id)

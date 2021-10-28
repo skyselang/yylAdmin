@@ -45,6 +45,8 @@ class UserService
             ->where($where)
             ->count('admin_user_id');
 
+        $pages = ceil($count / $limit);
+
         $list = Db::name('admin_user')
             ->field($field)
             ->where($where)
@@ -53,8 +55,6 @@ class UserService
             ->order($order)
             ->select()
             ->toArray();
-
-        $pages = ceil($count / $limit);
 
         $data['count'] = $count;
         $data['pages'] = $pages;

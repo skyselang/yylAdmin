@@ -43,6 +43,8 @@ class CommentService
             ->where($where)
             ->count('comment_id');
 
+        $pages = ceil($count / $limit);
+
         $list = Db::name(self::$db_name)
             ->field($field)
             ->where($where)
@@ -51,8 +53,6 @@ class CommentService
             ->order($order)
             ->select()
             ->toArray();
-
-        $pages = ceil($count / $limit);
 
         $data['count'] = $count;
         $data['pages'] = $pages;

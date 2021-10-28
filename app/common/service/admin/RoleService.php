@@ -43,6 +43,8 @@ class RoleService
             ->where($where)
             ->count('admin_role_id');
 
+        $pages = ceil($count / $limit);
+
         $list = Db::name('admin_role')
             ->field($field)
             ->where($where)
@@ -51,8 +53,6 @@ class RoleService
             ->order($order)
             ->select()
             ->toArray();
-
-        $pages = ceil($count / $limit);
 
         $data['count'] = $count;
         $data['pages'] = $pages;

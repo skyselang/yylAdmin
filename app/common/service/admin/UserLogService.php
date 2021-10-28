@@ -54,6 +54,8 @@ class UserLogService
             ->select()
             ->toArray();
 
+        $pages = ceil($count / $limit);
+
         foreach ($list as $k => $v) {
             if (isset($v['admin_user_id'])) {
                 $list[$k]['username'] = '';
@@ -73,8 +75,6 @@ class UserLogService
                 }
             }
         }
-
-        $pages = ceil($count / $limit);
 
         $data['count'] = $count;
         $data['pages'] = $pages;
@@ -290,7 +290,6 @@ class UserLogService
         if ($date_value) {
             $sta_date = $date_value[0];
             $end_date = $date_value[1];
-
             $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
         }
