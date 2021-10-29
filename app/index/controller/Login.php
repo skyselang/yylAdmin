@@ -64,8 +64,8 @@ class Login
             if (empty($param['captcha_code'])) {
                 exception('请输入验证码');
             }
-            $check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
-            if (empty($check)) {
+            $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
+            if (empty($captcha_check)) {
                 exception('验证码错误');
             }
         }
@@ -77,13 +77,19 @@ class Login
 
     /**
      * @Apidoc\Title("登录(公众号)")
-     * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转的页面地址，会携带member_id、member_token")
+     * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转地址，会携带 member_token 参数")
      */
     public function offi()
     {
+        $member_token = Request::param('member_token/s', '');
+        if ($member_token) {
+            die('Please save member_id and member_token');
+        }
+
         $offiurl = Request::param('offiurl/s', '');
         if (empty($offiurl)) {
-            exception('offiurl must');
+            $offiurl = (string) url('', [], false);
+            // exception('offiurl must');
         }
 
         Cache::set('offiurl', $offiurl, 15);
@@ -107,41 +113,33 @@ class Login
         $app  = WechatService::offi();
         $user = $app->oauth->user()->getOriginal();
         if (empty($user) || !isset($user['openid'])) {
-            exception('微信登录失败请重试！'.$user['errmsg']);
+            exception('微信登录失败:' . $user['errmsg']);
         }
 
-        $userinfo['unionid'] = isset($user['unionid']) ? $user['unionid'] : '';
-        $userinfo['openid'] = $user['openid'];
-        if (isset($user['nickname'])) {
-            $userinfo['nickname'] = $user['nickname'];
+        $userinfo = [
+            'unionid' => '',
+            'openid' => '',
+            'nickname' => '',
+            'sex' => '',
+            'city' => '',
+            'province' => '',
+            'country' => '',
+            'headimgurl' => '',
+            'language' => '',
+            'privilege' => ''
+        ];
+        foreach ($userinfo as $k => $v) {
+            if (isset($user[$k])) {
+                $userinfo[$k] = $user[$k];
+            }
         }
-        if (isset($user['sex'])) {
-            $userinfo['sex'] = $user['sex'];
-        }
-        if (isset($user['city'])) {
-            $userinfo['city'] = $user['city'];
-        }
-        if (isset($user['province'])) {
-            $userinfo['province'] = $user['province'];
-        }
-        if (isset($user['country'])) {
-            $userinfo['country'] = $user['country'];
-        }
-        if (isset($user['headimgurl'])) {
-            $userinfo['headimgurl'] = $user['headimgurl'];
-        }
-        if (isset($user['language'])) {
-            $userinfo['language'] = $user['language'];
-        }
-        if (isset($user['privilege'])) {
-            $userinfo['privilege'] = serialize($user['privilege']);
-        }
-        $userinfo['login_ip']  = Request::ip();
+        $userinfo['login_ip']    = Request::ip();
+        $userinfo['reg_channel'] = 2;
 
-        $data = LoginService::offiLogin($userinfo);
+        $data = LoginService::wechat($userinfo);
 
         $offiurl = Cache::get('offiurl');
-        $offiurl = $offiurl . '?member_id=' . $data['member_id'] . '&member_token=' . $data['member_token'];
+        $offiurl = $offiurl . '?member_token=' . $data['member_token'];
 
         Header("Location:" . $offiurl);
     }
@@ -164,35 +162,34 @@ class Login
         $app  = WechatService::mini();
         $user = $app->auth->session($code);
         if (empty($user) || !isset($user['openid'])) {
-            exception('微信登录失败请重试！'.$user['errmsg']);
+            exception('微信登录失败:' . $user['errmsg']);
         }
 
-        $userinfo['unionid'] = isset($user['unionid']) ? $user['unionid'] : '';
-        $userinfo['openid'] = $user['openid'];
-        if (isset($user_info['nickName'])) {
-            $userinfo['nickname'] = $user_info['nickName'];
+        $userinfo = [
+            'unionid' => '',
+            'openid' => '',
+            'nickname' => '',
+            'sex' => '',
+            'city' => '',
+            'province' => '',
+            'country' => '',
+            'headimgurl' => '',
+            'language' => '',
+            'privilege' => ''
+        ];
+        $user = array_merge($user, $user_info);
+        $user['nickname']   = isset($user['nickName']) ? $user['nickName'] : '';
+        $user['sex']        = isset($user['gender']) ? $user['gender'] : 0;
+        $user['headimgurl'] = isset($user['avatarUrl']) ? $user['avatarUrl'] : '';
+        foreach ($userinfo as $k => $v) {
+            if (isset($user[$k])) {
+                $userinfo[$k] = $user[$k];
+            }
         }
-        if (isset($user_info['gender'])) {
-            $userinfo['sex'] = $user_info['gender'];
-        }
-        if (isset($user_info['city'])) {
-            $userinfo['city'] = $user_info['city'];
-        }
-        if (isset($user_info['province'])) {
-            $userinfo['province'] = $user_info['province'];
-        }
-        if (isset($user_info['country'])) {
-            $userinfo['country'] = $user_info['country'];
-        }
-        if (isset($user_info['avatarUrl'])) {
-            $userinfo['headimgurl'] = $user_info['avatarUrl'];
-        }
-        if (isset($user_info['language'])) {
-            $userinfo['language'] = $user_info['language'];
-        }
-        $userinfo['login_ip'] = Request::ip();
+        $userinfo['login_ip']    = Request::ip();
+        $userinfo['reg_channel'] = 3;
 
-        $data = LoginService::miniLogin($userinfo);
+        $data = LoginService::wechat($userinfo);
 
         return success($data);
     }

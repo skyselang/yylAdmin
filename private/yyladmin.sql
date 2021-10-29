@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 19/10/2021 11:20:06
+ Date: 29/10/2021 18:07:00
 */
 
 SET NAMES utf8mb4;
@@ -397,7 +397,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 62 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -437,6 +437,7 @@ INSERT INTO `yyl_api` VALUES (57, 30, '留言', '', 200, 0, 0, 0, NULL, NULL, NU
 INSERT INTO `yyl_api` VALUES (58, 57, '留言提交', 'index/cms.Comment/add', 200, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (59, 30, '设置', '', 200, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (60, 59, '设置信息', 'index/cms.Setting/info', 200, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (61, 5, '绑定手机（小程序）', 'index/Member/bindPhoneMini', 200, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_cms_category

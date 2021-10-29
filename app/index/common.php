@@ -154,11 +154,11 @@ function member_id()
 }
 
 /**
- * 日志记录是否开启
+ * 会员日志是否开启
  *
  * @return bool
  */
-function index_log_switch()
+function member_log_switch()
 {
     $log_info = SettingService::logInfo();
     if ($log_info['log_switch']) {

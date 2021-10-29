@@ -20,7 +20,7 @@ use app\common\service\TokenService;
 class LoginService
 {
     /**
-     * 登录
+     * 登录（账号）
      *
      * @param array $param 登录信息
      * 
@@ -68,26 +68,37 @@ class LoginService
         // 会员信息
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
-        $data = self::loginField($member);
+        $data = self::field($member);
         $data['member_token'] = TokenService::create($member);
 
         return $data;
     }
 
     /**
-     * 公众号登录
+     * 微信登录
      *
      * @param array $userinfo 微信用户信息
      *
      * @return array
      */
-    public static function offiLogin($userinfo)
+    public static function wechat($userinfo)
     {
-        $unionid  = $userinfo['unionid'];
-        $openid   = $userinfo['openid'];
-        $login_ip = $userinfo['login_ip'];
+        $datetime    = datetime();
+        $unionid     = $userinfo['unionid'];
+        $openid      = $userinfo['openid'];
+        $login_ip    = $userinfo['login_ip'];
+        $reg_channel = $userinfo['reg_channel'];
+        $ip_info     = IpInfoUtils::info($login_ip);
 
-        unset($userinfo['login_ip']);
+        foreach ($userinfo as $k => $v) {
+            if ($k == 'privilege') {
+                $userinfo[$k] = serialize($v);
+            }
+            if (empty($userinfo[$k])) {
+                unset($userinfo[$k]);
+            }
+        }
+        unset($userinfo['login_ip'], $userinfo['reg_channel']);
 
         // 会员微信信息
         if ($unionid) {
@@ -102,210 +113,87 @@ class LoginService
             ->find();
 
         // 启动事务
-        $res = false;
-        $msg = '微信登录失败，请重试';
+        $errmsg = '';
         Db::startTrans();
         try {
-            $datetime = datetime();
-            $ip_info  = IpInfoUtils::info($login_ip);
-
-            $insert['login_num']    = 1;
-            $insert['login_ip']     = $login_ip;
-            $insert['login_time']   = $datetime;
-            $insert['login_region'] = $ip_info['region'];
-            $insert['create_time']  = $datetime;
-
-            // 已注册
             if ($member_wechat) {
-                $member_id = $member_wechat['member_id'];
                 $member_wechat_id = $member_wechat['member_wechat_id'];
-                $username = 'wechat_offi_' . $member_wechat_id;
-
-                if ($member_id) {
-                    $member = Db::name('member')
-                        ->field('member_id,login_num')
-                        ->where(['member_id' => $member_id, 'is_delete' => 0])
-                        ->find();
-
-                    if ($member) {
-                        $update['login_num']    = $member['login_num'] + 1;
-                        $update['login_ip']     = $login_ip;
-                        $update['login_time']   = $datetime;
-                        $update['login_region'] = $ip_info['region'];
-                        Db::name('member')
-                            ->where('member_id', $member_id)
-                            ->update($update);
-                    } else {
-                        $insert['username'] = $username;
-                        $insert['password'] = '';
-                        $member_id = Db::name('member')
-                            ->insertGetId($insert);
-                    }
-                } else {
-                    $insert['username'] = $username;
-                    $insert['password'] = '';
-                    $member_id = Db::name('member')
-                        ->insertGetId($insert);
-                }
-
-                $update_wechat = $userinfo;
-                $update_wechat['member_id'] = $member_id;
-                $update_wechat['update_time'] = $datetime;
                 Db::name('member_wechat')
                     ->where('member_wechat_id', $member_wechat_id)
-                    ->update($update_wechat);
-            } else {
-                // 未注册
-                $insert_wechat = $userinfo;
-                $insert_wechat['create_time'] = $datetime;
-                $member_wechat_id = Db::name('member_wechat')
-                    ->insertGetId($insert_wechat);
-
-                $insert['reg_channel'] = 2;
-                $insert['username']    = 'wechat_offi_' . $member_wechat_id;
-                $insert['password']    = '';
-                $member_id = Db::name('member')
-                    ->insertGetId($insert);
-
-                Db::name('member_wechat')
-                    ->where('member_wechat_id', $member_wechat_id)
-                    ->update(['member_id' => $member_id]);
-            }
-
-            $res = true;
-            // 提交事务
-            Db::commit();
-        } catch (\Exception $e) {
-            $msg = $e->getMessage();
-            // 回滚事务
-            Db::rollback();
-        }
-
-        if (empty($res)) {
-            exception($msg);
-        }
-
-        // 会员信息
-        MemberCache::del($member_id);
-        $member = MemberService::info($member_id);
-        $data = self::loginField($member);
-        $data['member_token'] = TokenService::create($member);
-
-        return $data;
-    }
-
-    /**
-     * 小程序登录
-     *
-     * @param array $userinfo 微信用户信息
-     *
-     * @return array
-     */
-    public static function miniLogin($userinfo)
-    {
-        $unionid  = $userinfo['unionid'];
-        $openid   = $userinfo['openid'];
-        $login_ip = $userinfo['login_ip'];
-
-        unset($userinfo['login_ip']);
-
-        // 会员微信信息
-        if ($unionid) {
-            $wechat_where[] = ['unionid', '=', $unionid];
-        } else {
-            $wechat_where[] = ['openid', '=', $openid];
-        }
-        $wechat_where[] = ['is_delete', '=', 0];
-        $member_wechat = Db::name('member_wechat')
-            ->field('member_wechat_id,member_id')
-            ->where($wechat_where)
-            ->find();
-
-        // 启动事务
-        $res = false;
-        $msg = '微信登录失败，请重试';
-        Db::startTrans();
-        try {
-            $datetime = datetime();
-            $ip_info  = IpInfoUtils::info($login_ip);
-
-            $insert['login_num']    = 1;
-            $insert['login_ip']     = $login_ip;
-            $insert['login_time']   = $datetime;
-            $insert['login_region'] = $ip_info['region'];
-            $insert['create_time']  = $datetime;
-
-            if ($member_wechat) {
+                    ->update($userinfo);
                 $member_id = $member_wechat['member_id'];
-                $member_wechat_id = $member_wechat['member_wechat_id'];
-                $username = 'wechat_mini_' . $member_wechat_id;
-
-                if ($member_id) {
-                    $member = Db::name('member')
-                        ->field('member_id,login_num')
-                        ->where(['member_id' => $member_id, 'is_delete' => 0])
-                        ->find();
-                    if ($member) {
-                        $update['login_num']    = $member['login_num'] + 1;
-                        $update['login_ip']     = $login_ip;
-                        $update['login_time']   = $datetime;
-                        $update['login_region'] = $ip_info['region'];
-                        Db::name('member')
-                            ->where('member_id', $member_id)
-                            ->update($update);
-                    } else {
-                        $insert['username'] = $username;
-                        $insert['password'] = '';
-                        $member_id = Db::name('member')
-                            ->insertGetId($insert);
-                    }
-                } else {
-                    $insert['username'] = $username;
-                    $insert['password'] = '';
-                    $member_id = Db::name('member')
-                        ->insertGetId($insert);
-                }
-
-                $update_wechat = $userinfo;
-                $update_wechat['member_id'] = $member_id;
-                $update_wechat['update_time'] = $datetime;
-                Db::name('member_wechat')
-                    ->where('member_wechat_id', $member_wechat_id)
-                    ->update($update_wechat);
             } else {
                 $insert_wechat = $userinfo;
                 $insert_wechat['create_time'] = $datetime;
                 $member_wechat_id = Db::name('member_wechat')
                     ->insertGetId($insert_wechat);
-
-                $insert['reg_channel'] = 3;
-                $insert['username']    = 'wechat_mini_' . $member_wechat_id;
-                $insert['password']    = '';
-                $member_id = Db::name('member')
-                    ->insertGetId($insert);
-
-                Db::name('member_wechat')
-                    ->where('member_wechat_id', $member_wechat_id)
-                    ->update(['member_id' => $member_id]);
+                $member_id = 0;
             }
 
-            $res = true;
+            $member = Db::name('member')
+                ->field('member_id,nickname,login_num')
+                ->where(['member_id' => $member_id, 'is_delete' => 0])
+                ->find();
+            if ($member) {
+                if (empty($member['nickname'])) {
+                    $member_update['nickname'] = $userinfo['nickname'];
+                }
+                $member_update['login_num']    = $member['login_num'] + 1;
+                $member_update['login_ip']     = $login_ip;
+                $member_update['login_time']   = $datetime;
+                $member_update['login_region'] = $ip_info['region'];
+                Db::name('member')
+                    ->where('member_id', $member_id)
+                    ->update($member_update);
+                // 登录日志
+                $member_log['member_id'] = $member_id;
+                MemberLogService::add($member_log, 2);
+            } else {
+                if ($reg_channel == 2) {
+                    $member_insert['username'] = 'wechatOffi' . $member_wechat_id;
+                } elseif ($reg_channel == 3) {
+                    $member_insert['username'] = 'wechatMini' . $member_wechat_id;
+                } else {
+                    $member_insert['username'] = 'wechat' . $member_wechat_id;
+                }
+                $member_insert['login_num']    = 1;
+                $member_insert['login_ip']     = $login_ip;
+                $member_insert['login_time']   = $datetime;
+                $member_insert['login_region'] = $ip_info['region'];
+                $member_insert['create_time']  = $datetime;
+                $member_insert['reg_channel']  = $reg_channel;
+                $member_insert['nickname']     = $userinfo['nickname'];
+                $member_insert['password']     = '';
+                $member_id = Db::name('member')
+                    ->insertGetId($member_insert);
+                // 注册日志
+                $member_log['member_id'] = $member_id;
+                MemberLogService::add($member_log, 1);
+            }
+
+            $wechat_update = $userinfo;
+            $wechat_update['member_id']   = $member_id;
+            $wechat_update['update_time'] = $datetime;
+            Db::name('member_wechat')
+                ->where('member_wechat_id', $member_wechat_id)
+                ->update($wechat_update);
+
             // 提交事务
             Db::commit();
         } catch (\Exception $e) {
-            $msg = $e->getMessage();
+            $errmsg = '微信登录失败:' . $e->getMessage();
             // 回滚事务
             Db::rollback();
         }
 
-        if (empty($res)) {
-            exception($msg);
+        if ($errmsg) {
+            exception($errmsg);
         }
 
         // 会员信息
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
-        $data = self::loginField($member);
+        $data = self::field($member);
         $data['member_token'] = TokenService::create($member);
 
         return $data;
@@ -318,10 +206,10 @@ class LoginService
      *
      * @return array
      */
-    public static function loginField($member)
+    public static function field($member)
     {
         $data = [];
-        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time'];
+        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url'];
         foreach ($field as $k => $v) {
             $data[$v] = $member[$v];
         }

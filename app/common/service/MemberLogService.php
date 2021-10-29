@@ -140,44 +140,47 @@ class MemberLogService
      */
     public static function add($param = [], $log_type = 3)
     {
-        if ($log_type == 1) {
-            $param['response_code'] = 200;
-            $param['response_msg']  = '注册成功';
-        } elseif ($log_type == 2) {
-            $param['response_code'] = 200;
-            $param['response_msg']  = '登录成功';
-        } elseif ($log_type == 4) {
-            $param['response_code'] = 200;
-            $param['response_msg']  = '退出成功';
-        }
+        // 会员日记是否开启
+        if (member_log_switch()) {
+            if ($log_type == 1) {
+                $param['response_code'] = 200;
+                $param['response_msg']  = '注册成功';
+            } elseif ($log_type == 2) {
+                $param['response_code'] = 200;
+                $param['response_msg']  = '登录成功';
+            } elseif ($log_type == 4) {
+                $param['response_code'] = 200;
+                $param['response_msg']  = '退出成功';
+            }
 
-        $api_info      = ApiService::info();
-        $ip_info       = IpInfoUtils::info();
-        $request_param = Request::param();
-        if (isset($request_param['password'])) {
-            unset($request_param['password']);
-        }
-        if (isset($request_param['new_password'])) {
-            unset($request_param['new_password']);
-        }
-        if (isset($request_param['old_password'])) {
-            unset($request_param['old_password']);
-        }
+            $api_info      = ApiService::info();
+            $ip_info       = IpInfoUtils::info();
+            $request_param = Request::param();
+            if (isset($request_param['password'])) {
+                unset($request_param['password']);
+            }
+            if (isset($request_param['new_password'])) {
+                unset($request_param['new_password']);
+            }
+            if (isset($request_param['old_password'])) {
+                unset($request_param['old_password']);
+            }
 
-        $param['api_id']           = $api_info['api_id'];
-        $param['log_type']         = $log_type;
-        $param['request_ip']       = $ip_info['ip'];
-        $param['request_country']  = $ip_info['country'];
-        $param['request_province'] = $ip_info['province'];
-        $param['request_city']     = $ip_info['city'];
-        $param['request_area']     = $ip_info['area'];
-        $param['request_region']   = $ip_info['region'];
-        $param['request_isp']      = $ip_info['isp'];
-        $param['request_param']    = serialize($request_param);
-        $param['request_method']   = Request::method();
-        $param['create_time']      = datetime();
+            $param['api_id']           = $api_info['api_id'];
+            $param['log_type']         = $log_type;
+            $param['request_ip']       = $ip_info['ip'];
+            $param['request_country']  = $ip_info['country'];
+            $param['request_province'] = $ip_info['province'];
+            $param['request_city']     = $ip_info['city'];
+            $param['request_area']     = $ip_info['area'];
+            $param['request_region']   = $ip_info['region'];
+            $param['request_isp']      = $ip_info['isp'];
+            $param['request_param']    = serialize($request_param);
+            $param['request_method']   = Request::method();
+            $param['create_time']      = datetime();
 
-        Db::name('member_log')->strict(false)->insert($param);
+            Db::name('member_log')->strict(false)->insert($param);
+        }
     }
 
     /**

@@ -26,9 +26,16 @@ class WechatService
     {
         $offi_info = SettingWechatService::offiInfo();
 
+        if (empty($offi_info['appid'])) {
+            exception('appid must');
+        }
+        if (empty($offi_info['appsecret'])) {
+            exception('appsecret must');
+        }
+
         $log_channel = Config::get('app.app_debug') ? 'dev' : 'prod';
 
-        $config = [
+        $config_info = [
             /**
              * 账号基本信息，请从微信公众平台/开放平台获取
              */
@@ -69,6 +76,8 @@ class WechatService
             ],
         ];
 
+        $config = array_merge($config_info, $config);
+
         $app = Factory::officialAccount($config);
 
         return $app;
@@ -85,7 +94,14 @@ class WechatService
     {
         $mini_info = SettingWechatService::miniInfo();
 
-        $config = [
+        if (empty($mini_info['appid'])) {
+            exception('appid must');
+        }
+        if (empty($mini_info['appsecret'])) {
+            exception('appsecret must');
+        }
+
+        $config_info = [
             'app_id' => $mini_info['appid'],
             'secret' => $mini_info['appsecret'],
 
@@ -104,6 +120,8 @@ class WechatService
                 'file' => '../runtime/easywechat/miniProgram.log',
             ],
         ];
+
+        $config = array_merge($config_info, $config);
 
         $app = Factory::miniProgram($config);
 

@@ -14,6 +14,7 @@ use think\facade\Db;
 use app\common\cache\MemberCache;
 use app\common\utils\DatetimeUtils;
 use app\common\service\file\FileService;
+use app\common\service\WechatService;
 
 class MemberService
 {
@@ -53,10 +54,24 @@ class MemberService
 
         $pages = ceil($count / $limit);
 
+        $member_ids = array_column($list, 'member_id');
+        $member_wechat = Db::name('member_wechat')
+            ->field('member_id,nickname,headimgurl')
+            ->where('member_id', 'in', $member_ids)
+            ->select()
+            ->toArray();
+
         foreach ($list as $k => $v) {
             $list[$k]['avatar_url'] = '';
             if (isset($v['avatar_id'])) {
                 $list[$k]['avatar_url'] = FileService::fileUrl($v['avatar_id']);
+            }
+            if (empty($list[$k]['avatar_url'])) {
+                foreach ($member_wechat as $kmw => $vmw) {
+                    if ($v['member_id'] == $vmw['member_id']) {
+                        $list[$k]['avatar_url'] = $vmw['headimgurl'];
+                    }
+                }
             }
         }
 
@@ -185,6 +200,9 @@ class MemberService
         $res = Db::name('member')
             ->where('member_id', $member_id)
             ->update($update);
+        Db::name('member_wechat')
+            ->where('member_id', $member_id)
+            ->update($update);
         if (empty($res)) {
             exception();
         }
@@ -255,6 +273,44 @@ class MemberService
         MemberCache::upd($member_id);
 
         return $update;
+    }
+
+    /**
+     * 绑定手机（小程序）
+     *
+     * @param string  $code
+     * @param string  $iv
+     * @param string  $encrypted_data
+     * @param integer $member_id
+     *
+     * @return array
+     */
+    public static function bindPhoneMini($code, $iv, $encrypted_data, $member_id = 0)
+    {
+        if (empty($member_id)) {
+            $member_id = member_id();
+        }
+
+        $app = WechatService::mini();
+        $session = $app->auth->session($code);
+        $decrypted_data = $app->encryptor->decryptData($session['session_key'], $iv, $encrypted_data);
+        if (isset($decrypted_data['phoneNumber'])) {
+            $phone = $decrypted_data['phoneNumber'];
+            $phone_exist = Db::name('member')
+                ->field('phone')
+                ->where('member_id', '<>', $member_id)
+                ->where('phone', '=', $phone)
+                ->find();
+            if ($phone_exist) {
+                exception('手机号已存在');
+            }
+            Db::name('member')
+                ->where('member_id', $member_id)
+                ->update(['phone' => $phone, 'update_time' => datetime()]);
+            return $decrypted_data;
+        } else {
+            exception('绑定失败');
+        }
     }
 
     /**
