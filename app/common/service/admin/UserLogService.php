@@ -138,33 +138,36 @@ class UserLogService
      */
     public static function add($param = [])
     {
-        $admin_menu    = MenuService::info();
-        $ip_info       = IpInfoUtils::info();
-        $request_param = Request::param();
+        // 日志记录是否开启
+        if (admin_log_switch()) {
+            $admin_menu    = MenuService::info();
+            $ip_info       = IpInfoUtils::info();
+            $request_param = Request::param();
 
-        if (isset($request_param['password'])) {
-            unset($request_param['password']);
-        }
-        if (isset($request_param['new_password'])) {
-            unset($request_param['new_password']);
-        }
-        if (isset($request_param['old_password'])) {
-            unset($request_param['old_password']);
-        }
+            if (isset($request_param['password'])) {
+                unset($request_param['password']);
+            }
+            if (isset($request_param['new_password'])) {
+                unset($request_param['new_password']);
+            }
+            if (isset($request_param['old_password'])) {
+                unset($request_param['old_password']);
+            }
 
-        $param['admin_menu_id']    = $admin_menu['admin_menu_id'];
-        $param['request_ip']       = $ip_info['ip'];
-        $param['request_country']  = $ip_info['country'];
-        $param['request_province'] = $ip_info['province'];
-        $param['request_city']     = $ip_info['city'];
-        $param['request_area']     = $ip_info['area'];
-        $param['request_region']   = $ip_info['region'];
-        $param['request_isp']      = $ip_info['isp'];
-        $param['request_param']    = serialize($request_param);
-        $param['request_method']   = Request::method();
-        $param['create_time']      = datetime();
+            $param['admin_menu_id']    = $admin_menu['admin_menu_id'];
+            $param['request_ip']       = $ip_info['ip'];
+            $param['request_country']  = $ip_info['country'];
+            $param['request_province'] = $ip_info['province'];
+            $param['request_city']     = $ip_info['city'];
+            $param['request_area']     = $ip_info['area'];
+            $param['request_region']   = $ip_info['region'];
+            $param['request_isp']      = $ip_info['isp'];
+            $param['request_param']    = serialize($request_param);
+            $param['request_method']   = Request::method();
+            $param['create_time']      = datetime();
 
-        Db::name('admin_user_log')->strict(false)->insert($param);
+            Db::name('admin_user_log')->insert($param);
+        }
     }
 
     /**
