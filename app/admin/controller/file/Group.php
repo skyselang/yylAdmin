@@ -43,13 +43,13 @@ class Group
         $group_name = Request::param('group_name/s', '');
         $group_desc = Request::param('group_desc/s', '');
 
-        $where[] = ['is_delete', '=', 0];
         if ($group_name) {
             $where[] = ['group_name', 'like', '%' . $group_name . '%'];
         }
         if ($group_desc) {
             $where[] = ['group_desc', 'like', '%' . $group_desc . '%'];
         }
+        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {

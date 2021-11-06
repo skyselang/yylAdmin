@@ -17,7 +17,7 @@ class SettingModel extends Model
 {
     // 表名
     protected $name = 'admin_setting';
-    // 主键
+    // 表主键
     protected $pk = 'admin_setting_id';
 
     /**

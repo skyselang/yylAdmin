@@ -44,10 +44,10 @@ class Member
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        $where[] = ['is_delete', '=', 0];
         if ($search_field && $search_value) {
             if ($search_field == 'member_id') {
-                $where[] = [$search_field, '=', $search_value];
+                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -56,6 +56,7 @@ class Member
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
+        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {

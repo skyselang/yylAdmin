@@ -46,7 +46,7 @@ class MemberLog
         $sort_value   = Request::param('sort_value/s', '');
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
+        $date_field   = Request::param('date_field/s', 'create_time');
         $date_value   = Request::param('date_value/a', '');
 
         $where = [];
@@ -55,14 +55,14 @@ class MemberLog
         }
         if ($search_field && $search_value) {
             if ($search_field == 'member_id' || $search_field == 'username') {
-                $where_member[] = ['is_delete', '=', 0];
                 $where_member[] = [$search_field, '=', $search_value];
+                $where_member[] = ['is_delete', '=', 0];
                 $member     = MemberService::list($where_member, 1, 9999, [], 'member_id');
                 $member_ids = array_column($member['list'], 'member_id');
                 $where[]    = ['member_id', 'in', $member_ids];
             } elseif ($search_field == 'api_url' || $search_field == 'api_name') {
-                $where_api[] = ['is_delete', '=', 0];
                 $where_api[] = [$search_field, '=', $search_value];
+                $where_api[] = ['is_delete', '=', 0];
                 $api     = ApiService::list($where_api, 1, 9999, [], 'api_id');
                 $api_ids = array_column($api['list'], 'api_id');
                 $where[] = ['api_id', 'in', $api_ids];

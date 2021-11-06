@@ -7,28 +7,21 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 留言管理模型
-namespace app\common\model\cms;
+// 会员管理模型
+namespace app\common\model;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
-class CommentModel extends Model
+class MemberWechatModel extends Model
 {
     // 表名
-    protected $name = 'cms_comment';
+    protected $name = 'member_wechat';
     // 表主键
-    protected $pk = 'comment_id';
+    protected $pk = 'member_wechat_id';
 
     /**
-     * @Apidoc\Field("comment_id")
-     */
-    public function id()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time")
+     * 
      */
     public function listReturn()
     {
@@ -42,24 +35,23 @@ class CommentModel extends Model
     }
 
     /**
-     * @Apidoc\Field("call,mobile,tel,email,qq,wechat,title,content")
+     * @Apidoc\withoutField("member_wechat_id")
      */
     public function addParam()
     {
     }
 
     /**
-     * @Apidoc\Field("comment_id,remark")
+     * @Apidoc\Field("member_wechat_id,nickname")
      */
     public function editParam()
     {
     }
 
     /**
-     * @Apidoc\Field("comment")
-     * @Apidoc\AddField("comment", type="array", require=true, default=" ", desc="留言列表")
+     * @Apidoc\Field("member_wechat_id")
      */
-    public function comment()
+    public function id()
     {
     }
 }

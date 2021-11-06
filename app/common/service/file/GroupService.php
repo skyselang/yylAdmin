@@ -15,6 +15,11 @@ use app\common\cache\file\GroupCache;
 
 class GroupService
 {
+    // 表名
+    protected static $t_name = 'file_group';
+    // 表主键
+    protected static $t_pk = 'group_id';
+
     /**
      * 文件分组列表
      *
@@ -29,18 +34,20 @@ class GroupService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'group_id,group_name,group_desc,group_sort,is_disable,create_time,update_time';
+            $field = self::$t_pk . ',group_name,group_desc,group_sort,is_disable,create_time,update_time';
         }
 
         if (empty($order)) {
-            $order = ['group_sort' => 'desc', 'group_id' => 'desc'];
+            $order = ['group_sort' => 'desc', self::$t_pk => 'desc'];
         }
 
-        $count = Db::name('file_group')
+        $count = Db::name(self::$t_name)
             ->where($where)
-            ->count('group_id');
+            ->count(self::$t_pk);
 
-        $list = Db::name('file_group')
+        $pages = ceil($count / $limit);
+
+        $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
             ->page($page)
@@ -49,15 +56,7 @@ class GroupService
             ->select()
             ->toArray();
 
-        $pages = ceil($count / $limit);
-
-        $data['count'] = $count;
-        $data['pages'] = $pages;
-        $data['page']  = $page;
-        $data['limit'] = $limit;
-        $data['list']  = $list;
-
-        return $data;
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -71,8 +70,8 @@ class GroupService
     {
         $file_group = GroupCache::get($group_id);
         if (empty($file_group)) {
-            $file_group = Db::name('file_group')
-                ->where('group_id', $group_id)
+            $file_group = Db::name(self::$t_name)
+                ->where(self::$t_pk, $group_id)
                 ->find();
             if (empty($file_group)) {
                 exception('文件分组不存在：' . $group_id);
@@ -95,13 +94,13 @@ class GroupService
     {
         $param['create_time'] = datetime();
 
-        $group_id = Db::name('file_group')
+        $group_id = Db::name(self::$t_name)
             ->insertGetId($param);
         if (empty($group_id)) {
             exception();
         }
 
-        $param['group_id'] = $group_id;
+        $param[self::$t_pk] = $group_id;
 
         return $param;
     }
@@ -115,18 +114,18 @@ class GroupService
      */
     public static function edit($param)
     {
-        $group_id = $param['group_id'];
-        unset($param['group_id']);
+        $group_id = $param[self::$t_pk];
+        unset($param[self::$t_pk]);
         $param['update_time'] = datetime();
 
-        $res = Db::name('file_group')
-            ->where('group_id', $group_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $group_id)
             ->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $param['group_id'] = $group_id;
+        $param[self::$t_pk] = $group_id;
 
         GroupCache::del($group_id);
 
@@ -136,20 +135,20 @@ class GroupService
     /**
      * 文件分组删除
      *
-     * @param array $group     文件分组列表
-     * @param int   $is_delete 是否删除
+     * @param array   $group     文件分组列表
+     * @param integer $is_delete 是否删除
      * 
      * @return array
      */
     public static function dele($group, $is_delete = 1)
     {
-        $group_ids = array_column($group, 'group_id');
+        $group_ids = array_column($group, self::$t_pk);
 
         $update['is_delete']   = $is_delete;
         $update['delete_time'] = datetime();
 
-        $res = Db::name('file_group')
-            ->where('group_id', 'in', $group_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $group_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -167,20 +166,20 @@ class GroupService
     /**
      * 文件分组禁用
      *
-     * @param array $group      文件分组列表
-     * @param int   $is_disable 是否禁用
+     * @param array   $group      文件分组列表
+     * @param integer $is_disable 是否禁用
      * 
      * @return array
      */
     public static function disable($group, $is_disable = 0)
     {
-        $group_ids = array_column($group, 'group_id');
+        $group_ids = array_column($group, self::$t_pk);
 
         $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
-        $res = Db::name('file_group')
-            ->where('group_id', 'in', $group_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $group_ids)
             ->update($update);
         if (empty($res)) {
             exception();

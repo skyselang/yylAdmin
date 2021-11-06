@@ -44,8 +44,8 @@ class Content
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn"),
      * @Apidoc\Returned("list", type="array", desc="内容列表", 
-     *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
-     *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
+     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
+     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
      */
     public function list()
@@ -62,13 +62,13 @@ class Content
 
         validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
-        $where[] = ['is_delete', '=', 0];
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
         }
         if ($search_field && $search_value) {
             if ($search_field == 'content_id') {
-                $where[] = [$search_field, '=', $search_value];
+                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
@@ -84,6 +84,7 @@ class Content
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
+        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {
@@ -292,7 +293,6 @@ class Content
 
         validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
-        $where[] = ['is_delete', '=', 1];
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
         }
@@ -314,6 +314,7 @@ class Content
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
+        $where[] = ['is_delete', '=', 1];
 
         $order = [];
         if ($sort_field && $sort_value) {

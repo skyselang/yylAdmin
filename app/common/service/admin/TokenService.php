@@ -22,9 +22,7 @@ class TokenService
      */
     public static function config()
     {
-        $config = SettingService::tokenInfo();
-
-        return $config;
+        return SettingService::tokenInfo();
     }
 
     /**

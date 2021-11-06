@@ -84,7 +84,6 @@ class File
         $is_disable   = Request::param('is_disable/s', '');
         $is_front     = Request::param('is_front/s', 0);
 
-        $where[] = ['is_delete', '=', 0];
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
                 $where[] = [$search_field, '=', $search_value];
@@ -108,6 +107,7 @@ class File
         if ($is_front != '') {
             $where[] = ['is_front', '=', $is_front];
         }
+        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {
@@ -154,6 +154,7 @@ class File
         $param['group_id']  = Request::param('group_id/d', 0);
         $param['file_type'] = Request::param('file_type/s', 'image');
         $param['file_name'] = Request::param('file_name/s', '');
+        $param['is_front']  = Request::param('is_front/s', 0);
         $param['sort']      = Request::param('sort/d', 200);
 
         validate(FileValidate::class)->scene('add')->check($param);
@@ -174,6 +175,7 @@ class File
         $param['group_id']  = Request::param('group_id/d', 0);
         $param['file_type'] = Request::param('file_type/s', 'image');
         $param['file_name'] = Request::param('file_name/s', '');
+        $param['is_front']  = Request::param('is_front/s', 0);
         $param['sort']      = Request::param('sort/d', 200);
 
         validate(FileValidate::class)->scene('edit')->check($param);
@@ -259,8 +261,8 @@ class File
         $group_id     = Request::param('group_id/s', '');
         $file_type    = Request::param('file_type/s', '');
         $is_disable   = Request::param('is_disable/s', '');
+        $is_front     = Request::param('is_front/s', '');
 
-        $where[] = ['is_delete', '=', 1];
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
                 $where[] = [$search_field, '=', $search_value];
@@ -281,6 +283,10 @@ class File
         if ($is_disable != '') {
             $where[] = ['is_disable', '=', $is_disable];
         }
+        if ($is_front != '') {
+            $where[] = ['is_front', '=', $is_front];
+        }
+        $where[] = ['is_delete', '=', 1];
 
         $order = [];
         if ($sort_field && $sort_value) {

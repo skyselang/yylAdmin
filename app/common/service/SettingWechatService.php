@@ -17,6 +17,10 @@ use app\common\utils\StringUtils;
 
 class SettingWechatService
 {
+    // 表名
+    protected static $t_name = 'setting_wechat';
+    // 表主键
+    protected static $t_pk = 'setting_wechat_id';
     // 公众号id
     private static $offi_id = 1;
     // 小程序id
@@ -33,20 +37,20 @@ class SettingWechatService
 
         $setting_wechat = SettingWechatCache::get($setting_wechat_id);
         if (empty($setting_wechat)) {
-            $setting_wechat = Db::name('setting_wechat')
-                ->where('setting_wechat_id', $setting_wechat_id)
+            $setting_wechat = Db::name(self::$t_name)
+                ->where(self::$t_pk, $setting_wechat_id)
                 ->find();
             if (empty($setting_wechat)) {
-                $setting_wechat['setting_wechat_id'] = $setting_wechat_id;
+                $setting_wechat[self::$t_pk]         = $setting_wechat_id;
                 $setting_wechat['token']             = StringUtils::random(32);
                 $setting_wechat['encoding_aes_key']  = StringUtils::random(43);
                 $setting_wechat['create_time']       = datetime();
 
-                Db::name('setting_wechat')
+                Db::name(self::$t_name)
                     ->insert($setting_wechat);
 
-                $setting_wechat = Db::name('setting_wechat')
-                    ->where('setting_wechat_id', $setting_wechat_id)
+                $setting_wechat = Db::name(self::$t_name)
+                    ->where(self::$t_pk, $setting_wechat_id)
                     ->find();
             }
 
@@ -72,8 +76,8 @@ class SettingWechatService
 
         $param['update_time'] = datetime();
 
-        $setting_wechat = Db::name('setting_wechat')
-            ->where('setting_wechat_id', $setting_wechat_id)
+        $setting_wechat = Db::name(self::$t_name)
+            ->where(self::$t_pk, $setting_wechat_id)
             ->update($param);
         if (empty($setting_wechat)) {
             exception();
@@ -95,18 +99,18 @@ class SettingWechatService
 
         $setting_wechat = SettingWechatCache::get($setting_wechat_id);
         if (empty($setting_wechat)) {
-            $setting_wechat = Db::name('setting_wechat')
-                ->where('setting_wechat_id', $setting_wechat_id)
+            $setting_wechat = Db::name(self::$t_name)
+                ->where(self::$t_pk, $setting_wechat_id)
                 ->find();
             if (empty($setting_wechat)) {
-                $setting_wechat['setting_wechat_id'] = $setting_wechat_id;
+                $setting_wechat[self::$t_pk] = $setting_wechat_id;
                 $setting_wechat['create_time']       = datetime();
 
-                Db::name('setting_wechat')
+                Db::name(self::$t_name)
                     ->insert($setting_wechat);
 
-                $setting_wechat = Db::name('setting_wechat')
-                    ->where('setting_wechat_id', $setting_wechat_id)
+                $setting_wechat = Db::name(self::$t_name)
+                    ->where(self::$t_pk, $setting_wechat_id)
                     ->find();
             }
 
@@ -131,8 +135,8 @@ class SettingWechatService
 
         $param['update_time'] = datetime();
 
-        $setting_wechat = Db::name('setting_wechat')
-            ->where('setting_wechat_id', $setting_wechat_id)
+        $setting_wechat = Db::name(self::$t_name)
+            ->where(self::$t_pk, $setting_wechat_id)
             ->update($param);
         if (empty($setting_wechat)) {
             exception();

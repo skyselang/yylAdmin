@@ -16,9 +16,11 @@ use app\common\service\file\FileService;
 
 class SettingService
 {
-    // 内容设置表名
-    protected static $db_name = 'cms_setting';
-    // 内容设置id
+    // 表名
+    protected static $t_name = 'cms_setting';
+    // 表主键
+    protected static $t_pk = 'setting_id';
+    // 设置id
     protected static $setting_id = 1;
 
     /**
@@ -32,17 +34,17 @@ class SettingService
 
         $setting = SettingCache::get($setting_id);
         if (empty($setting)) {
-            $setting = Db::name(self::$db_name)
-                ->where('setting_id', $setting_id)
+            $setting = Db::name(self::$t_name)
+                ->where(self::$t_pk, $setting_id)
                 ->find();
             if (empty($setting)) {
-                $setting['setting_id']  = $setting_id;
+                $setting[self::$t_pk]  = $setting_id;
                 $setting['create_time'] = datetime();
-                Db::name(self::$db_name)
+                Db::name(self::$t_name)
                     ->insert($setting);
 
-                $setting = Db::name(self::$db_name)
-                    ->where('setting_id', $setting_id)
+                $setting = Db::name(self::$t_name)
+                    ->where(self::$t_pk, $setting_id)
                     ->find();
             }
 
@@ -68,8 +70,8 @@ class SettingService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name(self::$db_name)
-            ->where('setting_id', $setting_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $setting_id)
             ->update($param);
         if (empty($res)) {
             exception();

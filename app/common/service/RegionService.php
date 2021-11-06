@@ -16,6 +16,10 @@ use Overtrue\Pinyin\Pinyin;
 
 class RegionService
 {
+    // 表名
+    protected static $t_name = 'region';
+    // 表主键
+    protected static $t_pk = 'region_id';
     // 地区树形key
     protected static $tree_key = 'tree';
 
@@ -31,21 +35,23 @@ class RegionService
     public static function list($where = [], $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'region_id,region_pid,region_path,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_sort';
+            $field = self::$t_pk . ',region_pid,region_path,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_sort';
         }
 
         $where[] = ['is_delete', '=', 0];
 
         if (empty($order)) {
-            $order = ['region_sort' => 'desc', 'region_id' => 'asc'];
+            $order = ['region_sort' => 'desc', self::$t_pk => 'asc'];
         }
 
-        $list = Db::name('region')
+        $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
             ->order($order)
             ->select()
             ->toArray();
+
+        $count = count($list);
 
         foreach ($list as $k => $v) {
             $v['children']    = [];
@@ -53,10 +59,7 @@ class RegionService
             $list[$k] = $v;
         }
 
-        $data['count'] = count($list);
-        $data['list']  = $list;
-
-        return $data;
+        return compact('count', 'list');
     }
 
     /**
@@ -71,7 +74,7 @@ class RegionService
         $region = RegionCache::get($region_id);
         if (empty($region)) {
             if ($region_id == self::$tree_key) {
-                $region = Db::name('region')
+                $region = Db::name(self::$t_name)
                     ->field('region_id,region_pid,region_name')
                     ->where('is_delete', '=', 0)
                     ->select()
@@ -79,8 +82,8 @@ class RegionService
 
                 $region = self::toTree($region, 0);
             } else {
-                $region = Db::name('region')
-                    ->where('region_id', $region_id)
+                $region = Db::name(self::$t_name)
+                    ->where(self::$t_pk, $region_id)
                     ->find();
                 if (empty($region)) {
                     exception('地区不存在：' . $region_id);
@@ -94,9 +97,9 @@ class RegionService
                 } else {
                     $region_pid = [];
                     foreach ($region_path as $k => $v) {
-                        $region_pid[] = Db::name('region')
+                        $region_pid[] = Db::name(self::$t_name)
                             ->field('region_name,region_pinyin')
-                            ->where('region_id', '=', $v)
+                            ->where(self::$t_pk, '=', $v)
                             ->find();
                     }
                     $region_fullname    = array_column($region_pid, 'region_name');
@@ -135,12 +138,12 @@ class RegionService
                 $region = self::info($param['region_pid']);
 
                 $param['region_level'] = $region['region_level'] + 1;
-                $region_id = Db::name('region')
+                $region_id = Db::name(self::$t_name)
                     ->insertGetId($param);
 
                 $region_path = $region['region_path'] . ',' . $region_id;
             } else {
-                $region_id = Db::name('region')
+                $region_id = Db::name(self::$t_name)
                     ->insertGetId($param);
 
                 $region_path = $region_id;
@@ -148,8 +151,8 @@ class RegionService
             }
 
             $update['region_path'] = $region_path;
-            $res = Db::name('region')
-                ->where('region_id', $region_id)
+            $res = Db::name(self::$t_name)
+                ->where(self::$t_pk, $region_id)
                 ->update($update);
             // 提交事务
             Db::commit();
@@ -164,7 +167,7 @@ class RegionService
 
         RegionCache::del(self::$tree_key);
 
-        $param['region_id']   = $region_id;
+        $param[self::$t_pk]   = $region_id;
         $param['region_path'] = $region_path;
 
         return $param;
@@ -181,9 +184,9 @@ class RegionService
     {
         $param = self::pinyin($param);
 
-        $region_id = $param['region_id'];
+        $region_id = $param[self::$t_pk];
 
-        unset($param['region_id']);
+        unset($param[self::$t_pk]);
 
         $res = false;
         // 启动事务
@@ -193,15 +196,15 @@ class RegionService
                 $region = self::info($param['region_pid']);
 
                 $param['region_level'] = $region['region_level'] + 1;
-                Db::name('region')
-                    ->where('region_id', $region_id)
+                Db::name(self::$t_name)
+                    ->where(self::$t_pk, $region_id)
                     ->update($param);
 
                 $region_path = $region['region_path'] . ',' . $region_id;
                 $update['region_path'] = $region_path;
             } else {
-                Db::name('region')
-                    ->where('region_id', $region_id)
+                Db::name(self::$t_name)
+                    ->where(self::$t_pk, $region_id)
                     ->update($param);
 
                 $region_path = $region_id;
@@ -209,8 +212,8 @@ class RegionService
             }
 
             $update['update_time'] = datetime();
-            $res = Db::name('region')
-                ->where('region_id', $region_id)
+            $res = Db::name(self::$t_name)
+                ->where(self::$t_pk, $region_id)
                 ->update($update);
             // 提交事务
             Db::commit();
@@ -223,7 +226,7 @@ class RegionService
             exception();
         }
 
-        $param['region_id']   = $region_id;
+        $param[self::$t_pk]   = $region_id;
         $param['region_path'] = $region_path;
 
         RegionCache::del(self::$tree_key);
@@ -244,14 +247,14 @@ class RegionService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name('region')
-            ->where('region_id', '=', $region_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, '=', $region_id)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['region_id'] = $region_id;
+        $update[self::$t_pk] = $region_id;
 
         RegionCache::del(self::$tree_key);
         RegionCache::del($region_id);
@@ -273,8 +276,8 @@ class RegionService
 
         foreach ($region as $k => $v) {
             if ($v['region_pid'] == $region_id) {
-                $children[] = $v['region_id'];
-                $children   = array_merge($children, self::getChildren($region, $v['region_id']));
+                $children[] = $v[self::$t_pk];
+                $children   = array_merge($children, self::getChildren($region, $v[self::$t_pk]));
             }
         }
 
@@ -295,7 +298,7 @@ class RegionService
 
         foreach ($region as $k => $v) {
             if ($v['region_pid'] == $region_pid) {
-                $v['children'] = self::toTree($region, $v['region_id']);
+                $v['children'] = self::toTree($region, $v[self::$t_pk]);
                 $tree[] = $v;
             }
         }
@@ -346,9 +349,9 @@ class RegionService
      */
     public static function likeQuery($keyword, $field = 'region_name')
     {
-        $data = Db::name('region')
-            ->where('is_delete', '=', 0)
+        $data = Db::name(self::$t_name)
             ->where($field, 'like', '%' . $keyword . '%')
+            ->where('is_delete', '=', 0)
             ->select()
             ->toArray();
 
@@ -365,9 +368,9 @@ class RegionService
      */
     public static function equQuery($keyword, $field = 'region_name')
     {
-        $data = Db::name('region')
-            ->where('is_delete', '=', 0)
+        $data = Db::name(self::$t_name)
             ->where($field, '=', $keyword)
+            ->where('is_delete', '=', 0)
             ->select()
             ->toArray();
 

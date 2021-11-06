@@ -12,12 +12,18 @@ namespace app\common\service;
 
 use think\facade\Db;
 use app\common\cache\MemberCache;
+use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
-use app\common\service\file\FileService;
 use app\common\service\WechatService;
+use app\common\service\file\FileService;
 
 class MemberService
 {
+    // 表名
+    protected static $t_name = 'member';
+    // 表主键
+    protected static $t_pk = 'member_id';
+
     /**
      * 会员列表
      *
@@ -32,18 +38,20 @@ class MemberService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'member_id,username,nickname,phone,email,avatar_id,sort,remark,create_time,is_disable';
+            $field = self::$t_pk . ',username,nickname,phone,email,avatar_id,sort,remark,create_time,is_disable';
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'member_id' => 'desc'];
+            $order = ['sort' => 'desc', self::$t_pk => 'desc'];
         }
 
-        $count = Db::name('member')
+        $count = Db::name(self::$t_name)
             ->where($where)
-            ->count('member_id');
+            ->count(self::$t_pk);
 
-        $list = Db::name('member')
+        $pages = ceil($count / $limit);
+
+        $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
             ->page($page)
@@ -52,36 +60,39 @@ class MemberService
             ->select()
             ->toArray();
 
-        $pages = ceil($count / $limit);
+        $file_ids = array_column($list, 'avatar_id');
+        $files = FileService::list([['file_id', 'in', $file_ids]], 1, $limit, [], 'file_id');
 
-        $member_ids = array_column($list, 'member_id');
-        $member_wechat = Db::name('member_wechat')
+        $member_ids = array_column($list, self::$t_pk);
+        $member_wechats = Db::name('member_wechat')
             ->field('member_id,nickname,headimgurl')
-            ->where('member_id', 'in', $member_ids)
+            ->where(self::$t_pk, 'in', $member_ids)
             ->select()
             ->toArray();
 
         foreach ($list as $k => $v) {
             $list[$k]['avatar_url'] = '';
             if (isset($v['avatar_id'])) {
-                $list[$k]['avatar_url'] = FileService::fileUrl($v['avatar_id']);
+                foreach ($files['list'] as $kl => $vl) {
+                    if ($v['avatar_id'] == $vl['file_id']) {
+                        $list[$k]['avatar_url'] = $vl['file_url'];
+                    }
+                }
             }
-            if (empty($list[$k]['avatar_url'])) {
-                foreach ($member_wechat as $kmw => $vmw) {
-                    if ($v['member_id'] == $vmw['member_id']) {
+
+            foreach ($member_wechats as $kmw => $vmw) {
+                if ($v[self::$t_pk] == $vmw[self::$t_pk]) {
+                    if (empty($list[$k]['avatar_url'])) {
                         $list[$k]['avatar_url'] = $vmw['headimgurl'];
+                    }
+                    if (empty($v['nickname'])) {
+                        $list[$k]['nickname'] = $vmw['nickname'];
                     }
                 }
             }
         }
 
-        $data['count'] = $count;
-        $data['pages'] = $pages;
-        $data['page']  = $page;
-        $data['limit'] = $limit;
-        $data['list']  = $list;
-
-        return $data;
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -95,8 +106,8 @@ class MemberService
     {
         $member = MemberCache::get($member_id);
         if (empty($member)) {
-            $member = Db::name('member')
-                ->where('member_id', $member_id)
+            $member = Db::name(self::$t_name)
+                ->where(self::$t_pk, $member_id)
                 ->find();
             if (empty($member)) {
                 exception('会员不存在：' . $member_id);
@@ -104,7 +115,7 @@ class MemberService
             $member['avatar_url'] = FileService::fileUrl($member['avatar_id']);
 
             $member_wechat = Db::name('member_wechat')
-                ->where('member_id', $member_id)
+                ->where(self::$t_pk, $member_id)
                 ->find();
             if ($member_wechat) {
                 if (empty($member['nickname'])) {
@@ -143,13 +154,13 @@ class MemberService
         $param['password']    = md5($param['password']);
         $param['create_time'] = datetime();
 
-        $member_id = Db::name('member')
+        $member_id = Db::name(self::$t_name)
             ->insertGetId($param);
         if (empty($member_id)) {
             exception();
         }
 
-        $param['member_id'] = $member_id;
+        $param[self::$t_pk] = $member_id;
 
         unset($param['password']);
 
@@ -165,20 +176,20 @@ class MemberService
      */
     public static function edit($param)
     {
-        $member_id = $param['member_id'];
+        $member_id = $param[self::$t_pk];
 
-        unset($param['member_id']);
+        unset($param[self::$t_pk]);
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $member_id)
             ->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $param['member_id'] = $member_id;
+        $param[self::$t_pk] = $member_id;
 
         MemberCache::upd($member_id);
 
@@ -197,17 +208,17 @@ class MemberService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $member_id)
             ->update($update);
         Db::name('member_wechat')
-            ->where('member_id', $member_id)
+            ->where(self::$t_pk, $member_id)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['member_id'] = $member_id;
+        $update[self::$t_pk] = $member_id;
 
         MemberCache::del($member_id);
 
@@ -223,7 +234,7 @@ class MemberService
      */
     public static function pwd($param)
     {
-        $member_id = $param['member_id'];
+        $member_id = $param[self::$t_pk];
         if (isset($param['password'])) {
             $update['password'] = md5($param['password']);
         } else {
@@ -232,14 +243,14 @@ class MemberService
 
         $update['update_time'] = datetime();
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $member_id)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['member_id'] = $member_id;
+        $update[self::$t_pk] = $member_id;
         $update['password']  = '';
 
         MemberCache::upd($member_id);
@@ -256,21 +267,236 @@ class MemberService
      */
     public static function disable($param)
     {
-        $member_id = $param['member_id'];
+        $member_id = $param[self::$t_pk];
 
         $update['is_disable']  = $param['is_disable'];
         $update['update_time'] = datetime();
 
-        $res = Db::name('member')
-            ->where('member_id', $member_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $member_id)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['member_id'] = $member_id;
+        $update[self::$t_pk] = $member_id;
 
         MemberCache::upd($member_id);
+
+        return $update;
+    }
+
+    /**
+     * 会员登录（账号）
+     *
+     * @param array $param 登录信息
+     * 
+     * @return array
+     */
+    public static function login($param)
+    {
+        // 通过 账号、手机、邮箱 登录
+        $where[] = ['username|phone|email', '=', $param['username']];
+        $where[] = ['password', '=', md5($param['password'])];
+        $where[] = ['is_delete', '=', 0];
+
+        $member = Db::name(self::$t_name)
+            ->field('member_id,username,nickname,phone,email,login_num,is_disable')
+            ->where($where)
+            ->find();
+        if (empty($member)) {
+            exception('账号或密码错误');
+        }
+        if ($member['is_disable'] == 1) {
+            exception('账号已被禁用');
+        }
+
+        $ip_info   = IpInfoUtils::info();
+        $member_id = $member['member_id'];
+
+        // 登录信息
+        $update['login_ip']     = $ip_info['ip'];
+        $update['login_region'] = $ip_info['region'];
+        $update['login_num']    = $member['login_num'] + 1;
+        $update['login_time']   = datetime();
+        Db::name(self::$t_name)
+            ->where('member_id', $member_id)
+            ->update($update);
+
+        // 登录日志
+        $member_log['member_id'] = $member_id;
+        MemberLogService::add($member_log, 2);
+
+        // 会员信息
+        MemberCache::del($member_id);
+        $member = MemberService::info($member_id);
+        $data = self::field($member);
+        $data['member_token'] = TokenService::create($member);
+
+        return $data;
+    }
+
+    /**
+     * 会员微信登录
+     *
+     * @param array $userinfo 微信用户信息
+     *
+     * @return array
+     */
+    public static function wechat($userinfo)
+    {
+        $datetime    = datetime();
+        $unionid     = $userinfo['unionid'];
+        $openid      = $userinfo['openid'];
+        $login_ip    = $userinfo['login_ip'];
+        $reg_channel = $userinfo['reg_channel'];
+        $ip_info     = IpInfoUtils::info($login_ip);
+
+        foreach ($userinfo as $k => $v) {
+            if ($k == 'privilege') {
+                $userinfo[$k] = serialize($v);
+            }
+            if (empty($userinfo[$k])) {
+                unset($userinfo[$k]);
+            }
+        }
+        unset($userinfo['login_ip'], $userinfo['reg_channel']);
+
+        // 会员微信信息
+        if ($unionid) {
+            $wechat_where[] = ['unionid', '=', $unionid];
+        } else {
+            $wechat_where[] = ['openid', '=', $openid];
+        }
+        $wechat_where[] = ['is_delete', '=', 0];
+        $member_wechat = Db::name('member_wechat')
+            ->field('member_wechat_id,member_id')
+            ->where($wechat_where)
+            ->find();
+
+        // 启动事务
+        $errmsg = '';
+        Db::startTrans();
+        try {
+            if ($member_wechat) {
+                $member_wechat_id = $member_wechat['member_wechat_id'];
+                Db::name('member_wechat')
+                    ->where('member_wechat_id', $member_wechat_id)
+                    ->update($userinfo);
+                $member_id = $member_wechat['member_id'];
+            } else {
+                $insert_wechat = $userinfo;
+                $insert_wechat['create_time'] = $datetime;
+                $member_wechat_id = Db::name('member_wechat')
+                    ->insertGetId($insert_wechat);
+                $member_id = 0;
+            }
+
+            $member = Db::name(self::$t_name)
+                ->field('member_id,nickname,login_num')
+                ->where(['member_id' => $member_id, 'is_delete' => 0])
+                ->find();
+            if ($member) {
+                if (empty($member['nickname'])) {
+                    $member_update['nickname'] = $userinfo['nickname'];
+                }
+                $member_update['login_num']    = $member['login_num'] + 1;
+                $member_update['login_ip']     = $login_ip;
+                $member_update['login_time']   = $datetime;
+                $member_update['login_region'] = $ip_info['region'];
+                Db::name(self::$t_name)
+                    ->where('member_id', $member_id)
+                    ->update($member_update);
+                // 登录日志
+                $member_log['member_id'] = $member_id;
+                MemberLogService::add($member_log, 2);
+            } else {
+                if ($reg_channel == 2) {
+                    $member_insert['username'] = 'wechatOffi' . $member_wechat_id;
+                } elseif ($reg_channel == 3) {
+                    $member_insert['username'] = 'wechatMini' . $member_wechat_id;
+                } else {
+                    $member_insert['username'] = 'wechat' . $member_wechat_id;
+                }
+                $member_insert['login_num']    = 1;
+                $member_insert['login_ip']     = $login_ip;
+                $member_insert['login_time']   = $datetime;
+                $member_insert['login_region'] = $ip_info['region'];
+                $member_insert['create_time']  = $datetime;
+                $member_insert['reg_channel']  = $reg_channel;
+                $member_insert['nickname']     = $userinfo['nickname'];
+                $member_insert['password']     = '';
+                $member_id = Db::name(self::$t_name)
+                    ->insertGetId($member_insert);
+                // 注册日志
+                $member_log['member_id'] = $member_id;
+                MemberLogService::add($member_log, 1);
+            }
+
+            $wechat_update = $userinfo;
+            $wechat_update['member_id']   = $member_id;
+            $wechat_update['update_time'] = $datetime;
+            Db::name('member_wechat')
+                ->where('member_wechat_id', $member_wechat_id)
+                ->update($wechat_update);
+
+            // 提交事务
+            Db::commit();
+        } catch (\Exception $e) {
+            $errmsg = '微信登录失败:' . $e->getMessage();
+            // 回滚事务
+            Db::rollback();
+        }
+
+        if ($errmsg) {
+            exception($errmsg);
+        }
+
+        // 会员信息
+        MemberCache::del($member_id);
+        $member = MemberService::info($member_id);
+        $data = self::field($member);
+        $data['member_token'] = TokenService::create($member);
+
+        return $data;
+    }
+
+    /**
+     * 登录返回字段
+     *
+     * @param array $member 会员信息
+     *
+     * @return array
+     */
+    public static function field($member)
+    {
+        $data = [];
+        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url'];
+        foreach ($field as $k => $v) {
+            $data[$v] = $member[$v];
+        }
+
+        return $data;
+    }
+
+    /**
+     * 会员退出
+     *
+     * @param integer $member_id 会员id
+     * 
+     * @return array
+     */
+    public static function logout($member_id)
+    {
+        $update['logout_time'] = datetime();
+
+        Db::name(self::$t_name)
+            ->where('member_id', $member_id)
+            ->update($update);
+
+        MemberCache::del($member_id);
+
+        $update['member_id'] = $member_id;
 
         return $update;
     }
@@ -296,16 +522,16 @@ class MemberService
         $decrypted_data = $app->encryptor->decryptData($session['session_key'], $iv, $encrypted_data);
         if (isset($decrypted_data['phoneNumber'])) {
             $phone = $decrypted_data['phoneNumber'];
-            $phone_exist = Db::name('member')
+            $phone_exist = Db::name(self::$t_name)
                 ->field('phone')
-                ->where('member_id', '<>', $member_id)
+                ->where(self::$t_pk, '<>', $member_id)
                 ->where('phone', '=', $phone)
                 ->find();
             if ($phone_exist) {
                 exception('手机号已存在');
             }
-            Db::name('member')
-                ->where('member_id', $member_id)
+            Db::name(self::$t_name)
+                ->where(self::$t_pk, $member_id)
                 ->update(['phone' => $phone, 'update_time' => datetime()]);
             return $decrypted_data;
         } else {
@@ -328,7 +554,7 @@ class MemberService
         if (empty($data)) {
             $where[] = ['is_delete', '=', 0];
             if ($date == 'total') {
-                $where[] = ['member_id', '>', 0];
+                $where[] = [self::$t_pk, '>', 0];
             } else {
                 if ($date == 'yesterday') {
                     $yesterday = DatetimeUtils::yesterday();
@@ -371,10 +597,10 @@ class MemberService
                 }
             }
 
-            $data = Db::name('member')
-                ->field('member_id')
+            $data = Db::name(self::$t_name)
+                ->field(self::$t_pk)
                 ->where($where)
-                ->count('member_id');
+                ->count(self::$t_pk);
 
             MemberCache::set($key, $data);
         }
@@ -407,7 +633,7 @@ class MemberService
             $end_time = DatetimeUtils::dateEndTime($end_date);
 
             // 新增会员
-            $new = Db::name('member')
+            $new = Db::name(self::$t_name)
                 ->field("count(create_time) as num, date_format(login_time,'%Y-%m-%d') as date")
                 ->where('create_time', '>=', $sta_time)
                 ->where('create_time', '<=', $end_time)
@@ -427,7 +653,7 @@ class MemberService
             $data['new'] = ['x' => $new_x, 's' => $new_s];
 
             // 活跃会员
-            $act = Db::name('member')
+            $act = Db::name(self::$t_name)
                 ->field("count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date")
                 ->where('login_time', '>=', $sta_time)
                 ->where('login_time', '<=', $end_time)
@@ -451,10 +677,10 @@ class MemberService
             foreach ($dates as $k => $v) {
                 $count_t = DatetimeUtils::dateEndTime($v);
                 $count_x[] = $v;
-                $count_s[] = Db::name('member')
+                $count_s[] = Db::name(self::$t_name)
                     ->where('is_delete', 0)
                     ->where('create_time', '<=', $count_t)
-                    ->count('member_id');
+                    ->count(self::$t_pk);
             }
             $data['count'] = ['x' => $count_x, 's' => $count_s];
 
@@ -480,10 +706,10 @@ class MemberService
                 $time = DatetimeUtils::monthStartEnd($v);
                 $time = DatetimeUtils::dateEndTime($time[1]);
                 $x[] = $v;
-                $s[] = Db::name('member')
+                $s[] = Db::name(self::$t_name)
                     ->where('is_delete', 0)
                     ->where('create_time', '<=', $time)
-                    ->count('member_id');
+                    ->count(self::$t_pk);
             }
             $data['x'] = $x;
             $data['s'] = $s;

@@ -16,6 +16,11 @@ use app\common\cache\admin\UserCache;
 
 class RoleService
 {
+    // 表名
+    protected static $t_name = 'admin_role';
+    // 表主键
+    protected static $t_pk = 'admin_role_id';
+
     /**
      * 角色列表
      *
@@ -30,22 +35,22 @@ class RoleService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'admin_role_id,role_name,role_desc,role_sort,is_disable,create_time,update_time';
+            $field = self::$t_pk . ',role_name,role_desc,role_sort,is_disable,create_time,update_time';
         }
 
         if (empty($order)) {
-            $order = ['role_sort' => 'desc', 'admin_role_id' => 'desc'];
+            $order = ['role_sort' => 'desc', self::$t_pk => 'desc'];
         }
 
         $where[] = ['is_delete', '=', 0];
 
-        $count = Db::name('admin_role')
+        $count = Db::name(self::$t_name)
             ->where($where)
-            ->count('admin_role_id');
+            ->count(self::$t_pk);
 
         $pages = ceil($count / $limit);
 
-        $list = Db::name('admin_role')
+        $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
             ->page($page)
@@ -54,13 +59,7 @@ class RoleService
             ->select()
             ->toArray();
 
-        $data['count'] = $count;
-        $data['pages'] = $pages;
-        $data['page']  = $page;
-        $data['limit'] = $limit;
-        $data['list']  = $list;
-
-        return $data;
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -73,10 +72,9 @@ class RoleService
     public static function info($admin_role_id)
     {
         $admin_role = RoleCache::get($admin_role_id);
-
         if (empty($admin_role)) {
-            $admin_role = Db::name('admin_role')
-                ->where('admin_role_id', $admin_role_id)
+            $admin_role = Db::name(self::$t_name)
+                ->where(self::$t_pk, $admin_role_id)
                 ->find();
             if (empty($admin_role)) {
                 exception('角色不存在：' . $admin_role_id);
@@ -97,9 +95,6 @@ class RoleService
             RoleCache::set($admin_role_id, $admin_role);
         }
 
-        $data['admin_role'] = $admin_role;
-        $data['menu_tree']  = MenuService::tree();
-
         return $admin_role;
     }
 
@@ -114,23 +109,17 @@ class RoleService
     {
         sort($param['admin_menu_ids']);
 
-        if (count($param['admin_menu_ids']) > 0) {
-            if (empty($param['admin_menu_ids'][0])) {
-                unset($param['admin_menu_ids'][0]);
-            }
-        }
-
         $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
         $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
         $param['create_time']    = datetime();
 
-        $admin_role_id = Db::name('admin_role')
+        $admin_role_id = Db::name(self::$t_name)
             ->insertGetId($param);
         if (empty($admin_role_id)) {
             exception();
         }
 
-        $param['admin_role_id'] = $admin_role_id;
+        $param[self::$t_pk] = $admin_role_id;
 
         return $param;
     }
@@ -144,41 +133,34 @@ class RoleService
      */
     public static function edit($param)
     {
-        $admin_role_id = $param['admin_role_id'];
+        $admin_role_id = $param[self::$t_pk];
 
-        if (false) {
-            $data['admin_role'] = self::info($admin_role_id);
-            $data['menu_tree']  = MenuService::tree();
+        unset($param[self::$t_pk]);
 
-            return $data;
-        } else {
-            unset($param['admin_role_id']);
+        sort($param['admin_menu_ids']);
 
-            sort($param['admin_menu_ids']);
-
-            if (count($param['admin_menu_ids']) > 0) {
-                if (empty($param['admin_menu_ids'][0])) {
-                    unset($param['admin_menu_ids'][0]);
-                }
+        if (count($param['admin_menu_ids']) > 0) {
+            if (empty($param['admin_menu_ids'][0])) {
+                unset($param['admin_menu_ids'][0]);
             }
-
-            $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-            $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
-            $param['update_time']    = datetime();
-
-            $res = Db::name('admin_role')
-                ->where('admin_role_id', $admin_role_id)
-                ->update($param);
-            if (empty($res)) {
-                exception();
-            }
-
-            $param['admin_role_id'] = $admin_role_id;
-
-            RoleCache::del($admin_role_id);
-
-            return $param;
         }
+
+        $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
+        $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
+        $param['update_time']    = datetime();
+
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_role_id)
+            ->update($param);
+        if (empty($res)) {
+            exception();
+        }
+
+        $param[self::$t_pk] = $admin_role_id;
+
+        RoleCache::del($admin_role_id);
+
+        return $param;
     }
 
     /**
@@ -193,14 +175,14 @@ class RoleService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name('admin_role')
-            ->where('admin_role_id', $admin_role_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_role_id)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_role_id'] = $admin_role_id;
+        $update[self::$t_pk] = $admin_role_id;
 
         RoleCache::del($admin_role_id);
 
@@ -216,19 +198,19 @@ class RoleService
      */
     public static function disable($param)
     {
-        $admin_role_id = $param['admin_role_id'];
+        $admin_role_id = $param[self::$t_pk];
 
         $update['is_disable']  = $param['is_disable'];
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_role')
-            ->where('admin_role_id', $admin_role_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_role_id)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_role_id'] = $admin_role_id;
+        $update[self::$t_pk] = $admin_role_id;
 
         RoleCache::del($admin_role_id);
 
@@ -248,9 +230,7 @@ class RoleService
      */
     public static function user($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        $data = UserService::list($where, $page, $limit, $order, $field);
-
-        return $data;
+        return UserService::list($where, $page, $limit, $order, $field);
     }
 
     /**
@@ -262,7 +242,7 @@ class RoleService
      */
     public static function userRemove($param)
     {
-        $admin_role_id = $param['admin_role_id'];
+        $admin_role_id = $param[self::$t_pk];
         $admin_user_id = $param['admin_user_id'];
 
         $admin_user = UserService::info($admin_user_id);
@@ -290,7 +270,7 @@ class RoleService
             exception();
         }
 
-        $update['admin_role_id'] = $admin_role_id;
+        $update[self::$t_pk] = $admin_role_id;
         $update['admin_user_id'] = $admin_user_id;
 
         UserCache::upd($admin_user_id);
@@ -310,8 +290,6 @@ class RoleService
         if (empty($admin_role_id)) {
             return [];
         }
-
-        $admin_role_ids = [];
 
         if (is_numeric($admin_role_id)) {
             $admin_role_ids[] = $admin_role_id;

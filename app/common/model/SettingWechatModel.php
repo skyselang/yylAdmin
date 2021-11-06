@@ -17,7 +17,7 @@ class SettingWechatModel extends Model
 {
     // 表名
     protected $name = 'setting_wechat';
-    // 主键
+    // 表主键
     protected $pk = 'setting_wechat_id';
 
     /**

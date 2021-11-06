@@ -17,7 +17,7 @@ class GroupModel extends Model
 {
     // 表名
     protected $name = 'file_group';
-    // 主键
+    // 表主键
     protected $pk = 'group_id';
 
     /**

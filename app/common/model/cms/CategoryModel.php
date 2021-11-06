@@ -17,7 +17,7 @@ class CategoryModel extends Model
 {
     // 表名
     protected $name = 'cms_category';
-    // 主键
+    // 表主键
     protected $pk = 'category_id';
 
     /**

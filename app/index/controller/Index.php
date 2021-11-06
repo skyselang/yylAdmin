@@ -26,7 +26,7 @@ class Index
     public function index()
     {
         $data = IndexService::index();
-        $msg  = '后端安装成功，感谢使用，如有帮助，欢迎Star！';
+        $msg  = '后端安装成功，欢迎使用，如有帮助，敬请Star！';
 
         return success($data, $msg);
     }

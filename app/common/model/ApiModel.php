@@ -17,7 +17,7 @@ class ApiModel extends Model
 {
     // 表名
     protected $name = 'api';
-    // 主键
+    // 表主键
     protected $pk = 'api_id';
 
     /**

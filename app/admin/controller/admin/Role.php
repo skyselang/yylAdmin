@@ -91,7 +91,7 @@ class Role
         $param['role_name']      = Request::param('role_name/s', '');
         $param['role_desc']      = Request::param('role_desc/s', '');
         $param['role_sort']      = Request::param('role_sort/d', 200);
-        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
+        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
 
         validate(RoleValidate::class)->scene('add')->check($param);
 
@@ -111,7 +111,7 @@ class Role
         $param['role_name']      = Request::param('role_name/s', '');
         $param['role_desc']      = Request::param('role_desc/s', '');
         $param['role_sort']      = Request::param('role_sort/d', 200);
-        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
+        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
 
         validate(RoleValidate::class)->scene('edit')->check($param);
 

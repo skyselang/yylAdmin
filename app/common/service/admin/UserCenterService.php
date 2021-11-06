@@ -24,21 +24,9 @@ class UserCenterService
      */
     public static function info($admin_user_id)
     {
-        $admin_user = UserService::info($admin_user_id);
+        $data = UserService::info($admin_user_id);
 
-        $data['admin_user_id'] = $admin_user['admin_user_id'];
-        $data['avatar_id']     = $admin_user['avatar_id'];
-        $data['avatar_url']    = $admin_user['avatar_url'];
-        $data['username']      = $admin_user['username'];
-        $data['nickname']      = $admin_user['nickname'];
-        $data['email']         = $admin_user['email'];
-        $data['phone']         = $admin_user['phone'];
-        $data['create_time']   = $admin_user['create_time'];
-        $data['update_time']   = $admin_user['update_time'];
-        $data['login_time']    = $admin_user['login_time'];
-        $data['logout_time']   = $admin_user['logout_time'];
-        $data['is_delete']     = $admin_user['is_delete'];
-        $data['roles']         = $admin_user['roles'];
+        unset($data['password'], $data['admin_token'], $data['menu_ids']);
 
         return $data;
     }
@@ -53,7 +41,7 @@ class UserCenterService
     public static function edit($param)
     {
         $admin_user_id = $param['admin_user_id'];
-        
+
         unset($param['admin_user_id']);
 
         $param['update_time'] = datetime();
@@ -121,8 +109,6 @@ class UserCenterService
      */
     public static function log($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
-        $data = UserLogService::list($where, $page, $limit, $order, $field);
-
-        return $data;
+        return UserLogService::list($where, $page, $limit, $order, $field);
     }
 }

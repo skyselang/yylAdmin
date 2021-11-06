@@ -182,9 +182,7 @@ class UtilsService
      */
     public static function ipinfo($ip = '')
     {
-        $ipinfo = IpInfoUtils::info($ip);
-
-        return $ipinfo;
+        return IpInfoUtils::info($ip);
     }
 
     /**

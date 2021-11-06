@@ -17,6 +17,10 @@ use app\common\cache\admin\SettingCache;
 
 class SettingService
 {
+    // 表名
+    protected static $t_name = 'admin_setting';
+    // 表主键
+    protected static $t_pk = 'admin_setting_id';
     // 设置id
     private static $admin_setting_id = 1;
 
@@ -31,17 +35,17 @@ class SettingService
 
         $admin_setting = SettingCache::get($admin_setting_id);
         if (empty($admin_setting)) {
-            $admin_setting = Db::name('admin_setting')
-                ->where('admin_setting_id', $admin_setting_id)
+            $admin_setting = Db::name(self::$t_name)
+                ->where(self::$t_pk, $admin_setting_id)
                 ->find();
             if (empty($admin_setting)) {
-                $admin_setting['admin_setting_id'] = $admin_setting_id;
-                $admin_setting['create_time']      = datetime();
-                Db::name('admin_setting')
+                $admin_setting[self::$t_pk]  = $admin_setting_id;
+                $admin_setting['create_time'] = datetime();
+                Db::name(self::$t_name)
                     ->insert($admin_setting);
 
-                $admin_setting = Db::name('admin_setting')
-                    ->where('admin_setting_id', $admin_setting_id)
+                $admin_setting = Db::name(self::$t_name)
+                    ->where(self::$t_pk, $admin_setting_id)
                     ->find();
             }
 
@@ -146,8 +150,8 @@ class SettingService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('admin_setting')
-            ->where('admin_setting_id', $admin_setting_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_setting_id)
             ->update($param);
         if (empty($res)) {
             exception();
@@ -185,8 +189,8 @@ class SettingService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('admin_setting')
-            ->where('admin_setting_id', $admin_setting_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_setting_id)
             ->update($param);
         if (empty($res)) {
             exception();
@@ -224,8 +228,8 @@ class SettingService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('admin_setting')
-            ->where('admin_setting_id', $admin_setting_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_setting_id)
             ->update($param);
         if (empty($res)) {
             exception();
@@ -264,8 +268,8 @@ class SettingService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('admin_setting')
-            ->where('admin_setting_id', $admin_setting_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_setting_id)
             ->update($param);
         if (empty($res)) {
             exception();

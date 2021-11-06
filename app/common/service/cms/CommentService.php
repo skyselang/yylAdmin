@@ -15,8 +15,10 @@ use app\common\cache\cms\CommentCache;
 
 class CommentService
 {
-    // 留言表名
-    protected static $db_name = 'cms_comment';
+    // 表名
+    protected static $t_name = 'cms_comment';
+    // 表主键
+    protected static $t_pk = 'comment_id';
 
     /**
      * 留言列表
@@ -32,20 +34,20 @@ class CommentService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'comment_id,call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time';
+            $field = self::$t_pk . ',call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time';
         }
 
         if (empty($order)) {
-            $order = ['comment_id' => 'desc'];
+            $order = [self::$t_pk => 'desc'];
         }
 
-        $count = Db::name(self::$db_name)
+        $count = Db::name(self::$t_name)
             ->where($where)
-            ->count('comment_id');
+            ->count(self::$t_pk);
 
         $pages = ceil($count / $limit);
 
-        $list = Db::name(self::$db_name)
+        $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
             ->page($page)
@@ -54,13 +56,7 @@ class CommentService
             ->select()
             ->toArray();
 
-        $data['count'] = $count;
-        $data['pages'] = $pages;
-        $data['page']  = $page;
-        $data['limit'] = $limit;
-        $data['list']  = $list;
-
-        return $data;
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -74,8 +70,8 @@ class CommentService
     {
         $comment = CommentCache::get($comment_id);
         if (empty($comment)) {
-            $comment = Db::name(self::$db_name)
-                ->where('comment_id', $comment_id)
+            $comment = Db::name(self::$t_name)
+                ->where(self::$t_pk, $comment_id)
                 ->find();
             if (empty($comment)) {
                 exception('留言不存在：' . $comment_id);
@@ -83,7 +79,7 @@ class CommentService
             if (empty($comment['is_read'])) {
                 $update['is_read']   = 1;
                 $update['read_time'] = $comment['read_time'] = datetime();
-                Db::name(self::$db_name)->where('comment_id', $comment_id)->update($update);
+                Db::name(self::$t_name)->where(self::$t_pk, $comment_id)->update($update);
             }
         }
 
@@ -100,13 +96,13 @@ class CommentService
     public static function add($param)
     {
         $param['create_time'] = datetime();
-        $comment_id = Db::name(self::$db_name)
+        $comment_id = Db::name(self::$t_name)
             ->insertGetId($param);
         if (empty($comment_id)) {
             exception();
         }
 
-        $param['comment_id'] = $comment_id;
+        $param[self::$t_pk] = $comment_id;
 
         return $param;
     }
@@ -120,19 +116,19 @@ class CommentService
      */
     public static function edit($param)
     {
-        $comment_id = $param['comment_id'];
+        $comment_id = $param[self::$t_pk];
 
-        unset($param['comment_id']);
+        unset($param[self::$t_pk]);
 
         $param['update_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('comment_id', $comment_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $comment_id)
             ->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $param['comment_id'] = $comment_id;
+        $param[self::$t_pk] = $comment_id;
 
         return $param;
     }
@@ -146,13 +142,13 @@ class CommentService
      */
     public static function dele($comment)
     {
-        $comment_ids = array_column($comment, 'comment_id');
+        $comment_ids = array_column($comment, self::$t_pk);
 
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name(self::$db_name)
-            ->where('comment_id', 'in', $comment_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $comment_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -172,16 +168,15 @@ class CommentService
      */
     public static function isread($comment)
     {
-        $comment_ids = array_column($comment, 'comment_id');
+        $comment_ids = array_column($comment, self::$t_pk);
 
         $update['is_read']   = 1;
         $update['read_time'] = datetime();
 
-        $res = Db::name(self::$db_name)
-            ->where('comment_id', 'in', $comment_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $comment_ids)
             ->where('is_read', '=', 0)
             ->update($update);
-
         if (empty($res)) {
             exception();
         }
@@ -200,13 +195,13 @@ class CommentService
      */
     public static function recoverReco($comment)
     {
-        $comment_ids = array_column($comment, 'comment_id');
+        $comment_ids = array_column($comment, self::$t_pk);
 
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$db_name)
-            ->where('comment_id', 'in', $comment_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $comment_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -226,10 +221,10 @@ class CommentService
      */
     public static function recoverDele($comment)
     {
-        $comment_ids = array_column($comment, 'comment_id');
+        $comment_ids = array_column($comment, self::$t_pk);
 
-        $res = Db::name(self::$db_name)
-            ->where('comment_id', 'in', $comment_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $comment_ids)
             ->delete();
         if (empty($res)) {
             exception();
@@ -250,7 +245,7 @@ class CommentService
         $key   = 'field';
         $field = CommentCache::get($key);
         if (empty($field)) {
-            $sql = Db::name(self::$db_name)
+            $sql = Db::name(self::$t_name)
                 ->field('show COLUMNS')
                 ->fetchSql(true)
                 ->select();

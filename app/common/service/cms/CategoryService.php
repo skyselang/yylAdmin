@@ -16,9 +16,11 @@ use app\common\service\file\FileService;
 
 class CategoryService
 {
-    // 分类表名
-    protected static $db_name = 'cms_category';
-    // 分类缓存key
+    // 表名
+    protected static $t_name = 'cms_category';
+    // 表主键
+    protected static $t_pk = 'category_id';
+    // 缓存key
     protected static $all_key = 'all';
 
     /**
@@ -33,13 +35,13 @@ class CategoryService
         $key  = self::$all_key;
         $data = CategoryCache::get($key);
         if (empty($data)) {
-            $field = 'category_id,category_pid,category_name,sort,is_hide,create_time,update_time';
+            $field = self::$t_pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
 
             $where[] = ['is_delete', '=', 0];
 
-            $order = ['sort' => 'desc', 'category_id' => 'desc'];
+            $order = ['sort' => 'desc', self::$t_pk => 'desc'];
 
-            $list = Db::name(self::$db_name)
+            $list = Db::name(self::$t_name)
                 ->field($field)
                 ->where($where)
                 ->order($order)
@@ -70,8 +72,8 @@ class CategoryService
     {
         $category = CategoryCache::get($category_id);
         if (empty($category)) {
-            $category = Db::name(self::$db_name)
-                ->where('category_id', $category_id)
+            $category = Db::name(self::$t_name)
+                ->where(self::$t_pk, $category_id)
                 ->find();
             if (empty($category)) {
                 exception('分类不存在：' . $category_id);
@@ -97,7 +99,7 @@ class CategoryService
         $param['img_ids']     = file_ids($param['imgs']);
         $param['create_time'] = datetime();
 
-        $category_id = Db::name(self::$db_name)
+        $category_id = Db::name(self::$t_name)
             ->insertGetId($param);
         if (empty($category_id)) {
             exception();
@@ -105,7 +107,7 @@ class CategoryService
 
         CategoryCache::del(self::$all_key);
 
-        $param['category_id'] = $category_id;
+        $param[self::$t_pk] = $category_id;
 
         return $param;
     }
@@ -119,15 +121,15 @@ class CategoryService
      */
     public static function edit($param)
     {
-        $category_id = $param['category_id'];
+        $category_id = $param[self::$t_pk];
 
-        unset($param['category_id']);
+        unset($param[self::$t_pk]);
 
         $param['img_ids']     = file_ids($param['imgs']);
         $param['update_time'] = datetime();
 
-        $res = Db::name(self::$db_name)
-            ->where('category_id', $category_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $category_id)
             ->update($param);
         if (empty($res)) {
             exception();
@@ -136,7 +138,7 @@ class CategoryService
         CategoryCache::del(self::$all_key);
         CategoryCache::del($category_id);
 
-        $param['category_id'] = $category_id;
+        $param[self::$t_pk] = $category_id;
 
         return $param;
     }
@@ -150,13 +152,13 @@ class CategoryService
      */
     public static function dele($category)
     {
-        $category_ids = array_column($category, 'category_id');
+        $category_ids = array_column($category, self::$t_pk);
 
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name(self::$db_name)
-            ->where('category_id', 'in', $category_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $category_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -182,13 +184,13 @@ class CategoryService
      */
     public static function ishide($category, $is_hide)
     {
-        $category_ids = array_column($category, 'category_id');
+        $category_ids = array_column($category, self::$t_pk);
 
         $update['is_hide']     = $is_hide;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$db_name)
-            ->where('category_id', 'in', $category_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $category_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -218,7 +220,7 @@ class CategoryService
 
         foreach ($category as $k => $v) {
             if ($v['category_pid'] == $category_pid) {
-                $v['children'] = self::toTree($category, $v['category_id']);
+                $v['children'] = self::toTree($category, $v[self::$t_pk]);
                 $tree[] = $v;
             }
         }
@@ -235,22 +237,22 @@ class CategoryService
      */
     public static function checkCategoryName($data)
     {
-        $category_id   = isset($data['category_id']) ? $data['category_id'] : '';
+        $category_id   = isset($data[self::$t_pk]) ? $data[self::$t_pk] : '';
         $category_pid  = isset($data['category_pid']) ? $data['category_pid'] : 0;
         $category_name = $data['category_name'];
         if ($category_id) {
             if ($category_id == $category_pid) {
                 return '分类父级不能等于分类本身';
             }
-            $where[] = ['category_id', '<>', $category_id];
+            $where[] = [self::$t_pk, '<>', $category_id];
         }
 
         $where[] = ['category_pid', '=', $category_pid];
         $where[] = ['category_name', '=', $category_name];
         $where[] = ['is_delete', '=', 0];
 
-        $res = Db::name(self::$db_name)
-            ->field('category_id')
+        $res = Db::name(self::$t_name)
+            ->field(self::$t_pk)
             ->where($where)
             ->find();
         if ($res) {

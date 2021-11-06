@@ -17,7 +17,7 @@ class MenuModel extends Model
 {
     // 表名
     protected $name = 'admin_menu';
-    // 主键
+    // 表主键
     protected $pk = 'admin_menu_id';
 
     /**

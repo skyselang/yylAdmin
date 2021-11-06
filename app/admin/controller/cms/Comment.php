@@ -46,10 +46,10 @@ class Comment
 
         validate(CommentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
-        $where[] = ['is_delete', '=', 0];
         if ($search_field && $search_value) {
             if ($search_field == 'comment_id') {
-                $where[] = [$search_field, '=', $search_value];
+                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_read'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
@@ -65,6 +65,7 @@ class Comment
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
+        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {

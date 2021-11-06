@@ -29,7 +29,7 @@ function success($data = [], string $msg = '操作成功', int $code = 200)
 }
 
 /**
- * 错误返回
+ * 错误返回（调试用）
  *
  * @param string  $msg  错误提示
  * @param array   $data 错误数据
@@ -49,7 +49,7 @@ function error(string $msg = '操作失败', $data = [], int $code = 400)
 }
 
 /**
- * 抛出异常
+ * 错误返回（抛出异常）
  *
  * @param string  $msg  异常提示
  * @param integer $code 错误码
@@ -250,9 +250,7 @@ function datetime()
  */
 function str_trim($str, $char = ',')
 {
-    $str = trim($str, $char);
-
-    return $str;
+    return trim($str, $char);
 }
 
 /**
@@ -265,9 +263,7 @@ function str_trim($str, $char = ',')
  */
 function str_join($str, $char = ',')
 {
-    $str = $char . $str . $char;
-
-    return $str;
+    return $char . $str . $char;
 }
 
 /**

@@ -18,6 +18,11 @@ use app\common\utils\IpInfoUtils;
 
 class MemberLogService
 {
+    // 表名
+    protected static $t_name = 'member_log';
+    // 表主键
+    protected static $t_pk = 'member_log_id';
+
     /**
      * 会员日志列表
      *
@@ -32,20 +37,20 @@ class MemberLogService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'member_log_id,member_id,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = self::$t_pk . ',member_id,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
 
         if (empty($order)) {
-            $order = ['member_log_id' => 'desc'];
+            $order = [self::$t_pk => 'desc'];
         }
 
-        $count = Db::name('member_log')
+        $count = Db::name(self::$t_name)
             ->where($where)
-            ->count('member_log_id');
+            ->count(self::$t_pk);
 
-        $list = Db::name('member_log')
+        $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
             ->page($page)
@@ -78,13 +83,7 @@ class MemberLogService
             }
         }
 
-        $data['count'] = $count;
-        $data['pages'] = $pages;
-        $data['page']  = $page;
-        $data['limit'] = $limit;
-        $data['list']  = $list;
-
-        return $data;
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -98,8 +97,8 @@ class MemberLogService
     {
         $member_log = MemberLogCache::get($member_log_id);
         if (empty($member_log)) {
-            $member_log = Db::name('member_log')
-                ->where('member_log_id', $member_log_id)
+            $member_log = Db::name(self::$t_name)
+                ->where(self::$t_pk, $member_log_id)
                 ->find();
             if (empty($member_log)) {
                 exception('会员日志不存在：' . $member_log_id);
@@ -179,7 +178,7 @@ class MemberLogService
             $param['request_method']   = Request::method();
             $param['create_time']      = datetime();
 
-            Db::name('member_log')->strict(false)->insert($param);
+            Db::name(self::$t_name)->strict(false)->insert($param);
         }
     }
 
@@ -192,20 +191,20 @@ class MemberLogService
      */
     public static function edit($param = [])
     {
-        $member_log_id = $param['member_log_id'];
+        $member_log_id = $param[self::$t_pk];
 
-        unset($param['member_log_id']);
+        unset($param[self::$t_pk]);
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('member_log')
-            ->where('member_log_id', $member_log_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $member_log_id)
             ->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $param['member_log_id'] = $member_log_id;
+        $param[self::$t_pk] = $member_log_id;
 
         MemberLogCache::del($member_log_id);
 
@@ -224,14 +223,14 @@ class MemberLogService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name('member_log')
-            ->where('member_log_id', $member_log_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $member_log_id)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['member_log_id'] = $member_log_id;
+        $update[self::$t_pk] = $member_log_id;
 
         MemberLogCache::del($member_log_id);
 
@@ -310,7 +309,7 @@ class MemberLogService
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
         }
 
-        $res = Db::name('member_log')
+        $res = Db::name(self::$t_name)
             ->where($where)
             ->delete(true);
 
@@ -334,7 +333,7 @@ class MemberLogService
         if (empty($data)) {
             $where[] = ['is_delete', '=', 0];
             if ($date == 'total') {
-                $where[] = ['member_log_id', '>', 0];
+                $where[] = [self::$t_pk, '>', 0];
             } else {
                 if ($date == 'yesterday') {
                     $yesterday = DatetimeUtils::yesterday();
@@ -372,10 +371,10 @@ class MemberLogService
                 $where[] = ['create_time', '<=', $end_time];
             }
 
-            $data = Db::name('member_log')
-                ->field('member_log_id')
+            $data = Db::name(self::$t_name)
+                ->field(self::$t_pk)
                 ->where($where)
-                ->count('member_log_id');
+                ->count(self::$t_pk);
 
             MemberLogCache::set($key, $data);
         }
@@ -411,7 +410,7 @@ class MemberLogService
             $where[] = ['create_time', '<=', $end_time];
             $group   = "date_format(create_time,'%Y-%m-%d')";
 
-            $member_log = Db::name('member_log')
+            $member_log = Db::name(self::$t_name)
                 ->field($field)
                 ->where($where)
                 ->group($group)
@@ -489,8 +488,8 @@ class MemberLogService
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
 
-            $member_log = Db::name('member_log')
-                ->field($field . ', COUNT(member_log_id) as y_data')
+            $member_log = Db::name(self::$t_name)
+                ->field($field . ', COUNT(' . self::$t_pk . ') as y_data')
                 ->where($where)
                 ->group($group)
                 ->order('y_data desc')

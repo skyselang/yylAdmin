@@ -22,9 +22,7 @@ use app\common\service\TokenService;
  */
 function api_url()
 {
-    $api_url = app('http')->getName() . '/' . Request::pathinfo();
-
-    return $api_url;
+    return app('http')->getName() . '/' . Request::pathinfo();
 }
 
 /**
@@ -62,7 +60,6 @@ function api_is_disable($api_url = '')
     }
 
     $api_info = ApiService::info($api_url);
-
     if ($api_info['is_disable'] == 1) {
         return true;
     }
@@ -94,15 +91,15 @@ function api_is_unlogin($api_url = '')
 /**
  * 会员token是否已设置
  *
- * @return bool
+ * @return boolean
  */
 function member_token_has()
 {
     $tokne_info = SettingService::tokenInfo();
     $token_key  = $tokne_info['token_name'];
     $token_key  = strtolower($token_key);
-    $header     = Request::header();
 
+    $header = Request::header();
     if (isset($header[$token_key])) {
         return true;
     }
@@ -148,15 +145,14 @@ function member_token_verify($member_token = '')
 function member_id()
 {
     $member_token = member_token();
-    $member_id    = TokenService::memberId($member_token);
 
-    return $member_id;
+    return TokenService::memberId($member_token);
 }
 
 /**
  * 会员日志是否开启
  *
- * @return bool
+ * @return boolean
  */
 function member_log_switch()
 {

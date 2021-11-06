@@ -17,7 +17,7 @@ class UserModel extends Model
 {
     // 表名
     protected $name = 'admin_user';
-    // 主键
+    // 表主键
     protected $pk = 'admin_user_id';
 
     /**

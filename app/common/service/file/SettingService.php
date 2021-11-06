@@ -15,6 +15,10 @@ use app\common\cache\file\SettingCache;
 
 class SettingService
 {
+    // 表名
+    protected static $t_name = 'file_setting';
+    // 表主键
+    protected static $t_pk = 'setting_id';
     // 设置id
     private static $setting_id = 1;
 
@@ -29,19 +33,19 @@ class SettingService
 
         $file_setting = SettingCache::get($setting_id);
         if (empty($file_setting)) {
-            $file_setting = Db::name('file_setting')
-                ->where('setting_id', $setting_id)
+            $file_setting = Db::name(self::$t_name)
+                ->where(self::$t_pk, $setting_id)
                 ->find();
             if (empty($file_setting)) {
-                $file_setting['setting_id']  = $setting_id;
+                $file_setting[self::$t_pk]   = $setting_id;
                 $file_setting['storage']     = 'local';
                 $file_setting['create_time'] = datetime();
 
-                Db::name('file_setting')
+                Db::name(self::$t_name)
                     ->insert($file_setting);
 
-                $file_setting = Db::name('file_setting')
-                    ->where('setting_id', $setting_id)
+                $file_setting = Db::name(self::$t_name)
+                    ->where(self::$t_pk, $setting_id)
                     ->find();
             }
 
@@ -64,8 +68,8 @@ class SettingService
 
         $param['update_time'] = datetime();
 
-        $file_setting = Db::name('file_setting')
-            ->where('setting_id', $setting_id)
+        $file_setting = Db::name(self::$t_name)
+            ->where(self::$t_pk, $setting_id)
             ->update($param);
         if (empty($file_setting)) {
             exception();

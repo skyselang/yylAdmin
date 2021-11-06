@@ -17,7 +17,7 @@ class RoleModel extends Model
 {
     // 表名
     protected $name = 'admin_role';
-    // 主键
+    // 表主键
     protected $pk = 'admin_role_id';
 
     /**

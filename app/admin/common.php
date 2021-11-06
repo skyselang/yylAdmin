@@ -17,15 +17,12 @@ use app\common\service\admin\TokenService;
 /**
  * 菜单url获取
  * 应用/控制器/操作 
- * eg：admin/Index/index
- *
- * @return string
+ * 
+ * @return string eg：admin/Index/index
  */
 function menu_url()
 {
-    $menu_url = app('http')->getName() . '/' . Request::pathinfo();
-
-    return $menu_url;
+    return app('http')->getName() . '/' . Request::pathinfo();
 }
 
 /**
@@ -63,7 +60,6 @@ function menu_is_disable($menu_url = '')
     }
 
     $menu_info = MenuService::info($menu_url);
-
     if ($menu_info['is_disable'] == 1) {
         return true;
     }
@@ -118,7 +114,7 @@ function menu_is_unlogin($menu_url = '')
 /**
  * 用户token是否已设置
  *
- * @return bool
+ * @return boolean
  */
 function admin_token_has()
 {
@@ -127,7 +123,6 @@ function admin_token_has()
     $token_name = $token_info['token_name'];
     $token_name = strtolower($token_name);
     $header     = Request::header();
-
     if (isset($header[$token_name])) {
         return true;
     }
@@ -143,11 +138,9 @@ function admin_token_has()
 function admin_token()
 {
     $token_info = SettingService::tokenInfo();
+    $token_name = $token_info['token_name'];
 
-    $token_name  = $token_info['token_name'];
-    $admin_token = Request::header($token_name, '');
-
-    return $admin_token;
+    return Request::header($token_name, '');
 }
 
 /**
@@ -157,10 +150,9 @@ function admin_token()
  */
 function admin_user_id()
 {
-    $admin_token   = admin_token();
-    $admin_user_id = TokenService::adminUserId($admin_token);
+    $admin_token = admin_token();
 
-    return $admin_user_id;
+    return TokenService::adminUserId($admin_token);
 }
 
 /**
@@ -168,7 +160,7 @@ function admin_user_id()
  *
  * @param integer $admin_user_id 用户id
  * 
- * @return bool
+ * @return boolean
  */
 function admin_is_super($admin_user_id = 0)
 {
@@ -180,7 +172,6 @@ function admin_is_super($admin_user_id = 0)
     if (empty($admin_super_ids)) {
         return false;
     }
-
     if (in_array($admin_user_id, $admin_super_ids)) {
         return true;
     } else {
@@ -191,7 +182,7 @@ function admin_is_super($admin_user_id = 0)
 /**
  * 日志记录是否开启
  *
- * @return bool
+ * @return boolean
  */
 function admin_log_switch()
 {

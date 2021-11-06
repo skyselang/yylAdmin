@@ -16,8 +16,10 @@ use app\common\service\file\FileService;
 
 class ContentService
 {
-    // 内容分类表名
-    protected static $db_name = 'cms_content';
+    // 表名
+    protected static $t_name = 'cms_content';
+    // 表主键
+    protected static $t_pk = 'content_id';
 
     /**
      * 内容列表
@@ -33,18 +35,18 @@ class ContentService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = 'content_id,category_id,name,img_ids,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
+            $field = self::$t_pk . ',category_id,name,img_ids,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', 'content_id' => 'desc'];
+            $order = ['sort' => 'desc', self::$t_pk => 'desc'];
         }
 
-        $count = Db::name(self::$db_name)
+        $count = Db::name(self::$t_name)
             ->where($where)
-            ->count('content_id');
+            ->count(self::$t_pk);
 
-        $list = Db::name(self::$db_name)
+        $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
             ->page($page)
@@ -76,13 +78,7 @@ class ContentService
             }
         }
 
-        $data['count'] = $count;
-        $data['pages'] = $pages;
-        $data['page']  = $page;
-        $data['limit'] = $limit;
-        $data['list']  = $list;
-
-        return $data;
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -96,8 +92,8 @@ class ContentService
     {
         $content = ContentCache::get($content_id);
         if (empty($content)) {
-            $where[] = ['content_id', '=', $content_id];
-            $content = Db::name(self::$db_name)
+            $where[] = [self::$t_pk, '=', $content_id];
+            $content = Db::name(self::$t_name)
                 ->where($where)
                 ->find();
             if (empty($content)) {
@@ -116,12 +112,12 @@ class ContentService
 
         // 点击量
         $gate = 10;
-        $key  = $content['content_id'] . 'hits';
+        $key  = $content[self::$t_pk] . 'hits';
         $hits = ContentCache::get($key);
         if ($hits) {
             if ($hits >= $gate) {
-                $res = Db::name(self::$db_name)
-                    ->where('content_id', '=', $content['content_id'])
+                $res = Db::name(self::$t_name)
+                    ->where(self::$t_pk, '=', $content[self::$t_pk])
                     ->inc('hits', $hits)
                     ->update();
                 if ($res) {
@@ -151,13 +147,13 @@ class ContentService
         $param['video_ids']   = file_ids($param['videos']);
         $param['create_time'] = datetime();
 
-        $content_id = Db::name(self::$db_name)
+        $content_id = Db::name(self::$t_name)
             ->insertGetId($param);
         if (empty($content_id)) {
             exception();
         }
 
-        $param['content_id'] = $content_id;
+        $param[self::$t_pk] = $content_id;
 
         return $param;
     }
@@ -171,15 +167,15 @@ class ContentService
      */
     public static function edit($param)
     {
-        $content_id = $param['content_id'];
-        unset($param['content_id']);
+        $content_id = $param[self::$t_pk];
+        unset($param[self::$t_pk]);
 
         $param['img_ids']     = file_ids($param['imgs']);
         $param['file_ids']    = file_ids($param['files']);
         $param['video_ids']   = file_ids($param['videos']);
         $param['update_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('content_id', $content_id)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $content_id)
             ->update($param);
         if (empty($res)) {
             exception();
@@ -187,7 +183,7 @@ class ContentService
 
         ContentCache::del($content_id);
 
-        $param['content_id'] = $content_id;
+        $param[self::$t_pk] = $content_id;
 
         return $param;
     }
@@ -201,12 +197,12 @@ class ContentService
      */
     public static function dele($content)
     {
-        $content_ids = array_column($content, 'content_id');
+        $content_ids = array_column($content, self::$t_pk);
 
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('content_id', 'in', $content_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -231,12 +227,12 @@ class ContentService
      */
     public static function istop($content, $is_top = 0)
     {
-        $content_ids = array_column($content, 'content_id');
+        $content_ids = array_column($content, self::$t_pk);
 
         $update['is_top']      = $is_top;
         $update['update_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('content_id', 'in', $content_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -261,12 +257,12 @@ class ContentService
      */
     public static function ishot($content, $is_hot = 0)
     {
-        $content_ids = array_column($content, 'content_id');
+        $content_ids = array_column($content, self::$t_pk);
 
         $update['is_hot']      = $is_hot;
         $update['update_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('content_id', 'in', $content_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -291,12 +287,12 @@ class ContentService
      */
     public static function isrec($content, $is_rec = 0)
     {
-        $content_ids = array_column($content, 'content_id');
+        $content_ids = array_column($content, self::$t_pk);
 
         $update['is_rec']      = $is_rec;
         $update['update_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('content_id', 'in', $content_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -321,12 +317,12 @@ class ContentService
      */
     public static function ishide($content, $is_hide = 0)
     {
-        $content_ids = array_column($content, 'content_id');
+        $content_ids = array_column($content, self::$t_pk);
 
         $update['is_hide']     = $is_hide;
         $update['update_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('content_id', 'in', $content_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -351,17 +347,17 @@ class ContentService
      */
     public static function prev($content_id, $is_category = 0)
     {
-        $where[] = ['content_id', '<', $content_id];
+        $where[] = [self::$t_pk, '<', $content_id];
         $where[] = ['is_delete', '=', 0];
         if ($is_category) {
             $content = self::info($content_id);
             $where[] = ['category_id', '=', $content['category_id']];
         }
 
-        $content = Db::name(self::$db_name)
+        $content = Db::name(self::$t_name)
             ->field('content_id,name')
             ->where($where)
-            ->order('content_id', 'desc')
+            ->order(self::$t_pk, 'desc')
             ->find();
         if (empty($content)) {
             return [];
@@ -380,17 +376,17 @@ class ContentService
      */
     public static function next($content_id, $is_category = 0)
     {
-        $where[] = ['content_id', '>', $content_id];
+        $where[] = [self::$t_pk, '>', $content_id];
         $where[] = ['is_delete', '=', 0];
         if ($is_category) {
             $content = self::info($content_id);
             $where[] = ['category_id', '=', $content['category_id']];
         }
 
-        $content = Db::name(self::$db_name)
+        $content = Db::name(self::$t_name)
             ->field('content_id,name')
             ->where($where)
-            ->order('content_id', 'asc')
+            ->order(self::$t_pk, 'asc')
             ->find();
         if (empty($content)) {
             return [];
@@ -408,12 +404,12 @@ class ContentService
      */
     public static function recoverReco($content)
     {
-        $content_ids = array_column($content, 'content_id');
+        $content_ids = array_column($content, self::$t_pk);
 
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
-        $res = Db::name(self::$db_name)
-            ->where('content_id', 'in', $content_ids)
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -437,9 +433,9 @@ class ContentService
      */
     public static function recoverDele($content)
     {
-        $content_ids = array_column($content, 'content_id');
-        $res = Db::name(self::$db_name)
-            ->where('content_id', 'in', $content_ids)
+        $content_ids = array_column($content, self::$t_pk);
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
             ->delete();
         if (empty($res)) {
             exception();
@@ -464,7 +460,7 @@ class ContentService
         $key   = 'field';
         $field = ContentCache::get($key);
         if (empty($field)) {
-            $sql = Db::name(self::$db_name)
+            $sql = Db::name(self::$t_name)
                 ->field('show COLUMNS')
                 ->fetchSql(true)
                 ->select();
@@ -513,7 +509,7 @@ class ContentService
 
             $count = Db::name('cms_content')
                 ->where('is_delete', 0)
-                ->count('content_id');
+                ->count(self::$t_pk);
 
             $category = Db::name('cms_category')
                 ->field('category_id,category_name')
@@ -526,7 +522,7 @@ class ContentService
                 $temp['s'] = Db::name('cms_content')
                     ->where('category_id', $v['category_id'])
                     ->where('is_delete', 0)
-                    ->count('content_id');
+                    ->count(self::$t_pk);
                 $xs_data[] = $temp;
             }
 

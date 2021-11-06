@@ -17,7 +17,7 @@ class FileModel extends Model
 {
     // 表名
     protected $name = 'file';
-    // 主键
+    // 表主键
     protected $pk = 'file_id';
 
     /**

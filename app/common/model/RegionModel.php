@@ -17,7 +17,7 @@ class RegionModel extends Model
 {
     // 表名
     protected $name = 'region';
-    // 主键
+    // 表主键
     protected $pk = 'region_id';
 
     /**

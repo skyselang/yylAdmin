@@ -178,8 +178,8 @@ class User
         if (Request::isGet()) {
             $data = UserService::rule($param);
         } else {
-            $param['admin_role_ids'] = Request::param('admin_role_ids/a', []);
-            $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', []);
+            $param['admin_role_ids'] = Request::param('admin_role_ids/a', '');
+            $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
 
             $data = UserService::rule($param, 'post');
         }

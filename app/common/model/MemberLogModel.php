@@ -17,7 +17,7 @@ class MemberLogModel extends Model
 {
     // 表名
     protected $name = 'Member_log';
-    // 主键
+    // 表主键
     protected $pk = 'member_log_id';
 
     /**

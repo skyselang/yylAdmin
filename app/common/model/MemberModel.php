@@ -17,7 +17,7 @@ class MemberModel extends Model
 {
     // 表名
     protected $name = 'member';
-    // 主键
+    // 表主键
     protected $pk = 'member_id';
 
     /**
