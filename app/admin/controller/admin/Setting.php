@@ -18,7 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("设置管理")
  * @Apidoc\Group("adminSystem")
- * @Apidoc\Sort("720")
+ * @Apidoc\Sort("710")
  */
 class Setting
 {
@@ -128,7 +128,7 @@ class Setting
     }
 
     /**
-     * @Apidoc\Title("API设置信息")
+     * @Apidoc\Title("接口设置信息")
      * @Apidoc\Returned(ref="app\common\model\admin\SettingModel\apiInfoParam")
      */
     public function apiInfo()
@@ -139,7 +139,7 @@ class Setting
     }
 
     /**
-     * @Apidoc\Title("API设置修改")
+     * @Apidoc\Title("接口设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\admin\SettingModel\apiInfoParam")
      */
@@ -151,6 +151,34 @@ class Setting
         validate(SettingValidate::class)->scene('api_edit')->check($param);
 
         $data = SettingService::apiEdit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("系统设置信息")
+     * @Apidoc\Returned(ref="app\common\model\admin\SettingModel\systemInfoParam")
+     */
+    public function systemInfo()
+    {
+        $data = SettingService::systemInfo();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("系统设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\admin\SettingModel\systemInfoParam")
+     */
+    public function systemEdit()
+    {
+        $param['logo_id']     = Request::param('logo_id/d', 0);
+        $param['login_bg_id'] = Request::param('login_bg_id/d', 0);
+        $param['system_name'] = Request::param('system_name/s', '');
+        $param['page_title']  = Request::param('page_title/s', '');
+
+        $data = SettingService::systemEdit($param);
 
         return success($data);
     }

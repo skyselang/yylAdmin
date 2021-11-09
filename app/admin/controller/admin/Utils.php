@@ -18,7 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("实用工具")
  * @Apidoc\Group("adminSystem")
- * @Apidoc\Sort("980")
+ * @Apidoc\Sort("730")
  */
 class Utils
 {

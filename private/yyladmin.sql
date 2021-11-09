@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 29/10/2021 18:07:00
+ Date: 09/11/2021 18:26:26
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 427 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 431 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -247,6 +247,10 @@ INSERT INTO `yyl_admin_menu` VALUES (423, 421, '文件设置修改', 'admin/file
 INSERT INTO `yyl_admin_menu` VALUES (424, 1, '总数统计', 'admin/Index/count', 200, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (425, 156, '会员统计', '', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (426, 123, '会员统计', 'admin/Member/stat', 100, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (427, 188, '系统设置', '', 100, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (428, 427, '系统设置添加', 'admin/admin.Setting/systemInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (429, 427, '系统设置修改', 'admin/admin.Setting/systemEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (430, 111, '设置信息', 'admin/admin.Login/setting', 200, 0, 0, 1, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -288,6 +292,10 @@ CREATE TABLE `yyl_admin_setting`  (
   `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录1开启0关闭',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
+  `logo_id` int(11) NULL DEFAULT 0 COMMENT 'logo图片id',
+  `login_bg_id` int(11) NULL DEFAULT 0 COMMENT '登录背景图id',
+  `system_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '系统名称',
+  `page_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '页面标题',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE,
@@ -329,7 +337,7 @@ CREATE TABLE `yyl_admin_user`  (
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `email`(`email`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yyl_admin_user
@@ -339,6 +347,7 @@ INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e1
 INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', 'demo', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (5, ',2,', ',,', 'php', '拍簧片', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (6, ',,', ',,', 'test', 'test', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_user_log
@@ -653,6 +662,7 @@ CREATE TABLE `yyl_file_setting`  (
   `other_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '30' COMMENT '允许上传的其它文件大小，单位MB',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
   INDEX `setting_cms_id`(`setting_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件设置' ROW_FORMAT = COMPACT;

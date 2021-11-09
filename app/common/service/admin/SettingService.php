@@ -14,6 +14,7 @@ use think\facade\Db;
 use think\facade\Cache;
 use app\common\cache\admin\UserCache;
 use app\common\cache\admin\SettingCache;
+use app\common\service\file\FileService;
 
 class SettingService
 {
@@ -39,7 +40,7 @@ class SettingService
                 ->where(self::$t_pk, $admin_setting_id)
                 ->find();
             if (empty($admin_setting)) {
-                $admin_setting[self::$t_pk]  = $admin_setting_id;
+                $admin_setting[self::$t_pk]   = $admin_setting_id;
                 $admin_setting['create_time'] = datetime();
                 Db::name(self::$t_name)
                     ->insert($admin_setting);
@@ -49,10 +50,45 @@ class SettingService
                     ->find();
             }
 
+            $admin_setting['logo_url'] = '';
+            if ($admin_setting['logo_id']) {
+                $admin_setting['logo_url'] = FileService::fileUrl($admin_setting['logo_id']);
+            }
+
+            $admin_setting['login_bg_url'] = '';
+            if ($admin_setting['login_bg_id']) {
+                $admin_setting['login_bg_url'] = FileService::fileUrl($admin_setting['login_bg_id']);
+            }
+
             SettingCache::set($admin_setting_id, $admin_setting);
         }
 
         return $admin_setting;
+    }
+
+    /**
+     * 设置修改
+     *
+     * @param array $param
+     *
+     * @return boolean|Exception
+     */
+    public static function edit($param)
+    {
+        $admin_setting_id = self::$admin_setting_id;
+
+        $param['update_time'] = datetime();
+
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, $admin_setting_id)
+            ->update($param);
+        if (empty($res)) {
+            exception();
+        }
+
+        SettingCache::del($admin_setting_id);
+
+        return $res;
     }
 
     /**
@@ -146,18 +182,7 @@ class SettingService
      */
     public static function tokenEdit($param)
     {
-        $admin_setting_id = self::$admin_setting_id;
-
-        $param['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        SettingCache::del($admin_setting_id);
+        self::edit($param);
 
         return $param;
     }
@@ -185,18 +210,7 @@ class SettingService
      */
     public static function captchaEdit($param)
     {
-        $admin_setting_id = self::$admin_setting_id;
-
-        $param['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        SettingCache::del($admin_setting_id);
+        self::edit($param);
 
         return $param;
     }
@@ -224,18 +238,7 @@ class SettingService
      */
     public static function logEdit($param)
     {
-        $admin_setting_id = self::$admin_setting_id;
-
-        $param['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        SettingCache::del($admin_setting_id);
+        self::edit($param);
 
         return $param;
     }
@@ -247,10 +250,10 @@ class SettingService
      */
     public static function apiInfo()
     {
-        $admin_setting = self::info();
+        $setting = self::info();
 
-        $data['api_rate_num']  = $admin_setting['api_rate_num'];
-        $data['api_rate_time'] = $admin_setting['api_rate_time'];
+        $data['api_rate_num']  = $setting['api_rate_num'];
+        $data['api_rate_time'] = $setting['api_rate_time'];
 
         return $data;
     }
@@ -258,24 +261,45 @@ class SettingService
     /**
      * 接口设置修改
      *
-     * @param array $param API信息
+     * @param array $param 接口设置信息
      *
      * @return array
      */
     public static function apiEdit($param)
     {
-        $admin_setting_id = self::$admin_setting_id;
+        self::edit($param);
 
-        $param['update_time'] = datetime();
+        return $param;
+    }
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
+    /**
+     * 系统设置信息
+     *
+     * @return array
+     */
+    public static function systemInfo()
+    {
+        $setting = self::info();
+
+        $data = [];
+        $field = ['logo_id', 'logo_url', 'login_bg_id', 'login_bg_url', 'system_name', 'page_title'];
+        foreach ($field as $k => $v) {
+            $data[$v] = $setting[$v];
         }
 
-        SettingCache::del($admin_setting_id);
+        return $data;
+    }
+
+    /**
+     * 系统设置修改
+     *
+     * @param array $param 系统设置信息
+     *
+     * @return array
+     */
+    public static function systemEdit($param)
+    {
+        self::edit($param);
 
         return $param;
     }

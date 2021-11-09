@@ -21,6 +21,13 @@ class SettingModel extends Model
     protected $pk = 'admin_setting_id';
 
     /**
+     * 
+     */
+    public function infoReturn()
+    {
+    }
+
+    /**
      * @Apidoc\Field("token_name,token_key,token_exp")
      */
     public function tokenInfoParam()
@@ -45,6 +52,14 @@ class SettingModel extends Model
      * @Apidoc\Field("api_rate_num,api_rate_time")
      */
     public function apiInfoParam()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("logo_id,system_name,page_title")
+     * @Apidoc\AddField("logo_url", type="string", require=false, default="", desc="logo链接")
+     */
+    public function systemInfoParam()
     {
     }
 }

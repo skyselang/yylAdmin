@@ -42,6 +42,25 @@ class Login
     }
 
     /**
+     * @Apidoc\Title("设置")
+     * @Apidoc\Method("GET")
+     * @Apidoc\Returned(ref="app\common\model\admin\SettingModel\infoReturn")
+     */
+    public function setting()
+    {
+        $captcha = SettingService::captchaInfo();
+        if ($captcha['captcha_switch']) {
+            $captcha = CaptchaUtils::create();
+        }
+
+        $system = SettingService::systemInfo();
+
+        $data = array_merge($system, $captcha);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("登录")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\loginParam")

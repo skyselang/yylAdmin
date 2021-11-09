@@ -28,7 +28,7 @@ class RegionModel extends Model
     }
 
     /**
-     * @Apidoc\withoutField("region_level,is_delete,create_time,update_time,delete_time")
+     * @Apidoc\WithoutField("region_level,is_delete,create_time,update_time,delete_time")
      */
     public function listReturn()
     {
@@ -42,14 +42,14 @@ class RegionModel extends Model
     }
 
     /**
-     * @Apidoc\withoutField("region_id,is_delete,create_time,update_time,delete_time")
+     * @Apidoc\WithoutField("region_id,is_delete,create_time,update_time,delete_time")
      */
     public function addParam()
     {
     }
 
     /**
-     * @Apidoc\withoutField("is_delete,create_time,update_time,delete_time")
+     * @Apidoc\WithoutField("is_delete,create_time,update_time,delete_time")
      */
     public function editParam()
     {
