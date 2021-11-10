@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 09/11/2021 18:26:26
+ Date: 10/11/2021 18:47:18
 */
 
 SET NAMES utf8mb4;
@@ -248,7 +248,7 @@ INSERT INTO `yyl_admin_menu` VALUES (424, 1, '总数统计', 'admin/Index/count'
 INSERT INTO `yyl_admin_menu` VALUES (425, 156, '会员统计', '', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (426, 123, '会员统计', 'admin/Member/stat', 100, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (427, 188, '系统设置', '', 100, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (428, 427, '系统设置添加', 'admin/admin.Setting/systemInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (428, 427, '系统设置信息', 'admin/admin.Setting/systemInfo', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (429, 427, '系统设置修改', 'admin/admin.Setting/systemEdit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (430, 111, '设置信息', 'admin/admin.Login/setting', 200, 0, 0, 1, 0, NULL, NULL, NULL);
 
@@ -293,9 +293,10 @@ CREATE TABLE `yyl_admin_setting`  (
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
   `logo_id` int(11) NULL DEFAULT 0 COMMENT 'logo图片id',
+  `favicon_id` int(11) NULL DEFAULT 0 COMMENT 'favicon图标id',
   `login_bg_id` int(11) NULL DEFAULT 0 COMMENT '登录背景图id',
-  `system_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '系统名称',
-  `page_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '页面标题',
+  `system_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin' COMMENT '系统简称',
+  `page_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin基于ThinkPHP6和Vue2极简后台管理系统' COMMENT '页面标题',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE,
@@ -650,7 +651,7 @@ CREATE TABLE `yyl_file_setting`  (
   `baidu_bucket` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，Bucket 名称',
   `baidu_endpoint` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，所属地域',
   `baidu_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '百度云BOS，官方域名',
-  `image_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'jpg,png,jpeg' COMMENT '允许上传的图片后缀，多个逗号\",\"隔开',
+  `image_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'jpg,png,jpeg,ico' COMMENT '允许上传的图片后缀，多个逗号\",\"隔开',
   `image_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '1' COMMENT '允许上传的图片大小，单位MB',
   `video_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'mp4,avi,mkv' COMMENT '允许上传的视频后缀，多个逗号\",\"隔开',
   `video_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '50' COMMENT '允许上传的视频大小，单位MB',

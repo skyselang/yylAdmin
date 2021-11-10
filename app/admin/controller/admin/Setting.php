@@ -174,6 +174,7 @@ class Setting
     public function systemEdit()
     {
         $param['logo_id']     = Request::param('logo_id/d', 0);
+        $param['favicon_id']  = Request::param('favicon_id/d', 0);
         $param['login_bg_id'] = Request::param('login_bg_id/d', 0);
         $param['system_name'] = Request::param('system_name/s', '');
         $param['page_title']  = Request::param('page_title/s', '');

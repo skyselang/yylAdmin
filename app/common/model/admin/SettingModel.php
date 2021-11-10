@@ -56,8 +56,10 @@ class SettingModel extends Model
     }
 
     /**
-     * @Apidoc\Field("logo_id,system_name,page_title")
+     * @Apidoc\Field("logo_id,favicon_id,login_bg_id,system_name,page_title")
      * @Apidoc\AddField("logo_url", type="string", require=false, default="", desc="logo链接")
+     * @Apidoc\AddField("favicon_url", type="string", require=false, default="", desc="favicon链接")
+     * @Apidoc\AddField("login_bg_url", type="string", require=false, default="", desc="登录背景图链接")
      */
     public function systemInfoParam()
     {

@@ -55,6 +55,13 @@ class SettingService
                 $admin_setting['logo_url'] = FileService::fileUrl($admin_setting['logo_id']);
             }
 
+            $admin_setting['favicon_url'] = '';
+            if ($admin_setting['favicon_id']) {
+                $admin_setting['favicon_url'] = FileService::fileUrl($admin_setting['favicon_id']);
+            } else {
+                $admin_setting['favicon_url'] = $admin_setting['logo_url'];
+            }
+
             $admin_setting['login_bg_url'] = '';
             if ($admin_setting['login_bg_id']) {
                 $admin_setting['login_bg_url'] = FileService::fileUrl($admin_setting['login_bg_id']);
@@ -282,7 +289,7 @@ class SettingService
         $setting = self::info();
 
         $data = [];
-        $field = ['logo_id', 'logo_url', 'login_bg_id', 'login_bg_url', 'system_name', 'page_title'];
+        $field = ['logo_id', 'logo_url', 'favicon_id', 'favicon_url', 'login_bg_id', 'login_bg_url', 'system_name', 'page_title'];
         foreach ($field as $k => $v) {
             $data[$v] = $setting[$v];
         }
