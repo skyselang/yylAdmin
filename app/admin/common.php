@@ -109,8 +109,6 @@ function menu_is_unlogin($menu_url = '')
     return false;
 }
 
-
-
 /**
  * 用户token是否已设置
  *

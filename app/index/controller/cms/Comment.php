@@ -43,7 +43,7 @@ class Comment
 
         $comment = CommentCache::get($param['mobile']);
         if ($comment) {
-            return error('请勿重复提交');
+            exception('请勿重复提交');
         } else {
             CommentCache::set($param['mobile'], $param['call'], 10);
         }

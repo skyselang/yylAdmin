@@ -533,9 +533,10 @@ class ContentService
                 $s_data[] = $v['s'];
             }
 
-            $data['count']  = $count;
-            $data['x_data'] = $x_data;
-            $data['s_data'] = $s_data;
+            $data['category'] = count($category);
+            $data['count']    = $count;
+            $data['x_data']   = $x_data;
+            $data['s_data']   = $s_data;
 
             ContentCache::set($key, $data);
         }

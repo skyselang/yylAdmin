@@ -19,7 +19,7 @@ use think\facade\Request;
  * 
  * @return json
  */
-function success($data = [], string $msg = '操作成功', int $code = 200)
+function success($data = [], $msg = '操作成功', $code = 200)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -29,15 +29,28 @@ function success($data = [], string $msg = '操作成功', int $code = 200)
 }
 
 /**
- * 错误返回（调试用）
+ * 错误返回（抛出异常）
  *
  * @param string  $msg  错误提示
+ * @param integer $code 错误码
+ * 
+ * @return Exception
+ */
+function exception($msg = '操作失败', $code = 400)
+{
+    throw new \think\Exception($msg, $code);
+}
+
+/**
+ * 错误返回（调试时用）
+ *
  * @param array   $data 错误数据
+ * @param string  $msg  错误提示
  * @param integer $code 错误码
  * 
  * @return json
  */
-function error(string $msg = '操作失败', $data = [], int $code = 400)
+function error($data = [], $msg = '操作失败',  $code = 400)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -46,19 +59,6 @@ function error(string $msg = '操作失败', $data = [], int $code = 400)
     print_r(json_encode($res, JSON_UNESCAPED_UNICODE));
 
     exit;
-}
-
-/**
- * 错误返回（抛出异常）
- *
- * @param string  $msg  异常提示
- * @param integer $code 错误码
- * 
- * @return Exception
- */
-function exception(string $msg = '操作失败', int $code = 400)
-{
-    throw new \think\Exception($msg, $code);
 }
 
 /**
