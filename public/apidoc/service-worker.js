@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.81a1e1ace18561c2480b75be0d97430a.js"
+  "precache-manifest.08f2376f0b4063f131beb2bbe03eb657.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "apidoc"});

@@ -14,6 +14,10 @@ const config = {
     // 多个可切换的host
     HOSTS: [],
   },
+  MENU: {
+    SHOWURL: false,
+    WIDTH: 300,
+  },
   // 多语言
   LANG: [
     {
