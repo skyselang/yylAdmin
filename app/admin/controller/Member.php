@@ -94,6 +94,11 @@ class Member
      * @Apidoc\Title("会员添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\MemberModel\addParam")
+     * @Apidoc\Param("username",type="string",mock="@string('lower', 6, 12)")
+     * @Apidoc\Param("nickname",type="string",mock="@cname")
+     * @Apidoc\Param("password",type="string",mock="@string('lower', 6)")
+     * @Apidoc\Param("phone",type="string",mock="@string('number', 11)")
+     * @Apidoc\Param("email",type="string",mock="@email")
      */
     public function add()
     {

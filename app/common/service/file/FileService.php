@@ -150,7 +150,7 @@ class FileService
             ->where('file_hash', '=', $file_hash)
             ->find();
         if ($file_exist) {
-            $file_update[self::$t_pk]    = $file_exist[self::$t_pk];
+            $file_update[self::$t_pk]  = $file_exist[self::$t_pk];
             $file_update['storage']    = $param['storage'];
             $file_update['domain']     = $param['domain'];
             $file_update['is_disable'] = 0;
@@ -357,14 +357,12 @@ class FileService
      */
     public static function fileUrl($file_id)
     {
-        $file_url = '';
-
         $file = self::info($file_id);
         if ($file) {
-            $file_url = $file['file_url'];
+            return $file['file_url'];
         }
 
-        return $file_url;
+        return '';
     }
 
     /**
@@ -517,9 +515,21 @@ class FileService
             $data['count'] = Db::name(self::$t_name)->where('is_delete', 0)->count(self::$t_pk);
 
             $file_type = self::fileType();
+            $file_count = Db::name(self::$t_name)
+                ->field('file_type,count(file_type) as file_count')
+                ->where('is_delete', 0)
+                ->group('file_type')
+                ->select()
+                ->toArray();
             foreach ($file_type as $k => $v) {
+                $temp = [];
                 $temp['name']  = $v;
-                $temp['value'] = Db::name(self::$t_name)->where('file_type', $k)->where('is_delete', 0)->count(self::$t_pk);
+                $temp['value'] = 0;
+                foreach ($file_count as $kf => $vf) {
+                    if ($k == $vf['file_type']) {
+                        $temp['value'] = $vf['file_count'];
+                    }
+                }
                 $data['data'][] = $temp;
             }
 

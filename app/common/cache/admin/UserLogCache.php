@@ -17,66 +17,50 @@ class UserLogCache
     /**
      * 缓存key
      *
-     * @param int|string $admin_user_log_id 日志id、统计时间
+     * @param mixed $admin_user_log_id 日志id、统计时间
      * 
      * @return string
      */
     public static function key($admin_user_log_id)
     {
-        $key = 'admin_user_log:' . $admin_user_log_id;
-
-        return $key;
+        return 'admin_user_log:' . $admin_user_log_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int|string $admin_user_log_id 日志id、统计时间
-     * @param array      $admin_user_log    日志信息
-     * @param int|null   $ttl               有效时间（秒）0永久
+     * @param mixed   $admin_user_log_id 日志id、统计时间
+     * @param array   $admin_user_log    日志信息
+     * @param integer $ttl               有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($admin_user_log_id, $admin_user_log, $ttl = null)
+    public static function set($admin_user_log_id, $admin_user_log, $ttl = 18000)
     {
-        $key = self::key($admin_user_log_id);
-        $val = $admin_user_log;
-        if ($ttl === null) {
-            $ttl = 0.5 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($admin_user_log_id), $admin_user_log, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int|string $admin_user_log_id 日志id、统计时间
+     * @param mixed $admin_user_log_id 日志id、统计时间
      * 
      * @return array 日志信息
      */
     public static function get($admin_user_log_id)
     {
-        $key = self::key($admin_user_log_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($admin_user_log_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int|string $admin_user_log_id 日志id、统计时间
+     * @param mixed $admin_user_log_id 日志id、统计时间
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($admin_user_log_id)
     {
-        $key = self::key($admin_user_log_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($admin_user_log_id));
     }
 }

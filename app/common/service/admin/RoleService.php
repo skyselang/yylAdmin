@@ -13,6 +13,7 @@ namespace app\common\service\admin;
 use think\facade\Db;
 use app\common\cache\admin\RoleCache;
 use app\common\cache\admin\UserCache;
+use app\common\model\admin\UserModel;
 
 class RoleService
 {
@@ -263,7 +264,8 @@ class RoleService
         $update['admin_role_ids'] = $admin_role_ids;
         $update['update_time']    = datetime();
 
-        $res = Db::name('admin_user')
+        $AdminUser = new UserModel();
+        $res = $AdminUser
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
         if (empty($res)) {

@@ -12,6 +12,7 @@ namespace app\common\service\admin;
 
 use think\facade\Db;
 use app\common\cache\admin\UserCache;
+use app\common\model\admin\UserModel;
 
 class UserCenterService
 {
@@ -46,7 +47,8 @@ class UserCenterService
 
         $param['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
+        $AdminUser = new UserModel();
+        $res = $AdminUser
             ->where('admin_user_id', $admin_user_id)
             ->update($param);
         if (empty($res)) {
@@ -81,7 +83,8 @@ class UserCenterService
         $update['password']    = md5($password_new);
         $update['update_time'] = datetime();
 
-        $res = Db::name('admin_user')
+        $AdminUser = new UserModel();
+        $res = $AdminUser
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
         if (empty($res)) {

@@ -11,9 +11,12 @@
 namespace app\common\service\admin;
 
 use think\facade\Db;
+use think\facade\Config;
 use app\common\cache\admin\MenuCache;
 use app\common\cache\admin\RoleCache;
 use app\common\cache\admin\UserCache;
+use app\common\model\admin\RoleModel;
+use app\common\model\admin\UserModel;
 
 class MenuService
 {
@@ -332,9 +335,7 @@ class MenuService
 
         $param[self::$t_pk] = $admin_menu_id;
 
-        MenuCache::del();
-        MenuCache::del($admin_menu_id);
-        MenuCache::del($admin_menu['menu_url']);
+        MenuCache::del([$admin_menu_id, $admin_menu['menu_url']]);
 
         return $param;
     }
@@ -362,9 +363,7 @@ class MenuService
 
         $update[self::$t_pk] = $admin_menu_id;
 
-        MenuCache::del();
-        MenuCache::del($admin_menu_id);
-        MenuCache::del($admin_menu['menu_url']);
+        MenuCache::del([$admin_menu_id, $admin_menu['menu_url']]);
 
         return $update;
     }
@@ -394,9 +393,7 @@ class MenuService
 
         $update[self::$t_pk] = $admin_menu_id;
 
-        MenuCache::del();
-        MenuCache::del($admin_menu_id);
-        MenuCache::del($admin_menu['menu_url']);
+        MenuCache::del([$admin_menu_id, $admin_menu['menu_url']]);
 
         return $update;
     }
@@ -426,9 +423,7 @@ class MenuService
 
         $update[self::$t_pk] = $admin_menu_id;
 
-        MenuCache::del();
-        MenuCache::del($admin_menu_id);
-        MenuCache::del($admin_menu['menu_url']);
+        MenuCache::del([$admin_menu_id, $admin_menu['menu_url']]);
 
         return $update;
     }
@@ -458,9 +453,7 @@ class MenuService
 
         $update[self::$t_pk] = $admin_menu_id;
 
-        MenuCache::del();
-        MenuCache::del($admin_menu_id);
-        MenuCache::del($admin_menu['menu_url']);
+        MenuCache::del([$admin_menu_id, $admin_menu['menu_url']]);
 
         return $update;
     }
@@ -510,7 +503,8 @@ class MenuService
         $update['update_time']    = datetime();
         $update['admin_menu_ids'] = $admin_menu_ids;
 
-        $res = Db::name('admin_role')
+        $AdminRole = new RoleModel();
+        $res = $AdminRole
             ->where('admin_role_id', $admin_role_id)
             ->update($update);
         if (empty($res)) {
@@ -570,7 +564,8 @@ class MenuService
         $update['update_time']    = datetime();
         $update['admin_menu_ids'] = $admin_menu_ids;
 
-        $res = Db::name('admin_user')
+        $AdminUser = new UserModel();
+        $res = $AdminUser
             ->where('admin_user_id', $admin_user_id)
             ->update($update);
         if (empty($res)) {
@@ -677,15 +672,12 @@ class MenuService
         $urllist_key = 'urlList';
         $urllist     = MenuCache::get($urllist_key);
         if (empty($urllist)) {
-            $list = Db::name(self::$t_name)
+            $urllist = Db::name(self::$t_name)
                 ->field('menu_url')
-                ->where('menu_url', '<>', '')
                 ->where('is_delete', '=', 0)
-                ->order('menu_url', 'asc')
-                ->select()
-                ->toArray();
+                ->column('menu_url');
 
-            $urllist = array_column($list, 'menu_url');
+            $urllist = array_filter($urllist);
 
             MenuCache::set($urllist_key, $urllist);
         }
@@ -703,22 +695,16 @@ class MenuService
         $unauthlist_key = 'unauthList';
         $unauthlist     = MenuCache::get($unauthlist_key);
         if (empty($unauthlist)) {
-            $where_unauth[] = ['menu_url', '<>', ''];
-            $where_unauth[] = ['is_unauth', '=', 1];
-            $where_unauth[] = ['is_delete', '=', 0];
-
-            $where_unlogin[] = ['menu_url', '<>', ''];
-            $where_unlogin[] = ['is_unlogin', '=', 1];
-            $where_unlogin[] = ['is_delete', '=', 0];
-
-            $list = Db::name(self::$t_name)
+            $unauthlist = Db::name(self::$t_name)
                 ->field('menu_url')
-                ->whereOr([$where_unauth, $where_unlogin])
-                ->order('menu_url', 'asc')
-                ->select()
-                ->toArray();
+                ->where('is_unauth', '=', 1)
+                ->where('is_delete', '=', 0)
+                ->column('menu_url');
 
-            $unauthlist = array_column($list, 'menu_url');
+            $menu_unauth = Config::get('admin.menu_is_unauth');
+            $unloginlist = self::unloginList();
+            $unauthlist  = array_merge($unauthlist, $unloginlist, $menu_unauth);
+            $unauthlist  = array_unique(array_filter($unauthlist));
 
             MenuCache::set($unauthlist_key, $unauthlist);
         }
@@ -736,18 +722,15 @@ class MenuService
         $unloginlist_key = 'unloginList';
         $unloginlist     = MenuCache::get($unloginlist_key);
         if (empty($unloginlist)) {
-            $where_unlogin[] = ['menu_url', '<>', ''];
-            $where_unlogin[] = ['is_unlogin', '=', 1];
-            $where_unlogin[] = ['is_delete', '=', 0];
-
-            $list = Db::name(self::$t_name)
+            $unloginlist = Db::name(self::$t_name)
                 ->field('menu_url')
-                ->where($where_unlogin)
-                ->order('menu_url', 'asc')
-                ->select()
-                ->toArray();
+                ->where('is_unlogin', '=', 1)
+                ->where('is_delete', '=', 0)
+                ->column('menu_url');
 
-            $unloginlist = array_column($list, 'menu_url');
+            $menu_unlogin = Config::get('admin.menu_is_unlogin');
+            $unloginlist  = array_merge($unloginlist, $menu_unlogin);
+            $unloginlist  = array_unique(array_filter($unloginlist));
 
             MenuCache::set($unloginlist_key, $unloginlist);
         }

@@ -17,85 +17,66 @@ class ApiRateCache
     /**
      * 缓存key
      *
-     * @param int    $member_id 会员id
-     * @param string $api_url   接口url
+     * @param integer $member_id 会员id
+     * @param string  $api_url   接口url
      * 
      * @return string
      */
     public static function key($member_id, $api_url)
     {
-        $key = 'apirate:' . $member_id . ':' . $api_url;
-
-        return $key;
+        return 'apirate:' . $member_id . ':' . $api_url;
     }
 
     /**
      * 缓存设置
      *
-     * @param int      $member_id 会员id
-     * @param string   $api_url   接口url
-     * @param int|null $ttl       有效时间（秒）0永久
+     * @param integer $member_id 会员id
+     * @param string  $api_url   接口url
+     * @param integer $ttl       有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($member_id, $api_url, $ttl = null)
+    public static function set($member_id, $api_url, $ttl = 60)
     {
-        $key = self::key($member_id, $api_url);
-        $val = 1;
-        if ($ttl === null) {
-            $ttl = 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($member_id, $api_url), 1, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int    $member_id 会员id
-     * @param string $api_url   接口url
+     * @param integer $member_id 会员id
+     * @param string  $api_url   接口url
      * 
      * @return string
      */
     public static function get($member_id, $api_url)
     {
-        $key = self::key($member_id, $api_url);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($member_id, $api_url));
     }
 
     /**
      * 缓存删除
      *
-     * @param int    $member_id 会员id
-     * @param string $api_url   接口url
+     * @param integer $member_id 会员id
+     * @param string  $api_url   接口url
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($member_id, $api_url)
     {
-        $key = self::key($member_id, $api_url);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($member_id, $api_url));
     }
 
     /**
      * 缓存自增
      *
-     * @param int    $member_id 会员id
-     * @param string $api_url   接口url
+     * @param integer $member_id 会员id
+     * @param string  $api_url   接口url
      * 
-     * @return bool
+     * @return boolean
      */
     public static function inc($member_id, $api_url)
     {
-        $key = self::key($member_id, $api_url);
-        $res = Cache::inc($key);
-
-        return $res;
+        return Cache::inc(self::key($member_id, $api_url));
     }
 }

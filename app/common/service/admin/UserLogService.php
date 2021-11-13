@@ -15,6 +15,8 @@ use think\facade\Request;
 use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\admin\UserLogCache;
+use app\common\model\admin\MenuModel;
+use app\common\model\admin\UserModel;
 
 class UserLogService
 {
@@ -241,7 +243,8 @@ class UserLogService
 
         $where = [];
         if ($admin_user_id && $username) {
-            $admin_user = Db::name('admin_user')
+            $AdminUser = new UserModel();
+            $admin_user = $AdminUser
                 ->field('admin_user_id')
                 ->where('username', '=', $username)
                 ->where('is_delete', '=', 0)
@@ -254,7 +257,8 @@ class UserLogService
         } elseif ($admin_user_id) {
             $where[] = ['admin_user_id', '=', $admin_user_id];
         } elseif ($username) {
-            $admin_user = Db::name('admin_user')
+            $AdminUser = new UserModel();
+            $admin_user = $AdminUser
                 ->field('admin_user_id')
                 ->where('username', '=', $username)
                 ->where('is_delete', '=', 0)
@@ -265,7 +269,8 @@ class UserLogService
         }
 
         if ($admin_menu_id && $menu_url) {
-            $admin_menu = Db::name('admin_menu')
+            $AdminMenu = new MenuModel();
+            $admin_menu = $AdminMenu
                 ->field('admin_menu_id')
                 ->where('menu_url', '=', $menu_url)
                 ->where('is_delete', '=', 0)
@@ -278,7 +283,8 @@ class UserLogService
         } elseif ($admin_menu_id) {
             $where[] = ['admin_menu_id', '=', $admin_menu_id];
         } elseif ($menu_url) {
-            $admin_menu = Db::name('admin_menu')
+            $AdminMenu = new MenuModel();
+            $admin_menu = $AdminMenu
                 ->field('admin_menu_id')
                 ->where('menu_url', '=', $menu_url)
                 ->where('is_delete', '=', 0)
@@ -489,7 +495,8 @@ class UserLogService
 
             if ($type == 'user') {
                 $admin_user_ids = array_column($admin_user_log, 'x');
-                $admin_user = Db::name('admin_user')
+                $AdminUser = new UserModel();
+                $admin_user = $AdminUser
                     ->field('admin_user_id,username')
                     ->where('admin_user_id', 'in', $admin_user_ids)
                     ->select()

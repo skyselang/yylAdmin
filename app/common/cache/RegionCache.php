@@ -17,66 +17,50 @@ class RegionCache
     /**
      * 缓存key
      *
-     * @param int|string $region_id 地区id
+     * @param mixed $region_id 地区id
      * 
      * @return string
      */
     public static function key($region_id)
     {
-        $key = 'region:' . $region_id;
-
-        return $key;
+        return 'region:' . $region_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int|string $region_id 地区id
-     * @param array      $region    地区信息
-     * @param int|null   $ttl       有效时间（秒）0永久
+     * @param mixed   $region_id 地区id
+     * @param array   $region    地区信息
+     * @param integer $ttl       有效时间（秒）0永久
      * 
      * @return array 地区信息
      */
-    public static function set($region_id, $region, $ttl = null)
+    public static function set($region_id, $region, $ttl = 86400)
     {
-        $key = self::key($region_id);
-        $val = $region;
-        if ($ttl === null) {
-            $ttl = 1 * 24 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($region_id), $region, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int|string $region_id 地区id
+     * @param mixed $region_id 地区id
      * 
      * @return array 地区信息
      */
     public static function get($region_id)
     {
-        $key = self::key($region_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($region_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int|string $region_id 地区id
+     * @param mixed $region_id 地区id
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($region_id)
     {
-        $key = self::key($region_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($region_id));
     }
 }

@@ -271,9 +271,7 @@ class DatetimeUtils
      */
     public static function daysAgo($days = 1)
     {
-        $date = date('Y-m-d', strtotime("-{$days} day"));
-
-        return $date;
+        return date('Y-m-d', strtotime("-{$days} day"));
     }
 
     /**
@@ -285,9 +283,7 @@ class DatetimeUtils
      */
     public static function daysAfter($days = 1)
     {
-        $date = date('Y-m-d', strtotime("+{$days} day"));
-
-        return $date;
+        return date('Y-m-d', strtotime("+{$days} day"));
     }
 
     /**
@@ -346,9 +342,7 @@ class DatetimeUtils
             $date = self::today();
         }
 
-        $datetime = $date . ' 00:00:00';
-
-        return $datetime;
+        return $date . ' 00:00:00';
     }
 
     /**
@@ -364,9 +358,7 @@ class DatetimeUtils
             $date = self::today();
         }
 
-        $datetime = $date . ' 23:59:59';
-
-        return $datetime;
+        return $date . ' 23:59:59';
     }
 
     /**

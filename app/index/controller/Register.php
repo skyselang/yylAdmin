@@ -46,6 +46,11 @@ class Register
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
      * @Apidoc\Param(ref="app\common\model\MemberModel\nickname")
+     * @Apidoc\Param("username",type="string",mock="@string('lower', 6, 12)")
+     * @Apidoc\Param("nickname",type="string",mock="@cname")
+     * @Apidoc\Param("password",type="string",mock="@string('lower', 6)")
+     * @Apidoc\Param("phone",type="string",mock="@string('number', 11)")
+     * @Apidoc\Param("email",type="string",mock="@email")
      * @Apidoc\Param(ref="captchaParam")
      */
     public function register()
@@ -53,6 +58,8 @@ class Register
         $param['username']     = Request::param('username/s', '');
         $param['password']     = Request::param('password/s', '');
         $param['nickname']     = Request::param('nickname/s', '');
+        $param['phone']        = Request::param('phone/s', '');
+        $param['email']        = Request::param('email/s', '');
         $param['captcha_id']   = Request::param('captcha_id/s', '');
         $param['captcha_code'] = Request::param('captcha_code/s', '');
 

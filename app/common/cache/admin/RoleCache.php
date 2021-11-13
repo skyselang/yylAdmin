@@ -17,66 +17,50 @@ class RoleCache
     /**
      * 缓存key
      *
-     * @param int $admin_role_id 角色id
+     * @param integer $admin_role_id 角色id
      * 
      * @return string
      */
     public static function key($admin_role_id)
     {
-        $key = 'admin_role:' . $admin_role_id;
-
-        return $key;
+        return 'admin_role:' . $admin_role_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int      $admin_role_id 角色id
-     * @param array    $admin_role    角色信息
-     * @param int|null $ttl           有效时间（秒）0永久
+     * @param integer $admin_role_id 角色id
+     * @param array   $admin_role    角色信息
+     * @param integer $ttl           有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($admin_role_id, $admin_role, $ttl = null)
+    public static function set($admin_role_id, $admin_role, $ttl = 86400)
     {
-        $key = self::key($admin_role_id);
-        $val = $admin_role;
-        if ($ttl === null) {
-            $ttl = 1 * 24 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($admin_role_id), $admin_role, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $admin_role_id 角色id
+     * @param integer $admin_role_id 角色id
      * 
      * @return array 角色信息
      */
     public static function get($admin_role_id)
     {
-        $key = self::key($admin_role_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($admin_role_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $admin_role_id 角色id
+     * @param integer $admin_role_id 角色id
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($admin_role_id)
     {
-        $key = self::key($admin_role_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($admin_role_id));
     }
 }

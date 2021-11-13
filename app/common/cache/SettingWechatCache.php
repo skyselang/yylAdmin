@@ -17,66 +17,50 @@ class SettingWechatCache
     /**
      * 缓存key
      *
-     * @param int $setting_wechat_id 微信设置id
+     * @param integer $setting_wechat_id 微信设置id
      * 
      * @return string
      */
     public static function key($setting_wechat_id)
     {
-        $key = 'setting_wechat:' . $setting_wechat_id;
-
-        return $key;
+        return 'setting_wechat:' . $setting_wechat_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int      $setting_wechat_id 微信设置id
-     * @param array    $setting_wechat    微信设置信息
-     * @param int|null $ttl               有效时间（秒）0永久
+     * @param integer $setting_wechat_id 微信设置id
+     * @param array   $setting_wechat    微信设置信息
+     * @param integer $ttl               有效时间（秒）0永久
      * 
      * @return bool
      */
-    public static function set($setting_wechat_id, $setting_wechat, $ttl = null)
+    public static function set($setting_wechat_id, $setting_wechat, $ttl = 86400)
     {
-        $key = self::key($setting_wechat_id);
-        $val = $setting_wechat;
-        if ($ttl === null) {
-            $ttl = 1 * 24 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($setting_wechat_id), $setting_wechat, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $setting_wechat_id 微信设置id
+     * @param integer $setting_wechat_id 微信设置id
      * 
      * @return array 微信设置信息
      */
     public static function get($setting_wechat_id)
     {
-        $key = self::key($setting_wechat_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($setting_wechat_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $setting_wechat_id 微信设置id
+     * @param integer $setting_wechat_id 微信设置id
      * 
      * @return bool
      */
     public static function del($setting_wechat_id)
     {
-        $key = self::key($setting_wechat_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($setting_wechat_id));
     }
 }

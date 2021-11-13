@@ -11,6 +11,7 @@
 namespace app\common\service;
 
 use think\facade\Db;
+use think\facade\Config;
 use app\common\cache\ApiCache;
 
 class ApiService
@@ -110,8 +111,8 @@ class ApiService
             if (is_numeric($api_id)) {
                 $where[] = [self::$t_pk, '=',  $api_id];
             } else {
-                $where[] = ['is_delete', '=', 0];
                 $where[] = ['api_url', '=',  $api_id];
+                $where[] = ['is_delete', '=', 0];
             }
 
             $api = Db::name(self::$t_name)
@@ -177,9 +178,7 @@ class ApiService
 
         $param[self::$t_pk] = $api_id;
 
-        ApiCache::del();
-        ApiCache::del($api_id);
-        ApiCache::del($api['api_url']);
+        ApiCache::del([$api_id, $api['api_url']]);
 
         return $param;
     }
@@ -207,9 +206,7 @@ class ApiService
 
         $update[self::$t_pk] = $api_id;
 
-        ApiCache::del();
-        ApiCache::del($api_id);
-        ApiCache::del($api['api_url']);
+        ApiCache::del([$api_id, $api['api_url']]);
 
         return $update;
     }
@@ -239,9 +236,7 @@ class ApiService
 
         $update[self::$t_pk] = $api_id;
 
-        ApiCache::del();
-        ApiCache::del($api_id);
-        ApiCache::del($api['api_url']);
+        ApiCache::del([$api_id, $api['api_url']]);
 
         return $update;
     }
@@ -271,9 +266,7 @@ class ApiService
 
         $update[self::$t_pk] = $api_id;
 
-        ApiCache::del();
-        ApiCache::del($api_id);
-        ApiCache::del($api['api_url']);
+        ApiCache::del([$api_id, $api['api_url']]);
 
         return $update;
     }
@@ -329,23 +322,20 @@ class ApiService
      */
     public static function urlList()
     {
-        $url_list_key = 'urlList';
-        $url_list     = ApiCache::get($url_list_key);
-        if (empty($url_list)) {
-            $list = Db::name(self::$t_name)
+        $urllist_key = 'urlList';
+        $urllist     = ApiCache::get($urllist_key);
+        if (empty($urllist)) {
+            $urllist = Db::name(self::$t_name)
                 ->field('api_url')
-                ->where('api_url', '<>', '')
                 ->where('is_delete', '=', 0)
-                ->order('api_url', 'asc')
-                ->select()
-                ->toArray();
+                ->column('api_url');
 
-            $url_list = array_column($list, 'api_url');
+            $urllist = array_filter($urllist);
 
-            ApiCache::set($url_list_key, $url_list);
+            ApiCache::set($urllist_key, $urllist);
         }
 
-        return $url_list;
+        return $urllist;
     }
 
     /**
@@ -358,16 +348,15 @@ class ApiService
         $unloginlist_key = 'unloginList';
         $unloginlist     = ApiCache::get($unloginlist_key);
         if (empty($unloginlist)) {
-            $list = Db::name(self::$t_name)
+            $unloginlist = Db::name(self::$t_name)
                 ->field('api_url')
-                ->where('api_url', '<>', '')
                 ->where('is_unlogin', '=', 1)
                 ->where('is_delete', '=', 0)
-                ->order('api_url', 'asc')
-                ->select()
-                ->toArray();
+                ->column('api_url');
 
-            $unloginlist = array_column($list, 'api_url');
+            $api_unlogin = Config::get('index.api_is_unlogin');
+            $unloginlist = array_merge($unloginlist, $api_unlogin);
+            $unloginlist = array_unique(array_filter($unloginlist));
 
             ApiCache::set($unloginlist_key, $unloginlist);
         }

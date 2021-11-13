@@ -16,6 +16,7 @@ use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\service\WechatService;
 use app\common\service\file\FileService;
+use app\common\model\MemberWechatModel;
 
 class MemberService
 {
@@ -64,7 +65,8 @@ class MemberService
         $files = FileService::list([['file_id', 'in', $file_ids]], 1, $limit, [], 'file_id');
 
         $member_ids = array_column($list, self::$t_pk);
-        $member_wechats = Db::name('member_wechat')
+        $MemberWechat = new MemberWechatModel();
+        $member_wechats = $MemberWechat
             ->field('member_id,nickname,headimgurl')
             ->where(self::$t_pk, 'in', $member_ids)
             ->select()
@@ -114,7 +116,8 @@ class MemberService
             }
             $member['avatar_url'] = FileService::fileUrl($member['avatar_id']);
 
-            $member_wechat = Db::name('member_wechat')
+            $MemberWechat = new MemberWechatModel();
+            $member_wechat = $MemberWechat
                 ->where(self::$t_pk, $member_id)
                 ->find();
             if ($member_wechat) {
@@ -211,8 +214,8 @@ class MemberService
         $res = Db::name(self::$t_name)
             ->where(self::$t_pk, $member_id)
             ->update($update);
-        Db::name('member_wechat')
-            ->where(self::$t_pk, $member_id)
+        $MemberWechat = new MemberWechatModel();
+        $MemberWechat->where(self::$t_pk, $member_id)
             ->update($update);
         if (empty($res)) {
             exception();
@@ -369,7 +372,8 @@ class MemberService
             $wechat_where[] = ['openid', '=', $openid];
         }
         $wechat_where[] = ['is_delete', '=', 0];
-        $member_wechat = Db::name('member_wechat')
+        $MemberWechat = new MemberWechatModel();
+        $member_wechat = $MemberWechat
             ->field('member_wechat_id,member_id')
             ->where($wechat_where)
             ->find();
@@ -380,14 +384,15 @@ class MemberService
         try {
             if ($member_wechat) {
                 $member_wechat_id = $member_wechat['member_wechat_id'];
-                Db::name('member_wechat')
-                    ->where('member_wechat_id', $member_wechat_id)
+                $MemberWechat = new MemberWechatModel();
+                $MemberWechat->where('member_wechat_id', $member_wechat_id)
                     ->update($userinfo);
                 $member_id = $member_wechat['member_id'];
             } else {
                 $insert_wechat = $userinfo;
                 $insert_wechat['create_time'] = $datetime;
-                $member_wechat_id = Db::name('member_wechat')
+                $MemberWechat = new MemberWechatModel();
+                $member_wechat_id = $MemberWechat
                     ->insertGetId($insert_wechat);
                 $member_id = 0;
             }
@@ -436,8 +441,8 @@ class MemberService
             $wechat_update = $userinfo;
             $wechat_update['member_id']   = $member_id;
             $wechat_update['update_time'] = $datetime;
-            Db::name('member_wechat')
-                ->where('member_wechat_id', $member_wechat_id)
+            $MemberWechat = new MemberWechatModel();
+            $MemberWechat->where('member_wechat_id', $member_wechat_id)
                 ->update($wechat_update);
 
             // 提交事务
@@ -693,7 +698,7 @@ class MemberService
     /**
      * 会员统计（总数）
      *
-     * @return integer
+     * @return array
      */
     public static function statCount()
     {

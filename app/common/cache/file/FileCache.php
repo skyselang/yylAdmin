@@ -17,66 +17,50 @@ class FileCache
     /**
      * 缓存key
      *
-     * @param int|string $file_id 文件id、文件统计key
+     * @param mixed $file_id 文件id、文件统计key
      * 
      * @return string
      */
     public static function key($file_id)
     {
-        $key = 'file:' . $file_id;
-
-        return $key;
+        return 'file:' . $file_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int|string $file_id 文件id、文件统计key
-     * @param array      $file    文件信息
-     * @param int|null   $ttl     有效时间（秒）0永久
+     * @param mixed   $file_id 文件id、文件统计key
+     * @param array   $file    文件信息
+     * @param integer $ttl     有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($file_id, $file, $ttl = null)
+    public static function set($file_id, $file, $ttl = 86400)
     {
-        $key = self::key($file_id);
-        $val = $file;
-        if ($ttl === null) {
-            $ttl = 1 * 24 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($file_id), $file, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int|string $file_id 文件id、文件统计key
+     * @param mixed $file_id 文件id、文件统计key
      * 
      * @return array
      */
     public static function get($file_id)
     {
-        $key = self::key($file_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($file_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int|string $file_id 文件id、文件统计key
+     * @param mixed $file_id 文件id、文件统计key
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($file_id)
     {
-        $key = self::key($file_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($file_id));
     }
 }

@@ -17,66 +17,50 @@ class SettingCache
     /**
      * 缓存key
      *
-     * @param int $setting_id 文件设置id
+     * @param integer $setting_id 文件设置id
      * 
      * @return string
      */
     public static function key($setting_id)
     {
-        $key = 'file_setting:' . $setting_id;
-
-        return $key;
+        return 'file_setting:' . $setting_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int      $setting_id   文件设置id
-     * @param array    $file_setting 文件设置信息
-     * @param int|null $ttl          有效时间（秒）0永久
+     * @param integer $setting_id   文件设置id
+     * @param array   $file_setting 文件设置信息
+     * @param integer $ttl          有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($setting_id, $file_setting, $ttl = null)
+    public static function set($setting_id, $file_setting, $ttl = 7 * 86400)
     {
-        $key = self::key($setting_id);
-        $val = $file_setting;
-        if ($ttl === null) {
-            $ttl = 7 * 24 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($setting_id), $file_setting, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $setting_id 文件设置id
+     * @param integer $setting_id 文件设置id
      * 
      * @return array 文件设置信息
      */
     public static function get($setting_id)
     {
-        $key = self::key($setting_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($setting_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $setting_id 文件设置id
+     * @param integer $setting_id 文件设置id
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($setting_id)
     {
-        $key = self::key($setting_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($setting_id));
     }
 }

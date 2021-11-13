@@ -12,6 +12,8 @@ namespace app\common\service\cms;
 
 use think\facade\Db;
 use app\common\cache\cms\ContentCache;
+use app\common\model\cms\CategoryModel;
+use app\common\model\cms\ContentModel;
 use app\common\service\file\FileService;
 
 class ContentService
@@ -507,22 +509,34 @@ class ContentService
         if (empty($data)) {
             $x_data = $s_data = $xs_data = [];
 
-            $count = Db::name('cms_content')
+            $CmsContent = new ContentModel();
+            $count = $CmsContent
                 ->where('is_delete', 0)
                 ->count(self::$t_pk);
 
-            $category = Db::name('cms_category')
+            $CmsCategory = new CategoryModel();
+            $category = $CmsCategory
                 ->field('category_id,category_name')
                 ->where('is_delete', 0)
                 ->select()
                 ->toArray();
+
+            $content_count = $CmsContent
+                ->field('category_id,count(category_id) as content_count')
+                ->where('is_delete', 0)
+                ->group('category_id')
+                ->select()
+                ->toArray();
+            $xs_data = [];
             foreach ($category as $k => $v) {
                 $temp = [];
                 $temp['x'] = $v['category_name'];
-                $temp['s'] = Db::name('cms_content')
-                    ->where('category_id', $v['category_id'])
-                    ->where('is_delete', 0)
-                    ->count(self::$t_pk);
+                $temp['s'] = 0;
+                foreach ($content_count as $kc => $vc) {
+                    if ($v['category_id'] == $vc['category_id']) {
+                        $temp['s'] = $vc['content_count'];
+                    }
+                }
                 $xs_data[] = $temp;
             }
 

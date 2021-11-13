@@ -18,79 +18,57 @@ class MemberCache
     /**
      * 缓存key
      *
-     * @param int|string $member_id 会员id、统计时间
+     * @param mixed $member_id 会员id、统计时间
      * 
      * @return string
      */
     public static function key($member_id)
     {
-        $key = 'member:' . $member_id;
-
-        return $key;
+        return 'member:' . $member_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int|string $member_id 会员id、统计时间
-     * @param array      $member    会员信息
-     * @param int|null   $ttl       有效时间（秒）0永久
+     * @param mixed   $member_id 会员id、统计时间
+     * @param array   $member    会员信息
+     * @param integer $ttl       有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($member_id, $member, $ttl = null)
+    public static function set($member_id, $member, $ttl = 86400)
     {
-        $key = self::key($member_id);
-        $val = $member;
-        if (is_numeric($member_id)) {
-            if ($ttl === null) {
-                $ttl = 1 * 24 * 60 * 60;
-            }
-        } else {
-            if ($ttl === null) {
-                $ttl = 1 * 60 * 60;
-            }
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($member_id), $member, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int|string $member_id 会员id、统计时间
+     * @param mixed $member_id 会员id、统计时间
      * 
      * @return array 会员信息
      */
     public static function get($member_id)
     {
-        $key = self::key($member_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($member_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int|string $member_id 会员id、统计时间
+     * @param mixed $member_id 会员id、统计时间
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($member_id)
     {
-        $key = self::key($member_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($member_id));
     }
 
     /**
      * 缓存更新
      *
-     * @param int $member_id 会员id
+     * @param integer $member_id 会员id
      * 
      * @return array 会员信息
      */
@@ -98,8 +76,6 @@ class MemberCache
     {
         self::del($member_id);
 
-        $data = MemberService::info($member_id);
-
-        return $data;
+        return MemberService::info($member_id);
     }
 }

@@ -9,6 +9,14 @@
 
 // admin配置
 return [
-    // 超管用户id（所有权限）
+    // 超管用户ID（所有权限）
     'super_ids' => [1],
+    // 无需登录菜单url
+    'menu_is_unlogin' => [
+        'admin/admin.Login/setting',
+        'admin/admin.Login/captcha',
+        'admin/admin.Login/login',
+    ],
+    // 无需权限菜单url
+    'menu_is_unauth' => [],
 ];

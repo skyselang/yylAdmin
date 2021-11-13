@@ -15,6 +15,7 @@ use think\facade\Cache;
 use app\common\cache\admin\UserCache;
 use app\common\cache\admin\SettingCache;
 use app\common\service\file\FileService;
+use app\common\model\admin\UserModel;
 
 class SettingService
 {
@@ -119,7 +120,8 @@ class SettingService
      */
     public static function cacheClear()
     {
-        $admin_user = Db::name('admin_user')
+        $AdminUser = new UserModel();
+        $admin_user = $AdminUser
             ->field('admin_user_id')
             ->where('is_delete', 0)
             ->select();

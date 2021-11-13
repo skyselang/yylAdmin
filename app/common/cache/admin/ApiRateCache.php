@@ -17,86 +17,67 @@ class ApiRateCache
     /**
      * 缓存key
      *
-     * @param int    $admin_user_id 用户id
-     * @param string $menu_url      菜单url
+     * @param integer $admin_user_id 用户id
+     * @param string  $menu_url      菜单url
      * 
      * @return string
      */
     public static function key($admin_user_id, $menu_url)
     {
-        $key = 'admin_apirate:' . $admin_user_id . ':' . $menu_url;
-
-        return $key;
+        return 'admin_apirate:' . $admin_user_id . ':' . $menu_url;
     }
 
     /**
      * 缓存设置
      *
-     * @param int      $admin_user_id 用户id
-     * @param string   $menu_url      菜单url
-     * @param int|null $ttl           有效时间（秒）0永久
+     * @param integer $admin_user_id 用户id
+     * @param string  $menu_url      菜单url
+     * @param integer $ttl           有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($admin_user_id, $menu_url, $ttl = null)
+    public static function set($admin_user_id, $menu_url, $ttl = 60)
     {
-        $key = self::key($admin_user_id, $menu_url);
-        $val = 1;
-        if ($ttl === null) {
-            $ttl = 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($admin_user_id, $menu_url), 1, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int    $admin_user_id 用户id
-     * @param string $menu_url      菜单url
+     * @param integer $admin_user_id 用户id
+     * @param string  $menu_url      菜单url
      * 
      * @return string
      */
     public static function get($admin_user_id, $menu_url)
     {
-        $key = self::key($admin_user_id, $menu_url);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($admin_user_id, $menu_url));
     }
 
     /**
      * 缓存删除
      *
-     * @param int    $admin_user_id 用户id
-     * @param string $menu_url      菜单url
+     * @param integer $admin_user_id 用户id
+     * @param string  $menu_url      菜单url
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($admin_user_id, $menu_url)
     {
-        $key = self::key($admin_user_id, $menu_url);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($admin_user_id, $menu_url));
     }
 
     /**
      * 缓存自增
      *
-     * @param int    $admin_user_id 用户id
-     * @param string $menu_url      菜单url
-     * @param int    $step          步长
+     * @param integer $admin_user_id 用户id
+     * @param string  $menu_url      菜单url
+     * @param integer $step          步长
      * 
-     * @return bool
+     * @return boolean
      */
     public static function inc($admin_user_id, $menu_url, $step = 1)
     {
-        $key = self::key($admin_user_id, $menu_url);
-        $res = Cache::inc($key, $step);
-
-        return $res;
+        return Cache::inc(self::key($admin_user_id, $menu_url), $step);
     }
 }

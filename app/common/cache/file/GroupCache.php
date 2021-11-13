@@ -17,66 +17,50 @@ class GroupCache
     /**
      * 缓存key
      *
-     * @param int $group_id 文件分组id
+     * @param integer $group_id 文件分组id
      * 
      * @return string
      */
     public static function key($group_id)
     {
-        $key = 'file_group:' . $group_id;
-
-        return $key;
+        return 'file_group:' . $group_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int      $group_id   文件分组id
-     * @param array    $file_group 文件分组信息
-     * @param int|null $ttl        有效时间（秒）0永久
+     * @param integer $group_id   文件分组id
+     * @param array   $file_group 文件分组信息
+     * @param integer $ttl        有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($group_id, $file_group, $ttl = null)
+    public static function set($group_id, $file_group, $ttl = 86400)
     {
-        $key = self::key($group_id);
-        $val = $file_group;
-        if ($ttl === null) {
-            $ttl = 1 * 24 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($group_id), $file_group, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $group_id 文件分组id
+     * @param integer $group_id 文件分组id
      * 
      * @return array 文件分组信息
      */
     public static function get($group_id)
     {
-        $key = self::key($group_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($group_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $group_id 文件分组id
+     * @param integer $group_id 文件分组id
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($group_id)
     {
-        $key = self::key($group_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($group_id));
     }
 }

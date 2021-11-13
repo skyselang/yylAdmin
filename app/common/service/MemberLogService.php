@@ -15,6 +15,8 @@ use think\facade\Request;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\MemberLogCache;
 use app\common\utils\IpInfoUtils;
+use app\common\model\MemberModel;
+use app\common\model\ApiModel;
 
 class MemberLogService
 {
@@ -254,7 +256,8 @@ class MemberLogService
 
         $where = [];
         if ($member_id && $username) {
-            $member = Db::name('member')
+            $Member = new MemberModel();
+            $member = $Member
                 ->field('member_id')
                 ->where('is_delete', '=', 0)
                 ->where('username', '=', $username)
@@ -267,7 +270,8 @@ class MemberLogService
         } elseif ($member_id) {
             $where[] = ['member_id', '=', $member_id];
         } elseif ($username) {
-            $member = Db::name('member')
+            $Member = new MemberModel();
+            $member = $Member
                 ->field('member_id')
                 ->where('is_delete', '=', 0)
                 ->where('username', '=', $username)
@@ -278,7 +282,8 @@ class MemberLogService
         }
 
         if ($api_id && $api_url) {
-            $api = Db::name('api')
+            $Api = new ApiModel();
+            $api = $Api
                 ->field('api_id')
                 ->where('is_delete', '=', 0)
                 ->where('api_url', '=', $api_url)
@@ -291,7 +296,8 @@ class MemberLogService
         } elseif ($api_id) {
             $where[] = ['api_id', '=', $api_id];
         } elseif ($api_url) {
-            $api = Db::name('api')
+            $Api = new ApiModel();
+            $api = $Api
                 ->field('api_id')
                 ->where('is_delete', '=', 0)
                 ->where('api_url', '=', $api_url)
@@ -499,7 +505,8 @@ class MemberLogService
 
             if ($type == 'member') {
                 $member_ids = array_column($member_log, 'x_data');
-                $member = Db::name('member')
+                $Member = new MemberModel();
+                $member = $Member
                     ->field('member_id,username')
                     ->where('member_id', 'in', $member_ids)
                     ->select()

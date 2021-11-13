@@ -95,7 +95,7 @@ class File
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        if ($group_id) {
+        if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
         }
         if ($file_type) {
@@ -155,7 +155,7 @@ class File
         $param['file_type'] = Request::param('file_type/s', 'image');
         $param['file_name'] = Request::param('file_name/s', '');
         $param['is_front']  = Request::param('is_front/s', 0);
-        $param['sort']      = Request::param('sort/d', 200);
+        $param['sort']      = Request::param('sort/d', 250);
 
         validate(FileValidate::class)->scene('add')->check($param);
 
@@ -176,7 +176,7 @@ class File
         $param['file_type'] = Request::param('file_type/s', 'image');
         $param['file_name'] = Request::param('file_name/s', '');
         $param['is_front']  = Request::param('is_front/s', 0);
-        $param['sort']      = Request::param('sort/d', 200);
+        $param['sort']      = Request::param('sort/d', 250);
 
         validate(FileValidate::class)->scene('edit')->check($param);
 

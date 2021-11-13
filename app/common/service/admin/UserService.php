@@ -14,6 +14,8 @@ use think\facade\Db;
 use think\facade\Config;
 use app\common\utils\IpInfoUtils;
 use app\common\cache\admin\UserCache;
+use app\common\model\admin\MenuModel;
+use app\common\model\admin\RoleModel;
 use app\common\service\admin\TokenService;
 use app\common\service\file\FileService;
 
@@ -87,7 +89,8 @@ class UserService
             $admin_user['admin_role_ids'] = str_trim($admin_user['admin_role_ids']);
             $admin_user['admin_menu_ids'] = str_trim($admin_user['admin_menu_ids']);
             if (admin_is_super($admin_user_id)) {
-                $admin_menu = Db::name('admin_menu')
+                $AdminMenu = new MenuModel();
+                $admin_menu = $AdminMenu
                     ->field('admin_menu_id,menu_url')
                     ->where('is_delete', 0)
                     ->select()
@@ -97,7 +100,8 @@ class UserService
                 $menu_url = array_column($admin_menu, 'menu_url');
                 $menu_url = array_filter($menu_url);
             } elseif ($admin_user['is_super'] == 1) {
-                $admin_menu = Db::name('admin_menu')
+                $AdminMenu = new MenuModel();
+                $admin_menu = $AdminMenu
                     ->field('admin_menu_id,menu_url')
                     ->where('is_disable', 0)
                     ->where('is_delete', 0)
@@ -108,7 +112,8 @@ class UserService
                 $menu_url = array_column($admin_menu, 'menu_url');
                 $menu_url = array_filter($menu_url);
             } else {
-                $menu_ids = Db::name('admin_role')
+                $AdminRole = new RoleModel();
+                $menu_ids = $AdminRole
                     ->field('admin_role_id')
                     ->where('admin_role_id', 'in', $admin_user['admin_role_ids'])
                     ->where('is_disable', 0)
@@ -131,7 +136,8 @@ class UserService
                 $where_un[] = ['is_disable', '=', 0];
                 $where_un[] = ['is_delete', '=', 0];
 
-                $menu_url = Db::name('admin_menu')
+                $AdminMenu = new MenuModel();
+                $menu_url = $AdminMenu
                     ->field('menu_url')
                     ->whereOr([$where, $where_un])
                     ->column('menu_url');

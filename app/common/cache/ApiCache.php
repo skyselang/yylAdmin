@@ -17,71 +17,63 @@ class ApiCache
     /**
      * 缓存key
      *
-     * @param int|string $api_id 接口id
+     * @param mixed $api_id 接口id
      * 
      * @return string
      */
     public static function key($api_id)
     {
-        $key = 'api:' . $api_id;
-
-        return $key;
+        return 'api:' . $api_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int|string $api_id 接口id
-     * @param array      $api    接口信息
-     * @param int|null   $ttl    有效时间（秒）0永久
+     * @param mixed   $api_id 接口id
+     * @param array   $api    接口信息
+     * @param integer $ttl    有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($api_id = '', $api = [], $ttl = null)
+    public static function set($api_id = '', $api = [], $ttl = 86400)
     {
-        $key = self::key($api_id);
-        $val = $api;
-        if ($ttl === null) {
-            $ttl = 1 * 24 * 60 * 60;
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($api_id), $api, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int|string $api_id 接口id
+     * @param mixed $api_id 接口id
      * 
      * @return array
      */
     public static function get($api_id = '')
     {
-        $key = self::key($api_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($api_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int|string $api_id 接口id
+     * @param mixed $api_id 接口id、key（为空删除所有）
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($api_id = '')
     {
-        if (empty($api_id)) {
-            $res = Cache::delete(self::key('tree'));
-            $res = Cache::delete(self::key('list'));
-            $res = Cache::delete(self::key('urlList'));
-            $res = Cache::delete(self::key('unloginList'));
+        if (is_array($api_id)) {
+            $keys = $api_id;
         } else {
-            $key = self::key($api_id);
-            $res = Cache::delete($key);
+            $keys[] = $api_id;
+        }
+
+        if (empty($api_id)) {
+            $key_all = ['list', 'tree', 'urlList', 'unloginList'];
+            $keys = array_merge($keys, $key_all);
+        }
+
+        foreach ($keys as $k => $v) {
+            $res = Cache::delete(self::key($v));
         }
 
         return $res;

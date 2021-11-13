@@ -25,24 +25,7 @@ use hg\apidoc\annotation as Apidoc;
 class Login
 {
     /**
-     * @Apidoc\Title("验证码")
-     * @Apidoc\Method("GET")
-     * @Apidoc\Returned(ref="captchaReturn")
-     */
-    public function captcha()
-    {
-        $setting = SettingService::captchaInfo();
-        if ($setting['captcha_switch']) {
-            $data = CaptchaUtils::create();
-        } else {
-            $data['captcha_switch'] = $setting['captcha_switch'];
-        }
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("设置")
+     * @Apidoc\Title("设置信息")
      * @Apidoc\Method("GET")
      * @Apidoc\Returned(ref="app\common\model\admin\SettingModel\infoReturn")
      */
@@ -56,6 +39,23 @@ class Login
         $system = SettingService::systemInfo();
 
         $data = array_merge($system, $captcha);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("验证码")
+     * @Apidoc\Method("GET")
+     * @Apidoc\Returned(ref="captchaReturn")
+     */
+    public function captcha()
+    {
+        $setting = SettingService::captchaInfo();
+        if ($setting['captcha_switch']) {
+            $data = CaptchaUtils::create();
+        } else {
+            $data['captcha_switch'] = $setting['captcha_switch'];
+        }
 
         return success($data);
     }

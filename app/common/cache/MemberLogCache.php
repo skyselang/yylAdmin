@@ -17,72 +17,50 @@ class MemberLogCache
     /**
      * 缓存key
      *
-     * @param int|string $member_log_id 会员日志id、统计时间
+     * @param mixed $member_log_id 会员日志id、统计时间
      * 
      * @return string
      */
     public static function key($member_log_id)
     {
-        $key = 'member_log:' . $member_log_id;
-
-        return $key;
+        return 'member_log:' . $member_log_id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int|string $member_log_id 会员日志id、统计时间
-     * @param array      $member_log    会员日志信息
-     * @param int|null   $ttl           有效时间（秒）0永久
+     * @param mixed   $member_log_id 会员日志id、统计时间
+     * @param array   $member_log    会员日志信息
+     * @param integer $ttl           有效时间（秒）0永久
      * 
-     * @return bool
+     * @return boolean
      */
-    public static function set($member_log_id, $member_log, $ttl = null)
+    public static function set($member_log_id, $member_log, $ttl = 3600)
     {
-        $key = self::key($member_log_id);
-        $val = $member_log;
-        if (is_numeric($member_log_id)) {
-            if ($ttl === null) {
-                $ttl = 1 * 60 * 60;
-            }
-        } else {
-            if ($ttl === null) {
-                $ttl = 0.5 * 60 * 60;
-            }
-        }
-
-        $res = Cache::set($key, $val, $ttl);
-
-        return $res;
+        return Cache::set(self::key($member_log_id), $member_log, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int|string $member_log_id 会员日志id、统计时间
+     * @param mixed $member_log_id 会员日志id、统计时间
      * 
      * @return array 会员日志信息
      */
     public static function get($member_log_id)
     {
-        $key = self::key($member_log_id);
-        $res = Cache::get($key);
-
-        return $res;
+        return Cache::get(self::key($member_log_id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int|string $member_log_id 会员日志id、统计时间
+     * @param mixed $member_log_id 会员日志id、统计时间
      * 
-     * @return bool
+     * @return boolean
      */
     public static function del($member_log_id)
     {
-        $key = self::key($member_log_id);
-        $res = Cache::delete($key);
-
-        return $res;
+        return Cache::delete(self::key($member_log_id));
     }
 }
