@@ -639,10 +639,10 @@ class MemberService
 
             // 新增会员
             $new = Db::name(self::$t_name)
-                ->field("count(create_time) as num, date_format(login_time,'%Y-%m-%d') as date")
+                ->field("count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date")
                 ->where('create_time', '>=', $sta_time)
                 ->where('create_time', '<=', $end_time)
-                ->group("date_format(login_time,'%Y-%m-%d')")
+                ->group("date_format(create_time,'%Y-%m-%d')")
                 ->select()
                 ->toArray();
             $new_x = $new_s = [];

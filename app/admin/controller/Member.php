@@ -200,13 +200,13 @@ class Member
     {
         $date = Request::param('date/a', []);
 
-        $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-
         $number = $active = [];
-        foreach ($range as $k => $v) {
+        $date_range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
+        foreach ($date_range as $k => $v) {
             $number[$v] = MemberService::statNum($v);
             $active[$v] = MemberService::statNum($v, 'act');
         }
+
         $data['number'] = $number;
         $data['active'] = $active;
         $data['date']   = MemberService::statDate($date);
