@@ -55,7 +55,7 @@ class ApiCache
     /**
      * 缓存删除
      *
-     * @param mixed $api_id 接口id、key（为空删除所有）
+     * @param mixed $api_id 接口id、key
      * 
      * @return boolean
      */
@@ -67,10 +67,8 @@ class ApiCache
             $keys[] = $api_id;
         }
 
-        if (empty($api_id)) {
-            $key_all = ['list', 'tree', 'urlList', 'unloginList'];
-            $keys = array_merge($keys, $key_all);
-        }
+        $key_all = ['list', 'tree', 'urlList', 'unloginList'];
+        $keys = array_merge($keys, $key_all);
 
         foreach ($keys as $k => $v) {
             $res = Cache::delete(self::key($v));

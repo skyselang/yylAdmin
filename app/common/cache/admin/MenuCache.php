@@ -55,7 +55,7 @@ class MenuCache
     /**
      * 缓存删除
      *
-     * @param mixed $admin_menu_id 菜单id、key（为空删除所有）
+     * @param mixed $admin_menu_id 菜单id、key
      * 
      * @return boolean
      */
@@ -67,10 +67,8 @@ class MenuCache
             $keys[] = $admin_menu_id;
         }
 
-        if (empty($admin_menu_id)) {
-            $key_all = ['list', 'tree', 'urlList', 'unauthList', 'unloginList'];
-            $keys = array_merge($keys, $key_all);
-        }
+        $key_all = ['list', 'tree', 'urlList', 'unauthList', 'unloginList'];
+        $keys = array_merge($keys, $key_all);
 
         foreach ($keys as $k => $v) {
             $res = Cache::delete(self::key($v));
