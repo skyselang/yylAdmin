@@ -42,6 +42,7 @@ class CategoryValidate extends Validate
         'add'    => ['category_name'],
         'edit'   => ['category_id', 'category_name'],
         'dele'   => ['category'],
+        'pid'    => ['category'],
         'ishide' => ['category', 'is_hide'],
         'image'  => ['image'],
     ];

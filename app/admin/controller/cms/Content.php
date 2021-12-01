@@ -91,9 +91,7 @@ class Content
             $order = [$sort_field => $sort_value];
         }
 
-        $field = '';
-
-        $data = ContentService::list($where, $page, $limit, $order, $field);
+        $data = ContentService::list($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -191,6 +189,24 @@ class Content
         validate(ContentValidate::class)->scene('dele')->check($param);
 
         $data = ContentService::dele($param['content']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("内容设置分类")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
+     */
+    public function cate()
+    {
+        $param['content']     = Request::param('content/a', '');
+        $param['category_id'] = Request::param('category_id/d', 0);
+
+        validate(ContentValidate::class)->scene('cate')->check($param);
+
+        $data = ContentService::cate($param['content'], $param['category_id']);
 
         return success($data);
     }
@@ -320,12 +336,10 @@ class Content
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
         } else {
-            $order = ['delete_time' => 'desc'];
+            $order = ['delete_time' => 'desc', 'content_id' => 'desc'];
         }
 
-        $field = '';
-
-        $data = ContentService::list($where, $page, $limit, $order, $field);
+        $data = ContentService::list($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -339,7 +353,7 @@ class Content
     {
         $param['content'] = Request::param('content/a', '');
 
-        validate(ContentValidate::class)->scene('dele')->check($param);
+        validate(ContentValidate::class)->scene('reco')->check($param);
 
         $data = ContentService::recoverReco($param['content']);
 

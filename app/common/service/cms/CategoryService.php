@@ -135,8 +135,8 @@ class CategoryService
             exception();
         }
 
-        CategoryCache::del(self::$all_key);
         CategoryCache::del($category_id);
+        CategoryCache::del(self::$all_key);
 
         $param[self::$t_pk] = $category_id;
 
@@ -157,6 +157,37 @@ class CategoryService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $category_ids)
+            ->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($category_ids as $k => $v) {
+            CategoryCache::del($v);
+        }
+        CategoryCache::del(self::$all_key);
+
+        $update['category_ids'] = $category_ids;
+
+        return $update;
+    }
+
+    /**
+     * 内容分类设置父级
+     *
+     * @param array $category     分类列表
+     * @param int   $category_pid 分类父级id
+     * 
+     * @return array
+     */
+    public static function pid($category, $category_pid = 0)
+    {
+        $category_ids = array_column($category, self::$t_pk);
+
+        $update['category_pid'] = $category_pid;
+        $update['update_time']  = datetime();
         $res = Db::name(self::$t_name)
             ->where(self::$t_pk, 'in', $category_ids)
             ->update($update);

@@ -220,6 +220,36 @@ class ContentService
     }
 
     /**
+     * 内容设置分类
+     *
+     * @param array $content     内容列表
+     * @param int   $category_id 分类id
+     * 
+     * @return array
+     */
+    public static function cate($content, $category_id = 0)
+    {
+        $content_ids = array_column($content, self::$t_pk);
+
+        $update['category_id'] = $category_id;
+        $update['update_time'] = datetime();
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $content_ids)
+            ->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($content_ids as $k => $v) {
+            ContentCache::del($v);
+        }
+
+        $update['content_ids'] = $content_ids;
+
+        return $update;
+    }
+
+    /**
      * 内容是否置顶
      *
      * @param array $content 内容列表

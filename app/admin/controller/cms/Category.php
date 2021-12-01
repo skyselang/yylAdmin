@@ -119,6 +119,24 @@ class Category
     }
 
     /**
+     * @Apidoc\Title("内容分类设置父级")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
+     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category_pid")
+     */
+    public function pid()
+    {
+        $param['category']     = Request::param('category/a', '');
+        $param['category_pid'] = Request::param('category_pid/d', 0);
+
+        validate(CategoryValidate::class)->scene('pid')->check($param);
+
+        $data = CategoryService::pid($param['category'], $param['category_pid']);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("内容分类是否隐藏")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
