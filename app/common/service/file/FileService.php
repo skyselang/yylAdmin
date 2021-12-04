@@ -35,9 +35,9 @@ class FileService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = self::$t_pk . ',group_id,storage,domain,file_hash,file_type,file_name,file_path,file_size,file_ext,sort,is_disable';
+            $field = self::$t_pk . ',group_id,storage,domain,file_md5,file_hash,file_type,file_name,file_path,file_size,file_ext,sort,is_disable';
         } else {
-            $field = str_merge($field, 'file_id,storage,domain,file_hash,file_path,file_ext');
+            $field = str_merge($field, 'file_id,storage,domain,file_md5,file_hash,file_path,file_ext');
         }
 
         if (empty($order)) {
@@ -127,12 +127,14 @@ class FileService
         $file_ext  = $file->getOriginalExtension();
         $file_type = self::typeJudge($file_ext);
         $file_size = $file->getSize();
+        $file_md5  = $file->hash('md5');
         $file_hash = $file->hash('sha1');
         $file_name = Filesystem::disk('public')
             ->putFile('file', $file, function () use ($file_hash) {
                 return $file_hash;
             });
 
+        $param['file_md5']  = $file_md5;
         $param['file_hash'] = $file_hash;
         $param['file_path'] = 'storage/' . $file_name;
         $param['file_ext']  = $file_ext;

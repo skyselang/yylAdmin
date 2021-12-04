@@ -108,7 +108,7 @@ class Member
             validate(MemberValidate::class)->scene('editpwd')->check($param);
         }
 
-        $data = MemberService::pwd($param);
+        $data = MemberService::repwd([['member_id' => $param['member_id']]], $param['password_new']);
 
         return success($data);
     }

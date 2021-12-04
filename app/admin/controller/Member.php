@@ -150,28 +150,28 @@ class Member
      */
     public function dele()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
+        $param['list'] = Request::param('list/a', '');
 
         validate(MemberValidate::class)->scene('dele')->check($param);
 
-        $data = MemberService::dele($param['member_id']);
+        $data = MemberService::dele($param['list']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员重置密码")
+     * @Apidoc\Title("会员设置地区")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\pwdParam")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\disableParam")
      */
-    public function pwd()
+    public function region()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
-        $param['password']  = Request::param('password/s', '');
+        $param['list']      = Request::param('list/a', '');
+        $param['region_id'] = Request::param('region_id/d', 0);
 
-        validate(MemberValidate::class)->scene('pwd')->check($param);
+        validate(MemberValidate::class)->scene('region')->check($param);
 
-        $data = MemberService::pwd($param);
+        $data = MemberService::region($param['list'], $param['region_id']);
 
         return success($data);
     }
@@ -183,12 +183,29 @@ class Member
      */
     public function disable()
     {
-        $param['member_id']  = Request::param('member_id/d', '');
+        $param['list']       = Request::param('list/a', '');
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(MemberValidate::class)->scene('disable')->check($param);
 
-        $data = MemberService::disable($param);
+        $data = MemberService::disable($param['list'], $param['is_disable']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员重置密码")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\pwdParam")
+     */
+    public function repwd()
+    {
+        $param['list']     = Request::param('list/a', '');
+        $param['password'] = Request::param('password/s', '');
+
+        validate(MemberValidate::class)->scene('repwd')->check($param);
+
+        $data = MemberService::repwd($param['list'], $param['password']);
 
         return success($data);
     }

@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 01/12/2021 16:03:28
+ Date: 04/12/2021 11:59:38
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 433 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 435 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -111,7 +111,7 @@ INSERT INTO `yyl_admin_menu` VALUES (125, 123, '会员信息', 'admin/Member/inf
 INSERT INTO `yyl_admin_menu` VALUES (126, 123, '会员添加', 'admin/Member/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (127, 123, '会员修改', 'admin/Member/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (128, 123, '会员删除', 'admin/Member/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (129, 123, '会员重置密码', 'admin/Member/pwd', 130, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (129, 123, '会员重置密码', 'admin/Member/repwd', 110, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (130, 123, '会员是否禁用', 'admin/Member/disable', 120, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (131, 123, '会员更换头像', 'admin/Member/avatar', 200, 0, 0, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (132, 186, '接口管理', '', 200, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -253,6 +253,7 @@ INSERT INTO `yyl_admin_menu` VALUES (429, 427, '系统设置修改', 'admin/admi
 INSERT INTO `yyl_admin_menu` VALUES (430, 111, '设置信息', 'admin/admin.Login/setting', 200, 0, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (432, 298, '内容分类设置父级', 'admin/cms.Category/pid', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (433, 283, '内容设置分类', 'admin/cms.Content/cate', 205, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (434, 123, '会员设置地区', 'admin/Member/region', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_role
@@ -583,7 +584,8 @@ CREATE TABLE `yyl_file`  (
   `group_id` int(11) NULL DEFAULT 0 COMMENT '分组id',
   `storage` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'local' COMMENT '存储方式：local本地(服务器)，qiniu七牛云Kodo，aliyun阿里云OSS，tencent腾讯云COS',
   `domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '访问域名',
-  `file_hash` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件哈希值',
+  `file_md5` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件MD5',
+  `file_hash` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件散列（sha1）',
   `file_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'image' COMMENT '文件类型：image图片，video视频，audio音频，word文档，other其它',
   `file_name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件名称',
   `file_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件路径',

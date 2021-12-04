@@ -202,61 +202,63 @@ class MemberService
     /**
      * 会员删除
      *
-     * @param integer $member_id 会员id
+     * @param array $list 会员列表
      * 
      * @return array
      */
-    public static function dele($member_id)
+    public static function dele($list)
     {
+        $pk_ids = array_column($list, self::$t_pk);
+
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $member_id)
+            ->where(self::$t_pk, 'in', $pk_ids)
             ->update($update);
         $MemberWechat = new MemberWechatModel();
-        $MemberWechat->where(self::$t_pk, $member_id)
+        $MemberWechat->where(self::$t_pk, 'in', $pk_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $member_id;
+        $update[self::$t_pk] = $pk_ids;
 
-        MemberCache::del($member_id);
+        foreach ($pk_ids as $k => $v) {
+            MemberCache::upd($v);
+        }
 
         return $update;
     }
 
     /**
-     * 会员修改密码
+     * 会员设置地区
      *
-     * @param array $param 密码信息
+     * @param array   $list      会员列表
+     * @param integer $region_id 地区id
      * 
      * @return array
      */
-    public static function pwd($param)
+    public static function region($list, $region_id = 0)
     {
-        $member_id = $param[self::$t_pk];
-        if (isset($param['password'])) {
-            $update['password'] = md5($param['password']);
-        } else {
-            $update['password'] = md5($param['password_new']);
-        }
+        $pk_ids = array_column($list, self::$t_pk);
 
+        $update['region_id']   = $region_id;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $member_id)
+            ->where(self::$t_pk, 'in', $pk_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $member_id;
-        $update['password']  = '';
+        $update[self::$t_pk] = $pk_ids;
 
-        MemberCache::upd($member_id);
+        foreach ($pk_ids as $k => $v) {
+            MemberCache::upd($v);
+        }
 
         return $update;
     }
@@ -264,27 +266,62 @@ class MemberService
     /**
      * 会员是否禁用
      *
-     * @param array $param 会员信息
+     * @param array   $list       会员列表
+     * @param integer $is_disable 是否禁用
      * 
      * @return array
      */
-    public static function disable($param)
+    public static function disable($list, $is_disable = 0)
     {
-        $member_id = $param[self::$t_pk];
+        $pk_ids = array_column($list, self::$t_pk);
 
-        $update['is_disable']  = $param['is_disable'];
+        $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $member_id)
+            ->where(self::$t_pk, 'in', $pk_ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $member_id;
+        $update[self::$t_pk] = $pk_ids;
 
-        MemberCache::upd($member_id);
+        foreach ($pk_ids as $k => $v) {
+            MemberCache::upd($v);
+        }
+
+        return $update;
+    }
+
+    /**
+     * 会员修改密码
+     *
+     * @param array   $list     会员列表
+     * @param integer $password 新密码
+     * 
+     * @return array
+     */
+    public static function repwd($list, $password)
+    {
+        $pk_ids = array_column($list, self::$t_pk);
+
+        $update['password']    = md5($password);
+        $update['update_time'] = datetime();
+
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $pk_ids)
+            ->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        $update[self::$t_pk] = $pk_ids;
+        $update['password']  = $password;
+
+        foreach ($pk_ids as $k => $v) {
+            MemberCache::upd($v);
+        }
 
         return $update;
     }
@@ -323,7 +360,7 @@ class MemberService
         $update['login_num']    = $member['login_num'] + 1;
         $update['login_time']   = datetime();
         Db::name(self::$t_name)
-            ->where('member_id', $member_id)
+            ->where('member_id', '=', $member_id)
             ->update($update);
 
         // 登录日志
@@ -342,7 +379,7 @@ class MemberService
     /**
      * 会员微信登录
      *
-     * @param array $userinfo 微信用户信息
+     * @param array $userinfo 会员微信信息
      *
      * @return array
      */
@@ -385,7 +422,7 @@ class MemberService
             if ($member_wechat) {
                 $member_wechat_id = $member_wechat['member_wechat_id'];
                 $MemberWechat = new MemberWechatModel();
-                $MemberWechat->where('member_wechat_id', $member_wechat_id)
+                $MemberWechat->where('member_wechat_id', '=', $member_wechat_id)
                     ->update($userinfo);
                 $member_id = $member_wechat['member_id'];
             } else {
@@ -399,7 +436,8 @@ class MemberService
 
             $member = Db::name(self::$t_name)
                 ->field('member_id,nickname,login_num')
-                ->where(['member_id' => $member_id, 'is_delete' => 0])
+                ->where('member_id', '=', $member_id)
+                ->where('is_delete', '=', 0)
                 ->find();
             if ($member) {
                 if (empty($member['nickname'])) {
@@ -410,7 +448,7 @@ class MemberService
                 $member_update['login_time']   = $datetime;
                 $member_update['login_region'] = $ip_info['region'];
                 Db::name(self::$t_name)
-                    ->where('member_id', $member_id)
+                    ->where('member_id', '=', $member_id)
                     ->update($member_update);
                 // 登录日志
                 $member_log['member_id'] = $member_id;
@@ -683,7 +721,7 @@ class MemberService
                 $count_t = DatetimeUtils::dateEndTime($v);
                 $count_x[] = $v;
                 $count_s[] = Db::name(self::$t_name)
-                    ->where('is_delete', 0)
+                    ->where('is_delete', '=', 0)
                     ->where('create_time', '<=', $count_t)
                     ->count(self::$t_pk);
             }
@@ -712,7 +750,7 @@ class MemberService
                 $time = DatetimeUtils::dateEndTime($time[1]);
                 $x[] = $v;
                 $s[] = Db::name(self::$t_name)
-                    ->where('is_delete', 0)
+                    ->where('is_delete', '=', 0)
                     ->where('create_time', '<=', $time)
                     ->count(self::$t_pk);
             }

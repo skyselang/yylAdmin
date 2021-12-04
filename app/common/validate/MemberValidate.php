@@ -17,12 +17,13 @@ class MemberValidate extends Validate
 {
     // 验证规则
     protected $rule = [
+        'list'         => ['require', 'array'],
         'member_id'    => ['require'],
-        'username'     => ['require', 'alphaDash', 'checkUsername', 'length' => '2,32'],
-        'nickname'     => ['checkNickname', 'length' => '1,32'],
-        'password'     => ['require', 'alphaNum', 'length' => '6,18'],
+        'username'     => ['require', 'length' => '2,32', 'alphaDash', 'checkUsername'],
+        'nickname'     => ['length' => '1,32', 'checkNickname'],
+        'password'     => ['require', 'length' => '6,18', 'alphaNum'],
         'password_old' => ['require', 'checkPwdOld'],
-        'password_new' => ['require', 'alphaNum', 'length' => '6,18'],
+        'password_new' => ['require', 'length' => '6,18', 'alphaNum'],
         'phone'        => ['mobile', 'checkPhone'],
         'email'        => ['email', 'checkEmail'],
         'avatar'       => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '102400'],
@@ -57,11 +58,12 @@ class MemberValidate extends Validate
         'info'     => ['member_id'],
         'add'      => ['username', 'nickname', 'password', 'phone', 'email'],
         'edit'     => ['member_id', 'username', 'nickname', 'phone', 'email'],
-        'dele'     => ['member_id'],
-        'pwd'      => ['member_id', 'password'],
+        'dele'     => ['list'],
+        'repwd'    => ['list', 'password'],
         'editpwd'  => ['member_id', 'password_old', 'password_new'],
         'editpwd1' => ['member_id', 'password_new'],
-        'disable'  => ['member_id'],
+        'disable'  => ['list'],
+        'region'   => ['list'],
         'avatar'   => ['avatar'],
         'register' => ['username', 'nickname', 'password', 'phone', 'email'],
         'login'    => ['username', 'password'],
@@ -82,8 +84,9 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['is_delete', '=', 0];
+
         $where[] = ['username', '=', $data['username']];
+        $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');
         if ($member['list']) {
             return '账号已存在：' . $data['username'];
@@ -98,8 +101,9 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['is_delete', '=', 0];
+
         $where[] = ['nickname', '=', $data['nickname']];
+        $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');
         if ($member['list']) {
             return '昵称已存在：' . $data['nickname'];
@@ -114,8 +118,9 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['is_delete', '=', 0];
+        
         $where[] = ['phone', '=', $data['phone']];
+        $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');
         if ($member['list']) {
             return '手机已存在：' . $data['phone'];
@@ -130,8 +135,9 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-        $where[] = ['is_delete', '=', 0];
+        
         $where[] = ['email', '=', $data['email']];
+        $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');
         if ($member['list']) {
             return '邮箱已存在：' . $data['email'];
