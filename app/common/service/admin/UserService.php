@@ -171,11 +171,11 @@ class UserService
                 }
             }
 
-            $api_whitelist  = Config::get('admin.api_whitelist', []);
-            $rule_whitelist = Config::get('admin.rule_whitelist', []);
-            $whitelist      = array_merge($api_whitelist, $rule_whitelist);
-            $menu_url       = array_merge($menu_url, $whitelist);
-            $menu_url       = array_unique($menu_url);
+            $menu_is_unlogin = Config::get('admin.menu_is_unlogin', []);
+            $menu_is_unauth  = Config::get('admin.menu_is_unauth', []);
+            $unlogin_unauth  = array_merge($menu_is_unlogin, $menu_is_unauth);
+            $menu_url        = array_merge($menu_url, $unlogin_unauth);
+            $menu_url        = array_unique($menu_url);
 
             sort($menu_url);
 
