@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 04/12/2021 11:59:38
+ Date: 08/12/2021 18:33:24
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 435 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 443 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -79,7 +79,7 @@ INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/admin.UserCe
 INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/admin.UserCenter/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/admin.UserCenter/pwd', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (48, 12, '上传头像', 'admin/admin.UserCenter/avatar', 200, 0, 0, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (49, 1, '首页', 'admin/Index/index', 200, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (49, 1, '首页', 'admin/Index/index', 300, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (50, 58, '地图坐标', 'admin/admin.Utils/map', 150, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/admin.Login/login', 160, 0, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (52, 111, '退出', 'admin/admin.Login/logout', 150, 0, 1, 0, 0, NULL, NULL, NULL);
@@ -254,6 +254,39 @@ INSERT INTO `yyl_admin_menu` VALUES (430, 111, '设置信息', 'admin/admin.Logi
 INSERT INTO `yyl_admin_menu` VALUES (432, 298, '内容分类设置父级', 'admin/cms.Category/pid', 200, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (433, 283, '内容设置分类', 'admin/cms.Content/cate', 205, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (434, 123, '会员设置地区', 'admin/Member/region', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (435, 53, '消息管理', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (436, 435, '消息列表', 'admin/admin.Message/list', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (437, 435, '消息信息', 'admin/admin.Message/info', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (438, 435, '消息添加', 'admin/admin.Message/add', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (439, 435, '消息修改', 'admin/admin.Message/edit', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (440, 435, '消息删除', 'admin/admin.Message/dele', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (441, 435, '消息是否开启', 'admin/admin.Message/isopen', 200, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (442, 1, '消息', 'admin/Index/message', 250, 0, 1, 0, 0, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for yyl_admin_message
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_admin_message`;
+CREATE TABLE `yyl_admin_message`  (
+  `admin_message_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '消息id',
+  `admin_user_id` int(11) NULL DEFAULT 0 COMMENT '用户id',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
+  `type` tinyint(1) NULL DEFAULT 1 COMMENT '类型',
+  `sort` int(1) NULL DEFAULT 250 COMMENT '排序',
+  `is_open` tinyint(1) NULL DEFAULT 1 COMMENT '是否开启1是0否',
+  `intro` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '简介',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`admin_message_id`) USING BTREE,
+  INDEX `admin_message_id`(`admin_message_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '消息' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yyl_admin_message
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yyl_admin_role

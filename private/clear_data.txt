@@ -18,3 +18,4 @@ TRUNCATE yyl_member_wechat;
 UPDATE yyl_region SET create_time=null, update_time=null, delete_time=null;
 TRUNCATE yyl_setting;
 TRUNCATE yyl_setting_wechat;
+TRUNCATE yyl_admin_message;

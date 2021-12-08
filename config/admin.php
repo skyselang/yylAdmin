@@ -18,5 +18,9 @@ return [
         'admin/admin.Login/login',
     ],
     // 无需权限菜单url
-    'menu_is_unauth' => [],
+    'menu_is_unauth' => [
+        'admin/Index/index',
+        'admin/Index/message',
+        'admin/admin.Message/info'
+    ],
 ];

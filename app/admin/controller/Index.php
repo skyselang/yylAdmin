@@ -12,6 +12,7 @@ namespace app\admin\controller;
 
 use think\facade\Request;
 use app\common\service\IndexService;
+use app\common\service\admin\MessageService;
 use app\common\service\cms\ContentService;
 use app\common\service\file\FileService;
 use app\common\service\MemberService;
@@ -33,6 +34,20 @@ class Index
         $msg  = 'yylAdmin后端安装成功，欢迎使用，如有帮助，敬请Star！';
 
         return success($data, $msg);
+    }
+
+    /**
+     * @Apidoc\Title("消息")
+     */
+    public function message()
+    {
+        $where = [['is_delete', '=', 0]];
+        $order = ['sort' => 'desc', 'admin_message_id' => 'desc'];
+        $field = 'admin_message_id,title,intro';
+
+        $data = MessageService::list($where, 1, 9, $order, $field);
+
+        return success($data);
     }
 
     /**
