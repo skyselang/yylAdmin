@@ -14,9 +14,18 @@ const config = {
     // 多个可切换的host
     HOSTS: [],
   },
+  // 菜单配置
   MENU: {
     SHOWURL: false,
     WIDTH: 300,
+  },
+  // 请求类型的颜色
+  METHODCOLOR: {
+    GET: "#87d068",
+    POST: "#2db7f5",
+    PUT: "#ff9800",
+    DELETE: "#ff4d4f",
+    PATCH: "#802feb",
   },
   // 多语言
   LANG: [
