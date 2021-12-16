@@ -363,4 +363,23 @@ class ApiService
 
         return $unloginlist;
     }
+
+    /**
+     * 接口无需限率url列表
+     *
+     * @return array
+     */
+    public static function unrateList()
+    {
+        $unratelist_key = 'unrateList';
+        $unratelist     = ApiCache::get($unratelist_key);
+        if (empty($unratelist)) {
+            $api_unrate = Config::get('index.api_is_unrate');
+            $unratelist = array_unique(array_filter($api_unrate));
+
+            ApiCache::set($unratelist_key, $unratelist);
+        }
+
+        return $unratelist;
+    }
 }

@@ -36,17 +36,19 @@ class ApiRateMiddleware
             $menu_url      = menu_url();
 
             if ($admin_user_id && $menu_url) {
-                $count = ApiRateCache::get($admin_user_id, $menu_url);
-                
-                if ($count) {
-                    if ($count >= $api_rate_num) {
-                        ApiRateCache::del($admin_user_id, $menu_url);
-                        exception('你的操作过于频繁', 429);
+                if (!menu_is_unrate($menu_url)) {
+                    $count = ApiRateCache::get($admin_user_id, $menu_url);
+
+                    if ($count) {
+                        if ($count >= $api_rate_num) {
+                            ApiRateCache::del($admin_user_id, $menu_url);
+                            exception('你的操作过于频繁', 429);
+                        } else {
+                            ApiRateCache::inc($admin_user_id, $menu_url);
+                        }
                     } else {
-                        ApiRateCache::inc($admin_user_id, $menu_url);
+                        ApiRateCache::set($admin_user_id, $menu_url, $api_rate_time);
                     }
-                } else {
-                    ApiRateCache::set($admin_user_id, $menu_url, $api_rate_time);
                 }
             }
         }

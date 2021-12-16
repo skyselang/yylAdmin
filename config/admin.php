@@ -15,7 +15,7 @@ return [
     'menu_is_unlogin' => [
         'admin/admin.Login/setting',
         'admin/admin.Login/captcha',
-        'admin/admin.Login/login',
+        'admin/admin.Login/login'
     ],
     // 无需权限菜单url
     'menu_is_unauth' => [
@@ -23,4 +23,9 @@ return [
         'admin/Index/message',
         'admin/admin.Message/info'
     ],
+    // 无需限率菜单url
+    'menu_is_unrate' => [
+        'admin/file.File/add',
+        'admin/file.File/list'
+    ]
 ];

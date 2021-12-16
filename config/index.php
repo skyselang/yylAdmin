@@ -10,5 +10,14 @@
 // index配置
 return [
     // 无需登录接口url
-    'api_is_unlogin' => [],
+    'api_is_unlogin' => [
+        'index/',
+        'index/Index/index',
+        'index/Register/captcha',
+        'index/Register/register',
+        'index/Login/captcha',
+        'index/Login/login'
+    ],
+    // 无需限率接口url
+    'api_is_unrate' => []
 ];

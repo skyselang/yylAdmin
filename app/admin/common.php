@@ -110,6 +110,27 @@ function menu_is_unlogin($menu_url = '')
 }
 
 /**
+ * 菜单是否无需限率
+ *
+ * @param string $menu_url 菜单url
+ *
+ * @return boolean
+ */
+function menu_is_unrate($menu_url = '')
+{
+    if (empty($menu_url)) {
+        $menu_url = menu_url();
+    }
+
+    $unratelist = MenuService::unrateList();
+    if (in_array($menu_url, $unratelist)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * 用户token是否已设置
  *
  * @return boolean

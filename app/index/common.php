@@ -89,6 +89,27 @@ function api_is_unlogin($api_url = '')
 }
 
 /**
+ * 接口是否无需限率
+ *
+ * @param string $api_url 接口url
+ *
+ * @return boolean
+ */
+function api_is_unrate($api_url = '')
+{
+    if (empty($api_url)) {
+        $api_url = api_url();
+    }
+
+    $unratelist = ApiService::unrateList();
+    if (in_array($api_url, $unratelist)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * 会员token是否已设置
  *
  * @return boolean

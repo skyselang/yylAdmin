@@ -36,17 +36,19 @@ class ApiRateMiddleware
             $api_url   = api_url();
 
             if ($member_id && $api_url) {
-                $count = ApiRateCache::get($member_id, $api_url);
+                if (!api_is_unrate($api_url)) {
+                    $count = ApiRateCache::get($member_id, $api_url);
 
-                if ($count) {
-                    if ($count >= $api_rate_num) {
-                        ApiRateCache::del($member_id, $api_url);
-                        exception('慢点，太快了！', 429);
+                    if ($count) {
+                        if ($count >= $api_rate_num) {
+                            ApiRateCache::del($member_id, $api_url);
+                            exception('慢点，太快了！', 429);
+                        } else {
+                            ApiRateCache::inc($member_id, $api_url);
+                        }
                     } else {
-                        ApiRateCache::inc($member_id, $api_url);
+                        ApiRateCache::set($member_id, $api_url, $api_rate_time);
                     }
-                } else {
-                    ApiRateCache::set($member_id, $api_url, $api_rate_time);
                 }
             }
         }

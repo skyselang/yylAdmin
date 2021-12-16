@@ -737,4 +737,23 @@ class MenuService
 
         return $unloginlist;
     }
+
+    /**
+     * 菜单无需限率url列表
+     *
+     * @return array
+     */
+    public static function unrateList()
+    {
+        $unratelist_key = 'unrateList';
+        $unratelist     = MenuCache::get($unratelist_key);
+        if (empty($unratelist)) {
+            $menu_unrate = Config::get('admin.menu_is_unrate');
+            $unratelist  = array_unique(array_filter($menu_unrate));
+
+            MenuCache::set($unratelist_key, $unratelist);
+        }
+
+        return $unratelist;
+    }
 }
