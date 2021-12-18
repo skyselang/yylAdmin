@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "8622e45325174bcfae9e73a0fd5f7373",
+    "revision": "8e97b7c6b26f55d074310b2f9327be81",
     "url": "config.js"
   },
   {
-    "revision": "6196393a96e8381da64059a37116a368",
+    "revision": "e6c9e7de5a065c91c5ff0ed71b428839",
     "url": "editor.worker.js"
   },
   {
@@ -12,11 +12,11 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "icon/iconfont.css"
   },
   {
-    "revision": "0cb1af6f41c9aae433606d25b6fc32c4",
+    "revision": "3fd3f07087800da45c9b43e355c90f22",
     "url": "index.html"
   },
   {
-    "revision": "6fc3370e19081dd32073b3b3e886f2f9",
+    "revision": "e40dce6c88f23aa04501f66c0ed9aa84",
     "url": "json.worker.js"
   },
   {
@@ -28,7 +28,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "robots.txt"
   },
   {
-    "revision": "6e5d54629d78c064dac3",
+    "revision": "d3d6759aca4a5df758da",
     "url": "static/css/apiDetail.d99c08d5.css"
   },
   {
@@ -40,7 +40,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "static/css/apiDetail~mdDetail.db8d650d.css"
   },
   {
-    "revision": "e35abf07a9038bf6880c",
+    "revision": "df571351760aa68b4bca",
     "url": "static/css/app.afd1f537.css"
   },
   {
@@ -52,7 +52,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "static/css/home.4f3fd59f.css"
   },
   {
-    "revision": "9bb59d7c95cd66396047",
+    "revision": "2c452260b42a472c72f8",
     "url": "static/css/mdDetail.e5d868cf.css"
   },
   {
@@ -60,8 +60,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "static/fonts/codicon.8801fd90.ttf"
   },
   {
-    "revision": "6e5d54629d78c064dac3",
-    "url": "static/js/apiDetail.70ab76f7.js"
+    "revision": "d3d6759aca4a5df758da",
+    "url": "static/js/apiDetail.c4167b8f.js"
   },
   {
     "revision": "99ae15cda9349f052386",
@@ -72,8 +72,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "static/js/apiDetail~mdDetail.b3763c3c.js"
   },
   {
-    "revision": "e35abf07a9038bf6880c",
-    "url": "static/js/app.e30ac258.js"
+    "revision": "df571351760aa68b4bca",
+    "url": "static/js/app.748f8401.js"
   },
   {
     "revision": "c214e1373aeaabdf5aad",
@@ -384,7 +384,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "static/js/home.61eea17c.js"
   },
   {
-    "revision": "9bb59d7c95cd66396047",
-    "url": "static/js/mdDetail.613fc987.js"
+    "revision": "2c452260b42a472c72f8",
+    "url": "static/js/mdDetail.8ede5c46.js"
   }
 ]);

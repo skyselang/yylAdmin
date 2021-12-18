@@ -49,7 +49,7 @@ class Register
      * @Apidoc\Param("username",type="string",mock="@string('lower', 6, 12)")
      * @Apidoc\Param("nickname",type="string",mock="@cname")
      * @Apidoc\Param("password",type="string",mock="@string('lower', 6)")
-     * @Apidoc\Param("phone",type="string",mock="@string('number', 11)")
+     * @Apidoc\Param("phone",type="string",mock="@phone")
      * @Apidoc\Param("email",type="string",mock="@email")
      * @Apidoc\Param(ref="captchaParam")
      */

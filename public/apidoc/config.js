@@ -27,6 +27,7 @@ const config = {
     DELETE: "#ff4d4f",
     PATCH: "#802feb",
   },
+  WITHCREDENTIALS: false,
   // 多语言
   LANG: [
     {
