@@ -10,13 +10,13 @@
 // 接口文档配置
 return [
     // 页面标题
-    'title' => 'yylAdmin-接口文档与调试',
+    'title' => env('apidoc.title', 'yylAdmin-接口文档与调试'),
     // 文档说明
-    'desc' => 'yylAdmin ApiDoc',
+    'desc' => env('apidoc.desc', 'yylAdmin Apidoc'),
     // 默认请求类型
-    'default_method' => 'GET',
+    'default_method' => env('apidoc.default_method', 'GET'),
     // 默认作者名称
-    'default_author' => 'skyselang',
+    'default_author' => env('apidoc.default_author', 'skyselang'),
     // 多应用/多版本管理配置
     'apps' => [
         [
