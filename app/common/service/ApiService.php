@@ -62,8 +62,6 @@ class ApiService
 
     /**
      * 接口树形
-     * 
-     * @param string
      *
      * @return array 树形
      */
@@ -145,9 +143,9 @@ class ApiService
             exception();
         }
 
-        $param[self::$t_pk] = $api_id;
-
         ApiCache::del();
+
+        $param[self::$t_pk] = $api_id;
 
         return $param;
     }
@@ -176,9 +174,9 @@ class ApiService
             exception();
         }
 
-        $param[self::$t_pk] = $api_id;
-
         ApiCache::del([$api_id, $api['api_url']]);
+
+        $param[self::$t_pk] = $api_id;
 
         return $param;
     }
@@ -186,27 +184,62 @@ class ApiService
     /**
      * 接口删除
      *
-     * @param integer $api_id 接口id
+     * @param array $ids 接口id
      * 
      * @return array
      */
-    public static function dele($api_id)
+    public static function dele($ids)
     {
-        $api = self::info($api_id);
+        foreach ($ids as $v) {
+            self::info($v);
+        }
 
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, '=', $api_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $api_id;
+        foreach ($ids as $v) {
+            $api = self::info($v);
+            ApiCache::del([$v, $api['api_url']]);
+        }
 
-        ApiCache::del([$api_id, $api['api_url']]);
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 接口设置父级
+     *
+     * @param array   $ids     接口id
+     * @param integer $api_pid 接口父级
+     * 
+     * @return array
+     */
+    public static function pid($ids, $api_pid)
+    {
+        $update['api_pid']     = $api_pid;
+        $update['update_time'] = datetime();
+
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $ids)
+            ->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($ids as $v) {
+            $api = self::info($v);
+            ApiCache::del([$v, $api['api_url']]);
+        }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -214,29 +247,29 @@ class ApiService
     /**
      * 接口是否禁用
      *
-     * @param array $param 接口信息
+     * @param array   $ids        接口id
+     * @param integer $is_disable 是否禁用
      * 
      * @return array
      */
-    public static function disable($param)
+    public static function disable($ids, $is_disable)
     {
-        $api_id = $param[self::$t_pk];
-
-        $update['is_disable']  = $param['is_disable'];
+        $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $api_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $api = self::info($api_id);
+        foreach ($ids as $v) {
+            $api = self::info($v);
+            ApiCache::del([$v, $api['api_url']]);
+        }
 
-        $update[self::$t_pk] = $api_id;
-
-        ApiCache::del([$api_id, $api['api_url']]);
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -244,29 +277,29 @@ class ApiService
     /**
      * 接口是否无需登录
      *
-     * @param array $param 接口信息
+     * @param array   $ids        接口id
+     * @param integer $is_unlogin 是否无需登录
      * 
      * @return array
      */
-    public static function unlogin($param)
+    public static function unlogin($ids, $is_unlogin)
     {
-        $api_id = $param[self::$t_pk];
-
-        $update['is_unlogin']  = $param['is_unlogin'];
+        $update['is_unlogin']  = $is_unlogin;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $api_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $api = self::info($api_id);
+        foreach ($ids as $v) {
+            $api = self::info($v);
+            ApiCache::del([$v, $api['api_url']]);
+        }
 
-        $update[self::$t_pk] = $api_id;
-
-        ApiCache::del([$api_id, $api['api_url']]);
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -283,7 +316,7 @@ class ApiService
     {
         $children = [];
 
-        foreach ($api as $k => $v) {
+        foreach ($api as $v) {
             if ($v['api_pid'] == $api_id) {
                 $children[] = $v[self::$t_pk];
                 $children   = array_merge($children, self::getChildren($api, $v[self::$t_pk]));
@@ -305,7 +338,7 @@ class ApiService
     {
         $tree = [];
 
-        foreach ($api as $k => $v) {
+        foreach ($api as $v) {
             if ($v['api_pid'] == $api_pid) {
                 $v['children'] = self::toTree($api, $v[self::$t_pk]);
                 $tree[] = $v;

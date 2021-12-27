@@ -60,15 +60,9 @@ class FileService
             ->toArray();
 
         foreach ($list as $k => $v) {
-            $list[$k]['file_url'] = '';
-            if ($v['storage'] == 'local') {
-                $list[$k]['file_url'] = file_url($v['file_path']);
-            } else {
-                $list[$k]['file_url'] = $v['domain'] . '/' . $v['file_hash'] . '.' . $v['file_ext'];
-            }
-
+            $list[$k]['file_url'] = self::fileUrl($v);
             if (isset($v['file_size'])) {
-                $list[$k]['file_size'] = self::sizeFormat($v['file_size']);
+                $list[$k]['file_size'] = self::fileSize($v['file_size']);
             }
         }
 
@@ -96,13 +90,8 @@ class FileService
                 ->where(self::$t_pk, $file_id)
                 ->find();
             if ($file) {
-                if ($file['storage'] == 'local') {
-                    $file['file_url'] = file_url($file['file_path']);
-                } else {
-                    $file['file_url'] = $file['domain'] . '/' . $file['file_hash'] . '.' . $file['file_ext'];
-                }
-
-                $file['file_size'] = self::sizeFormat($file['file_size']);
+                $file['file_url']  = self::fileUrl($file);
+                $file['file_size'] = self::fileSize($file['file_size']);
 
                 FileCache::set($file_id, $file);
             }
@@ -125,7 +114,7 @@ class FileService
         $datetime = datetime();
 
         $file_ext  = $file->getOriginalExtension();
-        $file_type = self::typeJudge($file_ext);
+        $file_type = self::fileType($file_ext);
         $file_size = $file->getSize();
         $file_md5  = $file->hash('md5');
         $file_hash = $file->hash('sha1');
@@ -353,18 +342,27 @@ class FileService
     /**
      * 文件链接
      *
-     * @param integer $file_id 文件id
+     * @param mixed $file 文件id、信息
      *
      * @return string
      */
-    public static function fileUrl($file_id)
+    public static function fileUrl($file)
     {
-        $file = self::info($file_id);
-        if ($file) {
-            return $file['file_url'];
+        $file_url = '';
+
+        if (is_numeric($file)) {
+            $file = self::info($file);
         }
 
-        return '';
+        if ($file) {
+            if ($file['storage'] == 'local') {
+                $file_url = file_url($file['file_path']);
+            } else {
+                $file_url = $file['domain'] . '/' . $file['file_hash'] . '.' . $file['file_ext'];
+            }
+        }
+
+        return $file_url;
     }
 
     /**
@@ -377,25 +375,25 @@ class FileService
     public static function fileArray($file_ids)
     {
         $file = Db::name(self::$t_name)
-            ->field('file_id,file_type,file_name,file_path,file_size')
+            ->field('file_id,storage,file_type,file_name,file_hash,file_ext,file_path,file_size')
             ->where(self::$t_pk, 'in', $file_ids)
             ->where('is_disable', '=', 0)
             ->select()
             ->toArray();
         foreach ($file as $k => $v) {
-            $file[$k]['file_url']  = file_url($v['file_path']);
-            $file[$k]['file_size'] = self::sizeFormat($v['file_size']);
+            $file[$k]['file_url']  = self::fileUrl($v);
+            $file[$k]['file_size'] = self::fileSize($v['file_size']);
         }
 
         return $file;
     }
 
     /**
-     * 文件类型
+     * 文件类型数组
      *
      * @return array
      */
-    public static function fileType()
+    public static function fileTypes()
     {
         $filetype = [
             'image' => '图片',
@@ -433,7 +431,7 @@ class FileService
      *
      * @return string
      */
-    public static function sizeFormat($file_size = 0)
+    public static function fileSize($file_size = 0)
     {
         $p = 0;
         $format = 'B';
@@ -464,13 +462,13 @@ class FileService
     }
 
     /**
-     * 文件类型判断
+     * 文件类型获取
      *
      * @param string $file_ext 文件后缀
      *
      * @return string image图片，video视频，audio音频，word文档，other其它
      */
-    public static function typeJudge($file_ext = '')
+    public static function fileType($file_ext = '')
     {
         if ($file_ext) {
             $file_ext = strtolower($file_ext);
@@ -516,14 +514,14 @@ class FileService
         if (empty($data)) {
             $data['count'] = Db::name(self::$t_name)->where('is_delete', 0)->count(self::$t_pk);
 
-            $file_type = self::fileType();
+            $file_types = self::fileTypes();
             $file_count = Db::name(self::$t_name)
                 ->field('file_type,count(file_type) as file_count')
                 ->where('is_delete', 0)
                 ->group('file_type')
                 ->select()
                 ->toArray();
-            foreach ($file_type as $k => $v) {
+            foreach ($file_types as $k => $v) {
                 $temp = [];
                 $temp['name']  = $v;
                 $temp['value'] = 0;

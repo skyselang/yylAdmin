@@ -233,7 +233,8 @@ class SettingService
     {
         $setting = self::info();
 
-        $data['log_switch'] = $setting['log_switch'];
+        $data['log_switch']    = $setting['log_switch'];
+        $data['log_save_time'] = $setting['log_save_time'];
 
         return $data;
     }

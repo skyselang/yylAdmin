@@ -203,25 +203,27 @@ class UserLogService
     /**
      * 用户日志删除
      *
-     * @param integer $admin_user_log_id 用户日志id
+     * @param array $ids 用户日志id
      * 
      * @return array
      */
-    public static function dele($admin_user_log_id)
+    public static function dele($ids)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_user_log_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_user_log_id;
+        $update[self::$t_pk] = $ids;
 
-        UserLogCache::del($admin_user_log_id);
+        foreach ($ids as $v) {
+            UserLogCache::del($v);
+        }
 
         return $update;
     }
@@ -229,84 +231,21 @@ class UserLogService
     /**
      * 用户日志清除
      *
-     * @param array $param 清除条件
+     * @param array   $where 清除条件
+     * @param boolean $clean 清空所有
      * 
      * @return array
      */
-    public static function clear($param)
+    public static function clear($where = [], $clean = false)
     {
-        $admin_user_id = $param['admin_user_id'];
-        $username      = $param['username'];
-        $admin_menu_id = $param['admin_menu_id'];
-        $menu_url      = $param['menu_url'];
-        $date_value    = $param['date_value'];
-
-        $where = [];
-        if ($admin_user_id && $username) {
-            $AdminUser = new UserModel();
-            $admin_user = $AdminUser
-                ->field('admin_user_id')
-                ->where('username', '=', $username)
-                ->where('is_delete', '=', 0)
-                ->find();
-            if ($admin_user) {
-                $where[] = ['admin_user_id', 'in', [$admin_user_id, $admin_user['admin_user_id']]];
-            } else {
-                $where[] = ['admin_user_id', '=', $admin_user_id];
-            }
-        } elseif ($admin_user_id) {
-            $where[] = ['admin_user_id', '=', $admin_user_id];
-        } elseif ($username) {
-            $AdminUser = new UserModel();
-            $admin_user = $AdminUser
-                ->field('admin_user_id')
-                ->where('username', '=', $username)
-                ->where('is_delete', '=', 0)
-                ->find();
-            if ($admin_user) {
-                $where[] = ['admin_user_id', '=', $admin_user['admin_user_id']];
-            }
+        if ($clean) {
+            $count = Db::name(self::$t_name)->delete(true);
+        } else {
+            $count = Db::name(self::$t_name)->where($where)->delete();
         }
 
-        if ($admin_menu_id && $menu_url) {
-            $AdminMenu = new MenuModel();
-            $admin_menu = $AdminMenu
-                ->field('admin_menu_id')
-                ->where('menu_url', '=', $menu_url)
-                ->where('is_delete', '=', 0)
-                ->find();
-            if ($admin_menu) {
-                $where[] = ['admin_menu_id', 'in', [$admin_menu_id, $admin_menu['admin_menu_id']]];
-            } else {
-                $where[] = ['admin_menu_id', '=', $admin_menu_id];
-            }
-        } elseif ($admin_menu_id) {
-            $where[] = ['admin_menu_id', '=', $admin_menu_id];
-        } elseif ($menu_url) {
-            $AdminMenu = new MenuModel();
-            $admin_menu = $AdminMenu
-                ->field('admin_menu_id')
-                ->where('menu_url', '=', $menu_url)
-                ->where('is_delete', '=', 0)
-                ->find();
-            if ($admin_menu) {
-                $where[] = ['admin_menu_id', '=', $admin_menu['admin_menu_id']];
-            }
-        }
-
-        if ($date_value) {
-            $sta_date = $date_value[0];
-            $end_date = $date_value[1];
-            $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
-            $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
-        }
-
-        $res = Db::name(self::$t_name)
-            ->where($where)
-            ->delete(true);
-
-        $data['count'] = $res;
-        $data['param'] = $param;
+        $data['count'] = $count;
+        $data['where'] = $where;
 
         return $data;
     }

@@ -15,6 +15,8 @@ use app\common\validate\MemberLogValidate;
 use app\common\service\MemberLogService;
 use app\common\service\MemberService;
 use app\common\service\ApiService;
+use app\common\model\MemberModel;
+use app\common\model\ApiModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -111,11 +113,11 @@ class MemberLog
      */
     public function dele()
     {
-        $param['member_log_id'] = Request::param('member_log_id/d', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(MemberLogValidate::class)->scene('dele')->check($param);
 
-        $data = MemberLogService::dele($param['member_log_id']);
+        $data = MemberLogService::dele($param['ids']);
 
         return success($data);
     }
@@ -131,13 +133,60 @@ class MemberLog
      */
     public function clear()
     {
-        $param['member_id']  = Request::param('member_id/d', '');
-        $param['username']   = Request::param('username/s', '');
-        $param['api_id']     = Request::param('api_id/d', '');
-        $param['api_url']    = Request::param('api_url/s', '');
-        $param['date_value'] = Request::param('date_value/a', '');
+        $member_id  = Request::param('member_id/s', '');
+        $username   = Request::param('username/s', '');
+        $api_id     = Request::param('api_id/s', '');
+        $api_url    = Request::param('api_url/s', '');
+        $date_value = Request::param('date_value/a', '');
+        $clean      = Request::param('clean/b', false);
 
-        $data = MemberLogService::clear($param);
+        $where = [];
+        $member_ids = [];
+        if ($member_id) {
+            $member_ids = array_merge(explode(',', $member_id), $member_ids);
+        }
+        if ($username) {
+            $exp_member = strstr($username, ',') ? 'in' : '=';
+            $Member = new MemberModel();
+            $member = $Member
+                ->field('member_id')
+                ->where('username', $exp_member, $username)
+                ->select()
+                ->toArray();
+            if ($member) {
+                $member_ids = array_merge(array_column($member, 'member_id'), $member_ids);
+            }
+        }
+        if ($member_ids) {
+            $where[] = ['member_id', 'in', $member_ids];
+        }
+
+        $api_ids = [];
+        if ($api_id) {
+            $api_ids = array_merge(explode(',', $api_id), $api_ids);
+        }
+        if ($api_url) {
+            $exp_api = strstr($api_url, ',') ? 'in' : '=';
+            $Api = new ApiModel();
+            $api = $Api
+                ->field('api_id')
+                ->where('api_url', $exp_api, $api_url)
+                ->select()
+                ->toArray();
+            if ($api) {
+                $api_ids = array_merge(array_column($api, 'api_id'), $api_ids);
+            }
+        }
+        if ($api_ids) {
+            $where[] = ['api_id', 'in', $api_ids];
+        }
+
+        if ($date_value) {
+            $where[] = ['create_time', '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = ['create_time', '<=', $date_value[1] . ' 23:59:59'];
+        }
+
+        $data = MemberLogService::clear($where, $clean);
 
         return success($data);
     }
@@ -159,7 +208,7 @@ class MemberLog
 
         if ($type == 'num') {
             $num = [];
-            foreach ($dates as $k => $v) {
+            foreach ($dates as $v) {
                 $num[$v] = MemberLogService::statNum($v);
             }
             $data['num'] = $num;
@@ -169,7 +218,7 @@ class MemberLog
             $data['field'] = MemberLogService::statField($date, $field);
         } else {
             $num = [];
-            foreach ($dates as $k => $v) {
+            foreach ($dates as $v) {
                 $num[$v] = MemberLogService::statNum($v);
             }
 

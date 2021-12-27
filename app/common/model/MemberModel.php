@@ -91,6 +91,13 @@ class MemberModel extends Model
     }
 
     /**
+     * @Apidoc\Field("username,nickname,password,phone,email")
+     */
+    public function registerReturn()
+    {
+    }
+
+    /**
      * @Apidoc\Field("member_id,username,nickname,phone,email,avatar_id,login_ip,login_time")
      * @Apidoc\AddField("menber_token", type="string", require=true, desc="MemberToken")
      */

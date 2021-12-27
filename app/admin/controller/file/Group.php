@@ -36,18 +36,33 @@ class Group
      */
     public function list()
     {
-        $page       = Request::param('page/d', 1);
-        $limit      = Request::param('limit/d', 9999);
-        $sort_field = Request::param('sort_field/s', '');
-        $sort_value = Request::param('sort_value/s', '');
-        $group_name = Request::param('group_name/s', '');
-        $group_desc = Request::param('group_desc/s', '');
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
-        if ($group_name) {
-            $where[] = ['group_name', 'like', '%' . $group_name . '%'];
+        if ($search_field && $search_value) {
+            if ($search_field == 'group_id') {
+                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
+            } elseif (in_array($search_field, ['is_disable'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
         }
-        if ($group_desc) {
-            $where[] = ['group_desc', 'like', '%' . $group_desc . '%'];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
         $where[] = ['is_delete', '=', 0];
 
@@ -56,9 +71,7 @@ class Group
             $order = [$sort_field => $sort_value];
         }
 
-        $field = 'group_id,group_name,group_desc,group_sort,is_disable,create_time,update_time';
-
-        $data = GroupService::list($where, $page, $limit, $order, $field);
+        $data = GroupService::list($where, $page, $limit, $order);
 
         return success($data);
     }
@@ -91,7 +104,7 @@ class Group
     {
         $param['group_name'] = Request::param('group_name/s', '');
         $param['group_desc'] = Request::param('group_desc/s', '');
-        $param['group_sort'] = Request::param('group_sort/d', 50);
+        $param['group_sort'] = Request::param('group_sort/d', 250);
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(GroupValidate::class)->scene('add')->check($param);
@@ -111,7 +124,7 @@ class Group
         $param['group_id']   = Request::param('group_id/d', '');
         $param['group_name'] = Request::param('group_name/s', '');
         $param['group_desc'] = Request::param('group_desc/s', '');
-        $param['group_sort'] = Request::param('group_sort/d', 50);
+        $param['group_sort'] = Request::param('group_sort/d', 250);
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(GroupValidate::class)->scene('edit')->check($param);
@@ -128,11 +141,11 @@ class Group
      */
     public function dele()
     {
-        $param['group'] = Request::param('group/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(GroupValidate::class)->scene('dele')->check($param);
 
-        $data = GroupService::dele($param['group']);
+        $data = GroupService::dele($param['ids']);
 
         return success($data);
     }
@@ -145,12 +158,12 @@ class Group
      */
     public function disable()
     {
-        $param['group']      = Request::param('group/a', '');
+        $param['ids']        = Request::param('ids/a', '');
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(GroupValidate::class)->scene('disable')->check($param);
 
-        $data = GroupService::disable($param['group'], $param['is_disable']);
+        $data = GroupService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }

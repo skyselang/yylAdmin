@@ -17,7 +17,7 @@ class CommentValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'comment'    => ['require', 'array'],
+        'ids'        => ['require', 'array'],
         'comment_id' => ['require'],
         'call'       => ['require'],
         'mobile'     => ['require','mobile'],
@@ -41,8 +41,8 @@ class CommentValidate extends Validate
         'info'   => ['comment_id'],
         'add'    => ['call', 'mobile', 'title', 'content'],
         'edit'   => ['comment_id'],
-        'dele'   => ['comment'],
-        'isread' => ['comment'],
+        'dele'   => ['ids'],
+        'isread' => ['ids'],
         'sort'   => ['sort_field', 'sort_value'],
     ];
 

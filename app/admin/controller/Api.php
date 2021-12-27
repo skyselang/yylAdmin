@@ -64,7 +64,7 @@ class Api
         $param['api_pid']  = Request::param('api_pid/d', 0);
         $param['api_name'] = Request::param('api_name/s', '');
         $param['api_url']  = Request::param('api_url/s', '');
-        $param['api_sort'] = Request::param('api_sort/d', 200);
+        $param['api_sort'] = Request::param('api_sort/d', 250);
 
         validate(ApiValidate::class)->scene('add')->check($param);
 
@@ -84,7 +84,7 @@ class Api
         $param['api_pid']  = Request::param('api_pid/d', 0);
         $param['api_name'] = Request::param('api_name/s', '');
         $param['api_url']  = Request::param('api_url/s', '');
-        $param['api_sort'] = Request::param('api_sort/d', 200);
+        $param['api_sort'] = Request::param('api_sort/d', 250);
 
         validate(ApiValidate::class)->scene('edit')->check($param);
 
@@ -100,11 +100,28 @@ class Api
      */
     public function dele()
     {
-        $param['api_id'] = Request::param('api_id/d', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(ApiValidate::class)->scene('dele')->check($param);
 
-        $data = ApiService::dele($param['api_id']);
+        $data = ApiService::dele($param['ids']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("接口设置父级")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\disableParam")
+     */
+    public function pid()
+    {
+        $param['ids']     = Request::param('ids/a', '');
+        $param['api_pid'] = Request::param('api_pid/d', 0);
+
+        validate(ApiValidate::class)->scene('pid')->check($param);
+
+        $data = ApiService::pid($param['ids'], $param['api_pid']);
 
         return success($data);
     }
@@ -116,12 +133,12 @@ class Api
      */
     public function disable()
     {
-        $param['api_id']     = Request::param('api_id/d', '');
+        $param['ids']        = Request::param('ids/a', '');
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(ApiValidate::class)->scene('disable')->check($param);
 
-        $data = ApiService::disable($param);
+        $data = ApiService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
@@ -133,12 +150,12 @@ class Api
      */
     public function unlogin()
     {
-        $param['api_id']     = Request::param('api_id/d', '');
+        $param['ids']        = Request::param('ids/a', '');
         $param['is_unlogin'] = Request::param('is_unlogin/d', 0);
 
         validate(ApiValidate::class)->scene('unlogin')->check($param);
 
-        $data = ApiService::unlogin($param);
+        $data = ApiService::unlogin($param['ids'], $param['is_unlogin']);
 
         return success($data);
     }

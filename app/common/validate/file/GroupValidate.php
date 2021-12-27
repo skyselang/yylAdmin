@@ -18,7 +18,7 @@ class GroupValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'group'      => ['require', 'array'],
+        'ids'        => ['require', 'array'],
         'group_id'   => ['require'],
         'group_name' => ['require', 'checkGroupName'],
     ];
@@ -34,15 +34,15 @@ class GroupValidate extends Validate
         'info'    => ['group_id'],
         'add'     => ['group_name'],
         'edit'    => ['group_id', 'group_name'],
-        'dele'    => ['group'],
-        'disable' => ['group'],
+        'dele'    => ['ids'],
+        'disable' => ['ids'],
     ];
 
     // 验证场景定义：删除
     protected function scenedele()
     {
-        return $this->only(['group'])
-            ->append('group', 'checkGroupFile');
+        return $this->only(['ids'])
+            ->append('ids', 'checkGroupFile');
     }
 
     // 自定义验证规则：分组名称是否已存在
@@ -64,8 +64,7 @@ class GroupValidate extends Validate
     // 自定义验证规则：分组是否有文件
     protected function checkGroupFile($value, $rule, $data = [])
     {
-        $group_ids = array_column($data['group'], 'group_id');
-        $where[] = ['group_id', 'in', $group_ids];
+        $where[] = ['group_id', 'in', $data['ids']];
         $file = FileService::list($where, 1, 1, [], 'file_id');
         if ($file['list']) {
             return '分组下有文件，无法删除';

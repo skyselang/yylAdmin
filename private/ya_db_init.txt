@@ -1,4 +1,4 @@
-/* clear data sql */
+/* yyladmin database init sql */
 UPDATE yyl_admin_menu SET create_time=null, update_time=null, delete_time=null;
 UPDATE yyl_admin_role SET create_time=null, update_time=null, delete_time=null;
 TRUNCATE yyl_admin_setting;

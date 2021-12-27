@@ -109,8 +109,8 @@ class Member
         $param['phone']     = Request::param('phone/s', '');
         $param['email']     = Request::param('email/s', '');
         $param['region_id'] = Request::param('region_id/d', 0);
-        $param['remark']    = Request::param('remark/s', '');
         $param['sort']      = Request::param('sort/d', 250);
+        $param['remark']    = Request::param('remark/s', '');
 
         validate(MemberValidate::class)->scene('add')->check($param);
 
@@ -133,8 +133,8 @@ class Member
         $param['phone']     = Request::param('phone/s', '');
         $param['email']     = Request::param('email/s', '');
         $param['region_id'] = Request::param('region_id/d', 0);
-        $param['remark']    = Request::param('remark/s', '');
         $param['sort']      = Request::param('sort/d', 250);
+        $param['remark']    = Request::param('remark/s', '');
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
@@ -150,11 +150,11 @@ class Member
      */
     public function dele()
     {
-        $param['list'] = Request::param('list/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(MemberValidate::class)->scene('dele')->check($param);
 
-        $data = MemberService::dele($param['list']);
+        $data = MemberService::dele($param['ids']);
 
         return success($data);
     }
@@ -166,12 +166,12 @@ class Member
      */
     public function region()
     {
-        $param['list']      = Request::param('list/a', '');
+        $param['ids']       = Request::param('ids/a', '');
         $param['region_id'] = Request::param('region_id/d', 0);
 
         validate(MemberValidate::class)->scene('region')->check($param);
 
-        $data = MemberService::region($param['list'], $param['region_id']);
+        $data = MemberService::region($param['ids'], $param['region_id']);
 
         return success($data);
     }
@@ -183,12 +183,12 @@ class Member
      */
     public function disable()
     {
-        $param['list']       = Request::param('list/a', '');
+        $param['ids']        = Request::param('ids/a', '');
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(MemberValidate::class)->scene('disable')->check($param);
 
-        $data = MemberService::disable($param['list'], $param['is_disable']);
+        $data = MemberService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
@@ -200,12 +200,12 @@ class Member
      */
     public function repwd()
     {
-        $param['list']     = Request::param('list/a', '');
+        $param['ids']      = Request::param('ids/a', '');
         $param['password'] = Request::param('password/s', '');
 
         validate(MemberValidate::class)->scene('repwd')->check($param);
 
-        $data = MemberService::repwd($param['list'], $param['password']);
+        $data = MemberService::repwd($param['ids'], $param['password']);
 
         return success($data);
     }
@@ -219,7 +219,7 @@ class Member
 
         $number = $active = [];
         $date_range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-        foreach ($date_range as $k => $v) {
+        foreach ($date_range as $v) {
             $number[$v] = MemberService::statNum($v);
             $active[$v] = MemberService::statNum($v, 'act');
         }

@@ -20,7 +20,7 @@ class RegionService
     protected static $t_name = 'region';
     // 表主键
     protected static $t_pk = 'region_id';
-    // 地区树形key
+    // 树形key
     protected static $tree_key = 'tree';
 
     /**
@@ -65,7 +65,7 @@ class RegionService
     /**
      * 地区信息
      *
-     * @param integer|string $region_id 地区id（tree树形）
+     * @param mixed $region_id 地区id（tree树形）
      * 
      * @return array
      */
@@ -96,7 +96,7 @@ class RegionService
                     $region_fullname_py = $region['region_pinyin'];
                 } else {
                     $region_pid = [];
-                    foreach ($region_path as $k => $v) {
+                    foreach ($region_path as $v) {
                         $region_pid[] = Db::name(self::$t_name)
                             ->field('region_name,region_pinyin')
                             ->where(self::$t_pk, '=', $v)
@@ -238,27 +238,29 @@ class RegionService
     /**
      * 地区删除
      *
-     * @param integer $region_id 地区id
+     * @param array $ids 地区id
      * 
      * @return array
      */
-    public static function dele($region_id)
+    public static function dele($ids)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, '=', $region_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $region_id;
-
         RegionCache::del(self::$tree_key);
-        RegionCache::del($region_id);
+        foreach ($ids as $v) {
+            RegionCache::del($v);
+        }
 
+        $update['ids'] = $ids;
+        
         return $update;
     }
 

@@ -135,30 +135,28 @@ class GroupService
     /**
      * 文件分组删除
      *
-     * @param array   $group     文件分组列表
+     * @param array   $ids       文件分组id
      * @param integer $is_delete 是否删除
      * 
      * @return array
      */
-    public static function dele($group, $is_delete = 1)
+    public static function dele($ids, $is_delete = 1)
     {
-        $group_ids = array_column($group, self::$t_pk);
-
         $update['is_delete']   = $is_delete;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $group_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['group_ids'] = $group_ids;
-
-        foreach ($group_ids as $k => $v) {
+        foreach ($ids as $v) {
             GroupCache::del($v);
         }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -166,30 +164,28 @@ class GroupService
     /**
      * 文件分组禁用
      *
-     * @param array   $group      文件分组列表
+     * @param array   $ids        文件分组id
      * @param integer $is_disable 是否禁用
      * 
      * @return array
      */
-    public static function disable($group, $is_disable = 0)
+    public static function disable($ids, $is_disable = 0)
     {
-        $group_ids = array_column($group, self::$t_pk);
-
         $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $group_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['group_ids'] = $group_ids;
-
-        foreach ($group_ids as $k => $v) {
+        foreach ($ids as $v) {
             GroupCache::del($v);
         }
+
+        $update['ids'] = $ids;
 
         return $update;
     }

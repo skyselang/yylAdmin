@@ -97,17 +97,16 @@ class UserCenter
      */
     public function log()
     {
-        $page            = Request::param('page/d', 1);
-        $limit           = Request::param('limit/d', 10);
-        $sort_field      = Request::param('sort_field/s', '');
-        $sort_value      = Request::param('sort_value/s', '');
-        $date_field      = Request::param('date_field/s', 'create_time');
-        $date_value      = Request::param('date_value/a', '');
-        $log_type        = Request::param('log_type/d', '');
-        $response_code   = Request::param('response_code/s', '');
-        $menu_keyword    = Request::param('menu_keyword/s', '');
-        $request_keyword = Request::param('request_keyword/s', '');
-        $admin_user_id   = admin_user_id();
+        $page          = Request::param('page/d', 1);
+        $limit         = Request::param('limit/d', 10);
+        $sort_field    = Request::param('sort_field/s', '');
+        $sort_value    = Request::param('sort_value/s', '');
+        $date_field    = Request::param('date_field/s', '');
+        $date_value    = Request::param('date_value/a', '');
+        $search_field  = Request::param('search_field/s', '');
+        $search_value  = Request::param('search_value/s', '');
+        $log_type      = Request::param('log_type/d', '');
+        $admin_user_id = admin_user_id();
 
         validate(UserCenterValidate::class)->scene('log')->check(['admin_user_id' => $admin_user_id]);
 
@@ -115,16 +114,17 @@ class UserCenter
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($response_code) {
-            $where[] = ['response_code', '=', $response_code];
-        }
-        if ($menu_keyword) {
-            $admin_menu     = MenuService::likeQuery($menu_keyword);
-            $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
-            $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
-        }
-        if ($request_keyword) {
-            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        if ($search_field && $search_value) {
+            if ($search_field == 'admin_user_log_id') {
+                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
+            } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
+                $admin_menu     = MenuService::likeQuery($search_value);
+                $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
+                $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
         }
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];

@@ -116,7 +116,7 @@ class File
 
         $data = FileService::list($where, $page, $limit, $order);
 
-        $data['filetype'] = FileService::fileType();
+        $data['filetype'] = FileService::fileTypes();
         $data['storage']  = FileService::storage();
 
         return success($data);

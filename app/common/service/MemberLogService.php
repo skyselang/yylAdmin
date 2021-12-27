@@ -16,7 +16,6 @@ use app\common\utils\DatetimeUtils;
 use app\common\cache\MemberLogCache;
 use app\common\utils\IpInfoUtils;
 use app\common\model\MemberModel;
-use app\common\model\ApiModel;
 
 class MemberLogService
 {
@@ -52,6 +51,8 @@ class MemberLogService
             ->where($where)
             ->count(self::$t_pk);
 
+        $pages = ceil($count / $limit);
+
         $list = Db::name(self::$t_name)
             ->field($field)
             ->where($where)
@@ -60,8 +61,6 @@ class MemberLogService
             ->order($order)
             ->select()
             ->toArray();
-
-        $pages = ceil($count / $limit);
 
         foreach ($list as $k => $v) {
             if (isset($v['member_id'])) {
@@ -191,7 +190,7 @@ class MemberLogService
      * 
      * @return array
      */
-    public static function edit($param = [])
+    public static function edit($param)
     {
         $member_log_id = $param[self::$t_pk];
 
@@ -216,25 +215,27 @@ class MemberLogService
     /**
      * 会员日志删除
      *
-     * @param integer $member_log_id 会员日志id
+     * @param array $ids 会员日志id
      * 
      * @return array
      */
-    public static function dele($member_log_id)
+    public static function dele($ids)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $member_log_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $member_log_id;
+        foreach ($ids as $v) {
+            MemberLogCache::del($v);
+        }
 
-        MemberLogCache::del($member_log_id);
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -242,85 +243,21 @@ class MemberLogService
     /**
      * 会员日志清除
      *
-     * @param array $param 清除条件
+     * @param array   $where 清除条件
+     * @param boolean $clean 清空所有
      * 
      * @return array
      */
-    public static function clear($param)
+    public static function clear($where = [], $clean = false)
     {
-        $member_id  = $param['member_id'];
-        $username   = $param['username'];
-        $api_id     = $param['api_id'];
-        $api_url    = $param['api_url'];
-        $date_value = $param['date_value'];
-
-        $where = [];
-        if ($member_id && $username) {
-            $Member = new MemberModel();
-            $member = $Member
-                ->field('member_id')
-                ->where('is_delete', '=', 0)
-                ->where('username', '=', $username)
-                ->find();
-            if ($member) {
-                $where[] = ['member_id', 'in', [$member_id, $member['member_id']]];
-            } else {
-                $where[] = ['member_id', '=', $member_id];
-            }
-        } elseif ($member_id) {
-            $where[] = ['member_id', '=', $member_id];
-        } elseif ($username) {
-            $Member = new MemberModel();
-            $member = $Member
-                ->field('member_id')
-                ->where('is_delete', '=', 0)
-                ->where('username', '=', $username)
-                ->find();
-            if ($member) {
-                $where[] = ['member_id', '=', $member['member_id']];
-            }
+        if ($clean) {
+            $count = Db::name(self::$t_name)->delete(true);
+        } else {
+            $count = Db::name(self::$t_name)->where($where)->delete();
         }
 
-        if ($api_id && $api_url) {
-            $Api = new ApiModel();
-            $api = $Api
-                ->field('api_id')
-                ->where('is_delete', '=', 0)
-                ->where('api_url', '=', $api_url)
-                ->find();
-            if ($api) {
-                $where[] = ['api_id', 'in', [$api_id, $api['api_id']]];
-            } else {
-                $where[] = ['api_id', '=', $api_id];
-            }
-        } elseif ($api_id) {
-            $where[] = ['api_id', '=', $api_id];
-        } elseif ($api_url) {
-            $Api = new ApiModel();
-            $api = $Api
-                ->field('api_id')
-                ->where('is_delete', '=', 0)
-                ->where('api_url', '=', $api_url)
-                ->find();
-            if ($api) {
-                $where[] = ['api_id', '=', $api['api_id']];
-            }
-        }
-
-        if ($date_value) {
-            $sta_date = $date_value[0];
-            $end_date = $date_value[1];
-
-            $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
-            $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
-        }
-
-        $res = Db::name(self::$t_name)
-            ->where($where)
-            ->delete(true);
-
-        $data['count'] = $res;
-        $data['param'] = $param;
+        $data['count'] = $count;
+        $data['where'] = $where;
 
         return $data;
     }
@@ -426,7 +363,7 @@ class MemberLogService
             $y_data = [];
             foreach ($x_data as $k => $v) {
                 $y_data[$k] = 0;
-                foreach ($member_log as $ku => $vu) {
+                foreach ($member_log as $vu) {
                     if ($v == $vu['date']) {
                         $y_data[$k] = $vu['num'];
                     }
@@ -516,7 +453,7 @@ class MemberLogService
             $x_data = [];
             $y_data = [];
             $p_data = [];
-            foreach ($member_log as $k => $v) {
+            foreach ($member_log as $v) {
                 if ($type == 'member') {
                     foreach ($member as $km => $vm) {
                         if ($v['x_data'] == $vm['member_id']) {

@@ -41,11 +41,19 @@ class Index
      */
     public function message()
     {
-        $where = [['is_delete', '=', 0]];
-        $order = ['sort' => 'desc', 'admin_message_id' => 'desc'];
-        $field = 'admin_message_id,title,intro';
+        $page  = Request::param('page/d', 1);
+        $limit = Request::param('limit/d', 10);
 
-        $data = MessageService::list($where, 1, 9, $order, $field);
+        $where[] = ['open_time_start', '<=', datetime()];
+        $where[] = ['open_time_end', '>=', datetime()];
+        $where[] = ['is_open', '=', 1];
+        $where[] = ['is_delete', '=', 0];
+
+        $order = ['sort' => 'desc', 'open_time_start' => 'desc', 'admin_message_id' => 'desc'];
+
+        $field = 'admin_message_id,title,color,intro,create_time';
+
+        $data = MessageService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }

@@ -17,13 +17,13 @@ class RegionValidate extends Validate
 {
     // 验证规则
     protected $rule = [
+        'ids'         => ['require', 'array'],
         'region_id'   => ['require'],
         'region_name' => ['require', 'checkRegionName'],
     ];
 
     // 错误信息
     protected $message = [
-        'region_id.require'   => '缺少参数：地区id',
         'region_name.require' => '请输入名称',
     ];
 
@@ -33,14 +33,14 @@ class RegionValidate extends Validate
         'info' => ['region_id'],
         'add'  => ['region_name'],
         'edit' => ['region_id', 'region_name'],
-        'dele' => ['region_id'],
+        'dele' => ['ids'],
     ];
 
     // 验证场景定义：删除
     protected function scenedele()
     {
-        return $this->only(['region_id'])
-            ->append('region_id', 'checkRegionChild');
+        return $this->only(['ids'])
+            ->append('ids', 'checkRegionChild');
     }
 
     // 自定义验证规则：地区名称是否已存在
@@ -62,13 +62,13 @@ class RegionValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：地区是否有子级地区
+    // 自定义验证规则：地区是否存在下级地区
     protected function checkRegionChild($value, $rule, $data = [])
     {
-        $where[] = ['region_pid', '=', $data['region_id']];
+        $where[] = ['region_pid', 'in', $data['ids']];
         $region = RegionService::list($where, [], 'region_id');
         if ($region['list']) {
-            return '请删除所有子级地区后再删除';
+            return '存在下级地区，无法删除';
         }
 
         return true;

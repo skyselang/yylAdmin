@@ -146,30 +146,28 @@ class CategoryService
     /**
      * 分类删除
      * 
-     * @param array $category 分类列表
+     * @param array $ids 分类列表id
      * 
      * @return array|Exception
      */
-    public static function dele($category)
+    public static function dele($ids)
     {
-        $category_ids = array_column($category, self::$t_pk);
-
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $category_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($category_ids as $k => $v) {
+        foreach ($ids as $v) {
             CategoryCache::del($v);
         }
         CategoryCache::del(self::$all_key);
 
-        $update['category_ids'] = $category_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -177,30 +175,28 @@ class CategoryService
     /**
      * 内容分类设置父级
      *
-     * @param array $category     分类列表
-     * @param int   $category_pid 分类父级id
+     * @param array   $ids          分类列表id
+     * @param integer $category_pid 分类父级id
      * 
      * @return array
      */
-    public static function pid($category, $category_pid = 0)
+    public static function pid($ids, $category_pid = 0)
     {
-        $category_ids = array_column($category, self::$t_pk);
-
         $update['category_pid'] = $category_pid;
         $update['update_time']  = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $category_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($category_ids as $k => $v) {
+        foreach ($ids as $v) {
             CategoryCache::del($v);
         }
         CategoryCache::del(self::$all_key);
 
-        $update['category_ids'] = $category_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -208,31 +204,29 @@ class CategoryService
     /**
      * 分类是否隐藏
      *
-     * @param array $category 分类列表
-     * @param int   $is_hide  是否隐藏
+     * @param array   $ids     分类列表
+     * @param integer $is_hide 是否隐藏
      * 
      * @return array|Exception
      */
-    public static function ishide($category, $is_hide)
+    public static function ishide($ids, $is_hide)
     {
-        $category_ids = array_column($category, self::$t_pk);
-
         $update['is_hide']     = $is_hide;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $category_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($category_ids as $k => $v) {
+        foreach ($ids as $v) {
             CategoryCache::del($v);
         }
         CategoryCache::del(self::$all_key);
 
-        $update['category_ids'] = $category_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }

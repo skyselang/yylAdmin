@@ -11,6 +11,8 @@
 return [
     // 全局跨域请求
     \app\common\middleware\AllowCrossDomain::class,
+    // 日志清除
+    \app\common\middleware\LogClear::class,
     // 全局请求缓存
     // \think\middleware\CheckRequestCache::class,
     // 多语言加载

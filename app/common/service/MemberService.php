@@ -39,7 +39,7 @@ class MemberService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = self::$t_pk . ',username,nickname,phone,email,avatar_id,sort,remark,create_time,is_disable';
+            $field = self::$t_pk . ',username,nickname,phone,email,avatar_id,sort,remark,is_disable,create_time';
         }
 
         if (empty($order)) {
@@ -202,32 +202,30 @@ class MemberService
     /**
      * 会员删除
      *
-     * @param array $list 会员列表
+     * @param array $ids 会员id
      * 
      * @return array
      */
-    public static function dele($list)
+    public static function dele($ids)
     {
-        $pk_ids = array_column($list, self::$t_pk);
-
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $pk_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         $MemberWechat = new MemberWechatModel();
-        $MemberWechat->where(self::$t_pk, 'in', $pk_ids)
+        $MemberWechat->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $pk_ids;
-
-        foreach ($pk_ids as $k => $v) {
+        foreach ($ids as $v) {
             MemberCache::upd($v);
         }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -235,30 +233,28 @@ class MemberService
     /**
      * 会员设置地区
      *
-     * @param array   $list      会员列表
+     * @param array   $ids       会员id
      * @param integer $region_id 地区id
      * 
      * @return array
      */
-    public static function region($list, $region_id = 0)
+    public static function region($ids, $region_id = 0)
     {
-        $pk_ids = array_column($list, self::$t_pk);
-
         $update['region_id']   = $region_id;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $pk_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $pk_ids;
-
-        foreach ($pk_ids as $k => $v) {
+        foreach ($ids as $v) {
             MemberCache::upd($v);
         }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -266,30 +262,28 @@ class MemberService
     /**
      * 会员是否禁用
      *
-     * @param array   $list       会员列表
+     * @param array   $ids        会员id
      * @param integer $is_disable 是否禁用
      * 
      * @return array
      */
-    public static function disable($list, $is_disable = 0)
+    public static function disable($ids, $is_disable = 0)
     {
-        $pk_ids = array_column($list, self::$t_pk);
-
         $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $pk_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $pk_ids;
-
-        foreach ($pk_ids as $k => $v) {
+        foreach ($ids as $v) {
             MemberCache::upd($v);
         }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -297,31 +291,29 @@ class MemberService
     /**
      * 会员修改密码
      *
-     * @param array   $list     会员列表
+     * @param array   $ids      会员ids
      * @param integer $password 新密码
      * 
      * @return array
      */
-    public static function repwd($list, $password)
+    public static function repwd($ids, $password)
     {
-        $pk_ids = array_column($list, self::$t_pk);
-
         $update['password']    = md5($password);
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $pk_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $pk_ids;
-        $update['password']  = $password;
-
-        foreach ($pk_ids as $k => $v) {
+        foreach ($ids as $v) {
             MemberCache::upd($v);
         }
+
+        $update['ids']      = $ids;
+        $update['password'] = $password;
 
         return $update;
     }
@@ -379,7 +371,7 @@ class MemberService
     /**
      * 会员微信登录
      *
-     * @param array $userinfo 会员微信信息
+     * @param array $userinfo 会员微信
      *
      * @return array
      */
@@ -402,7 +394,7 @@ class MemberService
         }
         unset($userinfo['login_ip'], $userinfo['reg_channel']);
 
-        // 会员微信信息
+        // 会员微信
         if ($unionid) {
             $wechat_where[] = ['unionid', '=', $unionid];
         } else {
@@ -515,7 +507,7 @@ class MemberService
     {
         $data = [];
         $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url'];
-        foreach ($field as $k => $v) {
+        foreach ($field as $v) {
             $data[$v] = $member[$v];
         }
 
@@ -569,6 +561,7 @@ class MemberService
                 ->field('phone')
                 ->where(self::$t_pk, '<>', $member_id)
                 ->where('phone', '=', $phone)
+                ->where('is_delete', '=', 0)
                 ->find();
             if ($phone_exist) {
                 exception('手机号已存在');
@@ -687,7 +680,7 @@ class MemberService
             foreach ($dates as $k => $v) {
                 $new_x[$k] = $v;
                 $new_s[$k] = 0;
-                foreach ($new as $kn => $vn) {
+                foreach ($new as $vn) {
                     if ($v == $vn['date']) {
                         $new_s[$k] = $vn['num'];
                     }
@@ -707,7 +700,7 @@ class MemberService
             foreach ($dates as $k => $v) {
                 $act_x[$k] = $v;
                 $act_s[$k] = 0;
-                foreach ($act as $ka => $va) {
+                foreach ($act as $va) {
                     if ($v == $va['date']) {
                         $act_s[$k] = $va['num'];
                     }

@@ -99,7 +99,7 @@ class User
         $param['email']     = Request::param('email/s', '');
         $param['phone']     = Request::param('phone/s', '');
         $param['remark']    = Request::param('remark/s', '');
-        $param['sort']      = Request::param('sort/d', 200);
+        $param['sort']      = Request::param('sort/d', 250);
 
         validate(UserValidate::class)->scene('add')->check($param);
 
@@ -122,7 +122,7 @@ class User
         $param['email']         = Request::param('email/s', '');
         $param['phone']         = Request::param('phone/s', '');
         $param['remark']        = Request::param('remark/s', '');
-        $param['sort']          = Request::param('sort/d', 200);
+        $param['sort']          = Request::param('sort/d', 250);
 
         validate(UserValidate::class)->scene('edit')->check($param);
 

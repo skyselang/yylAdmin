@@ -21,6 +21,7 @@ class SettingValidate extends Validate
         'token_exp'      => ['require', 'between' => '1,9999'],
         'captcha_switch' => ['require', 'in' => '0,1'],
         'log_switch'     => ['require', 'in' => '0,1'],
+        'log_save_time'  => ['require', 'between' => '0,99999'],
         'api_rate_num'   => ['require', 'between' => '0,999'],
         'api_rate_time'  => ['require', 'between' => '1,999'],
     ];
@@ -39,6 +40,7 @@ class SettingValidate extends Validate
         'captcha_switch.in'      => '验证码：1开启0关闭',
         'log_switch.require'     => 'log_switch must',
         'log_switch.in'          => '日志记录：1开启0关闭',
+        'log_save_time.between'  => '保留时间：0-99999',
         'api_rate_num.require'   => '请输入速率次数',
         'api_rate_num.between'   => '速率次数：0-999',
         'api_rate_time.require'  => '请输入速率时间',
@@ -49,7 +51,7 @@ class SettingValidate extends Validate
     protected $scene = [
         'token_edit'   => ['token_name', 'token_key', 'token_exp'],
         'captcha_edit' => ['captcha_switch'],
-        'log_edit'     => ['log_switch'],
+        'log_edit'     => ['log_switch', 'log_save_time'],
         'api_edit'     => ['api_rate_num', 'api_rate_time'],
     ];
 }

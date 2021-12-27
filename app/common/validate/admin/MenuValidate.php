@@ -19,6 +19,7 @@ class MenuValidate extends Validate
 {
     // 验证规则
     protected $rule = [
+        'ids'           => ['require', 'array'],
         'admin_menu_id' => ['require'],
         'menu_name'     => ['require', 'checkAdminMenuName'],
     ];
@@ -34,10 +35,11 @@ class MenuValidate extends Validate
         'info'       => ['admin_menu_id'],
         'add'        => ['menu_name'],
         'edit'       => ['admin_menu_id', 'menu_name'],
-        'dele'       => ['admin_menu_id'],
-        'disable'    => ['admin_menu_id', 'is_disable'],
-        'unauth'     => ['admin_menu_id'],
-        'unlogin'    => ['admin_menu_id'],
+        'dele'       => ['ids'],
+        'pid'        => ['ids'],
+        'disable'    => ['ids', 'is_disable'],
+        'unauth'     => ['ids', 'is_unauth'],
+        'unlogin'    => ['ids', 'is_unlogin'],
         'role'       => ['admin_menu_id'],
         'roleRemove' => ['admin_menu_id'],
         'user'       => ['admin_menu_id'],
@@ -47,8 +49,8 @@ class MenuValidate extends Validate
     // 验证场景定义：删除
     protected function scenedele()
     {
-        return $this->only(['admin_menu_id'])
-            ->append('admin_menu_id', 'checkAdminMenuRole');
+        return $this->only(['ids'])
+            ->append('ids', 'checkAdminMenuRole');
     }
 
     // 验证场景定义：角色解除
@@ -71,7 +73,7 @@ class MenuValidate extends Validate
         $menu = MenuService::list();
         $menu_name_msg = '菜单名称已存在：' . $data['menu_name'];
         $menu_url_msg  = '菜单链接已存在：' . $data['menu_url'];
-        foreach ($menu as $k => $v) {
+        foreach ($menu as $v) {
             if ($admin_menu_id) {
                 if ($v['menu_pid'] == $data['menu_pid'] && $v['menu_name'] == $data['menu_name'] && $v['admin_menu_id'] != $admin_menu_id) {
                     return $menu_name_msg;
@@ -95,25 +97,26 @@ class MenuValidate extends Validate
     // 自定义验证规则：菜单是否有子菜单或分配有角色或分配有用户
     protected function checkAdminMenuRole($value, $rule, $data = [])
     {
-        $admin_menu_id = $data['admin_menu_id'];
-
+        $ids = $data['ids'];
         $menu = MenuService::list();
-        foreach ($menu as $k => $v) {
-            if ($v['menu_pid'] == $admin_menu_id) {
-                return '请删除所有子菜单后再删除';
+        foreach ($ids as $v) {
+            foreach ($menu as $vm) {
+                if ($vm['menu_pid'] == $v) {
+                    return '请删除所有子菜单后再删除';
+                }
             }
-        }
 
-        $where_role[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
-        $admin_role = RoleService::list($where_role, 1, 1, [], 'admin_role_id');
-        if ($admin_role['list']) {
-            return '请在[角色]中解除所有角色后再删除';
-        }
+            $where_role[] = ['admin_menu_ids', 'like', '%' . str_join($v) . '%'];
+            $admin_role = RoleService::list($where_role, 1, 1, [], 'admin_role_id');
+            if ($admin_role['list']) {
+                return '请在[角色]中解除所有角色后再删除';
+            }
 
-        $where_user[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
-            return '请在[用户]中解除所有用户后再删除';
+            $where_user[] = ['admin_menu_ids', 'like', '%' . str_join($v) . '%'];
+            $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+            if ($admin_user['list']) {
+                return '请在[用户]中解除所有用户后再删除';
+            }
         }
 
         return true;

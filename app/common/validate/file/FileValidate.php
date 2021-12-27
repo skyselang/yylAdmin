@@ -51,7 +51,7 @@ class FileValidate extends Validate
         $setting = SettingService::info();
 
         $file_ext = $file->getOriginalExtension();
-        $file_type = FileService::typeJudge($file_ext);
+        $file_type = FileService::fileType($file_ext);
         $set_ext_str = $setting[$file_type . '_ext'];
         $set_ext_arr = explode(',', $set_ext_str);
         if (!in_array($file_ext, $set_ext_arr)) {

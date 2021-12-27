@@ -21,7 +21,9 @@ return [
     'menu_is_unauth' => [
         'admin/Index/index',
         'admin/Index/message',
-        'admin/admin.Message/info'
+        'admin/admin.Message/info',
+        'admin/admin.Login/logout',
+        'admin/admin.UserCenter/info'
     ],
     // 无需限率菜单url
     'menu_is_unrate' => [

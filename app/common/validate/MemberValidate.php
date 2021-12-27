@@ -17,25 +17,24 @@ class MemberValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'list'         => ['require', 'array'],
+        'ids'          => ['require', 'array'],
         'member_id'    => ['require'],
-        'username'     => ['require', 'length' => '2,32', 'alphaDash', 'checkUsername'],
-        'nickname'     => ['length' => '1,32', 'checkNickname'],
+        'username'     => ['require', 'length' => '2,64', 'alphaDash', 'checkUsername'],
+        'nickname'     => ['length' => '1,64', 'checkNickname'],
         'password'     => ['require', 'length' => '6,18', 'alphaNum'],
         'password_old' => ['require', 'checkPwdOld'],
         'password_new' => ['require', 'length' => '6,18', 'alphaNum'],
         'phone'        => ['mobile', 'checkPhone'],
         'email'        => ['email', 'checkEmail'],
-        'avatar'       => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '102400'],
     ];
 
     // 错误信息
     protected $message = [
         'username.require'      => '请输入账号',
-        'username.length'       => '账号长度为2至32个字符',
+        'username.length'       => '账号长度为2至64个字符',
         'username.alphaDash'    => '账号由字母、数字、下划线、破折号组成',
         'nickname.require'      => '请输入昵称',
-        'nickname.length'       => '昵称长度为1至32个字符',
+        'nickname.length'       => '昵称长度为1至64个字符',
         'password.require'      => '请输入密码',
         'password.length'       => '密码长度为6至18个字符',
         'password.alphaNum'     => '密码只能为数字和字母',
@@ -45,11 +44,6 @@ class MemberValidate extends Validate
         'password_new.alphaNum' => '新密码只能为数字和字母',
         'phone.mobile'          => '请输入正确的手机号码',
         'email.email'           => '请输入正确的邮箱地址',
-        'avatar.require'        => '请选择图片',
-        'avatar.file'           => '请选择图片文件',
-        'avatar.image'          => '请选择图片格式文件',
-        'avatar.fileExt'        => '请选择jpg、png格式图片',
-        'avatar.fileSize'       => '请选择大小小于100kb图片',
     ];
 
     // 验证场景
@@ -58,13 +52,12 @@ class MemberValidate extends Validate
         'info'     => ['member_id'],
         'add'      => ['username', 'nickname', 'password', 'phone', 'email'],
         'edit'     => ['member_id', 'username', 'nickname', 'phone', 'email'],
-        'dele'     => ['list'],
-        'repwd'    => ['list', 'password'],
+        'dele'     => ['ids'],
+        'repwd'    => ['ids', 'password'],
         'editpwd'  => ['member_id', 'password_old', 'password_new'],
         'editpwd1' => ['member_id', 'password_new'],
-        'disable'  => ['list'],
-        'region'   => ['list'],
-        'avatar'   => ['avatar'],
+        'disable'  => ['ids'],
+        'region'   => ['ids'],
         'register' => ['username', 'nickname', 'password', 'phone', 'email'],
         'login'    => ['username', 'password'],
         'logout'   => ['member_id'],
@@ -84,7 +77,6 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-
         $where[] = ['username', '=', $data['username']];
         $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');
@@ -101,7 +93,6 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-
         $where[] = ['nickname', '=', $data['nickname']];
         $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');
@@ -118,7 +109,6 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-        
         $where[] = ['phone', '=', $data['phone']];
         $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');
@@ -135,7 +125,7 @@ class MemberValidate extends Validate
         if (isset($data['member_id'])) {
             $where[] = ['member_id', '<>', $data['member_id']];
         }
-        
+
         $where[] = ['email', '=', $data['email']];
         $where[] = ['is_delete', '=', 0];
         $member = MemberService::list($where, 1, 1, [], 'member_id');

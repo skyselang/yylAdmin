@@ -50,8 +50,8 @@ class Setting
         $param['aliyun_access_key_id']     = Request::param('aliyun_access_key_id/s', '');
         $param['aliyun_access_key_secret'] = Request::param('aliyun_access_key_secret/s', '');
         $param['aliyun_bucket']            = Request::param('aliyun_bucket/s', '');
-        $param['aliyun_endpoint']          = Request::param('aliyun_endpoint/s', '');
         $param['aliyun_bucket_domain']     = Request::param('aliyun_bucket_domain/s', '');
+        $param['aliyun_endpoint']          = Request::param('aliyun_endpoint/s', '');
         $param['tencent_secret_id']        = Request::param('tencent_secret_id/s', '');
         $param['tencent_secret_key']       = Request::param('tencent_secret_key/s', '');
         $param['tencent_bucket']           = Request::param('tencent_bucket/s', '');

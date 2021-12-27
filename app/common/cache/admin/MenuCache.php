@@ -67,10 +67,10 @@ class MenuCache
             $keys[] = $admin_menu_id;
         }
 
-        $key_all = ['list', 'tree', 'urlList', 'unauthList', 'unloginList'];
+        $key_all = ['list', 'tree', 'urlList', 'unloginList', 'unauthList', 'unrateList'];
         $keys = array_merge($keys, $key_all);
 
-        foreach ($keys as $k => $v) {
+        foreach ($keys as $v) {
             $res = Cache::delete(self::key($v));
         }
 

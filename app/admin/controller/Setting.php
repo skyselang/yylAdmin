@@ -97,7 +97,8 @@ class Setting
      */
     public function logEdit()
     {
-        $param['log_switch'] = Request::param('log_switch/d', 0);
+        $param['log_switch']    = Request::param('log_switch/d', 0);
+        $param['log_save_time'] = Request::param('log_save_time/d', 0);
 
         validate(SettingValidate::class)->scene('log_edit')->check($param);
 

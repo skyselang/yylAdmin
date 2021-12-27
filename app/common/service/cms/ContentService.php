@@ -193,28 +193,26 @@ class ContentService
     /**
      * 内容删除
      * 
-     * @param array $content 内容列表
+     * @param array $ids 内容列表
      * 
      * @return array|Exception
      */
-    public static function dele($content)
+    public static function dele($ids)
     {
-        $content_ids = array_column($content, self::$t_pk);
-
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -222,29 +220,27 @@ class ContentService
     /**
      * 内容设置分类
      *
-     * @param array $content     内容列表
-     * @param int   $category_id 分类id
+     * @param array   $ids         内容id
+     * @param integer $category_id 分类id
      * 
      * @return array
      */
-    public static function cate($content, $category_id = 0)
+    public static function cate($ids, $category_id = 0)
     {
-        $content_ids = array_column($content, self::$t_pk);
-
         $update['category_id'] = $category_id;
         $update['update_time'] = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -252,29 +248,27 @@ class ContentService
     /**
      * 内容是否置顶
      *
-     * @param array $content 内容列表
-     * @param int   $is_top  是否置顶
+     * @param array   $ids    内容id
+     * @param integer $is_top 是否置顶
      * 
      * @return array
      */
-    public static function istop($content, $is_top = 0)
+    public static function istop($ids, $is_top = 0)
     {
-        $content_ids = array_column($content, self::$t_pk);
-
         $update['is_top']      = $is_top;
         $update['update_time'] = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -282,29 +276,27 @@ class ContentService
     /**
      * 内容是否热门
      *
-     * @param array $content 内容列表
-     * @param int   $is_hot  是否热门
+     * @param array   $ids    内容id
+     * @param integer $is_hot 是否热门
      * 
      * @return array
      */
-    public static function ishot($content, $is_hot = 0)
+    public static function ishot($ids, $is_hot = 0)
     {
-        $content_ids = array_column($content, self::$t_pk);
-
         $update['is_hot']      = $is_hot;
         $update['update_time'] = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -312,29 +304,27 @@ class ContentService
     /**
      * 内容是否推荐
      *
-     * @param array $content 内容信息
-     * @param int   $is_rec  是否推荐
+     * @param array   $ids    内容id
+     * @param integer $is_rec 是否推荐
      * 
      * @return array
      */
-    public static function isrec($content, $is_rec = 0)
+    public static function isrec($ids, $is_rec = 0)
     {
-        $content_ids = array_column($content, self::$t_pk);
-
         $update['is_rec']      = $is_rec;
         $update['update_time'] = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -342,29 +332,27 @@ class ContentService
     /**
      * 内容是否隐藏
      *
-     * @param array $content 内容列表
-     * @param int   $is_hide 是否隐藏
+     * @param array   $ids     内容id
+     * @param integer $is_hide 是否隐藏
      * 
      * @return array
      */
-    public static function ishide($content, $is_hide = 0)
+    public static function ishide($ids, $is_hide = 0)
     {
-        $content_ids = array_column($content, self::$t_pk);
-
         $update['is_hide']     = $is_hide;
         $update['update_time'] = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $k => $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -430,28 +418,26 @@ class ContentService
     /**
      * 内容回收站恢复
      * 
-     * @param array $content 内容列表
+     * @param array $ids 内容id
      * 
      * @return array|Exception
      */
-    public static function recoverReco($content)
+    public static function recoverReco($ids)
     {
-        $content_ids = array_column($content, self::$t_pk);
-
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -459,25 +445,24 @@ class ContentService
     /**
      * 内容回收站删除
      * 
-     * @param array $content 内容列表
+     * @param array $ids 内容id
      * 
      * @return array|Exception
      */
-    public static function recoverDele($content)
+    public static function recoverDele($ids)
     {
-        $content_ids = array_column($content, self::$t_pk);
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $content_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->delete();
         if (empty($res)) {
             exception();
         }
 
-        foreach ($content_ids as $k => $v) {
+        foreach ($ids as $v) {
             ContentCache::del($v);
         }
 
-        $update['content_ids'] = $content_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -518,7 +503,7 @@ class ContentService
     {
         $fields = self::tableField();
 
-        foreach ($fields as $k => $v) {
+        foreach ($fields as $v) {
             if ($v == $field) {
                 return true;
             }
@@ -558,11 +543,11 @@ class ContentService
                 ->select()
                 ->toArray();
             $xs_data = [];
-            foreach ($category as $k => $v) {
+            foreach ($category as $v) {
                 $temp = [];
                 $temp['x'] = $v['category_name'];
                 $temp['s'] = 0;
-                foreach ($content_count as $kc => $vc) {
+                foreach ($content_count as $vc) {
                     if ($v['category_id'] == $vc['category_id']) {
                         $temp['s'] = $vc['content_count'];
                     }
@@ -572,7 +557,7 @@ class ContentService
 
             $ss = array_column($xs_data, 's');
             array_multisort($ss,  SORT_DESC, $xs_data);
-            foreach ($xs_data as $k => $v) {
+            foreach ($xs_data as $v) {
                 $x_data[] = $v['x'];
                 $s_data[] = $v['s'];
             }

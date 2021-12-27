@@ -17,13 +17,13 @@ class ApiValidate extends Validate
 {
     // 验证规则
     protected $rule = [
+        'ids'      => ['require', 'array'],
         'api_id'   => ['require'],
         'api_name' => ['require', 'checkApiExist'],
     ];
 
     // 错误信息
     protected $message = [
-        'api_id.require'   => '缺少参数：接口id',
         'api_name.require' => '请输入接口名称',
     ];
 
@@ -33,16 +33,36 @@ class ApiValidate extends Validate
         'info'    => ['api_id'],
         'add'     => ['api_name'],
         'edit'    => ['api_id', 'api_name'],
-        'dele'    => ['api_id'],
-        'disable' => ['api_id'],
-        'unlogin' => ['api_id'],
+        'dele'    => ['ids'],
+        'pid'     => ['ids'],
+        'disable' => ['ids'],
+        'unlogin' => ['ids'],
     ];
 
     // 验证场景定义：删除
     protected function scenedele()
     {
-        return $this->only(['api_id'])
-            ->append('api_id', 'checkApiChild');
+        return $this->only(['ids'])
+            ->append('ids', 'checkApiPid');
+    }
+
+    // 验证场景定义：设置父级
+    protected function scenepid()
+    {
+        return $this->only(['ids'])
+            ->append('ids', 'checkApiPidNeq');
+    }
+
+    // 自定义验证规则：接口父级不能等于接口自己
+    protected function checkApiPidNeq($value, $rule, $data = [])
+    {
+        foreach ($data['ids'] as $v) {
+            if ($data['api_pid'] == $v) {
+                return '接口父级不能等于接口自己';
+            }
+        }
+
+        return true;
     }
 
     // 自定义验证规则：接口是否已存在
@@ -77,14 +97,14 @@ class ApiValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：接口是否有子级接口
-    protected function checkApiChild($value, $rule, $data = [])
+    // 自定义验证规则：接口是否存在下级接口
+    protected function checkApiPid($value, $rule, $data = [])
     {
-        $where_pid[] = ['api_pid', '=', $data['api_id']];
-        $where_pid[] = ['is_delete', '=', 0];
-        $api_pid = ApiService::list($where_pid, 1, 1, [], 'api_id');
-        if ($api_pid['list']) {
-            return '请删除所有子级接口后再删除';
+        $where[] = ['api_pid', 'in', $data['ids']];
+        $where[] = ['is_delete', '=', 0];
+        $api = ApiService::list($where, 1, 1, [], 'api_id');
+        if ($api['list']) {
+            return '存在下级接口，无法删除';
         }
 
         return true;

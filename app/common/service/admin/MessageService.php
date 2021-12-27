@@ -34,11 +34,11 @@ class MessageService
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = self::$t_pk . ',admin_user_id,title,type,sort,is_open,create_time';
+            $field = self::$t_pk . ',admin_user_id,title,color,sort,is_open,open_time_start,open_time_end,create_time';
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc', self::$t_pk => 'desc'];
+            $order = ['is_open' => 'desc', 'sort' => 'desc', self::$t_pk => 'desc'];
         }
 
         $count = Db::name(self::$t_name)

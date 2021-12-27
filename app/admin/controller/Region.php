@@ -35,29 +35,37 @@ class Region
      */
     public function list()
     {
-        $type          = Request::param('type/s', 'list');
-        $sort_field    = Request::param('sort_field/s', '');
-        $sort_value    = Request::param('sort_value/s', '');
-        $region_pid    = Request::param('region_pid/d', 0);
-        $region_id     = Request::param('region_id/d', '');
-        $region_name   = Request::param('region_name/s', '');
-        $region_pinyin = Request::param('region_pinyin/s', '');
+        $type         = Request::param('type/s', 'list');
+        $region_pid   = Request::param('region_pid/d', 0);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
         if ($type == 'tree') {
             $data = RegionService::info('tree');
         } else {
-            if ($region_id || $region_name || $region_pinyin) {
-                if ($region_id) {
-                    $where[] = ['region_id', '=', $region_id];
-                }
-                if ($region_name) {
-                    $where[] = ['region_name', '=', $region_name];
-                }
-                if ($region_pinyin) {
-                    $where[] = ['region_pinyin', '=', $region_pinyin];
+            if ($search_field && $search_value) {
+                if (in_array($search_field, ['region_id', 'region_pid', 'region_jianpin', 'region_initials', 'region_citycode', 'region_zipcode'])) {
+                    $exp = strstr($search_value, ',') ? 'in' : '=';
+                    $where[] = [$search_field, $exp, $search_value];
+                } else {
+                    if (strstr($search_value, ',')) {
+                        $exp = 'in';
+                    } else {
+                        $exp = 'like';
+                        $search_value = '%' . $search_value . '%';
+                    }
+                    $where[] = [$search_field, $exp, $search_value];
                 }
             } else {
                 $where[] = ['region_pid', '=', $region_pid];
+            }
+            if ($date_field && $date_value) {
+                $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+                $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
             }
 
             $order = [];
@@ -107,7 +115,7 @@ class Region
         $param['region_zipcode']   = Request::param('region_zipcode/s', '');
         $param['region_longitude'] = Request::param('region_longitude/s', '');
         $param['region_latitude']  = Request::param('region_latitude/s', '');
-        $param['region_sort']      = Request::param('region_sort/d', 1000);
+        $param['region_sort']      = Request::param('region_sort/d', 2250);
 
         if (empty($param['region_pid'])) {
             $param['region_pid'] = 0;
@@ -141,7 +149,7 @@ class Region
         $param['region_zipcode']   = Request::param('region_zipcode/s', '');
         $param['region_longitude'] = Request::param('region_longitude/s', '');
         $param['region_latitude']  = Request::param('region_latitude/s', '');
-        $param['region_sort']      = Request::param('region_sort/d', 1000);
+        $param['region_sort']      = Request::param('region_sort/d', 2250);
 
         if (empty($param['region_pid'])) {
             $param['region_pid'] = 0;
@@ -164,11 +172,11 @@ class Region
      */
     public function dele()
     {
-        $param['region_id'] = Request::param('region_id/d', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(RegionValidate::class)->scene('dele')->check($param);
 
-        $data = RegionService::dele($param['region_id']);
+        $data = RegionService::dele($param['ids']);
 
         return success($data);
     }

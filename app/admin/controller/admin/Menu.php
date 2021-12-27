@@ -67,7 +67,7 @@ class Menu
         $param['menu_pid']  = Request::param('menu_pid/d', 0);
         $param['menu_name'] = Request::param('menu_name/s', '');
         $param['menu_url']  = Request::param('menu_url/s', '');
-        $param['menu_sort'] = Request::param('menu_sort/d', 200);
+        $param['menu_sort'] = Request::param('menu_sort/d', 250);
         $param['add_list']  = Request::param('add_list/b', false);
         $param['add_info']  = Request::param('add_info/b', false);
         $param['add_add']   = Request::param('add_add/b', false);
@@ -92,7 +92,7 @@ class Menu
         $param['menu_pid']      = Request::param('menu_pid/d', 0);
         $param['menu_name']     = Request::param('menu_name/s', '');
         $param['menu_url']      = Request::param('menu_url/s', '');
-        $param['menu_sort']     = Request::param('menu_sort/d', 200);
+        $param['menu_sort']     = Request::param('menu_sort/d', 250);
         $param['add_list']      = Request::param('add_list/b', false);
         $param['add_info']      = Request::param('add_info/b', false);
         $param['add_add']       = Request::param('add_add/b', false);
@@ -118,45 +118,28 @@ class Menu
      */
     public function dele()
     {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(MenuValidate::class)->scene('dele')->check($param);
 
-        $data = MenuService::dele($param['admin_menu_id']);
+        $data = MenuService::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单是否禁用")
+     * @Apidoc\Title("菜单设置父级")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\disableParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unloginParam")
      */
-    public function disable()
+    public function pid()
     {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['is_disable']    = Request::param('is_disable/d', 0);
+        $param['ids']      = Request::param('ids/a', '');
+        $param['menu_pid'] = Request::param('menu_pid/d', 0);
 
-        validate(MenuValidate::class)->scene('disable')->check($param);
+        validate(MenuValidate::class)->scene('pid')->check($param);
 
-        $data = MenuService::disable($param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("菜单是否无需权限")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unauthParam")
-     */
-    public function unauth()
-    {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['is_unauth']     = Request::param('is_unauth/d', 0);
-
-        validate(MenuValidate::class)->scene('unauth')->check($param);
-
-        $data = MenuService::unauth($param);
+        $data = MenuService::pid($param['ids'], $param['menu_pid']);
 
         return success($data);
     }
@@ -168,12 +151,46 @@ class Menu
      */
     public function unlogin()
     {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['is_unlogin']    = Request::param('is_unlogin/d', 0);
+        $param['ids']        = Request::param('ids/a', '');
+        $param['is_unlogin'] = Request::param('is_unlogin/d', 0);
 
         validate(MenuValidate::class)->scene('unlogin')->check($param);
 
-        $data = MenuService::unlogin($param);
+        $data = MenuService::unlogin($param['ids'], $param['is_unlogin']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("菜单是否无需权限")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unauthParam")
+     */
+    public function unauth()
+    {
+        $param['ids']       = Request::param('ids/a', '');
+        $param['is_unauth'] = Request::param('is_unauth/d', 0);
+
+        validate(MenuValidate::class)->scene('unauth')->check($param);
+
+        $data = MenuService::unauth($param['ids'], $param['is_unauth']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("菜单是否禁用")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\disableParam")
+     */
+    public function disable()
+    {
+        $param['ids']        = Request::param('ids/a', '');
+        $param['is_disable'] = Request::param('is_disable/d', 0);
+
+        validate(MenuValidate::class)->scene('disable')->check($param);
+
+        $data = MenuService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }

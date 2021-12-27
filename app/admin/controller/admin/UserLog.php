@@ -15,6 +15,8 @@ use app\common\validate\admin\UserLogValidate;
 use app\common\service\admin\UserLogService;
 use app\common\service\admin\MenuService;
 use app\common\service\admin\UserService;
+use app\common\model\admin\MenuModel;
+use app\common\model\admin\UserModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -37,37 +39,35 @@ class UserLog
      */
     public function list()
     {
-        $page            = Request::param('page/d', 1);
-        $limit           = Request::param('limit/d', 10);
-        $sort_field      = Request::param('sort_field/s', '');
-        $sort_value      = Request::param('sort_value/s', '');
-        $date_field      = Request::param('date_field/s', 'create_time');
-        $date_value      = Request::param('date_value/a', '');
-        $log_type        = Request::param('log_type/d', '');
-        $response_code   = Request::param('response_code/s', '');
-        $user_keyword    = Request::param('user_keyword/s', '');
-        $menu_keyword    = Request::param('menu_keyword/s', '');
-        $request_keyword = Request::param('request_keyword/s', '');
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $log_type     = Request::param('log_type/d', '');
 
         $where = [];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($response_code) {
-            $where[] = ['response_code', '=', $response_code];
-        }
-        if ($user_keyword) {
-            $admin_user     = UserService::equQuery($user_keyword);
-            $admin_user_ids = array_column($admin_user, 'admin_user_id');
-            $where[]        = ['admin_user_id', 'in', $admin_user_ids];
-        }
-        if ($menu_keyword) {
-            $admin_menu     = MenuService::equQuery($menu_keyword);
-            $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
-            $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
-        }
-        if ($request_keyword) {
-            $where[] = ['request_ip|request_region|request_isp', 'like', '%' . $request_keyword . '%'];
+        if ($search_field && $search_value) {
+            if ($search_field == 'admin_user_log_id') {
+                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
+            } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
+                $admin_menu     = MenuService::likeQuery($search_value);
+                $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
+                $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
+            } elseif (in_array($search_field, ['username', 'admin_user_id'])) {
+                $admin_user     = UserService::equQuery($search_value, $search_field);
+                $admin_user_ids = array_column($admin_user, 'admin_user_id');
+                $where[]        = ['admin_user_id', 'in', $admin_user_ids];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
         }
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
@@ -110,11 +110,11 @@ class UserLog
      */
     public function dele()
     {
-        $param['admin_user_log_id'] = Request::param('admin_user_log_id/d', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(UserLogValidate::class)->scene('dele')->check($param);
 
-        $data = UserLogService::dele($param['admin_user_log_id']);
+        $data = UserLogService::dele($param['ids']);
 
         return success($data);
     }
@@ -134,13 +134,60 @@ class UserLog
      */
     public function clear()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['username']      = Request::param('username/s', '');
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['menu_url']      = Request::param('menu_url/s', '');
-        $param['date_value']    = Request::param('date_value/a', '');
+        $admin_user_id = Request::param('admin_user_id/d', '');
+        $username      = Request::param('username/s', '');
+        $admin_menu_id = Request::param('admin_menu_id/d', '');
+        $menu_url      = Request::param('menu_url/s', '');
+        $date_value    = Request::param('date_value/a', '');
+        $clean         = Request::param('clean/b', false);
 
-        $data = UserLogService::clear($param);
+        $where = [];
+        $admin_user_ids = [];
+        if ($admin_user_id) {
+            $admin_user_ids = array_merge(explode(',', $admin_user_id), $admin_user_ids);
+        }
+        if ($username) {
+            $exp_user = strstr($username, ',') ? 'in' : '=';
+            $User = new UserModel();
+            $user = $User
+                ->field('admin_user_id')
+                ->where('username', $exp_user, $username)
+                ->select()
+                ->toArray();
+            if ($user) {
+                $admin_user_ids = array_merge(array_column($user, 'admin_user_id'), $admin_user_ids);
+            }
+        }
+        if ($admin_user_ids) {
+            $where[] = ['admin_user_id', 'in', $admin_user_ids];
+        }
+
+        $admin_menu_ids = [];
+        if ($admin_menu_id) {
+            $admin_menu_ids = array_merge(explode(',', $admin_menu_id), $admin_menu_ids);
+        }
+        if ($menu_url) {
+            $exp_menu = strstr($menu_url, ',') ? 'in' : '=';
+            $Menu = new MenuModel();
+            $menu = $Menu
+                ->field('admin_menu_id')
+                ->where('menu_url', $exp_menu, $menu_url)
+                ->select()
+                ->toArray();
+            if ($menu) {
+                $admin_menu_ids = array_merge(array_column($menu, 'admin_menu_id'), $admin_menu_ids);
+            }
+        }
+        if ($admin_menu_ids) {
+            $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
+        }
+
+        if ($date_value) {
+            $where[] = ['create_time', '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = ['create_time', '<=', $date_value[1] . ' 23:59:59'];
+        }
+
+        $data = UserLogService::clear($where, $clean);
 
         return success($data);
     }

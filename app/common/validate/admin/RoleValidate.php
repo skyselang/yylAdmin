@@ -18,6 +18,7 @@ class RoleValidate extends Validate
 {
     // 验证规则
     protected $rule = [
+        'ids'           => ['require', 'array'],
         'admin_role_id' => ['require'],
         'role_name'     => ['require', 'checkAdminRuleName'],
     ];
@@ -33,16 +34,16 @@ class RoleValidate extends Validate
         'info'    => ['admin_role_id'],
         'add'     => ['role_name'],
         'edit'    => ['admin_role_id', 'role_name'],
-        'dele'    => ['admin_role_id'],
-        'disable' => ['admin_role_id'],
+        'dele'    => ['ids'],
+        'disable' => ['ids'],
         'user'    => ['admin_role_id'],
     ];
 
     // 验证场景定义：删除
     protected function scenedele()
     {
-        return $this->only(['admin_role_id'])
-            ->append('admin_role_id', 'checkAdminRoleMenuUser');
+        return $this->only(['ids'])
+            ->append('ids', 'checkAdminRoleMenuUser');
     }
 
     // 自定义验证规则：角色名称是否已存在
@@ -64,17 +65,18 @@ class RoleValidate extends Validate
     // 自定义验证规则：角色是否有菜单或用户
     protected function checkAdminRoleMenuUser($value, $rule, $data = [])
     {
-        $admin_role_id = $value;
+        $ids = $data['ids'];
+        foreach ($ids as $v) {
+            $admin_role = RoleService::info($v);
+            if ($admin_role['admin_menu_ids']) {
+                return '请在[修改]中取消所有菜单后再删除';
+            }
 
-        $admin_role = RoleService::info($admin_role_id);
-        if ($admin_role['admin_menu_ids']) {
-            return '请在[修改]中取消所有菜单后再删除';
-        }
-
-        $where_user[] = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
-            return '请在[用户]中解除所有用户后再删除';
+            $where_user[] = ['admin_role_ids', 'like', '%' . str_join($v) . '%'];
+            $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
+            if ($admin_user['list']) {
+                return '请在[用户]中解除所有用户后再删除';
+            }
         }
 
         return true;

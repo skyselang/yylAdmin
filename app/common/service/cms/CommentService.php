@@ -34,7 +34,7 @@ class CommentService
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
         if (empty($field)) {
-            $field = self::$t_pk . ',call,mobile,tel,title,remark,is_read,create_time,update_time,delete_time';
+            $field = self::$t_pk . ',call,mobile,tel,title,remark,is_unread,create_time,update_time,delete_time';
         }
 
         if (empty($order)) {
@@ -76,8 +76,8 @@ class CommentService
             if (empty($comment)) {
                 exception('留言不存在：' . $comment_id);
             }
-            if (empty($comment['is_read'])) {
-                $update['is_read']   = 1;
+            if ($comment['is_unread']) {
+                $update['is_unread'] = 0;
                 $update['read_time'] = $comment['read_time'] = datetime();
                 Db::name(self::$t_name)->where(self::$t_pk, $comment_id)->update($update);
             }
@@ -128,6 +128,8 @@ class CommentService
             exception();
         }
 
+        CommentCache::del($comment_id);
+
         $param[self::$t_pk] = $comment_id;
 
         return $param;
@@ -136,25 +138,27 @@ class CommentService
     /**
      * 留言删除
      * 
-     * @param array $comment 留言列表
+     * @param array $ids 留言列表id
      * 
      * @return array|Exception
      */
-    public static function dele($comment)
+    public static function dele($ids)
     {
-        $comment_ids = array_column($comment, self::$t_pk);
-
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $comment_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['comment_ids'] = $comment_ids;
+        foreach ($ids as $v) {
+            CommentCache::del($v);
+        }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -162,26 +166,28 @@ class CommentService
     /**
      * 留言已读
      *
-     * @param array $comment 留言列表
+     * @param array $ids 留言列表id
      * 
      * @return array
      */
-    public static function isread($comment)
+    public static function isread($ids)
     {
-        $comment_ids = array_column($comment, self::$t_pk);
-
-        $update['is_read']   = 1;
+        $update['is_unread'] = 0;
         $update['read_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $comment_ids)
-            ->where('is_read', '=', 0)
+            ->where(self::$t_pk, 'in', $ids)
+            ->where('is_unread', '=', 1)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['comment_ids'] = $comment_ids;
+        foreach ($ids as $v) {
+            CommentCache::del($v);
+        }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -189,25 +195,27 @@ class CommentService
     /**
      * 留言回收站恢复
      * 
-     * @param array $comment 留言列表
+     * @param array $ids 留言列表id
      * 
      * @return array|Exception
      */
-    public static function recoverReco($comment)
+    public static function recoverReco($ids)
     {
-        $comment_ids = array_column($comment, self::$t_pk);
-
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $comment_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['comment_ids'] = $comment_ids;
+        foreach ($ids as $v) {
+            CommentCache::del($v);
+        }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -215,22 +223,24 @@ class CommentService
     /**
      * 留言回收站删除
      * 
-     * @param array $comment 留言列表
+     * @param array $ids 留言列表id
      * 
      * @return array|Exception
      */
-    public static function recoverDele($comment)
+    public static function recoverDele($ids)
     {
-        $comment_ids = array_column($comment, self::$t_pk);
-
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $comment_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->delete();
         if (empty($res)) {
             exception();
         }
 
-        $update['comment_ids'] = $comment_ids;
+        foreach ($ids as $v) {
+            CommentCache::del($v);
+        }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -271,7 +281,7 @@ class CommentService
     {
         $fields = self::tableField();
 
-        foreach ($fields as $k => $v) {
+        foreach ($fields as $v) {
             if ($v == $field) {
                 return true;
             }

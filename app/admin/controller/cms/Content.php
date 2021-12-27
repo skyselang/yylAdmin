@@ -54,11 +54,11 @@ class Content
         $limit        = Request::param('limit/d', 10);
         $sort_field   = Request::param('sort_field/s', '');
         $sort_value   = Request::param('sort_value/s', '');
-        $category_id  = Request::param('category_id/d', '');
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
+        $category_id  = Request::param('category_id/d', '');
 
         validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
@@ -128,17 +128,17 @@ class Content
      */
     public function add()
     {
-        $param['category_id'] = Request::param('category_id/d', '');
+        $param['category_id'] = Request::param('category_id/d', 0);
         $param['name']        = Request::param('name/s', '');
         $param['title']       = Request::param('title/s', '');
         $param['keywords']    = Request::param('keywords/s', '');
         $param['description'] = Request::param('description/s', '');
-        $param['content']     = Request::param('content/s', '');
         $param['imgs']        = Request::param('imgs/a', []);
         $param['files']       = Request::param('files/a', []);
         $param['videos']      = Request::param('videos/a', []);
         $param['url']         = Request::param('url/s', '');
-        $param['sort']        = Request::param('sort/d', 200);
+        $param['sort']        = Request::param('sort/d', 250);
+        $param['content']     = Request::param('content/s', '');
 
         validate(ContentValidate::class)->scene('add')->check($param);
 
@@ -158,17 +158,17 @@ class Content
     public function edit()
     {
         $param['content_id']  = Request::param('content_id/d', '');
-        $param['category_id'] = Request::param('category_id/d', '');
+        $param['category_id'] = Request::param('category_id/d', 0);
         $param['name']        = Request::param('name/s', '');
         $param['title']       = Request::param('title/s', '');
         $param['keywords']    = Request::param('keywords/s', '');
         $param['description'] = Request::param('description/s', '');
-        $param['content']     = Request::param('content/s', '');
         $param['imgs']        = Request::param('imgs/a', []);
         $param['files']       = Request::param('files/a', []);
         $param['videos']      = Request::param('videos/a', []);
         $param['url']         = Request::param('url/s', '');
-        $param['sort']        = Request::param('sort/d', 200);
+        $param['sort']        = Request::param('sort/d', 250);
+        $param['content']     = Request::param('content/s', '');
 
         validate(ContentValidate::class)->scene('edit')->check($param);
 
@@ -184,11 +184,11 @@ class Content
      */
     public function dele()
     {
-        $param['content'] = Request::param('content/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(ContentValidate::class)->scene('dele')->check($param);
 
-        $data = ContentService::dele($param['content']);
+        $data = ContentService::dele($param['ids']);
 
         return success($data);
     }
@@ -201,12 +201,12 @@ class Content
      */
     public function cate()
     {
-        $param['content']     = Request::param('content/a', '');
+        $param['ids']         = Request::param('ids/a', '');
         $param['category_id'] = Request::param('category_id/d', 0);
 
         validate(ContentValidate::class)->scene('cate')->check($param);
 
-        $data = ContentService::cate($param['content'], $param['category_id']);
+        $data = ContentService::cate($param['ids'], $param['category_id']);
 
         return success($data);
     }
@@ -219,12 +219,12 @@ class Content
      */
     public function istop()
     {
-        $param['content'] = Request::param('content/a', '');
-        $param['is_top']  = Request::param('is_top/d', 0);
+        $param['ids']    = Request::param('ids/a', '');
+        $param['is_top'] = Request::param('is_top/d', 0);
 
         validate(ContentValidate::class)->scene('istop')->check($param);
 
-        $data = ContentService::istop($param['content'], $param['is_top']);
+        $data = ContentService::istop($param['ids'], $param['is_top']);
 
         return success($data);
     }
@@ -237,12 +237,12 @@ class Content
      */
     public function ishot()
     {
-        $param['content'] = Request::param('content/a', '');
-        $param['is_hot']  = Request::param('is_hot/d', 0);
+        $param['ids']    = Request::param('ids/a', '');
+        $param['is_hot'] = Request::param('is_hot/d', 0);
 
         validate(ContentValidate::class)->scene('ishot')->check($param);
 
-        $data = ContentService::ishot($param['content'], $param['is_hot']);
+        $data = ContentService::ishot($param['ids'], $param['is_hot']);
 
         return success($data);
     }
@@ -255,12 +255,12 @@ class Content
      */
     public function isrec()
     {
-        $param['content'] = Request::param('content/a', '');
-        $param['is_rec']  = Request::param('is_rec/d', 0);
+        $param['ids']    = Request::param('ids/a', '');
+        $param['is_rec'] = Request::param('is_rec/d', 0);
 
         validate(ContentValidate::class)->scene('isrec')->check($param);
 
-        $data = ContentService::isrec($param['content'], $param['is_rec']);
+        $data = ContentService::isrec($param['ids'], $param['is_rec']);
 
         return success($data);
     }
@@ -273,12 +273,12 @@ class Content
      */
     public function ishide()
     {
-        $param['content'] = Request::param('content/a', '');
+        $param['ids']     = Request::param('ids/a', '');
         $param['is_hide'] = Request::param('is_hide/d', 0);
 
         validate(ContentValidate::class)->scene('ishide')->check($param);
 
-        $data = ContentService::ishide($param['content'], $param['is_hide']);
+        $data = ContentService::ishide($param['ids'], $param['is_hide']);
 
         return success($data);
     }
@@ -301,11 +301,11 @@ class Content
         $limit        = Request::param('limit/d', 10);
         $sort_field   = Request::param('sort_field/s', '');
         $sort_value   = Request::param('sort_value/s', '');
-        $category_id  = Request::param('category_id/d', '');
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
+        $category_id  = Request::param('category_id/d', '');
 
         validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
@@ -351,11 +351,11 @@ class Content
      */
     public function recoverReco()
     {
-        $param['content'] = Request::param('content/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(ContentValidate::class)->scene('reco')->check($param);
 
-        $data = ContentService::recoverReco($param['content']);
+        $data = ContentService::recoverReco($param['ids']);
 
         return success($data);
     }
@@ -367,11 +367,11 @@ class Content
      */
     public function recoverDele()
     {
-        $param['content'] = Request::param('content/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(ContentValidate::class)->scene('dele')->check($param);
 
-        $data = ContentService::recoverDele($param['content']);
+        $data = ContentService::recoverDele($param['ids']);
 
         return success($data);
     }

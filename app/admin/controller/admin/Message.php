@@ -100,16 +100,24 @@ class Message
      * @Apidoc\Title("消息添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\admin\MessageModel\addParam")
+     * @Apidoc\Param("title", mock="@ctitle(15, 32)")
+     * @Apidoc\Param("open_time_start", mock="@now")
+     * @Apidoc\Param("open_time_end", mock="@now")
+     * @Apidoc\Param("intro", mock="@csentence(32, 64)")
+     * @Apidoc\Param("content", mock="@cparagraph(64, 128)")
      */
     public function add()
     {
-        $param['admin_user_id'] = admin_user_id();
-        $param['title']         = Request::param('title/s', '');
-        $param['type']          = Request::param('type/d', 1);
-        $param['sort']          = Request::param('sort/d', 250);
-        $param['is_open']       = Request::param('is_open/d', 1);
-        $param['intro']         = Request::param('intro/s', '');
-        $param['content']       = Request::param('content/s', '');
+        $param['admin_user_id']   = admin_user_id();
+        $param['title']           = Request::param('title/s', '');
+        $param['color']           = Request::param('color/s', '#606266');
+        $param['type']            = Request::param('type/d', 1);
+        $param['sort']            = Request::param('sort/d', 250);
+        $param['is_open']         = Request::param('is_open/d', 1);
+        $param['open_time_start'] = Request::param('open_time_start/s', '');
+        $param['open_time_end']   = Request::param('open_time_end/s', '');
+        $param['intro']           = Request::param('intro/s', '');
+        $param['content']         = Request::param('content/s', '');
 
         validate(MessageValidate::class)->scene('add')->check($param);
 
@@ -127,10 +135,13 @@ class Message
     {
         $param['admin_message_id'] = Request::param('admin_message_id/d', '');
         $param['title']            = Request::param('title/s', '');
+        $param['color']            = Request::param('color/s', '#606266');
         $param['type']             = Request::param('type/d', 1);
         $param['sort']             = Request::param('sort/d', 250);
         $param['is_open']          = Request::param('is_open/d', 1);
-        $param['intro']         = Request::param('intro/s', '');
+        $param['open_time_start']  = Request::param('open_time_start/s', '');
+        $param['open_time_end']    = Request::param('open_time_end/s', '');
+        $param['intro']            = Request::param('intro/s', '');
         $param['content']          = Request::param('content/s', '');
 
         validate(MessageValidate::class)->scene('edit')->check($param);

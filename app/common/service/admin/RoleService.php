@@ -167,25 +167,27 @@ class RoleService
     /**
      * 角色删除
      *
-     * @param array $admin_role_id 角色id
+     * @param array $ids 角色id
      * 
      * @return array
      */
-    public static function dele($admin_role_id)
+    public static function dele($ids)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_role_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_role_id;
+        foreach ($ids as $v) {
+            RoleCache::del($v);
+        }
 
-        RoleCache::del($admin_role_id);
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -193,27 +195,28 @@ class RoleService
     /**
      * 角色禁用
      *
-     * @param array $param 角色信息
+     * @param array   $ids        角色id
+     * @param integer $is_disable 是否禁用
      * 
      * @return array
      */
-    public static function disable($param)
+    public static function disable($ids, $is_disable)
     {
-        $admin_role_id = $param[self::$t_pk];
-
-        $update['is_disable']  = $param['is_disable'];
+        $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_role_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_role_id;
+        foreach ($ids as $v) {
+            RoleCache::del($v);
+        }
 
-        RoleCache::del($admin_role_id);
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -272,7 +275,7 @@ class RoleService
             exception();
         }
 
-        $update[self::$t_pk] = $admin_role_id;
+        $update[self::$t_pk]     = $admin_role_id;
         $update['admin_user_id'] = $admin_user_id;
 
         UserCache::upd($admin_user_id);
@@ -303,7 +306,7 @@ class RoleService
         }
 
         $admin_menu_ids = [];
-        foreach ($admin_role_ids as $k => $v) {
+        foreach ($admin_role_ids as $v) {
             $admin_role     = self::info($v);
             $admin_menu_ids = array_merge($admin_menu_ids, $admin_role['admin_menu_ids']);
         }

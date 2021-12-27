@@ -69,7 +69,7 @@ class Category
         $param['keywords']      = Request::param('keywords/s', '');
         $param['description']   = Request::param('description/s', '');
         $param['imgs']          = Request::param('imgs/a', []);
-        $param['sort']          = Request::param('sort/d', 200);
+        $param['sort']          = Request::param('sort/d', 250);
 
         validate(CategoryValidate::class)->scene('add')->check($param);
 
@@ -93,7 +93,7 @@ class Category
         $param['keywords']      = Request::param('keywords/s', '');
         $param['description']   = Request::param('description/s', '');
         $param['imgs']          = Request::param('imgs/a', []);
-        $param['sort']          = Request::param('sort/d', 200);
+        $param['sort']          = Request::param('sort/d', 250);
 
         validate(CategoryValidate::class)->scene('edit')->check($param);
 
@@ -109,11 +109,11 @@ class Category
      */
     public function dele()
     {
-        $param['category'] = Request::param('category/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(CategoryValidate::class)->scene('dele')->check($param);
 
-        $data = CategoryService::dele($param['category']);
+        $data = CategoryService::dele($param['ids']);
 
         return success($data);
     }
@@ -126,12 +126,12 @@ class Category
      */
     public function pid()
     {
-        $param['category']     = Request::param('category/a', '');
+        $param['ids']          = Request::param('ids/a', '');
         $param['category_pid'] = Request::param('category_pid/d', 0);
 
         validate(CategoryValidate::class)->scene('pid')->check($param);
 
-        $data = CategoryService::pid($param['category'], $param['category_pid']);
+        $data = CategoryService::pid($param['ids'], $param['category_pid']);
 
         return success($data);
     }
@@ -144,12 +144,12 @@ class Category
      */
     public function ishide()
     {
-        $param['category'] = Request::param('category/a', '');
-        $param['is_hide']  = Request::param('is_hide/d', 0);
+        $param['ids']     = Request::param('ids/a', '');
+        $param['is_hide'] = Request::param('is_hide/d', 0);
 
         validate(CategoryValidate::class)->scene('ishide')->check($param);
 
-        $data = CategoryService::ishide($param['category'], $param['is_hide']);
+        $data = CategoryService::ishide($param['ids'], $param['is_hide']);
 
         return success($data);
     }

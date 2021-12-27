@@ -50,7 +50,7 @@ class Comment
             if ($search_field == 'comment_id') {
                 $exp = strstr($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
-            } elseif (in_array($search_field, ['is_read'])) {
+            } elseif (in_array($search_field, ['is_unread'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
                 } else {
@@ -152,11 +152,11 @@ class Comment
      */
     public function dele()
     {
-        $param['comment'] = Request::param('comment/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(CommentValidate::class)->scene('dele')->check($param);
 
-        $data = CommentService::dele($param['comment']);
+        $data = CommentService::dele($param['ids']);
 
         return success($data);
     }
@@ -168,11 +168,11 @@ class Comment
      */
     public function isread()
     {
-        $param['comment'] = Request::param('comment/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(CommentValidate::class)->scene('isread')->check($param);
 
-        $data = CommentService::isread($param['comment']);
+        $data = CommentService::isread($param['ids']);
 
         return success($data);
     }
@@ -204,7 +204,7 @@ class Comment
         if ($search_field && $search_value) {
             if ($search_field == 'comment_id') {
                 $where[] = [$search_field, '=', $search_value];
-            } elseif (in_array($search_field, ['is_read'])) {
+            } elseif (in_array($search_field, ['is_unread'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
                 } else {
@@ -239,11 +239,11 @@ class Comment
      */
     public function recoverReco()
     {
-        $param['comment'] = Request::param('comment/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(CommentValidate::class)->scene('dele')->check($param);
 
-        $data = CommentService::recoverReco($param['comment']);
+        $data = CommentService::recoverReco($param['ids']);
 
         return success($data);
     }
@@ -255,11 +255,11 @@ class Comment
      */
     public function recoverDele()
     {
-        $param['comment'] = Request::param('comment/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(CommentValidate::class)->scene('dele')->check($param);
 
-        $data = CommentService::recoverDele($param['comment']);
+        $data = CommentService::recoverDele($param['ids']);
 
         return success($data);
     }

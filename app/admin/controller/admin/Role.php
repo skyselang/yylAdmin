@@ -14,6 +14,7 @@ use think\facade\Request;
 use app\common\validate\admin\RoleValidate;
 use app\common\validate\admin\UserValidate;
 use app\common\service\admin\RoleService;
+use app\common\service\admin\MenuService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -23,6 +24,19 @@ use hg\apidoc\annotation as Apidoc;
  */
 class Role
 {
+    /**
+     * @Apidoc\Title("菜单列表")
+     * @Apidoc\Returned("list", type="array", desc="树形列表",
+     *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\listReturn")
+     * )
+     */
+    public function menu()
+    {
+        $data['list'] = MenuService::tree();
+
+        return success($data);
+    }
+
     /**
      * @Apidoc\Title("角色列表")
      * @Apidoc\Param(ref="pagingParam")
@@ -37,19 +51,34 @@ class Role
      */
     public function list()
     {
-        $page       = Request::param('page/d', 1);
-        $limit      = Request::param('limit/d', 10);
-        $sort_field = Request::param('sort_field/s', '');
-        $sort_value = Request::param('sort_value/s', '');
-        $role_name  = Request::param('role_name/s', '');
-        $role_desc  = Request::param('role_desc/s', '');
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
         $where = [];
-        if ($role_name) {
-            $where[] = ['role_name', 'like', '%' . $role_name . '%'];
+        if ($search_field && $search_value) {
+            if ($search_field == 'admin_role_id') {
+                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
+            } elseif (in_array($search_field, ['is_disable'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
         }
-        if ($role_desc) {
-            $where[] = ['role_desc', 'like', '%' . $role_desc . '%'];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
@@ -90,7 +119,7 @@ class Role
     {
         $param['role_name']      = Request::param('role_name/s', '');
         $param['role_desc']      = Request::param('role_desc/s', '');
-        $param['role_sort']      = Request::param('role_sort/d', 200);
+        $param['role_sort']      = Request::param('role_sort/d', 250);
         $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
 
         validate(RoleValidate::class)->scene('add')->check($param);
@@ -110,7 +139,7 @@ class Role
         $param['admin_role_id']  = Request::param('admin_role_id/d', '');
         $param['role_name']      = Request::param('role_name/s', '');
         $param['role_desc']      = Request::param('role_desc/s', '');
-        $param['role_sort']      = Request::param('role_sort/d', 200);
+        $param['role_sort']      = Request::param('role_sort/d', 250);
         $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
 
         validate(RoleValidate::class)->scene('edit')->check($param);
@@ -127,11 +156,11 @@ class Role
      */
     public function dele()
     {
-        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(RoleValidate::class)->scene('dele')->check($param);
 
-        $data = RoleService::dele($param['admin_role_id']);
+        $data = RoleService::dele($param['ids']);
 
         return success($data);
     }
@@ -143,12 +172,12 @@ class Role
      */
     public function disable()
     {
-        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
-        $param['is_disable']    = Request::param('is_disable/d', 0);
+        $param['ids']        = Request::param('ids/a', '');
+        $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(RoleValidate::class)->scene('disable')->check($param);
 
-        $data = RoleService::disable($param);
+        $data = RoleService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
