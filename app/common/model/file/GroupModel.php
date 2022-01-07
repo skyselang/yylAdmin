@@ -28,13 +28,6 @@ class GroupModel extends Model
     }
 
     /**
-     * @Apidoc\Field("group_name,group_desc")
-     */
-    public function listParam()
-    {
-    }
-
-    /**
      * @Apidoc\Field("group_id,group_name,group_desc,group_sort,is_disable,create_time,update_time")
      */
     public function listReturn()
@@ -66,28 +59,6 @@ class GroupModel extends Model
      * @Apidoc\Field("is_disable")
      */
     public function is_disable()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("group_name")
-     */
-    public function group_name()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("group_desc")
-     */
-    public function group_desc()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("group")
-     * @Apidoc\AddField("group", type="array", require=true, default=" ", desc="文件分组数组")
-     */
-    public function group()
     {
     }
 }

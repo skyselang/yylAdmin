@@ -56,23 +56,9 @@ class ApiModel extends Model
     }
 
     /**
-     * @Apidoc\Field("api_id")
+     * @Apidoc\Field("api_pid")
      */
-    public function deleParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("api_id,is_disable")
-     */
-    public function disableParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("api_id,is_unlogin")
-     */
-    public function unloginParam()
+    public function api_pid()
     {
     }
 
@@ -80,6 +66,20 @@ class ApiModel extends Model
      * @Apidoc\Field("api_url")
      */
     public function api_url()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("is_disable")
+     */
+    public function is_disable()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("is_unlogin")
+     */
+    public function is_unlogin()
     {
     }
 }

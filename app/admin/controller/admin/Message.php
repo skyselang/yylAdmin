@@ -13,7 +13,7 @@ namespace app\admin\controller\admin;
 use think\facade\Request;
 use app\common\validate\admin\MessageValidate;
 use app\common\service\admin\MessageService;
-use app\common\service\admin\UserService;
+use app\common\model\admin\UserModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -47,13 +47,16 @@ class Message
 
         if ($search_field && $search_value) {
             if ($search_field == 'admin_message_id' || $search_field == 'admin_user_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
-            } elseif ($search_field == 'admin_user') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
-                $where_user[] = ['username', $exp, $search_value];
-                $admin_user = UserService::list($where_user, 1, 9999);
-                $admin_user_ids = array_column($admin_user['list'], 'admin_user_id');
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
+            } elseif ($search_field == 'username') {
+                $user_exp = strpos($search_value, ',') ? 'in' : '=';
+                $user_where[] = [$search_field, $user_exp, $search_value];
+                $UserModel = new UserModel();
+                $admin_user_ids = $UserModel
+                    ->field($UserModel->getPk())
+                    ->where($user_where)
+                    ->column($UserModel->getPk());
                 $where[] = ['admin_user_id', 'in', $admin_user_ids];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
@@ -154,15 +157,15 @@ class Message
     /**
      * @Apidoc\Title("消息删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("list", ref="app\common\model\admin\MessageModel\listReturn", type="array")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
-        $param['list'] = Request::param('list/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(MessageValidate::class)->scene('dele')->check($param);
 
-        $data = MessageService::dele($param['list']);
+        $data = MessageService::dele($param['ids']);
 
         return success($data);
     }
@@ -170,17 +173,17 @@ class Message
     /**
      * @Apidoc\Title("消息是否开启")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("list", ref="app\common\model\admin\MessageModel\listReturn", type="array")
-     * @Apidoc\Param(ref="app\common\model\admin\MessageModel\isopenParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MessageModel\is_open")
      */
     public function isopen()
     {
-        $param['list']    = Request::param('list/a', '');
+        $param['ids']     = Request::param('ids/a', '');
         $param['is_open'] = Request::param('is_open/d', 0);
 
         validate(MessageValidate::class)->scene('isopen')->check($param);
 
-        $data = MessageService::is_open($param['list'], $param['is_open']);
+        $data = MessageService::is_open($param['ids'], $param['is_open']);
 
         return success($data);
     }

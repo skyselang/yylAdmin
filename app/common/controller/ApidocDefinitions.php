@@ -91,12 +91,105 @@ class ApidocDefinitions
 
     /**
      * 上传文件返回参数
+     * @Apidoc\Returned("file_id", type="int", default=" ", desc="文件ID")
      * @Apidoc\Returned("file_name", type="string", default=" ", desc="文件名称")
      * @Apidoc\Returned("file_path", type="string", default=" ", desc="文件路径")
      * @Apidoc\Returned("file_size", type="string", default=" ", desc="文件大小")
      * @Apidoc\Returned("file_url", type="string", default=" ", desc="文件链接")
      */
     public function fileReturn()
+    {
+    }
+
+    /**
+     * ids请求参数
+     * @Apidoc\Param("ids", type="array", require=true, default="", desc="id数组，eg：[1,2,3]")
+     */
+    public function idsParam()
+    {
+    }
+
+    /**
+     * imgs请求参数
+     * @Apidoc\Param("imgs", type="array", require=false, default="[]", desc="图片",
+     *    @Apidoc\Param("file_id", type="int", require=true, default=" ", desc="文件ID"),
+     *    @Apidoc\Param("file_name", type="string", require=true, default=" ", desc="图片名称"),
+     *    @Apidoc\Param("file_size", type="string", require=true, default=" ", desc="图片大小"),
+     *    @Apidoc\Param("file_path", type="string", require=true, default=" ", desc="图片路径"),
+     *    @Apidoc\Param("file_url", type="string", require=true, default=" ", desc="图片链接")
+     * )
+     */
+    public function imgsParam()
+    {
+    }
+
+    /**
+     * imgs返回参数
+     * @Apidoc\Returned("imgs", type="array", require=false, default="[]", desc="图片",
+     *    @Apidoc\Returned("file_id", type="int", require=true, default=" ", desc="文件ID"),
+     *    @Apidoc\Returned("file_name", type="string", require=true, default=" ", desc="图片名称"),
+     *    @Apidoc\Returned("file_size", type="string", require=true, default=" ", desc="图片大小"),
+     *    @Apidoc\Returned("file_path", type="string", require=true, default=" ", desc="图片路径"),
+     *    @Apidoc\Returned("file_url", type="string", require=true, default=" ", desc="图片链接")
+     * )
+     */
+    public function imgsReturn()
+    {
+    }
+
+    /**
+     * files请求参数
+     * @Apidoc\Param("files", type="array", require=false, default="[]", desc="附件",
+     *    @Apidoc\Param("file_id", type="int", require=true, default=" ", desc="文件ID"),
+     *    @Apidoc\Param("file_name", type="string", require=true, default=" ", desc="附件名称"),
+     *    @Apidoc\Param("file_size", type="string", require=true, default=" ", desc="附件大小"),
+     *    @Apidoc\Param("file_path", type="string", require=true, default=" ", desc="附件路径"),
+     *    @Apidoc\Param("file_url", type="string", require=true, default=" ", desc="附件链接"),
+     * )
+     */
+    public function filesParam()
+    {
+    }
+
+    /**
+     * files返回参数
+     * @Apidoc\Returned("files", type="array", require=false, default="[]", desc="附件",
+     *    @Apidoc\Returned("file_id", type="int", require=true, default=" ", desc="文件ID"),
+     *    @Apidoc\Returned("file_name", type="string", require=true, default=" ", desc="附件名称"),
+     *    @Apidoc\Returned("file_size", type="string", require=true, default=" ", desc="附件大小"),
+     *    @Apidoc\Returned("file_path", type="string", require=true, default=" ", desc="附件路径"),
+     *    @Apidoc\Returned("file_url", type="string", require=true, default=" ", desc="附件链接"),
+     * )
+     */
+    public function filesReturn()
+    {
+    }
+
+    /**
+     * videos请求参数
+     * @Apidoc\Param("videos", type="array", require=false, default="[]", desc="视频",
+     *    @Apidoc\Param("file_id", type="int", require=true, default=" ", desc="文件ID"),
+     *    @Apidoc\Param("file_name", type="string", require=true, default=" ", desc="视频名称"),
+     *    @Apidoc\Param("file_size", type="string", require=true, default=" ", desc="视频大小"),
+     *    @Apidoc\Param("file_path", type="string", require=true, default=" ", desc="视频路径"),
+     *    @Apidoc\Param("file_url", type="string", require=true, default=" ", desc="视频链接"),
+     * )
+     */
+    public function videosParam()
+    {
+    }
+
+    /**
+     * videos返回参数
+     * @Apidoc\Returned("videos", type="array", require=false, default="[]", desc="视频",
+     *    @Apidoc\Returned("file_id", type="int", require=true, default=" ", desc="文件ID"),
+     *    @Apidoc\Returned("file_name", type="string", require=true, default=" ", desc="视频名称"),
+     *    @Apidoc\Returned("file_size", type="string", require=true, default=" ", desc="视频大小"),
+     *    @Apidoc\Returned("file_path", type="string", require=true, default=" ", desc="视频路径"),
+     *    @Apidoc\Returned("file_url", type="string", require=true, default=" ", desc="视频链接"),
+     * )
+     */
+    public function videosReturn()
     {
     }
 }

@@ -96,7 +96,7 @@ class Api
     /**
      * @Apidoc\Title("接口删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\deleParam")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -112,7 +112,8 @@ class Api
     /**
      * @Apidoc\Title("接口设置父级")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\disableParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\api_pid")
      */
     public function pid()
     {
@@ -129,7 +130,8 @@ class Api
     /**
      * @Apidoc\Title("接口是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\disableParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\is_disable")
      */
     public function disable()
     {
@@ -146,7 +148,8 @@ class Api
     /**
      * @Apidoc\Title("接口是否无需登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\unloginParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\is_unlogin")
      */
     public function unlogin()
     {

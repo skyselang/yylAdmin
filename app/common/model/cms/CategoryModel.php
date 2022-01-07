@@ -42,7 +42,7 @@ class CategoryModel extends Model
     }
 
     /**
-     * @Apidoc\Field("category_id,category_pid,category_name,title,keywords,description,sort")
+     * @Apidoc\Field("category_pid,category_name,title,keywords,description,sort")
      */
     public function addParam()
     {
@@ -73,27 +73,6 @@ class CategoryModel extends Model
      * @Apidoc\Field("is_hide")
      */
     public function is_hide()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("imgs")
-     * @Apidoc\AddField("imgs", type="array", require=false, default="[]", desc="图片",
-     *    @Apidoc\Param("file_name", type="string", require=true, default=" ", desc="图片名称"),
-     *    @Apidoc\Param("file_size", type="string", require=true, default=" ", desc="图片大小"),
-     *    @Apidoc\Param("file_path", type="string", require=true, default=" ", desc="图片路径"),
-     *    @Apidoc\Param("file_url", type="string", require=true, default=" ", desc="图片链接")
-     * )
-     */
-    public function imgs()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("category")
-     * @Apidoc\AddField("category", type="array", require=true, default=" ", desc="内容分类列表")
-     */
-    public function category()
     {
     }
 }

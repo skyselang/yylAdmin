@@ -13,8 +13,6 @@ namespace app\admin\controller;
 use think\facade\Request;
 use app\common\validate\MemberLogValidate;
 use app\common\service\MemberLogService;
-use app\common\service\MemberService;
-use app\common\service\ApiService;
 use app\common\model\MemberModel;
 use app\common\model\ApiModel;
 use hg\apidoc\annotation as Apidoc;
@@ -57,16 +55,22 @@ class MemberLog
         }
         if ($search_field && $search_value) {
             if ($search_field == 'member_id' || $search_field == 'username') {
-                $where_member[] = [$search_field, '=', $search_value];
-                $where_member[] = ['is_delete', '=', 0];
-                $member     = MemberService::list($where_member, 1, 9999, [], 'member_id');
-                $member_ids = array_column($member['list'], 'member_id');
-                $where[]    = ['member_id', 'in', $member_ids];
+                $member_exp = strpos($search_value, ',') ? 'in' : '=';
+                $member_where[] = [$search_field, $member_exp, $search_value];
+                $MemberModel = new MemberModel();
+                $member_ids = $MemberModel
+                    ->field($MemberModel->getPk())
+                    ->where($member_where)
+                    ->column($MemberModel->getPk());
+                $where[] = ['member_id', 'in', $member_ids];
             } elseif ($search_field == 'api_url' || $search_field == 'api_name') {
-                $where_api[] = [$search_field, '=', $search_value];
-                $where_api[] = ['is_delete', '=', 0];
-                $api     = ApiService::list($where_api, 1, 9999, [], 'api_id');
-                $api_ids = array_column($api['list'], 'api_id');
+                $api_exp = strpos($search_value, ',') ? 'in' : '=';
+                $api_where[] = [$search_field, $api_exp, $search_value];
+                $ApiModel = new ApiModel();
+                $api_ids = $ApiModel
+                    ->field($ApiModel->getPk())
+                    ->where($api_where)
+                    ->column($ApiModel->getPk());
                 $where[] = ['api_id', 'in', $api_ids];
             } else {
                 $where[] = [$search_field, '=', $search_value];
@@ -109,7 +113,7 @@ class MemberLog
     /**
      * @Apidoc\Title("会员日志删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberLogModel\deleParam")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -130,6 +134,7 @@ class MemberLog
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
      * @Apidoc\Param(ref="app\common\model\ApiModel\api_url")
      * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Param("clean", type="int", default="0", desc="是否清空所有1是0否")
      */
     public function clear()
     {
@@ -146,15 +151,13 @@ class MemberLog
             $member_ids = array_merge(explode(',', $member_id), $member_ids);
         }
         if ($username) {
-            $exp_member = strstr($username, ',') ? 'in' : '=';
-            $Member = new MemberModel();
-            $member = $Member
-                ->field('member_id')
-                ->where('username', $exp_member, $username)
-                ->select()
-                ->toArray();
-            if ($member) {
-                $member_ids = array_merge(array_column($member, 'member_id'), $member_ids);
+            $member_exp = strstr($username, ',') ? 'in' : '=';
+            $MemberModel = new MemberModel();
+            $memberids = $MemberModel->field($MemberModel->getPk())
+                ->where('username', $member_exp, $username)
+                ->column($MemberModel->getPk());
+            if ($memberids) {
+                $member_ids = array_merge($memberids, $member_ids);
             }
         }
         if ($member_ids) {
@@ -166,15 +169,13 @@ class MemberLog
             $api_ids = array_merge(explode(',', $api_id), $api_ids);
         }
         if ($api_url) {
-            $exp_api = strstr($api_url, ',') ? 'in' : '=';
-            $Api = new ApiModel();
-            $api = $Api
-                ->field('api_id')
-                ->where('api_url', $exp_api, $api_url)
-                ->select()
-                ->toArray();
-            if ($api) {
-                $api_ids = array_merge(array_column($api, 'api_id'), $api_ids);
+            $api_exp = strstr($api_url, ',') ? 'in' : '=';
+            $ApiModel = new ApiModel();
+            $apiids = $ApiModel->field($ApiModel->getPk())
+                ->where('api_url', $api_exp, $api_url)
+                ->column($ApiModel->getPk());
+            if ($apiids) {
+                $api_ids = array_merge($apiids, $api_ids);
             }
         }
         if ($api_ids) {
@@ -221,7 +222,6 @@ class MemberLog
             foreach ($dates as $v) {
                 $num[$v] = MemberLogService::statNum($v);
             }
-
             $data['num']   = $num;
             $data['date']  = MemberLogService::statDate($date);
             $data['field'] = MemberLogService::statField($date, $field);

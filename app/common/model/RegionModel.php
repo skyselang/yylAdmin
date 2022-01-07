@@ -56,13 +56,6 @@ class RegionModel extends Model
     }
 
     /**
-     * @Apidoc\Field("region_id")
-     */
-    public function deleParam()
-    {
-    }
-
-    /**
      * @Apidoc\Field("region_pid")
      */
     public function region_pid()

@@ -37,23 +37,34 @@ class User
      */
     public function list()
     {
-        $page       = Request::param('page/d', 1);
-        $limit      = Request::param('limit/d', 10);
-        $sort_field = Request::param('sort_field/s', '');
-        $sort_value = Request::param('sort_value/s', '');
-        $username   = Request::param('username/s', '');
-        $nickname   = Request::param('nickname/s', '');
-        $email      = Request::param('email/s', '');
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
         $where = [];
-        if ($username) {
-            $where[] = ['username', 'like', '%' . $username . '%'];
+        if ($search_field && $search_value) {
+            if ($search_field == 'admin_user_id') {
+                $exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
+            } elseif (in_array($search_field, ['is_super', 'is_disable'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
         }
-        if ($nickname) {
-            $where[] = ['nickname', 'like', '%' . $nickname . '%'];
-        }
-        if ($email) {
-            $where[] = ['email', 'like', '%' . $email . '%'];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
@@ -134,32 +145,15 @@ class User
     /**
      * @Apidoc\Title("用户删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\deleParam")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(UserValidate::class)->scene('dele')->check($param);
 
-        $data = UserService::dele($param['admin_user_id']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("用户重置密码")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\pwdParam")
-     */
-    public function pwd()
-    {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['password']      = Request::param('password/s', '');
-
-        validate(UserValidate::class)->scene('pwd')->check($param);
-
-        $data = UserService::pwd($param);
+        $data = UserService::dele($param['ids']);
 
         return success($data);
     }
@@ -188,18 +182,19 @@ class User
     }
 
     /**
-     * @Apidoc\Title("用户是否禁用")
+     * @Apidoc\Title("用户重置密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\disableParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\password")
      */
-    public function disable()
+    public function pwd()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['is_disable']    = Request::param('is_disable/d', 0);
+        $param['ids']      = Request::param('ids/a', '');
+        $param['password'] = Request::param('password/s', '');
 
-        validate(UserValidate::class)->scene('disable')->check($param);
+        validate(UserValidate::class)->scene('pwd')->check($param);
 
-        $data = UserService::disable($param);
+        $data = UserService::pwd($param['ids'], $param['password']);
 
         return success($data);
     }
@@ -207,16 +202,35 @@ class User
     /**
      * @Apidoc\Title("用户是否超管")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\superParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\is_super")
      */
     public function super()
     {
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
-        $param['is_super']      = Request::param('is_super/d', 0);
+        $param['ids']      = Request::param('ids/a', '');
+        $param['is_super'] = Request::param('is_super/d', 0);
 
         validate(UserValidate::class)->scene('super')->check($param);
 
-        $data = UserService::super($param);
+        $data = UserService::super($param['ids'], $param['is_super']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("用户是否禁用")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\UserModel\is_disable")
+     */
+    public function disable()
+    {
+        $param['ids']        = Request::param('ids/a', '');
+        $param['is_disable'] = Request::param('is_disable/d', 0);
+
+        validate(UserValidate::class)->scene('disable')->check($param);
+
+        $data = UserService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }

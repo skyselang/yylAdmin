@@ -65,23 +65,9 @@ class RoleModel extends Model
     }
 
     /**
-     * @Apidoc\Field("admin_role_id")
+     * @Apidoc\Field("is_disable")
      */
-    public function deleParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("admin_role_id,is_disable")
-     */
-    public function disableParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("admin_role_id,is_unauth")
-     */
-    public function unauthParam()
+    public function is_disable()
     {
     }
 }

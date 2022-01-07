@@ -33,6 +33,7 @@ class RegionValidate extends Validate
         'info' => ['region_id'],
         'add'  => ['region_name'],
         'edit' => ['region_id', 'region_name'],
+        'pid'  => ['ids'],
         'dele' => ['ids'],
     ];
 
@@ -41,6 +42,25 @@ class RegionValidate extends Validate
     {
         return $this->only(['ids'])
             ->append('ids', 'checkRegionChild');
+    }
+
+    // 验证场景定义：设置父级
+    protected function scenepid()
+    {
+        return $this->only(['ids'])
+            ->append('ids', 'checkRegionPidNeq');
+    }
+
+    // 自定义验证规则：地区父级不能等于地区自己
+    protected function checkRegionPidNeq($value, $rule, $data = [])
+    {
+        foreach ($data['ids'] as $v) {
+            if ($data['region_pid'] == $v) {
+                return '地区父级不能等于地区自己';
+            }
+        }
+
+        return true;
     }
 
     // 自定义验证规则：地区名称是否已存在

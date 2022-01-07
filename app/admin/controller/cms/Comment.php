@@ -48,7 +48,7 @@ class Comment
 
         if ($search_field && $search_value) {
             if ($search_field == 'comment_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_unread'])) {
                 if ($search_value == '是' || $search_value == '1') {
@@ -100,6 +100,10 @@ class Comment
      * @Apidoc\Title("留言添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\addParam")
+     * @Apidoc\Param("call", mock="@cname")
+     * @Apidoc\Param("mobile", mock="@phone")
+     * @Apidoc\Param("title", mock="@ctitle(8, 32)")
+     * @Apidoc\Param("content", mock="@cparagraph(8, 32)")
      */
     public function add()
     {
@@ -148,7 +152,7 @@ class Comment
     /**
      * @Apidoc\Title("留言删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -164,7 +168,7 @@ class Comment
     /**
      * @Apidoc\Title("留言已读")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function isread()
     {
@@ -203,7 +207,8 @@ class Comment
         $where[] = ['is_delete', '=', 1];
         if ($search_field && $search_value) {
             if ($search_field == 'comment_id') {
-                $where[] = [$search_field, '=', $search_value];
+                $exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_unread'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
@@ -235,13 +240,13 @@ class Comment
     /**
      * @Apidoc\Title("留言回收站恢复")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function recoverReco()
     {
         $param['ids'] = Request::param('ids/a', '');
 
-        validate(CommentValidate::class)->scene('dele')->check($param);
+        validate(CommentValidate::class)->scene('reco')->check($param);
 
         $data = CommentService::recoverReco($param['ids']);
 
@@ -251,7 +256,7 @@ class Comment
     /**
      * @Apidoc\Title("留言回收站删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CommentModel\comment")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function recoverDele()
     {

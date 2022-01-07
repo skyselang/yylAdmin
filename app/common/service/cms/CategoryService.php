@@ -243,7 +243,7 @@ class CategoryService
     {
         $tree = [];
 
-        foreach ($category as $k => $v) {
+        foreach ($category as $v) {
             if ($v['category_pid'] == $category_pid) {
                 $v['children'] = self::toTree($category, $v[self::$t_pk]);
                 $tree[] = $v;

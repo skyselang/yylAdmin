@@ -42,6 +42,7 @@ class CommentValidate extends Validate
         'add'    => ['call', 'mobile', 'title', 'content'],
         'edit'   => ['comment_id'],
         'dele'   => ['ids'],
+        'reco'   => ['ids'],
         'isread' => ['ids'],
         'sort'   => ['sort_field', 'sort_value'],
     ];

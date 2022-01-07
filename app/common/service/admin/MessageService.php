@@ -147,29 +147,27 @@ class MessageService
     /**
      * 消息删除
      *
-     * @param array $list 消息列表
+     * @param array $ids 消息id
      * 
      * @return array
      */
-    public static function dele($list)
+    public static function dele($ids)
     {
-        $pk_ids = array_column($list, self::$t_pk);
-
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $pk_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $pk_ids;
-
-        foreach ($pk_ids as $k => $v) {
+        foreach ($ids as $v) {
             MessageCache::del($v);
         }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -177,30 +175,28 @@ class MessageService
     /**
      * 消息是否开启
      *
-     * @param array   $list    消息列表
+     * @param array   $ids     消息id
      * @param integer $is_open 是否开启1是0否
      * 
      * @return array
      */
-    public static function is_open($list, $is_open = 0)
+    public static function is_open($ids, $is_open = 0)
     {
-        $pk_ids = array_column($list, self::$t_pk);
-
-        $update['is_open']      = $is_open;
+        $update['is_open']     = $is_open;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $pk_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $pk_ids;
-
-        foreach ($pk_ids as $k => $v) {
+        foreach ($ids as $v) {
             MessageCache::del($v);
         }
+
+        $update['ids'] = $ids;
 
         return $update;
     }

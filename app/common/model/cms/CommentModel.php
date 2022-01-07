@@ -54,12 +54,4 @@ class CommentModel extends Model
     public function editParam()
     {
     }
-
-    /**
-     * @Apidoc\Field("comment")
-     * @Apidoc\AddField("comment", type="array", require=true, default=" ", desc="留言列表")
-     */
-    public function comment()
-    {
-    }
 }

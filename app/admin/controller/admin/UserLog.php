@@ -13,8 +13,6 @@ namespace app\admin\controller\admin;
 use think\facade\Request;
 use app\common\validate\admin\UserLogValidate;
 use app\common\service\admin\UserLogService;
-use app\common\service\admin\MenuService;
-use app\common\service\admin\UserService;
 use app\common\model\admin\MenuModel;
 use app\common\model\admin\UserModel;
 use hg\apidoc\annotation as Apidoc;
@@ -54,17 +52,27 @@ class UserLog
             $where[] = ['log_type', '=', $log_type];
         }
         if ($search_field && $search_value) {
-            if ($search_field == 'admin_user_log_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+            if (in_array($search_field, ['admin_user_log_id', 'admin_user_id', 'admin_menu_id'])) {
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
+            } elseif (in_array($search_field, ['username'])) {
+                $user_exp = strpos($search_value, ',') ? 'in' : '=';
+                $user_where[] = [$search_field, $user_exp, $search_value];
+                $UserModel = new UserModel();
+                $admin_user_ids = $UserModel
+                    ->field($UserModel->getPk())
+                    ->where($user_where)
+                    ->column($UserModel->getPk());
+                $where[] = ['admin_user_id', 'in', $admin_user_ids];
             } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
-                $admin_menu     = MenuService::likeQuery($search_value);
-                $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
-                $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
-            } elseif (in_array($search_field, ['username', 'admin_user_id'])) {
-                $admin_user     = UserService::equQuery($search_value, $search_field);
-                $admin_user_ids = array_column($admin_user, 'admin_user_id');
-                $where[]        = ['admin_user_id', 'in', $admin_user_ids];
+                $menu_exp = strpos($search_value, ',') ? 'in' : '=';
+                $menu_where[] = [$search_field, $menu_exp, $search_value];
+                $MenuModel = new MenuModel();
+                $admin_menu_ids = $MenuModel
+                    ->field($MenuModel->getPk())
+                    ->where($menu_where)
+                    ->column($MenuModel->getPk());
+                $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -81,7 +89,7 @@ class UserLog
 
         $data = UserLogService::list($where, $page, $limit, $order);
 
-        return success($data);
+        return success($data, $where);
     }
 
     /**
@@ -106,7 +114,7 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\deleParam")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -147,15 +155,14 @@ class UserLog
             $admin_user_ids = array_merge(explode(',', $admin_user_id), $admin_user_ids);
         }
         if ($username) {
-            $exp_user = strstr($username, ',') ? 'in' : '=';
-            $User = new UserModel();
-            $user = $User
-                ->field('admin_user_id')
-                ->where('username', $exp_user, $username)
-                ->select()
-                ->toArray();
-            if ($user) {
-                $admin_user_ids = array_merge(array_column($user, 'admin_user_id'), $admin_user_ids);
+            $user_exp = strstr($username, ',') ? 'in' : '=';
+            $UserModel = new UserModel();
+            $user_ids = $UserModel
+                ->field($UserModel->getPk())
+                ->where('username', $user_exp, $username)
+                ->column($UserModel->getPk());
+            if ($user_ids) {
+                $admin_user_ids = array_merge($user_ids, $admin_user_ids);
             }
         }
         if ($admin_user_ids) {
@@ -167,15 +174,14 @@ class UserLog
             $admin_menu_ids = array_merge(explode(',', $admin_menu_id), $admin_menu_ids);
         }
         if ($menu_url) {
-            $exp_menu = strstr($menu_url, ',') ? 'in' : '=';
-            $Menu = new MenuModel();
-            $menu = $Menu
-                ->field('admin_menu_id')
-                ->where('menu_url', $exp_menu, $menu_url)
-                ->select()
-                ->toArray();
-            if ($menu) {
-                $admin_menu_ids = array_merge(array_column($menu, 'admin_menu_id'), $admin_menu_ids);
+            $menu_exp = strstr($menu_url, ',') ? 'in' : '=';
+            $MenuModel = new MenuModel();
+            $menu_ids = $MenuModel
+                ->field($MenuModel->getPk())
+                ->where('menu_url', $menu_exp, $menu_url)
+                ->column($MenuModel->getPk());
+            if ($menu_ids) {
+                $admin_menu_ids = array_merge($menu_ids, $admin_menu_ids);
             }
         }
         if ($admin_menu_ids) {
@@ -209,7 +215,7 @@ class UserLog
         $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
         if ($type == 'num') {
             $num = [];
-            foreach ($range as $k => $v) {
+            foreach ($range as $v) {
                 $num[$v] = UserLogService::statNum($v);
             }
             $data['num'] = $num;
@@ -219,7 +225,7 @@ class UserLog
             $data['field'] = UserLogService::statField($date, $field);
         } else {
             $num = [];
-            foreach ($range as $k => $v) {
+            foreach ($range as $v) {
                 $num[$v] = UserLogService::statNum($v);
             }
 

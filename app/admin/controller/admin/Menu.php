@@ -114,7 +114,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -130,7 +130,8 @@ class Menu
     /**
      * @Apidoc\Title("菜单设置父级")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unloginParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_pid")
      */
     public function pid()
     {
@@ -147,7 +148,8 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否无需登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unloginParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\is_unlogin")
      */
     public function unlogin()
     {
@@ -164,7 +166,8 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否无需权限")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\unauthParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\is_unauth")
      */
     public function unauth()
     {
@@ -181,7 +184,8 @@ class Menu
     /**
      * @Apidoc\Title("菜单是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\disableParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\is_disable")
      */
     public function disable()
     {

@@ -13,7 +13,7 @@ namespace app\admin\controller\admin;
 use think\facade\Request;
 use app\common\validate\admin\UserCenterValidate;
 use app\common\service\admin\UserCenterService;
-use app\common\service\admin\MenuService;
+use app\common\model\admin\MenuModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -116,12 +116,17 @@ class UserCenter
         }
         if ($search_field && $search_value) {
             if ($search_field == 'admin_user_log_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
-                $admin_menu     = MenuService::likeQuery($search_value);
-                $admin_menu_ids = array_column($admin_menu, 'admin_menu_id');
-                $where[]        = ['admin_menu_id', 'in', $admin_menu_ids];
+                $menu_exp = strpos($search_value, ',') ? 'in' : '=';
+                $menu_where[] = [$search_field, $menu_exp, $search_value];
+                $MenuModel = new MenuModel();
+                $admin_menu_ids = $MenuModel
+                    ->field($MenuModel->getPk())
+                    ->where($menu_where)
+                    ->column($MenuModel->getPk());
+                $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }

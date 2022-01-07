@@ -248,54 +248,27 @@ class UserService
     /**
      * 用户删除
      *
-     * @param integer $admin_user_id 用户id
+     * @param array $ids 用户id
      * 
      * @return array
      */
-    public static function dele($admin_user_id)
+    public static function dele($ids)
     {
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_user_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_user_id;
-
-        UserCache::del($admin_user_id);
-
-        return $update;
-    }
-
-    /**
-     * 用户重置密码
-     *
-     * @param array $param 用户信息
-     * 
-     * @return array
-     */
-    public static function pwd($param)
-    {
-        $admin_user_id = $param[self::$t_pk];
-
-        $update['password']    = md5($param['password']);
-        $update['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_user_id)
-            ->update($update);
-        if (empty($res)) {
-            exception();
+        foreach ($ids as $v) {
+            UserCache::del($v);
         }
 
-        $update[self::$t_pk] = $admin_user_id;
-        $update['password']      = $res;
-
-        UserCache::upd($admin_user_id);
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -382,29 +355,59 @@ class UserService
     }
 
     /**
-     * 用户是否禁用
+     * 用户重置密码
      *
-     * @param array $param 用户信息
+     * @param array  $ids      用户id
+     * @param string $password 新密码
      * 
      * @return array
      */
-    public static function disable($param)
+    public static function pwd($ids, $password)
     {
-        $admin_user_id = $param[self::$t_pk];
-
-        $update['is_disable']  = $param['is_disable'];
+        $update['password']    = md5($password);
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_user_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_user_id;
+        foreach ($ids as $v) {
+            UserCache::upd($v);
+        }
 
-        UserCache::upd($admin_user_id);
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 用户是否禁用
+     *
+     * @param array   $ids        用户id
+     * @param integer $is_disable 是否禁用
+     * 
+     * @return array
+     */
+    public static function disable($ids, $is_disable)
+    {
+        $update['is_disable']  = $is_disable;
+        $update['update_time'] = datetime();
+
+        $res = Db::name(self::$t_name)
+            ->where(self::$t_pk, 'in', $ids)
+            ->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($ids as $v) {
+            UserCache::upd($v);
+        }
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -412,27 +415,29 @@ class UserService
     /**
      * 用户是否超管
      *
-     * @param array $param 用户信息
+     * @param array   $ids      用户id
+     * @param integer $is_super 是否禁用
      * 
      * @return array
      */
-    public static function super($param)
+    public static function super($ids, $is_super)
     {
-        $admin_user_id = $param[self::$t_pk];
 
-        $update['is_super']    = $param['is_super'];
+        $update['is_super']    = $is_super;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_user_id)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_user_id;
+        foreach ($ids as $v) {
+            UserCache::upd($v);
+        }
 
-        UserCache::upd($admin_user_id);
+        $update['ids'] = $ids;
 
         return $update;
     }

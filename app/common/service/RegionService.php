@@ -236,6 +236,57 @@ class RegionService
     }
 
     /**
+     * 地区设置父级
+     *
+     * @param array   $ids        地区id
+     * @param integer $region_pid 地区父级id
+     * 
+     * @return array
+     */
+    public static function pid($ids, $region_pid)
+    {
+        $errmsg = '';
+        // 启动事务
+        Db::startTrans();
+        try {
+            $update['region_pid']  = $region_pid;
+            $update['update_time'] = datetime();
+            foreach ($ids as $v) {
+                $region_level = 1;
+                $region_path  = $v;
+                if ($region_pid) {
+                    $region = self::info($region_pid);
+                    $region_level = $region['region_level'] + 1;
+                    $region_path  = $region['region_path'] . ',' . $v;
+                }
+                $update['region_level'] = $region_level;
+                $update['region_path']  = $region_path;
+                Db::name(self::$t_name)
+                    ->where(self::$t_pk, '=', $v)
+                    ->update($update);
+            }
+            // 提交事务
+            Db::commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            Db::rollback();
+        }
+
+        if ($errmsg) {
+            exception($errmsg);
+        }
+
+        foreach ($ids as $v) {
+            RegionCache::del($v);
+        }
+
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
      * 地区删除
      *
      * @param array $ids 地区id
@@ -260,7 +311,7 @@ class RegionService
         }
 
         $update['ids'] = $ids;
-        
+
         return $update;
     }
 

@@ -194,26 +194,26 @@ class FileService
     /**
      * 文件删除
      *
-     * @param array   $file_ids  文件id数组
+     * @param array   $ids       文件id
      * @param integer $is_delete 是否删除
      * 
      * @return array|Exception
      */
-    public static function dele($file_ids, $is_delete = 1)
+    public static function dele($ids, $is_delete = 1)
     {
         $update['is_delete']   = $is_delete;
         $update['delete_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $file_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['file_ids'] = $file_ids;
+        $update['ids'] = $ids;
 
-        foreach ($file_ids as $k => $v) {
+        foreach ($ids as $k => $v) {
             FileCache::del($v);
         }
 
@@ -223,26 +223,26 @@ class FileService
     /**
      * 文件是否禁用
      *
-     * @param array   $file_ids   文件id数组
+     * @param array   $ids        文件id
      * @param integer $is_disable 是否禁用
      * 
      * @return array|Exception
      */
-    public static function disable($file_ids, $is_disable = 0)
+    public static function disable($ids, $is_disable = 0)
     {
         $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $file_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['file_ids'] = $file_ids;
+        $update['ids'] = $ids;
 
-        foreach ($file_ids as $k => $v) {
+        foreach ($ids as $k => $v) {
             FileCache::del($v);
         }
 
@@ -252,26 +252,26 @@ class FileService
     /**
      * 文件修改分组
      *
-     * @param array   $file_ids 文件id数组
+     * @param array   $ids      文件id
      * @param integer $group_id 分组id
      * 
      * @return array|Exception
      */
-    public static function group($file_ids, $group_id = 0)
+    public static function group($ids, $group_id = 0)
     {
         $update['group_id']    = $group_id;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $file_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['file_ids'] = $file_ids;
+        $update['ids'] = $ids;
 
-        foreach ($file_ids as $k => $v) {
+        foreach ($ids as $k => $v) {
             FileCache::del($v);
         }
 
@@ -281,27 +281,27 @@ class FileService
     /**
      * 文件回收站恢复
      * 
-     * @param array $file_ids 文件id数组
+     * @param array $ids 文件id
      * 
      * @return array|Exception
      */
-    public static function recoverReco($file_ids)
+    public static function recoverReco($ids)
     {
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $file_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($file_ids as $k => $v) {
+        foreach ($ids as $k => $v) {
             FileCache::del($v);
         }
 
-        $update['file_ids'] = $file_ids;
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -309,19 +309,19 @@ class FileService
     /**
      * 文件回收站删除
      * 
-     * @param array $file_ids 文件id数组
+     * @param array $ids 文件id
      * 
      * @return array|Exception
      */
-    public static function recoverDele($file_ids)
+    public static function recoverDele($ids)
     {
         $file = Db::name(self::$t_name)
             ->field('file_id,file_path')
-            ->where(self::$t_pk, 'in', $file_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->select();
 
         $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $file_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->delete();
         if (empty($res)) {
             exception();
@@ -333,7 +333,7 @@ class FileService
             $file_del[] = @unlink($v['file_path']);
         }
 
-        $update['file_ids'] = $file_ids;
+        $update['ids'] = $ids;
         $update['file_del'] = $file_del;
 
         return $update;
@@ -368,15 +368,15 @@ class FileService
     /**
      * 文件数组
      *
-     * @param string $file_ids 文件id，逗号,隔开
+     * @param string $ids 文件id，逗号,隔开
      *
      * @return array
      */
-    public static function fileArray($file_ids)
+    public static function fileArray($ids)
     {
         $file = Db::name(self::$t_name)
             ->field('file_id,storage,file_type,file_name,file_hash,file_ext,file_path,file_size')
-            ->where(self::$t_pk, 'in', $file_ids)
+            ->where(self::$t_pk, 'in', $ids)
             ->where('is_disable', '=', 0)
             ->select()
             ->toArray();
@@ -525,7 +525,7 @@ class FileService
                 $temp = [];
                 $temp['name']  = $v;
                 $temp['value'] = 0;
-                foreach ($file_count as $kf => $vf) {
+                foreach ($file_count as $vf) {
                     if ($k == $vf['file_type']) {
                         $temp['value'] = $vf['file_count'];
                     }

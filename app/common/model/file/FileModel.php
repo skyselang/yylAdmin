@@ -76,12 +76,4 @@ class FileModel extends Model
     public function file_url()
     {
     }
-
-    /**
-     * @Apidoc\Field("file_ids")
-     * @Apidoc\AddField("file_ids", type="array", require=true, default="[]", desc="文件id数组")
-     */
-    public function file_ids()
-    {
-    }
 }

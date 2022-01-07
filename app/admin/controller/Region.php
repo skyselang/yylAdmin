@@ -49,10 +49,10 @@ class Region
         } else {
             if ($search_field && $search_value) {
                 if (in_array($search_field, ['region_id', 'region_pid', 'region_jianpin', 'region_initials', 'region_citycode', 'region_zipcode'])) {
-                    $exp = strstr($search_value, ',') ? 'in' : '=';
+                    $exp = strpos($search_value, ',') ? 'in' : '=';
                     $where[] = [$search_field, $exp, $search_value];
                 } else {
-                    if (strstr($search_value, ',')) {
+                    if (strpos($search_value, ',')) {
                         $exp = 'in';
                     } else {
                         $exp = 'like';
@@ -166,9 +166,27 @@ class Region
     }
 
     /**
+     * @Apidoc\Title("地区设置父级")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\region_pid")
+     */
+    public function pid()
+    {
+        $param['ids']        = Request::param('ids/a', '');
+        $param['region_pid'] = Request::param('region_pid/d', 0);
+
+        validate(RegionValidate::class)->scene('pid')->check($param);
+
+        $data = RegionService::pid($param['ids'], $param['region_pid']);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("地区删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\RegionModel\deleParam")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {

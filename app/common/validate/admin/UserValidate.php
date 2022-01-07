@@ -17,13 +17,13 @@ class UserValidate extends Validate
 {
     // 验证规则
     protected $rule = [
+        'ids'           => ['require', 'array'],
         'admin_user_id' => ['require'],
         'username'      => ['require', 'checkUsername', 'length' => '2,32'],
         'nickname'      => ['require', 'checkNickname', 'length' => '1,32'],
         'password'      => ['require', 'length' => '6,18'],
         'phone'         => ['mobile', 'checkPhone'],
         'email'         => ['email', 'checkEmail'],
-        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '102400'],
     ];
 
     // 错误信息
@@ -36,11 +36,6 @@ class UserValidate extends Validate
         'password.length'  => '密码长度为6至18个字符',
         'phone.mobile'     => '请输入正确的手机号码',
         'email.email'      => '请输入正确的邮箱地址',
-        'avatar.require'   => '请选择图片',
-        'avatar.file'      => '请选择图片文件',
-        'avatar.image'     => '请选择图片格式文件',
-        'avatar.fileExt'   => '请选择jpg、png、gif格式图片',
-        'avatar.fileSize'  => '请选择大小小于100kb图片',
     ];
 
     // 验证场景
@@ -50,12 +45,11 @@ class UserValidate extends Validate
         'login'   => ['username', 'password'],
         'add'     => ['username', 'nickname', 'password', 'phone', 'email'],
         'edit'    => ['admin_user_id', 'username', 'nickname', 'phone', 'email'],
-        'dele'    => ['admin_user_id'],
-        'super'   => ['admin_user_id'],
-        'disable' => ['admin_user_id'],
+        'dele'    => ['ids'],
+        'super'   => ['ids'],
+        'disable' => ['ids'],
         'rule'    => ['admin_user_id'],
-        'pwd'     => ['admin_user_id', 'password'],
-        'avatar'  => ['avatar'],
+        'pwd'     => ['ids', 'password'],
 
     ];
 
@@ -65,6 +59,13 @@ class UserValidate extends Validate
         return $this->only(['username', 'password'])
             ->remove('username', ['length', 'checkUsername'])
             ->remove('password', ['length']);
+    }
+
+    // 验证场景定义：分配权限
+    protected function scenerule()
+    {
+        return $this->only(['admin_user_id'])
+            ->append('admin_user_id', ['checkAdminUserIsSuper']);
     }
 
     // 验证场景定义：修改
@@ -77,36 +78,29 @@ class UserValidate extends Validate
     // 验证场景定义：删除
     protected function scenedele()
     {
-        return $this->only(['admin_user_id'])
-            ->append('admin_user_id', ['checkAdminUserIsDelete', 'checkAdminUserRoleMenu']);
+        return $this->only(['ids'])
+            ->append('ids', ['checkAdminUserIsDelete', 'checkAdminUserRoleMenu']);
     }
 
     // 验证场景定义：是否超管
     protected function scenesuper()
     {
-        return $this->only(['admin_user_id'])
-            ->append('admin_user_id', ['checkAdminUserIsSuper']);
+        return $this->only(['ids'])
+            ->append('ids', ['checkAdminUserIsSuper']);
     }
 
     // 验证场景定义：是否禁用
     protected function scenedisable()
     {
-        return $this->only(['admin_user_id'])
-            ->append('admin_user_id', ['checkAdminUserIsDisable']);
-    }
-
-    // 验证场景定义：分配权限
-    protected function scenerule()
-    {
-        return $this->only(['admin_user_id'])
-            ->append('admin_user_id', ['checkAdminUserIsSuper']);
+        return $this->only(['ids'])
+            ->append('ids', ['checkAdminUserIsDisable']);
     }
 
     // 验证场景定义：重置密码
     protected function scenepwd()
     {
-        return $this->only(['admin_user_id', 'password'])
-            ->append('admin_user_id', ['checkAdminUserIsSuper']);
+        return $this->only(['ids', 'password'])
+            ->append('ids', ['checkAdminUserIsSuper']);
     }
 
     // 自定义验证规则：账号是否已存在
@@ -172,9 +166,12 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否已分配角色或菜单
     protected function checkAdminUserRoleMenu($value, $rule, $data = [])
     {
-        $admin_user = UserService::info($data['admin_user_id']);
-        if ($admin_user['admin_role_ids'] || $admin_user['admin_menu_ids']) {
-            return '请在[权限]中取消所有角色和菜单后再删除';
+        $ids = $data['ids'];
+        foreach ($ids as $v) {
+            $admin_user = UserService::info($v);
+            if ($admin_user['admin_role_ids'] || $admin_user['admin_menu_ids']) {
+                return '请在[权限]中取消所有角色和菜单后再删除';
+            }
         }
 
         return true;
@@ -183,10 +180,19 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否超管
     protected function checkAdminUserIsSuper($value, $rule, $data = [])
     {
-        $admin_is_super = admin_is_super(admin_user_id());
-        $admin_user_id  = admin_is_super($data['admin_user_id']);
-        if (!$admin_is_super && $admin_user_id) {
-            return '无法对系统用户进行操作';
+        $ids = [];
+        if (isset($data['ids'])) {
+            $ids = $data['ids'];
+        } else {
+            $ids[] = $data['admin_user_id'];
+        }
+
+        foreach ($ids as $v) {
+            $admin_is_super = admin_is_super(admin_user_id());
+            $admin_user_id  = admin_is_super($v);
+            if (!$admin_is_super && $admin_user_id) {
+                return '无法对系统用户进行操作:' . $v;
+            }
         }
 
         return true;
@@ -195,9 +201,12 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否禁用
     protected function checkAdminUserIsDisable($value, $rule, $data = [])
     {
-        $admin_is_super = admin_is_super($data['admin_user_id']);
-        if ($admin_is_super) {
-            return '无法对系统用户进行操作';
+        $ids = $data['ids'];
+        foreach ($ids as $v) {
+            $admin_is_super = admin_is_super($v);
+            if ($admin_is_super) {
+                return '无法对系统用户进行操作:' . $v;
+            }
         }
 
         return true;
@@ -206,9 +215,12 @@ class UserValidate extends Validate
     // 自定义验证规则：用户删除
     protected function checkAdminUserIsDelete($value, $rule, $data = [])
     {
-        $admin_is_super = admin_is_super($data['admin_user_id']);
-        if ($admin_is_super) {
-            return '无法对系统用户进行操作';
+        $ids = $data['ids'];
+        foreach ($ids as $v) {
+            $admin_is_super = admin_is_super($v);
+            if ($admin_is_super) {
+                return '无法对系统用户进行操作:' . $v;
+            }
         }
 
         return true;

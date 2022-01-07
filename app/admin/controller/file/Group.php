@@ -26,9 +26,8 @@ class Group
      * @Apidoc\Title("文件分组列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\listParam")
-     * @Apidoc\Param("group_name", require=false)
-     * @Apidoc\Param("group_desc", require=false)
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="文件分组列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
@@ -47,7 +46,7 @@ class Group
 
         if ($search_field && $search_value) {
             if ($search_field == 'group_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_disable'])) {
                 if ($search_value == '是' || $search_value == '1') {
@@ -98,6 +97,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组添加")
      * @Apidoc\Method("POST")
+     * @Apidoc\Param("group_name", mock="@ctitle(2, 5)")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\addParam")
      */
     public function add()
@@ -137,7 +137,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\group")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -153,7 +153,7 @@ class Group
     /**
      * @Apidoc\Title("文件分组是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\group")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\is_disable")
      */
     public function disable()

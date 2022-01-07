@@ -63,7 +63,7 @@ class Role
         $where = [];
         if ($search_field && $search_value) {
             if ($search_field == 'admin_role_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_disable'])) {
                 if ($search_value == '是' || $search_value == '1') {
@@ -152,7 +152,7 @@ class Role
     /**
      * @Apidoc\Title("角色删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\deleParam")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -168,7 +168,8 @@ class Role
     /**
      * @Apidoc\Title("角色是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\disableParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\is_disable")
      */
     public function disable()
     {

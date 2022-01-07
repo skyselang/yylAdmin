@@ -42,7 +42,7 @@ class SettingModel extends Model
     }
 
     /**
-     * @Apidoc\Field("log_switch")
+     * @Apidoc\Field("log_switch,log_save_time")
      */
     public function logInfoParam()
     {

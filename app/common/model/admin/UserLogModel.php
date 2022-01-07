@@ -50,11 +50,4 @@ class UserLogModel extends Model
     public function infoReturn()
     {
     }
-
-    /**
-     * @Apidoc\Field("admin_user_log_id")
-     */
-    public function deleParam()
-    {
-    }
 }

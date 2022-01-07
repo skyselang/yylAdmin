@@ -24,7 +24,7 @@ use hg\apidoc\annotation as Apidoc;
 class Content
 {
     /**
-     * @Apidoc\Title("内容分类")
+     * @Apidoc\Title("分类列表")
      * @Apidoc\Returned("list", type="array", desc="树形列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )
@@ -67,7 +67,7 @@ class Content
         }
         if ($search_field && $search_value) {
             if ($search_field == 'content_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
                 if ($search_value == '是' || $search_value == '1') {
@@ -100,9 +100,9 @@ class Content
      * @Apidoc\Title("内容信息")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\id")
      * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\infoReturn")
-     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\imgs")
-     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\files")
-     * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\videos")
+     * @Apidoc\Returned(ref="imgsReturn")
+     * @Apidoc\Returned(ref="filesReturn")
+     * @Apidoc\Returned(ref="videosReturn")
      */
     public function info()
     {
@@ -122,9 +122,11 @@ class Content
      * @Apidoc\Title("内容添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\addParam")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\imgs")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\files")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\videos")
+     * @Apidoc\Param("name", mock="@ctitle(9, 31)")
+     * @Apidoc\Param("content", mock="@cparagraph")
+     * @Apidoc\Param(ref="imgsParam")
+     * @Apidoc\Param(ref="filesParam")
+     * @Apidoc\Param(ref="videosParam")
      */
     public function add()
     {
@@ -151,9 +153,9 @@ class Content
      * @Apidoc\Title("内容修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\editParam")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\imgs")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\files")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\videos")
+     * @Apidoc\Param(ref="imgsParam")
+     * @Apidoc\Param(ref="filesParam")
+     * @Apidoc\Param(ref="videosParam")
      */
     public function edit()
     {
@@ -180,7 +182,7 @@ class Content
     /**
      * @Apidoc\Title("内容删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -196,7 +198,7 @@ class Content
     /**
      * @Apidoc\Title("内容设置分类")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
      */
     public function cate()
@@ -214,7 +216,7 @@ class Content
     /**
      * @Apidoc\Title("内容是否置顶")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\is_top")
      */
     public function istop()
@@ -232,7 +234,7 @@ class Content
     /**
      * @Apidoc\Title("内容是否热门")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\is_hot")
      */
     public function ishot()
@@ -250,7 +252,7 @@ class Content
     /**
      * @Apidoc\Title("内容是否推荐")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\is_rec")
      */
     public function isrec()
@@ -268,7 +270,7 @@ class Content
     /**
      * @Apidoc\Title("内容是否隐藏")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\is_hide")
      */
     public function ishide()
@@ -314,7 +316,8 @@ class Content
         }
         if ($search_field && $search_value) {
             if ($search_field == 'content_id') {
-                $where[] = [$search_field, '=', $search_value];
+                $exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
@@ -347,7 +350,7 @@ class Content
     /**
      * @Apidoc\Title("内容回收站恢复")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function recoverReco()
     {
@@ -363,7 +366,7 @@ class Content
     /**
      * @Apidoc\Title("内容回收站删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\content")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function recoverDele()
     {

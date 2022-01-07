@@ -738,7 +738,7 @@ class MemberService
         $data  = MemberCache::get($key);
         if (empty($data)) {
             $x = $s = [];
-            foreach ($month as $k => $v) {
+            foreach ($month as $v) {
                 $time = DatetimeUtils::monthStartEnd($v);
                 $time = DatetimeUtils::dateEndTime($time[1]);
                 $x[] = $v;

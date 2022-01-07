@@ -86,7 +86,8 @@ class File
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
-                $where[] = [$search_field, '=', $search_value];
+                $exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -188,15 +189,15 @@ class File
     /**
      * @Apidoc\Title("文件删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
-        $param['file_ids'] = Request::param('file_ids/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(FileValidate::class)->scene('dele')->check($param);
 
-        $data = FileService::dele($param['file_ids']);
+        $data = FileService::dele($param['ids']);
 
         return success($data);
     }
@@ -204,17 +205,17 @@ class File
     /**
      * @Apidoc\Title("文件是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\is_disable")
      */
     public function disable()
     {
-        $param['file_ids']   = Request::param('file_ids/a', '');
+        $param['ids']        = Request::param('ids/a', '');
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(FileValidate::class)->scene('disable')->check($param);
 
-        $data = FileService::disable($param['file_ids'], $param['is_disable']);
+        $data = FileService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
@@ -222,17 +223,17 @@ class File
     /**
      * @Apidoc\Title("文件分组")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
      */
     public function grouping()
     {
-        $param['file_ids'] = Request::param('file_ids/a', '');
+        $param['ids']      = Request::param('ids/a', '');
         $param['group_id'] = Request::param('group_id/d', 0);
 
         validate(FileValidate::class)->scene('grouping')->check($param);
 
-        $data = FileService::group($param['file_ids'], $param['group_id']);
+        $data = FileService::group($param['ids'], $param['group_id']);
 
         return success($data);
     }
@@ -265,7 +266,8 @@ class File
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
-                $where[] = [$search_field, '=', $search_value];
+                $exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -301,15 +303,15 @@ class File
     /**
      * @Apidoc\Title("文件回收站恢复")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function recoverReco()
     {
-        $param['file_ids'] = Request::param('file_ids/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
-        validate(FileValidate::class)->scene('reco_reco')->check($param);
+        validate(FileValidate::class)->scene('reco')->check($param);
 
-        $data = FileService::recoverReco($param['file_ids']);
+        $data = FileService::recoverReco($param['ids']);
 
         return success($data);
     }
@@ -317,15 +319,15 @@ class File
     /**
      * @Apidoc\Title("文件回收站删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_ids")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function recoverDele()
     {
-        $param['file_ids'] = Request::param('file_ids/a', '');
+        $param['ids'] = Request::param('ids/a', '');
 
-        validate(FileValidate::class)->scene('reco_dele')->check($param);
+        validate(FileValidate::class)->scene('dele')->check($param);
 
-        $data = FileService::recoverDele($param['file_ids']);
+        $data = FileService::recoverDele($param['ids']);
 
         return success($data);
     }

@@ -42,13 +42,6 @@ class MemberLogModel extends Model
     }
 
     /**
-     * @Apidoc\Field("member_log_id")
-     */
-    public function deleParam()
-    {
-    }
-
-    /**
      * @Apidoc\Field("log_type")
      */
     public function log_type()

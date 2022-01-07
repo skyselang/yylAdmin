@@ -67,8 +67,8 @@ class ApiCache
             $keys[] = $api_id;
         }
 
-        $key_all = ['list', 'tree', 'urlList', 'unloginList', 'unrateList'];
-        $keys = array_merge($keys, $key_all);
+        $key_arr = ['list', 'tree', 'urlList', 'unloginList', 'unrateList'];
+        $keys = array_merge($keys, $key_arr);
 
         foreach ($keys as $v) {
             $res = Cache::delete(self::key($v));

@@ -42,13 +42,6 @@ class MemberModel extends Model
     }
 
     /**
-     * @Apidoc\WithoutField("password,remark,sort,is_disable,is_delete,logout_time,delete_time")
-     */
-    public function indexInfoReturn()
-    {
-    }
-
-    /**
      * @Apidoc\Field("avatar_id,username,nickname,password,phone,email,region_id,remark,sort")
      */
     public function addParam()
@@ -59,49 +52,6 @@ class MemberModel extends Model
      * @Apidoc\Field("member_id,avatar_id,username,nickname,phone,email,region_id,remark,sort")
      */
     public function editParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("member_id,avatar_id,username,nickname,phone,email,region_id")
-     */
-    public function indexEditParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("member_id")
-     */
-    public function deleParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("member_id,password")
-     */
-    public function pwdParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("member_id,is_disable")
-     */
-    public function disableParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("username,nickname,password,phone,email")
-     */
-    public function registerReturn()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("member_id,username,nickname,phone,email,avatar_id,login_ip,login_time")
-     * @Apidoc\AddField("menber_token", type="string", require=true, desc="MemberToken")
-     */
-    public function loginReturn()
     {
     }
 
@@ -127,10 +77,46 @@ class MemberModel extends Model
     }
 
     /**
+     * @Apidoc\Field("is_disable")
+     */
+    public function is_disable()
+    {
+    }
+
+    /**
      * @Apidoc\Field("avatar_url")
      * @Apidoc\AddField("avatar_url", type="string", require=false, desc="头像链接")
      */
     public function avatar_url()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("username,nickname,password,phone,email")
+     */
+    public function registerReturn()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("member_id,username,nickname,phone,email,avatar_id,login_ip,login_time")
+     * @Apidoc\AddField("menber_token", type="string", require=true, desc="MemberToken")
+     */
+    public function loginReturn()
+    {
+    }
+
+    /**
+     * @Apidoc\WithoutField("password,remark,sort,is_disable,is_delete,logout_time,delete_time")
+     */
+    public function indexInfoReturn()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("member_id,avatar_id,username,nickname,phone,email,region_id")
+     */
+    public function indexEditParam()
     {
     }
 }

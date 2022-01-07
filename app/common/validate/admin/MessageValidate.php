@@ -16,7 +16,7 @@ class MessageValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'list'             => ['require', 'array'],
+        'ids'              => ['require', 'array'],
         'admin_message_id' => ['require'],
         'title'            => ['require']
     ];
@@ -32,7 +32,7 @@ class MessageValidate extends Validate
         'info'   => ['admin_message_id'],
         'add'    => ['title'],
         'edit'   => ['admin_message_id', 'title'],
-        'dele'   => ['list'],
-        'isopen' => ['list']
+        'dele'   => ['ids'],
+        'isopen' => ['ids']
     ];
 }

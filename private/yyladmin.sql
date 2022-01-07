@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 27/12/2021 18:40:44
+ Date: 07/01/2022 17:55:15
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 446 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 450 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -265,6 +265,7 @@ INSERT INTO `yyl_admin_menu` VALUES (442, 1, '消息', 'admin/Index/message', 25
 INSERT INTO `yyl_admin_menu` VALUES (443, 132, '接口设置父级', 'admin/Api/pid', 130, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (444, 3, '菜单设置父级', 'admin/admin.Menu/pid', 215, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (445, 5, '菜单列表', 'admin/admin.Role/menu', 270, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (449, 150, '地区设置父级', 'admin/Region/pid', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_message
@@ -312,18 +313,14 @@ CREATE TABLE `yyl_admin_role`  (
   PRIMARY KEY (`admin_role_id`) USING BTREE,
   INDEX `admin_rule_id`(`admin_role_id`) USING BTREE,
   INDEX `rule_name`(`role_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_admin_role
 -- ----------------------------
-INSERT INTO `yyl_admin_role` VALUES (1, ',,', '超管', '', 250, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (1, ',1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,49,50,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,170,171,172,173,186,187,188,189,190,191,192,193,194,196,197,198,199,200,201,202,203,204,205,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,283,284,285,286,287,288,289,291,292,293,294,295,296,297,298,299,300,301,302,303,308,381,382,383,384,385,386,387,388,389,390,391,392,393,396,397,398,399,400,401,402,403,404,405,406,407,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,426,427,428,429,430,432,433,434,435,436,437,438,439,440,441,442,443,444,445,449,', '管理员', '管理员', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (2, ',13,17,22,29,37,38,40,42,43,45,49,50,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,145,146,147,148,149,151,152,158,172,173,187,191,193,196,198,204,216,218,221,224,227,284,285,286,287,288,289,291,292,293,294,295,296,299,300,301,302,308,382,383,384,385,386,387,388,389,391,392,396,399,400,401,411,412,417,420,422,424,426,428,430,436,437,442,', '演示', '演示用', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '前端开发', 250, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (4, ',,', '1', '1', 200, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (5, ',,', '5', '5', 250, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (6, ',,', '6', '6', 250, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (7, ',,', '1', '1', 250, 0, 1, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_setting
@@ -343,7 +340,7 @@ CREATE TABLE `yyl_admin_setting`  (
   `favicon_id` int(11) NULL DEFAULT 0 COMMENT 'favicon图标id',
   `login_bg_id` int(11) NULL DEFAULT 0 COMMENT '登录背景图id',
   `system_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin' COMMENT '系统简称',
-  `page_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin基于ThinkPHP6和Vue2极简后台管理系统' COMMENT '页面标题',
+  `page_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin极简后台管理系统' COMMENT '页面标题',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE,
@@ -454,7 +451,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 78 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -479,7 +476,7 @@ INSERT INTO `yyl_api` VALUES (20, 11, '验证码', 'index/Register/captcha', 250
 INSERT INTO `yyl_api` VALUES (21, 11, '注册', 'index/Register/register', 250, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (22, 1, '登录(小程序)', 'index/Login/mini', 130, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (23, 16, '新闻分类', 'index/cms.News/category', 250, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (24, 0, '首页', '', 270, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (24, 0, '控制台', '', 270, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (25, 24, '首页', 'index/Index/index', 250, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (26, 1, '登录(公众号)回调', 'index/Login/officallback', 250, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (27, 24, 'index', 'index/', 250, 0, 1, 0, NULL, NULL, NULL);
@@ -495,12 +492,6 @@ INSERT INTO `yyl_api` VALUES (58, 57, '留言提交', 'index/cms.Comment/add', 2
 INSERT INTO `yyl_api` VALUES (59, 30, '设置', '', 250, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (60, 59, '设置信息', 'index/cms.Setting/info', 250, 0, 1, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (61, 5, '绑定手机（小程序）', 'index/Member/bindPhoneMini', 250, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (62, 0, '1', '1231', 250, 0, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (63, 62, '2', '', 250, 0, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (64, 63, '3', '', 250, 63, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (65, 63, '4', '', 250, 63, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (66, 63, '5', '', 250, 63, 0, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (67, 62, '3', '', 250, 0, 0, 1, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_cms_category
@@ -835,7 +826,7 @@ CREATE TABLE `yyl_member_wechat`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `yyl_region`;
 CREATE TABLE `yyl_region`  (
-  `region_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `region_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '地区id',
   `region_pid` int(11) NULL DEFAULT 0 COMMENT 'pid',
   `region_path` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '路径',
   `region_level` tinyint(1) NULL DEFAULT 1 COMMENT '级别',
@@ -856,7 +847,7 @@ CREATE TABLE `yyl_region`  (
   INDEX `region_id`(`region_id`) USING BTREE,
   INDEX `region_name`(`region_name`) USING BTREE,
   INDEX `region_pid`(`region_pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 659006106 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '地区' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 659006116 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '地区' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_region
@@ -4559,10 +4550,6 @@ INSERT INTO `yyl_region` VALUES (659004501, 659004, '65,659004,659004501', 3, '�
 INSERT INTO `yyl_region` VALUES (659004502, 659004, '65,659004,659004502', 3, '兵团一零三团', 'BingTuanYiLingSanTuan', 'BTYLST', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (659006100, 659006, '65,659006,659006100', 3, '博古其镇', 'BoGuQiZhen', 'BGQZ', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (659006101, 659006, '65,659006,659006101', 3, '双丰镇', 'ShuangFengZhen', 'SFZ', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (659006102, 0, '659006102', 1, '一', 'Yi', 'Y', 'Y', '', '', '', '', 2250, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (659006103, 659006102, '659006102,659006103', 2, '二', 'Er', 'E', 'E', '', '', '', '', 2250, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (659006104, 659006103, '659006102,659006103,659006104', 3, '三', 'San', 'S', 'S', '', '', '', '', 2250, 1, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (659006105, 659006104, '659006102,659006103,659006104,659006105', 4, '四', 'Si', 'S', 'S', '', '', '', '', 2250, 1, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_setting

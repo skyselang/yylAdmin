@@ -56,16 +56,9 @@ class MessageModel extends Model
     }
 
     /**
-     * @Apidoc\Field("admin_message_id")
-     */
-    public function deleParam()
-    {
-    }
-
-    /**
      * @Apidoc\Field("is_open")
      */
-    public function isopenParam()
+    public function is_open()
     {
     }
 }

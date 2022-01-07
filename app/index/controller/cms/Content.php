@@ -12,8 +12,8 @@ namespace app\index\controller\cms;
 
 use think\facade\Request;
 use app\common\validate\cms\ContentValidate;
-use app\common\service\cms\ContentService;
 use app\common\service\cms\CategoryService;
+use app\common\service\cms\ContentService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -33,7 +33,7 @@ class Content
     {
         $data = [];
         $list = CategoryService::list('list');
-        foreach ($list as $k => $v) {
+        foreach ($list as $v) {
             if ($v['is_hide'] == 0) {
                 $data[] = $v;
             }

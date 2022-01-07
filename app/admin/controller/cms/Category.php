@@ -39,7 +39,7 @@ class Category
      * @Apidoc\Title("内容分类信息")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\id")
      * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\infoReturn")
-     * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\imgs")
+     * @Apidoc\Returned(ref="imgsReturn")
      */
     public function info()
     {
@@ -59,7 +59,8 @@ class Category
      * @Apidoc\Title("内容分类添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\addParam")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
+     * @Apidoc\Param("category_name", mock="@ctitle(2, 5)")
+     * @Apidoc\Param(ref="imgsParam")
      */
     public function add()
     {
@@ -82,7 +83,7 @@ class Category
      * @Apidoc\Title("内容分类修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\editParam")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\imgs")
+     * @Apidoc\Param(ref="imgsParam")
      */
     public function edit()
     {
@@ -105,7 +106,7 @@ class Category
     /**
      * @Apidoc\Title("内容分类删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -121,7 +122,7 @@ class Category
     /**
      * @Apidoc\Title("内容分类设置父级")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category_pid")
      */
     public function pid()
@@ -139,7 +140,7 @@ class Category
     /**
      * @Apidoc\Title("内容分类是否隐藏")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category")
+     * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\is_hide")
      */
     public function ishide()

@@ -18,7 +18,7 @@ class FileValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'file_ids' => ['require', 'array'],
+        'ids'      => ['require', 'array'],
         'file'     => ['require', 'file', 'checkLimit'],
         'file_id'  => ['require'],
         'group_id' => ['require'],
@@ -37,11 +37,10 @@ class FileValidate extends Validate
         'info'      => ['file_id'],
         'add'       => ['file'],
         'edit'      => ['file_id'],
-        'dele'      => ['file_ids'],
-        'disable'   => ['file_ids'],
-        'grouping'  => ['file_ids'],
-        'reco_reco' => ['file_ids'],
-        'reco_dele' => ['file_ids'],
+        'dele'      => ['ids'],
+        'disable'   => ['ids'],
+        'grouping'  => ['ids'],
+        'reco'      => ['ids'],
     ];
 
     // 自定义验证规则：上传限制

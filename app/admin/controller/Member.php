@@ -46,7 +46,7 @@ class Member
 
         if ($search_field && $search_value) {
             if ($search_field == 'member_id') {
-                $exp = strstr($search_value, ',') ? 'in' : '=';
+                $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
@@ -138,7 +138,7 @@ class Member
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
-        $data = MemberService::edit($param, 'post');
+        $data = MemberService::edit($param);
 
         return success($data);
     }
@@ -146,7 +146,7 @@ class Member
     /**
      * @Apidoc\Title("会员删除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\deleParam")
+     * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
@@ -162,7 +162,8 @@ class Member
     /**
      * @Apidoc\Title("会员设置地区")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\disableParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\RegionModel\id")
      */
     public function region()
     {
@@ -179,7 +180,8 @@ class Member
     /**
      * @Apidoc\Title("会员是否禁用")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\disableParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\is_disable")
      */
     public function disable()
     {
@@ -196,7 +198,8 @@ class Member
     /**
      * @Apidoc\Title("会员重置密码")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\pwdParam")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\password")
      */
     public function repwd()
     {

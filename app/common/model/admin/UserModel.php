@@ -65,38 +65,10 @@ class UserModel extends Model
 
     /**
      * @Apidoc\Field("admin_user_id")
-     */
-    public function deleParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("admin_user_id,password")
-     */
-    public function pwdParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("admin_user_id")
      * @Apidoc\AddField("admin_role_ids", type="array", require=true, desc="角色id,eg:[1,2]")
      * @Apidoc\AddField("admin_menu_ids", type="array", require=true, desc="菜单id,eg:[1,2]")
      */
     public function ruleParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("admin_user_id,is_disable")
-     */
-    public function disableParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("admin_user_id,is_super")
-     */
-    public function superParam()
     {
     }
 
@@ -121,6 +93,27 @@ class UserModel extends Model
      * @Apidoc\Field("username")
      */
     public function username()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("password")
+     */
+    public function password()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("is_super")
+     */
+    public function is_super()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("is_disable")
+     */
+    public function is_disable()
     {
     }
 }

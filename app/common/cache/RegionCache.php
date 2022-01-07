@@ -61,6 +61,18 @@ class RegionCache
      */
     public static function del($region_id)
     {
-        return Cache::delete(self::key($region_id));
+        if (is_array($region_id)) {
+            $keys = $region_id;
+        } else {
+            $keys[] = $region_id;
+        }
+
+        $key_arr = ['tree'];
+        $keys = array_merge($keys, $key_arr);
+
+        foreach ($keys as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
     }
 }

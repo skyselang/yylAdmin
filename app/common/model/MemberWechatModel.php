@@ -21,6 +21,13 @@ class MemberWechatModel extends Model
     protected $pk = 'member_wechat_id';
 
     /**
+     * @Apidoc\Field("member_wechat_id")
+     */
+    public function id()
+    {
+    }
+
+    /**
      * 
      */
     public function listReturn()
@@ -45,13 +52,6 @@ class MemberWechatModel extends Model
      * @Apidoc\Field("member_wechat_id,nickname")
      */
     public function editParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("member_wechat_id")
-     */
-    public function id()
     {
     }
 }

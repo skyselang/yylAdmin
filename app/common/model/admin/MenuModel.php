@@ -26,12 +26,6 @@ class MenuModel extends Model
     public function id()
     {
     }
-    /**
-     * @Apidoc\Field("menu_url")
-     */
-    public function menu_url()
-    {
-    }
 
     /**
      * @Apidoc\Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time")
@@ -62,23 +56,37 @@ class MenuModel extends Model
     }
 
     /**
-     * @Apidoc\Field("admin_menu_id,is_disable")
+     * @Apidoc\Field("menu_pid")
      */
-    public function disableParam()
+    public function menu_pid()
+    {
+    }
+
+     /**
+     * @Apidoc\Field("menu_url")
+     */
+    public function menu_url()
     {
     }
 
     /**
-     * @Apidoc\Field("admin_menu_id,is_unauth")
+     * @Apidoc\Field("is_unlogin")
      */
-    public function unauthParam()
+    public function is_unlogin()
     {
     }
 
     /**
-     * @Apidoc\Field("admin_menu_id,is_unlogin")
+     * @Apidoc\Field("is_unauth")
      */
-    public function unloginParam()
+    public function is_unauth()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("is_disable")
+     */
+    public function is_disable()
     {
     }
 }

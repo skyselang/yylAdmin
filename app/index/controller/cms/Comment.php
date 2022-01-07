@@ -12,8 +12,8 @@ namespace app\index\controller\cms;
 
 use think\facade\Request;
 use app\common\validate\cms\CommentValidate;
-use app\common\service\cms\CommentService;
 use app\common\cache\cms\CommentCache;
+use app\common\service\cms\CommentService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -27,6 +27,10 @@ class Comment
      * @Apidoc\Title("留言")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\CommentModel\addParam")
+     * @Apidoc\Param("call", mock="@cname")
+     * @Apidoc\Param("title", mock="@ctitle(9, 31)")
+     * @Apidoc\Param("content", mock="@cparagraph")
+     * @Apidoc\Param("mobile", mock="@phone")
      */
     public function add()
     {

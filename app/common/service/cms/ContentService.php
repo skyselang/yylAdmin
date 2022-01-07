@@ -102,12 +102,14 @@ class ContentService
                 exception('内容不存在：' . $content_id);
             }
 
-            $category = CategoryService::info($content['category_id']);
-
-            $content['category_name'] = $category['category_name'];
-            $content['imgs']          = FileService::fileArray($content['img_ids']);
-            $content['files']         = FileService::fileArray($content['file_ids']);
-            $content['videos']        = FileService::fileArray($content['video_ids']);
+            $content['category_name'] = '';
+            if ($content['category_id']) {
+                $category = CategoryService::info($content['category_id']);
+                $content['category_name'] = $category['category_name'];
+            }
+            $content['imgs']   = FileService::fileArray($content['img_ids']);
+            $content['files']  = FileService::fileArray($content['file_ids']);
+            $content['videos'] = FileService::fileArray($content['video_ids']);
 
             ContentCache::set($content_id, $content);
         }
@@ -193,7 +195,7 @@ class ContentService
     /**
      * 内容删除
      * 
-     * @param array $ids 内容列表
+     * @param array $ids 内容id
      * 
      * @return array|Exception
      */

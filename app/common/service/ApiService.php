@@ -218,7 +218,7 @@ class ApiService
      * 接口设置父级
      *
      * @param array   $ids     接口id
-     * @param integer $api_pid 接口父级
+     * @param integer $api_pid 接口父级id
      * 
      * @return array
      */

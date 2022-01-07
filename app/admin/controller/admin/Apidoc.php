@@ -22,6 +22,11 @@ class Apidoc
 {
     /**
      * @Apidocs\Title("接口文档")
+     * @Apidocs\Returned("apidoc_url", type="string", desc="接口文档链接")
+     * @Apidocs\Returned("apidoc_pwd", type="string", desc="接口文档密码")
+     * @Apidocs\Returned("admin_user_id", type="string", desc="用户id")
+     * @Apidocs\Returned("admin_token", type="string", desc="admin_token")
+     * @Apidocs\Returned("admin_token_sub", type="string", desc="admin_token（部分）")
      */
     public function apidoc()
     {
