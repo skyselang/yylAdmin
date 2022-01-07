@@ -42,7 +42,7 @@ class MemberWechatModel extends Model
     }
 
     /**
-     * @Apidoc\withoutField("member_wechat_id")
+     * @Apidoc\WithoutField("member_wechat_id")
      */
     public function addParam()
     {

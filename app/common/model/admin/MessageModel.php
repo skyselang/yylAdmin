@@ -28,7 +28,7 @@ class MessageModel extends Model
     }
 
     /**
-     * @Apidoc\withoutField("type,intro,content,is_delete,update_time,delete_time")
+     * @Apidoc\WithoutField("type,intro,content,is_delete,update_time,delete_time")
      */
     public function listReturn()
     {
@@ -42,14 +42,14 @@ class MessageModel extends Model
     }
 
     /**
-     * @Apidoc\withoutField("admin_message_id,admin_user_id,is_delete,create_time,update_time,delete_time")
+     * @Apidoc\WithoutField("admin_message_id,admin_user_id,is_delete,create_time,update_time,delete_time")
      */
     public function addParam()
     {
     }
 
     /**
-     * @Apidoc\withoutField("admin_user_id,is_delete,create_time,update_time,delete_time")
+     * @Apidoc\WithoutField("admin_user_id,is_delete,create_time,update_time,delete_time")
      */
     public function editParam()
     {
