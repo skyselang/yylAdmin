@@ -29,11 +29,11 @@ class MenuCache
     /**
      * 缓存设置
      *
-     * @param mixed   $admin_menu_id 菜单id、key
-     * @param array   $admin_menu    菜单信息
-     * @param integer $ttl           有效时间（秒）0永久
+     * @param mixed $admin_menu_id 菜单id、key
+     * @param array $admin_menu    菜单信息
+     * @param int   $ttl           有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($admin_menu_id = '', $admin_menu = [], $ttl = 86400)
     {
@@ -57,7 +57,7 @@ class MenuCache
      *
      * @param mixed $admin_menu_id 菜单id、key
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($admin_menu_id = '')
     {

@@ -24,7 +24,7 @@ class Setting
 {
     /**
      * @Apidoc\Title("缓存设置信息")
-     * @Apidoc\Returned("type", type="string", default=" ", desc="缓存类型")
+     * @Apidoc\Returned("type", type="string", default="", desc="缓存类型")
      */
     public function cacheInfo()
     {

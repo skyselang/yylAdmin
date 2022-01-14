@@ -11,8 +11,9 @@
 namespace app\common\validate\cms;
 
 use think\Validate;
-use app\common\service\cms\ContentService;
 use app\common\service\cms\CategoryService;
+use app\common\model\cms\CategoryModel;
+use app\common\model\cms\ContentModel;
 
 class CategoryValidate extends Validate
 {
@@ -50,12 +51,31 @@ class CategoryValidate extends Validate
     // 自定义验证规则：分类名称是否已存在
     protected function checkCategoryName($value, $rule, $data = [])
     {
-        $check = CategoryService::checkCategoryName($data);
+        $CategoryModel = new CategoryModel();
+        $CategoryPk = $CategoryModel->getPk();
 
-        return $check;
+        $category_id  = isset($data[$CategoryPk]) ? $data[$CategoryPk] : '';
+        $category_pid = isset($data['category_pid']) ? $data['category_pid'] : 0;
+        
+        if ($category_id) {
+            if ($category_id == $category_pid) {
+                return '分类父级不能等于分类本身';
+            }
+            $where[] = [$CategoryPk, '<>', $category_id];
+        }
+        $where[] = ['category_pid', '=', $category_pid];
+        $where[] = ['category_name', '=', $data['category_name']];
+        $where[] = ['is_delete', '=', 0];
+
+        $category = $CategoryModel->field($CategoryPk)->where($where)->find();
+        if ($category) {
+            return '分类名称已存在：' . $data['category_name'];
+        }
+
+        return true;
     }
 
-    // 自定义验证规则：分类下是否存在子分类
+    // 自定义验证规则：分类下是否存在下级分类
     protected function checkCategoryPid($value, $rule, $data = [])
     {
         $ids = $data['ids'];
@@ -63,7 +83,7 @@ class CategoryValidate extends Validate
         foreach ($category as $v) {
             foreach ($ids as $vc) {
                 if ($v['category_pid'] == $vc) {
-                    return '存在下级分类，无法删除';
+                    return '分类下存在下级分类，无法删除';
                 }
             }
         }
@@ -74,11 +94,17 @@ class CategoryValidate extends Validate
     // 自定义验证规则：分类下是否存在内容
     protected function checkCategoryContent($value, $rule, $data = [])
     {
+        $CategoryModel = new CategoryModel();
+        $CategoryPk = $CategoryModel->getPk();
+
+        $ContentModel = new ContentModel();
+        $ContentPk = $ContentModel->getPk();
+
         $ids = $data['ids'];
-        $where[] = ['category_id', 'in', $ids];
+        $where[] = [$CategoryPk, 'in', $ids];
         $where[] = ['is_delete', '=', 0];
-        $content = ContentService::list($where, 1, 1, [], 'content_id');
-        if ($content['list']) {
+        $content = $ContentModel->field($ContentPk)->where($where)->find();
+        if ($content) {
             return '分类下存在内容，无法删除';
         }
 

@@ -12,7 +12,8 @@ namespace app\common\validate\admin;
 
 use think\Validate;
 use app\common\service\admin\RoleService;
-use app\common\service\admin\UserService;
+use app\common\model\admin\RoleModel;
+use app\common\model\admin\UserModel;
 
 class RoleValidate extends Validate
 {
@@ -49,13 +50,16 @@ class RoleValidate extends Validate
     // 自定义验证规则：角色名称是否已存在
     protected function checkAdminRuleName($value, $rule, $data = [])
     {
-        $admin_role_id = isset($data['admin_role_id']) ? $data['admin_role_id'] : '';
-        if ($admin_role_id) {
-            $where_role[] = ['admin_role_id', '<>', $admin_role_id];
+        $RoleModel = new RoleModel();
+        $RolePk = $RoleModel->getPk();
+
+        if (isset($data[$RolePk])) {
+            $role_where[] = [$RolePk, '<>', $data[$RolePk]];
         }
-        $where_role[] = ['role_name', '=', $data['role_name']];
-        $admin_role = RoleService::list($where_role, 1, 1, [], 'admin_role_id');
-        if ($admin_role['list']) {
+        $role_where[] = ['role_name', '=', $data['role_name']];
+        $role_where[] = ['is_delete', '=', 0];
+        $role = $RoleModel->field($RolePk)->where($role_where)->find();
+        if ($role) {
             return '角色名称已存在：' . $data['role_name'];
         }
 
@@ -65,16 +69,19 @@ class RoleValidate extends Validate
     // 自定义验证规则：角色是否有菜单或用户
     protected function checkAdminRoleMenuUser($value, $rule, $data = [])
     {
-        $ids = $data['ids'];
-        foreach ($ids as $v) {
-            $admin_role = RoleService::info($v);
-            if ($admin_role['admin_menu_ids']) {
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        foreach ($data['ids'] as $v) {
+            $role = RoleService::info($v);
+            if ($role['admin_menu_ids']) {
                 return '请在[修改]中取消所有菜单后再删除';
             }
 
-            $where_user[] = ['admin_role_ids', 'like', '%' . str_join($v) . '%'];
-            $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-            if ($admin_user['list']) {
+            $user_where[] = ['admin_role_ids', 'like', '%' . str_join($v) . '%'];
+            $user_where[] = ['is_delete', '=', 0];
+            $user = $UserModel->field($UserPk)->where($user_where)->find();
+            if ($user) {
                 return '请在[用户]中解除所有用户后再删除';
             }
         }

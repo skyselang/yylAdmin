@@ -30,7 +30,7 @@ function menu_url()
  *
  * @param string $menu_url 菜单url
  *
- * @return boolean
+ * @return bool
  */
 function menu_is_exist($menu_url = '')
 {
@@ -51,7 +51,7 @@ function menu_is_exist($menu_url = '')
  *
  * @param string $menu_url 菜单url
  *
- * @return boolean
+ * @return bool
  */
 function menu_is_disable($menu_url = '')
 {
@@ -72,7 +72,7 @@ function menu_is_disable($menu_url = '')
  *
  * @param string $menu_url 菜单url
  *
- * @return boolean
+ * @return bool
  */
 function menu_is_unauth($menu_url = '')
 {
@@ -93,7 +93,7 @@ function menu_is_unauth($menu_url = '')
  *
  * @param string $menu_url 菜单url
  *
- * @return boolean
+ * @return bool
  */
 function menu_is_unlogin($menu_url = '')
 {
@@ -114,7 +114,7 @@ function menu_is_unlogin($menu_url = '')
  *
  * @param string $menu_url 菜单url
  *
- * @return boolean
+ * @return bool
  */
 function menu_is_unrate($menu_url = '')
 {
@@ -133,7 +133,7 @@ function menu_is_unrate($menu_url = '')
 /**
  * 用户token是否已设置
  *
- * @return boolean
+ * @return bool
  */
 function admin_token_has()
 {
@@ -165,7 +165,7 @@ function admin_token()
 /**
  * 用户id获取
  *
- * @return integer
+ * @return int
  */
 function admin_user_id()
 {
@@ -177,9 +177,9 @@ function admin_user_id()
 /**
  * 用户是否超管
  *
- * @param integer $admin_user_id 用户id
+ * @param int $admin_user_id 用户id
  * 
- * @return boolean
+ * @return bool
  */
 function admin_is_super($admin_user_id = 0)
 {
@@ -201,7 +201,7 @@ function admin_is_super($admin_user_id = 0)
 /**
  * 日志记录是否开启
  *
- * @return boolean
+ * @return bool
  */
 function admin_log_switch()
 {

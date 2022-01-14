@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 存储方式
+// 对象存储
 namespace app\common\service\file;
 
 require_once '../extend/bce-php-sdk-0.9.16/BaiduBce.phar';

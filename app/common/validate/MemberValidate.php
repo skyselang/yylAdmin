@@ -11,6 +11,7 @@
 namespace app\common\validate;
 
 use think\Validate;
+use app\common\model\MemberModel;
 use app\common\service\MemberService;
 
 class MemberValidate extends Validate
@@ -54,7 +55,7 @@ class MemberValidate extends Validate
         'edit'     => ['member_id', 'username', 'nickname', 'phone', 'email'],
         'dele'     => ['ids'],
         'repwd'    => ['ids', 'password'],
-        'editpwd'  => ['member_id', 'password_old', 'password_new'],
+        'editpwd0' => ['member_id', 'password_old', 'password_new'],
         'editpwd1' => ['member_id', 'password_new'],
         'disable'  => ['ids'],
         'region'   => ['ids'],
@@ -74,13 +75,16 @@ class MemberValidate extends Validate
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
-        if (isset($data['member_id'])) {
-            $where[] = ['member_id', '<>', $data['member_id']];
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+
+        if (isset($data[$MemberPk])) {
+            $where[] = [$MemberPk, '<>', $data[$MemberPk]];
         }
         $where[] = ['username', '=', $data['username']];
         $where[] = ['is_delete', '=', 0];
-        $member = MemberService::list($where, 1, 1, [], 'member_id');
-        if ($member['list']) {
+        $member = $MemberModel->field($MemberPk)->where($where)->find();
+        if ($member) {
             return '账号已存在：' . $data['username'];
         }
 
@@ -90,13 +94,16 @@ class MemberValidate extends Validate
     // 自定义验证规则：昵称是否已存在
     protected function checkNickname($value, $rule, $data = [])
     {
-        if (isset($data['member_id'])) {
-            $where[] = ['member_id', '<>', $data['member_id']];
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+
+        if (isset($data[$MemberPk])) {
+            $where[] = [$MemberPk, '<>', $data[$MemberPk]];
         }
         $where[] = ['nickname', '=', $data['nickname']];
         $where[] = ['is_delete', '=', 0];
-        $member = MemberService::list($where, 1, 1, [], 'member_id');
-        if ($member['list']) {
+        $member = $MemberModel->field($MemberPk)->where($where)->find();
+        if ($member) {
             return '昵称已存在：' . $data['nickname'];
         }
 
@@ -106,13 +113,16 @@ class MemberValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
-        if (isset($data['member_id'])) {
-            $where[] = ['member_id', '<>', $data['member_id']];
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+
+        if (isset($data[$MemberPk])) {
+            $where[] = [$MemberPk, '<>', $data[$MemberPk]];
         }
         $where[] = ['phone', '=', $data['phone']];
         $where[] = ['is_delete', '=', 0];
-        $member = MemberService::list($where, 1, 1, [], 'member_id');
-        if ($member['list']) {
+        $member = $MemberModel->field($MemberPk)->where($where)->find();
+        if ($member) {
             return '手机已存在：' . $data['phone'];
         }
 
@@ -122,14 +132,16 @@ class MemberValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmail($value, $rule, $data = [])
     {
-        if (isset($data['member_id'])) {
-            $where[] = ['member_id', '<>', $data['member_id']];
-        }
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
 
+        if (isset($data[$MemberPk])) {
+            $where[] = [$MemberPk, '<>', $data[$MemberPk]];
+        }
         $where[] = ['email', '=', $data['email']];
         $where[] = ['is_delete', '=', 0];
-        $member = MemberService::list($where, 1, 1, [], 'member_id');
-        if ($member['list']) {
+        $member = $MemberModel->field($MemberPk)->where($where)->find();
+        if ($member) {
             return '邮箱已存在：' . $data['email'];
         }
 
@@ -139,8 +151,11 @@ class MemberValidate extends Validate
     // 自定义验证规则：旧密码是否正确
     protected function checkPwdOld($value, $rule, $data = [])
     {
-        if (isset($data['member_id'])) {
-            $member       = MemberService::info($data['member_id']);
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+
+        if (isset($data[$MemberPk])) {
+            $member       = MemberService::info($data[$MemberPk]);
             $password     = $member['password'];
             $password_old = md5($data['password_old']);
             if ($password != $password_old) {

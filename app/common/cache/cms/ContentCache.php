@@ -29,11 +29,11 @@ class ContentCache
     /**
      * 缓存写入
      *
-     * @param mixed   $content_id 内容id
-     * @param mixed   $content    内容信息
-     * @param integer $ttl        有效时间（秒）0永久
+     * @param mixed $content_id 内容id
+     * @param mixed $content    内容信息
+     * @param int   $ttl        有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($content_id, $content, $ttl = 86400)
     {
@@ -57,7 +57,7 @@ class ContentCache
      *
      * @param mixed $content_id 内容id
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($content_id)
     {
@@ -67,10 +67,10 @@ class ContentCache
     /**
      * 缓存自增
      *
-     * @param string  $content_id 内容key
-     * @param integer $step       步长
+     * @param string $content_id 内容key
+     * @param int    $step       步长
      *
-     * @return boolean
+     * @return bool
      */
     public static function inc($content_key, $step = 1)
     {

@@ -11,7 +11,7 @@
 namespace app\common\validate\admin;
 
 use think\Validate;
-use app\common\service\admin\UserService;
+use app\common\model\admin\UserModel;
 
 class UserCenterValidate extends Validate
 {
@@ -24,7 +24,6 @@ class UserCenterValidate extends Validate
         'password_new'  => ['require', 'length' => '6,18'],
         'phone'         => ['mobile', 'checkPhone'],
         'email'         => ['email', 'checkEmail'],
-        'avatar'        => ['require', 'file', 'image', 'fileExt' => 'jpg,png,gif,jpeg', 'fileSize' => '102400'],
     ];
 
     // 错误信息
@@ -38,30 +37,28 @@ class UserCenterValidate extends Validate
         'password_new.length'  => '新密码长度为6至18个字符',
         'phone.mobile'         => '请输入正确的手机号码',
         'email.email'          => '请输入正确的邮箱地址',
-        'avatar.require'       => '请选择图片',
-        'avatar.file'          => '请选择图片文件',
-        'avatar.image'         => '请选择图片格式文件',
-        'avatar.fileExt'       => '请选择jpg、png、gif格式图片',
-        'avatar.fileSize'      => '请选择大小小于100kb的图片',
     ];
 
     // 验证场景
     protected $scene = [
-        'id'     => ['admin_user_id'],
-        'info'   => ['admin_user_id'],
-        'edit'   => ['admin_user_id', 'username', 'nickname', 'phone', 'email'],
-        'pwd'    => ['admin_user_id', 'password_old', 'password_new', 'phone'],
-        'avatar' => ['avatar'],
-        'log'    => ['admin_user_id'],
+        'id'   => ['admin_user_id'],
+        'info' => ['admin_user_id'],
+        'edit' => ['admin_user_id', 'username', 'nickname', 'phone', 'email'],
+        'pwd'  => ['admin_user_id', 'password_old', 'password_new', 'phone'],
+        'log'  => ['admin_user_id'],
     ];
 
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
-        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
-        $where_user[] = ['username', '=', $data['username']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        $user_where[] = [$UserPk, '<>', $data[$UserPk]];
+        $user_where[] = ['username', '=', $data['username']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '账号已存在：' . $data['username'];
         }
 
@@ -71,10 +68,14 @@ class UserCenterValidate extends Validate
     // 自定义验证规则：昵称是否已存在
     protected function checkNickname($value, $rule, $data = [])
     {
-        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
-        $where_user[] = ['nickname', '=', $data['nickname']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        $user_where[] = [$UserPk, '<>', $data[$UserPk]];
+        $user_where[] = ['nickname', '=', $data['nickname']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '昵称已存在：' . $data['nickname'];
         }
 
@@ -84,10 +85,14 @@ class UserCenterValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
-        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
-        $where_user[] = ['phone', '=', $data['phone']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        $user_where[] = [$UserPk, '<>', $data[$UserPk]];
+        $user_where[] = ['phone', '=', $data['phone']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '手机已存在：' . $data['phone'];
         }
 
@@ -97,10 +102,14 @@ class UserCenterValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmail($value, $rule, $data = [])
     {
-        $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
-        $where_user[] = ['email', '=', $data['email']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        $user_where[] = [$UserPk, '<>', $data[$UserPk]];
+        $user_where[] = ['email', '=', $data['email']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '邮箱已存在：' . $data['email'];
         }
 

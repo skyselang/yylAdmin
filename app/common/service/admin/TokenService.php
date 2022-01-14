@@ -71,7 +71,6 @@ class TokenService
         try {
             $config = self::config();
             $decode = JWT::decode($token, $config['token_key'], array('HS256'));
-
             $admin_user_id = $decode->data->admin_user_id;
         } catch (\Exception $e) {
             exception('账号登录状态已过期', 401);
@@ -99,14 +98,13 @@ class TokenService
      *
      * @param string $token token
      * 
-     * @return integer admin_user_id
+     * @return int admin_user_id
      */
     public static function adminUserId($token)
     {
         try {
             $config = self::config();
             $decode = JWT::decode($token, $config['token_key'], array('HS256'));
-
             $admin_user_id = $decode->data->admin_user_id;
         } catch (\Exception $e) {
             $admin_user_id = 0;

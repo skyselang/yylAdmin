@@ -14,6 +14,7 @@ use think\facade\Request;
 use app\common\validate\file\FileValidate;
 use app\common\service\file\GroupService;
 use app\common\service\file\FileService;
+use app\common\service\file\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -60,10 +61,10 @@ class File
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\listParam")
-     * @Apidoc\Param("group_id", require=false, default=" ")
-     * @Apidoc\Param("file_type", require=false, default=" ")
-     * @Apidoc\Param("is_disable", require=false, default=" ")
-     * @Apidoc\Param("is_front", require=false, default=" ")
+     * @Apidoc\Param("group_id", require=false, default="")
+     * @Apidoc\Param("file_type", require=false, default="")
+     * @Apidoc\Param("is_disable", require=false, default="")
+     * @Apidoc\Param("is_front", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="文件列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
@@ -83,6 +84,7 @@ class File
         $file_type    = Request::param('file_type/s', '');
         $is_disable   = Request::param('is_disable/s', '');
         $is_front     = Request::param('is_front/s', 0);
+        $storage      = Request::param('storage/s', '');
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
@@ -92,6 +94,7 @@ class File
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
@@ -108,7 +111,9 @@ class File
         if ($is_front != '') {
             $where[] = ['is_front', '=', $is_front];
         }
-        $where[] = ['is_delete', '=', 0];
+        if ($storage != '') {
+            $where[] = ['storage', '=', $storage];
+        }
 
         $order = [];
         if ($sort_field && $sort_value) {
@@ -117,8 +122,8 @@ class File
 
         $data = FileService::list($where, $page, $limit, $order);
 
-        $data['filetype'] = FileService::fileTypes();
-        $data['storage']  = FileService::storage();
+        $data['filetype'] = SettingService::fileType();
+        $data['storage']  = SettingService::storage();
 
         return success($data);
     }
@@ -174,6 +179,7 @@ class File
     {
         $param['file_id']   = Request::param('file_id/d', '');
         $param['group_id']  = Request::param('group_id/d', 0);
+        $param['domain']    = Request::param('domain/s', '');
         $param['file_type'] = Request::param('file_type/s', 'image');
         $param['file_name'] = Request::param('file_name/s', '');
         $param['is_front']  = Request::param('is_front/s', 0);
@@ -203,6 +209,60 @@ class File
     }
 
     /**
+     * @Apidoc\Title("文件修改分组")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
+     */
+    public function editgroup()
+    {
+        $param['ids']      = Request::param('ids/a', '');
+        $param['group_id'] = Request::param('group_id/d', 0);
+
+        validate(FileValidate::class)->scene('editgroup')->check($param);
+
+        $data = FileService::editgroup($param['ids'], $param['group_id']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("文件修改类型")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
+     */
+    public function edittype()
+    {
+        $param['ids']       = Request::param('ids/a', '');
+        $param['file_type'] = Request::param('file_type/s', 'image');
+
+        validate(FileValidate::class)->scene('edittype')->check($param);
+
+        $data = FileService::edittype($param['ids'], $param['file_type']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("文件修改域名")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel\domain")
+     */
+    public function editdomain()
+    {
+        $param['ids']    = Request::param('ids/a', '');
+        $param['domain'] = Request::param('domain/s', 'image');
+
+        validate(FileValidate::class)->scene('editdomain')->check($param);
+
+        $data = FileService::editdomain($param['ids'], $param['domain']);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("文件是否禁用")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
@@ -216,24 +276,6 @@ class File
         validate(FileValidate::class)->scene('disable')->check($param);
 
         $data = FileService::disable($param['ids'], $param['is_disable']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("文件分组")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
-     */
-    public function grouping()
-    {
-        $param['ids']      = Request::param('ids/a', '');
-        $param['group_id'] = Request::param('group_id/d', 0);
-
-        validate(FileValidate::class)->scene('grouping')->check($param);
-
-        $data = FileService::group($param['ids'], $param['group_id']);
 
         return success($data);
     }
@@ -263,6 +305,7 @@ class File
         $file_type    = Request::param('file_type/s', '');
         $is_disable   = Request::param('is_disable/s', '');
         $is_front     = Request::param('is_front/s', '');
+        $storage      = Request::param('storage/s', '');
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
@@ -272,6 +315,7 @@ class File
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 1];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
@@ -288,7 +332,9 @@ class File
         if ($is_front != '') {
             $where[] = ['is_front', '=', $is_front];
         }
-        $where[] = ['is_delete', '=', 1];
+        if ($storage != '') {
+            $where[] = ['storage', '=', $storage];
+        }
 
         $order = [];
         if ($sort_field && $sort_value) {

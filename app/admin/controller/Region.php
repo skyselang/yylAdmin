@@ -166,7 +166,23 @@ class Region
     }
 
     /**
-     * @Apidoc\Title("地区设置父级")
+     * @Apidoc\Title("地区删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function dele()
+    {
+        $param['ids'] = Request::param('ids/a', '');
+
+        validate(RegionValidate::class)->scene('dele')->check($param);
+
+        $data = RegionService::dele($param['ids']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("地区修改父级")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\RegionModel\region_pid")
@@ -179,22 +195,6 @@ class Region
         validate(RegionValidate::class)->scene('pid')->check($param);
 
         $data = RegionService::pid($param['ids'], $param['region_pid']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("地区删除")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     */
-    public function dele()
-    {
-        $param['ids'] = Request::param('ids/a', '');
-
-        validate(RegionValidate::class)->scene('dele')->check($param);
-
-        $data = RegionService::dele($param['ids']);
 
         return success($data);
     }

@@ -17,7 +17,7 @@ class CommentCache
     /**
      * 缓存键名
      *
-     * @param integer $comment_id 留言id
+     * @param int $comment_id 留言id
      * 
      * @return string
      */
@@ -29,9 +29,9 @@ class CommentCache
     /**
      * 缓存写入
      *
-     * @param integer $comment_id 留言id
-     * @param array   $comment    留言信息
-     * @param integer $ttl        有效时间（秒）0永久
+     * @param int   $comment_id 留言id
+     * @param array $comment    留言信息
+     * @param int   $ttl        有效时间（秒）0永久
      * 
      * @return bool
      */
@@ -43,7 +43,7 @@ class CommentCache
     /**
      * 缓存读取
      *
-     * @param integer $comment_id 留言id
+     * @param int $comment_id 留言id
      * 
      * @return mixed
      */
@@ -55,7 +55,7 @@ class CommentCache
     /**
      * 缓存删除
      *
-     * @param integer $comment_id 留言id
+     * @param int $comment_id 留言id
      * 
      * @return bool
      */

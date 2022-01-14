@@ -12,35 +12,38 @@ namespace app\common\validate\file;
 
 use think\Validate;
 use app\common\service\file\SettingService;
-use app\common\service\file\FileService;
 
 class FileValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'ids'      => ['require', 'array'],
-        'file'     => ['require', 'file', 'checkLimit'],
-        'file_id'  => ['require'],
-        'group_id' => ['require'],
+        'ids'       => ['require', 'array'],
+        'file'      => ['require', 'file', 'checkLimit'],
+        'file_id'   => ['require'],
+        'file_type' => ['require'],
+        'group_id'  => ['require'],
     ];
 
     // 错误信息
     protected $message = [
-        'file.require'     => '请选择上传文件',
-        'file_id.require'  => '缺少参数：file_id',
-        'group_id.require' => '缺少参数：group_id',
+        'file.require'      => '请选择上传文件',
+        'file_id.require'   => '缺少参数：file_id',
+        'file_type.require' => '请选择文件类型',
+        'group_id.require'  => '缺少参数：group_id',
     ];
 
     // 验证场景
     protected $scene = [
-        'id'        => ['file_id'],
-        'info'      => ['file_id'],
-        'add'       => ['file'],
-        'edit'      => ['file_id'],
-        'dele'      => ['ids'],
-        'disable'   => ['ids'],
-        'grouping'  => ['ids'],
-        'reco'      => ['ids'],
+        'id'         => ['file_id'],
+        'info'       => ['file_id'],
+        'add'        => ['file'],
+        'edit'       => ['file_id'],
+        'dele'       => ['ids'],
+        'disable'    => ['ids'],
+        'editgroup'  => ['ids'],
+        'edittype'   => ['ids', 'file_type'],
+        'editdomain' => ['ids'],
+        'reco'       => ['ids'],
     ];
 
     // 自定义验证规则：上传限制
@@ -50,7 +53,7 @@ class FileValidate extends Validate
         $setting = SettingService::info();
 
         $file_ext = $file->getOriginalExtension();
-        $file_type = FileService::fileType($file_ext);
+        $file_type = SettingService::getFileType($file_ext);
         $set_ext_str = $setting[$file_type . '_ext'];
         $set_ext_arr = explode(',', $set_ext_str);
         if (!in_array($file_ext, $set_ext_arr)) {

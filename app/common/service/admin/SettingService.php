@@ -10,21 +10,17 @@
 // 设置管理
 namespace app\common\service\admin;
 
-use think\facade\Db;
 use think\facade\Cache;
 use app\common\cache\admin\UserCache;
 use app\common\cache\admin\SettingCache;
 use app\common\service\file\FileService;
 use app\common\model\admin\UserModel;
+use app\common\model\admin\SettingModel;
 
 class SettingService
 {
-    // 表名
-    protected static $t_name = 'admin_setting';
-    // 表主键
-    protected static $t_pk = 'admin_setting_id';
     // 设置id
-    private static $admin_setting_id = 1;
+    private static $id = 1;
 
     /**
      * 设置信息
@@ -33,45 +29,43 @@ class SettingService
      */
     public static function info()
     {
-        $admin_setting_id = self::$admin_setting_id;
+        $id = self::$id;
+        $info = SettingCache::get($id);
+        if (empty($info)) {
+            $model = new SettingModel();
+            $pk = $model->getPk();
 
-        $admin_setting = SettingCache::get($admin_setting_id);
-        if (empty($admin_setting)) {
-            $admin_setting = Db::name(self::$t_name)
-                ->where(self::$t_pk, $admin_setting_id)
-                ->find();
-            if (empty($admin_setting)) {
-                $admin_setting[self::$t_pk]   = $admin_setting_id;
-                $admin_setting['create_time'] = datetime();
-                Db::name(self::$t_name)
-                    ->insert($admin_setting);
+            $info = $model->where($pk, $id)->find();
+            if (empty($info)) {
+                $info[$pk]           = $id;
+                $info['create_time'] = datetime();
+                $model->insert($info);
 
-                $admin_setting = Db::name(self::$t_name)
-                    ->where(self::$t_pk, $admin_setting_id)
-                    ->find();
+                $info = $model->where($pk, $id)->find();
+            }
+            $info = $info->toArray();
+
+            $info['logo_url'] = '';
+            if ($info['logo_id']) {
+                $info['logo_url'] = FileService::fileUrl($info['logo_id']);
             }
 
-            $admin_setting['logo_url'] = '';
-            if ($admin_setting['logo_id']) {
-                $admin_setting['logo_url'] = FileService::fileUrl($admin_setting['logo_id']);
-            }
-
-            $admin_setting['favicon_url'] = '';
-            if ($admin_setting['favicon_id']) {
-                $admin_setting['favicon_url'] = FileService::fileUrl($admin_setting['favicon_id']);
+            $info['favicon_url'] = '';
+            if ($info['favicon_id']) {
+                $info['favicon_url'] = FileService::fileUrl($info['favicon_id']);
             } else {
-                $admin_setting['favicon_url'] = $admin_setting['logo_url'];
+                $info['favicon_url'] = $info['logo_url'];
             }
 
-            $admin_setting['login_bg_url'] = '';
-            if ($admin_setting['login_bg_id']) {
-                $admin_setting['login_bg_url'] = FileService::fileUrl($admin_setting['login_bg_id']);
+            $info['login_bg_url'] = '';
+            if ($info['login_bg_id']) {
+                $info['login_bg_url'] = FileService::fileUrl($info['login_bg_id']);
             }
 
-            SettingCache::set($admin_setting_id, $admin_setting);
+            SettingCache::set($id, $info);
         }
 
-        return $admin_setting;
+        return $info;
     }
 
     /**
@@ -79,24 +73,26 @@ class SettingService
      *
      * @param array $param
      *
-     * @return boolean|Exception
+     * @return bool|Exception
      */
     public static function edit($param)
     {
-        $admin_setting_id = self::$admin_setting_id;
+        $model = new SettingModel();
+        $pk = $model->getPk();
+
+        $id = self::$id;
+        unset($param[$pk]);
 
         $param['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_setting_id)
-            ->update($param);
+        $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        SettingCache::del($admin_setting_id);
+        SettingCache::del($id);
 
-        return $res;
+        return $param;
     }
 
     /**
@@ -120,18 +116,16 @@ class SettingService
      */
     public static function cacheClear()
     {
-        $AdminUser = new UserModel();
-        $admin_user = $AdminUser
-            ->field('admin_user_id')
-            ->where('is_delete', 0)
-            ->select();
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
 
+        $admin_user = $UserModel->field($UserPk)->where('is_delete', 0)->select();
         $admin_user_cache = [];
-        foreach ($admin_user as $k => $v) {
-            $user_cache = UserCache::get($v['admin_user_id']);
+        foreach ($admin_user as $v) {
+            $user_cache = UserCache::get($v[$UserPk]);
             if ($user_cache) {
-                $user_cache_temp['admin_user_id'] = $user_cache['admin_user_id'];
-                $user_cache_temp['admin_token']   = $user_cache['admin_token'];
+                $user_cache_temp[$UserPk]       = $user_cache[$UserPk];
+                $user_cache_temp['admin_token'] = $user_cache['admin_token'];
                 $admin_user_cache[] = $user_cache_temp;
             }
         }
@@ -141,10 +135,10 @@ class SettingService
             exception();
         }
 
-        foreach ($admin_user_cache as $k => $v) {
-            $admin_user_new = UserService::info($v['admin_user_id']);
+        foreach ($admin_user_cache as $v) {
+            $admin_user_new = UserService::info($v[$UserPk]);
             $admin_user_new['admin_token'] = $v['admin_token'];
-            UserCache::set($admin_user_new['admin_user_id'], $admin_user_new);
+            UserCache::set($admin_user_new[$UserPk], $admin_user_new);
         }
 
         $data['clear'] = $res;
@@ -293,7 +287,7 @@ class SettingService
 
         $data = [];
         $field = ['logo_id', 'logo_url', 'favicon_id', 'favicon_url', 'login_bg_id', 'login_bg_url', 'system_name', 'page_title'];
-        foreach ($field as $k => $v) {
+        foreach ($field as $v) {
             $data[$v] = $setting[$v];
         }
 

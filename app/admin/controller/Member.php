@@ -52,11 +52,11 @@ class Member
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {
@@ -109,8 +109,8 @@ class Member
         $param['phone']     = Request::param('phone/s', '');
         $param['email']     = Request::param('email/s', '');
         $param['region_id'] = Request::param('region_id/d', 0);
-        $param['sort']      = Request::param('sort/d', 250);
         $param['remark']    = Request::param('remark/s', '');
+        $param['sort']      = Request::param('sort/d', 250);
 
         validate(MemberValidate::class)->scene('add')->check($param);
 
@@ -133,8 +133,8 @@ class Member
         $param['phone']     = Request::param('phone/s', '');
         $param['email']     = Request::param('email/s', '');
         $param['region_id'] = Request::param('region_id/d', 0);
-        $param['sort']      = Request::param('sort/d', 250);
         $param['remark']    = Request::param('remark/s', '');
+        $param['sort']      = Request::param('sort/d', 250);
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
@@ -160,7 +160,7 @@ class Member
     }
 
     /**
-     * @Apidoc\Title("会员设置地区")
+     * @Apidoc\Title("会员修改地区")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\RegionModel\id")
@@ -173,24 +173,6 @@ class Member
         validate(MemberValidate::class)->scene('region')->check($param);
 
         $data = MemberService::region($param['ids'], $param['region_id']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("会员是否禁用")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\MemberModel\is_disable")
-     */
-    public function disable()
-    {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_disable'] = Request::param('is_disable/d', 0);
-
-        validate(MemberValidate::class)->scene('disable')->check($param);
-
-        $data = MemberService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
@@ -209,6 +191,24 @@ class Member
         validate(MemberValidate::class)->scene('repwd')->check($param);
 
         $data = MemberService::repwd($param['ids'], $param['password']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员是否禁用")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\MemberModel\is_disable")
+     */
+    public function disable()
+    {
+        $param['ids']        = Request::param('ids/a', '');
+        $param['is_disable'] = Request::param('is_disable/d', 0);
+
+        validate(MemberValidate::class)->scene('disable')->check($param);
+
+        $data = MemberService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }

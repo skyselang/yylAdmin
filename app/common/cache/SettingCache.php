@@ -17,7 +17,7 @@ class SettingCache
     /**
      * 缓存key
      *
-     * @param integer $setting_id 设置id
+     * @param int $setting_id 设置id
      * 
      * @return string
      */
@@ -29,11 +29,11 @@ class SettingCache
     /**
      * 缓存设置
      *
-     * @param integer $setting_id 设置id
-     * @param array   $setting    设置信息
-     * @param integer $ttl        有效时间（秒）0永久
+     * @param int   $setting_id 设置id
+     * @param array $setting    设置信息
+     * @param int   $ttl        有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($setting_id, $setting, $ttl = 86400)
     {
@@ -43,7 +43,7 @@ class SettingCache
     /**
      * 缓存获取
      *
-     * @param integer $setting_id 设置id
+     * @param int $setting_id 设置id
      * 
      * @return array 设置信息
      */
@@ -55,9 +55,9 @@ class SettingCache
     /**
      * 缓存删除
      *
-     * @param integer $setting_id 设置id
+     * @param int $setting_id 设置id
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($setting_id)
     {

@@ -45,11 +45,12 @@ class Comment
 
         validate(CommentValidate::class)->scene('add')->check($param);
 
-        $comment = CommentCache::get($param['mobile']);
+        $comment_key = 'rep' . $param['mobile'];
+        $comment = CommentCache::get($comment_key);
         if ($comment) {
-            exception('请勿重复提交');
+            exception('请稍后再试');
         } else {
-            CommentCache::set($param['mobile'], $param['call'], 10);
+            CommentCache::set($comment_key, $param['call'], 60);
         }
 
         $data = CommentService::add($param);

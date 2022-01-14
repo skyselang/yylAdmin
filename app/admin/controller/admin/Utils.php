@@ -41,7 +41,7 @@ class Utils
 
     /**
      * @Apidoc\Title("字符串转换")
-     * @Apidoc\Param("str", type="string", default=" ", desc="字符串")
+     * @Apidoc\Param("str", type="string", default="", desc="字符串")
      */
     public function strtran()
     {
@@ -54,8 +54,8 @@ class Utils
 
     /**
      * @Apidoc\Title("时间戳转换")
-     * @Apidoc\Param("type", type="string", default=" ", desc="转换类型")
-     * @Apidoc\Param("value", type="string", default=" ", desc="时间、时间戳")
+     * @Apidoc\Param("type", type="string", default="", desc="转换类型")
+     * @Apidoc\Param("value", type="string", default="", desc="时间、时间戳")
      */
     public function timestamp()
     {
@@ -84,7 +84,7 @@ class Utils
 
     /**
      * @Apidoc\Title("IP信息")
-     * @Apidoc\Param("ip", type="string", default=" ", desc="ip")
+     * @Apidoc\Param("ip", type="string", default="", desc="ip")
      */
     public function ipinfo()
     {

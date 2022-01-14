@@ -45,7 +45,7 @@ class Group
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value) {
-            if ($search_field == 'group_id') {
+            if (in_array($search_field, ['group_id'])) {
                 $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_disable'])) {
@@ -59,11 +59,11 @@ class Group
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {

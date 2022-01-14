@@ -80,14 +80,13 @@ class TokenService
      *
      * @param string $token token
      * 
-     * @return integer member_id
+     * @return int member_id
      */
     public static function memberId($token)
     {
         try {
             $config = self::config();
             $decode = JWT::decode($token, $config['token_key'], array('HS256'));
-
             $member_id = $decode->data->member_id;
         } catch (\Exception $e) {
             $member_id = 0;

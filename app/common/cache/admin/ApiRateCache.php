@@ -17,8 +17,8 @@ class ApiRateCache
     /**
      * 缓存key
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
      * 
      * @return string
      */
@@ -30,11 +30,11 @@ class ApiRateCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
-     * @param integer $ttl           有效时间（秒）0永久
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
+     * @param int    $ttl           有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($admin_user_id, $menu_url, $ttl = 60)
     {
@@ -44,8 +44,8 @@ class ApiRateCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
      * 
      * @return string
      */
@@ -57,10 +57,10 @@ class ApiRateCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($admin_user_id, $menu_url)
     {
@@ -70,11 +70,11 @@ class ApiRateCache
     /**
      * 缓存自增
      *
-     * @param integer $admin_user_id 用户id
-     * @param string  $menu_url      菜单url
-     * @param integer $step          步长
+     * @param int    $admin_user_id 用户id
+     * @param string $menu_url      菜单url
+     * @param int    $step          步长
      * 
-     * @return boolean
+     * @return bool
      */
     public static function inc($admin_user_id, $menu_url, $step = 1)
     {

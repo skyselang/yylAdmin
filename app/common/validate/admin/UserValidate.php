@@ -11,6 +11,7 @@
 namespace app\common\validate\admin;
 
 use think\Validate;
+use app\common\model\admin\UserModel;
 use app\common\service\admin\UserService;
 
 class UserValidate extends Validate
@@ -46,11 +47,10 @@ class UserValidate extends Validate
         'add'     => ['username', 'nickname', 'password', 'phone', 'email'],
         'edit'    => ['admin_user_id', 'username', 'nickname', 'phone', 'email'],
         'dele'    => ['ids'],
+        'pwd'     => ['ids', 'password'],
         'super'   => ['ids'],
         'disable' => ['ids'],
         'rule'    => ['admin_user_id'],
-        'pwd'     => ['ids', 'password'],
-
     ];
 
     // 验证场景定义：登录
@@ -106,12 +106,16 @@ class UserValidate extends Validate
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
-        if (isset($data['admin_user_id'])) {
-            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        if (isset($data[$UserPk])) {
+            $user_where[] = [$UserPk, '<>', $data[$UserPk]];
         }
-        $where_user[] = ['username', '=', $data['username']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $user_where[] = ['username', '=', $data['username']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '账号已存在：' . $data['username'];
         }
 
@@ -121,12 +125,16 @@ class UserValidate extends Validate
     // 自定义验证规则：昵称是否已存在
     protected function checkNickname($value, $rule, $data = [])
     {
-        if (isset($data['admin_user_id'])) {
-            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        if (isset($data[$UserPk])) {
+            $user_where[] = [$UserPk, '<>', $data[$UserPk]];
         }
-        $where_user[] = ['nickname', '=', $data['nickname']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $user_where[] = ['nickname', '=', $data['nickname']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '昵称已存在：' . $data['nickname'];
         }
 
@@ -136,12 +144,16 @@ class UserValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
-        if (isset($data['admin_user_id'])) {
-            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        if (isset($data[$UserPk])) {
+            $user_where[] = [$UserPk, '<>', $data[$UserPk]];
         }
-        $where_user[] = ['phone', '=', $data['phone']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $user_where[] = ['phone', '=', $data['phone']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '手机已存在：' . $data['phone'];
         }
 
@@ -151,12 +163,16 @@ class UserValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmail($value, $rule, $data = [])
     {
-        if (isset($data['admin_user_id'])) {
-            $where_user[] = ['admin_user_id', '<>', $data['admin_user_id']];
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        if (isset($data[$UserPk])) {
+            $user_where[] = [$UserPk, '<>', $data[$UserPk]];
         }
-        $where_user[] = ['email', '=', $data['email']];
-        $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-        if ($admin_user['list']) {
+        $user_where[] = ['email', '=', $data['email']];
+        $user_where[] = ['is_delete', '=', 0];
+        $user = $UserModel->field($UserPk)->where($user_where)->find();
+        if ($user) {
             return '邮箱已存在：' . $data['email'];
         }
 
@@ -168,8 +184,8 @@ class UserValidate extends Validate
     {
         $ids = $data['ids'];
         foreach ($ids as $v) {
-            $admin_user = UserService::info($v);
-            if ($admin_user['admin_role_ids'] || $admin_user['admin_menu_ids']) {
+            $user = UserService::info($v);
+            if ($user['admin_role_ids'] || $user['admin_menu_ids']) {
                 return '请在[权限]中取消所有角色和菜单后再删除';
             }
         }
@@ -184,7 +200,9 @@ class UserValidate extends Validate
         if (isset($data['ids'])) {
             $ids = $data['ids'];
         } else {
-            $ids[] = $data['admin_user_id'];
+            $UserModel = new UserModel();
+            $UserPk = $UserModel->getPk();
+            $ids[] = $data[$UserPk];
         }
 
         foreach ($ids as $v) {

@@ -10,52 +10,41 @@
 // 接口管理
 namespace app\common\service;
 
-use think\facade\Db;
 use think\facade\Config;
 use app\common\cache\ApiCache;
+use app\common\model\ApiModel;
 
 class ApiService
 {
-    // 表名
-    protected static $t_name = 'api';
-    // 表主键
-    protected static $t_pk = 'api_id';
-
     /**
      * 接口列表
      *
-     * @param array   $where 条件
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param array   $order 排序
-     * @param string  $field 字段
+     * @param array  $where 条件
+     * @param int    $page  页数
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array 
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
+        $model = new ApiModel();
+        $pk = $model->getPk();
+
         if (empty($field)) {
-            $field = self::$t_name . ',api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+            $field = $pk . ',api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
         }
 
         if (empty($order)) {
-            $order = ['api_sort' => 'desc', self::$t_pk => 'desc'];
+            $order = ['api_sort' => 'desc', $pk => 'desc'];
         }
 
-        $count = Db::name(self::$t_name)
-            ->where($where)
-            ->count(self::$t_pk);
+        $count = $model->where($where)->count($pk);
 
         $pages = ceil($count / $limit);
 
-        $list = Db::name(self::$t_name)
-            ->field($field)
-            ->where($where)
-            ->page($page)
-            ->limit($limit)
-            ->order($order)
-            ->select()
-            ->toArray();
+        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -68,62 +57,62 @@ class ApiService
     public static function tree()
     {
         $key = 'tree';
-        $api = ApiCache::get($key);
-        if (empty($api)) {
-            $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+        $tree = ApiCache::get($key);
+        if (empty($tree)) {
+            $model = new ApiModel();
+            $pk = $model->getPk();
+
+            $field = $pk . ',api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
 
             $where[] = ['is_delete', '=', 0];
 
-            $order = ['api_sort' => 'desc', self::$t_pk => 'asc'];
+            $order = ['api_sort' => 'desc', $pk => 'asc'];
 
-            $list = Db::name(self::$t_name)
-                ->field($field)
-                ->where($where)
-                ->order($order)
-                ->select()
-                ->toArray();
+            $list = $model->field($field)->where($where)->order($order)->select()->toArray();
 
-            $api = self::toTree($list, 0);
+            $tree = self::toTree($list, 0);
 
-            ApiCache::set($key, $api);
+            ApiCache::set($key, $tree);
         }
 
-        return $api;
+        return $tree;
     }
 
     /**
      * 接口信息
      *
-     * @param integer $api_id 接口id
+     * @param int $id 接口id
      * 
      * @return array
      */
-    public static function info($api_id = '')
+    public static function info($id = '')
     {
-        if (empty($api_id)) {
-            $api_id = api_url();
+        if (empty($id)) {
+            $id = api_url();
         }
 
-        $api = ApiCache::get($api_id);
-        if (empty($api)) {
-            if (is_numeric($api_id)) {
-                $where[] = [self::$t_pk, '=',  $api_id];
+        $info = ApiCache::get($id);
+        if (empty($info)) {
+            $model = new ApiModel();
+            $pk = $model->getPk();
+
+            if (is_numeric($id)) {
+                $where[] = [$pk, '=',  $id];
             } else {
-                $where[] = ['api_url', '=',  $api_id];
+                $where[] = ['api_url', '=',  $id];
                 $where[] = ['is_delete', '=', 0];
             }
 
-            $api = Db::name(self::$t_name)
-                ->where($where)
-                ->find();
-            if (empty($api)) {
-                exception('接口不存在：' . $api_id);
+            $info = $model->where($where)->find();
+            if (empty($info)) {
+                exception('接口不存在：' . $id);
             }
+            $info = $info->toArray();
 
-            ApiCache::set($api_id, $api);
+            ApiCache::set($id, $info);
         }
 
-        return $api;
+        return $info;
     }
 
     /**
@@ -135,17 +124,19 @@ class ApiService
      */
     public static function add($param)
     {
+        $model = new ApiModel();
+        $pk = $model->getPk();
+
         $param['create_time'] = datetime();
 
-        $api_id = Db::name(self::$t_name)
-            ->insertGetId($param);
-        if (empty($api_id)) {
+        $id = $model->insertGetId($param);
+        if (empty($id)) {
             exception();
         }
 
         ApiCache::del();
 
-        $param[self::$t_pk] = $api_id;
+        $param[$pk] = $id;
 
         return $param;
     }
@@ -159,24 +150,23 @@ class ApiService
      */
     public static function edit($param)
     {
-        $api_id = $param[self::$t_pk];
+        $model = new ApiModel();
+        $pk = $model->getPk();
 
-        unset($param[self::$t_pk]);
-
-        $api = self::info($api_id);
+        $id = $param[$pk];
+        unset($param[$pk]);
+        $info = self::info($id);
 
         $param['update_time'] = datetime();
 
-        $update = Db::name(self::$t_name)
-            ->where(self::$t_pk, '=', $api_id)
-            ->update($param);
-        if (empty($update)) {
+        $res = $model->where($pk, $id)->update($param);
+        if (empty($res)) {
             exception();
         }
 
-        ApiCache::del([$api_id, $api['api_url']]);
+        ApiCache::del([$id, $info['api_url']]);
 
-        $param[self::$t_pk] = $api_id;
+        $param[$pk] = $id;
 
         return $param;
     }
@@ -190,6 +180,9 @@ class ApiService
      */
     public static function dele($ids)
     {
+        $model = new ApiModel();
+        $pk = $model->getPk();
+
         foreach ($ids as $v) {
             self::info($v);
         }
@@ -197,16 +190,14 @@ class ApiService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $api = self::info($v);
-            ApiCache::del([$v, $api['api_url']]);
+            $info = self::info($v);
+            ApiCache::del([$v, $info['api_url']]);
         }
 
         $update['ids'] = $ids;
@@ -217,56 +208,27 @@ class ApiService
     /**
      * 接口设置父级
      *
-     * @param array   $ids     接口id
-     * @param integer $api_pid 接口父级id
+     * @param array $ids     接口id
+     * @param int   $api_pid 接口pid
      * 
      * @return array
      */
     public static function pid($ids, $api_pid)
     {
+        $model = new ApiModel();
+        $pk = $model->getPk();
+
         $update['api_pid']     = $api_pid;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $api = self::info($v);
-            ApiCache::del([$v, $api['api_url']]);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 接口是否禁用
-     *
-     * @param array   $ids        接口id
-     * @param integer $is_disable 是否禁用
-     * 
-     * @return array
-     */
-    public static function disable($ids, $is_disable)
-    {
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            $api = self::info($v);
-            ApiCache::del([$v, $api['api_url']]);
+            $info = self::info($v);
+            ApiCache::del([$v, $info['api_url']]);
         }
 
         $update['ids'] = $ids;
@@ -277,26 +239,58 @@ class ApiService
     /**
      * 接口是否无需登录
      *
-     * @param array   $ids        接口id
-     * @param integer $is_unlogin 是否无需登录
+     * @param array $ids        接口id
+     * @param int   $is_unlogin 是否无需登录
      * 
      * @return array
      */
     public static function unlogin($ids, $is_unlogin)
     {
+        $model = new ApiModel();
+        $pk = $model->getPk();
+
         $update['is_unlogin']  = $is_unlogin;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $api = self::info($v);
-            ApiCache::del([$v, $api['api_url']]);
+            $info = self::info($v);
+            ApiCache::del([$v, $info['api_url']]);
+        }
+
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 接口是否禁用
+     *
+     * @param array $ids        接口id
+     * @param int   $is_disable 是否禁用
+     * 
+     * @return array
+     */
+    public static function disable($ids, $is_disable)
+    {
+        $model = new ApiModel();
+        $pk = $model->getPk();
+
+        $update['is_disable']  = $is_disable;
+        $update['update_time'] = datetime();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($ids as $v) {
+            $info = self::info($v);
+            ApiCache::del([$v, $info['api_url']]);
         }
 
         $update['ids'] = $ids;
@@ -307,19 +301,21 @@ class ApiService
     /**
      * 接口获取所有子级
      *
-     * @param array   $api    所有接口
-     * @param integer $api_id 接口id
+     * @param array $api    所有接口
+     * @param int   $api_id 接口id
      * 
      * @return array
      */
     public static function getChildren($api, $api_id)
     {
-        $children = [];
+        $model = new ApiModel();
+        $pk = $model->getPk();
 
+        $children = [];
         foreach ($api as $v) {
             if ($v['api_pid'] == $api_id) {
-                $children[] = $v[self::$t_pk];
-                $children   = array_merge($children, self::getChildren($api, $v[self::$t_pk]));
+                $children[] = $v[$pk];
+                $children   = array_merge($children, self::getChildren($api, $v[$pk]));
             }
         }
 
@@ -329,18 +325,20 @@ class ApiService
     /**
      * 接口列表转树形
      *
-     * @param array   $api     接口列表
-     * @param integer $api_pid 接口父级id
+     * @param array $api     接口列表
+     * @param int   $api_pid 接口父级id
      * 
      * @return array
      */
     public static function toTree($api, $api_pid)
     {
-        $tree = [];
+        $model = new ApiModel();
+        $pk = $model->getPk();
 
+        $tree = [];
         foreach ($api as $v) {
             if ($v['api_pid'] == $api_pid) {
-                $v['children'] = self::toTree($api, $v[self::$t_pk]);
+                $v['children'] = self::toTree($api, $v[$pk]);
                 $tree[] = $v;
             }
         }
@@ -355,14 +353,12 @@ class ApiService
      */
     public static function urlList()
     {
+        $model = new ApiModel();
+
         $urllist_key = 'urlList';
         $urllist     = ApiCache::get($urllist_key);
         if (empty($urllist)) {
-            $urllist = Db::name(self::$t_name)
-                ->field('api_url')
-                ->where('is_delete', '=', 0)
-                ->column('api_url');
-
+            $urllist = $model->where('is_delete', 0)->column('api_url');
             $urllist = array_filter($urllist);
 
             ApiCache::set($urllist_key, $urllist);
@@ -378,15 +374,12 @@ class ApiService
      */
     public static function unloginList()
     {
+        $model = new ApiModel();
+
         $unloginlist_key = 'unloginList';
         $unloginlist     = ApiCache::get($unloginlist_key);
         if (empty($unloginlist)) {
-            $unloginlist = Db::name(self::$t_name)
-                ->field('api_url')
-                ->where('is_unlogin', '=', 1)
-                ->where('is_delete', '=', 0)
-                ->column('api_url');
-
+            $unloginlist = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('api_url');
             $api_unlogin = Config::get('index.api_is_unlogin');
             $unloginlist = array_merge($unloginlist, $api_unlogin);
             $unloginlist = array_unique(array_filter($unloginlist));

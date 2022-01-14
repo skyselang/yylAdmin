@@ -13,9 +13,9 @@ use think\facade\Request;
 /**
  * 成功返回
  *
- * @param array   $data 成功数据
- * @param string  $msg  成功提示
- * @param integer $code 成功码
+ * @param array  $data 成功数据
+ * @param string $msg  成功提示
+ * @param int    $code 成功码
  * 
  * @return json
  */
@@ -31,8 +31,8 @@ function success($data = [], $msg = '操作成功', $code = 200)
 /**
  * 错误返回（抛出异常）
  *
- * @param string  $msg  错误提示
- * @param integer $code 错误码
+ * @param string $msg  错误提示
+ * @param int    $code 错误码
  * 
  * @return Exception
  */
@@ -44,9 +44,9 @@ function exception($msg = '操作失败', $code = 400)
 /**
  * 错误返回（调试时用）
  *
- * @param array   $data 错误数据
- * @param string  $msg  错误提示
- * @param integer $code 错误码
+ * @param array  $data 错误数据
+ * @param string $msg  错误提示
+ * @param int    $code 错误码
  * 
  * @return json
  */
@@ -271,7 +271,7 @@ function str_join($str, $char = ',')
  *
  * @param string  $str1   字符串1
  * @param string  $str2   字符串2
- * @param boolean $is_rep 是否去重
+ * @param bool    $is_rep 是否去重
  *
  * @return string
  */

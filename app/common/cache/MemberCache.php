@@ -30,11 +30,11 @@ class MemberCache
     /**
      * 缓存设置
      *
-     * @param mixed   $member_id 会员id、统计时间
-     * @param array   $member    会员信息
-     * @param integer $ttl       有效时间（秒）0永久
+     * @param mixed $member_id 会员id、统计时间
+     * @param array $member    会员信息
+     * @param int   $ttl       有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($member_id, $member, $ttl = 86400)
     {
@@ -58,7 +58,7 @@ class MemberCache
      *
      * @param mixed $member_id 会员id、统计时间
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($member_id)
     {
@@ -68,7 +68,7 @@ class MemberCache
     /**
      * 缓存更新
      *
-     * @param integer $member_id 会员id
+     * @param int $member_id 会员id
      * 
      * @return array 会员信息
      */

@@ -15,8 +15,8 @@ class StringUtils
     /**
      * 随机字符串
      *
-     * @param integer $length    字符长度
-     * @param array   $character 所用字符：1数字，2小写字母，3大写字母，4标点符号
+     * @param int   $length    字符长度
+     * @param array $character 所用字符：1数字，2小写字母，3大写字母，4标点符号
      * 
      * @return string
      */

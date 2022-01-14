@@ -176,7 +176,7 @@ class UtilsService
     /**
      * IP查询
      *
-     * @param array $param ip、域名
+     * @param string $param ip、域名
      *
      * @return array
      */
@@ -196,14 +196,15 @@ class UtilsService
         $server     = Cache::get($server_key);
         if (empty($server)) {
             try {
-                $mysql = Db::query('select version() as version');
-                $server['mysql'] = $mysql[0]['version']; //mysql
+                $MySql = Db::query('select version() as version');
+                $mysql_version = $MySql[0]['version'];
             } catch (\Throwable $th) {
-                $server['mysql'] = '';
+                $mysql_version = '';
             }
 
             $server['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
             $server['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
+            $server['mysql']               = $mysql_version;                            //mysql
             $server['php_version']         = PHP_VERSION;                               //php
             $server['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //protocol
             $server['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
@@ -250,7 +251,7 @@ class UtilsService
 
             $cache['type'] = $config['default'];
 
-            Cache::set($cache_key, $cache, 30);
+            Cache::set($cache_key, $cache, 60);
         }
 
         $data = array_merge($server, $cache);

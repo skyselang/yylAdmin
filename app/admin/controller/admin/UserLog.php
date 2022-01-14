@@ -27,9 +27,10 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志列表")
      * @Apidoc\Param(ref="pagingParam")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\listParam")
-     * @Apidoc\Param("log_type", require=false, default=" ")
-     * @Apidoc\Param("response_code", require=false, default=" ")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="日志列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
@@ -41,10 +42,10 @@ class UserLog
         $limit        = Request::param('limit/d', 10);
         $sort_field   = Request::param('sort_field/s', '');
         $sort_value   = Request::param('sort_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
         $log_type     = Request::param('log_type/d', '');
 
         $where = [];
@@ -59,20 +60,16 @@ class UserLog
                 $user_exp = strpos($search_value, ',') ? 'in' : '=';
                 $user_where[] = [$search_field, $user_exp, $search_value];
                 $UserModel = new UserModel();
-                $admin_user_ids = $UserModel
-                    ->field($UserModel->getPk())
-                    ->where($user_where)
-                    ->column($UserModel->getPk());
-                $where[] = ['admin_user_id', 'in', $admin_user_ids];
+                $UserPk = $UserModel->getPk();
+                $admin_user_ids = $UserModel->where($user_where)->column($UserPk);
+                $where[] = [$UserPk, 'in', $admin_user_ids];
             } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
                 $menu_exp = strpos($search_value, ',') ? 'in' : '=';
                 $menu_where[] = [$search_field, $menu_exp, $search_value];
                 $MenuModel = new MenuModel();
-                $admin_menu_ids = $MenuModel
-                    ->field($MenuModel->getPk())
-                    ->where($menu_where)
-                    ->column($MenuModel->getPk());
-                $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
+                $MenuPk = new $MenuModel->getPk();
+                $admin_menu_ids = $MenuModel->where($menu_where)->column($MenuPk);
+                $where[] = [$MenuPk, 'in', $admin_menu_ids];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -131,14 +128,15 @@ class UserLog
      * @Apidoc\Title("用户日志清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
-     * @Apidoc\Param("admin_user_id", require=false,default=" ")
+     * @Apidoc\Param("admin_user_id", require=false,default="")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\username")
-     * @Apidoc\Param("username", require=false,default=" ")
+     * @Apidoc\Param("username", require=false,default="")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
-     * @Apidoc\Param("admin_menu_id", require=false,default=" ")
+     * @Apidoc\Param("admin_menu_id", require=false,default="")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_url")
-     * @Apidoc\Param("menu_url", require=false,default=" ")
-     * @Apidoc\Param("date_value", type="array", default=" ", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Param("menu_url", require=false,default="")
+     * @Apidoc\Param("date_value", type="array", default="", desc="日期范围eg:['2022-02-22','2022-02-28']")
+     * @Apidoc\Param("clean", type="int", default="0", desc="是否清空所有1是0否")
      */
     public function clear()
     {
@@ -157,10 +155,8 @@ class UserLog
         if ($username) {
             $user_exp = strstr($username, ',') ? 'in' : '=';
             $UserModel = new UserModel();
-            $user_ids = $UserModel
-                ->field($UserModel->getPk())
-                ->where('username', $user_exp, $username)
-                ->column($UserModel->getPk());
+            $UserPk = $UserModel->getPk();
+            $user_ids = $UserModel->where('username', $user_exp, $username)->column($UserPk);
             if ($user_ids) {
                 $admin_user_ids = array_merge($user_ids, $admin_user_ids);
             }
@@ -176,10 +172,8 @@ class UserLog
         if ($menu_url) {
             $menu_exp = strstr($menu_url, ',') ? 'in' : '=';
             $MenuModel = new MenuModel();
-            $menu_ids = $MenuModel
-                ->field($MenuModel->getPk())
-                ->where('menu_url', $menu_exp, $menu_url)
-                ->column($MenuModel->getPk());
+            $MenuPk = $MenuModel->getPk();
+            $menu_ids = $MenuModel->where('menu_url', $menu_exp, $menu_url)->column($MenuPk);
             if ($menu_ids) {
                 $admin_menu_ids = array_merge($menu_ids, $admin_menu_ids);
             }
@@ -201,9 +195,9 @@ class UserLog
     /**
      * @Apidoc\Title("用户日志统计")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("type", type="string", default=" ", desc="类型")
+     * @Apidoc\Param("type", type="string", default="", desc="类型")
      * @Apidoc\Param("date", type="array", default="[]", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Param("field", type="string", default=" ", desc="统计字段")
+     * @Apidoc\Param("field", type="string", default="", desc="统计字段")
      */
     public function stat()
     {

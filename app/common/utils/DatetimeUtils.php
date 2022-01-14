@@ -184,7 +184,7 @@ class DatetimeUtils
     /**
      * 最近天数所有日期
      *  
-     * @param integer $days 天数
+     * @param int $days 天数
      * 
      * @return array
      */
@@ -206,7 +206,7 @@ class DatetimeUtils
     /**
      * 几年前开始和结束的日期
      * 
-     * @param integer $year 几年
+     * @param int $year 几年
      *
      * @return array
      */
@@ -222,8 +222,8 @@ class DatetimeUtils
     /**
      * 几天前到现在/昨日结束的日期
      *
-     * @param integer $day 天数
-     * @param bool    $now 现在或者昨天结束日期
+     * @param int  $day 天数
+     * @param bool $now 现在或者昨天结束日期
      * 
      * @return array
      */
@@ -265,9 +265,9 @@ class DatetimeUtils
     /**
      * 几天前的日期
      *
-     * @param integer $days 天数
+     * @param int $days 天数
      * 
-     * @return integer
+     * @return int
      */
     public static function daysAgo($days = 1)
     {
@@ -277,9 +277,9 @@ class DatetimeUtils
     /**
      * 几天后的日期
      *
-     * @param integer $days 天数
+     * @param int $days 天数
      * 
-     * @return integer
+     * @return int
      */
     public static function daysAfter($days = 1)
     {
@@ -289,9 +289,9 @@ class DatetimeUtils
     /**
      * 天数转换成秒数
      *
-     * @param integer $days 天数
+     * @param int $days 天数
      * 
-     * @return integer
+     * @return int
      */
     public static function daysToSecond($days = 1)
     {
@@ -301,9 +301,9 @@ class DatetimeUtils
     /**
      * 周数转换成秒数
      *
-     * @param integer $week 周数
+     * @param int $week 周数
      * 
-     * @return integer
+     * @return int
      */
     public static function weekToSecond($weeks = 1)
     {
@@ -364,8 +364,8 @@ class DatetimeUtils
     /**
      * 获取过去或将来的月份
      *
-     * @param integer $number 月份数
-     * @param boolean $future 是否将来
+     * @param int  $number 月份数
+     * @param bool $future 是否将来
      *
      * @return array
      */

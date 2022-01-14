@@ -10,17 +10,13 @@
 // 设置
 namespace app\common\service;
 
-use think\facade\Db;
 use app\common\cache\SettingCache;
+use app\common\model\SettingModel;
 
 class SettingService
 {
-    // 表名
-    protected static $t_name = 'setting';
-    // 表主键
-    protected static $t_pk = 'setting_id';
     // 设置id
-    private static $setting_id = 1;
+    private static $id = 1;
 
     /**
      * 设置信息
@@ -29,28 +25,53 @@ class SettingService
      */
     public static function info()
     {
-        $setting_id = self::$setting_id;
+        $id = self::$id;
+        $info = SettingCache::get($id);
+        if (empty($info)) {
+            $model = new SettingModel();
+            $pk = $model->getPk();
 
-        $setting = SettingCache::get($setting_id);
-        if (empty($setting)) {
-            $setting = Db::name(self::$t_name)
-                ->where(self::$t_pk, $setting_id)
-                ->find();
-            if (empty($setting)) {
-                $setting[self::$t_pk]   = $setting_id;
-                $setting['create_time'] = datetime();
-                Db::name(self::$t_name)
-                    ->insert($setting);
+            $info = $model->where($pk, $id)->find();
+            if (empty($info)) {
+                $info[$pk] = $id;
+                $info['create_time'] = datetime();
+                $model->insert($info);
 
-                $setting = Db::name(self::$t_name)
-                    ->where(self::$t_pk, $setting_id)
-                    ->find();
+                $info = $model->where($pk, $id)->find();
             }
+            $info = $info->toArray();
 
-            SettingCache::set($setting_id, $setting);
+            SettingCache::set($id, $info);
         }
 
-        return $setting;
+        return $info;
+    }
+
+    /**
+     * 设置修改
+     *
+     * @param array $param
+     *
+     * @return bool|Exception
+     */
+    public static function edit($param)
+    {
+        $model = new SettingModel();
+        $pk = $model->getPk();
+
+        $id = self::$id;
+        unset($param[$pk]);
+
+        $param['update_time'] = datetime();
+
+        $res = $model->where($pk, $id)->update($param);
+        if (empty($res)) {
+            exception();
+        }
+
+        SettingCache::del($id);
+
+        return $param;
     }
 
     /**
@@ -60,25 +81,25 @@ class SettingService
      */
     public static function tokenInfo()
     {
-        $setting = self::info();
+        $info = self::info();
 
         // token_name为空则设置token_name
-        if (empty($setting['token_name'])) {
+        if (empty($info['token_name'])) {
             $token_name = 'MemberToken';
             self::tokenEdit(['token_name' => $token_name]);
-            $setting = self::info();
+            $info = self::info();
         }
 
         // token_key为空则生成token_key
-        if (empty($setting['token_key'])) {
+        if (empty($info['token_key'])) {
             $token_key = uniqid();
             self::tokenEdit(['token_key' => $token_key]);
-            $setting = self::info();
+            $info = self::info();
         }
 
-        $data['token_name'] = $setting['token_name'];
-        $data['token_key']  = $setting['token_key'];
-        $data['token_exp']  = $setting['token_exp'];
+        $data['token_name'] = $info['token_name'];
+        $data['token_key']  = $info['token_key'];
+        $data['token_exp']  = $info['token_exp'];
 
         return $data;
     }
@@ -86,24 +107,13 @@ class SettingService
     /**
      * Token设置修改
      *
-     * @param array $param Token信息
+     * @param array $param Token设置信息
      *
      * @return array
      */
     public static function tokenEdit($param)
     {
-        $setting_id = self::$setting_id;
-
-        $param['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        SettingCache::del($setting_id);
+        $param = self::edit($param);
 
         return $param;
     }
@@ -115,10 +125,10 @@ class SettingService
      */
     public static function captchaInfo()
     {
-        $setting = self::info();
+        $info = self::info();
 
-        $data['captcha_register'] = $setting['captcha_register'];
-        $data['captcha_login']    = $setting['captcha_login'];
+        $data['captcha_register'] = $info['captcha_register'];
+        $data['captcha_login']    = $info['captcha_login'];
 
         return $data;
     }
@@ -126,24 +136,13 @@ class SettingService
     /**
      * 验证码设置修改
      * 
-     * @param array $param 验证码信息
+     * @param array $param 验证码设置信息
      *
      * @return array
      */
     public static function captchaEdit($param)
     {
-        $setting_id = self::$setting_id;
-
-        $param['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        SettingCache::del($setting_id);
+        $param = self::edit($param);
 
         return $param;
     }
@@ -155,10 +154,10 @@ class SettingService
      */
     public static function logInfo()
     {
-        $setting = self::info();
+        $info = self::info();
 
-        $data['log_switch']    = $setting['log_switch'];
-        $data['log_save_time'] = $setting['log_save_time'];
+        $data['log_switch']    = $info['log_switch'];
+        $data['log_save_time'] = $info['log_save_time'];
 
         return $data;
     }
@@ -166,24 +165,13 @@ class SettingService
     /**
      * 日志设置修改
      * 
-     * @param array $param 日志记录信息
+     * @param array $param 日志设置信息
      *
      * @return array
      */
     public static function logEdit($param)
     {
-        $setting_id = self::$setting_id;
-
-        $param['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        SettingCache::del($setting_id);
+        $param = self::edit($param);
 
         return $param;
     }
@@ -195,10 +183,10 @@ class SettingService
      */
     public static function apiInfo()
     {
-        $setting = self::info();
+        $info = self::info();
 
-        $data['api_rate_num']  = $setting['api_rate_num'];
-        $data['api_rate_time'] = $setting['api_rate_time'];
+        $data['api_rate_num']  = $info['api_rate_num'];
+        $data['api_rate_time'] = $info['api_rate_time'];
 
         return $data;
     }
@@ -206,24 +194,13 @@ class SettingService
     /**
      * 接口设置修改
      *
-     * @param array $param API信息
+     * @param array $param 接口设置信息
      *
      * @return array
      */
     public static function apiEdit($param)
     {
-        $setting_id = self::$setting_id;
-
-        $param['update_time'] = datetime();
-
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $setting_id)
-            ->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        SettingCache::del($setting_id);
+        $param = self::edit($param);
 
         return $param;
     }

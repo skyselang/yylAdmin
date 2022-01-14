@@ -21,7 +21,16 @@ class SettingModel extends Model
     protected $pk = 'setting_id';
 
     /**
-     * @Apidoc\WithoutField("setting_id")
+     * @Apidoc\Field("setting_id")
+     */
+    public function id()
+    {
+    }
+
+    /**
+     * @Apidoc\WithoutField("setting_id,logo_id,off_acc_id")
+     * @Apidoc\AddField("logo_url", type="string", default="", desc="logo链接")
+     * @Apidoc\AddField("off_acc_url", type="string", default="", desc="公众号链接")
      */
     public function infoReturn()
     {

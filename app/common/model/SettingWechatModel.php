@@ -36,7 +36,7 @@ class SettingWechatModel extends Model
 
     /**
      * @Apidoc\Field("qrcode_url")
-     * @Apidoc\AddField("qrcode_url",type="string",default=" ",desc="二维码链接")
+     * @Apidoc\AddField("qrcode_url", type="string", default="", desc="二维码链接")
      */
     public function qrcode_url()
     {

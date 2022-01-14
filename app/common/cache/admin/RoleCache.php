@@ -17,7 +17,7 @@ class RoleCache
     /**
      * 缓存key
      *
-     * @param integer $admin_role_id 角色id
+     * @param int $admin_role_id 角色id
      * 
      * @return string
      */
@@ -29,11 +29,11 @@ class RoleCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_role_id 角色id
-     * @param array   $admin_role    角色信息
-     * @param integer $ttl           有效时间（秒）0永久
+     * @param int   $admin_role_id 角色id
+     * @param array $admin_role    角色信息
+     * @param int   $ttl           有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($admin_role_id, $admin_role, $ttl = 86400)
     {
@@ -43,7 +43,7 @@ class RoleCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_role_id 角色id
+     * @param int $admin_role_id 角色id
      * 
      * @return array 角色信息
      */
@@ -55,9 +55,9 @@ class RoleCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_role_id 角色id
+     * @param int $admin_role_id 角色id
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($admin_role_id)
     {

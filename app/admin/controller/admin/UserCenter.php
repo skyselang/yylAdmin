@@ -88,8 +88,8 @@ class UserCenter
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\listParam")
-     * @Apidoc\Param("log_type", require=false, default=" ")
-     * @Apidoc\Param("response_code", require=false, default=" ")
+     * @Apidoc\Param("log_type", require=false, default="")
+     * @Apidoc\Param("response_code", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn"),
      * @Apidoc\Returned("list", type="array", desc="日志列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
@@ -97,6 +97,7 @@ class UserCenter
      */
     public function log()
     {
+        $admin_user_id = admin_user_id();
         $page          = Request::param('page/d', 1);
         $limit         = Request::param('limit/d', 10);
         $sort_field    = Request::param('sort_field/s', '');
@@ -106,7 +107,6 @@ class UserCenter
         $search_field  = Request::param('search_field/s', '');
         $search_value  = Request::param('search_value/s', '');
         $log_type      = Request::param('log_type/d', '');
-        $admin_user_id = admin_user_id();
 
         validate(UserCenterValidate::class)->scene('log')->check(['admin_user_id' => $admin_user_id]);
 
@@ -115,18 +115,16 @@ class UserCenter
             $where[] = ['log_type', '=', $log_type];
         }
         if ($search_field && $search_value) {
-            if ($search_field == 'admin_user_log_id') {
+            if (in_array($search_field, ['admin_user_log_id'])) {
                 $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
                 $menu_exp = strpos($search_value, ',') ? 'in' : '=';
                 $menu_where[] = [$search_field, $menu_exp, $search_value];
                 $MenuModel = new MenuModel();
-                $admin_menu_ids = $MenuModel
-                    ->field($MenuModel->getPk())
-                    ->where($menu_where)
-                    ->column($MenuModel->getPk());
-                $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
+                $MenuPk = $MenuModel->getPk();
+                $admin_menu_ids = $MenuModel->where($menu_where)->column($MenuPk);
+                $where[] = [$MenuPk, 'in', $admin_menu_ids];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }

@@ -10,7 +10,6 @@
 // 个人中心
 namespace app\common\service\admin;
 
-use think\facade\Db;
 use app\common\cache\admin\UserCache;
 use app\common\model\admin\UserModel;
 
@@ -19,7 +18,7 @@ class UserCenterService
     /**
      * 我的信息
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return array
      */
@@ -41,23 +40,22 @@ class UserCenterService
      */
     public static function edit($param)
     {
-        $admin_user_id = $param['admin_user_id'];
+        $model = new UserModel();
+        $pk = $model->getPk();
 
-        unset($param['admin_user_id']);
+        $admin_user_id = $param[$pk];
+        unset($param[$pk]);
 
         $param['update_time'] = datetime();
 
-        $AdminUser = new UserModel();
-        $res = $AdminUser
-            ->where('admin_user_id', $admin_user_id)
-            ->update($param);
+        $res = $model->where($pk, $admin_user_id)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $param['admin_user_id'] = $admin_user_id;
-
         UserCache::upd($admin_user_id);
+
+        $param[$pk] = $admin_user_id;
 
         return $param;
     }
@@ -71,7 +69,10 @@ class UserCenterService
      */
     public static function pwd($param)
     {
-        $admin_user_id = $param['admin_user_id'];
+        $model = new UserModel();
+        $pk = $model->getPk();
+
+        $admin_user_id = $param[$pk];
         $password_old  = $param['password_old'];
         $password_new  = $param['password_new'];
 
@@ -83,18 +84,14 @@ class UserCenterService
         $update['password']    = md5($password_new);
         $update['update_time'] = datetime();
 
-        $AdminUser = new UserModel();
-        $res = $AdminUser
-            ->where('admin_user_id', $admin_user_id)
-            ->update($update);
+        $res = $model->where($pk, $admin_user_id)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update['admin_user_id'] = $admin_user_id;
-        $update['password']      = $res;
-
         UserCache::upd($admin_user_id);
+
+        $update[$pk] = $admin_user_id;
 
         return $update;
     }
@@ -102,11 +99,11 @@ class UserCenterService
     /**
      * 我的日志
      *
-     * @param array   $where 条件
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param array   $order 排序
-     * @param string  $field 字段
+     * @param array  $where 条件
+     * @param int    $page  页数
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array 
      */

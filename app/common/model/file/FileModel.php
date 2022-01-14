@@ -56,7 +56,7 @@ class FileModel extends Model
     }
 
     /**
-     * @Apidoc\Field("file_id,group_id,file_name,sort")
+     * @Apidoc\Field("file_id,file_name,group_id,file_type,sort,domain")
      */
     public function editParam()
     {
@@ -71,7 +71,7 @@ class FileModel extends Model
 
     /**
      * @Apidoc\Field("file_url")
-     * @Apidoc\AddField("file_url", type="string", require=false, default=" ", desc="文件链接")
+     * @Apidoc\AddField("file_url", type="string", require=false, default="", desc="文件链接")
      */
     public function file_url()
     {

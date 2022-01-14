@@ -128,7 +128,7 @@ class Menu
     }
 
     /**
-     * @Apidoc\Title("菜单设置父级")
+     * @Apidoc\Title("菜单修改父级")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_pid")

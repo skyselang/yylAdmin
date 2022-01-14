@@ -11,8 +11,8 @@
 namespace app\common\validate\file;
 
 use think\Validate;
-use app\common\service\file\FileService;
-use app\common\service\file\GroupService;
+use app\common\model\file\GroupModel;
+use app\common\model\file\FileModel;
 
 class GroupValidate extends Validate
 {
@@ -48,13 +48,16 @@ class GroupValidate extends Validate
     // 自定义验证规则：分组名称是否已存在
     protected function checkGroupName($value, $rule, $data = [])
     {
-        if (isset($data['group_id'])) {
-            $where[] = ['group_id', '<>', $data['group_id']];
+        $GroupModel = new GroupModel();
+        $GroupPk = $GroupModel->getPk();
+
+        if (isset($data[$GroupPk])) {
+            $where[] = [$GroupPk, '<>', $data[$GroupPk]];
         }
         $where[] = ['group_name', '=', $data['group_name']];
         $where[] = ['is_delete', '=', 0];
-        $group = GroupService::list($where, 1, 1, [], 'group_id');
-        if ($group['list']) {
+        $group = $GroupModel->field($GroupPk)->where($where)->find();
+        if ($group) {
             return '分组名称已存在：' . $data['group_name'];
         }
 
@@ -64,9 +67,16 @@ class GroupValidate extends Validate
     // 自定义验证规则：分组是否有文件
     protected function checkGroupFile($value, $rule, $data = [])
     {
-        $where[] = ['group_id', 'in', $data['ids']];
-        $file = FileService::list($where, 1, 1, [], 'file_id');
-        if ($file['list']) {
+        $GroupModel = new GroupModel();
+        $GroupPk = $GroupModel->getPk();
+
+        $FileModel = new FileModel();
+        $FilePk = $FileModel->getPk();
+
+        $where[] = [$GroupPk, 'in', $data['ids']];
+        $where[] = ['is_delete', '=', 0];
+        $file = $FileModel->field($FilePk)->where($where)->find();
+        if ($file) {
             return '分组下有文件，无法删除';
         }
 

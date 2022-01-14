@@ -29,11 +29,11 @@ class ApiCache
     /**
      * 缓存设置
      *
-     * @param mixed   $api_id 接口id
-     * @param array   $api    接口信息
-     * @param integer $ttl    有效时间（秒）0永久
+     * @param mixed $api_id 接口id
+     * @param array $api    接口信息
+     * @param int   $ttl    有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($api_id = '', $api = [], $ttl = 86400)
     {
@@ -57,7 +57,7 @@ class ApiCache
      *
      * @param mixed $api_id 接口id、key
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($api_id = '')
     {

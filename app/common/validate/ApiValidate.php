@@ -11,7 +11,7 @@
 namespace app\common\validate;
 
 use think\Validate;
-use app\common\service\ApiService;
+use app\common\model\ApiModel;
 
 class ApiValidate extends Validate
 {
@@ -35,8 +35,8 @@ class ApiValidate extends Validate
         'edit'    => ['api_id', 'api_name'],
         'dele'    => ['ids'],
         'pid'     => ['ids'],
-        'disable' => ['ids'],
         'unlogin' => ['ids'],
+        'disable' => ['ids'],
     ];
 
     // 验证场景定义：删除
@@ -68,28 +68,31 @@ class ApiValidate extends Validate
     // 自定义验证规则：接口是否已存在
     protected function checkApiExist($value, $rule, $data = [])
     {
-        $api_id = isset($data['api_id']) ? $data['api_id'] : '';
+        $ApiModel = new ApiModel();
+        $ApiPk = $ApiModel->getPk();
+
+        $api_id = isset($data[$ApiPk]) ? $data[$ApiPk] : '';
         if ($api_id) {
-            if ($data['api_pid'] == $data['api_id']) {
+            if ($data['api_pid'] == $data[$ApiPk]) {
                 return '接口父级不能等于接口自己';
             }
         }
 
-        $where_name[] = ['api_id', '<>', $api_id];
-        $where_name[] = ['api_pid', '=', $data['api_pid']];
-        $where_name[] = ['api_name', '=', $data['api_name']];
-        $where_name[] = ['is_delete', '=', 0];
-        $api_name = ApiService::list($where_name, 1, 1, [], 'api_id');
-        if ($api_name['list']) {
+        $name_where[] = [$ApiPk, '<>', $api_id];
+        $name_where[] = ['api_pid', '=', $data['api_pid']];
+        $name_where[] = ['api_name', '=', $data['api_name']];
+        $name_where[] = ['is_delete', '=', 0];
+        $api_name = $ApiModel->field($ApiPk)->where($name_where)->find();
+        if ($api_name) {
             return '接口名称已存在：' . $data['api_name'];
         }
 
         if ($data['api_url']) {
-            $where_url[] = ['api_id', '<>', $api_id];
-            $where_url[] = ['api_url', '=', $data['api_url']];
-            $where_url[] = ['is_delete', '=', 0];
-            $api_url = ApiService::list($where_url, 1, 1, [], 'api_id');
-            if ($api_url['list']) {
+            $url_where[] = [$ApiPk, '<>', $api_id];
+            $url_where[] = ['api_url', '=', $data['api_url']];
+            $url_where[] = ['is_delete', '=', 0];
+            $api_url = $ApiModel->field($ApiPk)->where($url_where)->find();
+            if ($api_url) {
                 return '接口链接已存在：' . $data['api_url'];
             }
         }
@@ -100,11 +103,14 @@ class ApiValidate extends Validate
     // 自定义验证规则：接口是否存在下级接口
     protected function checkApiPid($value, $rule, $data = [])
     {
+        $ApiModel = new ApiModel();
+        $ApiPk = $ApiModel->getPk();
+
         $where[] = ['api_pid', 'in', $data['ids']];
         $where[] = ['is_delete', '=', 0];
-        $api = ApiService::list($where, 1, 1, [], 'api_id');
-        if ($api['list']) {
-            return '存在下级接口，无法删除';
+        $api = $ApiModel->field($ApiPk)->where($where)->find();
+        if ($api) {
+            return '接口存在下级接口，无法删除';
         }
 
         return true;

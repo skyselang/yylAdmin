@@ -29,11 +29,11 @@ class CategoryCache
     /**
      * 缓存写入
      *
-     * @param mixed   $category_id 内容分类id、all
-     * @param array   $category    内容分类信息
-     * @param integer $ttl         有效时间（秒）0永久
+     * @param mixed $category_id 内容分类id、all
+     * @param array $category    内容分类信息
+     * @param int   $ttl         有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($category_id, $category, $ttl = 86400)
     {
@@ -57,7 +57,7 @@ class CategoryCache
      *
      * @param mixed $category_id 内容分类id、all
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($category_id)
     {

@@ -10,17 +10,17 @@
 // 微信设置
 namespace app\common\service;
 
-use think\facade\Db;
-use app\common\cache\SettingWechatCache;
-use app\common\service\file\FileService;
 use app\common\utils\StringUtils;
+use app\common\cache\SettingWechatCache;
+use app\common\model\SettingWechatModel;
+use app\common\service\file\FileService;
 
 class SettingWechatService
 {
     // 表名
-    protected static $t_name = 'setting_wechat';
+    protected static $t_name = 'info';
     // 表主键
-    protected static $t_pk = 'setting_wechat_id';
+    protected static $t_pk = 'id';
     // 公众号id
     private static $offi_id = 1;
     // 小程序id
@@ -33,34 +33,31 @@ class SettingWechatService
      */
     public static function offiInfo()
     {
-        $setting_wechat_id = self::$offi_id;
+        $id = self::$offi_id;
+        $info = SettingWechatCache::get($id);
+        if (empty($info)) {
+            $model = new SettingWechatModel();
+            $pk = $model->getPk();
 
-        $setting_wechat = SettingWechatCache::get($setting_wechat_id);
-        if (empty($setting_wechat)) {
-            $setting_wechat = Db::name(self::$t_name)
-                ->where(self::$t_pk, $setting_wechat_id)
-                ->find();
-            if (empty($setting_wechat)) {
-                $setting_wechat[self::$t_pk]         = $setting_wechat_id;
-                $setting_wechat['token']             = StringUtils::random(32);
-                $setting_wechat['encoding_aes_key']  = StringUtils::random(43);
-                $setting_wechat['create_time']       = datetime();
+            $info = $model->where($pk, $id)->find();
+            if (empty($info)) {
+                $info[$pk]                = $id;
+                $info['token']            = StringUtils::random(32);
+                $info['encoding_aes_key'] = StringUtils::random(43);
+                $info['create_time']      = datetime();
+                $model->insert($info);
 
-                Db::name(self::$t_name)
-                    ->insert($setting_wechat);
-
-                $setting_wechat = Db::name(self::$t_name)
-                    ->where(self::$t_pk, $setting_wechat_id)
-                    ->find();
+                $info = $model->where($pk, $id)->find();
             }
+            $info = $info->toArray();
 
-            $setting_wechat['server_url'] = server_url() . '/index/Wechat/access';
-            $setting_wechat['qrcode_url'] = FileService::fileUrl($setting_wechat['qrcode_id']);
+            $info['server_url'] = server_url() . '/index/Wechat/access';
+            $info['qrcode_url'] = FileService::fileUrl($info['qrcode_id']);
 
-            SettingWechatCache::set($setting_wechat_id, $setting_wechat);
+            SettingWechatCache::set($id, $info);
         }
 
-        return $setting_wechat;
+        return $info;
     }
 
     /**
@@ -72,18 +69,18 @@ class SettingWechatService
      */
     public static function offiEdit($param)
     {
-        $setting_wechat_id = self::$offi_id;
+        $model = new SettingWechatModel();
+        $pk = $model->getPk();
 
+        $id = self::$offi_id;
         $param['update_time'] = datetime();
 
-        $setting_wechat = Db::name(self::$t_name)
-            ->where(self::$t_pk, $setting_wechat_id)
-            ->update($param);
-        if (empty($setting_wechat)) {
+        $res = $model->where($pk, $id)->update($param);
+        if (empty($res)) {
             exception();
         }
 
-        SettingWechatCache::del($setting_wechat_id);
+        SettingWechatCache::del($id);
 
         return $param;
     }
@@ -95,31 +92,28 @@ class SettingWechatService
      */
     public static function miniInfo()
     {
-        $setting_wechat_id = self::$mini_id;
+        $id = self::$mini_id;
+        $info = SettingWechatCache::get($id);
+        if (empty($info)) {
+            $model = new SettingWechatModel();
+            $pk = $model->getPk();
 
-        $setting_wechat = SettingWechatCache::get($setting_wechat_id);
-        if (empty($setting_wechat)) {
-            $setting_wechat = Db::name(self::$t_name)
-                ->where(self::$t_pk, $setting_wechat_id)
-                ->find();
-            if (empty($setting_wechat)) {
-                $setting_wechat[self::$t_pk] = $setting_wechat_id;
-                $setting_wechat['create_time']       = datetime();
+            $info = $model->where($pk, $id)->find();
+            if (empty($info)) {
+                $info[$pk]           = $id;
+                $info['create_time'] = datetime();
+                $model->insert($info);
 
-                Db::name(self::$t_name)
-                    ->insert($setting_wechat);
-
-                $setting_wechat = Db::name(self::$t_name)
-                    ->where(self::$t_pk, $setting_wechat_id)
-                    ->find();
+                $info = $model->where($pk, $id)->find();
             }
+            $info = $info->toArray();
 
-            $setting_wechat['qrcode_url'] = FileService::fileUrl($setting_wechat['qrcode_id']);
+            $info['qrcode_url'] = FileService::fileUrl($info['qrcode_id']);
 
-            SettingWechatCache::set($setting_wechat_id, $setting_wechat);
+            SettingWechatCache::set($id, $info);
         }
 
-        return $setting_wechat;
+        return $info;
     }
 
     /**
@@ -131,18 +125,18 @@ class SettingWechatService
      */
     public static function miniEdit($param)
     {
-        $setting_wechat_id = self::$mini_id;
+        $model = new SettingWechatModel();
+        $pk = $model->getPk();
 
+        $id = self::$mini_id;
         $param['update_time'] = datetime();
 
-        $setting_wechat = Db::name(self::$t_name)
-            ->where(self::$t_pk, $setting_wechat_id)
-            ->update($param);
-        if (empty($setting_wechat)) {
+        $res = $model->where($pk, $id)->update($param);
+        if (empty($res)) {
             exception();
         }
 
-        SettingWechatCache::del($setting_wechat_id);
+        SettingWechatCache::del($id);
 
         return $param;
     }

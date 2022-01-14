@@ -17,7 +17,7 @@ class GroupCache
     /**
      * 缓存key
      *
-     * @param integer $group_id 文件分组id
+     * @param int $group_id 文件分组id
      * 
      * @return string
      */
@@ -29,11 +29,11 @@ class GroupCache
     /**
      * 缓存设置
      *
-     * @param integer $group_id   文件分组id
-     * @param array   $file_group 文件分组信息
-     * @param integer $ttl        有效时间（秒）0永久
+     * @param int   $group_id   文件分组id
+     * @param array $file_group 文件分组信息
+     * @param int   $ttl        有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($group_id, $file_group, $ttl = 86400)
     {
@@ -43,7 +43,7 @@ class GroupCache
     /**
      * 缓存获取
      *
-     * @param integer $group_id 文件分组id
+     * @param int $group_id 文件分组id
      * 
      * @return array 文件分组信息
      */
@@ -55,9 +55,9 @@ class GroupCache
     /**
      * 缓存删除
      *
-     * @param integer $group_id 文件分组id
+     * @param int $group_id 文件分组id
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($group_id)
     {

@@ -29,11 +29,11 @@ class FileCache
     /**
      * 缓存设置
      *
-     * @param mixed   $file_id 文件id、文件统计key
-     * @param array   $file    文件信息
-     * @param integer $ttl     有效时间（秒）0永久
+     * @param mixed $file_id 文件id、文件统计key
+     * @param array $file    文件信息
+     * @param int   $ttl     有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($file_id, $file, $ttl = 86400)
     {
@@ -57,7 +57,7 @@ class FileCache
      *
      * @param mixed $file_id 文件id、文件统计key
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($file_id)
     {

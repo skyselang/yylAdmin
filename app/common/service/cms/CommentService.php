@@ -10,51 +10,40 @@
 // 留言管理
 namespace app\common\service\cms;
 
-use think\facade\Db;
 use app\common\cache\cms\CommentCache;
+use app\common\model\cms\CommentModel;
 
 class CommentService
 {
-    // 表名
-    protected static $t_name = 'cms_comment';
-    // 表主键
-    protected static $t_pk = 'comment_id';
-
     /**
      * 留言列表
      *
-     * @param array   $where 条件
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param array   $order 排序
-     * @param string  $field 字段
+     * @param array  $where 条件
+     * @param int    $page  页数
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array 
      */
     public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
     {
+        $model = new CommentModel();
+        $pk = $model->getPk();
+
         if (empty($field)) {
-            $field = self::$t_pk . ',call,mobile,tel,title,remark,is_unread,create_time,update_time,delete_time';
+            $field = $pk . ',call,mobile,tel,title,remark,is_unread,create_time,update_time,delete_time';
         }
 
         if (empty($order)) {
-            $order = [self::$t_pk => 'desc'];
+            $order = [$pk => 'desc'];
         }
 
-        $count = Db::name(self::$t_name)
-            ->where($where)
-            ->count(self::$t_pk);
+        $count = $model->where($where)->count($pk);
 
         $pages = ceil($count / $limit);
 
-        $list = Db::name(self::$t_name)
-            ->field($field)
-            ->where($where)
-            ->page($page)
-            ->limit($limit)
-            ->order($order)
-            ->select()
-            ->toArray();
+        $list  = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -62,28 +51,31 @@ class CommentService
     /**
      * 留言信息
      * 
-     * @param $comment_id 留言id
+     * @param $id 留言id
      * 
      * @return array|Exception
      */
-    public static function info($comment_id)
+    public static function info($id)
     {
-        $comment = CommentCache::get($comment_id);
-        if (empty($comment)) {
-            $comment = Db::name(self::$t_name)
-                ->where(self::$t_pk, $comment_id)
-                ->find();
-            if (empty($comment)) {
-                exception('留言不存在：' . $comment_id);
+        $info = CommentCache::get($id);
+        if (empty($info)) {
+            $model = new CommentModel();
+            $pk = $model->getPk();
+
+            $info = $model->where($pk, $id)->find();
+            if (empty($info)) {
+                exception('留言不存在：' . $id);
             }
-            if ($comment['is_unread']) {
+            $info = $info->toArray();
+
+            if ($info['is_unread']) {
                 $update['is_unread'] = 0;
-                $update['read_time'] = $comment['read_time'] = datetime();
-                Db::name(self::$t_name)->where(self::$t_pk, $comment_id)->update($update);
+                $update['read_time'] = $info['read_time'] = datetime();
+                $model->where($pk, $id)->update($update);
             }
         }
 
-        return $comment;
+        return $info;
     }
 
     /**
@@ -95,14 +87,17 @@ class CommentService
      */
     public static function add($param)
     {
+        $model = new CommentModel();
+        $pk = $model->getPk();
+
         $param['create_time'] = datetime();
-        $comment_id = Db::name(self::$t_name)
-            ->insertGetId($param);
-        if (empty($comment_id)) {
+
+        $id = $model->insertGetId($param);
+        if (empty($id)) {
             exception();
         }
 
-        $param[self::$t_pk] = $comment_id;
+        $param[$pk] = $id;
 
         return $param;
     }
@@ -116,21 +111,22 @@ class CommentService
      */
     public static function edit($param)
     {
-        $comment_id = $param[self::$t_pk];
+        $model = new CommentModel();
+        $pk = $model->getPk();
 
-        unset($param[self::$t_pk]);
+        $id = $param[$pk];
+        unset($param[$pk]);
 
         $param['update_time'] = datetime();
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $comment_id)
-            ->update($param);
+
+        $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        CommentCache::del($comment_id);
+        CommentCache::del($id);
 
-        $param[self::$t_pk] = $comment_id;
+        $param[$pk] = $id;
 
         return $param;
     }
@@ -138,18 +134,19 @@ class CommentService
     /**
      * 留言删除
      * 
-     * @param array $ids 留言列表id
+     * @param array $ids 留言id
      * 
      * @return array|Exception
      */
     public static function dele($ids)
     {
+        $model = new CommentModel();
+        $pk = $model->getPk();
+
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
@@ -166,19 +163,19 @@ class CommentService
     /**
      * 留言已读
      *
-     * @param array $ids 留言列表id
+     * @param array $ids 留言id
      * 
      * @return array
      */
     public static function isread($ids)
     {
+        $model = new CommentModel();
+        $pk = $model->getPk();
+
         $update['is_unread'] = 0;
         $update['read_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->where('is_unread', '=', 1)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->where('is_unread', 1)->update($update);
         if (empty($res)) {
             exception();
         }
@@ -195,18 +192,19 @@ class CommentService
     /**
      * 留言回收站恢复
      * 
-     * @param array $ids 留言列表id
+     * @param array $ids 留言id
      * 
      * @return array|Exception
      */
     public static function recoverReco($ids)
     {
+        $model = new CommentModel();
+        $pk = $model->getPk();
+
         $update['is_delete']   = 0;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
@@ -223,15 +221,16 @@ class CommentService
     /**
      * 留言回收站删除
      * 
-     * @param array $ids 留言列表id
+     * @param array $ids 留言id
      * 
      * @return array|Exception
      */
     public static function recoverDele($ids)
     {
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->delete();
+        $model = new CommentModel();
+        $pk = $model->getPk();
+
+        $res = $model->where($pk, 'in', $ids)->delete();
         if (empty($res)) {
             exception();
         }
@@ -243,50 +242,5 @@ class CommentService
         $update['ids'] = $ids;
 
         return $update;
-    }
-
-    /**
-     * 表字段
-     * 
-     * @return array
-     */
-    public static function tableField()
-    {
-        $key   = 'field';
-        $field = CommentCache::get($key);
-        if (empty($field)) {
-            $sql = Db::name(self::$t_name)
-                ->field('show COLUMNS')
-                ->fetchSql(true)
-                ->select();
-
-            $sql   = str_replace('SELECT', '', $sql);
-            $field = Db::query($sql);
-            $field = array_column($field, 'Field');
-
-            CommentCache::set($key, $field);
-        }
-
-        return $field;
-    }
-
-    /**
-     * 表字段是否存在
-     * 
-     * @param string $field 要检查的字段
-     * 
-     * @return bool
-     */
-    public static function tableFieldExist($field)
-    {
-        $fields = self::tableField();
-
-        foreach ($fields as $v) {
-            if ($v == $field) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

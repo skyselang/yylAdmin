@@ -110,7 +110,7 @@ class Api
     }
 
     /**
-     * @Apidoc\Title("接口设置父级")
+     * @Apidoc\Title("接口修改父级")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\ApiModel\api_pid")
@@ -123,24 +123,6 @@ class Api
         validate(ApiValidate::class)->scene('pid')->check($param);
 
         $data = ApiService::pid($param['ids'], $param['api_pid']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("接口是否禁用")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\ApiModel\is_disable")
-     */
-    public function disable()
-    {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_disable'] = Request::param('is_disable/d', 0);
-
-        validate(ApiValidate::class)->scene('disable')->check($param);
-
-        $data = ApiService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
@@ -159,6 +141,24 @@ class Api
         validate(ApiValidate::class)->scene('unlogin')->check($param);
 
         $data = ApiService::unlogin($param['ids'], $param['is_unlogin']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("接口是否禁用")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\ApiModel\is_disable")
+     */
+    public function disable()
+    {
+        $param['ids']        = Request::param('ids/a', '');
+        $param['is_disable'] = Request::param('is_disable/d', 0);
+
+        validate(ApiValidate::class)->scene('disable')->check($param);
+
+        $data = ApiService::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }

@@ -29,9 +29,9 @@ class RegionCache
     /**
      * 缓存设置
      *
-     * @param mixed   $region_id 地区id
-     * @param array   $region    地区信息
-     * @param integer $ttl       有效时间（秒）0永久
+     * @param mixed $region_id 地区id
+     * @param array $region    地区信息
+     * @param int   $ttl       有效时间（秒）0永久
      * 
      * @return array 地区信息
      */
@@ -57,7 +57,7 @@ class RegionCache
      *
      * @param mixed $region_id 地区id
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($region_id)
     {

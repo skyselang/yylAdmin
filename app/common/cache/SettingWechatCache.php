@@ -17,7 +17,7 @@ class SettingWechatCache
     /**
      * 缓存key
      *
-     * @param integer $setting_wechat_id 微信设置id
+     * @param int $setting_wechat_id 微信设置id
      * 
      * @return string
      */
@@ -29,9 +29,9 @@ class SettingWechatCache
     /**
      * 缓存设置
      *
-     * @param integer $setting_wechat_id 微信设置id
-     * @param array   $setting_wechat    微信设置信息
-     * @param integer $ttl               有效时间（秒）0永久
+     * @param int   $setting_wechat_id 微信设置id
+     * @param array $setting_wechat    微信设置信息
+     * @param int   $ttl               有效时间（秒）0永久
      * 
      * @return bool
      */
@@ -43,7 +43,7 @@ class SettingWechatCache
     /**
      * 缓存获取
      *
-     * @param integer $setting_wechat_id 微信设置id
+     * @param int $setting_wechat_id 微信设置id
      * 
      * @return array 微信设置信息
      */
@@ -55,7 +55,7 @@ class SettingWechatCache
     /**
      * 缓存删除
      *
-     * @param integer $setting_wechat_id 微信设置id
+     * @param int $setting_wechat_id 微信设置id
      * 
      * @return bool
      */

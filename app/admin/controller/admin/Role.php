@@ -62,7 +62,7 @@ class Role
 
         $where = [];
         if ($search_field && $search_value) {
-            if ($search_field == 'admin_role_id') {
+            if (in_array($search_field, ['admin_role_id'])) {
                 $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_disable'])) {
@@ -117,10 +117,10 @@ class Role
      */
     public function add()
     {
+        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
         $param['role_name']      = Request::param('role_name/s', '');
         $param['role_desc']      = Request::param('role_desc/s', '');
         $param['role_sort']      = Request::param('role_sort/d', 250);
-        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
 
         validate(RoleValidate::class)->scene('add')->check($param);
 
@@ -137,10 +137,10 @@ class Role
     public function edit()
     {
         $param['admin_role_id']  = Request::param('admin_role_id/d', '');
+        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
         $param['role_name']      = Request::param('role_name/s', '');
         $param['role_desc']      = Request::param('role_desc/s', '');
         $param['role_sort']      = Request::param('role_sort/d', 250);
-        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
 
         validate(RoleValidate::class)->scene('edit')->check($param);
 

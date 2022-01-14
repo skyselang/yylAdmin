@@ -7,21 +7,21 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 消息管理模型
+// 公告管理模型
 namespace app\common\model\admin;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
-class MessageModel extends Model
+class NoticeModel extends Model
 {
     // 表名
-    protected $name = 'admin_message';
+    protected $name = 'admin_notice';
     // 表主键
-    protected $pk = 'admin_message_id';
+    protected $pk = 'admin_notice_id';
 
     /**
-     * @Apidoc\Field("admin_message_id")
+     * @Apidoc\Field("admin_notice_id")
      */
     public function id()
     {
@@ -42,7 +42,7 @@ class MessageModel extends Model
     }
 
     /**
-     * @Apidoc\WithoutField("admin_message_id,admin_user_id,is_delete,create_time,update_time,delete_time")
+     * @Apidoc\WithoutField("admin_notice_id,admin_user_id,is_delete,create_time,update_time,delete_time")
      */
     public function addParam()
     {
@@ -59,6 +59,20 @@ class MessageModel extends Model
      * @Apidoc\Field("is_open")
      */
     public function is_open()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("open_time_start")
+     */
+    public function open_time_start()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("open_time_end")
+     */
+    public function open_time_end()
     {
     }
 }

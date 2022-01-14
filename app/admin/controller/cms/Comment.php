@@ -44,10 +44,8 @@ class Comment
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        validate(CommentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
-
         if ($search_field && $search_value) {
-            if ($search_field == 'comment_id') {
+            if (in_array($search_field, ['comment_id'])) {
                 $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_unread'])) {
@@ -202,11 +200,8 @@ class Comment
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        validate(CommentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
-
-        $where[] = ['is_delete', '=', 1];
         if ($search_field && $search_value) {
-            if ($search_field == 'comment_id') {
+            if (in_array($search_field, ['comment_id'])) {
                 $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_unread'])) {
@@ -220,6 +215,7 @@ class Comment
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 1];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];

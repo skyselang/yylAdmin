@@ -48,7 +48,7 @@ class User
 
         $where = [];
         if ($search_field && $search_value) {
-            if ($search_field == 'admin_user_id') {
+            if (in_array($search_field, ['admin_user_id'])) {
                 $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_super', 'is_disable'])) {
@@ -165,7 +165,7 @@ class User
      */
     public function rule()
     {
-        $param['admin_user_id']  = Request::param('admin_user_id/d', '');
+        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
 
         validate(UserValidate::class)->scene('rule')->check($param);
 

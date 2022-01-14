@@ -1,21 +1,38 @@
-/* yyladmin database init sql */
-UPDATE yyl_admin_menu SET create_time=null, update_time=null, delete_time=null;
-UPDATE yyl_admin_role SET create_time=null, update_time=null, delete_time=null;
-TRUNCATE yyl_admin_setting;
-UPDATE yyl_admin_user SET create_time=null, update_time=null, delete_time=null, avatar_id=0, login_num=0,login_ip='', login_region='', login_time=null, logout_time=null;
-TRUNCATE yyl_admin_user_log;
-UPDATE yyl_api SET create_time=null, update_time=null, delete_time=null;
+/* 数据库初始化SQL语句，请按需谨慎执行，会清除数据！！！
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
+*/
+
+TRUNCATE yyl_member;
+TRUNCATE yyl_member_log;
+TRUNCATE yyl_member_wechat;
+
 TRUNCATE yyl_cms_category;
 TRUNCATE yyl_cms_comment;
 TRUNCATE yyl_cms_content;
 TRUNCATE yyl_cms_setting;
+
 TRUNCATE yyl_file;
 TRUNCATE yyl_file_group;
 TRUNCATE yyl_file_setting;
-TRUNCATE yyl_member;
-TRUNCATE yyl_member_log;
-TRUNCATE yyl_member_wechat;
-UPDATE yyl_region SET create_time=null, update_time=null, delete_time=null;
+
 TRUNCATE yyl_setting;
 TRUNCATE yyl_setting_wechat;
-TRUNCATE yyl_admin_message;
+DELETE FROM yyl_api WHERE is_delete=1;
+UPDATE yyl_api SET create_time=null, update_time=null, delete_time=null;
+UPDATE yyl_region SET create_time=null, update_time=null, delete_time=null;
+
+DELETE FROM yyl_admin_menu WHERE is_delete=1;
+UPDATE yyl_admin_menu SET create_time=null, update_time=null, delete_time=null;
+UPDATE yyl_admin_role SET create_time=null, update_time=null, delete_time=null;
+DELETE FROM yyl_admin_user WHERE is_delete=1;
+UPDATE yyl_admin_user SET create_time=null, update_time=null, delete_time=null,avatar_id=0,login_num=0,login_ip='',login_region='',login_time=null,logout_time=null;
+TRUNCATE yyl_admin_user_log;
+
+TRUNCATE yyl_admin_setting;
+TRUNCATE yyl_admin_notice;

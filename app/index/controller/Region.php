@@ -26,7 +26,7 @@ class Region
      * @Apidoc\Title("地区列表")
      * @Apidoc\Param("region_id", type="int", require=false, default="0", desc="地区id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="数据列表", 
+     * @Apidoc\Returned("list", type="array", desc="地区列表", 
      *     @Apidoc\Returned(ref="app\common\model\RegionModel\listReturn")
      * )
      */

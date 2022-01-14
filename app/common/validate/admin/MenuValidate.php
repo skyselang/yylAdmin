@@ -11,9 +11,9 @@
 namespace app\common\validate\admin;
 
 use think\Validate;
-use app\common\service\admin\MenuService;
-use app\common\service\admin\RoleService;
-use app\common\service\admin\UserService;
+use app\common\model\admin\MenuModel;
+use app\common\model\admin\RoleModel;
+use app\common\model\admin\UserModel;
 
 class MenuValidate extends Validate
 {
@@ -37,9 +37,9 @@ class MenuValidate extends Validate
         'edit'       => ['admin_menu_id', 'menu_name'],
         'dele'       => ['ids'],
         'pid'        => ['ids'],
-        'disable'    => ['ids', 'is_disable'],
-        'unauth'     => ['ids', 'is_unauth'],
-        'unlogin'    => ['ids', 'is_unlogin'],
+        'unauth'     => ['ids'],
+        'unlogin'    => ['ids'],
+        'disable'    => ['ids'],
         'role'       => ['admin_menu_id'],
         'roleRemove' => ['admin_menu_id'],
         'user'       => ['admin_menu_id'],
@@ -63,58 +63,73 @@ class MenuValidate extends Validate
     // 自定义验证规则：菜单名称是否已存在
     protected function checkAdminMenuName($value, $rule, $data = [])
     {
-        $admin_menu_id = isset($data['admin_menu_id']) ? $data['admin_menu_id'] : '';
+        $MenuModel = new MenuModel();
+        $MenuPk = $MenuModel->getPk();
+
+        $admin_menu_id = isset($data[$MenuPk]) ? $data[$MenuPk] : '';
         if ($admin_menu_id) {
-            if ($data['menu_pid'] == $data['admin_menu_id']) {
+            if ($data['menu_pid'] == $data[$MenuPk]) {
                 return '菜单父级不能等于菜单本身';
             }
         }
 
-        $menu = MenuService::list();
-        $menu_name_msg = '菜单名称已存在：' . $data['menu_name'];
-        $menu_url_msg  = '菜单链接已存在：' . $data['menu_url'];
-        foreach ($menu as $v) {
+        if ($admin_menu_id) {
+            $name_where[] = [$MenuPk, '<>', $admin_menu_id];
+        }
+        $name_where[] = ['menu_pid', '=', $data['menu_pid']];
+        $name_where[] = ['menu_name', '=', $data['menu_name']];
+        $name_where[] = ['is_delete', '=', 0];
+        $menu_name = $MenuModel->field($MenuPk)->where($name_where)->find();
+        if ($menu_name) {
+            return '菜单名称已存在：' . $data['menu_name'];
+        }
+
+        if ($data['menu_url']) {
             if ($admin_menu_id) {
-                if ($v['menu_pid'] == $data['menu_pid'] && $v['menu_name'] == $data['menu_name'] && $v['admin_menu_id'] != $admin_menu_id) {
-                    return $menu_name_msg;
-                }
-                if ($v['menu_url'] == $data['menu_url'] && $v['menu_url'] != '' && $v['admin_menu_id'] != $admin_menu_id) {
-                    return $menu_url_msg;
-                }
-            } else {
-                if ($v['menu_pid'] == $data['menu_pid'] && $v['menu_name'] == $data['menu_name']) {
-                    return $menu_name_msg;
-                }
-                if ($v['menu_url'] == $data['menu_url'] && $v['menu_url'] != '') {
-                    return $menu_url_msg;
-                }
+                $url_where[] = [$MenuPk, '<>', $admin_menu_id];
+            }
+            $url_where[] = ['menu_url', '=', $data['menu_url']];
+            $url_where[] = ['is_delete', '=', 0];
+            $menu_url = $MenuModel->field($MenuPk)->where($url_where)->find();
+            if ($menu_url) {
+                return '菜单链接已存在：' . $data['menu_url'];
             }
         }
 
         return true;
     }
 
-    // 自定义验证规则：菜单是否有子菜单或分配有角色或分配有用户
+    // 自定义验证规则：菜单是否有下级菜单或分配有角色或分配有用户
     protected function checkAdminMenuRole($value, $rule, $data = [])
     {
-        $ids = $data['ids'];
-        $menu = MenuService::list();
-        foreach ($ids as $v) {
-            foreach ($menu as $vm) {
-                if ($vm['menu_pid'] == $v) {
-                    return '请删除所有子菜单后再删除';
-                }
+        $MenuModel = new MenuModel();
+        $MenuPk = $MenuModel->getPk();
+
+        $RoleModel = new RoleModel();
+        $RolePk = $RoleModel->getPk();
+
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        foreach ($data['ids'] as $v) {
+            $menu_where[] = ['menu_pid', '=', $v];
+            $menu_where[] = ['is_delete', '=', 0];
+            $menu = $MenuModel->field($MenuPk)->where($menu_where)->find();
+            if ($menu) {
+                return '请删除所有下级菜单后再删除';
             }
 
-            $where_role[] = ['admin_menu_ids', 'like', '%' . str_join($v) . '%'];
-            $admin_role = RoleService::list($where_role, 1, 1, [], 'admin_role_id');
-            if ($admin_role['list']) {
+            $role_where[] = ['admin_menu_ids', 'like', '%' . str_join($v) . '%'];
+            $role_where[] = ['is_delete', '=', 0];
+            $role = $RoleModel->field($RolePk)->where($role_where)->find();
+            if ($role) {
                 return '请在[角色]中解除所有角色后再删除';
             }
 
-            $where_user[] = ['admin_menu_ids', 'like', '%' . str_join($v) . '%'];
-            $admin_user = UserService::list($where_user, 1, 1, [], 'admin_user_id');
-            if ($admin_user['list']) {
+            $user_where[] = ['admin_menu_ids', 'like', '%' . str_join($v) . '%'];
+            $user_where[] = ['is_delete', '=', 0];
+            $user = $UserModel->field($UserPk)->where($user_where)->find();
+            if ($user) {
                 return '请在[用户]中解除所有用户后再删除';
             }
         }

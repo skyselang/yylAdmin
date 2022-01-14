@@ -13,7 +13,6 @@ namespace app\admin\controller\file;
 use think\facade\Request;
 use app\common\validate\file\SettingValidate;
 use app\common\service\file\SettingService;
-use app\common\service\file\FileService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -30,7 +29,7 @@ class Setting
     public function info()
     {
         $data['setting'] = SettingService::info();
-        $data['storage'] = FileService::storage();
+        $data['storage'] = SettingService::storage();
 
         return success($data);
     }

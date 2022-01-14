@@ -60,13 +60,11 @@ class Content
         $date_value   = Request::param('date_value/a', '');
         $category_id  = Request::param('category_id/d', '');
 
-        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
-
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
         }
         if ($search_field && $search_value) {
-            if ($search_field == 'content_id') {
+            if (in_array($search_field, ['content_id'])) {
                 $exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $exp, $search_value];
             } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
@@ -80,11 +78,11 @@ class Content
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {
@@ -196,7 +194,7 @@ class Content
     }
 
     /**
-     * @Apidoc\Title("内容设置分类")
+     * @Apidoc\Title("内容修改分类")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
@@ -308,8 +306,6 @@ class Content
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
         $category_id  = Request::param('category_id/d', '');
-
-        validate(ContentValidate::class)->scene('sort')->check(['sort_field' => $sort_field, 'sort_value' => $sort_value]);
 
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];

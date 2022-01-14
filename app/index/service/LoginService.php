@@ -41,7 +41,7 @@ class LoginService
     /**
      * 退出
      *
-     * @param integer $member_id 会员id
+     * @param int $member_id 会员id
      * 
      * @return array
      */

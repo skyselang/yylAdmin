@@ -120,7 +120,7 @@ class Category
     }
 
     /**
-     * @Apidoc\Title("内容分类设置父级")
+     * @Apidoc\Title("内容分类修改父级")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\cms\CategoryModel\category_pid")

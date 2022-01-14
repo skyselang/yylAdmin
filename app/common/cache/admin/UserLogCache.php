@@ -29,11 +29,11 @@ class UserLogCache
     /**
      * 缓存设置
      *
-     * @param mixed   $admin_user_log_id 日志id、统计时间
-     * @param array   $admin_user_log    日志信息
-     * @param integer $ttl               有效时间（秒）0永久
+     * @param mixed $admin_user_log_id 日志id、统计时间
+     * @param array $admin_user_log    日志信息
+     * @param int   $ttl               有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($admin_user_log_id, $admin_user_log, $ttl = 18000)
     {
@@ -57,7 +57,7 @@ class UserLogCache
      *
      * @param mixed $admin_user_log_id 日志id、统计时间
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($admin_user_log_id)
     {

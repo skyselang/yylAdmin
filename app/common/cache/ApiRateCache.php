@@ -17,8 +17,8 @@ class ApiRateCache
     /**
      * 缓存key
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
      * @return string
      */
@@ -30,11 +30,11 @@ class ApiRateCache
     /**
      * 缓存设置
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
-     * @param integer $ttl       有效时间（秒）0永久
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
+     * @param int    $ttl       有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($member_id, $api_url, $ttl = 60)
     {
@@ -44,8 +44,8 @@ class ApiRateCache
     /**
      * 缓存获取
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
      * @return string
      */
@@ -57,10 +57,10 @@ class ApiRateCache
     /**
      * 缓存删除
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($member_id, $api_url)
     {
@@ -70,10 +70,10 @@ class ApiRateCache
     /**
      * 缓存自增
      *
-     * @param integer $member_id 会员id
-     * @param string  $api_url   接口url
+     * @param int    $member_id 会员id
+     * @param string $api_url   接口url
      * 
-     * @return boolean
+     * @return bool
      */
     public static function inc($member_id, $api_url)
     {

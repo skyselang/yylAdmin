@@ -10,21 +10,16 @@
 // 菜单管理
 namespace app\common\service\admin;
 
-use think\facade\Db;
 use think\facade\Config;
 use app\common\cache\admin\MenuCache;
 use app\common\cache\admin\RoleCache;
 use app\common\cache\admin\UserCache;
+use app\common\model\admin\MenuModel;
 use app\common\model\admin\RoleModel;
 use app\common\model\admin\UserModel;
 
 class MenuService
 {
-    // 表名
-    protected static $t_name = 'admin_menu';
-    // 表主键
-    protected static $t_pk = 'admin_menu_id';
-
     /**
      * 菜单列表
      *
@@ -35,18 +30,16 @@ class MenuService
         $key  = 'list';
         $list = MenuCache::get($key);
         if (empty($list)) {
-            $field = self::$t_pk . ',menu_pid,menu_name,menu_url,is_unauth,is_unlogin';
+            $model = new MenuModel();
+            $pk = $model->getPk();
+
+            $field = $pk . ',menu_pid,menu_name,menu_url,is_unauth,is_unlogin';
 
             $where[] = ['is_delete', '=', 0];
 
-            $order = ['menu_sort' => 'desc', self::$t_pk => 'asc'];
+            $order = ['menu_sort' => 'desc', $pk => 'asc'];
 
-            $list = Db::name(self::$t_name)
-                ->field($field)
-                ->where($where)
-                ->order($order)
-                ->select()
-                ->toArray();
+            $list = $model->field($field)->where($where)->order($order)->select()->toArray();
 
             MenuCache::set($key, $list);
         }
@@ -64,18 +57,16 @@ class MenuService
         $key  = 'tree';
         $tree = MenuCache::get($key);
         if (empty($tree)) {
-            $field = self::$t_pk . ',menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,is_unlogin';
+            $model = new MenuModel();
+            $pk = $model->getPk();
+
+            $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,is_unlogin';
 
             $where[] = ['is_delete', '=', 0];
 
-            $order = ['menu_sort' => 'desc', self::$t_pk => 'asc'];
+            $order = ['menu_sort' => 'desc', $pk => 'asc'];
 
-            $list = Db::name(self::$t_name)
-                ->field($field)
-                ->where($where)
-                ->order($order)
-                ->select()
-                ->toArray();
+            $list = $model->field($field)->where($where)->order($order)->select()->toArray();
 
             $tree = self::toTree($list, 0);
 
@@ -88,36 +79,38 @@ class MenuService
     /**
      * 菜单信息
      *
-     * @param integer $admin_menu_id 菜单id
+     * @param int $id 菜单id
      * 
      * @return array
      */
-    public static function info($admin_menu_id = '')
+    public static function info($id = '')
     {
-        if (empty($admin_menu_id)) {
-            $admin_menu_id = menu_url();
+        if (empty($id)) {
+            $id = menu_url();
         }
 
-        $admin_menu = MenuCache::get($admin_menu_id);
-        if (empty($admin_menu)) {
-            if (is_numeric($admin_menu_id)) {
-                $where[] = [self::$t_pk, '=',  $admin_menu_id];
+        $info = MenuCache::get($id);
+        if (empty($info)) {
+            $model = new MenuModel();
+            $pk = $model->getPk();
+
+            if (is_numeric($id)) {
+                $where[] = [$pk, '=',  $id];
             } else {
-                $where[] = ['menu_url', '=',  $admin_menu_id];
+                $where[] = ['menu_url', '=',  $id];
                 $where[] = ['is_delete', '=', 0];
             }
 
-            $admin_menu = Db::name(self::$t_name)
-                ->where($where)
-                ->find();
-            if (empty($admin_menu)) {
-                exception('菜单不存在：' . $admin_menu_id);
+            $info = $model->where($where)->find();
+            if (empty($info)) {
+                exception('菜单不存在：' . $id);
             }
+            $info = $info->toArray();
 
-            MenuCache::set($admin_menu_id, $admin_menu);
+            MenuCache::set($id, $info);
         }
 
-        return $admin_menu;
+        return $info;
     }
 
     /**
@@ -141,6 +134,9 @@ class MenuService
             }
         }
 
+        $model = new MenuModel();
+        $pk = $model->getPk();
+
         if ($add) {
             if (empty($param['menu_url'])) {
                 exception('请输入菜单链接：应用/控制器，不含操作');
@@ -148,11 +144,9 @@ class MenuService
 
             $errmsg = '';
             // 启动事务
-            Db::startTrans();
+            $model->startTrans();
             try {
-                $admin_menu_id = Db::name(self::$t_name)
-                    ->strict(false)
-                    ->insertGetId($param);
+                $id = $model->strict(false)->insertGetId($param);
 
                 $add_data = [];
                 foreach ($add_arr as $k => $v) {
@@ -161,14 +155,12 @@ class MenuService
                     if ($param[$add_key]) {
                         $menu_url = '';
                         $menu_url = $param['menu_url'] . '/' . $k;
-                        $exist = Db::name(self::$t_name)
-                            ->field(self::$t_pk)
-                            ->where('menu_url', '=', $menu_url)
-                            ->where('is_delete', '=', 0)
-                            ->find();
+                        $exist_where[] = ['menu_url', '=', $menu_url];
+                        $exist_where[] = ['is_delete', '=', 0];
+                        $exist = $model->field($pk)->where($exist_where)->find();
                         if (empty($exist)) {
                             $add_temp = [];
-                            $add_temp['menu_pid']    = $admin_menu_id;
+                            $add_temp['menu_pid']    = $id;
                             $add_temp['menu_name']   = $param['menu_name'] . $v;
                             $add_temp['menu_url']    = $menu_url;
                             $add_temp['create_time'] = datetime();
@@ -177,33 +169,32 @@ class MenuService
                     }
                 }
                 if ($add_data) {
-                    Db::name(self::$t_name)
-                        ->insertAll($add_data);
+                    $model->insertAll($add_data);
                 }
                 $param['add_data'] = $add_data;
 
                 // 提交事务
-                Db::commit();
+                $model->commit();
             } catch (\Exception $e) {
                 $errmsg = '添加失败：' . $e->getMessage() . ':' . $e->getLine();
                 // 回滚事务
-                Db::rollback();
+                $model->rollback();
             }
             if ($errmsg) {
                 exception($errmsg);
             }
         } else {
-            $admin_menu_id = Db::name(self::$t_name)
+            $id = $model
                 ->strict(false)
                 ->insertGetId($param);
-            if (empty($admin_menu_id)) {
+            if (empty($id)) {
                 exception();
             }
         }
 
-        $param[self::$t_pk] = $admin_menu_id;
-
         MenuCache::del();
+
+        $param[$pk] = $id;
 
         return $param;
     }
@@ -217,10 +208,12 @@ class MenuService
      */
     public static function edit($param)
     {
-        $admin_menu_id = $param[self::$t_pk];
-        $admin_menu    = self::info($admin_menu_id);
+        $model = new MenuModel();
+        $pk = $model->getPk();
 
-        unset($param[self::$t_pk]);
+        $id = $param[$pk];
+        unset($param[$pk]);
+        $info = self::info($id);
 
         $param['update_time'] = datetime();
 
@@ -250,40 +243,34 @@ class MenuService
 
             $errmsg = '';
             // 启动事务
-            Db::startTrans();
+            $model->startTrans();
             try {
-                Db::name(self::$t_name)
-                    ->strict(false)
-                    ->where(self::$t_pk, '=', $admin_menu_id)
-                    ->update($param);
+                $model->strict(false)->where($pk, $id)->update($param);
 
                 $edit_data = [];
                 foreach ($edit_arr as $k => $v) {
                     $edit_key = '';
                     $edit_key = 'edit_' . $k;
                     if ($param[$edit_key]) {
-                        $menu_url = '';
-                        $menu_url = $param['menu_url'] . '/' . $k;
-                        $admin_menu_edit = Db::name(self::$t_name)
-                            ->field(self::$t_pk)
-                            ->where('menu_pid', '=', $admin_menu_id)
-                            ->where('menu_url', '=', $menu_url)
-                            ->where('is_delete', '=', 0)
-                            ->find();
-                        if ($admin_menu_edit) {
+                        $menu_url =  '';
+                        $menu_where = [];
+                        $menu_where[] = ['menu_pid', '=', $id];
+                        $menu_where[] = ['menu_url', 'like', '%/' . $k];
+                        $menu_where[] = ['is_delete', '=', 0];
+                        $menu_edit = $model->field($pk)->where($menu_where)->find();
+                        if ($menu_edit) {
+                            $menu_edit->toArray();
                             $edit_temp = [];
                             $edit_temp['menu_name']   = $param['menu_name'] . $v;
                             $edit_temp['menu_url']    = $param['menu_url'] . '/' . $k;
                             $edit_temp['update_time'] = datetime();
                             $edit_data[] = $edit_temp;
-                            Db::name(self::$t_name)
-                                ->where(self::$t_pk, $admin_menu_edit[self::$t_pk])
-                                ->update($edit_temp);
+                            $model->where($pk, $menu_edit[$pk])->update($edit_temp);
                         }
                     }
                 }
                 $param['edit_data'] = $edit_data;
-
+                
                 $add_data = [];
                 foreach ($add_arr as $k => $v) {
                     $add_key = '';
@@ -291,15 +278,14 @@ class MenuService
                     if ($param[$add_key]) {
                         $menu_url = '';
                         $menu_url = $param['menu_url'] . '/' . $k;
-                        $exist = Db::name(self::$t_name)
-                            ->field(self::$t_pk)
-                            ->where('menu_pid', '=', $admin_menu_id)
-                            ->where('menu_url', '=', $menu_url)
-                            ->where('is_delete', '=', 0)
-                            ->find();
+                        $exist_where = [];
+                        $exist_where[] = ['menu_pid', '=', $id];
+                        $exist_where[] = ['menu_url', '=', $menu_url];
+                        $exist_where[] = ['is_delete', '=', 0];
+                        $exist = $model->field($pk)->where($exist_where)->find();
                         if (empty($exist)) {
                             $add_temp = [];
-                            $add_temp['menu_pid']    = $admin_menu_id;
+                            $add_temp['menu_pid']    = $id;
                             $add_temp['menu_name']   = $param['menu_name'] . $v;
                             $add_temp['menu_url']    = $menu_url;
                             $add_temp['create_time'] = datetime();
@@ -308,34 +294,30 @@ class MenuService
                     }
                 }
                 if ($add_data) {
-                    Db::name(self::$t_name)
-                        ->insertAll($add_data);
+                    $model->insertAll($add_data);
                 }
                 $param['add_data'] = $add_data;
 
                 // 提交事务
-                Db::commit();
+                $model->commit();
             } catch (\Exception $e) {
                 $errmsg = '修改失败：' . $e->getMessage() . ':' . $e->getLine();
                 // 回滚事务
-                Db::rollback();
+                $model->rollback();
             }
             if ($errmsg) {
                 exception($errmsg);
             }
         } else {
-            $res = Db::name(self::$t_name)
-                ->strict(false)
-                ->where(self::$t_pk, '=', $admin_menu_id)
-                ->update($param);
+            $res = $model->strict(false)->where($pk, $id)->update($param);
             if (empty($res)) {
                 exception();
             }
         }
 
-        $param[self::$t_pk] = $admin_menu_id;
+        MenuCache::del([$id, $info['menu_url']]);
 
-        MenuCache::del([$admin_menu_id, $admin_menu['menu_url']]);
+        $param[$pk] = $id;
 
         return $param;
     }
@@ -343,7 +325,7 @@ class MenuService
     /**
      * 菜单删除
      *
-     * @param array $admin_menu_id 菜单id
+     * @param array $ids 菜单id
      * 
      * @return array
      */
@@ -356,16 +338,17 @@ class MenuService
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $model = new MenuModel();
+        $pk = $model->getPk();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $admin_menu = self::info($v);
-            MenuCache::del([$v, $admin_menu['menu_url']]);
+            $info = self::info($v);
+            MenuCache::del([$v, $info['menu_url']]);
         }
 
         $update['ids'] = $ids;
@@ -376,8 +359,8 @@ class MenuService
     /**
      * 菜单设置父级
      *
-     * @param array   $ids      菜单id
-     * @param integer $menu_pid 菜单父级
+     * @param array $ids      菜单id
+     * @param int   $menu_pid 菜单pid
      * 
      * @return array
      */
@@ -386,16 +369,17 @@ class MenuService
         $update['menu_pid']    = $menu_pid;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $model = new MenuModel();
+        $pk = $model->getPk();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $admin_menu = self::info($v);
-            MenuCache::del([$v, $admin_menu['menu_url']]);
+            $info = self::info($v);
+            MenuCache::del([$v, $info['menu_url']]);
         }
 
         $update['ids'] = $ids;
@@ -406,26 +390,27 @@ class MenuService
     /**
      * 菜单是否无需登录
      *
-     * @param array   $ids        菜单id
-     * @param integer $is_unlogin 是否无需登录
+     * @param array $ids        菜单id
+     * @param int   $is_unlogin 是否无需登录
      * 
      * @return array
      */
     public static function unlogin($ids, $is_unlogin)
     {
+        $model = new MenuModel();
+        $pk = $model->getPk();
+
         $update['is_unlogin']  = $is_unlogin;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $admin_menu = self::info($v);
-            MenuCache::del([$v, $admin_menu['menu_url']]);
+            $info = self::info($v);
+            MenuCache::del([$v, $info['menu_url']]);
         }
 
         $update['ids'] = $ids;
@@ -436,26 +421,27 @@ class MenuService
     /**
      * 菜单是否无需权限
      *
-     * @param array   $ids       菜单id
-     * @param integer $is_unauth 是否无需权限
+     * @param array $ids       菜单id
+     * @param int   $is_unauth 是否无需权限
      * 
      * @return array
      */
     public static function unauth($ids, $is_unauth)
     {
+        $model = new MenuModel();
+        $pk = $model->getPk();
+
         $update['is_unauth']   = $is_unauth;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $admin_menu = self::info($v);
-            MenuCache::del([$v, $admin_menu['menu_url']]);
+            $info = self::info($v);
+            MenuCache::del([$v, $info['menu_url']]);
         }
 
         $update['ids'] = $ids;
@@ -466,26 +452,27 @@ class MenuService
     /**
      * 菜单是否禁用
      *
-     * @param array   $ids        菜单id
-     * @param integer $is_disable 是否禁用
+     * @param array $ids        菜单id
+     * @param int   $is_disable 是否禁用
      * 
      * @return array
      */
     public static function disable($ids, $is_disable)
     {
+        $model = new MenuModel();
+        $pk = $model->getPk();
+
         $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         foreach ($ids as $v) {
-            $admin_menu = self::info($v);
-            MenuCache::del([$v, $admin_menu['menu_url']]);
+            $info = self::info($v);
+            MenuCache::del([$v, $info['menu_url']]);
         }
 
         $update['ids'] = $ids;
@@ -496,11 +483,11 @@ class MenuService
     /**
      * 菜单角色
      *
-     * @param array   $where 条件
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param array   $order 排序
-     * @param string  $field 字段
+     * @param array  $where 条件
+     * @param int    $page  页数
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array 
      */
@@ -518,11 +505,15 @@ class MenuService
      */
     public static function roleRemove($param)
     {
-        $admin_menu_id = $param[self::$t_pk];
-        $admin_role_id = $param['admin_role_id'];
+        $model = new MenuModel();
+        $pk = $model->getPk();
+        $admin_menu_id = $param[$pk];
+
+        $RoleModel = new RoleModel();
+        $RolePk = $RoleModel->getPk();
+        $admin_role_id = $param[$RolePk];
 
         $admin_role = RoleService::info($admin_role_id);
-
         $admin_menu_ids = $admin_role['admin_menu_ids'];
         foreach ($admin_menu_ids as $k => $v) {
             if ($admin_menu_id == $v) {
@@ -538,18 +529,15 @@ class MenuService
         $update['update_time']    = datetime();
         $update['admin_menu_ids'] = $admin_menu_ids;
 
-        $AdminRole = new RoleModel();
-        $res = $AdminRole
-            ->where('admin_role_id', $admin_role_id)
-            ->update($update);
+        $res = $RoleModel->where($RolePk, $admin_role_id)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_menu_id;
-        $update['admin_role_id'] = $admin_role_id;
-
         RoleCache::del($admin_role_id);
+
+        $update[$pk]     = $admin_menu_id;
+        $update[$RolePk] = $admin_role_id;
 
         return $update;
     }
@@ -557,11 +545,11 @@ class MenuService
     /**
      * 菜单用户
      *
-     * @param array   $where 条件
-     * @param integer $page  页数
-     * @param integer $limit 数量
-     * @param array   $order 排序
-     * @param string  $field 字段
+     * @param array  $where 条件
+     * @param int    $page  页数
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
      *
      * @return array 
      */
@@ -579,11 +567,15 @@ class MenuService
      */
     public static function userRemove($param)
     {
-        $admin_menu_id = $param[self::$t_pk];
-        $admin_user_id = $param['admin_user_id'];
+        $model = new MenuModel();
+        $pk = $model->getPk();
+        $admin_menu_id = $param[$pk];
+
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+        $admin_user_id = $param[$UserPk];
 
         $admin_user = UserService::info($admin_user_id);
-
         $admin_menu_ids = $admin_user['admin_menu_ids'];
         foreach ($admin_menu_ids as $k => $v) {
             if ($admin_menu_id == $v) {
@@ -599,18 +591,15 @@ class MenuService
         $update['update_time']    = datetime();
         $update['admin_menu_ids'] = $admin_menu_ids;
 
-        $AdminUser = new UserModel();
-        $res = $AdminUser
-            ->where('admin_user_id', $admin_user_id)
-            ->update($update);
+        $res = $UserModel->where($UserPk, $admin_user_id)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $admin_menu_id;
-        $update['admin_user_id'] = $admin_user_id;
-
         UserCache::upd($admin_user_id);
+
+        $update[$pk]     = $admin_menu_id;
+        $update[$UserPk] = $admin_user_id;
 
         return $update;
     }
@@ -618,19 +607,21 @@ class MenuService
     /**
      * 菜单所有子级获取
      *
-     * @param array   $admin_menu    所有菜单
-     * @param integer $admin_menu_id 菜单id
+     * @param array $admin_menu    所有菜单
+     * @param int   $admin_menu_id 菜单id
      * 
      * @return array
      */
     public static function getChildren($admin_menu, $admin_menu_id)
     {
-        $children = [];
+        $model = new MenuModel();
+        $pk = $model->getPk();
 
+        $children = [];
         foreach ($admin_menu as $v) {
             if ($v['menu_pid'] == $admin_menu_id) {
-                $children[] = $v[self::$t_pk];
-                $children   = array_merge($children, self::getChildren($admin_menu, $v[self::$t_pk]));
+                $children[] = $v[$pk];
+                $children   = array_merge($children, self::getChildren($admin_menu, $v[$pk]));
             }
         }
 
@@ -640,61 +631,25 @@ class MenuService
     /**
      * 菜单树形获取
      *
-     * @param array   $admin_menu 所有菜单
-     * @param integer $menu_pid   菜单父级id
+     * @param array $admin_menu 所有菜单
+     * @param int   $menu_pid   菜单pid
      * 
      * @return array
      */
     public static function toTree($admin_menu, $menu_pid)
     {
-        $tree = [];
+        $model = new MenuModel();
+        $pk = $model->getPk();
 
+        $tree = [];
         foreach ($admin_menu as $v) {
             if ($v['menu_pid'] == $menu_pid) {
-                $v['children'] = self::toTree($admin_menu, $v[self::$t_pk]);
+                $v['children'] = self::toTree($admin_menu, $v[$pk]);
                 $tree[] = $v;
             }
         }
 
         return $tree;
-    }
-
-    /**
-     * 菜单模糊查询
-     *
-     * @param string $keyword 关键词
-     * @param string $field   字段
-     *
-     * @return array
-     */
-    public static function likeQuery($keyword, $field = 'menu_url|menu_name')
-    {
-        $data = Db::name(self::$t_name)
-            ->where($field, 'like', '%' . $keyword . '%')
-            ->where('is_delete', '=', 0)
-            ->select()
-            ->toArray();
-
-        return $data;
-    }
-
-    /**
-     * 菜单精确查询
-     *
-     * @param string $keyword 关键词
-     * @param string $field   字段
-     *
-     * @return array
-     */
-    public static function equQuery($keyword, $field = 'menu_url|menu_name')
-    {
-        $data = Db::name(self::$t_name)
-            ->where($field, '=', $keyword)
-            ->where('is_delete', '=', 0)
-            ->select()
-            ->toArray();
-
-        return $data;
     }
 
     /**
@@ -707,11 +662,9 @@ class MenuService
         $urllist_key = 'urlList';
         $urllist     = MenuCache::get($urllist_key);
         if (empty($urllist)) {
-            $urllist = Db::name(self::$t_name)
-                ->field('menu_url')
-                ->where('is_delete', '=', 0)
-                ->column('menu_url');
+            $model = new MenuModel();
 
+            $urllist = $model->where('is_delete', 0)->column('menu_url');
             $urllist = array_filter($urllist);
 
             MenuCache::set($urllist_key, $urllist);
@@ -730,12 +683,9 @@ class MenuService
         $unloginlist_key = 'unloginList';
         $unloginlist     = MenuCache::get($unloginlist_key);
         if (empty($unloginlist)) {
-            $unloginlist = Db::name(self::$t_name)
-                ->field('menu_url')
-                ->where('is_unlogin', '=', 1)
-                ->where('is_delete', '=', 0)
-                ->column('menu_url');
+            $model = new MenuModel();
 
+            $unloginlist  = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('menu_url');
             $menu_unlogin = Config::get('admin.menu_is_unlogin');
             $unloginlist  = array_merge($unloginlist, $menu_unlogin);
             $unloginlist  = array_unique(array_filter($unloginlist));
@@ -756,12 +706,9 @@ class MenuService
         $unauthlist_key = 'unauthList';
         $unauthlist     = MenuCache::get($unauthlist_key);
         if (empty($unauthlist)) {
-            $unauthlist = Db::name(self::$t_name)
-                ->field('menu_url')
-                ->where('is_unauth', '=', 1)
-                ->where('is_delete', '=', 0)
-                ->column('menu_url');
+            $model = new MenuModel();
 
+            $unauthlist  = $model->where('is_unauth', 1)->where('is_delete', 0)->column('menu_url');
             $menu_unauth = Config::get('admin.menu_is_unauth');
             $unloginlist = self::unloginList();
             $unauthlist  = array_merge($unauthlist, $unloginlist, $menu_unauth);

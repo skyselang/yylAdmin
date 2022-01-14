@@ -43,7 +43,7 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录(账号)")
+     * @Apidoc\Title("登录（账号）")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\MemberModel\username")
      * @Apidoc\Param(ref="app\common\model\MemberModel\password")
@@ -76,7 +76,7 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录(公众号)")
+     * @Apidoc\Title("登录（公众号）")
      * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转地址，会携带 member_token 参数")
      */
     public function offi()
@@ -107,7 +107,7 @@ class Login
 
         $oauth->redirect()->send();
     }
-    // 登录(公众号)回调
+    // 登录（公众号）回调
     public function officallback()
     {
         $app  = WechatService::offi();
@@ -145,22 +145,27 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录(小程序)")
+     * @Apidoc\Title("登录（小程序）")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
      * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")
+     * @Apidoc\Param("iv", type="string", require=false, desc="加密算法的初始向量")
+     * @Apidoc\Param("encrypted_data", type="string", require=false, desc="包括敏感数据在内的完整用户信息的加密数据")
      * @Apidoc\Returned(ref="app\common\model\MemberModel\loginReturn")
      */
     public function mini()
     {
-        $code      = Request::param('code/s', '');
-        $user_info = Request::param('user_info/a', []);
+        $code           = Request::param('code/s', '');
+        $user_info      = Request::param('user_info/a', []);
+        $iv             = Request::param('iv/s', '');
+        $encrypted_data = Request::param('encrypted_data/s', '');
         if (empty($code)) {
             exception('code must');
         }
 
-        $app  = WechatService::mini();
+        $app = WechatService::mini();
         $user = $app->auth->session($code);
+
         if (empty($user) || !isset($user['openid'])) {
             exception('微信登录失败:' . $user['errmsg']);
         }
@@ -177,7 +182,12 @@ class Login
             'language' => '',
             'privilege' => ''
         ];
-        $user = array_merge($user, $user_info);
+
+        if ($iv && $encrypted_data) {
+            $decrypted_data = $app->encryptor->decryptData($user['session_key'], $iv, $encrypted_data);
+        }
+
+        $user = array_merge($user, $user_info, $decrypted_data);
         $user['nickname']   = isset($user['nickName']) ? $user['nickName'] : '';
         $user['sex']        = isset($user['gender']) ? $user['gender'] : 0;
         $user['headimgurl'] = isset($user['avatarUrl']) ? $user['avatarUrl'] : '';

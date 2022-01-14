@@ -25,7 +25,7 @@ class Content
 {
     /**
      * @Apidoc\Title("内容分类")
-     * @Apidoc\Returned("list", type="array", desc="分类列表", 
+     * @Apidoc\Returned("list", type="array", desc="分类树形", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )
      */
@@ -50,7 +50,7 @@ class Content
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\name")
      * @Apidoc\Param("name", require=false)
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
-     * @Apidoc\Param("category_id", require=false, default=" ")
+     * @Apidoc\Param("category_id", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),

@@ -27,7 +27,7 @@ class LoginService
     /**
      * 退出
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return array
      */

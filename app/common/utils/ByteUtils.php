@@ -15,7 +15,7 @@ class ByteUtils
     /**
      * 字节格式化
      *
-     * @param integer $num 字节数值
+     * @param int $num 字节数值
      *
      * @return string
      */
@@ -52,13 +52,12 @@ class ByteUtils
     /**
      * 字节转换
      *
-     * @param int    $value  字节数值
-     * @param string $type   字节类型
-     * @param string $target 目标字节类型
+     * @param int    $value 字节数值
+     * @param string $type  字节类型
      *
-     * @return int 目标字节数值
+     * @return array
      */
-    public static function shift($value, $type = 'b', $target = 'MB')
+    public static function shift($value, $type = 'b')
     {
         $hex_b = 8;
         $hex_B = 1024;

@@ -7,31 +7,31 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 消息管理控制器
+// 公告管理控制器
 namespace app\admin\controller\admin;
 
 use think\facade\Request;
-use app\common\validate\admin\MessageValidate;
-use app\common\service\admin\MessageService;
+use app\common\validate\admin\NoticeValidate;
+use app\common\service\admin\NoticeService;
 use app\common\model\admin\UserModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("消息管理")
+ * @Apidoc\Title("公告管理")
  * @Apidoc\Group("adminSystem")
  * @Apidoc\Sort("705")
  */
-class Message
+class Notice
 {
     /**
-     * @Apidoc\Title("消息列表")
+     * @Apidoc\Title("公告列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="消息列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\MessageModel\listReturn")
+     * @Apidoc\Returned("list", type="array", desc="公告列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\NoticeModel\listReturn")
      * )
      */
     public function list()
@@ -46,52 +46,57 @@ class Message
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value) {
-            if ($search_field == 'admin_message_id' || $search_field == 'admin_user_id') {
+            if (in_array($search_field, ['admin_notice_id', 'admin_user_id'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif ($search_field == 'username') {
+            } elseif (in_array($search_field, ['username'])) {
                 $user_exp = strpos($search_value, ',') ? 'in' : '=';
                 $user_where[] = [$search_field, $user_exp, $search_value];
                 $UserModel = new UserModel();
-                $admin_user_ids = $UserModel
-                    ->field($UserModel->getPk())
-                    ->where($user_where)
-                    ->column($UserModel->getPk());
-                $where[] = ['admin_user_id', 'in', $admin_user_ids];
+                $UserPk = $UserModel->getPk();
+                $admin_user_ids = $UserModel->where($user_where)->column($UserPk);
+                $where[] = [$UserPk, 'in', $admin_user_ids];
+            } elseif (in_array($search_field, ['is_open'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
         }
 
-        $data = MessageService::list($where, $page, $limit, $order);
+        $data = NoticeService::list($where, $page, $limit, $order);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("消息信息")
-     * @Apidoc\Param(ref="app\common\model\admin\MessageModel\id")
-     * @Apidoc\Returned(ref="app\common\model\admin\MessageModel\infoReturn")
+     * @Apidoc\Title("公告信息")
+     * @Apidoc\Param(ref="app\common\model\admin\NoticeModel\id")
+     * @Apidoc\Returned(ref="app\common\model\admin\NoticeModel\infoReturn")
      */
     public function info()
     {
-        $param['admin_message_id'] = Request::param('admin_message_id/d', '');
+        $param['admin_notice_id'] = Request::param('admin_notice_id/d', '');
 
-        validate(MessageValidate::class)->scene('info')->check($param);
+        validate(NoticeValidate::class)->scene('info')->check($param);
 
-        $data = MessageService::info($param['admin_message_id']);
+        $data = NoticeService::info($param['admin_notice_id']);
         if ($data['is_delete'] == 1) {
-            exception('消息已被删除：' . $param['admin_message_id']);
+            exception('公告已被删除：' . $param['admin_notice_id']);
         }
 
         unset($data['password'], $data['token']);
@@ -100,9 +105,9 @@ class Message
     }
 
     /**
-     * @Apidoc\Title("消息添加")
+     * @Apidoc\Title("公告添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MessageModel\addParam")
+     * @Apidoc\Param(ref="app\common\model\admin\NoticeModel\addParam")
      * @Apidoc\Param("title", mock="@ctitle(15, 32)")
      * @Apidoc\Param("open_time_start", mock="@now")
      * @Apidoc\Param("open_time_end", mock="@now")
@@ -122,40 +127,40 @@ class Message
         $param['intro']           = Request::param('intro/s', '');
         $param['content']         = Request::param('content/s', '');
 
-        validate(MessageValidate::class)->scene('add')->check($param);
+        validate(NoticeValidate::class)->scene('add')->check($param);
 
-        $data = MessageService::add($param);
+        $data = NoticeService::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("消息修改")
+     * @Apidoc\Title("公告修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\admin\MessageModel\editParam")
+     * @Apidoc\Param(ref="app\common\model\admin\NoticeModel\editParam")
      */
     public function edit()
     {
-        $param['admin_message_id'] = Request::param('admin_message_id/d', '');
-        $param['title']            = Request::param('title/s', '');
-        $param['color']            = Request::param('color/s', '#606266');
-        $param['type']             = Request::param('type/d', 1);
-        $param['sort']             = Request::param('sort/d', 250);
-        $param['is_open']          = Request::param('is_open/d', 1);
-        $param['open_time_start']  = Request::param('open_time_start/s', '');
-        $param['open_time_end']    = Request::param('open_time_end/s', '');
-        $param['intro']            = Request::param('intro/s', '');
-        $param['content']          = Request::param('content/s', '');
+        $param['admin_notice_id'] = Request::param('admin_notice_id/d', '');
+        $param['title']           = Request::param('title/s', '');
+        $param['color']           = Request::param('color/s', '#606266');
+        $param['type']            = Request::param('type/d', 1);
+        $param['sort']            = Request::param('sort/d', 250);
+        $param['is_open']         = Request::param('is_open/d', 1);
+        $param['open_time_start'] = Request::param('open_time_start/s', '');
+        $param['open_time_end']   = Request::param('open_time_end/s', '');
+        $param['intro']           = Request::param('intro/s', '');
+        $param['content']         = Request::param('content/s', '');
 
-        validate(MessageValidate::class)->scene('edit')->check($param);
+        validate(NoticeValidate::class)->scene('edit')->check($param);
 
-        $data = MessageService::edit($param);
+        $data = NoticeService::edit($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("消息删除")
+     * @Apidoc\Title("公告删除")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      */
@@ -163,27 +168,47 @@ class Message
     {
         $param['ids'] = Request::param('ids/a', '');
 
-        validate(MessageValidate::class)->scene('dele')->check($param);
+        validate(NoticeValidate::class)->scene('dele')->check($param);
 
-        $data = MessageService::dele($param['ids']);
+        $data = NoticeService::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("消息是否开启")
+     * @Apidoc\Title("公告是否开启")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\admin\MessageModel\is_open")
+     * @Apidoc\Param(ref="app\common\model\admin\NoticeModel\is_open")
      */
     public function isopen()
     {
         $param['ids']     = Request::param('ids/a', '');
         $param['is_open'] = Request::param('is_open/d', 0);
 
-        validate(MessageValidate::class)->scene('isopen')->check($param);
+        validate(NoticeValidate::class)->scene('isopen')->check($param);
 
-        $data = MessageService::is_open($param['ids'], $param['is_open']);
+        $data = NoticeService::is_open($param['ids'], $param['is_open']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("公告开启时间")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\NoticeModel\open_time_start")
+     * @Apidoc\Param(ref="app\common\model\admin\NoticeModel\open_time_end")
+     */
+    public function opentime()
+    {
+        $param['ids']             = Request::param('ids/a', '');
+        $param['open_time_start'] = Request::param('open_time_start/s', '');
+        $param['open_time_end']   = Request::param('open_time_end/s', '');
+
+        validate(NoticeValidate::class)->scene('opentime')->check($param);
+
+        $data = NoticeService::opentime($param['ids'], $param);
 
         return success($data);
     }

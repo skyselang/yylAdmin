@@ -29,9 +29,9 @@ class UserLogModel extends Model
 
     /**
      * @Apidoc\Field("log_type,response_code")
-     * @Apidoc\AddField("request_keyword", type="string", default=" ", desc="请求地区/IP/ISP")
-     * @Apidoc\AddField("menu_keyword", type="string", default=" ", desc="菜单链接/名称")
-     * @Apidoc\AddField("user_keyword", type="string", default=" ", desc="用户账号/昵称")
+     * @Apidoc\AddField("request_keyword", type="string", default="", desc="请求地区/IP/ISP")
+     * @Apidoc\AddField("menu_keyword", type="string", default="", desc="菜单链接/名称")
+     * @Apidoc\AddField("user_keyword", type="string", default="", desc="用户账号/昵称")
      */
     public function listParam()
     {

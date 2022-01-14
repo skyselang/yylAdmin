@@ -10,58 +10,46 @@
 // 用户日志
 namespace app\common\service\admin;
 
-use think\facade\Db;
 use think\facade\Request;
 use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\admin\UserLogCache;
-use app\common\model\admin\MenuModel;
+use app\common\model\admin\UserLogModel;
 use app\common\model\admin\UserModel;
 
 class UserLogService
 {
-    // 表名
-    protected static $t_name = 'admin_user_log';
-    // 表主键
-    protected static $t_pk = 'admin_user_log_id';
-
     /**
      * 用户日志列表
      *
-     * @param array   $where 条件
-     * @param integer $page  分页
-     * @param integer $limit 数量
-     * @param array   $order 排序
-     * @param string  $field 字段
+     * @param array  $where 条件
+     * @param int    $page  分页
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array 
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
+        $model = new UserLogModel();
+        $pk = $model->getPk();
+
         if (empty($field)) {
-            $field = self::$t_pk . ',admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
 
         if (empty($order)) {
-            $order = [self::$t_pk => 'desc'];
+            $order = [$pk => 'desc'];
         }
 
-        $count = Db::name(self::$t_name)
-            ->where($where)
-            ->count(self::$t_pk);
+        $count = $model->where($where)->count($pk);
 
         $pages = ceil($count / $limit);
 
-        $list = Db::name(self::$t_name)
-            ->field($field)
-            ->where($where)
-            ->page($page)
-            ->limit($limit)
-            ->order($order)
-            ->select()
-            ->toArray();
+        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         foreach ($list as $k => $v) {
             if (isset($v['admin_user_id'])) {
@@ -89,44 +77,47 @@ class UserLogService
     /**
      * 用户日志信息
      *
-     * @param integer $admin_user_log_id 用户日志id
+     * @param int $id 用户日志id
      * 
      * @return array
      */
-    public static function info($admin_user_log_id)
+    public static function info($id)
     {
-        $admin_user_log = UserLogCache::get($admin_user_log_id);
-        if (empty($admin_user_log)) {
-            $admin_user_log = Db::name(self::$t_name)
-                ->where(self::$t_pk, $admin_user_log_id)
-                ->find();
-            if (empty($admin_user_log)) {
-                exception('用户日志不存在：' . $admin_user_log_id);
+        $info = UserLogCache::get($id);
+        if (empty($info)) {
+            $model = new UserLogModel();
+            $pk = $model->getPk();
+
+            $info = $model->where($pk, $id)->find();
+            if (empty($info)) {
+                exception('用户日志不存在：' . $id);
             }
-            if ($admin_user_log['request_param']) {
-                $admin_user_log['request_param'] = unserialize($admin_user_log['request_param']);
+            $info = $info->toArray();
+
+            if ($info['request_param']) {
+                $info['request_param'] = unserialize($info['request_param']);
             }
 
-            $admin_user_log['username'] = '';
-            $admin_user_log['nickname'] = '';
-            $admin_user = UserService::info($admin_user_log['admin_user_id']);
+            $info['username'] = '';
+            $info['nickname'] = '';
+            $admin_user = UserService::info($info['admin_user_id']);
             if ($admin_user) {
-                $admin_user_log['username'] = $admin_user['username'];
-                $admin_user_log['nickname'] = $admin_user['nickname'];
+                $info['username'] = $admin_user['username'];
+                $info['nickname'] = $admin_user['nickname'];
             }
 
-            $admin_user_log['menu_name'] = '';
-            $admin_user_log['menu_url']  = '';
-            $admin_menu = MenuService::info($admin_user_log['admin_menu_id']);
+            $info['menu_name'] = '';
+            $info['menu_url']  = '';
+            $admin_menu = MenuService::info($info['admin_menu_id']);
             if ($admin_menu) {
-                $admin_user_log['menu_name'] = $admin_menu['menu_name'];
-                $admin_user_log['menu_url']  = $admin_menu['menu_url'];
+                $info['menu_name'] = $admin_menu['menu_name'];
+                $info['menu_url']  = $admin_menu['menu_url'];
             }
 
-            UserLogCache::set($admin_user_log_id, $admin_user_log);
+            UserLogCache::set($id, $info);
         }
 
-        return $admin_user_log;
+        return $info;
     }
 
     /**
@@ -166,7 +157,8 @@ class UserLogService
             $param['request_method']   = Request::method();
             $param['create_time']      = datetime();
 
-            Db::name(self::$t_name)->insert($param);
+            $model = new UserLogModel();
+            $model->insert($param);
         }
     }
 
@@ -179,23 +171,23 @@ class UserLogService
      */
     public static function edit($param = [])
     {
-        $admin_user_log_id = $param[self::$t_pk];
+        $model = new UserLogModel();
+        $pk = $model->getPk();
 
-        unset($param[self::$t_pk]);
+        $id = $param[$pk];
+        unset($param[$pk]);
 
         $param['request_param'] = serialize($param['request_param']);
         $param['update_time']   = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, $admin_user_log_id)
-            ->update($param);
+        $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $param[self::$t_pk] = $admin_user_log_id;
+        UserLogCache::del($id);
 
-        UserLogCache::del($admin_user_log_id);
+        $param[$pk] = $id;
 
         return $param;
     }
@@ -209,21 +201,22 @@ class UserLogService
      */
     public static function dele($ids)
     {
+        $model = new UserLogModel();
+        $pk = $model->getPk();
+
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
-        $res = Db::name(self::$t_name)
-            ->where(self::$t_pk, 'in', $ids)
-            ->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $update[self::$t_pk] = $ids;
-
         foreach ($ids as $v) {
             UserLogCache::del($v);
         }
+
+        $update[$pk] = $ids;
 
         return $update;
     }
@@ -231,17 +224,18 @@ class UserLogService
     /**
      * 用户日志清除
      *
-     * @param array   $where 清除条件
-     * @param boolean $clean 清空所有
+     * @param array $where 清除条件
+     * @param bool  $clean 清空所有
      * 
      * @return array
      */
     public static function clear($where = [], $clean = false)
     {
+        $model = new UserLogModel();
         if ($clean) {
-            $count = Db::name(self::$t_name)->delete(true);
+            $count = $model->delete(true);
         } else {
-            $count = Db::name(self::$t_name)->where($where)->delete();
+            $count = $model->where($where)->delete();
         }
 
         $data['count'] = $count;
@@ -255,17 +249,20 @@ class UserLogService
      *
      * @param string $date 日期
      *
-     * @return integer
+     * @return int
      */
     public static function statNum($date = 'total')
     {
         $key  = 'num:' . $date;
         $data = UserLogCache::get($key);
         if (empty($data)) {
+            $model = new UserLogModel();
+            $pk = $model->getPk();
+
             $where[] = ['is_delete', '=', 0];
 
             if ($date == 'total') {
-                $where[] = [self::$t_pk, '>', 0];
+                $where[] = [$pk, '>', 0];
             } else {
                 if ($date == 'yesterday') {
                     $yesterday = DatetimeUtils::yesterday();
@@ -303,10 +300,7 @@ class UserLogService
                 $where[] = ['create_time', '<=', $end_time];
             }
 
-            $data = Db::name(self::$t_name)
-                ->field(self::$t_pk)
-                ->where($where)
-                ->count(self::$t_pk);
+            $data = $model->field($pk)->where($where)->count($pk);
 
             UserLogCache::set($key, $data);
         }
@@ -334,6 +328,8 @@ class UserLogService
         $key  = 'date:' . $sta_date . '-' . $end_date;
         $data = UserLogCache::get($key);
         if (empty($data)) {
+            $model = new UserLogModel();
+
             $sta_time = DatetimeUtils::dateStartTime($sta_date);
             $end_time = DatetimeUtils::dateEndTime($end_date);
 
@@ -342,11 +338,7 @@ class UserLogService
             $where[] = ['create_time', '<=', $end_time];
             $group   = "date_format(create_time,'%Y-%m-%d')";
 
-            $admin_user_log = Db::name(self::$t_name)
-                ->field($field)
-                ->where($where)
-                ->group($group)
-                ->select();
+            $admin_user_log = $model->field($field)->where($where)->group($group)->select()->toArray();
 
             $x = DatetimeUtils::betweenDates($sta_date, $end_date);
             $s = [];
@@ -373,9 +365,9 @@ class UserLogService
     /**
      * 用户日志字段统计
      *
-     * @param array   $date 日期范围
-     * @param string  $type 统计类型
-     * @param integer $top  top排行
+     * @param array  $date 日期范围
+     * @param string $type 统计类型
+     * @param int    $top  top排行
      *   
      * @return array
      */
@@ -414,6 +406,9 @@ class UserLogService
 
         $data = UserLogCache::get($key);
         if (empty($data)) {
+            $model = new UserLogModel();
+            $pk = $model->getPk();
+
             $sta_time = DatetimeUtils::dateStartTime($date[0]);
             $end_time = DatetimeUtils::dateEndTime($date[1]);
 
@@ -421,8 +416,8 @@ class UserLogService
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
 
-            $admin_user_log = Db::name(self::$t_name)
-                ->field($field . ', COUNT(' . self::$t_pk . ') as s')
+            $admin_user_log = $model
+                ->field($field . ', COUNT(' . $pk . ') as s')
                 ->where($where)
                 ->group($group)
                 ->order('s desc')
@@ -434,25 +429,27 @@ class UserLogService
 
             if ($type == 'user') {
                 $admin_user_ids = array_column($admin_user_log, 'x');
-                $AdminUser = new UserModel();
-                $admin_user = $AdminUser
-                    ->field('admin_user_id,username')
-                    ->where('admin_user_id', 'in', $admin_user_ids)
+                $UserModel = new UserModel();
+                $UserPk = $UserModel->getPk();
+
+                $admin_user = $UserModel
+                    ->field($UserPk . ',username')
+                    ->where($UserPk, 'in', $admin_user_ids)
                     ->select()
                     ->toArray();
             }
 
-            foreach ($admin_user_log as $k => $v) {
+            foreach ($admin_user_log as $v) {
                 if ($type == 'user') {
-                    foreach ($admin_user as $ka => $va) {
+                    foreach ($admin_user as $va) {
                         if ($v['x'] == $va['admin_user_id']) {
                             $v['x'] = $va['username'];
                         }
                     }
                 }
 
-                $x[] = $v['x'];
-                $s[] = $v['s'];
+                $x[]  = $v['x'];
+                $s[]  = $v['s'];
                 $sp[] = ['value' => $v['s'], 'name' => $v['x']];
             }
 

@@ -11,7 +11,6 @@
 namespace app\common\validate\cms;
 
 use think\Validate;
-use app\common\service\cms\CommentService;
 
 class CommentValidate extends Validate
 {
@@ -20,11 +19,9 @@ class CommentValidate extends Validate
         'ids'        => ['require', 'array'],
         'comment_id' => ['require'],
         'call'       => ['require'],
-        'mobile'     => ['require','mobile'],
+        'mobile'     => ['require', 'mobile'],
         'title'      => ['require'],
         'content'    => ['require'],
-        'sort_field' => ['checkSort'],
-        'sort_value' => ['checkSort'],
     ];
 
     // 错误信息
@@ -44,22 +41,5 @@ class CommentValidate extends Validate
         'dele'   => ['ids'],
         'reco'   => ['ids'],
         'isread' => ['ids'],
-        'sort'   => ['sort_field', 'sort_value'],
     ];
-
-    // 自定义验证规则：排序字段是否存在，排序类型是否为asc、desc
-    protected function checkSort($value, $rule, $data = [])
-    {
-        $sort_field = $data['sort_field'];
-        $sort_value = $data['sort_value'];
-        $field_exist = CommentService::tableFieldExist($sort_field);
-        if (!$field_exist) {
-            return '排序字段sort_field：' . $sort_field . ' 不存在';
-        }
-        if (!empty($sort_value) && $sort_value != 'asc' && $sort_value != 'desc') {
-            return '排序类型sort_value只能为asc升序或desc降序';
-        }
-
-        return true;
-    }
 }

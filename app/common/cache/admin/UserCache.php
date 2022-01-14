@@ -19,7 +19,7 @@ class UserCache
     /**
      * 缓存key
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return string
      */
@@ -31,11 +31,11 @@ class UserCache
     /**
      * 缓存设置
      *
-     * @param integer $admin_user_id 用户id
-     * @param array   $admin_user    用户信息
-     * @param integer $ttl           有效时间（秒）0永久
+     * @param int   $admin_user_id 用户id
+     * @param array $admin_user    用户信息
+     * @param int   $ttl           有效时间（秒）0永久
      * 
-     * @return boolean
+     * @return bool
      */
     public static function set($admin_user_id, $admin_user, $ttl = null)
     {
@@ -50,7 +50,7 @@ class UserCache
     /**
      * 缓存获取
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
      * @return array 用户信息
      */
@@ -62,9 +62,9 @@ class UserCache
     /**
      * 缓存删除
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
-     * @return boolean
+     * @return bool
      */
     public static function del($admin_user_id)
     {
@@ -74,9 +74,9 @@ class UserCache
     /**
      * 缓存更新
      *
-     * @param integer $admin_user_id 用户id
+     * @param int $admin_user_id 用户id
      * 
-     * @return boolean
+     * @return bool
      */
     public static function upd($admin_user_id)
     {

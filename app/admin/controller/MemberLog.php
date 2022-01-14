@@ -31,7 +31,7 @@ class MemberLog
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
-     * @Apidoc\Param("log_type", require=false, default=" ")
+     * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="会员日志列表", 
      *     @Apidoc\Returned(ref="app\common\model\MemberLogModel\listReturn")
@@ -54,24 +54,20 @@ class MemberLog
             $where[] = ['log_type', '=', $log_type];
         }
         if ($search_field && $search_value) {
-            if ($search_field == 'member_id' || $search_field == 'username') {
+            if (in_array($search_field, ['member_id', 'username'])) {
                 $member_exp = strpos($search_value, ',') ? 'in' : '=';
                 $member_where[] = [$search_field, $member_exp, $search_value];
                 $MemberModel = new MemberModel();
-                $member_ids = $MemberModel
-                    ->field($MemberModel->getPk())
-                    ->where($member_where)
-                    ->column($MemberModel->getPk());
-                $where[] = ['member_id', 'in', $member_ids];
-            } elseif ($search_field == 'api_url' || $search_field == 'api_name') {
+                $MemberPk = $MemberModel->getPk();
+                $member_ids = $MemberModel->where($member_where)->column($MemberPk);
+                $where[] = [$MemberPk, 'in', $member_ids];
+            } elseif (in_array($search_field, ['api_url', 'api_name'])) {
                 $api_exp = strpos($search_value, ',') ? 'in' : '=';
                 $api_where[] = [$search_field, $api_exp, $search_value];
                 $ApiModel = new ApiModel();
-                $api_ids = $ApiModel
-                    ->field($ApiModel->getPk())
-                    ->where($api_where)
-                    ->column($ApiModel->getPk());
-                $where[] = ['api_id', 'in', $api_ids];
+                $ApiPk = $ApiModel->getPk();
+                $api_ids = $ApiModel->where($api_where)->column($ApiPk);
+                $where[] = [$ApiPk, 'in', $api_ids];
             } else {
                 $where[] = [$search_field, '=', $search_value];
             }
@@ -93,7 +89,7 @@ class MemberLog
 
     /**
      * @Apidoc\Title("会员日志信息")
-     * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\id")
+     * @Apidoc\Param(ref="app\common\model\MemberLogModel\id")
      * @Apidoc\Returned(ref="app\common\model\MemberLogModel\infoReturn")
      */
     public function info()
@@ -153,9 +149,8 @@ class MemberLog
         if ($username) {
             $member_exp = strstr($username, ',') ? 'in' : '=';
             $MemberModel = new MemberModel();
-            $memberids = $MemberModel->field($MemberModel->getPk())
-                ->where('username', $member_exp, $username)
-                ->column($MemberModel->getPk());
+            $MemberPk = $MemberModel->getPk();
+            $memberids = $MemberModel->where('username', $member_exp, $username)->column($MemberPk);
             if ($memberids) {
                 $member_ids = array_merge($memberids, $member_ids);
             }
@@ -171,9 +166,8 @@ class MemberLog
         if ($api_url) {
             $api_exp = strstr($api_url, ',') ? 'in' : '=';
             $ApiModel = new ApiModel();
-            $apiids = $ApiModel->field($ApiModel->getPk())
-                ->where('api_url', $api_exp, $api_url)
-                ->column($ApiModel->getPk());
+            $ApiPk = $ApiModel->getPk();
+            $apiids = $ApiModel->where('api_url', $api_exp, $api_url)->column($ApiPk);
             if ($apiids) {
                 $api_ids = array_merge($apiids, $api_ids);
             }
@@ -194,9 +188,9 @@ class MemberLog
 
     /**
      * @Apidoc\Title("会员日志统计")
-     * @Apidoc\Param("type", type="string", default=" ", desc="类型")
+     * @Apidoc\Param("type", type="string", default="", desc="类型")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Param("field", type="string", default=" ", desc="统计字段")
+     * @Apidoc\Param("field", type="string", default="", desc="统计字段")
      */
     public function stat()
     {

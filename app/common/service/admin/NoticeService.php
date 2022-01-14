@@ -7,16 +7,17 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件分组
-namespace app\common\service\file;
+// 消息管理
+namespace app\common\service\admin;
 
-use app\common\cache\file\GroupCache;
-use app\common\model\file\GroupModel;
+use app\common\cache\admin\NoticeCache;
+use app\common\model\admin\NoticeModel;
+use app\common\model\admin\UserModel;
 
-class GroupService
+class NoticeService
 {
     /**
-     * 文件分组列表
+     * 消息列表
      *
      * @param array  $where 条件
      * @param int    $page  页数
@@ -26,17 +27,17 @@ class GroupService
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
-        $model = new GroupModel();
+        $model = new NoticeModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',group_name,group_desc,group_sort,is_disable,create_time,update_time';
+            $field = $pk . ',admin_user_id,title,color,sort,is_open,open_time_start,open_time_end,create_time';
         }
 
         if (empty($order)) {
-            $order = ['group_sort' => 'desc', $pk => 'desc'];
+            $order = ['sort' => 'desc',  $pk => 'desc', 'is_open' => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
@@ -45,45 +46,60 @@ class GroupService
 
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
+        foreach ($list as $k => $v) {
+            if (isset($v['admin_user_id'])) {
+                $list[$k]['admin_user'] = '';
+                $admin_user = UserService::info($v['admin_user_id']);
+                if ($admin_user) {
+                    $list[$k]['admin_user'] = $admin_user['username'];
+                }
+            }
+        }
+
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
-     * 文件分组信息
+     * 消息信息
      *
-     * @param int $id 文件分组id
+     * @param int $id 消息id
      * 
      * @return array
      */
     public static function info($id)
     {
-        $model = new GroupModel();
-        $pk = $model->getPk();
-
-        $info = GroupCache::get($id);
+        $info = NoticeCache::get($id);
         if (empty($info)) {
+            $model = new NoticeModel();
+            $pk = $model->getPk();
+
             $info = $model->where($pk, $id)->find();
             if (empty($info)) {
-                exception('文件分组不存在：' . $id);
+                exception('消息不存在：' . $id);
             }
             $info = $info->toArray();
 
-            GroupCache::set($id, $info);
+            $UserModel = new UserModel();
+            $UserPk = $UserModel->getPk();
+            $admin_user = UserService::info($info[$UserPk]);
+            $info['admin_user'] = $admin_user ? $admin_user['username'] : '';
+
+            NoticeCache::set($id, $info);
         }
 
         return $info;
     }
 
     /**
-     * 文件分组添加
+     * 消息添加
      *
-     * @param array $param 文件分组信息
+     * @param array $param 消息信息
      * 
      * @return array
      */
     public static function add($param)
     {
-        $model = new GroupModel();
+        $model = new NoticeModel();
         $pk = $model->getPk();
 
         $param['create_time'] = datetime();
@@ -99,15 +115,15 @@ class GroupService
     }
 
     /**
-     * 文件分组修改
+     * 消息修改
      *
-     * @param array $param 文件分组信息
+     * @param array $param 消息信息
      * 
      * @return array
      */
     public static function edit($param)
     {
-        $model = new GroupModel();
+        $model = new NoticeModel();
         $pk = $model->getPk();
 
         $id = $param[$pk];
@@ -120,7 +136,7 @@ class GroupService
             exception();
         }
 
-        GroupCache::del($id);
+        NoticeCache::del($id);
 
         $param[$pk] = $id;
 
@@ -128,19 +144,18 @@ class GroupService
     }
 
     /**
-     * 文件分组删除
+     * 消息删除
      *
-     * @param array $ids       文件分组id
-     * @param int   $is_delete 是否删除
+     * @param array $ids 消息id
      * 
      * @return array
      */
-    public static function dele($ids, $is_delete = 1)
+    public static function dele($ids)
     {
-        $model = new GroupModel();
+        $model = new NoticeModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = $is_delete;
+        $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
 
         $res = $model->where($pk, 'in', $ids)->update($update);
@@ -149,7 +164,7 @@ class GroupService
         }
 
         foreach ($ids as $v) {
-            GroupCache::del($v);
+            NoticeCache::del($v);
         }
 
         $update['ids'] = $ids;
@@ -158,19 +173,19 @@ class GroupService
     }
 
     /**
-     * 文件分组禁用
+     * 消息是否开启
      *
-     * @param array $ids        文件分组id
-     * @param int   $is_disable 是否禁用
+     * @param array $ids     消息id
+     * @param int   $is_open 是否开启
      * 
      * @return array
      */
-    public static function disable($ids, $is_disable = 0)
+    public static function is_open($ids, $is_open)
     {
-        $model = new GroupModel();
+        $model = new NoticeModel();
         $pk = $model->getPk();
 
-        $update['is_disable']  = $is_disable;
+        $update['is_open']     = $is_open;
         $update['update_time'] = datetime();
 
         $res = $model->where($pk, 'in', $ids)->update($update);
@@ -179,7 +194,38 @@ class GroupService
         }
 
         foreach ($ids as $v) {
-            GroupCache::del($v);
+            NoticeCache::del($v);
+        }
+
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 消息开启时间
+     *
+     * @param array  $ids   消息id
+     * @param string $param 开始时间、结束时间
+     * 
+     * @return array
+     */
+    public static function opentime($ids, $param)
+    {
+        $model = new NoticeModel();
+        $pk = $model->getPk();
+
+        $update['open_time_start'] = $param['open_time_start'];
+        $update['open_time_end']   = $param['open_time_end'];
+        $update['update_time']     = datetime();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($ids as $v) {
+            NoticeCache::del($v);
         }
 
         $update['ids'] = $ids;

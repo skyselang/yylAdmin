@@ -29,7 +29,7 @@ class ContentModel extends Model
 
     /**
      * @Apidoc\Field("content_id,name,category_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time")
-     * @Apidoc\AddField("img_url", type="string", require=true, default=" ", desc="图片链接")
+     * @Apidoc\AddField("img_url", type="string", default="", desc="图片链接")
      */
     public function listReturn()
     {

@@ -29,7 +29,7 @@ return [
                 ['title' => '会员中心', 'name' => 'member'],
                 ['title' => '微信', 'name' => 'wechat'],
                 ['title' => '地区', 'name' => 'region'],
-                ['title' => '内容管理', 'name' => 'cms']
+                ['title' => '内容', 'name' => 'cms']
             ],
             'headers' => [
                 ['name' => 'MemberToken', 'type' => 'string', 'require' => true, 'desc' => 'member_token']

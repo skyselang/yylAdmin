@@ -21,6 +21,13 @@ class SettingModel extends Model
     protected $pk = 'admin_setting_id';
 
     /**
+     * @Apidoc\Field("admin_setting_id")
+     */
+    public function id()
+    {
+    }
+
+    /**
      * 
      */
     public function infoReturn()

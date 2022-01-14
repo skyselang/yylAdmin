@@ -10,17 +10,13 @@
 // 文件设置
 namespace app\common\service\file;
 
-use think\facade\Db;
 use app\common\cache\file\SettingCache;
+use app\common\model\file\SettingModel;
 
 class SettingService
 {
-    // 表名
-    protected static $t_name = 'file_setting';
-    // 表主键
-    protected static $t_pk = 'setting_id';
     // 设置id
-    private static $setting_id = 1;
+    private static $id = 1;
 
     /**
      * 设置信息
@@ -29,30 +25,27 @@ class SettingService
      */
     public static function info()
     {
-        $setting_id = self::$setting_id;
+        $model = new SettingModel();
+        $pk = $model->getPk();
 
-        $file_setting = SettingCache::get($setting_id);
-        if (empty($file_setting)) {
-            $file_setting = Db::name(self::$t_name)
-                ->where(self::$t_pk, $setting_id)
-                ->find();
-            if (empty($file_setting)) {
-                $file_setting[self::$t_pk]   = $setting_id;
-                $file_setting['storage']     = 'local';
-                $file_setting['create_time'] = datetime();
+        $id = self::$id;
+        $info = SettingCache::get($id);
+        if (empty($info)) {
+            $info = $model->where($pk, $id)->find();
+            if (empty($info)) {
+                $info[$pk]           = $id;
+                $info['storage']     = 'local';
+                $info['create_time'] = datetime();
 
-                Db::name(self::$t_name)
-                    ->insert($file_setting);
-
-                $file_setting = Db::name(self::$t_name)
-                    ->where(self::$t_pk, $setting_id)
-                    ->find();
+                $model->insert($info);
+                $info = $model->where($pk, $id)->find();
             }
+            $info = $info->toArray();
 
-            SettingCache::set($setting_id, $file_setting);
+            SettingCache::set($id, $info);
         }
 
-        return $file_setting;
+        return $info;
     }
 
     /**
@@ -64,19 +57,134 @@ class SettingService
      */
     public static function edit($param)
     {
-        $setting_id = self::$setting_id;
+        $model = new SettingModel();
+        $pk = $model->getPk();
+
+        $id = self::$id;
 
         $param['update_time'] = datetime();
 
-        $file_setting = Db::name(self::$t_name)
-            ->where(self::$t_pk, $setting_id)
-            ->update($param);
-        if (empty($file_setting)) {
+        $info = $model->where($pk, $id)->update($param);
+        if (empty($info)) {
             exception();
         }
 
-        SettingCache::del($setting_id);
+        SettingCache::del($id);
 
         return $param;
+    }
+
+    /**
+     * 文件类型数组
+     *
+     * @return array
+     */
+    public static function fileType()
+    {
+        $filetype = [
+            'image' => '图片',
+            'video' => '视频',
+            'audio' => '音频',
+            'word'  => '文档',
+            'other' => '其它'
+        ];
+
+        return $filetype;
+    }
+
+    /**
+     * 文件储存方式
+     *
+     * @return array
+     */
+    public static function storage()
+    {
+        $storage = [
+            'local'   => '本地(服务器)',
+            'qiniu'   => '七牛云Kodo',
+            'aliyun'  => '阿里云OSS',
+            'tencent' => '腾讯云COS',
+            'baidu'   => '百度云BOS'
+        ];
+
+        return $storage;
+    }
+
+    /**
+     * 文件大小格式化
+     *
+     * @param int $file_size 文件大小（byte(B)字节）
+     *
+     * @return string
+     */
+    public static function fileSize($file_size = 0)
+    {
+        $p = 0;
+        $format = 'B';
+        if ($file_size > 0 && $file_size < 1024) {
+            $p = 0;
+            return number_format($file_size) . ' ' . $format;
+        }
+        if ($file_size >= 1024 && $file_size < pow(1024, 2)) {
+            $p = 1;
+            $format = 'KB';
+        }
+        if ($file_size >= pow(1024, 2) && $file_size < pow(1024, 3)) {
+            $p = 2;
+            $format = 'MB';
+        }
+        if ($file_size >= pow(1024, 3) && $file_size < pow(1024, 4)) {
+            $p = 3;
+            $format = 'GB';
+        }
+        if ($file_size >= pow(1024, 4) && $file_size < pow(1024, 5)) {
+            $p = 3;
+            $format = 'TB';
+        }
+
+        $file_size /= pow(1024, $p);
+
+        return number_format($file_size, 2) . ' ' . $format;
+    }
+
+    /**
+     * 文件类型获取
+     *
+     * @param string $file_ext 文件后缀
+     *
+     * @return string image图片，video视频，audio音频，word文档，other其它
+     */
+    public static function getFileType($file_ext = '')
+    {
+        if ($file_ext) {
+            $file_ext = strtolower($file_ext);
+        }
+
+        $image_ext = [
+            'jpg', 'png', 'jpeg', 'gif', 'bmp', 'webp', 'ico', 'svg', 'tif', 'pcx', 'tga', 'exif',
+            'psd', 'cdr', 'pcd', 'dxf', 'ufo', 'eps', 'ai', 'raw', 'wmf',  'avif', 'apng', 'xbm', 'fpx'
+        ];
+        $video_ext = [
+            'mp4', 'avi', 'mkv', 'flv', 'rm', 'rmvb', 'webm', '3gp', 'mpeg', 'mpg', 'dat', 'asx', 'wmv',
+            'mov', 'm4a', 'ogm', 'vob'
+        ];
+        $audio_ext = ['mp3', 'aac', 'wma', 'wav', 'ape', 'flac', 'ogg', 'adt', 'adts', 'cda'];
+        $word_ext = [
+            'doc', 'docx', 'docm', 'dotx', 'dotm', 'txt',
+            'xls', 'xlsx', 'xlsm', 'xltx', 'xltm', 'xlsb', 'xlam', 'csv',
+            'ppt', 'pptx', 'potx', 'potm', 'ppam', 'ppsx', 'ppsm', 'sldx', 'sldm', 'thmx'
+        ];
+
+        if (in_array($file_ext, $image_ext)) {
+            return 'image';
+        } elseif (in_array($file_ext, $video_ext)) {
+            return 'video';
+        } elseif (in_array($file_ext, $audio_ext)) {
+            return 'audio';
+        } elseif (in_array($file_ext, $word_ext)) {
+            return 'word';
+        } else {
+            return 'other';
+        }
     }
 }

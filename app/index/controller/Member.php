@@ -105,19 +105,19 @@ class Member
         if ($member['pwd_edit_type']) {
             validate(MemberValidate::class)->scene('editpwd1')->check($param);
         } else {
-            validate(MemberValidate::class)->scene('editpwd')->check($param);
+            validate(MemberValidate::class)->scene('editpwd0')->check($param);
         }
 
-        $data = MemberService::repwd([['member_id' => $param['member_id']]], $param['password_new']);
+        $data = MemberService::repwd([$param['member_id']], $param['password_new']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("我的日志")
+     * @Apidoc\Title("日志记录")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="app\common\model\MemberLogModel\log_type")
-     * @Apidoc\Param("log_type", require=false, default=" ")
+     * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="日志列表", 

@@ -30,7 +30,7 @@ function api_url()
  *
  * @param string $api_url 接口url
  *
- * @return boolean
+ * @return bool
  */
 function api_is_exist($api_url = '')
 {
@@ -51,7 +51,7 @@ function api_is_exist($api_url = '')
  *
  * @param string $api_url 接口url
  *
- * @return boolean
+ * @return bool
  */
 function api_is_disable($api_url = '')
 {
@@ -72,7 +72,7 @@ function api_is_disable($api_url = '')
  *
  * @param string $api_url 接口url
  *
- * @return boolean
+ * @return bool
  */
 function api_is_unlogin($api_url = '')
 {
@@ -93,7 +93,7 @@ function api_is_unlogin($api_url = '')
  *
  * @param string $api_url 接口url
  *
- * @return boolean
+ * @return bool
  */
 function api_is_unrate($api_url = '')
 {
@@ -112,7 +112,7 @@ function api_is_unrate($api_url = '')
 /**
  * 会员token是否已设置
  *
- * @return boolean
+ * @return bool
  */
 function member_token_has()
 {
@@ -161,7 +161,7 @@ function member_token_verify($member_token = '')
 /**
  * 会员id获取
  *
- * @return integer
+ * @return int
  */
 function member_id()
 {
@@ -173,7 +173,7 @@ function member_id()
 /**
  * 会员日志是否开启
  *
- * @return boolean
+ * @return bool
  */
 function member_log_switch()
 {

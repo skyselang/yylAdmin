@@ -11,7 +11,7 @@
 namespace app\common\validate;
 
 use think\Validate;
-use app\common\service\RegionService;
+use app\common\model\RegionModel;
 
 class RegionValidate extends Validate
 {
@@ -51,12 +51,12 @@ class RegionValidate extends Validate
             ->append('ids', 'checkRegionPidNeq');
     }
 
-    // 自定义验证规则：地区父级不能等于地区自己
+    // 自定义验证规则：地区父级不能等于本身
     protected function checkRegionPidNeq($value, $rule, $data = [])
     {
         foreach ($data['ids'] as $v) {
             if ($data['region_pid'] == $v) {
-                return '地区父级不能等于地区自己';
+                return '地区父级不能等于本身';
             }
         }
 
@@ -66,16 +66,20 @@ class RegionValidate extends Validate
     // 自定义验证规则：地区名称是否已存在
     protected function checkRegionName($value, $rule, $data = [])
     {
-        if (isset($data['region_id'])) {
-            if ($data['region_pid'] == $data['region_id']) {
-                return '地区父级不能等于地区自己';
+        $RegionModel = new RegionModel();
+        $RegionPk = $RegionModel->getPk();
+
+        if (isset($data[$RegionPk])) {
+            if ($data['region_pid'] == $data[$RegionPk]) {
+                return '地区父级不能等于本身';
             }
-            $where[] = ['region_id', '<>', $data['region_id']];
+            $where[] = [$RegionPk, '<>', $data[$RegionPk]];
         }
         $where[] = ['region_pid', '=', $data['region_pid']];
         $where[] = ['region_name', '=', $data['region_name']];
-        $region = RegionService::list($where, [], 'region_id');
-        if ($region['list']) {
+        $where[] = ['is_delete', '=', 0];
+        $region = $RegionModel->field($RegionPk)->where($where)->find();
+        if ($region) {
             return '地区名称已存在：' . $data['region_name'];
         }
 
@@ -85,10 +89,14 @@ class RegionValidate extends Validate
     // 自定义验证规则：地区是否存在下级地区
     protected function checkRegionChild($value, $rule, $data = [])
     {
+        $RegionModel = new RegionModel();
+        $RegionPk = $RegionModel->getPk();
+
         $where[] = ['region_pid', 'in', $data['ids']];
-        $region = RegionService::list($where, [], 'region_id');
-        if ($region['list']) {
-            return '存在下级地区，无法删除';
+        $where[] = ['is_delete', '=', 0];
+        $region = $RegionModel->field($RegionPk)->where($where)->find();
+        if ($region) {
+            return '地区存在下级地区，无法删除';
         }
 
         return true;
