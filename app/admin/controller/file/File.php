@@ -212,7 +212,7 @@ class File
      * @Apidoc\Title("文件修改分组")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\group_id")
      */
     public function editgroup()
     {
@@ -230,7 +230,7 @@ class File
      * @Apidoc\Title("文件修改类型")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\id")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_type")
      */
     public function edittype()
     {
@@ -248,7 +248,7 @@ class File
      * @Apidoc\Title("文件修改域名")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel\domain")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\domain")
      */
     public function editdomain()
     {

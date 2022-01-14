@@ -63,6 +63,27 @@ class FileModel extends Model
     }
 
     /**
+     * @Apidoc\Field("group_id")
+     */
+    public function group_id()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("file_type")
+     */
+    public function file_type()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("domain")
+     */
+    public function domain()
+    {
+    }
+
+    /**
      * @Apidoc\Field("is_disable")
      */
     public function is_disable()
