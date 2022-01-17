@@ -27,9 +27,9 @@ class ApiRateMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $set_api_info  = SettingService::apiInfo();
-        $api_rate_num  = $set_api_info['api_rate_num'];
-        $api_rate_time = $set_api_info['api_rate_time'];
+        $setting       = SettingService::info();
+        $api_rate_num  = $setting['api_rate_num'];
+        $api_rate_time = $setting['api_rate_time'];
 
         if ($api_rate_num > 0 && $api_rate_time > 0) {
             $admin_user_id = admin_user_id();
@@ -38,7 +38,6 @@ class ApiRateMiddleware
             if ($admin_user_id && $menu_url) {
                 if (!menu_is_unrate($menu_url)) {
                     $count = ApiRateCache::get($admin_user_id, $menu_url);
-
                     if ($count) {
                         if ($count >= $api_rate_num) {
                             ApiRateCache::del($admin_user_id, $menu_url);

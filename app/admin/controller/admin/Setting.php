@@ -18,7 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("设置管理")
  * @Apidoc\Group("adminSystem")
- * @Apidoc\Sort("710")
+ * @Apidoc\Sort("750")
  */
 class Setting
 {
@@ -28,7 +28,9 @@ class Setting
      */
     public function cacheInfo()
     {
-        $data = SettingService::cacheInfo();
+        $setting = SettingService::info();
+
+        $data['cache_type'] = $setting['cache_type'];
 
         return success($data);
     }
@@ -50,7 +52,10 @@ class Setting
      */
     public function tokenInfo()
     {
-        $data = SettingService::tokenInfo();
+        $setting = SettingService::info();
+
+        $data['token_key'] = $setting['token_key'];
+        $data['token_exp'] = $setting['token_exp'];
 
         return success($data);
     }
@@ -62,13 +67,12 @@ class Setting
      */
     public function tokenEdit()
     {
-        $param['token_name'] = Request::param('token_name/s', '');
-        $param['token_key']  = Request::param('token_key/s', '');
-        $param['token_exp']  = Request::param('token_exp/d', 12);
+        $param['token_key'] = Request::param('token_key/s', '');
+        $param['token_exp'] = Request::param('token_exp/d', 12);
 
         validate(SettingValidate::class)->scene('token_edit')->check($param);
 
-        $data = SettingService::tokenEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
@@ -79,7 +83,10 @@ class Setting
      */
     public function captchaInfo()
     {
-        $data = SettingService::captchaInfo();
+        $setting = SettingService::info();
+
+        $data['captcha_switch'] = $setting['captcha_switch'];
+        $data['captcha_type']   = $setting['captcha_type'];
 
         return success($data);
     }
@@ -92,10 +99,11 @@ class Setting
     public function captchaEdit()
     {
         $param['captcha_switch'] = Request::param('captcha_switch/d', 0);
+        $param['captcha_type']   = Request::param('captcha_type/d', 1);
 
         validate(SettingValidate::class)->scene('captcha_edit')->check($param);
 
-        $data = SettingService::captchaEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
@@ -106,7 +114,10 @@ class Setting
      */
     public function logInfo()
     {
-        $data = SettingService::logInfo();
+        $setting = SettingService::info();
+
+        $data['log_switch']    = $setting['log_switch'];
+        $data['log_save_time'] = $setting['log_save_time'];
 
         return success($data);
     }
@@ -123,7 +134,7 @@ class Setting
 
         validate(SettingValidate::class)->scene('log_edit')->check($param);
 
-        $data = SettingService::logEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
@@ -134,7 +145,10 @@ class Setting
      */
     public function apiInfo()
     {
-        $data = SettingService::apiInfo();
+        $setting = SettingService::info();
+
+        $data['api_rate_num']  = $setting['api_rate_num'];
+        $data['api_rate_time'] = $setting['api_rate_time'];
 
         return success($data);
     }
@@ -151,7 +165,7 @@ class Setting
 
         validate(SettingValidate::class)->scene('api_edit')->check($param);
 
-        $data = SettingService::apiEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
@@ -162,7 +176,12 @@ class Setting
      */
     public function systemInfo()
     {
-        $data = SettingService::systemInfo();
+        $setting = SettingService::info();
+
+        $field = ['logo_id', 'logo_url', 'favicon_id', 'favicon_url', 'login_bg_id', 'login_bg_url', 'system_name', 'page_title'];
+        foreach ($field as $v) {
+            $data[$v] = $setting[$v];
+        }
 
         return success($data);
     }
@@ -174,13 +193,13 @@ class Setting
      */
     public function systemEdit()
     {
+        $param['system_name'] = Request::param('system_name/s', '');
+        $param['page_title']  = Request::param('page_title/s', '');
         $param['logo_id']     = Request::param('logo_id/d', 0);
         $param['favicon_id']  = Request::param('favicon_id/d', 0);
         $param['login_bg_id'] = Request::param('login_bg_id/d', 0);
-        $param['system_name'] = Request::param('system_name/s', '');
-        $param['page_title']  = Request::param('page_title/s', '');
 
-        $data = SettingService::systemEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }

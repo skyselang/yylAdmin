@@ -16,7 +16,7 @@ use app\common\service\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("基础设置")
+ * @Apidoc\Title("设置管理")
  * @Apidoc\Group("adminSetting")
  * @Apidoc\Sort("540")
  */
@@ -28,7 +28,10 @@ class Setting
      */
     public function tokenInfo()
     {
-        $data = SettingService::tokenInfo();
+        $setting = SettingService::info();
+
+        $data['token_key'] = $setting['token_key'];
+        $data['token_exp'] = $setting['token_exp'];
 
         return success($data);
     }
@@ -40,13 +43,12 @@ class Setting
      */
     public function tokenEdit()
     {
-        $param['token_name'] = Request::param('token_name/s', '');
-        $param['token_key']  = Request::param('token_key/s', '');
-        $param['token_exp']  = Request::param('token_exp/d', 720);
+        $param['token_key'] = Request::param('token_key/s', '');
+        $param['token_exp'] = Request::param('token_exp/d', 720);
 
         validate(SettingValidate::class)->scene('token_edit')->check($param);
 
-        $data = SettingService::tokenEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
@@ -57,7 +59,10 @@ class Setting
      */
     public function captchaInfo()
     {
-        $data = SettingService::captchaInfo();
+        $setting = SettingService::info();
+
+        $data['captcha_register'] = $setting['captcha_register'];
+        $data['captcha_login']    = $setting['captcha_login'];
 
         return success($data);
     }
@@ -74,7 +79,7 @@ class Setting
 
         validate(SettingValidate::class)->scene('captcha_edit')->check($param);
 
-        $data = SettingService::captchaEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
@@ -85,7 +90,10 @@ class Setting
      */
     public function logInfo()
     {
-        $data = SettingService::logInfo();
+        $setting = SettingService::info();
+
+        $data['log_switch']    = $setting['log_switch'];
+        $data['log_save_time'] = $setting['log_save_time'];
 
         return success($data);
     }
@@ -102,24 +110,27 @@ class Setting
 
         validate(SettingValidate::class)->scene('log_edit')->check($param);
 
-        $data = SettingService::logEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("API设置信息")
+     * @Apidoc\Title("接口设置信息")
      * @Apidoc\Returned(ref="app\common\model\SettingModel\apiInfoParam")
      */
     public function apiInfo()
     {
-        $data = SettingService::apiInfo();
+        $setting = SettingService::info();
+
+        $data['api_rate_num']  = $setting['api_rate_num'];
+        $data['api_rate_time'] = $setting['api_rate_time'];
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("API设置修改")
+     * @Apidoc\Title("接口设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\SettingModel\apiInfoParam")
      */
@@ -130,7 +141,7 @@ class Setting
 
         validate(SettingValidate::class)->scene('api_edit')->check($param);
 
-        $data = SettingService::apiEdit($param);
+        $data = SettingService::edit($param);
 
         return success($data);
     }

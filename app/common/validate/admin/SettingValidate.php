@@ -16,8 +16,7 @@ class SettingValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'token_name'     => ['require', 'alpha', 'length' => '5,30'],
-        'token_key'      => ['require', 'alphaNum', 'length' => '5,30'],
+        'token_key'      => ['require', 'alphaNum', 'length' => '6,32'],
         'token_exp'      => ['require', 'between' => '1,9999'],
         'captcha_switch' => ['require', 'in' => '0,1'],
         'log_switch'     => ['require', 'in' => '0,1'],
@@ -28,12 +27,9 @@ class SettingValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'token_name.require'     => '请输入Token名称',
-        'token_name.alpha'       => 'Token名称组成：字母',
-        'token_name.length'      => 'Token名称长度：5-30',
         'token_key.require'      => '请输入Token密钥',
         'token_key.alphaNum'     => 'Token密钥组成：字母和数字',
-        'token_key.length'       => 'Token密钥长度：5-30',
+        'token_key.length'       => 'Token密钥长度：6-32',
         'token_exp.require'      => 'token_exp must',
         'token_exp.between'      => 'Token有效时间：1-9999',
         'captcha_switch.require' => 'captcha_switch must',
@@ -49,7 +45,7 @@ class SettingValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'token_edit'   => ['token_name', 'token_key', 'token_exp'],
+        'token_edit'   => ['token_key', 'token_exp'],
         'captcha_edit' => ['captcha_switch'],
         'log_edit'     => ['log_switch', 'log_save_time'],
         'api_edit'     => ['api_rate_num', 'api_rate_time'],

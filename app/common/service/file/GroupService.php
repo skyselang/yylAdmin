@@ -57,12 +57,10 @@ class GroupService
      */
     public static function info($id)
     {
-        $model = new GroupModel();
-        $pk = $model->getPk();
-
         $info = GroupCache::get($id);
         if (empty($info)) {
-            $info = $model->where($pk, $id)->find();
+            $model = new GroupModel();
+            $info = $model->find($id);
             if (empty($info)) {
                 exception('文件分组不存在：' . $id);
             }

@@ -13,6 +13,7 @@ namespace app\common\service\file;
 use think\facade\Filesystem;
 use app\common\cache\file\FileCache;
 use app\common\model\file\FileModel;
+use app\common\model\file\GroupModel;
 
 class FileService
 {
@@ -32,8 +33,11 @@ class FileService
         $model = new FileModel();
         $pk = $model->getPk();
 
+        $GroupModel = new GroupModel();
+        $GroupPk = $GroupModel->getPk();
+
         if (empty($field)) {
-            $field = $pk . ',group_id,storage,domain,file_md5,file_hash,file_type,file_name,file_path,file_size,file_ext,sort,is_disable';
+            $field = $pk . ',' . $GroupPk . ',storage,domain,file_md5,file_hash,file_type,file_name,file_path,file_size,file_ext,sort,is_disable';
         } else {
             $field = str_merge($field, 'file_id,storage,domain,file_md5,file_hash,file_path,file_ext');
         }
@@ -76,9 +80,7 @@ class FileService
         $info = FileCache::get($id);
         if (empty($info)) {
             $model = new FileModel();
-            $pk = $model->getPk();
-
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 return [];
             } else {
@@ -440,7 +442,8 @@ class FileService
         $pk = $model->getPk();
 
         $field = $pk . ',storage,file_type,file_name,file_hash,file_ext,file_path,file_size,is_disable';
-        $where = [[$pk, 'in', $ids], ['is_disable', '=', 0]];
+        $where[] = [$pk, 'in', $ids];
+        $where[] = ['is_disable', '=', 0];
         $file = $model->field($field)->where($where)->select()->toArray();
         foreach ($file as $k => $v) {
             $file[$k]['file_url']  = self::fileUrl($v);
@@ -457,12 +460,12 @@ class FileService
      */
     public static function statistics()
     {
-        $model = new FileModel();
-        $pk = $model->getPk();
-
-        $key  = 'count';
+        $key = 'count';
         $data = FileCache::get($key);
         if (empty($data)) {
+            $model = new FileModel();
+            $pk = $model->getPk();
+
             $file_types = SettingService::fileType();
             $file_field = 'file_type,count(file_type) as count';
             $file_count = $model->field($file_field)->where('is_delete', 0)->group('file_type')->select()->toArray();
@@ -470,9 +473,9 @@ class FileService
                 $temp = [];
                 $temp['name']  = $v;
                 $temp['value'] = 0;
-                foreach ($file_count as $vf) {
-                    if ($k == $vf['file_type']) {
-                        $temp['value'] = $vf['count'];
+                foreach ($file_count as $vfc) {
+                    if ($k == $vfc['file_type']) {
+                        $temp['value'] = $vfc['count'];
                     }
                 }
                 $data['data'][] = $temp;

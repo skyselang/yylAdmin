@@ -46,19 +46,19 @@ class ApiValidate extends Validate
             ->append('ids', 'checkApiPid');
     }
 
-    // 验证场景定义：设置父级
+    // 验证场景定义：修改父级
     protected function scenepid()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkApiPidNeq');
     }
 
-    // 自定义验证规则：接口父级不能等于接口自己
+    // 自定义验证规则：接口父级不能等于接口本身
     protected function checkApiPidNeq($value, $rule, $data = [])
     {
         foreach ($data['ids'] as $v) {
             if ($data['api_pid'] == $v) {
-                return '接口父级不能等于接口自己';
+                return '接口父级不能等于接口本身';
             }
         }
 
@@ -74,7 +74,7 @@ class ApiValidate extends Validate
         $api_id = isset($data[$ApiPk]) ? $data[$ApiPk] : '';
         if ($api_id) {
             if ($data['api_pid'] == $data[$ApiPk]) {
-                return '接口父级不能等于接口自己';
+                return '接口父级不能等于接口本身';
             }
         }
 

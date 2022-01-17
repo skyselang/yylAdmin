@@ -10,6 +10,7 @@
 // 设置
 namespace app\common\service;
 
+use think\facade\Config;
 use app\common\cache\SettingCache;
 use app\common\model\SettingModel;
 
@@ -31,13 +32,14 @@ class SettingService
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
-                $info[$pk] = $id;
+                $info[$pk]           = $id;
+                $info['token_name']  = Config::get('index.token_name');
+                $info['token_key']   = uniqid();
                 $info['create_time'] = datetime();
                 $model->insert($info);
-
-                $info = $model->where($pk, $id)->find();
+                $info = $model->find($id);
             }
             $info = $info->toArray();
 
@@ -50,7 +52,7 @@ class SettingService
     /**
      * 设置修改
      *
-     * @param array $param
+     * @param array $param 设置信息
      *
      * @return bool|Exception
      */
@@ -60,7 +62,6 @@ class SettingService
         $pk = $model->getPk();
 
         $id = self::$id;
-        unset($param[$pk]);
 
         $param['update_time'] = datetime();
 
@@ -70,137 +71,6 @@ class SettingService
         }
 
         SettingCache::del($id);
-
-        return $param;
-    }
-
-    /**
-     * Token设置信息
-     *
-     * @return array
-     */
-    public static function tokenInfo()
-    {
-        $info = self::info();
-
-        // token_name为空则设置token_name
-        if (empty($info['token_name'])) {
-            $token_name = 'MemberToken';
-            self::tokenEdit(['token_name' => $token_name]);
-            $info = self::info();
-        }
-
-        // token_key为空则生成token_key
-        if (empty($info['token_key'])) {
-            $token_key = uniqid();
-            self::tokenEdit(['token_key' => $token_key]);
-            $info = self::info();
-        }
-
-        $data['token_name'] = $info['token_name'];
-        $data['token_key']  = $info['token_key'];
-        $data['token_exp']  = $info['token_exp'];
-
-        return $data;
-    }
-
-    /**
-     * Token设置修改
-     *
-     * @param array $param Token设置信息
-     *
-     * @return array
-     */
-    public static function tokenEdit($param)
-    {
-        $param = self::edit($param);
-
-        return $param;
-    }
-
-    /**
-     * 验证码设置信息
-     *
-     * @return array
-     */
-    public static function captchaInfo()
-    {
-        $info = self::info();
-
-        $data['captcha_register'] = $info['captcha_register'];
-        $data['captcha_login']    = $info['captcha_login'];
-
-        return $data;
-    }
-
-    /**
-     * 验证码设置修改
-     * 
-     * @param array $param 验证码设置信息
-     *
-     * @return array
-     */
-    public static function captchaEdit($param)
-    {
-        $param = self::edit($param);
-
-        return $param;
-    }
-
-    /**
-     * 日志设置信息
-     *
-     * @return array
-     */
-    public static function logInfo()
-    {
-        $info = self::info();
-
-        $data['log_switch']    = $info['log_switch'];
-        $data['log_save_time'] = $info['log_save_time'];
-
-        return $data;
-    }
-
-    /**
-     * 日志设置修改
-     * 
-     * @param array $param 日志设置信息
-     *
-     * @return array
-     */
-    public static function logEdit($param)
-    {
-        $param = self::edit($param);
-
-        return $param;
-    }
-
-    /**
-     * 接口设置信息
-     *
-     * @return array
-     */
-    public static function apiInfo()
-    {
-        $info = self::info();
-
-        $data['api_rate_num']  = $info['api_rate_num'];
-        $data['api_rate_time'] = $info['api_rate_time'];
-
-        return $data;
-    }
-
-    /**
-     * 接口设置修改
-     *
-     * @param array $param 接口设置信息
-     *
-     * @return array
-     */
-    public static function apiEdit($param)
-    {
-        $param = self::edit($param);
 
         return $param;
     }

@@ -48,7 +48,6 @@ class UserLogMiddleware
             UserLogService::add($admin_user_log);
         }
 
-
         return $response;
     }
 }

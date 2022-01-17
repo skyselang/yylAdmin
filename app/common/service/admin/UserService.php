@@ -16,16 +16,11 @@ use app\common\cache\admin\UserCache;
 use app\common\model\admin\MenuModel;
 use app\common\model\admin\RoleModel;
 use app\common\model\admin\UserModel;
-use app\common\service\admin\TokenService;
 use app\common\service\file\FileService;
+use app\common\service\admin\TokenService;
 
 class UserService
 {
-    // 表名
-    protected static $t_name = 'admin_user';
-    // 表主键
-    protected static $t_pk = 'admin_user_id';
-
     /**
      * 用户列表
      *
@@ -73,9 +68,7 @@ class UserService
         $info = UserCache::get($id);
         if (empty($info)) {
             $model = new UserModel();
-            $pk = $model->getPk();
-
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 exception('用户不存在：' . $id);
             }
@@ -88,21 +81,14 @@ class UserService
             $info['admin_role_ids'] = str_trim($info['admin_role_ids']);
             $info['admin_menu_ids'] = str_trim($info['admin_menu_ids']);
             if (admin_is_super($id)) {
-                $admin_menu = $MenuModel->field($MenuPk . ',menu_url')->where('is_delete', 0)->select()->toArray();
-
-                $menu_ids = array_column($admin_menu, 'admin_menu_id');
-                $menu_url = array_column($admin_menu, 'menu_url');
+                $menu = $MenuModel->field($MenuPk . ',menu_url')->where('is_delete', 0)->select()->toArray();
+                $menu_ids = array_column($menu, 'admin_menu_id');
+                $menu_url = array_column($menu, 'menu_url');
                 $menu_url = array_filter($menu_url);
             } elseif ($info['is_super'] == 1) {
-                $admin_menu = $MenuModel
-                    ->field($MenuPk . ',menu_url')
-                    ->where('is_disable', 0)
-                    ->where('is_delete', 0)
-                    ->select()
-                    ->toArray();
-
-                $menu_ids = array_column($admin_menu, 'admin_menu_id');
-                $menu_url = array_column($admin_menu, 'menu_url');
+                $menu = $MenuModel->field($MenuPk . ',menu_url')->where('is_disable', 0)->where('is_delete', 0)->select()->toArray();
+                $menu_ids = array_column($menu, 'admin_menu_id');
+                $menu_url = array_column($menu, 'menu_url');
                 $menu_url = array_filter($menu_url);
             } else {
                 $RoleModel = new RoleModel();
@@ -277,13 +263,13 @@ class UserService
         $pk = $model->getPk();
 
         if ($method == 'get') {
-            $admin_user_id = $param[$pk];
-
             $RoleModel = new RoleModel();
             $RolePk = $RoleModel->getPk();
 
-            $admin_role = $RoleModel->field($RolePk . ',role_name')->where('is_delete', 0)->select()->toArray();
+            $admin_user_id = $param[$pk];
+
             $admin_menu = MenuService::list();
+            $admin_role = $RoleModel->field($RolePk . ',role_name')->where('is_delete', 0)->select()->toArray();
             $admin_user = UserService::info($admin_user_id);
 
             $menu_ids       = $admin_user['menu_ids'];
@@ -335,7 +321,7 @@ class UserService
             $update['admin_menu_ids'] = str_join(implode(',', $admin_menu_ids));
             $update['update_time']    = datetime();
 
-            $res = $model->where($pk, $admin_user_id)->update($update);                   
+            $res = $model->where($pk, $admin_user_id)->update($update);
             if (empty($res)) {
                 exception();
             }
@@ -412,7 +398,7 @@ class UserService
      * 用户是否超管
      *
      * @param array $ids      用户id
-     * @param int   $is_super 是否禁用
+     * @param int   $is_super 是否超管
      * 
      * @return array
      */
@@ -450,41 +436,36 @@ class UserService
         $model = new UserModel();
         $pk = $model->getPk();
 
-        $username = $param['username'];
-        $password = md5($param['password']);
-
-        $where[] = ['username|phone|email', '=', $username];
-        $where[] = ['password', '=', $password];
+        $where[] = ['username|phone|email', '=', $param['username']];
+        $where[] = ['password', '=', md5($param['password'])];
         $where[] = ['is_delete', '=', 0];
 
-        $admin_user = $model->field($pk . ',login_num,is_disable')->where($where)->find();
-        if (empty($admin_user)) {
+        $user = $model->field($pk . ',login_num,is_disable')->where($where)->find();
+        if (empty($user)) {
             exception('账号或密码错误');
         }
-        $admin_user->toArray();
-        if ($admin_user['is_disable'] == 1) {
+        $user = $user->toArray();
+        if ($user['is_disable'] == 1) {
             exception('账号已被禁用，请联系管理员');
         }
 
         $ip_info = IpInfoUtils::info();
 
-        $admin_user_id = $admin_user[$pk];
-
         $update['login_ip']     = $ip_info['ip'];
         $update['login_region'] = $ip_info['region'];
         $update['login_time']   = datetime();
-        $update['login_num']    = $admin_user['login_num'] + 1;
-        $model->where($pk, $admin_user_id)->update($update);
+        $update['login_num']    = $user['login_num'] + 1;
+        $model->where($pk, $user[$pk])->update($update);
 
-        $admin_user_log[$pk]             = $admin_user_id;
-        $admin_user_log['log_type']      = 1;
-        $admin_user_log['response_code'] = 200;
-        $admin_user_log['response_msg']  = '登录成功';
-        UserLogService::add($admin_user_log);
+        $user_log[$pk]             = $user[$pk];
+        $user_log['log_type']      = 1;
+        $user_log['response_code'] = 200;
+        $user_log['response_msg']  = '登录成功';
+        UserLogService::add($user_log);
 
-        UserCache::del($admin_user_id);
-        $admin_user  = self::info($admin_user_id);
-        $admin_token = $admin_user['admin_token'];
+        UserCache::del($user[$pk]);
+        $user = self::info($user[$pk]);
+        $admin_token = $user['admin_token'];
 
         return compact($pk, 'admin_token');
     }

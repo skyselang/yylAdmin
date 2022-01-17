@@ -21,7 +21,7 @@ class TokenService
      */
     public static function config()
     {
-        return SettingService::tokenInfo();
+        return SettingService::info();
     }
 
     /**

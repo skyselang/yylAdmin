@@ -46,8 +46,8 @@ class Member
 
         if ($search_field && $search_value) {
             if ($search_field == 'member_id') {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }

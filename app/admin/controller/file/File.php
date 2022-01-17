@@ -64,7 +64,8 @@ class File
      * @Apidoc\Param("group_id", require=false, default="")
      * @Apidoc\Param("file_type", require=false, default="")
      * @Apidoc\Param("is_disable", require=false, default="")
-     * @Apidoc\Param("is_front", require=false, default="")
+     * @Apidoc\Param("is_front", require=false, default="0")
+     * @Apidoc\Param("storage", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="文件列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
@@ -88,8 +89,8 @@ class File
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -152,6 +153,7 @@ class File
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="fileParam")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\addParam")
      * @Apidoc\Returned(ref="fileReturn")
      */
     public function add()
@@ -286,6 +288,12 @@ class File
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\listParam")
+     * @Apidoc\Param("group_id", require=false, default="")
+     * @Apidoc\Param("file_type", require=false, default="")
+     * @Apidoc\Param("is_disable", require=false, default="")
+     * @Apidoc\Param("is_front", require=false, default="0")
+     * @Apidoc\Param("storage", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="文件列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
@@ -309,8 +317,8 @@ class File
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }

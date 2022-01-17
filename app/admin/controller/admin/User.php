@@ -26,10 +26,8 @@ class User
      * @Apidoc\Title("用户列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
-     * @Apidoc\Param(ref="app\common\model\admin\UserModel\listParam")
-     * @Apidoc\Param("username", require=false)
-     * @Apidoc\Param("nickname", require=false)
-     * @Apidoc\Param("email", require=false)
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn"),
      * @Apidoc\Returned("list", type="array", desc="用户列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\UserModel\listReturn")
@@ -49,8 +47,8 @@ class User
         $where = [];
         if ($search_field && $search_value) {
             if (in_array($search_field, ['admin_user_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['is_super', 'is_disable'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;

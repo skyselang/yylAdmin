@@ -27,7 +27,7 @@ class LoginService
     }
 
     /**
-     * 微信登录
+     * 登录（微信）
      *
      * @param array $userinfo 微信用户信息
      *

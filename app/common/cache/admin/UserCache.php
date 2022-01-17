@@ -40,7 +40,7 @@ class UserCache
     public static function set($admin_user_id, $admin_user, $ttl = null)
     {
         if ($ttl === null) {
-            $setting = SettingService::tokenInfo();
+            $setting = SettingService::info();
             $ttl     = $setting['token_exp'] * 3600;
         }
 
@@ -84,8 +84,8 @@ class UserCache
         self::del($admin_user_id);
 
         $new = UserService::info($admin_user_id);
-        unset($new['admin_token']);
+        $new['admin_token'] = $old['admin_token'];
 
-        return self::set($admin_user_id, array_merge($old, $new));
+        return self::set($admin_user_id, $new);
     }
 }

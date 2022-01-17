@@ -72,6 +72,7 @@ class Member
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="fileParam")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\addParam")
      * @Apidoc\Returned(ref="fileReturn")
      */
     public function avatar()

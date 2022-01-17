@@ -24,7 +24,7 @@ use hg\apidoc\annotation as Apidoc;
 class Content
 {
     /**
-     * @Apidoc\Title("内容分类")
+     * @Apidoc\Title("分类列表")
      * @Apidoc\Returned("list", type="array", desc="分类树形", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )

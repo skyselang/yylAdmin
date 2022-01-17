@@ -59,8 +59,8 @@ function menu_is_disable($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $menu_info = MenuService::info($menu_url);
-    if ($menu_info['is_disable'] == 1) {
+    $menu = MenuService::info($menu_url);
+    if ($menu['is_disable'] == 1) {
         return true;
     }
 
@@ -80,8 +80,8 @@ function menu_is_unauth($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $unauthlist = MenuService::unauthList();
-    if (in_array($menu_url, $unauthlist)) {
+    $unauth_url = MenuService::unauthUrl();
+    if (in_array($menu_url, $unauth_url)) {
         return true;
     }
 
@@ -101,8 +101,8 @@ function menu_is_unlogin($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $unloginlist = MenuService::unloginList();
-    if (in_array($menu_url, $unloginlist)) {
+    $unlogin_url = MenuService::unloginUrl();
+    if (in_array($menu_url, $unlogin_url)) {
         return true;
     }
 
@@ -122,8 +122,8 @@ function menu_is_unrate($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $unratelist = MenuService::unrateList();
-    if (in_array($menu_url, $unratelist)) {
+    $unrate_url = MenuService::unrateUrl();
+    if (in_array($menu_url, $unrate_url)) {
         return true;
     }
 
@@ -137,9 +137,8 @@ function menu_is_unrate($menu_url = '')
  */
 function admin_token_has()
 {
-    $token_info = SettingService::tokenInfo();
-
-    $token_name = $token_info['token_name'];
+    $setting    = SettingService::info();
+    $token_name = $setting['token_name'];
     $token_name = strtolower($token_name);
     $header     = Request::header();
     if (isset($header[$token_name])) {
@@ -156,8 +155,8 @@ function admin_token_has()
  */
 function admin_token()
 {
-    $token_info = SettingService::tokenInfo();
-    $token_name = $token_info['token_name'];
+    $setting    = SettingService::info();
+    $token_name = $setting['token_name'];
 
     return Request::header($token_name, '');
 }
@@ -205,8 +204,8 @@ function admin_is_super($admin_user_id = 0)
  */
 function admin_log_switch()
 {
-    $log_info = SettingService::logInfo();
-    if ($log_info['log_switch']) {
+    $setting = SettingService::info();
+    if ($setting['log_switch']) {
         return true;
     } else {
         return false;

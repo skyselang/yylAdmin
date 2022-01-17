@@ -19,5 +19,7 @@ return [
         'index/Login/login'
     ],
     // 无需限率接口url
-    'api_is_unrate' => []
+    'api_is_unrate' => [],
+    // token名称，必须与前端设置一致
+    'token_name' => env('token.index_token_name', 'MemberToken')
 ];

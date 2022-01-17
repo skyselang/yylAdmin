@@ -59,8 +59,8 @@ function api_is_disable($api_url = '')
         $api_url = api_url();
     }
 
-    $api_info = ApiService::info($api_url);
-    if ($api_info['is_disable'] == 1) {
+    $api = ApiService::info($api_url);
+    if ($api['is_disable'] == 1) {
         return true;
     }
 
@@ -80,8 +80,8 @@ function api_is_unlogin($api_url = '')
         $api_url = api_url();
     }
 
-    $unloginlist = ApiService::unloginList();
-    if (in_array($api_url, $unloginlist)) {
+    $unlogin_url = ApiService::unloginUrl();
+    if (in_array($api_url, $unlogin_url)) {
         return true;
     }
 
@@ -101,8 +101,8 @@ function api_is_unrate($api_url = '')
         $api_url = api_url();
     }
 
-    $unratelist = ApiService::unrateList();
-    if (in_array($api_url, $unratelist)) {
+    $unrate_url = ApiService::unrateUrl();
+    if (in_array($api_url, $unrate_url)) {
         return true;
     }
 
@@ -116,9 +116,9 @@ function api_is_unrate($api_url = '')
  */
 function member_token_has()
 {
-    $tokne_info = SettingService::tokenInfo();
-    $token_key  = $tokne_info['token_name'];
-    $token_key  = strtolower($token_key);
+    $setting   = SettingService::info();
+    $token_key = $setting['token_name'];
+    $token_key = strtolower($token_key);
 
     $header = Request::header();
     if (isset($header[$token_key])) {
@@ -135,8 +135,8 @@ function member_token_has()
  */
 function member_token()
 {
-    $tokne_info   = SettingService::tokenInfo();
-    $token_key    = $tokne_info['token_name'];
+    $setting      = SettingService::info();
+    $token_key    = $setting['token_name'];
     $member_token = Request::header($token_key, '');
 
     return $member_token;
@@ -177,8 +177,8 @@ function member_id()
  */
 function member_log_switch()
 {
-    $log_info = SettingService::logInfo();
-    if ($log_info['log_switch']) {
+    $setting = SettingService::info();
+    if ($setting['log_switch']) {
         return true;
     } else {
         return false;

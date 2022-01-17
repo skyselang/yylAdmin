@@ -30,11 +30,13 @@ class Register
      */
     public function captcha()
     {
-        $setting = SettingService::captchaInfo();
+        $setting = SettingService::info();
+
+        $data['captcha_switch'] = $setting['captcha_register'];
+
         if ($setting['captcha_register']) {
-            $data = CaptchaUtils::create();
-        } else {
-            $data['captcha_switch'] = $setting['captcha_register'];
+            $captcha = CaptchaUtils::create();
+            $data    = array_merge($data, $captcha);
         }
 
         return success($data);
@@ -63,13 +65,13 @@ class Register
 
         validate(MemberValidate::class)->scene('register')->check($param);
 
-        $setting = SettingService::captchaInfo();
+        $setting = SettingService::info();
         if ($setting['captcha_register']) {
             if (empty($param['captcha_code'])) {
                 exception('请输入验证码');
             }
-            $check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
-            if (empty($check)) {
+            $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
+            if (empty($captcha_check)) {
                 exception('验证码错误');
             }
         }

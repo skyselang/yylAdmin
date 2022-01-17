@@ -17,48 +17,17 @@ use app\common\model\ApiModel;
 class ApiService
 {
     /**
-     * 接口列表
+     * 菜单列表
      *
-     * @param array  $where 条件
-     * @param int    $page  页数
-     * @param int    $limit 数量
-     * @param array  $order 排序
-     * @param string $field 字段
+     * @param $type list列表，tree树形
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
+    public static function list($type = 'list')
     {
-        $model = new ApiModel();
-        $pk = $model->getPk();
-
-        if (empty($field)) {
-            $field = $pk . ',api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
-        }
-
-        if (empty($order)) {
-            $order = ['api_sort' => 'desc', $pk => 'desc'];
-        }
-
-        $count = $model->where($where)->count($pk);
-
-        $pages = ceil($count / $limit);
-
-        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
-
-        return compact('count', 'pages', 'page', 'limit', 'list');
-    }
-
-    /**
-     * 接口树形
-     *
-     * @return array 树形
-     */
-    public static function tree()
-    {
-        $key = 'tree';
-        $tree = ApiCache::get($key);
-        if (empty($tree)) {
+        $key = $type;
+        $data = ApiCache::get($key);
+        if (empty($data)) {
             $model = new ApiModel();
             $pk = $model->getPk();
 
@@ -68,14 +37,16 @@ class ApiService
 
             $order = ['api_sort' => 'desc', $pk => 'asc'];
 
-            $list = $model->field($field)->where($where)->order($order)->select()->toArray();
+            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
 
-            $tree = self::toTree($list, 0);
+            if ($type == 'tree') {
+                $data = self::toTree($data, 0);
+            }
 
-            ApiCache::set($key, $tree);
+            ApiCache::set($key, $data);
         }
 
-        return $tree;
+        return $data;
     }
 
     /**
@@ -195,10 +166,12 @@ class ApiService
             exception();
         }
 
+        $ids_arr = $ids;
         foreach ($ids as $v) {
             $info = self::info($v);
-            ApiCache::del([$v, $info['api_url']]);
+            $ids_arr[] = $info['api_url'];
         }
+        ApiCache::del($ids_arr);
 
         $update['ids'] = $ids;
 
@@ -206,7 +179,7 @@ class ApiService
     }
 
     /**
-     * 接口设置父级
+     * 接口修改父级
      *
      * @param array $ids     接口id
      * @param int   $api_pid 接口pid
@@ -226,10 +199,12 @@ class ApiService
             exception();
         }
 
+        $ids_arr = $ids;
         foreach ($ids as $v) {
             $info = self::info($v);
-            ApiCache::del([$v, $info['api_url']]);
+            $ids_arr[] = $info['api_url'];
         }
+        ApiCache::del($ids_arr);
 
         $update['ids'] = $ids;
 
@@ -257,10 +232,12 @@ class ApiService
             exception();
         }
 
+        $ids_arr = $ids;
         foreach ($ids as $v) {
             $info = self::info($v);
-            ApiCache::del([$v, $info['api_url']]);
+            $ids_arr[] = $info['api_url'];
         }
+        ApiCache::del($ids_arr);
 
         $update['ids'] = $ids;
 
@@ -288,10 +265,12 @@ class ApiService
             exception();
         }
 
+        $ids_arr = $ids;
         foreach ($ids as $v) {
             $info = self::info($v);
-            ApiCache::del([$v, $info['api_url']]);
+            $ids_arr[] = $info['api_url'];
         }
+        ApiCache::del($ids_arr);
 
         $update['ids'] = $ids;
 
@@ -301,7 +280,7 @@ class ApiService
     /**
      * 接口获取所有子级
      *
-     * @param array $api    所有接口
+     * @param array $api    接口列表
      * @param int   $api_id 接口id
      * 
      * @return array
@@ -326,7 +305,7 @@ class ApiService
      * 接口列表转树形
      *
      * @param array $api     接口列表
-     * @param int   $api_pid 接口父级id
+     * @param int   $api_pid 接口pid
      * 
      * @return array
      */
@@ -355,16 +334,16 @@ class ApiService
     {
         $model = new ApiModel();
 
-        $urllist_key = 'urlList';
-        $urllist     = ApiCache::get($urllist_key);
-        if (empty($urllist)) {
-            $urllist = $model->where('is_delete', 0)->column('api_url');
-            $urllist = array_filter($urllist);
+        $key = 'urlList';
+        $list = ApiCache::get($key);
+        if (empty($list)) {
+            $list = $model->where('is_delete', 0)->column('api_url');
+            $list = array_filter($list);
 
-            ApiCache::set($urllist_key, $urllist);
+            ApiCache::set($key, $list);
         }
 
-        return $urllist;
+        return $list;
     }
 
     /**
@@ -372,22 +351,22 @@ class ApiService
      *
      * @return array
      */
-    public static function unloginList()
+    public static function unloginUrl()
     {
-        $model = new ApiModel();
+        $key = 'unloginUrl';
+        $list = ApiCache::get($key);
+        if (empty($list)) {
+            $model = new ApiModel();
 
-        $unloginlist_key = 'unloginList';
-        $unloginlist     = ApiCache::get($unloginlist_key);
-        if (empty($unloginlist)) {
-            $unloginlist = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('api_url');
-            $api_unlogin = Config::get('index.api_is_unlogin');
-            $unloginlist = array_merge($unloginlist, $api_unlogin);
-            $unloginlist = array_unique(array_filter($unloginlist));
+            $list    = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('api_url');
+            $unlogin = Config::get('index.api_is_unlogin');
+            $list    = array_merge($list, $unlogin);
+            $list    = array_unique(array_filter($list));
 
-            ApiCache::set($unloginlist_key, $unloginlist);
+            ApiCache::set($key, $list);
         }
 
-        return $unloginlist;
+        return $list;
     }
 
     /**
@@ -395,17 +374,17 @@ class ApiService
      *
      * @return array
      */
-    public static function unrateList()
+    public static function unrateUrl()
     {
-        $unratelist_key = 'unrateList';
-        $unratelist     = ApiCache::get($unratelist_key);
-        if (empty($unratelist)) {
-            $api_unrate = Config::get('index.api_is_unrate');
-            $unratelist = array_unique(array_filter($api_unrate));
+        $key = 'unrateUrl';
+        $list = ApiCache::get($key);
+        if (empty($list)) {
+            $unrate = Config::get('index.api_is_unrate');
+            $list   = array_unique(array_filter($unrate));
 
-            ApiCache::set($unratelist_key, $unratelist);
+            ApiCache::set($key, $list);
         }
 
-        return $unratelist;
+        return $list;
     }
 }

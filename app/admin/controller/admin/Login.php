@@ -12,8 +12,8 @@ namespace app\admin\controller\admin;
 
 use think\facade\Request;
 use app\common\validate\admin\UserValidate;
-use app\common\service\admin\LoginService;
 use app\common\service\admin\SettingService;
+use app\common\service\admin\LoginService;
 use app\common\utils\CaptchaUtils;
 use hg\apidoc\annotation as Apidoc;
 
@@ -31,14 +31,18 @@ class Login
      */
     public function setting()
     {
-        $captcha = SettingService::captchaInfo();
-        if ($captcha['captcha_switch']) {
-            $captcha = CaptchaUtils::create();
+        $setting = SettingService::info();
+
+        $data['system_name']  = $setting['system_name'];
+        $data['page_title']   = $setting['page_title'];
+        $data['logo_url']     = $setting['logo_url'];
+        $data['favicon_url']  = $setting['favicon_url'];
+        $data['login_bg_url'] = $setting['login_bg_url'];
+
+        if ($setting['captcha_switch']) {
+            $captcha = CaptchaUtils::create($setting['captcha_type']);
+            $data    = array_merge($data, $captcha);
         }
-
-        $system = SettingService::systemInfo();
-
-        $data = array_merge($system, $captcha);
 
         return success($data);
     }
@@ -50,11 +54,13 @@ class Login
      */
     public function captcha()
     {
-        $setting = SettingService::captchaInfo();
+        $setting = SettingService::info();
+
+        $data['captcha_switch'] = $setting['captcha_switch'];
+
         if ($setting['captcha_switch']) {
-            $data = CaptchaUtils::create();
-        } else {
-            $data['captcha_switch'] = $setting['captcha_switch'];
+            $captcha = CaptchaUtils::create($setting['captcha_type']);
+            $data    = array_merge($data, $captcha);
         }
 
         return success($data);
@@ -76,13 +82,13 @@ class Login
 
         validate(UserValidate::class)->scene('login')->check($param);
 
-        $setting = SettingService::captchaInfo();
+        $setting = SettingService::info();
         if ($setting['captcha_switch']) {
             if (empty($param['captcha_code'])) {
                 exception('请输入验证码');
             }
-            $check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
-            if (empty($check)) {
+            $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
+            if (empty($captcha_check)) {
                 exception('验证码错误');
             }
         }

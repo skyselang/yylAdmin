@@ -55,17 +55,17 @@ class MemberLog
         }
         if ($search_field && $search_value) {
             if (in_array($search_field, ['member_id', 'username'])) {
-                $member_exp = strpos($search_value, ',') ? 'in' : '=';
-                $member_where[] = [$search_field, $member_exp, $search_value];
                 $MemberModel = new MemberModel();
                 $MemberPk = $MemberModel->getPk();
+                $member_exp = strpos($search_value, ',') ? 'in' : '=';
+                $member_where[] = [$search_field, $member_exp, $search_value];
                 $member_ids = $MemberModel->where($member_where)->column($MemberPk);
                 $where[] = [$MemberPk, 'in', $member_ids];
             } elseif (in_array($search_field, ['api_url', 'api_name'])) {
-                $api_exp = strpos($search_value, ',') ? 'in' : '=';
-                $api_where[] = [$search_field, $api_exp, $search_value];
                 $ApiModel = new ApiModel();
                 $ApiPk = $ApiModel->getPk();
+                $api_exp = strpos($search_value, ',') ? 'in' : '=';
+                $api_where[] = [$search_field, $api_exp, $search_value];
                 $api_ids = $ApiModel->where($api_where)->column($ApiPk);
                 $where[] = [$ApiPk, 'in', $api_ids];
             } else {
@@ -130,7 +130,7 @@ class MemberLog
      * @Apidoc\Param(ref="app\common\model\ApiModel\id")
      * @Apidoc\Param(ref="app\common\model\ApiModel\api_url")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Param("clean", type="int", default="0", desc="是否清空所有1是0否")
+     * @Apidoc\Param("clean", type="int", default="0", desc="是否清空所有,1是0否")
      */
     public function clear()
     {
@@ -139,7 +139,7 @@ class MemberLog
         $api_id     = Request::param('api_id/s', '');
         $api_url    = Request::param('api_url/s', '');
         $date_value = Request::param('date_value/a', '');
-        $clean      = Request::param('clean/b', false);
+        $clean      = Request::param('clean/d', 0);
 
         $where = [];
         $member_ids = [];
@@ -147,9 +147,9 @@ class MemberLog
             $member_ids = array_merge(explode(',', $member_id), $member_ids);
         }
         if ($username) {
-            $member_exp = strstr($username, ',') ? 'in' : '=';
             $MemberModel = new MemberModel();
             $MemberPk = $MemberModel->getPk();
+            $member_exp = strstr($username, ',') ? 'in' : '=';
             $memberids = $MemberModel->where('username', $member_exp, $username)->column($MemberPk);
             if ($memberids) {
                 $member_ids = array_merge($memberids, $member_ids);
@@ -164,9 +164,9 @@ class MemberLog
             $api_ids = array_merge(explode(',', $api_id), $api_ids);
         }
         if ($api_url) {
-            $api_exp = strstr($api_url, ',') ? 'in' : '=';
             $ApiModel = new ApiModel();
             $ApiPk = $ApiModel->getPk();
+            $api_exp = strstr($api_url, ',') ? 'in' : '=';
             $apiids = $ApiModel->where('api_url', $api_exp, $api_url)->column($ApiPk);
             if ($apiids) {
                 $api_ids = array_merge($apiids, $api_ids);
@@ -188,7 +188,7 @@ class MemberLog
 
     /**
      * @Apidoc\Title("会员日志统计")
-     * @Apidoc\Param("type", type="string", default="", desc="类型")
+     * @Apidoc\Param("type", type="string", default="", desc="类型：field字段，date日期")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param("field", type="string", default="", desc="统计字段")
      */

@@ -18,7 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("微信设置")
  * @Apidoc\Group("adminSetting")
- * @Apidoc\Sort("520")
+ * @Apidoc\Sort("535")
  */
 class SettingWechat
 {

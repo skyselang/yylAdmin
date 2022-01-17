@@ -33,7 +33,7 @@ class Menu
      */
     public function list()
     {
-        $data['list'] = MenuService::tree();
+        $data['list'] = MenuService::list('tree');
 
         return success($data);
     }

@@ -28,7 +28,7 @@ class RoleModel extends Model
     }
 
     /**
-     * @Apidoc\Field("role_name,role_desc")
+     * 
      */
     public function listParam()
     {

@@ -75,7 +75,7 @@ class CategoryValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分类下是否存在下级分类
+    // 自定义验证规则：分类是否存在下级分类
     protected function checkCategoryPid($value, $rule, $data = [])
     {
         $ids = $data['ids'];
@@ -83,7 +83,7 @@ class CategoryValidate extends Validate
         foreach ($category as $v) {
             foreach ($ids as $vc) {
                 if ($v['category_pid'] == $vc) {
-                    return '分类下存在下级分类，无法删除';
+                    return '分类存在下级分类，无法删除';
                 }
             }
         }
@@ -91,7 +91,7 @@ class CategoryValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分类下是否存在内容
+    // 自定义验证规则：分类是否存在内容
     protected function checkCategoryContent($value, $rule, $data = [])
     {
         $CategoryModel = new CategoryModel();

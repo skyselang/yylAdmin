@@ -33,7 +33,7 @@ class RegionCache
      * @param array $region    地区信息
      * @param int   $ttl       有效时间（秒）0永久
      * 
-     * @return array 地区信息
+     * @return bool 
      */
     public static function set($region_id, $region, $ttl = 86400)
     {

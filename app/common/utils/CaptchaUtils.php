@@ -59,28 +59,28 @@ class CaptchaUtils
     /**
      * 验证码配置
      * 
+     * @param int $type 验证码类型：1数字，2字母，3数字字母，4算术，5中文
+     * 
      * @return void
      */
-    protected static function configure()
+    protected static function configure($type = 1)
     {
         $config = Config::get('captcha', []);
-
         foreach ($config as $key => $val) {
             if (property_exists(__CLASS__, $key)) {
                 self::${$key} = $val;
             }
         }
 
-        // 验证码类型：1数字，2字母，3数字字母，4算术，5中文
-        if ($config['type'] == 1) {
+        if ($type == 1) {
             self::$codeSet = '0123456789';
-        } elseif ($config['type'] == 2) {
+        } elseif ($type == 2) {
             self::$codeSet = 'abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-        } elseif ($config['type'] == 3) {
+        } elseif ($type == 3) {
             self::$codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-        } elseif ($config['type'] == 4) {
+        } elseif ($type == 4) {
             self::$math = true;
-        } elseif ($config['type'] == 5) {
+        } elseif ($type == 5) {
             self::$useZh = true;
         } else {
             self::$codeSet = '0123456789';
@@ -90,14 +90,13 @@ class CaptchaUtils
     /**
      * 验证码生成
      * 
-     * @param array $captcha 验证码信息
+     * @param int $type 验证码类型：1数字，2字母，3数字字母，4算术，5中文
      */
-    public static function create()
+    public static function create($type = 1)
     {
-        self::configure();
+        self::configure($type);
 
         $switch = self::$switch;
-
         if (empty($switch)) {
             $captcha['captcha_switch'] = $switch;
             $captcha['captcha_id']     = '';
@@ -116,10 +115,8 @@ class CaptchaUtils
         self::$im = imagecreate(self::$imageW, self::$imageH);
         // 设置背景
         imagecolorallocate(self::$im, self::$bg[0], self::$bg[1], self::$bg[2]);
-
         // 验证码字体随机颜色
         self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
-
         // 验证码使用随机字体
         $ttfPath = '../private/captcha/assets/' . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
 
@@ -153,7 +150,6 @@ class CaptchaUtils
 
         // 绘验证码
         $text = self::$useZh ? preg_split('/(?<!^)(?!$)/u', $generator['val']) : str_split($generator['val']); // 验证码
-
         foreach ($text as $index => $char) {
             $x     = self::$fontSize * ($index + 1) * mt_rand(1.2, 1.6) * (self::$math ? 1 : 1.5);
             $y     = self::$fontSize + mt_rand(10, 20);
@@ -187,7 +183,7 @@ class CaptchaUtils
      */
     protected static function generate()
     {
-        $id = uniqid('captcha');
+        $id  = uniqid('captcha');
         $key = self::$prefix . $id;
         $bag = '';
 
@@ -195,7 +191,7 @@ class CaptchaUtils
             self::$useZh  = false;
             self::$length = 5;
 
-            $x   = random_int(10, 30);
+            $x   = random_int(1, 30);
             $y   = random_int(1, 9);
             $bag = "{$x} + {$y} = ";
             $and = $x + $y;
@@ -217,10 +213,7 @@ class CaptchaUtils
             Cache::set($key, $val, self::$expire);
         }
 
-        return [
-            'key' => $id,
-            'val' => $bag,
-        ];
+        return ['key' => $id, 'val' => $bag];
     }
 
     /**
@@ -234,13 +227,13 @@ class CaptchaUtils
     public static function check($captcha_id, $captcha_code)
     {
         self::configure();
-        
+
         $switch = self::$switch;
         if (empty($switch)) {
             return true;
         }
 
-        $key    = self::$prefix . $captcha_id;
+        $key     = self::$prefix . $captcha_id;
         $captcha = Cache::get($key);
         if ($captcha && ($captcha == $captcha_code)) {
             return true;

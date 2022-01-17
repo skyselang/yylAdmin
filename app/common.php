@@ -102,28 +102,6 @@ function file_url($file_path = '')
 }
 
 /**
- * 文件序列化
- *
- * @param array $files 文件数组 [['name'=>'名称','path'=>'路径','size'=>'大小']]
- *
- * @return string
- */
-function file_ser($files = [])
-{
-    if (empty($files)) {
-        return serialize([]);
-    }
-
-    $files_arr = [];
-    foreach ($files as $k => $v) {
-        unset($v['status'], $v['uid'], $v['url']);
-        $files_arr[] = $v;
-    }
-
-    return serialize($files_arr);
-}
-
-/**
  * 文件id
  *
  * @param array $files 文件数组 [['file_id'=>'文件id']]
@@ -140,28 +118,6 @@ function file_ids($files = [])
     $file_ids = implode(',', $file_ids);
 
     return $file_ids;
-}
-
-/**
- * 文件反序列化
- *
- * @param string $files 序列化后的文件数组
- *
- * @return array
- */
-function file_unser($files)
-{
-    $files = unserialize($files);
-
-    if (empty($files)) {
-        return [];
-    }
-
-    foreach ($files as $k => $v) {
-        $files[$k]['url'] = file_url($v['path']);
-    }
-
-    return $files;
 }
 
 /**

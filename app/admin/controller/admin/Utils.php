@@ -24,7 +24,7 @@ class Utils
 {
     /**
      * @Apidoc\Title("随机字符串")
-     * @Apidoc\Param("strrand_ids", type="array", require=true, default="[1,2,3]", desc="字符类型")
+     * @Apidoc\Param("strrand_ids", type="array", require=true, default="[1,2,3]", desc="所用字符")
      * @Apidoc\Param("strrand_len", type="int", require=true, default="12", desc="字符长度")
      */
     public function strrand()
@@ -34,7 +34,7 @@ class Utils
 
         validate(UtilsValidate::class)->scene('strrand')->check($param);
 
-        $data = UtilsService::strrand($param);
+        $data = UtilsService::strrand($param['strrand_ids'], $param['strrand_len']);
 
         return success($data);
     }

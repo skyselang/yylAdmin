@@ -16,7 +16,7 @@ use app\common\service\file\FileService;
 
 class SettingService
 {
-    // 设置id
+    // 内容设置id
     protected static $id = 1;
 
     /**
@@ -32,12 +32,12 @@ class SettingService
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['create_time'] = datetime();
                 $model->insert($info);
-                $info = $model->where($pk, $id)->find();
+                $info = $model->find($id);
             }
             $info = $info->toArray();
 
@@ -63,7 +63,6 @@ class SettingService
         $pk = $model->getPk();
 
         $id = self::$id;
-        unset($param[$pk]);
 
         $param['update_time'] = datetime();
 

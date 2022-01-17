@@ -89,7 +89,7 @@ class MemberService
             $model = new MemberModel();
             $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 exception('会员不存在：' . $id);
             }
@@ -209,7 +209,7 @@ class MemberService
     }
 
     /**
-     * 会员设置地区
+     * 会员修改地区
      *
      * @param array $ids       会员id
      * @param int   $region_id 地区id
@@ -234,6 +234,37 @@ class MemberService
         }
 
         $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 会员修改密码
+     *
+     * @param array $ids      会员id
+     * @param int   $password 新密码
+     * 
+     * @return array
+     */
+    public static function repwd($ids, $password)
+    {
+        $model = new MemberModel();
+        $pk = $model->getPk();
+
+        $update['password']    = md5($password);
+        $update['update_time'] = datetime();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($ids as $v) {
+            MemberCache::upd($v);
+        }
+
+        $update['ids']      = $ids;
+        $update['password'] = $password;
 
         return $update;
     }
@@ -264,37 +295,6 @@ class MemberService
         }
 
         $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 会员修改密码
-     *
-     * @param array $ids      会员ids
-     * @param int   $password 新密码
-     * 
-     * @return array
-     */
-    public static function repwd($ids, $password)
-    {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
-        $update['password']    = md5($password);
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            MemberCache::upd($v);
-        }
-
-        $update['ids']      = $ids;
-        $update['password'] = $password;
 
         return $update;
     }
@@ -386,8 +386,8 @@ class MemberService
         $MemberWechatPk = $MemberWechatModel->getPk();
         $member_wechat = $MemberWechatModel->field($MemberWechatPk . ',' . $MemberPk)->where($wechat_where)->find();
 
-        // 启动事务
         $errmsg = '';
+        // 启动事务
         $MemberModel->startTrans();
         try {
             if ($member_wechat) {
@@ -448,7 +448,7 @@ class MemberService
             // 提交事务
             $MemberModel->commit();
         } catch (\Exception $e) {
-            $errmsg = '微信登录失败:' . $e->getMessage() . ',line:' . $e->getLine();
+            $errmsg = '微信登录失败：' . $e->getMessage() . '：' . $e->getLine();
             // 回滚事务
             $MemberModel->rollback();
         }
@@ -560,7 +560,7 @@ class MemberService
      */
     public static function statNum($date = 'total', $type = 'new')
     {
-        $key  = $date . ':' . $type;
+        $key = $date . ':' . $type;
         $data = MemberCache::get($key);
         if (empty($data)) {
             $model = new MemberModel();
@@ -635,7 +635,7 @@ class MemberService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = 'date:' . $sta_date . '-' . $end_date;
+        $key = 'date:' . $sta_date . '-' . $end_date;
         $data = MemberCache::get($key);
         if (empty($data)) {
             $data['date'] = $date;

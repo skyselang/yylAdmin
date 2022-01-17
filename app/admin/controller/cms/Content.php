@@ -65,8 +65,8 @@ class Content
         }
         if ($search_field && $search_value) {
             if (in_array($search_field, ['content_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
@@ -312,8 +312,8 @@ class Content
         }
         if ($search_field && $search_value) {
             if ($search_field == 'content_id') {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;

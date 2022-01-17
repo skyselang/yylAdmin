@@ -16,6 +16,7 @@ use app\common\utils\DatetimeUtils;
 use app\common\cache\admin\UserLogCache;
 use app\common\model\admin\UserLogModel;
 use app\common\model\admin\UserModel;
+use app\common\model\admin\MenuModel;
 
 class UserLogService
 {
@@ -35,8 +36,14 @@ class UserLogService
         $model = new UserLogModel();
         $pk = $model->getPk();
 
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
+        $MenuModel = new MenuModel();
+        $MenuPk = $MenuModel->getPk();
+
         if (empty($field)) {
-            $field = $pk . ',admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',' . $UserPk . ',' . $MenuPk . ',request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -52,21 +59,21 @@ class UserLogService
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         foreach ($list as $k => $v) {
-            if (isset($v['admin_user_id'])) {
+            if (isset($v[$UserPk])) {
                 $list[$k]['username'] = '';
-                $admin_user = UserService::info($v['admin_user_id']);
-                if ($admin_user) {
-                    $list[$k]['username'] = $admin_user['username'];
+                $user = UserService::info($v[$UserPk]);
+                if ($user) {
+                    $list[$k]['username'] = $user['username'];
                 }
             }
 
-            if (isset($v['admin_menu_id'])) {
+            if (isset($v[$MenuPk])) {
                 $list[$k]['menu_name'] = '';
                 $list[$k]['menu_url']  = '';
-                $admin_menu = MenuService::info($v['admin_menu_id']);
-                if ($admin_menu) {
-                    $list[$k]['menu_name'] = $admin_menu['menu_name'];
-                    $list[$k]['menu_url']  = $admin_menu['menu_url'];
+                $menu = MenuService::info($v[$MenuPk]);
+                if ($menu) {
+                    $list[$k]['menu_name'] = $menu['menu_name'];
+                    $list[$k]['menu_url']  = $menu['menu_url'];
                 }
             }
         }
@@ -86,9 +93,7 @@ class UserLogService
         $info = UserLogCache::get($id);
         if (empty($info)) {
             $model = new UserLogModel();
-            $pk = $model->getPk();
-
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 exception('用户日志不存在：' . $id);
             }
@@ -98,21 +103,17 @@ class UserLogService
                 $info['request_param'] = unserialize($info['request_param']);
             }
 
-            $info['username'] = '';
-            $info['nickname'] = '';
-            $admin_user = UserService::info($info['admin_user_id']);
-            if ($admin_user) {
-                $info['username'] = $admin_user['username'];
-                $info['nickname'] = $admin_user['nickname'];
-            }
+            $UserModel = new UserModel();
+            $UserPk = $UserModel->getPk();
+            $user = UserService::info($info[$UserPk]);
+            $info['username'] = $user['username'];
+            $info['nickname'] = $user['nickname'];
 
-            $info['menu_name'] = '';
-            $info['menu_url']  = '';
-            $admin_menu = MenuService::info($info['admin_menu_id']);
-            if ($admin_menu) {
-                $info['menu_name'] = $admin_menu['menu_name'];
-                $info['menu_url']  = $admin_menu['menu_url'];
-            }
+            $MenuModel = new MenuModel();
+            $MenuPk = $MenuModel->getPk();
+            $menu = MenuService::info($info[$MenuPk]);
+            $info['menu_name'] = $menu['menu_name'];
+            $info['menu_url']  = $menu['menu_url'];
 
             UserLogCache::set($id, $info);
         }
@@ -131,10 +132,7 @@ class UserLogService
     {
         // 日志记录是否开启
         if (admin_log_switch()) {
-            $admin_menu    = MenuService::info();
-            $ip_info       = IpInfoUtils::info();
             $request_param = Request::param();
-
             if (isset($request_param['password'])) {
                 unset($request_param['password']);
             }
@@ -145,7 +143,10 @@ class UserLogService
                 unset($request_param['old_password']);
             }
 
-            $param['admin_menu_id']    = $admin_menu['admin_menu_id'];
+            $menu    = MenuService::info();
+            $ip_info = IpInfoUtils::info();
+
+            $param['admin_menu_id']    = $menu['admin_menu_id'];
             $param['request_ip']       = $ip_info['ip'];
             $param['request_country']  = $ip_info['country'];
             $param['request_province'] = $ip_info['province'];
@@ -253,7 +254,7 @@ class UserLogService
      */
     public static function statNum($date = 'total')
     {
-        $key  = 'num:' . $date;
+        $key = 'num:' . $date;
         $data = UserLogCache::get($key);
         if (empty($data)) {
             $model = new UserLogModel();
@@ -325,7 +326,7 @@ class UserLogService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = 'date:' . $sta_date . '-' . $end_date;
+        $key = 'date:' . $sta_date . '-' . $end_date;
         $data = UserLogCache::get($key);
         if (empty($data)) {
             $model = new UserLogModel();
@@ -338,16 +339,16 @@ class UserLogService
             $where[] = ['create_time', '<=', $end_time];
             $group   = "date_format(create_time,'%Y-%m-%d')";
 
-            $admin_user_log = $model->field($field)->where($where)->group($group)->select()->toArray();
+            $user_log = $model->field($field)->where($where)->group($group)->select()->toArray();
 
             $x = DatetimeUtils::betweenDates($sta_date, $end_date);
             $s = [];
 
             foreach ($x as $k => $v) {
                 $s[$k] = 0;
-                foreach ($admin_user_log as $ka => $va) {
-                    if ($v == $va['date']) {
-                        $s[$k] = $va['num'];
+                foreach ($user_log as $vul) {
+                    if ($v == $vul['date']) {
+                        $s[$k] = $vul['num'];
                     }
                 }
             }
@@ -381,7 +382,7 @@ class UserLogService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
+        $key = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
         if ($type == 'country') {
             $group = 'request_country';
             $field = $group . ' as x';
@@ -416,32 +417,20 @@ class UserLogService
             $where[] = ['create_time', '>=', $sta_time];
             $where[] = ['create_time', '<=', $end_time];
 
-            $admin_user_log = $model
-                ->field($field . ', COUNT(' . $pk . ') as s')
-                ->where($where)
-                ->group($group)
-                ->order('s desc')
-                ->limit($top)
-                ->select()
-                ->toArray();
+            $user_log = $model->field($field . ', COUNT(' . $pk . ') as s')->where($where)->group($group)->order('s desc')->limit($top)->select()->toArray();
 
             $x = $s = $sp = [];
 
             if ($type == 'user') {
-                $admin_user_ids = array_column($admin_user_log, 'x');
                 $UserModel = new UserModel();
                 $UserPk = $UserModel->getPk();
-
-                $admin_user = $UserModel
-                    ->field($UserPk . ',username')
-                    ->where($UserPk, 'in', $admin_user_ids)
-                    ->select()
-                    ->toArray();
+                $admin_user_ids = array_column($user_log, 'x');
+                $user = $UserModel->field($UserPk . ',username')->where($UserPk, 'in', $admin_user_ids)->select()->toArray();
             }
 
-            foreach ($admin_user_log as $v) {
+            foreach ($user_log as $v) {
                 if ($type == 'user') {
-                    foreach ($admin_user as $va) {
+                    foreach ($user as $va) {
                         if ($v['x'] == $va['admin_user_id']) {
                             $v['x'] = $va['username'];
                         }

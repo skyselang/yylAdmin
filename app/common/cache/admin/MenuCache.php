@@ -67,7 +67,7 @@ class MenuCache
             $keys[] = $admin_menu_id;
         }
 
-        $key_arr = ['list', 'tree', 'urlList', 'unloginList', 'unauthList', 'unrateList'];
+        $key_arr = ['list', 'tree', 'urlList', 'unloginUrl', 'unauthUrl', 'unrateUrl'];
         $keys = array_merge($keys, $key_arr);
 
         foreach ($keys as $v) {

@@ -16,62 +16,56 @@ use app\common\service\file\FileService;
 
 class CategoryService
 {
-    // 缓存key
-    protected static $key = 'all';
-
     /**
-     * 分类列表
+     * 内容分类列表
      * 
-     * @param string $type tree树形，list列表
+     * @param string $type list列表，tree树形
      * 
      * @return array
      */
-    public static function list($type = 'tree')
+    public static function list($type = 'list')
     {
-        $model = new CategoryModel();
-        $pk = $model->getPk();
-
-        $key  = self::$key;
+        $key = $type;
         $data = CategoryCache::get($key);
         if (empty($data)) {
+            $model = new CategoryModel();
+            $pk = $model->getPk();
+
             $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
 
             $where[] = ['is_delete', '=', 0];
 
             $order = ['sort' => 'desc', $pk => 'desc'];
 
-            $list = $model->field($field)->where($where)->order($order)->select()->toArray();
+            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
 
-            $data['list'] = $list;
-            $data['tree'] = self::toTree($list, 0);
+            if ($type == 'tree') {
+                $data = self::toTree($data, 0);
+            }
 
             CategoryCache::set($key, $data);
         }
 
-        if ($type == 'list') {
-            return $data['list'];
-        }
-
-        return $data['tree'];
+        return $data;
     }
 
     /**
-     * 分类信息
+     * 内容分类信息
      * 
-     * @param int $id 分类id
+     * @param int $id 内容分类id
      * 
      * @return array|Exception
      */
     public static function info($id)
     {
-        $model = new CategoryModel();
-        $pk = $model->getPk();
-
         $info = CategoryCache::get($id);
         if (empty($info)) {
+            $model = new CategoryModel();
+            $pk = $model->getPk();
+
             $info = $model->where($pk, $id)->find();
             if (empty($info)) {
-                exception('分类不存在：' . $id);
+                exception('内容分类不存在：' . $id);
             }
             $info = $info->toArray();
 
@@ -84,9 +78,9 @@ class CategoryService
     }
 
     /**
-     * 分类添加
+     * 内容分类添加
      *
-     * @param array $param 分类信息
+     * @param array $param 内容分类信息
      *
      * @return array|Exception
      */
@@ -103,7 +97,7 @@ class CategoryService
             exception();
         }
 
-        CategoryCache::del(self::$key);
+        CategoryCache::del();
 
         $param[$pk] = $id;
 
@@ -111,9 +105,9 @@ class CategoryService
     }
 
     /**
-     * 分类修改 
+     * 内容分类修改 
      *     
-     * @param array $param 分类信息
+     * @param array $param 内容分类信息
      *     
      * @return array|Exception
      */
@@ -134,7 +128,6 @@ class CategoryService
         }
 
         CategoryCache::del($id);
-        CategoryCache::del(self::$key);
 
         $param[$pk] = $id;
 
@@ -142,9 +135,9 @@ class CategoryService
     }
 
     /**
-     * 分类删除
+     * 内容分类删除
      * 
-     * @param array $ids 分类列表id
+     * @param array $ids 内容分类id
      * 
      * @return array|Exception
      */
@@ -161,10 +154,7 @@ class CategoryService
             exception();
         }
 
-        foreach ($ids as $v) {
-            CategoryCache::del($v);
-        }
-        CategoryCache::del(self::$key);
+        CategoryCache::del($ids);
 
         $update['ids'] = $ids;
 
@@ -172,10 +162,10 @@ class CategoryService
     }
 
     /**
-     * 内容分类设置父级
+     * 内容分类修改父级
      *
-     * @param array $ids          分类列表id
-     * @param int   $category_pid 分类父级id
+     * @param array $ids          内容分类id
+     * @param int   $category_pid 内容分类pid
      * 
      * @return array
      */
@@ -192,10 +182,7 @@ class CategoryService
             exception();
         }
 
-        foreach ($ids as $v) {
-            CategoryCache::del($v);
-        }
-        CategoryCache::del(self::$key);
+        CategoryCache::del($ids);
 
         $update['ids'] = $ids;
 
@@ -203,9 +190,9 @@ class CategoryService
     }
 
     /**
-     * 分类是否隐藏
+     * 内容分类是否隐藏
      *
-     * @param array $ids     分类列表
+     * @param array $ids     内容分类id
      * @param int   $is_hide 是否隐藏
      * 
      * @return array|Exception
@@ -223,10 +210,7 @@ class CategoryService
             exception();
         }
 
-        foreach ($ids as $v) {
-            CategoryCache::del($v);
-        }
-        CategoryCache::del(self::$key);
+        CategoryCache::del($ids);
 
         $update['ids'] = $ids;
 
@@ -234,10 +218,10 @@ class CategoryService
     }
 
     /**
-     * 分类列表转树形
+     * 内容分类列表转树形
      *
-     * @param array $category     分类列表
-     * @param int   $category_pid 分类父级id
+     * @param array $category     内容分类列表
+     * @param int   $category_pid 内容分类pid
      * 
      * @return array
      */

@@ -29,5 +29,7 @@ return [
     'menu_is_unrate' => [
         'admin/file.File/add',
         'admin/file.File/list'
-    ]
+    ],
+    // token名称，必须与前端设置一致
+    'token_name' => env('token.admin_token_name', 'AdminToken')
 ];

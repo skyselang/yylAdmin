@@ -49,18 +49,18 @@ class FileValidate extends Validate
     // 自定义验证规则：上传限制
     protected function checkLimit($value, $rule, $data = [])
     {
-        $file = $data['file'];
+        $file    = $data['file'];
         $setting = SettingService::info();
 
-        $file_ext = $file->getOriginalExtension();
-        $file_type = SettingService::getFileType($file_ext);
+        $file_ext    = $file->getOriginalExtension();
+        $file_type   = SettingService::getFileType($file_ext);
         $set_ext_str = $setting[$file_type . '_ext'];
         $set_ext_arr = explode(',', $set_ext_str);
         if (!in_array($file_ext, $set_ext_arr)) {
             return '上传的文件格式不允许，允许格式：' . $set_ext_str;
         }
 
-        $file_size = $file->getSize();
+        $file_size  = $file->getSize();
         $set_size_m = $setting[$file_type . '_size'];
         $set_size_b = $set_size_m * 1048576;
         if ($file_size > $set_size_b) {

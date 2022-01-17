@@ -17,7 +17,7 @@ class CategoryCache
     /**
      * 缓存键名
      *
-     * @param mixed $category_id 内容分类id、all
+     * @param mixed $category_id 内容分类id、key
      * 
      * @return string
      */
@@ -29,7 +29,7 @@ class CategoryCache
     /**
      * 缓存写入
      *
-     * @param mixed $category_id 内容分类id、all
+     * @param mixed $category_id 内容分类id、key
      * @param array $category    内容分类信息
      * @param int   $ttl         有效时间（秒）0永久
      * 
@@ -43,7 +43,7 @@ class CategoryCache
     /**
      * 缓存读取
      *
-     * @param mixed $category_id 内容分类id、all
+     * @param mixed $category_id 内容分类id、key
      * 
      * @return mixed
      */
@@ -55,12 +55,25 @@ class CategoryCache
     /**
      * 缓存删除
      *
-     * @param mixed $category_id 内容分类id、all
+     * @param mixed $category_id 内容分类id、key
      * 
      * @return bool
      */
-    public static function del($category_id)
+    public static function del($category_id = '')
     {
-        return Cache::delete(self::key($category_id));
+        if (is_array($category_id)) {
+            $keys = $category_id;
+        } else {
+            $keys[] = $category_id;
+        }
+
+        $key_arr = ['list', 'tree'];
+        $keys = array_merge($keys, $key_arr);
+
+        foreach ($keys as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+
+        return $res;
     }
 }

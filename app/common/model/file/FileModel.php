@@ -28,7 +28,7 @@ class FileModel extends Model
     }
 
     /**
-     * @Apidoc\Field("group_id,file_type,is_disable,is_front")
+     * @Apidoc\Field("group_id,file_type,is_disable,is_front,storage")
      */
     public function listParam()
     {
@@ -49,7 +49,7 @@ class FileModel extends Model
     }
 
     /**
-     * @Apidoc\Field("group_id,file_name")
+     * @Apidoc\Field("group_id,file_type,file_name")
      */
     public function addParam()
     {
@@ -70,16 +70,16 @@ class FileModel extends Model
     }
 
     /**
-     * @Apidoc\Field("file_type")
+     * @Apidoc\Field("domain")
      */
-    public function file_type()
+    public function domain()
     {
     }
 
     /**
-     * @Apidoc\Field("domain")
+     * @Apidoc\Field("file_type")
      */
-    public function domain()
+    public function file_type()
     {
     }
 

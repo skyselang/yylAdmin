@@ -59,7 +59,7 @@ class RegionService
     /**
      * 地区信息
      *
-     * @param mixed $id 地区id、树形key
+     * @param mixed $id 地区id、树形key（tree)
      * 
      * @return array
      */
@@ -74,7 +74,7 @@ class RegionService
                 $info = $model->field($pk . ',region_pid,region_name')->where('is_delete', 0)->select()->toArray();
                 $info = self::toTree($info, 0);
             } else {
-                $info = $model->where($pk, $id)->find();
+                $info = $model->find($id);
                 if (empty($info)) {
                     exception('地区不存在：' . $id);
                 }
@@ -140,13 +140,13 @@ class RegionService
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = $e->getMessage();
+            $errmsg = '添加失败：' . $e->getMessage() . '：' . $e->getLine();
             // 回滚事务
             $model->rollback();
         }
 
         if (empty($errmsg)) {
-            exception('添加失败：' . $errmsg);
+            exception($errmsg);
         }
 
         RegionCache::del(self::$tree);
@@ -170,7 +170,6 @@ class RegionService
         $pk = $model->getPk();
 
         $param = self::pinyin($param);
-
         $region_id = $param[$pk];
         unset($param[$pk]);
 
@@ -198,13 +197,13 @@ class RegionService
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = $e->getMessage();
+            $errmsg = '修改失败：' . $e->getMessage() . '：' . $e->getLine();
             // 回滚事务
             $model->rollback();
         }
 
         if (empty($errmsg)) {
-            exception('修改失败：' . $errmsg);
+            exception($errmsg);
         }
 
         RegionCache::del($region_id);
@@ -214,59 +213,6 @@ class RegionService
         $param['region_path'] = $region_path;
 
         return $param;
-    }
-
-    /**
-     * 地区设置父级
-     *
-     * @param array $ids        地区id
-     * @param int   $region_pid 地区pid
-     * 
-     * @return array
-     */
-    public static function pid($ids, $region_pid)
-    {
-        $model = new RegionModel();
-        $pk = $model->getPk();
-
-        $errmsg = '';
-        // 启动事务
-        $model->startTrans();
-        try {
-            $update['region_pid']  = $region_pid;
-            $update['update_time'] = datetime();
-            foreach ($ids as $v) {
-                $region_level = 1;
-                $region_path  = $v;
-                if ($region_pid) {
-                    $region = self::info($region_pid);
-                    $region_level = $region['region_level'] + 1;
-                    $region_path  = $region['region_path'] . ',' . $v;
-                }
-                $update['region_level'] = $region_level;
-                $update['region_path']  = $region_path;
-                $model->where($pk, $v)->update($update);
-            }
-            // 提交事务
-            $model->commit();
-        } catch (\Exception $e) {
-            $errmsg = $e->getMessage();
-            // 回滚事务
-            $model->rollback();
-        }
-
-        if ($errmsg) {
-            exception('设置失败：' . $errmsg);
-        }
-
-        foreach ($ids as $v) {
-            RegionCache::del($v);
-        }
-        RegionCache::del(self::$tree);
-
-        $update['ids'] = $ids;
-
-        return $update;
     }
 
     /**
@@ -300,9 +246,62 @@ class RegionService
     }
 
     /**
+     * 地区修改父级
+     *
+     * @param array $ids        地区id
+     * @param int   $region_pid 地区pid
+     * 
+     * @return array
+     */
+    public static function pid($ids, $region_pid)
+    {
+        $model = new RegionModel();
+        $pk = $model->getPk();
+
+        $errmsg = '';
+        // 启动事务
+        $model->startTrans();
+        try {
+            $update['region_pid']  = $region_pid;
+            $update['update_time'] = datetime();
+            foreach ($ids as $v) {
+                $region_level = 1;
+                $region_path  = $v;
+                if ($region_pid) {
+                    $region = self::info($region_pid);
+                    $region_level = $region['region_level'] + 1;
+                    $region_path  = $region['region_path'] . ',' . $v;
+                }
+                $update['region_level'] = $region_level;
+                $update['region_path']  = $region_path;
+                $model->where($pk, $v)->update($update);
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = '修改失败：' . $e->getMessage() . '：' . $e->getLine();
+            // 回滚事务
+            $model->rollback();
+        }
+
+        if ($errmsg) {
+            exception($errmsg);
+        }
+
+        foreach ($ids as $v) {
+            RegionCache::del($v);
+        }
+        RegionCache::del(self::$tree);
+
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
      * 地区获取所有子级
      *
-     * @param array $region    所有地区
+     * @param array $region    地区列表
      * @param int   $region_id 地区id
      * 
      * @return array
@@ -324,9 +323,9 @@ class RegionService
     }
 
     /**
-     * 地区转换树形
+     * 地区列表转换树形
      *
-     * @param array $region     所有地区
+     * @param array $region     地区列表
      * @param int   $region_pid 地区pid
      * 
      * @return array
@@ -361,6 +360,7 @@ class RegionService
         $region_pinyin   = '';
         $region_jianpin  = '';
         $region_initials = '';
+
         foreach ($region_py as $k => $v) {
             $region_py_i = '';
             $region_py_e = '';

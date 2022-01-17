@@ -28,7 +28,7 @@ class Wechat
         $app = WechatService::offi();
 
         $app->server->push(function ($message) {
-            return "您好！欢迎使用 yylAdmin !";
+            return "您好！欢迎使用 yylAdmin !" . $message;
         });
 
         $response = $app->server->serve();

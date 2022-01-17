@@ -37,10 +37,10 @@ class IndexService
      */
     public static function count()
     {
-        $key  = 'statistics:count';
+        $key = 'statistics:count';
         $data = Cache::get($key);
         if (empty($data)) {
-            $data  = [];
+            $data = [];
             $table = ['member' => '会员', 'cms_content' => '内容', 'file' => '文件', 'api' => '接口', 'region' => '地区'];
             foreach ($table as $k => $v) {
                 $temp = [];

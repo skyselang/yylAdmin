@@ -61,13 +61,6 @@ class UserValidate extends Validate
             ->remove('password', ['length']);
     }
 
-    // 验证场景定义：分配权限
-    protected function scenerule()
-    {
-        return $this->only(['admin_user_id'])
-            ->append('admin_user_id', ['checkAdminUserIsSuper']);
-    }
-
     // 验证场景定义：修改
     protected function sceneedit()
     {
@@ -80,6 +73,13 @@ class UserValidate extends Validate
     {
         return $this->only(['ids'])
             ->append('ids', ['checkAdminUserIsDelete', 'checkAdminUserRoleMenu']);
+    }
+
+    // 验证场景定义：分配权限
+    protected function scenerule()
+    {
+        return $this->only(['admin_user_id'])
+            ->append('admin_user_id', ['checkAdminUserIsSuper']);
     }
 
     // 验证场景定义：是否超管
@@ -101,6 +101,20 @@ class UserValidate extends Validate
     {
         return $this->only(['ids', 'password'])
             ->append('ids', ['checkAdminUserIsSuper']);
+    }
+
+    // 自定义验证规则：用户删除
+    protected function checkAdminUserIsDelete($value, $rule, $data = [])
+    {
+        $ids = $data['ids'];
+        foreach ($ids as $v) {
+            $admin_is_super = admin_is_super($v);
+            if ($admin_is_super) {
+                return '无法对系统用户进行操作:' . $v;
+            }
+        }
+
+        return true;
     }
 
     // 自定义验证规则：账号是否已存在
@@ -179,20 +193,6 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否已分配角色或菜单
-    protected function checkAdminUserRoleMenu($value, $rule, $data = [])
-    {
-        $ids = $data['ids'];
-        foreach ($ids as $v) {
-            $user = UserService::info($v);
-            if ($user['admin_role_ids'] || $user['admin_menu_ids']) {
-                return '请在[权限]中取消所有角色和菜单后再删除';
-            }
-        }
-
-        return true;
-    }
-
     // 自定义验证规则：用户是否超管
     protected function checkAdminUserIsSuper($value, $rule, $data = [])
     {
@@ -230,14 +230,14 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户删除
-    protected function checkAdminUserIsDelete($value, $rule, $data = [])
+    // 自定义验证规则：用户是否已分配角色或菜单
+    protected function checkAdminUserRoleMenu($value, $rule, $data = [])
     {
         $ids = $data['ids'];
         foreach ($ids as $v) {
-            $admin_is_super = admin_is_super($v);
-            if ($admin_is_super) {
-                return '无法对系统用户进行操作:' . $v;
+            $user = UserService::info($v);
+            if ($user['admin_role_ids'] || $user['admin_menu_ids']) {
+                return '请在[权限]中取消所有角色和菜单后再删除';
             }
         }
 

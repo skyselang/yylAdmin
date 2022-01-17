@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 消息管理
+// 公告管理
 namespace app\common\service\admin;
 
 use app\common\cache\admin\NoticeCache;
@@ -17,7 +17,7 @@ use app\common\model\admin\UserModel;
 class NoticeService
 {
     /**
-     * 消息列表
+     * 公告列表
      *
      * @param array  $where 条件
      * @param int    $page  页数
@@ -32,12 +32,15 @@ class NoticeService
         $model = new NoticeModel();
         $pk = $model->getPk();
 
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+
         if (empty($field)) {
-            $field = $pk . ',admin_user_id,title,color,sort,is_open,open_time_start,open_time_end,create_time';
+            $field = $pk . ',' . $UserPk . ',title,color,sort,is_open,open_time_start,open_time_end,create_time';
         }
 
         if (empty($order)) {
-            $order = ['sort' => 'desc',  $pk => 'desc', 'is_open' => 'desc'];
+            $order = ['is_open' => 'desc', 'sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
@@ -47,12 +50,9 @@ class NoticeService
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         foreach ($list as $k => $v) {
-            if (isset($v['admin_user_id'])) {
-                $list[$k]['admin_user'] = '';
-                $admin_user = UserService::info($v['admin_user_id']);
-                if ($admin_user) {
-                    $list[$k]['admin_user'] = $admin_user['username'];
-                }
+            if (isset($v[$UserPk])) {
+                $user = UserService::info($v[$UserPk]);
+                $list[$k]['username'] = $user['username'];
             }
         }
 
@@ -60,9 +60,9 @@ class NoticeService
     }
 
     /**
-     * 消息信息
+     * 公告信息
      *
-     * @param int $id 消息id
+     * @param int $id 公告id
      * 
      * @return array
      */
@@ -71,18 +71,16 @@ class NoticeService
         $info = NoticeCache::get($id);
         if (empty($info)) {
             $model = new NoticeModel();
-            $pk = $model->getPk();
-
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
-                exception('消息不存在：' . $id);
+                exception('公告不存在：' . $id);
             }
             $info = $info->toArray();
 
             $UserModel = new UserModel();
             $UserPk = $UserModel->getPk();
-            $admin_user = UserService::info($info[$UserPk]);
-            $info['admin_user'] = $admin_user ? $admin_user['username'] : '';
+            $user = UserService::info($info[$UserPk]);
+            $info['username'] = $user['username'];
 
             NoticeCache::set($id, $info);
         }
@@ -91,9 +89,9 @@ class NoticeService
     }
 
     /**
-     * 消息添加
+     * 公告添加
      *
-     * @param array $param 消息信息
+     * @param array $param 公告信息
      * 
      * @return array
      */
@@ -115,9 +113,9 @@ class NoticeService
     }
 
     /**
-     * 消息修改
+     * 公告修改
      *
-     * @param array $param 消息信息
+     * @param array $param 公告信息
      * 
      * @return array
      */
@@ -144,9 +142,9 @@ class NoticeService
     }
 
     /**
-     * 消息删除
+     * 公告删除
      *
-     * @param array $ids 消息id
+     * @param array $ids 公告id
      * 
      * @return array
      */
@@ -173,9 +171,9 @@ class NoticeService
     }
 
     /**
-     * 消息是否开启
+     * 公告是否开启
      *
-     * @param array $ids     消息id
+     * @param array $ids     公告id
      * @param int   $is_open 是否开启
      * 
      * @return array
@@ -203,10 +201,10 @@ class NoticeService
     }
 
     /**
-     * 消息开启时间
+     * 公告开启时间
      *
-     * @param array  $ids   消息id
-     * @param string $param 开始时间、结束时间
+     * @param array $ids   公告id
+     * @param array $param 开始时间、结束时间
      * 
      * @return array
      */

@@ -17,10 +17,6 @@ use app\common\service\file\FileService;
 
 class SettingWechatService
 {
-    // 表名
-    protected static $t_name = 'info';
-    // 表主键
-    protected static $t_pk = 'id';
     // 公众号id
     private static $offi_id = 1;
     // 小程序id
@@ -39,15 +35,14 @@ class SettingWechatService
             $model = new SettingWechatModel();
             $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]                = $id;
                 $info['token']            = StringUtils::random(32);
                 $info['encoding_aes_key'] = StringUtils::random(43);
                 $info['create_time']      = datetime();
                 $model->insert($info);
-
-                $info = $model->where($pk, $id)->find();
+                $info = $model->find($id);
             }
             $info = $info->toArray();
 
@@ -73,6 +68,7 @@ class SettingWechatService
         $pk = $model->getPk();
 
         $id = self::$offi_id;
+
         $param['update_time'] = datetime();
 
         $res = $model->where($pk, $id)->update($param);
@@ -98,13 +94,12 @@ class SettingWechatService
             $model = new SettingWechatModel();
             $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['create_time'] = datetime();
                 $model->insert($info);
-
-                $info = $model->where($pk, $id)->find();
+                $info = $model->find($id);
             }
             $info = $info->toArray();
 
@@ -129,6 +124,7 @@ class SettingWechatService
         $pk = $model->getPk();
 
         $id = self::$mini_id;
+        
         $param['update_time'] = datetime();
 
         $res = $model->where($pk, $id)->update($param);

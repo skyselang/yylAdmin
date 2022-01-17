@@ -32,7 +32,7 @@ class Role
      */
     public function menu()
     {
-        $data['list'] = MenuService::tree();
+        $data['list'] = MenuService::list('tree');
 
         return success($data);
     }
@@ -41,9 +41,8 @@ class Role
      * @Apidoc\Title("角色列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
-     * @Apidoc\Param(ref="app\common\model\admin\RoleModel\listParam")
-     * @Apidoc\Param("role_name", require=false)
-     * @Apidoc\Param("role_desc", require=false)
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="角色列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\RoleModel\listReturn")
@@ -63,8 +62,8 @@ class Role
         $where = [];
         if ($search_field && $search_value) {
             if (in_array($search_field, ['admin_role_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['is_disable'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;

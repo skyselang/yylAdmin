@@ -67,7 +67,7 @@ class ApiCache
             $keys[] = $api_id;
         }
 
-        $key_arr = ['list', 'tree', 'urlList', 'unloginList', 'unrateList'];
+        $key_arr = ['list', 'tree', 'urlList', 'unloginUrl', 'unrateUrl'];
         $keys = array_merge($keys, $key_arr);
 
         foreach ($keys as $v) {

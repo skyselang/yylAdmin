@@ -19,16 +19,14 @@ class UtilsService
     /**
      * 随机字符串
      *
-     * @param array $param 字符串参数
+     * @param array $ids 所用字符：1数字，2小写字母，3大写字母，4特殊符号
+     * @param array $len 字符串长度
      * 
      * @return array
      */
-    public static function strrand($param)
+    public static function strrand($ids = [1, 2, 3], $len = 12)
     {
-        $ids = $param['strrand_ids'];
-        $len = $param['strrand_len'];
-
-        $str_arr = [
+        $character = [
             1 => '0123456789',
             2 => 'abcdefghijklmnopqrstuvwxyz',
             3 => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
@@ -37,7 +35,7 @@ class UtilsService
 
         $ori = '';
         foreach ($ids as $v) {
-            $ori .= $str_arr[$v];
+            $ori .= $character[$v];
         }
         $ori = str_shuffle($ori);
 

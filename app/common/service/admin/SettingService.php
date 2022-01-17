@@ -11,6 +11,7 @@
 namespace app\common\service\admin;
 
 use think\facade\Cache;
+use think\facade\Config;
 use app\common\cache\admin\UserCache;
 use app\common\cache\admin\SettingCache;
 use app\common\service\file\FileService;
@@ -35,15 +36,19 @@ class SettingService
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
+                $info['token_name']  = Config::get('admin.token_name');
+                $info['token_key']   = uniqid();
                 $info['create_time'] = datetime();
                 $model->insert($info);
-
-                $info = $model->where($pk, $id)->find();
+                $info = $model->find($id);
             }
             $info = $info->toArray();
+
+            $cache_config = Cache::getConfig();
+            $info['cache_type'] = $cache_config['default'];
 
             $info['logo_url'] = '';
             if ($info['logo_id']) {
@@ -71,7 +76,7 @@ class SettingService
     /**
      * 设置修改
      *
-     * @param array $param
+     * @param array $param 设置信息
      *
      * @return bool|Exception
      */
@@ -81,7 +86,6 @@ class SettingService
         $pk = $model->getPk();
 
         $id = self::$id;
-        unset($param[$pk]);
 
         $param['update_time'] = datetime();
 
@@ -96,20 +100,6 @@ class SettingService
     }
 
     /**
-     * 缓存设置信息
-     *
-     * @return array
-     */
-    public static function cacheInfo()
-    {
-        $config = Cache::getConfig();
-
-        $data['type'] = $config['default'];
-
-        return $data;
-    }
-
-    /**
      * 缓存设置清除
      *
      * @return array
@@ -119,14 +109,15 @@ class SettingService
         $UserModel = new UserModel();
         $UserPk = $UserModel->getPk();
 
-        $admin_user = $UserModel->field($UserPk)->where('is_delete', 0)->select();
-        $admin_user_cache = [];
-        foreach ($admin_user as $v) {
-            $user_cache = UserCache::get($v[$UserPk]);
-            if ($user_cache) {
-                $user_cache_temp[$UserPk]       = $user_cache[$UserPk];
-                $user_cache_temp['admin_token'] = $user_cache['admin_token'];
-                $admin_user_cache[] = $user_cache_temp;
+        $user_cache = [];
+        $user = $UserModel->field($UserPk)->where('is_delete', 0)->select()->toArray();
+        foreach ($user as $v) {
+            $user_old = UserCache::get($v[$UserPk]);
+            if ($user_old) {
+                $user_cache_temp = [];
+                $user_cache_temp[$UserPk] = $user_old[$UserPk];
+                $user_cache_temp['admin_token'] = $user_old['admin_token'];
+                $user_cache[] = $user_cache_temp;
             }
         }
 
@@ -135,176 +126,14 @@ class SettingService
             exception();
         }
 
-        foreach ($admin_user_cache as $v) {
-            $admin_user_new = UserService::info($v[$UserPk]);
-            $admin_user_new['admin_token'] = $v['admin_token'];
-            UserCache::set($admin_user_new[$UserPk], $admin_user_new);
+        foreach ($user_cache as $v) {
+            $user_new = UserService::info($v[$UserPk]);
+            $user_new['admin_token'] = $v['admin_token'];
+            UserCache::set($user_new[$UserPk], $user_new);
         }
 
         $data['clear'] = $res;
 
         return $data;
-    }
-
-    /**
-     * Token设置信息
-     *
-     * @return array
-     */
-    public static function tokenInfo()
-    {
-        $setting = self::info();
-
-        // token_name为空则设置token_name
-        if (empty($setting['token_name'])) {
-            $token_name = 'AdminToken';
-            self::tokenEdit(['token_name' => $token_name]);
-            $setting = self::info();
-        }
-
-        // token_key为空则生成token_key
-        if (empty($setting['token_key'])) {
-            $token_key = uniqid();
-            self::tokenEdit(['token_key' => $token_key]);
-            $setting = self::info();
-        }
-
-        $data['token_name'] = $setting['token_name'];
-        $data['token_key']  = $setting['token_key'];
-        $data['token_exp']  = $setting['token_exp'];
-
-        return $data;
-    }
-
-    /**
-     * Token设置修改
-     *
-     * @param array $param Token信息
-     *
-     * @return array
-     */
-    public static function tokenEdit($param)
-    {
-        self::edit($param);
-
-        return $param;
-    }
-
-    /**
-     * 验证码设置信息
-     *
-     * @return array
-     */
-    public static function captchaInfo()
-    {
-        $setting = self::info();
-
-        $data['captcha_switch'] = $setting['captcha_switch'];
-
-        return $data;
-    }
-
-    /**
-     * 验证码设置修改
-     * 
-     * @param array $param 验证码信息
-     *
-     * @return array
-     */
-    public static function captchaEdit($param)
-    {
-        self::edit($param);
-
-        return $param;
-    }
-
-    /**
-     * 日志设置信息
-     *
-     * @return array
-     */
-    public static function logInfo()
-    {
-        $setting = self::info();
-
-        $data['log_switch']    = $setting['log_switch'];
-        $data['log_save_time'] = $setting['log_save_time'];
-
-        return $data;
-    }
-
-    /**
-     * 日志设置修改
-     * 
-     * @param array $param 日志记录信息
-     *
-     * @return array
-     */
-    public static function logEdit($param)
-    {
-        self::edit($param);
-
-        return $param;
-    }
-
-    /**
-     * 接口设置信息
-     *
-     * @return array
-     */
-    public static function apiInfo()
-    {
-        $setting = self::info();
-
-        $data['api_rate_num']  = $setting['api_rate_num'];
-        $data['api_rate_time'] = $setting['api_rate_time'];
-
-        return $data;
-    }
-
-    /**
-     * 接口设置修改
-     *
-     * @param array $param 接口设置信息
-     *
-     * @return array
-     */
-    public static function apiEdit($param)
-    {
-        self::edit($param);
-
-        return $param;
-    }
-
-    /**
-     * 系统设置信息
-     *
-     * @return array
-     */
-    public static function systemInfo()
-    {
-        $setting = self::info();
-
-        $data = [];
-        $field = ['logo_id', 'logo_url', 'favicon_id', 'favicon_url', 'login_bg_id', 'login_bg_url', 'system_name', 'page_title'];
-        foreach ($field as $v) {
-            $data[$v] = $setting[$v];
-        }
-
-        return $data;
-    }
-
-    /**
-     * 系统设置修改
-     *
-     * @param array $param 系统设置信息
-     *
-     * @return array
-     */
-    public static function systemEdit($param)
-    {
-        self::edit($param);
-
-        return $param;
     }
 }

@@ -62,7 +62,7 @@ class CommentService
             $model = new CommentModel();
             $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 exception('留言不存在：' . $id);
             }

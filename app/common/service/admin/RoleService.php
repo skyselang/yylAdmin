@@ -64,9 +64,7 @@ class RoleService
         $info = RoleCache::get($id);
         if (empty($info)) {
             $model = new RoleModel();
-            $pk = $model->getPk();
-
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 exception('角色不存在：' . $id);
             }
@@ -145,7 +143,7 @@ class RoleService
         $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
         $param['update_time']    = datetime();
 
-        $res = $model ->where($pk, $id)->update($param);
+        $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
         }
@@ -241,19 +239,22 @@ class RoleService
      */
     public static function userRemove($param)
     {
-        $model = new RoleModel();
-        $pk = $model->getPk();
-        $admin_role_id = $param[$pk];
+        $RoleModel = new RoleModel();
+        $RolePk = $RoleModel->getPk();
+        $admin_role_id = $param[$RolePk];
 
         $UserModel = new UserModel();
         $UserPk = $UserModel->getPk();
         $admin_user_id = $param[$UserPk];
 
-        $admin_user = UserService::info($admin_user_id);
-        $admin_role_ids = $admin_user['admin_role_ids'];
-        foreach ($admin_role_ids as $k => $v) {
-            if ($admin_role_id == $v) {
-                unset($admin_role_ids[$k]);
+        $admin_role_ids = [];
+        $user = UserService::info($admin_user_id);
+        if ($user) {
+            $admin_role_ids = $user['admin_role_ids'];
+            foreach ($admin_role_ids as $k => $v) {
+                if ($admin_role_id == $v) {
+                    unset($admin_role_ids[$k]);
+                }
             }
         }
 
@@ -273,14 +274,14 @@ class RoleService
 
         UserCache::upd($admin_user_id);
 
-        $update[$pk]     = $admin_role_id;
+        $update[$RolePk] = $admin_role_id;
         $update[$UserPk] = $admin_user_id;
 
         return $update;
     }
 
     /**
-     * 角色菜单id
+     * 角色获取菜单id
      *
      * @param mixed $id 角色id
      *

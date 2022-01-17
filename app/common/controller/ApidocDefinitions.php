@@ -82,8 +82,7 @@ class ApidocDefinitions
 
     /**
      * 上传文件请求参数
-     * @Apidoc\Param("file", type="file", require=true, default="", desc="图片、视频、文件")
-     * @Apidoc\Param("type", type="string", require=false, default="image", desc="image、video、file")
+     * @Apidoc\Param("file", type="file", require=true, default="", desc="文件")
      */
     public function fileParam()
     {

@@ -15,30 +15,28 @@ use app\common\model\file\SettingModel;
 
 class SettingService
 {
-    // 设置id
+    // 文件设置id
     private static $id = 1;
 
     /**
-     * 设置信息
+     * 文件设置信息
      *
      * @return array
      */
     public static function info()
     {
-        $model = new SettingModel();
-        $pk = $model->getPk();
-
         $id = self::$id;
         $info = SettingCache::get($id);
         if (empty($info)) {
-            $info = $model->where($pk, $id)->find();
+            $model = new SettingModel();
+            $pk = $model->getPk();
+
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['storage']     = 'local';
                 $info['create_time'] = datetime();
-
                 $model->insert($info);
-                $info = $model->where($pk, $id)->find();
+                $info = $model->find($id);
             }
             $info = $info->toArray();
 
@@ -49,7 +47,7 @@ class SettingService
     }
 
     /**
-     * 设置修改
+     * 文件设置修改
      *
      * @param array $param 设置信息
      *
@@ -61,7 +59,7 @@ class SettingService
         $pk = $model->getPk();
 
         $id = self::$id;
-
+        
         $param['update_time'] = datetime();
 
         $info = $model->where($pk, $id)->update($param);
@@ -168,7 +166,10 @@ class SettingService
             'mp4', 'avi', 'mkv', 'flv', 'rm', 'rmvb', 'webm', '3gp', 'mpeg', 'mpg', 'dat', 'asx', 'wmv',
             'mov', 'm4a', 'ogm', 'vob'
         ];
-        $audio_ext = ['mp3', 'aac', 'wma', 'wav', 'ape', 'flac', 'ogg', 'adt', 'adts', 'cda'];
+        $audio_ext = [
+            'mp3', 'aac', 'wma', 'wav', 'ape', 'flac', 'ogg', 'adt', 'adts', 'cda', 'cd', 'wave',
+            'aiff', 'midi', 'ra', 'rmx', 'vqf', 'amr'
+        ];
         $word_ext = [
             'doc', 'docx', 'docm', 'dotx', 'dotm', 'txt',
             'xls', 'xlsx', 'xlsm', 'xltx', 'xltm', 'xlsb', 'xlam', 'csv',

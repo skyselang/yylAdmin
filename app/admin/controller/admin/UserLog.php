@@ -57,17 +57,17 @@ class UserLog
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['username'])) {
-                $user_exp = strpos($search_value, ',') ? 'in' : '=';
-                $user_where[] = [$search_field, $user_exp, $search_value];
                 $UserModel = new UserModel();
                 $UserPk = $UserModel->getPk();
+                $user_exp = strpos($search_value, ',') ? 'in' : '=';
+                $user_where[] = [$search_field, $user_exp, $search_value];
                 $admin_user_ids = $UserModel->where($user_where)->column($UserPk);
                 $where[] = [$UserPk, 'in', $admin_user_ids];
             } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
-                $menu_exp = strpos($search_value, ',') ? 'in' : '=';
-                $menu_where[] = [$search_field, $menu_exp, $search_value];
                 $MenuModel = new MenuModel();
                 $MenuPk = new $MenuModel->getPk();
+                $menu_exp = strpos($search_value, ',') ? 'in' : '=';
+                $menu_where[] = [$search_field, $menu_exp, $search_value];
                 $admin_menu_ids = $MenuModel->where($menu_where)->column($MenuPk);
                 $where[] = [$MenuPk, 'in', $admin_menu_ids];
             } else {
@@ -153,9 +153,9 @@ class UserLog
             $admin_user_ids = array_merge(explode(',', $admin_user_id), $admin_user_ids);
         }
         if ($username) {
-            $user_exp = strstr($username, ',') ? 'in' : '=';
             $UserModel = new UserModel();
             $UserPk = $UserModel->getPk();
+            $user_exp = strstr($username, ',') ? 'in' : '=';
             $user_ids = $UserModel->where('username', $user_exp, $username)->column($UserPk);
             if ($user_ids) {
                 $admin_user_ids = array_merge($user_ids, $admin_user_ids);
@@ -170,9 +170,9 @@ class UserLog
             $admin_menu_ids = array_merge(explode(',', $admin_menu_id), $admin_menu_ids);
         }
         if ($menu_url) {
-            $menu_exp = strstr($menu_url, ',') ? 'in' : '=';
             $MenuModel = new MenuModel();
             $MenuPk = $MenuModel->getPk();
+            $menu_exp = strstr($menu_url, ',') ? 'in' : '=';
             $menu_ids = $MenuModel->where('menu_url', $menu_exp, $menu_url)->column($MenuPk);
             if ($menu_ids) {
                 $admin_menu_ids = array_merge($menu_ids, $admin_menu_ids);

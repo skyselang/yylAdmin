@@ -46,8 +46,8 @@ class Comment
 
         if ($search_field && $search_value) {
             if (in_array($search_field, ['comment_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['is_unread'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;
@@ -182,6 +182,7 @@ class Comment
     /**
      * @Apidoc\Title("留言回收站")
      * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn"),
@@ -202,8 +203,8 @@ class Comment
 
         if ($search_field && $search_value) {
             if (in_array($search_field, ['comment_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['is_unread'])) {
                 if ($search_value == '是' || $search_value == '1') {
                     $search_value = 1;

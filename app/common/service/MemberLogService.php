@@ -16,6 +16,7 @@ use app\common\utils\DatetimeUtils;
 use app\common\cache\MemberLogCache;
 use app\common\model\MemberLogModel;
 use app\common\model\MemberModel;
+use app\common\model\ApiModel;
 
 class MemberLogService
 {
@@ -35,8 +36,14 @@ class MemberLogService
         $model = new MemberLogModel();
         $pk = $model->getPk();
 
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+
+        $ApiModel = new ApiModel();
+        $ApiPk = $ApiModel->getPk();
+
         if (empty($field)) {
-            $field = $pk . ',member_id,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',' . $MemberPk . ',' . $ApiPk . ',request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
 
         $where[] = ['is_delete', '=', 0];
@@ -52,20 +59,20 @@ class MemberLogService
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         foreach ($list as $k => $v) {
-            if (isset($v['member_id'])) {
+            if (isset($v[$MemberPk])) {
                 $list[$k]['username'] = '';
                 $list[$k]['nickname'] = '';
-                $admin_user = MemberService::info($v['member_id']);
-                if ($admin_user) {
-                    $list[$k]['username'] = $admin_user['username'];
-                    $list[$k]['nickname'] = $admin_user['nickname'];
+                $member = MemberService::info($v[$MemberPk]);
+                if ($member) {
+                    $list[$k]['username'] = $member['username'];
+                    $list[$k]['nickname'] = $member['nickname'];
                 }
             }
 
-            if (isset($v['api_id'])) {
+            if (isset($v[$ApiPk])) {
                 $list[$k]['api_name'] = '';
                 $list[$k]['api_url']  = '';
-                $api = ApiService::info($v['api_id']);
+                $api = ApiService::info($v[$ApiPk]);
                 if ($api) {
                     $list[$k]['api_name'] = $api['api_name'];
                     $list[$k]['api_url']  = $api['api_url'];
@@ -101,10 +108,10 @@ class MemberLogService
 
             $info['username'] = '';
             $info['nickname'] = '';
-            $admin_user = MemberService::info($info['member_id']);
-            if ($admin_user) {
-                $info['username'] = $admin_user['username'];
-                $info['nickname'] = $admin_user['nickname'];
+            $user = MemberService::info($info['member_id']);
+            if ($user) {
+                $info['username'] = $user['username'];
+                $info['nickname'] = $user['nickname'];
             }
 
             $info['api_name'] = '';
@@ -144,8 +151,6 @@ class MemberLogService
                 $param['response_msg']  = '退出成功';
             }
 
-            $api_info      = ApiService::info();
-            $ip_info       = IpInfoUtils::info();
             $request_param = Request::param();
             if (isset($request_param['password'])) {
                 unset($request_param['password']);
@@ -157,7 +162,10 @@ class MemberLogService
                 unset($request_param['old_password']);
             }
 
-            $param['api_id']           = $api_info['api_id'];
+            $api     = ApiService::info();
+            $ip_info = IpInfoUtils::info();
+
+            $param['api_id']           = $api['api_id'];
             $param['log_type']         = $log_type;
             $param['request_ip']       = $ip_info['ip'];
             $param['request_country']  = $ip_info['country'];
@@ -237,16 +245,17 @@ class MemberLogService
      * 会员日志清除
      *
      * @param array $where 清除条件
-     * @param bool  $clean 清空所有
+     * @param int   $clean 清空所有
      * 
      * @return array
      */
-    public static function clear($where = [], $clean = false)
+    public static function clear($where = [], $clean = 0)
     {
         $model = new MemberLogModel();
+        $pk = $model->getPk();
 
         if ($clean) {
-            $count = $model->delete(true);
+            $count = $model->where($pk, '>', 0)->delete(true);
         } else {
             $count = $model->where($where)->delete();
         }
@@ -266,7 +275,7 @@ class MemberLogService
      */
     public static function statNum($date = 'total')
     {
-        $key  = 'num:' . $date;
+        $key = 'num:' . $date;
         $data = MemberLogCache::get($key);
         if (empty($data)) {
             $model = new MemberLogModel();
@@ -411,7 +420,7 @@ class MemberLogService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
+        $key = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
         $data = MemberLogCache::get($key);
         if (empty($data)) {
             $MemberLogModel = new MemberLogModel();

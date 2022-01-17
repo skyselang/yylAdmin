@@ -24,11 +24,11 @@ class Region
 {
     /**
      * @Apidoc\Title("地区列表")
-     * @Apidoc\Param("type", type="string", default="list", desc="数据类型：list列表，tree树形")
+     * @Apidoc\Param("type", type="string", default="list", desc="list列表，tree树形")
      * @Apidoc\Param(ref="app\common\model\RegionModel\id")
-     * @Apidoc\Param(ref="app\common\model\RegionModel\region_pid")
-     * @Apidoc\Param(ref="app\common\model\RegionModel\region_name")
-     * @Apidoc\Param(ref="app\common\model\RegionModel\region_pinyin")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned("list", type="array", desc="地区列表", 
      *     @Apidoc\Returned(ref="app\common\model\RegionModel\listReturn")
      * )
@@ -49,16 +49,16 @@ class Region
         } else {
             if ($search_field && $search_value) {
                 if (in_array($search_field, ['region_id', 'region_pid', 'region_jianpin', 'region_initials', 'region_citycode', 'region_zipcode'])) {
-                    $exp = strpos($search_value, ',') ? 'in' : '=';
-                    $where[] = [$search_field, $exp, $search_value];
+                    $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                    $where[] = [$search_field, $search_exp, $search_value];
                 } else {
                     if (strpos($search_value, ',')) {
-                        $exp = 'in';
+                        $search_exp = 'in';
                     } else {
-                        $exp = 'like';
+                        $search_exp = 'like';
                         $search_value = '%' . $search_value . '%';
                     }
-                    $where[] = [$search_field, $exp, $search_value];
+                    $where[] = [$search_field, $search_exp, $search_value];
                 }
             } else {
                 $where[] = ['region_pid', '=', $region_pid];

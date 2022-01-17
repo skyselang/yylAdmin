@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 14/01/2022 18:54:59
+ Date: 17/01/2022 18:38:27
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 494 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 495 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -136,7 +136,7 @@ INSERT INTO `yyl_admin_menu` VALUES (153, 150, '地区添加', 'admin/Region/add
 INSERT INTO `yyl_admin_menu` VALUES (154, 150, '地区修改', 'admin/Region/edit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (155, 150, '地区删除', 'admin/Region/dele', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (156, 0, '会员管理', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (157, 186, '设置管理', '', 220, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (157, 186, '设置管理', '', 100, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (158, 3, '菜单信息', 'admin/admin.Menu/info', 255, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -144,9 +144,9 @@ INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/Index/member
 INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/admin.Apidoc/apidoc', 180, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (186, 0, '设置管理', '', 155, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (187, 5, '角色信息', 'admin/admin.Role/info', 255, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (188, 53, '设置管理', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (188, 53, '系统管理', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (189, 41, '用户日志清除', 'admin/admin.UserLog/clear', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (190, 186, '微信设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (190, 186, '微信设置', '', 130, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (191, 190, '公众号设置信息', 'admin/SettingWechat/offiInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (192, 190, '公众号设置修改', 'admin/SettingWechat/offiEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (193, 190, '小程序设置信息', 'admin/SettingWechat/miniInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -259,6 +259,7 @@ INSERT INTO `yyl_admin_menu` VALUES (444, 3, '菜单修改父级', 'admin/admin.
 INSERT INTO `yyl_admin_menu` VALUES (445, 5, '菜单列表', 'admin/admin.Role/menu', 270, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (492, 435, '公告开启时间', 'admin/admin.Notice/opentime', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (493, 398, '文件修改域名', 'admin/file.File/editdomain', 270, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (494, 58, 'IT在线工具', 'admin/admin.Utils/huatools', 100, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_notice
@@ -321,19 +322,20 @@ INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '', 250, 0, 0, NULL, NUL
 DROP TABLE IF EXISTS `yyl_admin_setting`;
 CREATE TABLE `yyl_admin_setting`  (
   `admin_setting_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '设置id',
-  `token_name` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
-  `token_key` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
-  `token_exp` int(5) NULL DEFAULT 12 COMMENT 'Token有效时间（小时）',
-  `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码1开启0关闭',
-  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录1开启0关闭',
-  `log_save_time` int(11) NULL DEFAULT 0 COMMENT '日志保留时间，0永久保留',
-  `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
-  `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
+  `system_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin' COMMENT '系统简称',
+  `page_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin极简后台管理系统' COMMENT '页面标题',
   `logo_id` int(11) NULL DEFAULT 0 COMMENT 'logo图片id',
   `favicon_id` int(11) NULL DEFAULT 0 COMMENT 'favicon图标id',
   `login_bg_id` int(11) NULL DEFAULT 0 COMMENT '登录背景图id',
-  `system_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin' COMMENT '系统简称',
-  `page_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'yylAdmin极简后台管理系统' COMMENT '页面标题',
+  `token_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
+  `token_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
+  `token_exp` int(5) NULL DEFAULT 12 COMMENT 'Token有效时间（小时）',
+  `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码开关：1开启0关闭',
+  `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型：1数字，2字母，3数字字母，4算术，5中文',
+  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关：1开启0关闭',
+  `log_save_time` int(11) NULL DEFAULT 0 COMMENT '日志保留时间，0永久保留',
+  `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
+  `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`admin_setting_id`) USING BTREE,
@@ -375,7 +377,7 @@ CREATE TABLE `yyl_admin_user`  (
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `email`(`email`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_admin_user
@@ -461,9 +463,9 @@ INSERT INTO `yyl_api` VALUES (9, 5, '修改密码', 'index/Member/pwd', 250, 0, 
 INSERT INTO `yyl_api` VALUES (10, 5, '日志记录', 'index/Member/log', 250, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (11, 0, '注册', '', 260, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (12, 0, '地区', '', 250, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'index/Region/list', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'index/Region/list', 300, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (14, 12, '地区信息', 'index/Region/info', 250, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'index/Region/tree', 280, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (19, 1, '登录（公众号）', 'index/Login/offi', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (20, 11, '验证码', 'index/Register/captcha', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (21, 11, '注册', 'index/Register/register', 250, 1, 0, 0, NULL, NULL, NULL);
@@ -4551,12 +4553,12 @@ INSERT INTO `yyl_region` VALUES (659006101, 659006, '65,659006,659006101', 3, '�
 DROP TABLE IF EXISTS `yyl_setting`;
 CREATE TABLE `yyl_setting`  (
   `setting_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '设置id',
-  `token_name` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
-  `token_key` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
+  `token_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
+  `token_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
   `token_exp` int(5) NULL DEFAULT 720 COMMENT 'Token有效时间（小时）',
   `captcha_register` tinyint(1) NULL DEFAULT 1 COMMENT '注册验证码1开启0关闭',
   `captcha_login` tinyint(1) NULL DEFAULT 0 COMMENT '登录验证码1开启0关闭',
-  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录1开启0关闭',
+  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关：1开启0关闭',
   `log_save_time` int(11) NULL DEFAULT 0 COMMENT '日志保留时间，0永久保留',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',

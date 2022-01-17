@@ -13,10 +13,10 @@ namespace app\index\controller;
 use think\facade\Request;
 use think\facade\Cache;
 use app\index\service\LoginService;
-use app\common\utils\CaptchaUtils;
 use app\common\validate\MemberValidate;
 use app\common\service\WechatService;
 use app\common\service\SettingService;
+use app\common\utils\CaptchaUtils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -32,11 +32,13 @@ class Login
      */
     public function captcha()
     {
-        $setting = SettingService::captchaInfo();
+        $setting = SettingService::info();
+
+        $data['captcha_switch'] = $setting['captcha_login'];
+
         if ($setting['captcha_login']) {
-            $data = CaptchaUtils::create();
-        } else {
-            $data['captcha_switch'] = $setting['captcha_login'];
+            $captcha = CaptchaUtils::create();
+            $data    = array_merge($data, $captcha);
         }
 
         return success($data);
@@ -59,7 +61,7 @@ class Login
 
         validate(MemberValidate::class)->scene('login')->check($param);
 
-        $setting = SettingService::captchaInfo();
+        $setting = SettingService::info();
         if ($setting['captcha_login']) {
             if (empty($param['captcha_code'])) {
                 exception('请输入验证码');
@@ -92,7 +94,7 @@ class Login
             // exception('offiurl must');
         }
 
-        Cache::set('offiurl', $offiurl, 15);
+        Cache::set('offiurl', $offiurl, 30);
 
         $config = [
             'oauth' => [

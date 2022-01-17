@@ -116,13 +116,13 @@ class UserCenter
         }
         if ($search_field && $search_value) {
             if (in_array($search_field, ['admin_user_log_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
-                $menu_exp = strpos($search_value, ',') ? 'in' : '=';
-                $menu_where[] = [$search_field, $menu_exp, $search_value];
                 $MenuModel = new MenuModel();
                 $MenuPk = $MenuModel->getPk();
+                $menu_exp = strpos($search_value, ',') ? 'in' : '=';
+                $menu_where[] = [$search_field, $menu_exp, $search_value];
                 $admin_menu_ids = $MenuModel->where($menu_where)->column($MenuPk);
                 $where[] = [$MenuPk, 'in', $admin_menu_ids];
             } else {

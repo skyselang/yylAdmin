@@ -33,8 +33,11 @@ class ContentService
         $model = new ContentModel();
         $pk = $model->getPk();
 
+        $CategoryModel = new CategoryModel();
+        $CategoryPk = $CategoryModel->getPk();
+
         if (empty($field)) {
-            $field = $pk . ',category_id,name,img_ids,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
+            $field = $pk . ',' . $CategoryPk . ',name,img_ids,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
         }
 
         if (empty($order)) {
@@ -50,9 +53,9 @@ class ContentService
         $category = CategoryService::list('list');
         foreach ($list as $k => $v) {
             $list[$k]['category_name'] = '';
-            if (isset($v['category_id'])) {
+            if (isset($v[$CategoryPk])) {
                 foreach ($category as $kp => $vp) {
-                    if ($v['category_id'] == $vp['category_id']) {
+                    if ($v[$CategoryPk] == $vp[$CategoryPk]) {
                         $list[$k]['category_name'] = $vp['category_name'];
                     }
                 }
@@ -85,7 +88,7 @@ class ContentService
 
         $info = ContentCache::get($id);
         if (empty($info)) {
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 exception('内容不存在：' . $id);
             }
@@ -212,7 +215,7 @@ class ContentService
     }
 
     /**
-     * 内容设置分类
+     * 内容修改分类
      *
      * @param array $ids         内容id
      * @param int   $category_id 分类id
@@ -481,7 +484,7 @@ class ContentService
      */
     public static function statistics()
     {
-        $key  = 'count';
+        $key = 'count';
         $data = ContentCache::get($key);
         if (empty($data)) {
             $CategoryModel = new CategoryModel();

@@ -30,7 +30,7 @@ class Api
      */
     public function list()
     {
-        $data['list'] = ApiService::tree();
+        $data['list'] = ApiService::list('tree');
 
         return success($data);
     }

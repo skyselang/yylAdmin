@@ -76,8 +76,8 @@ class UserCenterService
         $password_old  = $param['password_old'];
         $password_new  = $param['password_new'];
 
-        $admin_user = UserService::info($admin_user_id);
-        if (md5($password_old) != $admin_user['password']) {
+        $user = UserService::info($admin_user_id);
+        if (md5($password_old) != $user['password']) {
             exception('旧密码错误');
         }
 

@@ -32,12 +32,12 @@ class LogClear
     public function handle($request, Closure $next)
     {
         // 会员日志清除
-        $member_setting = SettingService::logInfo();
-        if ($member_setting['log_save_time']) {
+        $setting = SettingService::info();
+        if ($setting['log_save_time']) {
             $member_clear_key = 'clear';
             $member_clear_val = MemberLogCache::get($member_clear_key);
             if (empty($member_clear_val)) {
-                $member_days = $member_setting['log_save_time'];
+                $member_days = $setting['log_save_time'];
                 $member_date = date('Y-m-d H:i:s', strtotime("-{$member_days} day"));
                 $mmeber_where[] = ['create_time', '<=', $member_date];
                 MemberLogService::clear($mmeber_where);
@@ -46,12 +46,12 @@ class LogClear
         }
 
         // 用户日志清除
-        $user_seting = AdminSettingService::logInfo();
-        if ($user_seting['log_save_time']) {
+        $admin_setting = AdminSettingService::info();
+        if ($admin_setting['log_save_time']) {
             $user_clear_key = 'clear';
             $user_clear_val = UserLogCache::get($user_clear_key);
             if (empty($user_clear_val)) {
-                $user_days = $user_seting['log_save_time'];
+                $user_days = $admin_setting['log_save_time'];
                 $user_date = date('Y-m-d H:i:s', strtotime("-{$user_days} day"));
                 $user_where[] = ['create_time', '<=', $user_date];
                 UserLogService::clear($user_where);

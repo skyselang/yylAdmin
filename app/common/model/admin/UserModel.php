@@ -28,7 +28,7 @@ class UserModel extends Model
     }
 
     /**
-     * @Apidoc\Field("username,nickname,email")
+     * 
      */
     public function listParam()
     {

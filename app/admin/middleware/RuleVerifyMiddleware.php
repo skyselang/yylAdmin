@@ -43,22 +43,21 @@ class RuleVerifyMiddleware
         // 菜单是否无需权限
         if (!menu_is_unauth($menu_url)) {
             $admin_user_id = admin_user_id();
-            
+
             // 用户是否超管
             if (!admin_is_super($admin_user_id)) {
-                $admin_user = UserCache::get($admin_user_id);
-
-                if (empty($admin_user)) {
+                $user = UserCache::get($admin_user_id);
+                if (empty($user)) {
                     exception('登录已失效，请重新登录', 401);
                 }
 
-                if ($admin_user['is_disable'] == 1) {
+                if ($user['is_disable'] == 1) {
                     exception('账号已禁用，请联系管理员', 401);
                 }
 
-                if (!in_array($menu_url, $admin_user['roles'])) {
-                    $admin_menu = MenuService::info($menu_url);
-                    exception('你没有权限操作：' . $admin_menu['menu_name'], 403);
+                if (!in_array($menu_url, $user['roles'])) {
+                    $menu = MenuService::info($menu_url);
+                    exception('你没有权限操作：' . $menu['menu_name'], 403);
                 }
             }
         }

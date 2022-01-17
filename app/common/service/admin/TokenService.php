@@ -22,17 +22,17 @@ class TokenService
      */
     public static function config()
     {
-        return SettingService::tokenInfo();
+        return SettingService::info();
     }
 
     /**
      * Token生成
      * 
-     * @param array $admin_user 用户信息
+     * @param array $user 用户信息
      * 
      * @return string
      */
-    public static function create($admin_user)
+    public static function create($user)
     {
         $config = self::config();
 
@@ -42,9 +42,9 @@ class TokenService
         $exp = time() + $config['token_exp'] * 3600;  //过期时间
 
         $data = [
-            'admin_user_id' => $admin_user['admin_user_id'],
-            'login_time'    => $admin_user['login_time'],
-            'login_ip'      => $admin_user['login_ip'],
+            'admin_user_id' => $user['admin_user_id'],
+            'login_time'    => $user['login_time'],
+            'login_ip'      => $user['login_ip'],
         ];
 
         $payload = [
@@ -76,17 +76,17 @@ class TokenService
             exception('账号登录状态已过期', 401);
         }
 
-        $admin_user = UserCache::get($admin_user_id);
-        if (empty($admin_user)) {
+        $user = UserCache::get($admin_user_id);
+        if (empty($user)) {
             exception('账号登录状态已失效', 401);
         } else {
-            if ($token != $admin_user['admin_token']) {
+            if ($token != $user['admin_token']) {
                 exception('账号已在另一处登录', 401);
             } else {
-                if ($admin_user['is_disable'] == 1) {
+                if ($user['is_disable'] == 1) {
                     exception('账号已被禁用', 401);
                 }
-                if ($admin_user['is_delete'] == 1) {
+                if ($user['is_delete'] == 1) {
                     exception('账号已被删除', 401);
                 }
             }
