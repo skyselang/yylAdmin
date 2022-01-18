@@ -26,7 +26,7 @@ class UserCenterService
     {
         $data = UserService::info($admin_user_id);
 
-        unset($data['password'], $data['admin_token'], $data['menu_ids']);
+        unset($data['password'], $data['admin_token'], $data['admin_menu_ids'], $data['admin_role_ids'], $data['menu_ids']);
 
         return $data;
     }
