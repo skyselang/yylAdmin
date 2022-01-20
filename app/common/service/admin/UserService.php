@@ -365,36 +365,6 @@ class UserService
     }
 
     /**
-     * 用户是否禁用
-     *
-     * @param array $ids        用户id
-     * @param int   $is_disable 是否禁用
-     * 
-     * @return array
-     */
-    public static function disable($ids, $is_disable)
-    {
-        $model = new UserModel();
-        $pk = $model->getPk();
-
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        $update['ids'] = $ids;
-
-        foreach ($ids as $v) {
-            UserCache::upd($v);
-        }
-
-        return $update;
-    }
-
-    /**
      * 用户是否超管
      *
      * @param array $ids      用户id
@@ -408,6 +378,36 @@ class UserService
         $pk = $model->getPk();
 
         $update['is_super']    = $is_super;
+        $update['update_time'] = datetime();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($ids as $v) {
+            UserCache::upd($v);
+        }
+
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 用户是否禁用
+     *
+     * @param array $ids        用户id
+     * @param int   $is_disable 是否禁用
+     * 
+     * @return array
+     */
+    public static function disable($ids, $is_disable)
+    {
+        $model = new UserModel();
+        $pk = $model->getPk();
+
+        $update['is_disable']  = $is_disable;
         $update['update_time'] = datetime();
 
         $res = $model->where($pk, 'in', $ids)->update($update);
@@ -465,6 +465,7 @@ class UserService
 
         UserCache::del($user[$pk]);
         $user = self::info($user[$pk]);
+        $admin_user_id = $user[$pk];
         $admin_token = $user['admin_token'];
 
         return compact($pk, 'admin_token');
