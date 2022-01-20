@@ -44,19 +44,19 @@ class RegionValidate extends Validate
             ->append('ids', 'checkRegionChild');
     }
 
-    // 验证场景定义：修改父级
+    // 验证场景定义：修改上级
     protected function scenepid()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkRegionPidNeq');
     }
 
-    // 自定义验证规则：地区父级不能等于本身
+    // 自定义验证规则：地区上级不能等于本身
     protected function checkRegionPidNeq($value, $rule, $data = [])
     {
         foreach ($data['ids'] as $v) {
             if ($data['region_pid'] == $v) {
-                return '地区父级不能等于地区本身';
+                return '地区上级不能等于地区本身';
             }
         }
 
@@ -71,7 +71,7 @@ class RegionValidate extends Validate
 
         if (isset($data[$RegionPk])) {
             if ($data['region_pid'] == $data[$RegionPk]) {
-                return '地区父级不能等于地区本身';
+                return '地区上级不能等于地区本身';
             }
             $where[] = [$RegionPk, '<>', $data[$RegionPk]];
         }

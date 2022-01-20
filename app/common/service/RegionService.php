@@ -246,7 +246,7 @@ class RegionService
     }
 
     /**
-     * 地区修改父级
+     * 地区修改上级
      *
      * @param array $ids        地区id
      * @param int   $region_pid 地区pid

@@ -19,15 +19,14 @@ class ApiService
     /**
      * 菜单列表
      *
-     * @param $type list列表，tree树形
+     * @param string $type  list列表，tree树形
+     * @param array  $where 搜索条件
      * 
      * @return array 
      */
-    public static function list($type = 'list')
+    public static function list($type = 'list', $where = [])
     {
-        $key = $type;
-        $data = ApiCache::get($key);
-        if (empty($data)) {
+        if ($where) {
             $model = new ApiModel();
             $pk = $model->getPk();
 
@@ -38,12 +37,27 @@ class ApiService
             $order = ['api_sort' => 'desc', $pk => 'asc'];
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+        } else {
+            $key = $type;
+            $data = ApiCache::get($key);
+            if (empty($data)) {
+                $model = new ApiModel();
+                $pk = $model->getPk();
 
-            if ($type == 'tree') {
-                $data = self::toTree($data, 0);
+                $field = $pk . ',api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+
+                $where[] = ['is_delete', '=', 0];
+
+                $order = ['api_sort' => 'desc', $pk => 'asc'];
+
+                $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+
+                if ($type == 'tree') {
+                    $data = self::toTree($data, 0);
+                }
+
+                ApiCache::set($key, $data);
             }
-
-            ApiCache::set($key, $data);
         }
 
         return $data;
@@ -179,7 +193,7 @@ class ApiService
     }
 
     /**
-     * 接口修改父级
+     * 接口修改上级
      *
      * @param array $ids     接口id
      * @param int   $api_pid 接口pid

@@ -69,7 +69,7 @@ class MenuValidate extends Validate
         $admin_menu_id = isset($data[$MenuPk]) ? $data[$MenuPk] : '';
         if ($admin_menu_id) {
             if ($data['menu_pid'] == $data[$MenuPk]) {
-                return '菜单父级不能等于菜单本身';
+                return '菜单上级不能等于菜单本身';
             }
         }
 

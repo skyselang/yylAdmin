@@ -27,13 +27,34 @@ class Menu
 {
     /**
      * @Apidoc\Title("菜单列表")
+     * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Returned("list", type="array", desc="树形列表",
      *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\listReturn")
      * )
      */
     public function list()
     {
-        $data['list'] = MenuService::list('tree');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+
+        $where = [];
+        if ($search_field && $search_value) {
+            if (in_array($search_field, ['admin_menu_id', 'menu_pid'])) {
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
+            } elseif (in_array($search_field, ['is_unlogin', 'is_unauth', 'is_disable'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
+        }
+
+        $data['list'] = MenuService::list('tree', $where);
 
         return success($data);
     }
@@ -128,7 +149,7 @@ class Menu
     }
 
     /**
-     * @Apidoc\Title("菜单修改父级")
+     * @Apidoc\Title("菜单修改上级")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_pid")

@@ -59,7 +59,7 @@ class CategoryValidate extends Validate
         
         if ($category_id) {
             if ($category_id == $category_pid) {
-                return '分类父级不能等于分类本身';
+                return '分类上级不能等于分类本身';
             }
             $where[] = [$CategoryPk, '<>', $category_id];
         }

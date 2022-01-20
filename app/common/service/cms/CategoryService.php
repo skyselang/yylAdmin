@@ -19,15 +19,14 @@ class CategoryService
     /**
      * 内容分类列表
      * 
-     * @param string $type list列表，tree树形
+     * @param string $type  list列表，tree树形
+     * @param array  $where 搜索条件
      * 
      * @return array
      */
-    public static function list($type = 'list')
+    public static function list($type = 'list', $where = [])
     {
-        $key = $type;
-        $data = CategoryCache::get($key);
-        if (empty($data)) {
+        if ($where) {
             $model = new CategoryModel();
             $pk = $model->getPk();
 
@@ -38,12 +37,27 @@ class CategoryService
             $order = ['sort' => 'desc', $pk => 'desc'];
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+        } else {
+            $key = $type;
+            $data = CategoryCache::get($key);
+            if (empty($data)) {
+                $model = new CategoryModel();
+                $pk = $model->getPk();
 
-            if ($type == 'tree') {
-                $data = self::toTree($data, 0);
+                $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
+
+                $where[] = ['is_delete', '=', 0];
+
+                $order = ['sort' => 'desc', $pk => 'desc'];
+
+                $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+
+                if ($type == 'tree') {
+                    $data = self::toTree($data, 0);
+                }
+
+                CategoryCache::set($key, $data);
             }
-
-            CategoryCache::set($key, $data);
         }
 
         return $data;
@@ -162,7 +176,7 @@ class CategoryService
     }
 
     /**
-     * 内容分类修改父级
+     * 内容分类修改上级
      *
      * @param array $ids          内容分类id
      * @param int   $category_pid 内容分类pid

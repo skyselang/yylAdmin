@@ -23,15 +23,14 @@ class MenuService
     /**
      * 菜单列表
      *
-     * @param $type list列表，tree树形
+     * @param string $type  list列表，tree树形
+     * @param array  $where 搜索条件
      * 
      * @return array 
      */
-    public static function list($type = 'list')
+    public static function list($type = 'list', $where = [])
     {
-        $key = $type;
-        $data = MenuCache::get($key);
-        if (empty($data)) {
+        if ($where) {
             $model = new MenuModel();
             $pk = $model->getPk();
 
@@ -42,12 +41,27 @@ class MenuService
             $order = ['menu_sort' => 'desc', $pk => 'asc'];
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+        } else {
+            $key = $type;
+            $data = MenuCache::get($key);
+            if (empty($data)) {
+                $model = new MenuModel();
+                $pk = $model->getPk();
 
-            if ($type == 'tree') {
-                $data = self::toTree($data, 0);
+                $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unauth,is_unlogin,is_disable';
+
+                $where[] = ['is_delete', '=', 0];
+
+                $order = ['menu_sort' => 'desc', $pk => 'asc'];
+
+                $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+
+                if ($type == 'tree') {
+                    $data = self::toTree($data, 0);
+                }
+
+                MenuCache::set($key, $data);
             }
-
-            MenuCache::set($key, $data);
         }
 
         return $data;
@@ -330,7 +344,7 @@ class MenuService
     }
 
     /**
-     * 菜单修改父级
+     * 菜单修改上级
      *
      * @param array $ids      菜单id
      * @param int   $menu_pid 菜单pid

@@ -182,7 +182,7 @@ class Region
     }
 
     /**
-     * @Apidoc\Title("地区修改父级")
+     * @Apidoc\Title("地区修改上级")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\RegionModel\region_pid")
