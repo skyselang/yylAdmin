@@ -28,17 +28,14 @@ class IpInfoUtils
             $ip = Request::ip();
         }
 
-        $key     = 'ip_info:' . $ip;
-        $ip_info = Cache::get($key);
+        $ip_key  = 'ip_info:' . $ip;
+        $ip_info = Cache::get($ip_key);
         if (empty($ip_info)) {
             $url = 'http://ip.taobao.com/outGetIpInfo?ip=' . $ip . '&accessKey=alibaba-inc';
             $res = http_get($url);
-
             if (empty($res)) {
-                $par = [
-                    'ip' => $ip,
-                    'accessKey' => 'alibaba-inc'
-                ];
+                $par['ip']        = $ip;
+                $par['accessKey'] = 'alibaba-inc';
                 $res = http_post($url, $par);
             }
 
@@ -71,9 +68,8 @@ class IpInfoUtils
                     $ip_info['area']     = $area;
                     $ip_info['isp']      = $isp;
 
-                    $ttl = 7 * 24 * 60 * 60;
-
-                    Cache::set($key, $ip_info, $ttl);
+                    $ip_ttl = 7 * 24 * 60 * 60;
+                    Cache::set($ip_key, $ip_info, $ip_ttl);
                 }
             }
         }

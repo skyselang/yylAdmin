@@ -19,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("用户日志")
- * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("640")
  */
 class UserLog

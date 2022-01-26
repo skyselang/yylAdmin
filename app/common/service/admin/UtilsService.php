@@ -249,7 +249,8 @@ class UtilsService
 
             $cache['type'] = $config['default'];
 
-            Cache::set($cache_key, $cache, 60);
+            $cache_ttl = 12 * 60 * 60;
+            Cache::set($cache_key, $cache, $cache_ttl);
         }
 
         $data = array_merge($server, $cache);

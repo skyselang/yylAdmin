@@ -67,9 +67,7 @@ class CategoryCache
             $keys[] = $category_id;
         }
 
-        $key_arr = ['list', 'tree'];
-        $keys = array_merge($keys, $key_arr);
-
+        $keys = array_merge($keys, ['list', 'tree']);
         foreach ($keys as $v) {
             $res = Cache::delete(self::key($v));
         }

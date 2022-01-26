@@ -59,18 +59,22 @@ class UserService
     /**
      * 用户信息
      *
-     * @param int $id 用户id
+     * @param int  $id   用户id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = UserCache::get($id);
         if (empty($info)) {
             $model = new UserModel();
             $info = $model->find($id);
             if (empty($info)) {
-                exception('用户不存在：' . $id);
+                if ($exce) {
+                    exception('用户不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
@@ -267,10 +271,9 @@ class UserService
             $RolePk = $RoleModel->getPk();
 
             $admin_user_id = $param[$pk];
-
-            $admin_menu = MenuService::list();
-            $admin_role = $RoleModel->field($RolePk . ',role_name')->where('is_delete', 0)->select()->toArray();
-            $admin_user = UserService::info($admin_user_id);
+            $admin_menu    = MenuService::list();
+            $admin_role    = $RoleModel->field($RolePk . ',role_name')->where('is_delete', 0)->select()->toArray();
+            $admin_user    = UserService::info($admin_user_id);
 
             $menu_ids       = $admin_user['menu_ids'];
             $admin_menu_ids = $admin_user['admin_menu_ids'];

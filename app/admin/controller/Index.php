@@ -12,7 +12,7 @@ namespace app\admin\controller;
 
 use think\facade\Request;
 use app\common\service\IndexService;
-use app\common\service\MemberService;
+use app\common\service\member\MemberService;
 use app\common\service\cms\ContentService;
 use app\common\service\file\FileService;
 use app\common\service\admin\NoticeService;

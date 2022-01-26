@@ -50,9 +50,12 @@ class NoticeService
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         foreach ($list as $k => $v) {
+            $list[$k]['username'] = '';
             if (isset($v[$UserPk])) {
-                $user = UserService::info($v[$UserPk]);
-                $list[$k]['username'] = $user['username'];
+                $user = UserService::info($v[$UserPk], false);
+                if ($user) {
+                    $list[$k]['username'] = $user['username'];
+                }
             }
         }
 
@@ -77,10 +80,13 @@ class NoticeService
             }
             $info = $info->toArray();
 
+            $info['username'] = '';
             $UserModel = new UserModel();
             $UserPk = $UserModel->getPk();
             $user = UserService::info($info[$UserPk]);
-            $info['username'] = $user['username'];
+            if ($user) {
+                $info['username'] = $user['username'];
+            }
 
             NoticeCache::set($id, $info);
         }

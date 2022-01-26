@@ -61,7 +61,7 @@ class UserLogService
         foreach ($list as $k => $v) {
             if (isset($v[$UserPk])) {
                 $list[$k]['username'] = '';
-                $user = UserService::info($v[$UserPk]);
+                $user = UserService::info($v[$UserPk], false);
                 if ($user) {
                     $list[$k]['username'] = $user['username'];
                 }
@@ -70,7 +70,7 @@ class UserLogService
             if (isset($v[$MenuPk])) {
                 $list[$k]['menu_name'] = '';
                 $list[$k]['menu_url']  = '';
-                $menu = MenuService::info($v[$MenuPk]);
+                $menu = MenuService::info($v[$MenuPk], false);
                 if ($menu) {
                     $list[$k]['menu_name'] = $menu['menu_name'];
                     $list[$k]['menu_url']  = $menu['menu_url'];
@@ -103,17 +103,25 @@ class UserLogService
                 $info['request_param'] = unserialize($info['request_param']);
             }
 
+            $info['username'] = '';
+            $info['nickname'] = '';
             $UserModel = new UserModel();
             $UserPk = $UserModel->getPk();
-            $user = UserService::info($info[$UserPk]);
-            $info['username'] = $user['username'];
-            $info['nickname'] = $user['nickname'];
+            $user = UserService::info($info[$UserPk], false);
+            if ($user) {
+                $info['username'] = $user['username'];
+                $info['nickname'] = $user['nickname'];
+            }
 
+            $info['menu_name'] = '';
+            $info['menu_url']  = '';
             $MenuModel = new MenuModel();
             $MenuPk = $MenuModel->getPk();
-            $menu = MenuService::info($info[$MenuPk]);
-            $info['menu_name'] = $menu['menu_name'];
-            $info['menu_url']  = $menu['menu_url'];
+            $menu = MenuService::info($info[$MenuPk], false);
+            if ($menu) {
+                $info['menu_name'] = $menu['menu_name'];
+                $info['menu_url']  = $menu['menu_url'];
+            }
 
             UserLogCache::set($id, $info);
         }

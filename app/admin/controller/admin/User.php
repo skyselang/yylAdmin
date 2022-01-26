@@ -17,7 +17,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("用户管理")
- * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("630")
  */
 class User

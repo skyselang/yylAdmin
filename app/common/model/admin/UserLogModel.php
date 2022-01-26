@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 日志管理模型
+// 用户日志模型
 namespace app\common\model\admin;
 
 use think\Model;

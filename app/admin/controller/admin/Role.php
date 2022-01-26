@@ -19,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("角色管理")
- * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("620")
  */
 class Role

@@ -20,7 +20,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("菜单管理")
- * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("610")
  */
 class Menu

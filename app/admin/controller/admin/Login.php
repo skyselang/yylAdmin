@@ -19,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("登录退出")
- * @Apidoc\Group("adminAuthority")
+ * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("660")
  */
 class Login

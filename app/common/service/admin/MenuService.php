@@ -70,11 +70,12 @@ class MenuService
     /**
      * 菜单信息
      *
-     * @param int $id 菜单id
+     * @param int  $id   菜单id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id = '')
+    public static function info($id = '', $exce = true)
     {
         if (empty($id)) {
             $id = menu_url();
@@ -94,7 +95,10 @@ class MenuService
 
             $info = $model->where($where)->find();
             if (empty($info)) {
-                exception('菜单不存在：' . $id);
+                if ($exce) {
+                    exception('菜单不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 

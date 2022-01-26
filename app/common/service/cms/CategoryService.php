@@ -66,11 +66,12 @@ class CategoryService
     /**
      * 内容分类信息
      * 
-     * @param int $id 内容分类id
+     * @param int  $id   内容分类id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = CategoryCache::get($id);
         if (empty($info)) {
@@ -79,7 +80,10 @@ class CategoryService
 
             $info = $model->where($pk, $id)->find();
             if (empty($info)) {
-                exception('内容分类不存在：' . $id);
+                if ($exce) {
+                    exception('内容分类不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 

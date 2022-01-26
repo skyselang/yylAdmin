@@ -50,14 +50,12 @@ class ContentService
 
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        $category = CategoryService::list('list');
         foreach ($list as $k => $v) {
             $list[$k]['category_name'] = '';
             if (isset($v[$CategoryPk])) {
-                foreach ($category as $kp => $vp) {
-                    if ($v[$CategoryPk] == $vp[$CategoryPk]) {
-                        $list[$k]['category_name'] = $vp['category_name'];
-                    }
+                $category = CategoryService::info($v[$CategoryPk], false);
+                if ($category) {
+                    $list[$k]['category_name'] = $category['category_name'];
                 }
             }
 
@@ -95,10 +93,13 @@ class ContentService
             $info = $info->toArray();
 
             $info['category_name'] = '';
-            if ($info['category_id']) {
-                $category = CategoryService::info($info['category_id']);
+            $CategoryModel = new CategoryModel();
+            $CategoryPk = $CategoryModel->getPk();
+            $category = CategoryService::info($info[$CategoryPk], false);
+            if ($category) {
                 $info['category_name'] = $category['category_name'];
             }
+
             $info['imgs']   = FileService::fileArray($info['img_ids']);
             $info['files']  = FileService::fileArray($info['file_ids']);
             $info['videos'] = FileService::fileArray($info['video_ids']);

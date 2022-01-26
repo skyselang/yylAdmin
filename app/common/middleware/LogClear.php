@@ -13,10 +13,10 @@ namespace app\common\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use app\common\cache\MemberLogCache;
+use app\common\cache\member\LogCache;
 use app\common\cache\admin\UserLogCache;
-use app\common\service\SettingService;
-use app\common\service\MemberLogService;
+use app\common\service\setting\SettingService;
+use app\common\service\member\LogService;
 use app\common\service\admin\SettingService as AdminSettingService;
 use app\common\service\admin\UserLogService;
 
@@ -35,13 +35,13 @@ class LogClear
         $setting = SettingService::info();
         if ($setting['log_save_time']) {
             $member_clear_key = 'clear';
-            $member_clear_val = MemberLogCache::get($member_clear_key);
+            $member_clear_val = LogCache::get($member_clear_key);
             if (empty($member_clear_val)) {
                 $member_days = $setting['log_save_time'];
                 $member_date = date('Y-m-d H:i:s', strtotime("-{$member_days} day"));
                 $mmeber_where[] = ['create_time', '<=', $member_date];
-                MemberLogService::clear($mmeber_where);
-                MemberLogCache::set($member_clear_key, $member_days, 86400);
+                LogService::clear($mmeber_where);
+                LogCache::set($member_clear_key, $member_days, 86400);
             }
         }
 

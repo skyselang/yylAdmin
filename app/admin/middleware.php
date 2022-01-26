@@ -14,7 +14,7 @@ return [
     // Token验证中间件
     \app\admin\middleware\TokenVerifyMiddleware::class,
     // 权限验证中间件
-    \app\admin\middleware\RuleVerifyMiddleware::class,
+    \app\admin\middleware\AuthVerifyMiddleware::class,
     // 接口速率中间件
     \app\admin\middleware\ApiRateMiddleware::class,
 ];

@@ -79,7 +79,6 @@ class RoleService
                     $admin_menu_ids[$k] = (int) $v;
                 }
             }
-
             $info['admin_menu_ids'] = $admin_menu_ids;
 
             RoleCache::set($id, $info);

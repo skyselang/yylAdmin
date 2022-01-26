@@ -6,11 +6,9 @@
 
 ### 测试BASE_API
 
-[https://testapi.yyladmin.top](https://testapi.yyladmin.top)
 
 ### 正式BASE_API
 
-[https://api.yyladmin.top](https://api.yyladmin.top)
 
 ## 请求头部
 
@@ -18,9 +16,9 @@
 
 请求头部Headers需带上参数：AdminToken
 
-### index
+### api
 
-请求头部Headers需带上参数：MemberToken 
+请求头部Headers需带上参数：ApiToken 
 
 ## 全局参数
 

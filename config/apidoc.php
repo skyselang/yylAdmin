@@ -20,9 +20,26 @@ return [
     // 多应用/多版本管理配置
     'apps' => [
         [
-            'title' => 'index前台',
-            'path' => 'app\index\controller',
-            'folder' => 'index',
+            'title' => 'admin',
+            'path' => 'app\admin\controller',
+            'folder' => 'admin',
+            'groups' => [
+                ['title' => '控制台', 'name' => 'adminConsole'],
+                ['title' => '会员管理', 'name' => 'adminMember'],
+                ['title' => '内容管理', 'name' => 'adminCms'],
+                ['title' => '文件管理', 'name' => 'adminFile'],
+                ['title' => '设置管理', 'name' => 'adminSetting'],
+                ['title' => '权限管理', 'name' => 'adminAuth'],
+                ['title' => '系统管理', 'name' => 'adminSystem']
+            ],
+            'headers' => [
+                ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token']
+            ]
+        ],
+        [
+            'title' => 'api',
+            'path' => 'app\api\controller',
+            'folder' => 'api',
             'groups' => [
                 ['title' => '首页', 'name' => 'index'],
                 ['title' => '登录注册', 'name' => 'login'],
@@ -32,24 +49,7 @@ return [
                 ['title' => '内容', 'name' => 'cms']
             ],
             'headers' => [
-                ['name' => 'MemberToken', 'type' => 'string', 'require' => true, 'desc' => 'member_token']
-            ]
-        ],
-        [
-            'title' => 'admin后台',
-            'path' => 'app\admin\controller',
-            'folder' => 'admin',
-            'groups' => [
-                ['title' => '控制台', 'name' => 'adminConsole'],
-                ['title' => '会员管理', 'name' => 'adminMember'],
-                ['title' => '内容管理', 'name' => 'adminCms'],
-                ['title' => '文件管理', 'name' => 'adminFile'],
-                ['title' => '设置管理', 'name' => 'adminSetting'],
-                ['title' => '权限管理', 'name' => 'adminAuthority'],
-                ['title' => '系统管理', 'name' => 'adminSystem']
-            ],
-            'headers' => [
-                ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token']
+                ['name' => 'ApiToken', 'type' => 'string', 'require' => true, 'desc' => 'api_token']
             ]
         ]
     ],
