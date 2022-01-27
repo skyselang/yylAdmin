@@ -140,4 +140,4 @@ cnpm run build:stage
 ## 提示
 
 - 项目不定时更新，前后端最新代码保持一致  
-- 拉取代码后请更新前后端依赖（composer update、npm install）
+- 拉取代码后请更新前后端依赖（composer update、npm install）、同步数据库结构
