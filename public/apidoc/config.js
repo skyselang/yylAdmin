@@ -13,6 +13,8 @@ const config = {
     TIMEOUT: 30000,
     // 多个可切换的host
     HOSTS: [],
+    // 请求头 encodeURIComponent 转码
+    HEADERS_ENCODEURICOMPONENT: false,
   },
   // 菜单配置
   MENU: {
@@ -81,6 +83,7 @@ const config = {
         "apiPage.mdDetail.title": "{name} 字段的说明",
         "apiPage.debug.mock.reload": "更新Mock",
         "apiPage.debug.excute": "执行 Excute",
+        "apiPage.debug.mockAndExcute": "更新Mock 并执行",
         "apiPage.debug.selectFile": "Select File",
         "apiPage.debug.selectFiles": "Select Files",
         "layout.menu.reload": "更新菜单",
