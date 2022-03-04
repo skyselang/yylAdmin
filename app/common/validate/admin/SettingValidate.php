@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 设置管理验证器
+// 系统设置验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
@@ -23,6 +23,13 @@ class SettingValidate extends Validate
         'log_save_time'  => ['require', 'between' => '0,99999'],
         'api_rate_num'   => ['require', 'between' => '0,999'],
         'api_rate_time'  => ['require', 'between' => '1,999'],
+        'email_host'     => ['require'],
+        'email_port'     => ['require'],
+        'email_secure'   => ['require'],
+        'email_username' => ['require'],
+        'email_password' => ['require'],
+        'email_setfrom'  => ['require'],
+        'email_test'     => ['require'],
     ];
 
     // 错误信息
@@ -41,6 +48,13 @@ class SettingValidate extends Validate
         'api_rate_num.between'   => '速率次数：0-999',
         'api_rate_time.require'  => '请输入速率时间',
         'api_rate_time.between'  => '速率时间：1-999',
+        'email_host.require'     => '请输入邮箱服务器',
+        'email_port.require'     => '请输入邮箱端口',
+        'email_secure.require'   => '请选择邮箱协议',
+        'email_username.require' => '请输入邮箱账号',
+        'email_password.require' => '请输入邮箱密码',
+        'email_setfrom.require'  => '请输入发件人邮箱',
+        'email_test.require'     => '请输入测试邮箱',
     ];
 
     // 验证场景
@@ -49,5 +63,7 @@ class SettingValidate extends Validate
         'captcha_edit' => ['captcha_switch'],
         'log_edit'     => ['log_switch', 'log_save_time'],
         'api_edit'     => ['api_rate_num', 'api_rate_time'],
+        'email_edit'   => ['email_host', 'email_port', 'email_secure', 'email_username', 'email_password', 'email_setfrom'],
+        'email_test'   => ['email_test'],
     ];
 }

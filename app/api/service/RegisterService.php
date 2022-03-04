@@ -16,7 +16,7 @@ use app\common\service\member\LogService;
 class RegisterService
 {
     /**
-     * 注册
+     * 账号注册
      *
      * @param array $param 注册信息
      *
@@ -24,10 +24,12 @@ class RegisterService
      */
     public static function register($param)
     {
+        if (empty($param['username'])) {
+            $param['username'] = md5(uniqid(mt_rand(), true));
+        }
         $data = MemberService::add($param);
 
         $member_log['member_id'] = $data['member_id'];
-        
         LogService::add($member_log, 1);
 
         return $data;

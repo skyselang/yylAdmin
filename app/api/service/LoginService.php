@@ -15,19 +15,20 @@ use app\common\service\member\MemberService;
 class LoginService
 {
     /**
-     * 登录（账号）
+     * 登录
      *
-     * @param array $param 登录信息
+     * @param array  $param 登录信息
+     * @param string $type  登录方式
      * 
      * @return array
      */
-    public static function login($param)
+    public static function login($param, $type = '')
     {
-        return MemberService::login($param);
+        return MemberService::login($param, $type);
     }
 
     /**
-     * 登录（微信）
+     * 微信登录
      *
      * @param array $userinfo 微信用户信息
      *

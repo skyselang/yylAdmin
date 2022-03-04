@@ -12,11 +12,15 @@ namespace app\api\controller;
 
 use think\facade\Request;
 use think\facade\Cache;
-use app\api\service\LoginService;
 use app\common\validate\member\MemberValidate;
+use app\common\cache\utils\CaptchaSmsCache;
+use app\common\cache\utils\CaptchaEmailCache;
 use app\common\service\setting\WechatService;
 use app\common\service\setting\SettingService;
 use app\common\utils\CaptchaUtils;
+use app\common\utils\SmsUtils;
+use app\common\utils\EmailUtils;
+use app\api\service\LoginService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -45,21 +49,26 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录（账号）")
+     * @Apidoc\Title("登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel\username")
+     * @Apidoc\Param("account", type="string", require=true, desc="账号（用户名、手机、邮箱）")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\password")
      * @Apidoc\Param(ref="captchaParam")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
      */
     public function login()
     {
-        $param['username']     = Request::param('username/s', '');
+        $param['account']      = Request::param('account/s', '');
         $param['password']     = Request::param('password/s', '');
         $param['captcha_id']   = Request::param('captcha_id/s', '');
         $param['captcha_code'] = Request::param('captcha_code/s', '');
 
-        validate(MemberValidate::class)->scene('login')->check($param);
+        if (empty($param['account'])) {
+            exception('请输入账号');
+        }
+        if (empty($param['password'])) {
+            exception('请输入密码');
+        }
 
         $setting = SettingService::info();
         if ($setting['captcha_login']) {
@@ -78,7 +87,91 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录（公众号）")
+     * @Apidoc\Title("手机验证码")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone", require=true)
+     */
+    public function phoneCaptcha()
+    {
+        $param['phone'] = Request::param('phone/s', '');
+
+        validate(MemberValidate::class)->scene('phoneLoginCaptcha')->check($param);
+
+        SmsUtils::captcha($param['phone']);
+
+        return success('', '发送成功');
+    }
+
+    /**
+     * @Apidoc\Title("手机登录")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone", require=true)
+     * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
+     */
+    public function phoneLogin()
+    {
+        $param['phone']        = Request::param('phone/s', '');
+        $param['captcha_code'] = Request::param('captcha_code/s', '');
+
+        validate(MemberValidate::class)->scene('phoneLogin')->check($param);
+        if (empty($param['captcha_code'])) {
+            exception('请输入验证码');
+        }
+        $captcha = CaptchaSmsCache::get($param['phone']);
+        if ($captcha != $param['captcha_code']) {
+            exception('验证码错误');
+        }
+
+        $data = LoginService::login($param, 'phone');
+        CaptchaSmsCache::del($param['phone']);
+
+        return success($data, '登录成功');
+    }
+
+    /**
+     * @Apidoc\Title("邮箱验证码")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email", require=true)
+     */
+    public function emailCaptcha()
+    {
+        $param['email'] = Request::param('email/s', '');
+
+        validate(MemberValidate::class)->scene('emailLoginCaptcha')->check($param);
+
+        EmailUtils::captcha($param['email']);
+
+        return success('', '发送成功');
+    }
+
+    /**
+     * @Apidoc\Title("邮箱登录")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email", require=true)
+     * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
+     */
+    public function emailLogin()
+    {
+        $param['email']        = Request::param('email/s', '');
+        $param['captcha_code'] = Request::param('captcha_code/s', '');
+
+        validate(MemberValidate::class)->scene('emailLogin')->check($param);
+        if (empty($param['captcha_code'])) {
+            exception('请输入验证码');
+        }
+        $captcha = CaptchaEmailCache::get($param['email']);
+        if ($captcha != $param['captcha_code']) {
+            exception('验证码错误');
+        }
+
+        $data = LoginService::login($param, 'email');
+        CaptchaEmailCache::del($param['email']);
+
+        return success($data, '登录成功');
+    }
+
+    /**
+     * @Apidoc\Title("公众号登录")
      * @Apidoc\Param("offiurl", type="string", require=true, desc="登录成功后跳转地址，会携带 api_token 参数")
      */
     public function offi()
@@ -109,7 +202,7 @@ class Login
 
         $oauth->redirect()->send();
     }
-    // 登录（公众号）回调
+    // 公众号登录回调
     public function officallback()
     {
         $app  = WechatService::offi();
@@ -147,7 +240,7 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("登录（小程序）")
+     * @Apidoc\Title("小程序登录")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
      * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")

@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 设置管理控制器
+// 系统设置控制器
 namespace app\admin\controller\admin;
 
 use think\facade\Request;
@@ -16,7 +16,7 @@ use app\common\service\admin\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("设置管理")
+ * @Apidoc\Title("系统设置")
  * @Apidoc\Group("adminSystem")
  * @Apidoc\Sort("750")
  */
@@ -202,5 +202,59 @@ class Setting
         $data = SettingService::edit($param);
 
         return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("邮件设置信息")
+     * @Apidoc\Returned(ref="app\common\model\admin\SettingModel\emailInfoParam")
+     */
+    public function emailInfo()
+    {
+        $setting = SettingService::info();
+
+        $field = ['email_host', 'email_port', 'email_secure', 'email_username', 'email_password', 'email_setfrom', 'email_test'];
+        foreach ($field as $v) {
+            $data[$v] = $setting[$v];
+        }
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("邮件设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\admin\SettingModel\emailInfoParam")
+     */
+    public function emailEdit()
+    {
+        $param['email_host']     = Request::param('email_host/s', '');
+        $param['email_port']     = Request::param('email_port/s', '');
+        $param['email_secure']   = Request::param('email_secure/s', 'ssl');
+        $param['email_username'] = Request::param('email_username/s', '');
+        $param['email_password'] = Request::param('email_password/s', '');
+        $param['email_setfrom']  = Request::param('email_setfrom/s', '');
+        $param['email_test']     = Request::param('email_test/s', '');
+
+        validate(SettingValidate::class)->scene('email_edit')->check($param);
+
+        $data = SettingService::edit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("邮件设置测试")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\admin\SettingModel\emailTestParam")
+     */
+    public function emailTest()
+    {
+        $param['email_test'] = Request::param('email_test/s', '');
+
+        validate(SettingValidate::class)->scene('email_test')->check($param);
+
+        $data = SettingService::emailTest($param);
+
+        return success($data, '发送成功');
     }
 }

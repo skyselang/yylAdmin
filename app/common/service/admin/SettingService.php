@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 设置管理
+// 系统设置
 namespace app\common\service\admin;
 
 use think\facade\Cache;
@@ -17,6 +17,7 @@ use app\common\cache\admin\SettingCache;
 use app\common\service\file\FileService;
 use app\common\model\admin\UserModel;
 use app\common\model\admin\SettingModel;
+use app\common\utils\EmailUtils;
 
 class SettingService
 {
@@ -135,5 +136,23 @@ class SettingService
         $data['clear'] = $res;
 
         return $data;
+    }
+
+    /**
+     * 邮箱设置测试
+     *
+     * @param array $param
+     *
+     * @return void
+     */
+    public static function emailTest($param)
+    {
+        $setting = self::info();
+
+        $address = $param['email_test'];
+        $subject = $setting['system_name'] . '-测试邮件';
+        $body    = '这是一封测试邮件，收到此邮件说明邮件设置和发送正常。';
+
+        EmailUtils::send($address, $subject, $body);
     }
 }

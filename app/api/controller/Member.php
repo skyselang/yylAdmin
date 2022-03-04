@@ -56,8 +56,6 @@ class Member
         $param['avatar_id'] = Request::param('avatar_id/d', 0);
         $param['username']  = Request::param('username/s', '');
         $param['nickname']  = Request::param('nickname/s', '');
-        $param['phone']     = Request::param('phone/s', '');
-        $param['email']     = Request::param('email/s', '');
         $param['region_id'] = Request::param('region_id/d', 0);
 
         validate(MemberValidate::class)->scene('edit')->check($param);

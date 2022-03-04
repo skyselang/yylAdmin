@@ -151,10 +151,10 @@ class WechatService
         $offi_info = WechatService::offiInfo();
 
         if (empty($offi_info['appid'])) {
-            exception('appid must');
+            exception('公众号 appid 未设置');
         }
         if (empty($offi_info['appsecret'])) {
-            exception('appsecret must');
+            exception('公众号 appsecret 未设置');
         }
 
         $log_channel = Config::get('app.app_debug') ? 'dev' : 'prod';
@@ -186,13 +186,13 @@ class WechatService
                     // 测试环境
                     'dev' => [
                         'driver' => 'single',
-                        'path' => '../runtime/easywechat/officialAccountDev.log',
+                        'path' => runtime_path() . 'easywechatOfficialAccountDev.log',
                         'level' => 'debug',
                     ],
                     // 生产环境
                     'prod' => [
                         'driver' => 'daily',
-                        'path' => '../runtime/easywechat/officialAccount.log',
+                        'path' => runtime_path() . 'easywechatOfficialAccount.log',
                         'level' => 'info',
                         'days' => 30,
                     ],
@@ -219,10 +219,10 @@ class WechatService
         $mini_info = WechatService::miniInfo();
 
         if (empty($mini_info['appid'])) {
-            exception('appid must');
+            exception('小程序 appid 未设置');
         }
         if (empty($mini_info['appsecret'])) {
-            exception('appsecret must');
+            exception('小程序 appsecret 未设置');
         }
 
         $config_info = [
@@ -241,7 +241,7 @@ class WechatService
              */
             'log' => [
                 'level' => 'debug',
-                'file' => '../runtime/easywechat/miniProgram.log',
+                'file' => runtime_path() . 'easywechatMiniProgram.log',
             ],
         ];
 

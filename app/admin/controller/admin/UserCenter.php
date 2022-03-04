@@ -90,7 +90,7 @@ class UserCenter
      * @Apidoc\Param(ref="app\common\model\admin\UserLogModel\listParam")
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Param("response_code", require=false, default="")
-     * @Apidoc\Returned(ref="pagingReturn"),
+     * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="日志列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
      * )

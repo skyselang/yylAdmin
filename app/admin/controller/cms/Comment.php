@@ -185,7 +185,7 @@ class Comment
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Returned(ref="pagingReturn"),
+     * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="留言列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\listReturn")
      * )

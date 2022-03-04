@@ -71,6 +71,20 @@ class MemberModel extends Model
     }
 
     /**
+     * @Apidoc\Field("phone")
+     */
+    public function phone()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("email")
+     */
+    public function email()
+    {
+    }
+
+    /**
      * @Apidoc\Field("password")
      */
     public function password()
@@ -93,7 +107,8 @@ class MemberModel extends Model
     }
 
     /**
-     * @Apidoc\Field("username,nickname,password,phone,email")
+     * 账号注册
+     * @Apidoc\Field("username,nickname,password")
      */
     public function registerReturn()
     {
@@ -117,7 +132,8 @@ class MemberModel extends Model
     }
 
     /**
-     * @Apidoc\Field("avatar_id,username,nickname,phone,email,region_id")
+     * 会员修改信息
+     * @Apidoc\Field("avatar_id,username,nickname,region_id")
      */
     public function indexEditParam()
     {

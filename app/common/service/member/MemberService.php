@@ -304,20 +304,33 @@ class MemberService
     }
 
     /**
-     * 会员登录（账号）
+     * 会员登录
      *
-     * @param array $param 登录信息
+     * @param array  $param 登录信息
+     * @param string $type  登录方式
      * 
      * @return array
      */
-    public static function login($param)
+    public static function login($param, $type = '')
     {
         $model = new MemberModel();
         $pk = $model->getPk();
 
-        // 通过 账号、手机、邮箱 登录
-        $where[] = ['username|phone|email', '=', $param['username']];
-        $where[] = ['password', '=', md5($param['password'])];
+        if ($type == 'username') {
+            // 通过用户名登录
+            $where[] = ['username', '=', $param['username']];
+            $where[] = ['password', '=', md5($param['password'])];
+        } else if ($type == 'phone') {
+            // 通过手机登录
+            $where[] = ['phone', '=', $param['phone']];
+        } else if ($type == 'email') {
+            // 通过邮箱登录
+            $where[] = ['email', '=', $param['email']];
+        } else {
+            // 通过用户名、手机、邮箱登录
+            $where[] = ['username|phone|email', '=', $param['account']];
+            $where[] = ['password', '=', md5($param['password'])];
+        }
         $where[] = ['is_delete', '=', 0];
 
         $field = $pk . ',username,nickname,phone,email,login_num,is_disable';

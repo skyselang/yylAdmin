@@ -42,7 +42,7 @@ class Content
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Returned(ref="pagingReturn"),
+     * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
@@ -292,7 +292,7 @@ class Content
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", 
      *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
-     *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name"),
+     *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
      */
     public function recover()

@@ -32,7 +32,9 @@
         "aliyuncs/oss-sdk-php": "^2.4",
         "qcloud/cos-sdk-v5": "^2.3",
         "guzzlehttp/guzzle": "^6.0",
-        "psr/container": "1.1.1"
+        "psr/container": "1.1.1",
+        "phpmailer/phpmailer": "^6.5",
+        "overtrue/easy-sms": "^2.1"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"
