@@ -65,7 +65,7 @@ class UserLog
                 $where[] = [$UserPk, 'in', $admin_user_ids];
             } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
                 $MenuModel = new MenuModel();
-                $MenuPk = new $MenuModel->getPk();
+                $MenuPk = $MenuModel->getPk();
                 $menu_exp = strpos($search_value, ',') ? 'in' : '=';
                 $menu_where[] = [$search_field, $menu_exp, $search_value];
                 $admin_menu_ids = $MenuModel->where($menu_where)->column($MenuPk);
