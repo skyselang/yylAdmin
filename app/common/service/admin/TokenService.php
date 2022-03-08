@@ -102,6 +102,10 @@ class TokenService
      */
     public static function adminUserId($token)
     {
+        if (empty($token)) {
+            return 0;
+        }
+
         try {
             $config = self::config();
             $decode = JWT::decode($token, $config['token_key'], array('HS256'));

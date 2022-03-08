@@ -58,7 +58,7 @@ return [
     // 缓存配置
     'cache' => [
         // 是否开启缓存
-        'enable' => !env('app.debug', false)
+        'enable' => env('apidoc.cache_enable', !env('app.debug', false))
     ],
     // 进入接口问页面的权限认证配置
     'auth' => [
