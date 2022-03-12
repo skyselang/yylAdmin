@@ -23,13 +23,13 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("注册")
- * @Apidoc\Sort("220")
- * @Apidoc\Group("login")
+ * @Apidoc\Sort("210")
+ * @Apidoc\Group("register")
  */
 class Register
 {
     /**
-     * @Apidoc\Title("用户名验证码")
+     * @Apidoc\Title("用户名注册验证码")
      * @Apidoc\Returned(ref="captchaReturn")
      */
     public function captcha()
@@ -65,8 +65,6 @@ class Register
         $param['captcha_id']   = Request::param('captcha_id/s', '');
         $param['captcha_code'] = Request::param('captcha_code/s', '');
 
-        validate(MemberValidate::class)->scene('usernameRegister')->check($param);
-
         $setting = SettingService::info();
         if ($setting['captcha_register']) {
             if (empty($param['captcha_code'])) {
@@ -77,6 +75,8 @@ class Register
                 exception('验证码错误');
             }
         }
+        
+        validate(MemberValidate::class)->scene('usernameRegister')->check($param);
 
         unset($param['captcha_id'], $param['captcha_code']);
 
@@ -86,8 +86,9 @@ class Register
     }
 
     /**
-     * @Apidoc\Title("手机验证码")
+     * @Apidoc\Title("手机注册验证码")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone")
+     * @Apidoc\Param("phone", require=true, mock="@phone")
      */
     public function phoneCaptcha()
     {
@@ -106,10 +107,10 @@ class Register
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\nickname")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\password")
-     * @Apidoc\Param("phone", mock="@phone")
+     * @Apidoc\Param("phone", require=true, mock="@phone")
      * @Apidoc\Param("nickname", mock="@ctitle(6, 12)")
-     * @Apidoc\Param("password", mock="@string(6)")
-     * @Apidoc\Param("captcha_code", type="string", desc="手机验证码")
+     * @Apidoc\Param("password", require=true, mock="@string(6)")
+     * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
      */
     public function phoneRegister()
     {
@@ -136,8 +137,9 @@ class Register
     }
 
     /**
-     * @Apidoc\Title("邮箱验证码")
+     * @Apidoc\Title("邮箱注册验证码")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\email")
+     * @Apidoc\Param("email", require=true, mock="@email")
      */
     public function emailCaptcha()
     {
@@ -156,10 +158,10 @@ class Register
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\email")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\nickname")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\password")
-     * @Apidoc\Param("email", mock="@email")
+     * @Apidoc\Param("email", require=true, mock="@email")
      * @Apidoc\Param("nickname", mock="@ctitle(6, 12)")
-     * @Apidoc\Param("password", mock="@string(6)")
-     * @Apidoc\Param("captcha_code", type="string", desc="邮箱验证码")
+     * @Apidoc\Param("password", require=true, mock="@string(6)")
+     * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
      */
     public function emailRegister()
     {

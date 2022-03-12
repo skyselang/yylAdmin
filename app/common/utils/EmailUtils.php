@@ -32,7 +32,7 @@ class EmailUtils
             $setting = SettingService::info();
             $captcha = mt_rand(100000, 999999);
             $subject = $setting['system_name'] . '-验证码';
-            $body = '您的验证码为：<b>' . $captcha . '</b>。';
+            $body = $setting['system_name'] . ', 您的验证码为：<b>' . $captcha . '</b>。';
             self::send($address, $subject, $body);
             CaptchaEmailCache::set($address, $captcha);
         }

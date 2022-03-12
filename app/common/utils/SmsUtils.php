@@ -90,7 +90,7 @@ class SmsUtils
                 ]);
             }
         } catch (\Exception $e) {
-            exception($e->getLastException());
+            exception('短信发送失败：' . $e->getMessage());
         }
     }
 }

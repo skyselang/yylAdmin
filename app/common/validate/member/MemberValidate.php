@@ -27,6 +27,7 @@ class MemberValidate extends Validate
         'password_new' => ['require', 'length' => '6,18'],
         'phone'        => ['mobile'],
         'email'        => ['email'],
+        'captcha_code' => ['require'],
     ];
 
     // 错误信息
@@ -43,6 +44,7 @@ class MemberValidate extends Validate
         'phone.mobile'         => '请输入正确的手机号码',
         'email.require'        => '请输入邮箱地址',
         'email.email'          => '请输入正确的邮箱地址',
+        'captcha_code.require' => '请输入验证码',
     ];
 
     // 验证场景
@@ -62,10 +64,14 @@ class MemberValidate extends Validate
         'phoneRegister'        => ['mobile', 'nickname', 'password'],
         'phoneLoginCaptcha'    => ['mobile'],
         'phoneLogin'           => ['mobile'],
+        'phoneBindCaptcha'     => ['mobile'],
+        'phoneBind'            => ['mobile', 'member_id', 'captcha_code'],
         'emailRegisterCaptcha' => ['email'],
         'emailRegister'        => ['email', 'nickname', 'password'],
         'emailLoginCaptcha'    => ['email'],
         'emailLogin'           => ['email'],
+        'emailBindCaptcha'     => ['email'],
+        'emailBind'            => ['email', 'member_id', 'captcha_code'],
         'logout'               => ['member_id'],
     ];
 
@@ -104,6 +110,20 @@ class MemberValidate extends Validate
             ->append('phone', ['require', 'checkPhoneIsExist']);
     }
 
+    // 验证场景定义：手机绑定验证码
+    protected function scenePhoneBindCaptcha()
+    {
+        return $this->only(['phone'])
+            ->append('phone', ['require', 'checkPhoneExisted']);
+    }
+
+    // 验证场景定义：手机绑定
+    protected function scenePhoneBind()
+    {
+        return $this->only(['phone', 'member_id', 'captcha_code'])
+            ->append('phone', ['require', 'checkPhoneExisted']);
+    }
+
     // 验证场景定义：邮箱注册验证码
     protected function sceneEmailRegisterCaptcha()
     {
@@ -130,6 +150,20 @@ class MemberValidate extends Validate
     {
         return $this->only(['email'])
             ->append('email', ['require', 'checkEmailIsExist']);
+    }
+
+    // 验证场景定义：邮箱绑定验证码
+    protected function sceneEmailBindCaptcha()
+    {
+        return $this->only(['email', 'captcha_code'])
+            ->append('email', ['require', 'checkEmailExisted']);
+    }
+
+    // 验证场景定义：邮箱绑定
+    protected function sceneEmailBind()
+    {
+        return $this->only(['email', 'member_id', 'captcha_code'])
+            ->append('email', ['require', 'checkEmailExisted']);
     }
 
     // 验证场景定义：后台添加

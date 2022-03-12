@@ -31,7 +31,7 @@ DELETE FROM yyl_admin_menu WHERE is_delete=1;
 UPDATE yyl_admin_menu SET create_time=null, update_time=null, delete_time=null;
 UPDATE yyl_admin_role SET create_time=null, update_time=null, delete_time=null;
 DELETE FROM yyl_admin_user WHERE is_delete=1;
-UPDATE yyl_admin_user SET create_time=null, update_time=null, delete_time=null,avatar_id=0,login_num=0,login_ip='',login_region='',login_time=null,logout_time=null;
+UPDATE yyl_admin_user SET create_time=null, update_time=null, delete_time=null, avatar_id=0, login_num=0, login_ip='', login_region='', login_time=null, logout_time=null;
 TRUNCATE yyl_admin_user_log;
 
 TRUNCATE yyl_admin_setting;

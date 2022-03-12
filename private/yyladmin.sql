@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 04/03/2022 15:38:10
+ Date: 12/03/2022 15:22:01
 */
 
 SET NAMES utf8mb4;
@@ -449,13 +449,13 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 70 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 74 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_api
 -- ----------------------------
 INSERT INTO `yyl_api` VALUES (1, 0, '登录退出', '', 250, 0, 1, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (2, 1, '验证码', 'api/Login/captcha', 300, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (2, 1, '登录验证码', 'api/Login/captcha', 300, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (3, 1, '登录', 'api/Login/login', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'api/Login/logout', 120, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (5, 0, '会员中心', '', 250, 0, 0, 0, NULL, NULL, NULL);
@@ -470,7 +470,7 @@ INSERT INTO `yyl_api` VALUES (13, 12, '地区列表', 'api/Region/list', 300, 1,
 INSERT INTO `yyl_api` VALUES (14, 12, '地区信息', 'api/Region/info', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (15, 12, '地区树形', 'api/Region/tree', 280, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (19, 1, '公众号登录', 'api/Login/offi', 135, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (20, 11, '用户名验证码', 'api/Register/captcha', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (20, 11, '用户名注册验证码', 'api/Register/captcha', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (21, 11, '用户名注册', 'api/Register/register', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (22, 1, '小程序登录', 'api/Login/mini', 130, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (23, 16, '新闻分类', 'api/cms.News/category', 250, 1, 0, 0, NULL, NULL, NULL);
@@ -489,15 +489,19 @@ INSERT INTO `yyl_api` VALUES (57, 30, '留言', '', 250, 0, 0, 0, NULL, NULL, NU
 INSERT INTO `yyl_api` VALUES (58, 57, '留言提交', 'api/cms.Comment/add', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (59, 30, '设置', '', 250, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (60, 59, '设置信息', 'api/cms.Setting/info', 250, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (61, 5, '绑定手机（小程序）', 'api/Member/bindPhoneMini', 250, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (62, 11, '手机验证码', 'api/Register/phoneCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (61, 5, '手机绑定（小程序）', 'api/Member/bindPhoneMini', 250, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (62, 11, '手机注册验证码', 'api/Register/phoneCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (63, 11, '手机注册', 'api/Register/phoneRegister', 250, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (64, 11, '邮箱验证码', 'api/Register/emailCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (64, 11, '邮箱注册验证码', 'api/Register/emailCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (65, 11, '邮箱注册', 'api/Register/emailRegister', 250, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (66, 1, '手机验证码', 'api/Login/phoneCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (66, 1, '手机登录验证码', 'api/Login/phoneCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (67, 1, '手机登录', 'api/Login/phoneLogin', 250, 1, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_api` VALUES (68, 1, '邮箱验证码', 'api/Login/emailCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (68, 1, '邮箱登录验证码', 'api/Login/emailCaptcha', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (69, 1, '邮箱登录', 'api/Login/emailLogin', 250, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (70, 5, '手机绑定验证码', 'api/Member/phoneCaptcha', 250, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (71, 5, '手机绑定', 'api/Member/phoneBind', 250, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (72, 5, '邮箱绑定验证码', 'api/Member/emailCaptcha', 250, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (73, 5, '邮箱绑定', 'api/Member/emailBind', 250, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_cms_category

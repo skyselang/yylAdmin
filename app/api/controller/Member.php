@@ -16,6 +16,10 @@ use app\common\validate\file\FileValidate;
 use app\common\service\member\MemberService;
 use app\common\service\member\LogService;
 use app\common\service\file\FileService;
+use app\common\cache\utils\CaptchaSmsCache;
+use app\common\cache\utils\CaptchaEmailCache;
+use app\common\utils\SmsUtils;
+use app\common\utils\EmailUtils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -40,7 +44,11 @@ class Member
         if ($data['is_delete'] == 1) {
             exception('会员已被注销');
         }
-        unset($data['password'], $data['remark'], $data['sort'], $data['is_disable'], $data['is_delete'], $data['delete_time']);
+
+        $unset = ['password', 'remark', 'sort', 'is_disable', 'is_delete', 'delete_time'];
+        foreach ($unset as $v) {
+            unset($data[$v]);
+        }
 
         return success($data);
     }
@@ -153,7 +161,48 @@ class Member
     }
 
     /**
-     * @Apidoc\Title("绑定手机（小程序）")
+     * @Apidoc\Title("手机绑定验证码")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone")
+     */
+    public function phoneCaptcha()
+    {
+        $param['phone'] = Request::param('phone/s', '');
+
+        validate(MemberValidate::class)->scene('phoneBindCaptcha')->check($param);
+
+        SmsUtils::captcha($param['phone']);
+
+        return success('', '发送成功');
+    }
+
+    /**
+     * @Apidoc\Title("手机绑定")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone")
+     * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
+     */
+    public function phoneBind()
+    {
+        $param['member_id']    = member_id();
+        $param['phone']        = Request::param('phone/s', '');
+        $param['captcha_code'] = Request::param('captcha_code/s', '');
+
+        validate(MemberValidate::class)->scene('phoneBind')->check($param);
+        $captcha = CaptchaSmsCache::get($param['phone']);
+        if ($captcha != $param['captcha_code']) {
+            exception('验证码错误');
+        }
+
+        unset($param['captcha_code']);
+
+        $data = MemberService::edit($param);
+        CaptchaSmsCache::del($param['phone']);
+
+        return success($data, '绑定成功');
+    }
+
+    /**
+     * @Apidoc\Title("手机绑定（小程序）")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
      * @Apidoc\Param("iv", type="string", require=true, desc="加密算法的初始向量")
@@ -174,5 +223,46 @@ class Member
         $data = MemberService::bindPhoneMini($param['code'], $param['iv'], $param['encrypted_data']);
 
         return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("邮箱绑定验证码")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email", require=true)
+     */
+    public function emailCaptcha()
+    {
+        $param['email'] = Request::param('email/s', '');
+
+        validate(MemberValidate::class)->scene('emailBindCaptcha')->check($param);
+
+        EmailUtils::captcha($param['email']);
+
+        return success('', '发送成功');
+    }
+
+    /**
+     * @Apidoc\Title("邮箱绑定")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email", require=true)
+     * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
+     */
+    public function emailBind()
+    {
+        $param['member_id']    = member_id();
+        $param['email']        = Request::param('email/s', '');
+        $param['captcha_code'] = Request::param('captcha_code/s', '');
+
+        validate(MemberValidate::class)->scene('emailBind')->check($param);
+        $captcha = CaptchaEmailCache::get($param['email']);
+        if ($captcha != $param['captcha_code']) {
+            exception('验证码错误');
+        }
+
+        unset($param['captcha_code']);
+
+        $data = MemberService::edit($param);
+        CaptchaEmailCache::del($param['email']);
+
+        return success($data, '绑定成功');
     }
 }

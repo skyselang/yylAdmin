@@ -42,7 +42,8 @@ return [
             'folder' => 'api',
             'groups' => [
                 ['title' => '首页', 'name' => 'index'],
-                ['title' => '登录注册', 'name' => 'login'],
+                ['title' => '注册', 'name' => 'register'],
+                ['title' => '登录退出', 'name' => 'login'],
                 ['title' => '会员中心', 'name' => 'member'],
                 ['title' => '微信', 'name' => 'wechat'],
                 ['title' => '地区', 'name' => 'region'],

@@ -25,13 +25,13 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("登录退出")
- * @Apidoc\Sort("210")
+ * @Apidoc\Sort("220")
  * @Apidoc\Group("login")
  */
 class Login
 {
     /**
-     * @Apidoc\Title("验证码")
+     * @Apidoc\Title("登录验证码")
      * @Apidoc\Returned(ref="captchaReturn")
      */
     public function captcha()
@@ -87,8 +87,9 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("手机验证码")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone", require=true)
+     * @Apidoc\Title("手机登录验证码")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone")
+     * @Apidoc\Param("phone", type="string", require=true, desc="手机")
      */
     public function phoneCaptcha()
     {
@@ -104,7 +105,8 @@ class Login
     /**
      * @Apidoc\Title("手机登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone", require=true)
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\phone")
+     * @Apidoc\Param("phone", type="string", require=true, desc="手机")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
      */
@@ -129,8 +131,9 @@ class Login
     }
 
     /**
-     * @Apidoc\Title("邮箱验证码")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email", require=true)
+     * @Apidoc\Title("邮箱登录验证码")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email")
+     * @Apidoc\Param("email", type="string", require=true, desc="邮箱")
      */
     public function emailCaptcha()
     {
@@ -146,7 +149,8 @@ class Login
     /**
      * @Apidoc\Title("邮箱登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email", require=true)
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\email")
+     * @Apidoc\Param("email", type="string", require=true, desc="邮箱")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
      */
