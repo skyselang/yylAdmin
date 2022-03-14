@@ -86,7 +86,7 @@ class UserLog
 
         $data = UserLogService::list($where, $page, $limit, $order);
 
-        return success($data, $where);
+        return success($data);
     }
 
     /**

@@ -99,7 +99,7 @@ class Login
 
         SmsUtils::captcha($param['phone']);
 
-        return success('', '发送成功');
+        return success([], '发送成功');
     }
 
     /**
@@ -143,7 +143,7 @@ class Login
 
         EmailUtils::captcha($param['email']);
 
-        return success('', '发送成功');
+        return success([], '发送成功');
     }
 
     /**
