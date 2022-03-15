@@ -52,7 +52,11 @@ class FileValidate extends Validate
         $file    = $data['file'];
         $setting = SettingService::info();
 
-        $file_ext    = $file->getOriginalExtension();
+        $file_ext = $file->getOriginalExtension();
+        if (empty($file_ext)) {
+            return '上传的文件格式不允许';
+        }
+
         $file_type   = SettingService::getFileType($file_ext);
         $set_ext_str = $setting[$file_type . '_ext'];
         $set_ext_arr = explode(',', $set_ext_str);
@@ -64,7 +68,7 @@ class FileValidate extends Validate
         $set_size_m = $setting[$file_type . '_size'];
         $set_size_b = $set_size_m * 1048576;
         if ($file_size > $set_size_b) {
-            return '上传的文件大小不允许，允许大小：<= ' . $set_size_m . ' MB';
+            return '上传的文件大小不允许，允许大小：' . $set_size_m . ' MB';
         }
 
         return true;
