@@ -39,7 +39,7 @@ class FileService
         if (empty($field)) {
             $field = $pk . ',' . $GroupPk . ',storage,domain,file_md5,file_hash,file_type,file_name,file_path,file_size,file_ext,sort,is_disable';
         } else {
-            $field = str_merge($field, 'file_id,storage,domain,file_md5,file_hash,file_path,file_ext');
+            $field = str_merge($field, 'file_id,storage,domain,file_md5,file_hash,file_path,file_ext,is_disable');
         }
 
         if (empty($order)) {
@@ -441,7 +441,7 @@ class FileService
         $model = new FileModel();
         $pk = $model->getPk();
 
-        $field = $pk . ',storage,file_type,file_name,file_hash,file_ext,file_path,file_size,is_disable';
+        $field = $pk . ',storage,domain,file_type,file_name,file_hash,file_ext,file_path,file_size,is_disable';
         $where[] = [$pk, 'in', $ids];
         $where[] = ['is_disable', '=', 0];
         $file = $model->field($field)->where($where)->select()->toArray();
