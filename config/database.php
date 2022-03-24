@@ -56,11 +56,11 @@ return [
             // 是否严格检查字段是否存在
             'fields_strict'     => env('app_debug', false),
             // 是否需要断线重连
-            'break_reconnect'   => env('database.breakreconnect', false),
+            'break_reconnect'   => env('database.break_reconnect', false),
             // 监听SQL
             'trigger_sql'       => env('app_debug', false),
             // 开启字段缓存
-            'fields_cache'      => env('database.fieldscache', true),
+            'fields_cache'      => env('database.fields_cache', true),
             // 字段缓存路径
             'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
         ],

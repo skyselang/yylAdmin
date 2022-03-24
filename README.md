@@ -21,6 +21,7 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 - 设置管理
 - 权限管理
 - 系统管理
+- 代码生成器
 - 接口文档与调试...
 - 前台基础功能：登录注册、微信登录、Token认证、接口管理...  
 - 更多功能请安装后体验
@@ -28,7 +29,7 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 ## 演示
 
 - 地址：[yylAdmin demo](https://admin.yyladmin.top) 
-- 账号：yyladmin、admin、demo、php  
+- 账号：yyladmin、admin、demo、test、php  
 - 密码：123456  
 - 提示：演示账号只有部分权限，请安装后体验全部功能
 - 前台：[yylAdmin index](https://www.yyladmin.top) 
@@ -74,7 +75,7 @@ PHP版本：7.3.9
 伪静态Nginx：
 location / {
     if (!-e $request_filename){
-        rewrite  ^(.*)$  /index.php?s=$1  last;   break;
+        rewrite  ^(.*)$  /index.php?s=$1  last;  break;
     }
 }
 ```
