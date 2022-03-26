@@ -35,11 +35,17 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
+                $info['diy_config']  = serialize([]);
                 $info['create_time'] = datetime();
                 $model->insert($info);
                 $info = $model->find($id);
             }
             $info = $info->toArray();
+            if ($info['diy_config']) {
+                $info['diy_config'] = unserialize($info['diy_config']);
+            } else {
+                $info['diy_config'] = [];
+            }
 
             $info['logo_url']    = FileService::fileUrl($info['logo_id']);
             $info['off_acc_url'] = FileService::fileUrl($info['off_acc_id']);
@@ -61,11 +67,9 @@ class SettingService
     {
         $model = new SettingModel();
         $pk = $model->getPk();
-
         $id = self::$id;
 
         $param['update_time'] = datetime();
-
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();

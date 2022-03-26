@@ -25,6 +25,11 @@ class Setting
     /**
      * @Apidoc\Title("内容设置信息")
      * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\InfoReturn")
+     * @Apidoc\Returned("diy_config", type="array", default="", desc="自定义信息",
+     *     @Apidoc\Returned("config_key", type="string", require=true, default="", desc="键名"),
+     *     @Apidoc\Returned("config_val", type="string", require=false, default="", desc="键值"),
+     *     @Apidoc\Returned("config_desc", type="string", require=false, default="", desc="说明")
+     * )
      */
     public function info()
     {
@@ -37,6 +42,11 @@ class Setting
      * @Apidoc\Title("内容设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\SettingModel\editParam")
+     * @Apidoc\Param("diy_config", type="array", default="", desc="自定义信息",
+     *     @Apidoc\Param("config_key", type="string", require=true, default="", desc="键名"),
+     *     @Apidoc\Param("config_val", type="string", require=false, default="", desc="键值"),
+     *     @Apidoc\Param("config_desc", type="string", require=false, default="", desc="说明")
+     * )
      */
     public function edit()
     {
@@ -47,15 +57,18 @@ class Setting
         $param['description'] = Request::param('description/s', '');
         $param['icp']         = Request::param('icp/s', '');
         $param['copyright']   = Request::param('copyright/s', '');
+        $param['off_acc_id']  = Request::param('off_acc_id/d', 0);
         $param['address']     = Request::param('address/s', '');
         $param['tel']         = Request::param('tel/s', '');
         $param['mobile']      = Request::param('mobile/s', '');
         $param['email']       = Request::param('email/s', '');
         $param['qq']          = Request::param('qq/s', '');
         $param['wechat']      = Request::param('wechat/s', '');
-        $param['off_acc_id']  = Request::param('off_acc_id/d', 0);
+        $param['diy_config']  = Request::param('diy_config/a', []);
 
         validate(SettingValidate::class)->scene('edit')->check($param);
+
+        $param['diy_config'] = serialize($param['diy_config']);
 
         $data = SettingService::edit($param);
 
