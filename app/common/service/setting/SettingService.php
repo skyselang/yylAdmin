@@ -37,11 +37,17 @@ class SettingService
                 $info[$pk]           = $id;
                 $info['token_name']  = Config::get('api.token_name');
                 $info['token_key']   = uniqid();
+                $info['diy_config']  = serialize([]);
                 $info['create_time'] = datetime();
                 $model->insert($info);
                 $info = $model->find($id);
             }
             $info = $info->toArray();
+            if ($info['diy_config']) {
+                $info['diy_config'] = unserialize($info['diy_config']);
+            } else {
+                $info['diy_config'] = [];
+            }
 
             SettingCache::set($id, $info);
         }
@@ -60,11 +66,9 @@ class SettingService
     {
         $model = new SettingModel();
         $pk = $model->getPk();
-
         $id = self::$id;
 
         $param['update_time'] = datetime();
-
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
@@ -73,5 +77,22 @@ class SettingService
         SettingCache::del($id);
 
         return $param;
+    }
+
+    /**
+     * 自定义设置
+     *
+     * @return bool|Exception
+     */
+    public static function diy()
+    {
+        $setting = self::info();
+
+        $diy = [];
+        foreach ($setting['diy_config'] as $v) {
+            $diy[$v['config_key']] = $v['config_val'];
+        }
+
+        return $diy;
     }
 }

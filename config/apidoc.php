@@ -41,6 +41,7 @@ return [
             'path' => 'app\api\controller',
             'folder' => 'api',
             'groups' => [
+                ['title' => '设置', 'name' => 'setting'],
                 ['title' => '首页', 'name' => 'index'],
                 ['title' => '注册', 'name' => 'register'],
                 ['title' => '登录退出', 'name' => 'login'],

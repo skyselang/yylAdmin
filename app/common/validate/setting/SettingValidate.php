@@ -24,6 +24,7 @@ class SettingValidate extends Validate
         'log_save_time'    => ['require', 'between' => '0,99999'],
         'api_rate_num'     => ['require', 'between' => '0,999'],
         'api_rate_time'    => ['require', 'between' => '1,999'],
+        'diy_config'       => ['array', 'checkDiyConfig'],
     ];
 
     // 错误信息
@@ -52,5 +53,25 @@ class SettingValidate extends Validate
         'captcha_edit' => ['captcha_register', 'captcha_login'],
         'log_edit'     => ['log_switch', 'log_save_time'],
         'api_edit'     => ['api_rate_num', 'api_rate_time'],
+        'diy_edit'     => ['diy_config'],
     ];
+
+    // 自定义验证规则：自定义设置验证
+    protected function checkDiyConfig($value, $rule, $data = [])
+    {
+        foreach ($data['diy_config'] as $v) {
+            if (empty($v['config_key'])) {
+                return '请输入键名';
+            }
+        }
+
+        $key_array = array_column($data['diy_config'], 'config_key');
+        $key_unique = array_unique($key_array);
+        $key_repeat = array_diff_assoc($key_array, $key_unique);
+        if ($key_repeat) {
+            return  '存在重复键名：' . implode(',', $key_repeat);
+        }
+
+        return true;
+    }
 }

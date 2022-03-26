@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 12/03/2022 15:22:01
+ Date: 26/03/2022 11:28:24
 */
 
 SET NAMES utf8mb4;
@@ -27,10 +27,10 @@ CREATE TABLE `yyl_admin_menu`  (
   `menu_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '菜单名称',
   `menu_url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单链接',
   `menu_sort` int(10) NULL DEFAULT 250 COMMENT '菜单排序',
-  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_unauth` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需权限1是0否',
-  `is_unlogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需登录1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
+  `is_unauth` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需权限，1是0否',
+  `is_unlogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需登录，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 498 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 501 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -132,7 +132,7 @@ INSERT INTO `yyl_admin_menu` VALUES (155, 150, '地区删除', 'admin/setting.Re
 INSERT INTO `yyl_admin_menu` VALUES (156, 0, '会员管理', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (157, 186, '设置管理', '', 100, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (158, 3, '菜单信息', 'admin/admin.Menu/info', 255, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (170, 157, '验证码设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (171, 157, 'Token设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (172, 1, '会员统计', 'admin/Index/member', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (173, 53, '接口文档', 'admin/admin.Apidoc/apidoc', 180, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -159,10 +159,10 @@ INSERT INTO `yyl_admin_menu` VALUES (215, 3, '菜单是否无需登录', 'admin/
 INSERT INTO `yyl_admin_menu` VALUES (217, 188, '日志设置', '', 120, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (218, 217, '日志设置信息', 'admin/admin.Setting/logInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (219, 217, '日志设置修改', 'admin/admin.Setting/logEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (220, 157, '日志设置', '', 120, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (220, 157, '日志设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (221, 220, '日志设置信息', 'admin/setting.Setting/logInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (222, 220, '日志设置修改', 'admin/setting.Setting/logEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (223, 157, '接口设置', '', 100, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (223, 157, '接口设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (224, 223, '接口设置信息', 'admin/setting.Setting/apiInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (225, 223, '接口设置修改', 'admin/setting.Setting/apiEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (226, 188, '接口设置', '', 110, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -256,6 +256,9 @@ INSERT INTO `yyl_admin_menu` VALUES (494, 188, '邮件设置', '', 90, 0, 0, 0, 
 INSERT INTO `yyl_admin_menu` VALUES (495, 494, '邮件设置信息', 'admin/admin.Setting/emailInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (496, 494, '邮件设置修改', 'admin/admin.Setting/emailEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (497, 494, '邮件设置测试', 'admin/admin.Setting/emailTest', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (498, 157, '自定义设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (499, 498, '自定义设置信息', 'admin/setting.Setting/diyInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (500, 498, '自定义设置修改', 'admin/setting.Setting/diyEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_notice
@@ -270,10 +273,10 @@ CREATE TABLE `yyl_admin_notice`  (
   `sort` int(1) NULL DEFAULT 250 COMMENT '排序',
   `intro` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '简介',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
-  `is_open` tinyint(1) NULL DEFAULT 1 COMMENT '是否开启1是0否',
+  `is_open` tinyint(1) NULL DEFAULT 1 COMMENT '是否开启，1是0否',
   `open_time_start` datetime NOT NULL COMMENT '开启开始时间',
   `open_time_end` datetime NOT NULL COMMENT '开启结束时间',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -295,8 +298,8 @@ CREATE TABLE `yyl_admin_role`  (
   `role_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '角色名称',
   `role_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '角色描述',
   `role_sort` int(10) NULL DEFAULT 250 COMMENT '角色排序',
-  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -309,7 +312,7 @@ CREATE TABLE `yyl_admin_role`  (
 -- Records of yyl_admin_role
 -- ----------------------------
 INSERT INTO `yyl_admin_role` VALUES (1, ',,', '管理员', '', 250, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',1,13,17,22,29,37,38,40,42,43,45,49,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,151,152,158,172,173,187,191,193,196,198,204,218,221,224,227,284,285,286,289,291,292,293,294,295,299,300,382,383,384,388,392,396,399,400,401,402,411,412,417,420,422,424,426,428,430,436,437,442,445,', '演示', '', 250, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',1,13,17,22,29,37,38,40,42,43,45,49,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,151,152,158,172,173,187,191,193,196,198,204,218,221,224,227,284,285,286,289,291,292,293,294,295,299,300,382,383,384,388,392,396,399,400,401,402,411,412,417,420,422,424,426,428,430,436,437,442,445,498,499,500,', '演示', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '', 250, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -326,9 +329,9 @@ CREATE TABLE `yyl_admin_setting`  (
   `token_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
   `token_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
   `token_exp` int(5) NULL DEFAULT 12 COMMENT 'Token有效时间（小时）',
-  `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码开关：1开启0关闭',
-  `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型：1数字，2字母，3数字字母，4算术，5中文',
-  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关：1开启0关闭',
+  `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码开关，1开启0关闭',
+  `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型，1数字，2字母，3数字字母，4算术，5中文',
+  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关，1开启0关闭',
   `log_save_time` int(11) NULL DEFAULT 0 COMMENT '日志保留时间，0永久保留',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
@@ -365,9 +368,9 @@ CREATE TABLE `yyl_admin_user`  (
   `avatar_id` int(11) NULL DEFAULT 0 COMMENT '头像id',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   `sort` int(10) NULL DEFAULT 250 COMMENT '排序',
-  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_super` tinyint(1) NULL DEFAULT 0 COMMENT '是否超管1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
+  `is_super` tinyint(1) NULL DEFAULT 0 COMMENT '是否超管，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
   `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
   `login_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录地区',
@@ -412,7 +415,7 @@ CREATE TABLE `yyl_admin_user_log`  (
   `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
   `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回码',
   `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -439,9 +442,9 @@ CREATE TABLE `yyl_api`  (
   `api_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接口名称',
   `api_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '接口链接',
   `api_sort` int(10) NULL DEFAULT 250 COMMENT '接口排序',
-  `is_unlogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需登录1是0否',
-  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_unlogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需登录，1是0否',
+  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -449,12 +452,12 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 74 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_api
 -- ----------------------------
-INSERT INTO `yyl_api` VALUES (1, 0, '登录退出', '', 250, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (1, 0, '登录退出', '', 250, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (2, 1, '登录验证码', 'api/Login/captcha', 300, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (3, 1, '登录', 'api/Login/login', 250, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (4, 1, '退出', 'api/Login/logout', 120, 0, 0, 0, NULL, NULL, NULL);
@@ -502,6 +505,8 @@ INSERT INTO `yyl_api` VALUES (70, 5, '手机绑定验证码', 'api/Member/phoneC
 INSERT INTO `yyl_api` VALUES (71, 5, '手机绑定', 'api/Member/phoneBind', 250, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (72, 5, '邮箱绑定验证码', 'api/Member/emailCaptcha', 250, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_api` VALUES (73, 5, '邮箱绑定', 'api/Member/emailBind', 250, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (74, 0, '设置', '', 280, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_api` VALUES (75, 74, '自定义设置', 'api/Setting/diy', 250, 1, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_cms_category
@@ -517,8 +522,8 @@ CREATE TABLE `yyl_cms_category`  (
   `img_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '图片id，逗号,隔开',
   `imgs` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '图片',
   `sort` int(11) NULL DEFAULT 250 COMMENT '排序',
-  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_hide` tinyint(1) NULL DEFAULT 0 COMMENT '是否隐藏，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -545,8 +550,8 @@ CREATE TABLE `yyl_cms_comment`  (
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
-  `is_unread` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否未读1是0否',
-  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_unread` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否未读，1是0否',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `read_time` datetime NULL DEFAULT NULL COMMENT '已读时间',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
@@ -580,11 +585,11 @@ CREATE TABLE `yyl_cms_content`  (
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '链接',
   `sort` int(11) NULL DEFAULT 250 COMMENT '排序',
   `hits` int(11) NULL DEFAULT 0 COMMENT '点击量',
-  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶1是0否',
-  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门1是0否',
-  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐1是0否',
-  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶，1是0否',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否热门，1是0否',
+  `is_rec` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐，1是0否',
+  `is_hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -633,19 +638,19 @@ DROP TABLE IF EXISTS `yyl_file`;
 CREATE TABLE `yyl_file`  (
   `file_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文件id',
   `group_id` int(11) NULL DEFAULT 0 COMMENT '分组id',
-  `storage` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'local' COMMENT '存储方式：local本地(服务器)，qiniu七牛云Kodo，aliyun阿里云OSS，tencent腾讯云COS',
+  `storage` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'local' COMMENT '存储方式，local本地(服务器)，qiniu七牛云Kodo，aliyun阿里云OSS，tencent腾讯云COS',
   `domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '访问域名',
   `file_md5` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件MD5',
   `file_hash` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件散列（sha1）',
-  `file_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'image' COMMENT '文件类型：image图片，video视频，audio音频，word文档，other其它',
+  `file_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'image' COMMENT '文件类型，image图片，video视频，audio音频，word文档，other其它',
   `file_name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件名称',
   `file_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件路径',
   `file_size` int(11) NULL DEFAULT 0 COMMENT '文件大小，单位字节(b)',
   `file_ext` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件后缀',
   `sort` int(11) NULL DEFAULT 250 COMMENT '排序',
   `is_front` tinyint(1) NULL DEFAULT 0 COMMENT '是否前台上传',
-  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -667,8 +672,8 @@ CREATE TABLE `yyl_file_group`  (
   `group_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分组名称',
   `group_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '分组描述',
   `group_sort` int(11) NULL DEFAULT 250 COMMENT '分组排序',
-  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -743,9 +748,9 @@ CREATE TABLE `yyl_member`  (
   `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   `sort` int(10) NULL DEFAULT 250 COMMENT '排序',
-  `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道1Web2公众号3小程序4安卓5苹果',
-  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用1是0否',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道，1Web2公众号3小程序4安卓5苹果',
+  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
   `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
   `login_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录地区',
@@ -772,7 +777,7 @@ DROP TABLE IF EXISTS `yyl_member_log`;
 CREATE TABLE `yyl_member_log`  (
   `member_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '会员日志id',
   `member_id` int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
-  `log_type` tinyint(1) NULL DEFAULT 3 COMMENT '日志类型：1注册2登录3操作4退出',
+  `log_type` tinyint(1) NULL DEFAULT 3 COMMENT '日志类型，1注册2登录3操作4退出',
   `api_id` int(11) NULL DEFAULT 0 COMMENT '接口id',
   `request_method` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
   `request_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求IP',
@@ -785,7 +790,7 @@ CREATE TABLE `yyl_member_log`  (
   `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
   `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回码',
   `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -812,14 +817,14 @@ CREATE TABLE `yyl_member_wechat`  (
   `headimgurl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '头像',
   `openid` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'openid',
   `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '昵称',
-  `sex` tinyint(1) NULL DEFAULT 0 COMMENT '性别：0未知1男2女',
+  `sex` tinyint(1) NULL DEFAULT 0 COMMENT '性别，0未知1男2女',
   `country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '国家',
   `province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '省份',
   `city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '城市',
   `language` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '语言',
   `privilege` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '特权信息',
   `unionid` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'unionid',
-  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除1是0否',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -4571,12 +4576,13 @@ CREATE TABLE `yyl_setting`  (
   `token_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
   `token_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
   `token_exp` int(5) NULL DEFAULT 720 COMMENT 'Token有效时间（小时）',
-  `captcha_register` tinyint(1) NULL DEFAULT 1 COMMENT '注册验证码1开启0关闭',
-  `captcha_login` tinyint(1) NULL DEFAULT 0 COMMENT '登录验证码1开启0关闭',
-  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关：1开启0关闭',
+  `captcha_register` tinyint(1) NULL DEFAULT 1 COMMENT '注册验证码，1开启0关闭',
+  `captcha_login` tinyint(1) NULL DEFAULT 0 COMMENT '登录验证码，1开启0关闭',
+  `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关，1开启0关闭',
   `log_save_time` int(11) NULL DEFAULT 0 COMMENT '日志保留时间，0永久保留',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
+  `diy_config` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '自定义设置',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_id`) USING BTREE,
@@ -4601,7 +4607,7 @@ CREATE TABLE `yyl_setting_wechat`  (
   `server_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '服务器地址(URL)',
   `token` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '令牌(Token)',
   `encoding_aes_key` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '消息加密密钥',
-  `encoding_aes_type` tinyint(1) NULL DEFAULT 1 COMMENT '消息加解密方式：1明文2兼容3安全',
+  `encoding_aes_type` tinyint(1) NULL DEFAULT 1 COMMENT '消息加解密方式，1明文2兼容3安全',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`setting_wechat_id`) USING BTREE,

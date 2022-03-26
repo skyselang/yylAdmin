@@ -145,4 +145,43 @@ class Setting
 
         return success($data);
     }
+
+    /**
+     * @Apidoc\Title("自定义设置信息")
+     * @Apidoc\Returned("diy_config", type="array", default="", desc="自定义设置",
+     *     @Apidoc\Returned("config_key", type="string", require=true, default="", desc="键名"),
+     *     @Apidoc\Returned("config_val", type="string", require=false, default="", desc="键值"),
+     *     @Apidoc\Returned("config_desc", type="string", require=false, default="", desc="说明")
+     * )
+     */
+    public function diyInfo()
+    {
+        $setting = SettingService::info();
+
+        $data['diy_config'] = $setting['diy_config'];
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("自定义设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param("diy_config", type="array", default="", desc="自定义设置",
+     *     @Apidoc\Param("config_key", type="string", require=true, default="", desc="键名"),
+     *     @Apidoc\Param("config_val", type="string", require=false, default="", desc="键值"),
+     *     @Apidoc\Param("config_desc", type="string", require=false, default="", desc="说明")
+     * )
+     */
+    public function diyEdit()
+    {
+        $param['diy_config'] = Request::param('diy_config/a', []);
+
+        validate(SettingValidate::class)->scene('diy_edit')->check($param);
+
+        $param['diy_config'] = serialize($param['diy_config']);
+
+        $data = SettingService::edit($param);
+
+        return success($data);
+    }
 }
