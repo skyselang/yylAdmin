@@ -1,17 +1,13 @@
 /*
- Navicat Premium Data Transfer
-
  Source Server         : 127.0.0.1
  Source Server Type    : MySQL
- Source Server Version : 50529
- Source Host           : localhost:3306
+ Source Server Version : 50650
+ Source Host           : 127.0.0.1:3306
  Source Schema         : yyladmin
 
  Target Server Type    : MySQL
- Target Server Version : 50529
+ Target Server Version : 50650
  File Encoding         : 65001
-
- Date: 26/03/2022 16:09:06
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +34,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 501 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 504 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -259,6 +255,9 @@ INSERT INTO `yyl_admin_menu` VALUES (497, 494, '邮件设置测试', 'admin/admi
 INSERT INTO `yyl_admin_menu` VALUES (498, 157, '自定义设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (499, 498, '自定义设置信息', 'admin/setting.Setting/diyInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (500, 498, '自定义设置修改', 'admin/setting.Setting/diyEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (501, 123, '会员回收站', 'admin/member.Member/recover', 80, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (502, 123, '会员回收站恢复', 'admin/member.Member/recoverReco', 70, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (503, 123, '会员回收站删除', 'admin/member.Member/recoverDele', 60, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_notice

@@ -73,6 +73,8 @@ class MemberValidate extends Validate
         'emailBindCaptcha'     => ['email'],
         'emailBind'            => ['email', 'member_id', 'captcha_code'],
         'logout'               => ['member_id'],
+        'recoverReco'          => ['ids'],
+        'recoverDele'          => ['ids'],
     ];
 
     // 验证场景定义：用户名注册
@@ -182,6 +184,13 @@ class MemberValidate extends Validate
             ->append('username', ['checkUsernameExisted'])
             ->append('phone', ['checkPhoneExisted'])
             ->append('email', ['checkEmailExisted']);
+    }
+
+    // 验证场景定义：回收站恢复
+    protected function sceneRecoverReco()
+    {
+        return $this->only(['ids'])
+            ->append('ids', ['checkRecoverReco']);
     }
 
     // 自定义验证规则：用户名是否已存在
@@ -310,6 +319,46 @@ class MemberValidate extends Validate
             $password_old = md5($data['password_old']);
             if ($password != $password_old) {
                 return '旧密码错误';
+            }
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：回收站恢复：用户名、手机、邮箱是否已存在
+    protected function checkRecoverReco($value, $rule, $data = [])
+    {
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+
+        foreach ($data['ids'] as $v) {
+            $member = MemberService::info($v);
+
+            if ($member['username']) {
+                $where_username[] = ['username', '=', $member['username']];
+                $where_username[] = ['is_delete', '=', 0];
+                $username = $MemberModel->field($MemberPk)->where($where_username)->find();
+                if ($username) {
+                    return '会员ID：' . $v . '，用户名已存在：' . $member['username'];
+                }
+            }
+
+            if ($member['phone']) {
+                $where_phone[] = ['phone', '=', $member['phone']];
+                $where_phone[] = ['is_delete', '=', 0];
+                $phone = $MemberModel->field($MemberPk)->where($where_phone)->find();
+                if ($phone) {
+                    return '会员ID：' . $v . '，手机已存在：' . $member['phone'];
+                }
+            }
+
+            if ($member['email']) {
+                $where_email[] = ['email', '=', $member['email']];
+                $where_email[] = ['is_delete', '=', 0];
+                $email = $MemberModel->field($MemberPk)->where($where_email)->find();
+                if ($email) {
+                    return '会员ID：' . $v . '，邮箱已存在：' . $member['email'];
+                }
             }
         }
 

@@ -81,9 +81,6 @@ class Member
         validate(MemberValidate::class)->scene('info')->check($param);
 
         $data = MemberService::info($param['member_id']);
-        if ($data['is_delete'] == 1) {
-            exception('会员已被删除：' . $param['member_id']);
-        }
 
         unset($data['password'], $data['token']);
 
@@ -231,6 +228,84 @@ class Member
         $data['active'] = $active;
         $data['date']   = MemberService::statDate($date);
         $data['count']  = MemberService::statCount();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员回收站")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="会员列表", 
+     *    @Apidoc\Returned(ref="app\common\model\member\MemberModel\listReturn")
+     * )
+     */
+    public function recover()
+    {
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
+
+        if ($search_field && $search_value) {
+            if ($search_field == 'member_id') {
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
+        }
+        $where[] = ['is_delete', '=', 1];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
+        }
+
+        $order = ['delete_time' => 'desc'];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
+        }
+
+        $data = MemberService::list($where, $page, $limit, $order);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员回收站恢复")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function recoverReco()
+    {
+        $param['ids'] = Request::param('ids/a', '');
+
+        validate(MemberValidate::class)->scene('recoverReco')->check($param);
+
+        $data = MemberService::recoverReco($param['ids']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员回收站删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function recoverDele()
+    {
+        $param['ids'] = Request::param('ids/a', '');
+
+        validate(MemberValidate::class)->scene('recoverDele')->check($param);
+
+        $data = MemberService::recoverDele($param['ids']);
 
         return success($data);
     }

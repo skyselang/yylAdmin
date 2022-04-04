@@ -38,7 +38,7 @@ class MemberService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',username,nickname,phone,email,avatar_id,sort,remark,is_disable,create_time';
+            $field = $pk . ',username,nickname,phone,email,avatar_id,sort,remark,is_disable,create_time,delete_time';
         }
 
         if (empty($order)) {
@@ -197,8 +197,6 @@ class MemberService
         $update['delete_time'] = datetime();
 
         $res = $model->where($pk, 'in', $ids)->update($update);
-        $WechatModel = new WechatModel();
-        $WechatModel->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
@@ -402,7 +400,7 @@ class MemberService
         $WechatModel = new WechatModel();
         $MemberWechatPk = $WechatModel->getPk();
         $member_wechat = $WechatModel->field($MemberWechatPk . ',' . $MemberPk)->where($wechat_where)->find();
-
+        // error($member_wechat);
         $errmsg = '';
         // 启动事务
         $MemberModel->startTrans();
@@ -418,12 +416,17 @@ class MemberService
                 $member_id = 0;
             }
 
-            $member_field = $MemberPk . ',nickname,login_num';
+            $member_field = $MemberPk . ',nickname,login_num,is_disable,is_delete';
             $member_where[] = [$MemberPk, '=', $member_id];
-            $member_where[] = ['is_delete', '=', 0];
             $member = $MemberModel->field($member_field)->where($member_where)->find();
             if ($member) {
                 $member = $member->toArray();
+                if ($member['is_disable']) {
+                    exception('账号已被禁用');
+                }
+                if ($member['is_delete']) {
+                    exception('账号已被删除');
+                }
                 if (empty($member['nickname'])) {
                     $member_update['nickname'] = $userinfo['nickname'];
                 }
@@ -746,5 +749,62 @@ class MemberService
         }
 
         return $data;
+    }
+
+    /**
+     * 会员回收站恢复
+     * 
+     * @param array $ids 会员id
+     * 
+     * @return array|Exception
+     */
+    public static function recoverReco($ids)
+    {
+        $model = new MemberModel();
+        $pk = $model->getPk();
+
+        $update['is_delete']   = 0;
+        $update['update_time'] = datetime();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
+        if (empty($res)) {
+            exception();
+        }
+
+        foreach ($ids as $v) {
+            MemberCache::del($v);
+        }
+
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 会员回收站删除
+     * 
+     * @param array $ids 会员id
+     * 
+     * @return array|Exception
+     */
+    public static function recoverDele($ids)
+    {
+        $model = new MemberModel();
+        $pk = $model->getPk();
+
+        $res = $model->where($pk, 'in', $ids)->delete();
+        if (empty($res)) {
+            exception();
+        }
+        $WechatModel = new WechatModel();
+        $WechatModel->where('member_id', 'in', $ids)->delete();
+
+        foreach ($ids as $v) {
+            MemberCache::del($v);
+        }
+
+        $update['ids'] = $ids;
+
+        return $update;
     }
 }
