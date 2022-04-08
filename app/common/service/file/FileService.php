@@ -436,18 +436,19 @@ class FileService
      *
      * @return array
      */
-    public static function fileArray($ids)
+    public static function fileArray($ids = '')
     {
-        $model = new FileModel();
-        $pk = $model->getPk();
+        if (empty($ids)) {
+            return [];
+        }
 
-        $field = $pk . ',storage,domain,file_type,file_name,file_hash,file_ext,file_path,file_size,is_disable';
-        $where[] = [$pk, 'in', $ids];
-        $where[] = ['is_disable', '=', 0];
-        $file = $model->field($field)->where($where)->select()->toArray();
-        foreach ($file as $k => $v) {
-            $file[$k]['file_url']  = self::fileUrl($v);
-            $file[$k]['file_size'] = SettingService::fileSize($v['file_size']);
+        $file = [];
+        $ids = explode(',', $ids);
+        foreach ($ids as $v) {
+            $info = self::info($v);
+            if ($info) {
+                $file[] = $info;
+            }
         }
 
         return $file;

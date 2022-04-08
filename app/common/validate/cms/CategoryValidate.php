@@ -11,7 +11,6 @@
 namespace app\common\validate\cms;
 
 use think\Validate;
-use app\common\service\cms\CategoryService;
 use app\common\model\cms\CategoryModel;
 use app\common\model\cms\ContentModel;
 
@@ -39,13 +38,14 @@ class CategoryValidate extends Validate
         'dele'   => ['ids'],
         'pid'    => ['ids'],
         'ishide' => ['ids', 'is_hide'],
+        'reco'   => ['ids'],
     ];
 
     // 验证场景定义：分类删除
-    protected function scenedele()
+    protected function sceneDele()
     {
         return $this->only(['ids'])
-            ->append('ids', ['checkCategoryPid', 'checkCategoryContent']);
+            ->append('ids', ['checkCategoryChildren', 'checkCategoryContent']);
     }
 
     // 自定义验证规则：分类名称是否已存在
@@ -56,7 +56,7 @@ class CategoryValidate extends Validate
 
         $category_id  = isset($data[$CategoryPk]) ? $data[$CategoryPk] : '';
         $category_pid = isset($data['category_pid']) ? $data['category_pid'] : 0;
-        
+
         if ($category_id) {
             if ($category_id == $category_pid) {
                 return '分类上级不能等于分类本身';
@@ -76,16 +76,21 @@ class CategoryValidate extends Validate
     }
 
     // 自定义验证规则：分类是否存在下级分类
-    protected function checkCategoryPid($value, $rule, $data = [])
+    protected function checkCategoryChildren($value, $rule, $data = [])
     {
-        $ids = $data['ids'];
-        $category = CategoryService::list('list');
-        foreach ($category as $v) {
-            foreach ($ids as $vc) {
-                if ($v['category_pid'] == $vc) {
-                    return '分类存在下级分类，无法删除';
-                }
-            }
+        $CategoryModel = new CategoryModel();
+        $CategoryPk = $CategoryModel->getPk();
+
+        $recycle = isset($data['recycle']) ? $data['recycle'] : 0;
+        $where[] = ['category_pid', 'in', $data['ids']];
+        if ($recycle == 1) {
+            $where[] = ['is_delete', '=', 1];
+        } else {
+            $where[] = ['is_delete', '=', 0];
+        }
+        $category = $CategoryModel->field($CategoryPk)->where($where)->find();
+        if ($category) {
+            return '分类存在下级分类，无法删除';
         }
 
         return true;
@@ -100,8 +105,7 @@ class CategoryValidate extends Validate
         $ContentModel = new ContentModel();
         $ContentPk = $ContentModel->getPk();
 
-        $ids = $data['ids'];
-        $where[] = [$CategoryPk, 'in', $ids];
+        $where[] = [$CategoryPk, 'in', $data['ids']];
         $where[] = ['is_delete', '=', 0];
         $content = $ContentModel->field($ContentPk)->where($where)->find();
         if ($content) {

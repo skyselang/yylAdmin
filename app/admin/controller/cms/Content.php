@@ -109,9 +109,6 @@ class Content
         validate(ContentValidate::class)->scene('info')->check($param);
 
         $data = ContentService::info($param['content_id']);
-        if ($data['is_delete'] == 1) {
-            exception('内容已被删除：' . $param['content_id']);
-        }
 
         return success($data);
     }
@@ -325,17 +322,15 @@ class Content
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 1];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        $where[] = ['is_delete', '=', 1];
 
-        $order = [];
+        $order = ['delete_time' => 'desc', 'content_id' => 'desc'];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
-        } else {
-            $order = ['delete_time' => 'desc', 'content_id' => 'desc'];
         }
 
         $data = ContentService::list($where, $page, $limit, $order);

@@ -19,22 +19,23 @@ class CategoryService
     /**
      * 内容分类列表
      * 
-     * @param string $type  list列表，tree树形
-     * @param array  $where 搜索条件
+     * @param string $type  tree树形，list列表
+     * @param array  $where 条件
+     * @param array  $order 排序
      * 
      * @return array
      */
-    public static function list($type = 'list', $where = [])
+    public static function list($type = 'tree', $where = [], $order = [])
     {
-        if ($where) {
+        if ($type == 'list') {
             $model = new CategoryModel();
             $pk = $model->getPk();
 
-            $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
+            $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time,delete_time';
 
-            $where[] = ['is_delete', '=', 0];
-
-            $order = ['sort' => 'desc', $pk => 'desc'];
+            if (empty($order)) {
+                $order = ['sort' => 'desc', $pk => 'desc'];
+            }
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
         } else {
@@ -46,15 +47,12 @@ class CategoryService
 
                 $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
 
-                $where[] = ['is_delete', '=', 0];
-
-                $order = ['sort' => 'desc', $pk => 'desc'];
+                if (empty($order)) {
+                    $order = ['sort' => 'desc', $pk => 'desc'];
+                }
 
                 $data = $model->field($field)->where($where)->order($order)->select()->toArray();
-
-                if ($type == 'tree') {
-                    $data = self::toTree($data, 0);
-                }
+                $data = listToTree($data, $pk, 'category_pid');
 
                 CategoryCache::set($key, $data);
             }
@@ -73,6 +71,10 @@ class CategoryService
      */
     public static function info($id, $exce = true)
     {
+        if (empty($id)) {
+            return [];
+        }
+
         $info = CategoryCache::get($id);
         if (empty($info)) {
             $model = new CategoryModel();
@@ -86,7 +88,6 @@ class CategoryService
                 return [];
             }
             $info = $info->toArray();
-
             $info['imgs'] = FileService::fileArray($info['img_ids']);
 
             CategoryCache::set($id, $info);
@@ -236,26 +237,53 @@ class CategoryService
     }
 
     /**
-     * 内容分类列表转树形
-     *
-     * @param array $category     内容分类列表
-     * @param int   $category_pid 内容分类pid
+     * 内容分类回收站恢复
      * 
-     * @return array
+     * @param array $ids 内容分类id
+     * 
+     * @return array|Exception
      */
-    public static function toTree($category, $category_pid)
+    public static function recoverReco($ids)
     {
         $model = new CategoryModel();
         $pk = $model->getPk();
 
-        $tree = [];
-        foreach ($category as $v) {
-            if ($v['category_pid'] == $category_pid) {
-                $v['children'] = self::toTree($category, $v[$pk]);
-                $tree[] = $v;
-            }
+        $update['is_delete']   = 0;
+        $update['update_time'] = datetime();
+
+        $res = $model->where($pk, 'in', $ids)->update($update);
+        if (empty($res)) {
+            exception();
         }
 
-        return $tree;
+        CategoryCache::del($ids);
+
+        $update['ids'] = $ids;
+
+        return $update;
+    }
+
+    /**
+     * 内容分类回收站删除
+     * 
+     * @param array $ids 内容分类id
+     * 
+     * @return array|Exception
+     */
+    public static function recoverDele($ids)
+    {
+        $model = new CategoryModel();
+        $pk = $model->getPk();
+
+        $res = $model->where($pk, 'in', $ids)->delete();
+        if (empty($res)) {
+            exception();
+        }
+
+        CategoryCache::del($ids);
+
+        $update['ids'] = $ids;
+
+        return $update;
     }
 }

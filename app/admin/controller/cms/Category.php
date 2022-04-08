@@ -34,7 +34,7 @@ class Category
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
 
-        $where = [];
+        $where[] = ['is_delete', '=', 0];
         if ($search_field && $search_value) {
             if (in_array($search_field, ['category_id', 'category_pid'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
@@ -49,9 +49,10 @@ class Category
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
+            $data['list'] = CategoryService::list('list', $where);
+        } else {
+            $data['list'] = CategoryService::list('tree', $where);
         }
-
-        $data['list'] = CategoryService::list('tree', $where);
 
         return success($data);
     }
@@ -69,9 +70,6 @@ class Category
         validate(CategoryValidate::class)->scene('info')->check($param);
 
         $data = CategoryService::info($param['category_id']);
-        if ($data['is_delete'] == 1) {
-            exception('内容分类已被删除：' . $param['category_id']);
-        }
 
         return success($data);
     }
@@ -172,6 +170,80 @@ class Category
         validate(CategoryValidate::class)->scene('ishide')->check($param);
 
         $data = CategoryService::ishide($param['ids'], $param['is_hide']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("内容分类回收站")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="内容列表", 
+     *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
+     *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
+     * )
+     */
+    public function recover()
+    {
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+
+        $where[] = ['is_delete', '=', 1];
+        if ($search_field && $search_value) {
+            if (in_array($search_field, ['category_id', 'category_pid'])) {
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
+            } elseif (in_array($search_field, ['is_hide'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
+        }
+
+        $order = ['delete_time' => 'desc', 'sort' => 'desc'];
+
+        $data['list'] = CategoryService::list('list', $where, $order);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("内容分类回收站恢复")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function recoverReco()
+    {
+        $param['ids'] = Request::param('ids/a', '');
+
+        validate(CategoryValidate::class)->scene('reco')->check($param);
+
+        $data = CategoryService::recoverReco($param['ids']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("内容分类回收站删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function recoverDele()
+    {
+        $param['ids']     = Request::param('ids/a', '');
+        $param['recycle'] = 1;
+
+        validate(CategoryValidate::class)->scene('dele')->check($param);
+
+        $data = CategoryService::recoverDele($param['ids']);
 
         return success($data);
     }

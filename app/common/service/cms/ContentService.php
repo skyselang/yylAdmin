@@ -52,7 +52,7 @@ class ContentService
 
         foreach ($list as $k => $v) {
             $list[$k]['category_name'] = '';
-            if (isset($v[$CategoryPk])) {
+            if (isset($v[$CategoryPk]) && !empty($v[$CategoryPk])) {
                 $category = CategoryService::info($v[$CategoryPk], false);
                 if ($category) {
                     $list[$k]['category_name'] = $category['category_name'];
@@ -60,10 +60,11 @@ class ContentService
             }
 
             $list[$k]['img_url'] = '';
-            if (isset($v['img_ids'])) {
-                $imgs = FileService::fileArray($v['img_ids']);
+            if (isset($v['img_ids']) && !empty($v['img_ids'])) {
+                $img_ids = explode(',', $v['img_ids']);
+                $imgs = FileService::info($img_ids[0]);
                 if ($imgs) {
-                    $list[$k]['img_url'] = $imgs[0]['file_url'];
+                    $list[$k]['img_url'] = $imgs['file_url'];
                 }
                 unset($list[$k]['img_ids']);
             }

@@ -42,8 +42,8 @@ class ContentValidate extends Validate
     // 验证场景
     protected $scene = [
         'info'   => ['content_id'],
-        'add'    => ['category_id', 'name', 'image', 'video', 'file'],
-        'edit'   => ['content_id', 'category_id', 'name', 'image', 'video', 'file'],
+        'add'    => ['name', 'image', 'video', 'file'],
+        'edit'   => ['content_id', 'name', 'image', 'video', 'file'],
         'dele'   => ['ids'],
         'cate'   => ['ids', 'category_id'],
         'istop'  => ['ids', 'is_top'],

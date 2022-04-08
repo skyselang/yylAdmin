@@ -245,3 +245,64 @@ function str_merge($str1 = '', $str2 = '', $is_rep = true)
 
     return $str;
 }
+
+/**
+ * 列表转树形
+ *
+ * @param array   $list  列表数组
+ * @param string  $pk    主键名称
+ * @param string  $pid   父键名称
+ * @param integer $root  根节点id
+ * @param string  $child 子节点名称
+ *
+ * @return array
+ */
+function listToTree($list = [], $pk = 'id', $pid = 'pid', $root = 0,  $child = 'children')
+{
+    $tree = [];
+    $refer = [];
+    foreach ($list as $k => $v) {
+        $refer[$v[$pk]] = &$list[$k];
+    }
+    foreach ($list as $key => $val) {
+        $parent_id = 0;
+        if (isset($val[$pid])) {
+            $parent_id = $val[$pid];
+        }
+        if ($root == $parent_id) {
+            $tree[] = &$list[$key];
+        } else {
+            if (isset($refer[$parent_id])) {
+                $parent = &$refer[$parent_id];
+                $parent[$child][] = &$list[$key];
+            }
+        }
+    }
+    return $tree;
+}
+
+/**
+ * 树形转列表
+ *
+ * @param array  $tree  树形数组
+ * @param string $child 子节点名称
+ *
+ * @return array
+ */
+function treeToList($tree = [], $child = 'children')
+{
+    $list = [];
+    foreach ($tree as $val) {
+        if (isset($val[$child])) {
+            $children = $val[$child];
+            unset($val[$child]);
+            $list[] = $val;
+            if (is_array($children)) {
+                $list = array_merge($list, treeToList($children, $child));
+            }
+        } else {
+            $list[] = $val;
+        }
+    }
+    return $list;
+}
