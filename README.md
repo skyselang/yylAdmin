@@ -142,3 +142,7 @@ cnpm run build:stage
 
 - 项目不定时更新，前后端最新代码保持一致  
 - 拉取代码后请更新前后端依赖（composer update、npm install）、同步数据库结构
+
+## 交流群
+
+- QQ交流群：679883097
