@@ -314,10 +314,8 @@ class MemberValidate extends Validate
         $MemberPk = $MemberModel->getPk();
 
         if (isset($data[$MemberPk])) {
-            $member       = MemberService::info($data[$MemberPk]);
-            $password     = $member['password'];
-            $password_old = md5($data['password_old']);
-            if ($password != $password_old) {
+            $member = MemberService::info($data[$MemberPk]);
+            if ($member['password'] != md5($data['password_old'])) {
                 return '旧密码错误';
             }
         }
@@ -331,35 +329,24 @@ class MemberValidate extends Validate
         $MemberModel = new MemberModel();
         $MemberPk = $MemberModel->getPk();
 
-        foreach ($data['ids'] as $v) {
-            $member = MemberService::info($v);
+        $member = $MemberModel->field('username,phone,email')->where($MemberPk, 'in', $data['ids'])->select()->toArray();
 
-            if ($member['username']) {
-                $where_username[] = ['username', '=', $member['username']];
-                $where_username[] = ['is_delete', '=', 0];
-                $username = $MemberModel->field($MemberPk)->where($where_username)->find();
-                if ($username) {
-                    return '会员ID：' . $v . '，用户名已存在：' . $member['username'];
-                }
-            }
+        $usernames = array_filter(array_column($member, 'username'));
+        $username = $MemberModel->field('username')->where('username', 'in', $usernames)->where('is_delete', 0)->find();
+        if ($username) {
+            return '用户名已存在：' . $username['username'];
+        }
 
-            if ($member['phone']) {
-                $where_phone[] = ['phone', '=', $member['phone']];
-                $where_phone[] = ['is_delete', '=', 0];
-                $phone = $MemberModel->field($MemberPk)->where($where_phone)->find();
-                if ($phone) {
-                    return '会员ID：' . $v . '，手机已存在：' . $member['phone'];
-                }
-            }
+        $phones = array_filter(array_column($member, 'phone'));
+        $phone = $MemberModel->field('phone')->where('phone', 'in', $phones)->where('is_delete', 0)->find();
+        if ($phone) {
+            return '手机已存在：' . $phone['phone'];
+        }
 
-            if ($member['email']) {
-                $where_email[] = ['email', '=', $member['email']];
-                $where_email[] = ['is_delete', '=', 0];
-                $email = $MemberModel->field($MemberPk)->where($where_email)->find();
-                if ($email) {
-                    return '会员ID：' . $v . '，邮箱已存在：' . $member['email'];
-                }
-            }
+        $emails = array_filter(array_column($member, 'email'));
+        $email = $MemberModel->field('email')->where('email', 'in', $emails)->where('is_delete', 0)->find();
+        if ($email) {
+            return '邮箱已存在：' . $email['email'];
         }
 
         return true;

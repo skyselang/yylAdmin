@@ -60,9 +60,19 @@ class MemberCache
      * 
      * @return bool
      */
-    public static function del($member_id)
+    public static function del($member_id = '')
     {
-        return Cache::delete(self::key($member_id));
+        if (is_array($member_id)) {
+            $keys = $member_id;
+        } else {
+            $keys = [$member_id];
+        }
+
+        foreach ($keys as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+
+        return $res;
     }
 
     /**

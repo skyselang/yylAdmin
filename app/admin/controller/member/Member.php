@@ -268,7 +268,7 @@ class Member
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
-        $order = ['delete_time' => 'desc'];
+        $order = ['delete_time' => 'desc', 'create_time' => 'desc'];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
         }
