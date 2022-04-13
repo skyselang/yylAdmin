@@ -70,19 +70,23 @@ class ExceptionHandle extends Handle
         // 请求异常
         if ($e instanceof HttpException && $request->isAjax()) {
             return response($e->getMessage(), $e->getStatusCode(), [], 'json');
+            // return response($e->getMessage(), 200, [], 'json');
         }
 
+        // 其它异常
+        $data['code'] = $e->getCode();
+        $data['msg']  = $e->getMessage();
+        $data['data'] = [];
         $debug = Config::get('app.app_debug');
         if ($debug) {
-            // 其他错误交给系统处理
-            return parent::render($request, $e);
-        } else {
-            // 手动异常
-            $data['code'] = $e->getCode();
-            $data['msg']  = $e->getMessage();
-            $data['data'] = [];
-
-            return response($data, 200, [], 'json');
+            $data['data'] = [
+                'msg' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTrace(),
+            ];
         }
+
+        return response($data, 200, [], 'json');
     }
 }
