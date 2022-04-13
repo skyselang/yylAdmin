@@ -13,6 +13,7 @@ namespace app\common\service\member;
 use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\member\MemberCache;
+use app\common\model\file\FileModel;
 use app\common\service\setting\WechatService;
 use app\common\service\setting\TokenService;
 use app\common\service\file\FileService;
@@ -51,24 +52,42 @@ class MemberService
 
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        $member_ids = array_column($list, $pk);
-        $WechatModel = new WechatModel();
-        $member_wechat = $WechatModel->field($pk . ',nickname,headimgurl')->where($pk, 'in', $member_ids)->select()->toArray();
+        $file = $avatar = [];
+        $avatar_ids = array_filter(array_column($list, 'avatar_id'));
+        if ($avatar_ids) {
+            $FileModel = new FileModel();
+            $file = $FileModel->field('file_id,storage,domain,file_path,file_hash,file_ext')->where('file_id', 'in', $avatar_ids)->select()->toArray();
+        }
+        foreach ($file as $kf => $vf) {
+            $avatar[$vf['file_id']] = FileService::fileUrl($vf);
+        }
+
+        $headimgurl = $nickname = [];
+        $member_ids = array_filter(array_column($list, $pk));
+        if ($member_ids) {
+            $WechatModel = new WechatModel();
+            $member_wechat = $WechatModel->field($pk . ',nickname,headimgurl')->where($pk, 'in', $member_ids)->select()->toArray();
+            foreach ($member_wechat as $k => $v) {
+                $nickname[$v['member_id']] = $v['nickname'];
+                $headimgurl[$v['member_id']] = $v['headimgurl'];
+            }
+        }
 
         foreach ($list as $k => $v) {
             $list[$k]['avatar_url'] = '';
             if (isset($v['avatar_id'])) {
-                $list[$k]['avatar_url'] = FileService::fileUrl($v['avatar_id']);
+                if (isset($avatar[$v['avatar_id']]) && $avatar[$v['avatar_id']]) {
+                    $list[$k]['avatar_url'] = $avatar[$v['avatar_id']];
+                }
             }
-
-            foreach ($member_wechat as $kmw => $vmw) {
-                if ($v[$pk] == $vmw[$pk]) {
-                    if (empty($list[$k]['avatar_url'])) {
-                        $list[$k]['avatar_url'] = $vmw['headimgurl'];
-                    }
-                    if (empty($v['nickname'])) {
-                        $list[$k]['nickname'] = $vmw['nickname'];
-                    }
+            if (empty($list[$k]['avatar_url'])) {
+                if (isset($headimgurl[$v['member_id']]) && $headimgurl[$v['member_id']]) {
+                    $list[$k]['avatar_url'] = $headimgurl[$v['member_id']];
+                }
+            }
+            if (empty($v['nickname'])) {
+                if (isset($nickname[$v['member_id']]) && $nickname[$v['member_id']]) {
+                    $list[$k]['nickname'] = $nickname[$v['member_id']];
                 }
             }
         }
@@ -174,7 +193,7 @@ class MemberService
             exception();
         }
 
-        MemberCache::upd($id);
+        MemberCache::del($id);
 
         $param[$pk] = $id;
 
@@ -201,9 +220,7 @@ class MemberService
             exception();
         }
 
-        foreach ($ids as $v) {
-            MemberCache::upd($v);
-        }
+        MemberCache::del($ids);
 
         $update['ids'] = $ids;
 
@@ -231,9 +248,7 @@ class MemberService
             exception();
         }
 
-        foreach ($ids as $v) {
-            MemberCache::upd($v);
-        }
+        MemberCache::del($ids);
 
         $update['ids'] = $ids;
 
@@ -261,9 +276,7 @@ class MemberService
             exception();
         }
 
-        foreach ($ids as $v) {
-            MemberCache::upd($v);
-        }
+        MemberCache::del($ids);
 
         $update['ids']      = $ids;
         $update['password'] = $password;
@@ -292,9 +305,7 @@ class MemberService
             exception();
         }
 
-        foreach ($ids as $v) {
-            MemberCache::upd($v);
-        }
+        MemberCache::del($ids);
 
         $update['ids'] = $ids;
 
@@ -321,9 +332,15 @@ class MemberService
         } else if ($type == 'phone') {
             // 通过手机登录
             $where[] = ['phone', '=', $param['phone']];
+            if (isset($param['password'])) {
+                $where[] = ['password', '=', md5($param['password'])];
+            }
         } else if ($type == 'email') {
             // 通过邮箱登录
             $where[] = ['email', '=', $param['email']];
+            if (isset($param['password'])) {
+                $where[] = ['password', '=', md5($param['password'])];
+            }
         } else {
             // 通过用户名、手机、邮箱登录
             $where[] = ['username|phone|email', '=', $param['account']];
@@ -400,7 +417,7 @@ class MemberService
         $WechatModel = new WechatModel();
         $MemberWechatPk = $WechatModel->getPk();
         $member_wechat = $WechatModel->field($MemberWechatPk . ',' . $MemberPk)->where($wechat_where)->find();
-        // error($member_wechat);
+
         $errmsg = '';
         // 启动事务
         $MemberModel->startTrans();
@@ -771,9 +788,7 @@ class MemberService
             exception();
         }
 
-        foreach ($ids as $v) {
-            MemberCache::del($v);
-        }
+        MemberCache::del($ids);
 
         $update['ids'] = $ids;
 
@@ -799,9 +814,7 @@ class MemberService
         $WechatModel = new WechatModel();
         $WechatModel->where('member_id', 'in', $ids)->delete();
 
-        foreach ($ids as $v) {
-            MemberCache::del($v);
-        }
+        MemberCache::del($ids);
 
         $update['ids'] = $ids;
 
