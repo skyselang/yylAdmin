@@ -50,23 +50,30 @@ class ContentService
 
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
+        $category_ids = $file_ids = [];
+        foreach ($list as $kc => $vc) {
+            $category_ids[] = $vc['category_id'];
+            $list[$kc]['img_id'] = 0;
+            $img_ids = explode(',', $vc['img_ids']);
+            if ($img_ids) {
+                $list[$kc]['img_id'] = $img_ids[0];
+                $file_ids[] = $img_ids[0];
+            }
+        }
+        $category = $CategoryModel->where('category_id', 'in', $category_ids)->column('category_name', 'category_id');
+        $file = FileService::fileArray($file_ids);
+
         foreach ($list as $k => $v) {
             $list[$k]['category_name'] = '';
-            if (isset($v[$CategoryPk]) && !empty($v[$CategoryPk])) {
-                $category = CategoryService::info($v[$CategoryPk], false);
-                if ($category) {
-                    $list[$k]['category_name'] = $category['category_name'];
-                }
+            if (isset($category[$v['category_id']]) && !empty($category[$v['category_id']])) {
+                $list[$k]['category_name'] = $category[$v['category_id']];
             }
 
             $list[$k]['img_url'] = '';
-            if (isset($v['img_ids']) && !empty($v['img_ids'])) {
-                $img_ids = explode(',', $v['img_ids']);
-                $imgs = FileService::info($img_ids[0]);
-                if ($imgs) {
-                    $list[$k]['img_url'] = $imgs['file_url'];
+            foreach ($file as $kf => $vf) {
+                if ($v['img_id'] == $vf['file_id']) {
+                    $list[$k]['img_url'] = $vf['file_url'];
                 }
-                unset($list[$k]['img_ids']);
             }
         }
 

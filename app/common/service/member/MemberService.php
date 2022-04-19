@@ -56,7 +56,7 @@ class MemberService
         $avatar_ids = array_filter(array_column($list, 'avatar_id'));
         if ($avatar_ids) {
             $FileModel = new FileModel();
-            $file = $FileModel->field('file_id,storage,domain,file_path,file_hash,file_ext')->where('file_id', 'in', $avatar_ids)->select()->toArray();
+            $file = $FileModel->field('file_id,storage,domain,file_path,file_hash,file_ext,is_disable')->where('file_id', 'in', $avatar_ids)->select()->toArray();
         }
         foreach ($file as $kf => $vf) {
             $avatar[$vf['file_id']] = FileService::fileUrl($vf);

@@ -30,7 +30,10 @@ class StorageService
      */
     public static function upload($file_info)
     {
+        $errmsg = '';
         $file_info['domain'] = '';
+        $file_path = './' . $file_info['file_path'];
+        $file_name = $file_info['file_hash'] . '.' . $file_info['file_ext'];
         $setting = SettingService::info();
         $storage = $setting['storage'];
         if ($storage == 'qiniu') {
@@ -42,19 +45,17 @@ class StorageService
             // 生成上传 Token
             $token = $auth->uploadToken($bucket);
             // 要上传文件的本地路径
-            $filePath = './' . $file_info['file_path'];
+            $filePath = $file_path;
             // 上传到存储后保存的文件名
-            $key = $file_info['file_hash'] . '.' . $file_info['file_ext'];
+            $key = $file_name;
             // 初始化 UploadManager 对象并进行文件的上传。
             $uploadMgr = new UploadManager();
             // 调用 UploadManager 的 putFile 方法进行文件的上传。
             list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
             if ($err !== null) {
-                $msg = isset($err['error']) ?: 'Kodo upload error';
-                exception($msg);
-            } else {
-                $file_info['domain'] = $setting['qiniu_domain'];
+                $errmsg = isset($err['error']) ? $err['error'] : 'Kodo upload error';
             }
+            $file_info['domain'] = $setting['qiniu_domain'];
         } elseif ($storage == 'aliyun') {
             $accessKeyId = $setting['aliyun_access_key_id'];
             $accessKeySecret = $setting['aliyun_access_key_secret'];
@@ -63,15 +64,14 @@ class StorageService
             // 设置存储空间名称。
             $bucket = $setting['aliyun_bucket'];
             // 设置文件名称。
-            $object = $file_info['file_hash'] . '.' . $file_info['file_ext'];
+            $object = $file_name;
             // 由本地文件路径加文件名包括后缀组成，例如/users/local/myfile.txt。
-            $filePath = './' . $file_info['file_path'];
+            $filePath = $file_path;
             try {
                 $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
                 $ossClient->uploadFile($bucket, $object, $filePath);
             } catch (OssException $e) {
-                $msg = $e->getMessage() ?: 'OSS upload error';
-                exception($msg);
+                $errmsg = $e->getMessage() ?: 'OSS upload error';
             }
             $file_info['domain'] = $setting['aliyun_bucket_domain'];
         } elseif ($storage == 'tencent') {
@@ -80,57 +80,64 @@ class StorageService
             $secretKey = $setting['tencent_secret_key']; //"云 API 密钥 SecretKey";
             $region =  $setting['tencent_region']; //设置一个默认的存储桶地域
             $cosClient = new Client(
-                array(
+                [
                     'region' => $region,
                     'schema' => 'https', //协议头部，默认为http
-                    'credentials' => array(
+                    'credentials' => [
                         'secretId'  => $secretId,
                         'secretKey' => $secretKey
-                    )
-                )
+                    ]
+                ]
             );
             // 上传文件
             try {
                 $bucket = $setting['tencent_bucket']; //存储桶名称 格式：BucketName-APPID
-                $key = $file_info['file_hash'] . '.' . $file_info['file_ext']; //此处的 key 为对象键，对象键是对象在存储桶中的唯一标识
-                $srcPath = './' . $file_info['file_path']; //本地文件绝对路径
+                $key = $file_name; //此处的 key 为对象键，对象键是对象在存储桶中的唯一标识
+                $srcPath = $file_path; //本地文件绝对路径
                 $file = fopen($srcPath, "rb");
                 if ($file) {
-                    $cosClient->putObject(array(
+                    $cosClient->putObject([
                         'Bucket' => $bucket,
                         'Key' => $key,
                         'Body' => $file
-                    ));
+                    ]);
                 }
             } catch (\Exception $e) {
-                $msg = $e->getMessage() ?: 'COS upload error';
-                exception($msg);
+                $errmsg = $e->getMessage() ?: 'COS upload error';
             }
             $file_info['domain'] = $setting['tencent_domain'];
         } elseif ($storage == 'baidu') {
             try {
                 // 设置BosClient的Access Key ID、Secret Access Key和ENDPOINT
-                $bos_config =
-                    array(
-                        'credentials' => array(
-                            'accessKeyId' => $setting['baidu_access_key'],
-                            'secretAccessKey' => $setting['baidu_secret_key']
-                        ),
-                        'endpoint' => $setting['baidu_endpoint'],
-                    );
+                $bos_config = [
+                    'credentials' => [
+                        'accessKeyId' => $setting['baidu_access_key'],
+                        'secretAccessKey' => $setting['baidu_secret_key']
+                    ],
+                    'endpoint' => $setting['baidu_endpoint'],
+                ];
                 $bucketName = $setting['baidu_bucket'];
-                $objectKey = $file_info['file_hash'] . '.' . $file_info['file_ext'];
-                $fileName = './' . $file_info['file_path'];
+                $objectKey = $file_name;
+                $fileName = $file_path;
                 $client = new BosClient($bos_config);
                 $client->putObjectFromFile($bucketName, $objectKey, $fileName);
                 $file_info['domain'] = $setting['baidu_domain'];
             } catch (\Exception $e) {
-                $msg = $e->getMessage() ?: 'BOS upload error';
-                exception($msg);
+                $errmsg = $e->getMessage() ?: 'BOS upload error';
             }
         }
-
         $file_info['storage'] = $storage;
+
+        if ($errmsg) {
+            if (empty($file_info['file_id'])) {
+                unlink($file_path);
+            }
+            exception($errmsg);
+        } else {
+            if ($storage != 'local') {
+                unlink($file_path);
+            }
+        }
 
         return $file_info;
     }

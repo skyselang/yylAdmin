@@ -82,10 +82,10 @@ class File
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
         $group_id     = Request::param('group_id/s', '');
-        $file_type    = Request::param('file_type/s', '');
-        $is_disable   = Request::param('is_disable/s', '');
-        $is_front     = Request::param('is_front/s', 0);
         $storage      = Request::param('storage/s', '');
+        $file_type    = Request::param('file_type/s', '');
+        $is_front     = Request::param('is_front/s', 0);
+        $is_disable   = Request::param('is_disable/s', '');
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
@@ -95,25 +95,25 @@ class File
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
-        $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
+        }
+        if ($storage != '') {
+            $where[] = ['storage', '=', $storage];
         }
         if ($file_type) {
             $where[] = ['file_type', '=', $file_type];
         }
-        if ($is_disable != '') {
-            $where[] = ['is_disable', '=', $is_disable];
-        }
         if ($is_front != '') {
             $where[] = ['is_front', '=', $is_front];
         }
-        if ($storage != '') {
-            $where[] = ['storage', '=', $storage];
+        if ($is_disable != '') {
+            $where[] = ['is_disable', '=', $is_disable];
+        }
+        $where[] = ['is_delete', '=', 0];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = [];
@@ -122,7 +122,6 @@ class File
         }
 
         $data = FileService::list($where, $page, $limit, $order);
-
         $data['filetype'] = SettingService::fileType();
         $data['storage']  = SettingService::storage();
 
@@ -141,9 +140,6 @@ class File
         validate(FileValidate::class)->scene('info')->check($param);
 
         $data = FileService::info($param['file_id']);
-        if ($data['is_delete'] == 1) {
-            exception('文件已被删除：' . $param['file_id']);
-        }
 
         return success($data);
     }
@@ -310,10 +306,10 @@ class File
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
         $group_id     = Request::param('group_id/s', '');
-        $file_type    = Request::param('file_type/s', '');
-        $is_disable   = Request::param('is_disable/s', '');
-        $is_front     = Request::param('is_front/s', '');
         $storage      = Request::param('storage/s', '');
+        $file_type    = Request::param('file_type/s', '');
+        $is_front     = Request::param('is_front/s', '');
+        $is_disable   = Request::param('is_disable/s', '');
 
         if ($search_field && $search_value) {
             if ($search_field == 'file_id') {
@@ -323,33 +319,37 @@ class File
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        if ($group_id) {
+            $where[] = ['group_id', '=', $group_id];
+        }
+        if ($storage != '') {
+            $where[] = ['storage', '=', $storage];
+        }
+        if ($file_type) {
+            $where[] = ['file_type', '=', $file_type];
+        }
+        if ($is_front != '') {
+            $where[] = ['is_front', '=', $is_front];
+        }
+        if ($is_disable != '') {
+            $where[] = ['is_disable', '=', $is_disable];
+        }
         $where[] = ['is_delete', '=', 1];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        if ($group_id) {
-            $where[] = ['group_id', '=', $group_id];
-        }
-        if ($file_type) {
-            $where[] = ['file_type', '=', $file_type];
-        }
-        if ($is_disable != '') {
-            $where[] = ['is_disable', '=', $is_disable];
-        }
-        if ($is_front != '') {
-            $where[] = ['is_front', '=', $is_front];
-        }
-        if ($storage != '') {
-            $where[] = ['storage', '=', $storage];
-        }
 
         $order = [];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
+        } else {
+            $order = ['delete_time' => 'desc', 'update_time' => 'desc', 'is_disable' => 'desc'];
         }
 
         $data = FileService::list($where, $page, $limit, $order);
+        $data['filetype'] = SettingService::fileType();
+        $data['storage']  = SettingService::storage();
 
         return success($data);
     }

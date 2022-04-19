@@ -13,7 +13,6 @@ namespace app\common\service\file;
 use think\facade\Filesystem;
 use app\common\cache\file\FileCache;
 use app\common\model\file\FileModel;
-use app\common\model\file\GroupModel;
 
 class FileService
 {
@@ -33,17 +32,14 @@ class FileService
         $model = new FileModel();
         $pk = $model->getPk();
 
-        $GroupModel = new GroupModel();
-        $GroupPk = $GroupModel->getPk();
-
         if (empty($field)) {
-            $field = $pk . ',' . $GroupPk . ',storage,domain,file_md5,file_hash,file_type,file_name,file_path,file_size,file_ext,sort,is_disable';
+            $field = $pk . ',storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable';
         } else {
-            $field = str_merge($field, 'file_id,storage,domain,file_md5,file_hash,file_path,file_ext,is_disable');
+            $field = str_merge($field, 'file_id,storage,domain,file_hash,file_path,file_ext,is_disable');
         }
 
         if (empty($order)) {
-            $order = ['update_time' => 'desc', 'sort' => 'desc', $pk => 'desc'];
+            $order = ['is_disable' => 'asc', 'update_time' => 'desc',  'sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
@@ -53,7 +49,12 @@ class FileService
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         foreach ($list as $k => $v) {
-            $list[$k]['file_url'] = self::fileUrl($v);
+            $list[$k]['file_url'] = '';
+            if ($v['storage'] == 'local') {
+                $list[$k]['file_url'] = file_url($v['file_path']);
+            } else {
+                $list[$k]['file_url'] = $v['domain'] . '/' . $v['file_hash'] . '.' . $v['file_ext'];
+            }
             if (isset($v['file_size'])) {
                 $list[$k]['file_size'] = SettingService::fileSize($v['file_size']);
             }
@@ -85,10 +86,10 @@ class FileService
                 return [];
             } else {
                 $info = $info->toArray();
-                if ($info['is_disable']) {
-                    $info['file_url'] = '';
+                if ($info['storage'] == 'local') {
+                    $info['file_url'] = file_url($info['file_path']);
                 } else {
-                    $info['file_url'] = self::fileUrl($info);
+                    $info['file_url'] = $info['domain'] . '/' . $info['file_hash'] . '.' . $info['file_ext'];
                 }
                 $info['file_size'] = SettingService::fileSize($info['file_size']);
 
@@ -119,7 +120,7 @@ class FileService
         $file_hash = $file->hash('sha1');
         $file_name = Filesystem::disk('public')
             ->putFile('file', $file, function () use ($file_hash) {
-                return $file_hash;
+                return date('Ymd') . '/' . $file_hash;
             });
 
         $param['file_md5']  = $file_md5;
@@ -132,15 +133,19 @@ class FileService
             $param['file_name'] = mb_substr($file->getOriginalName(), 0, - (mb_strlen($param['file_ext']) + 1));
         }
 
-        // 对象存储
-        $param = StorageService::upload($param);
-
+        $param['file_id'] = '';
         $model = new FileModel();
         $pk = $model->getPk();
-
         $file_exist = $model->field($pk)->where('file_hash', $file_hash)->find();
         if ($file_exist) {
             $file_exist = $file_exist->toArray();
+            $param['file_id'] = $file_exist[$pk];
+        }
+
+        // 对象存储
+        $param = StorageService::upload($param);
+
+        if ($file_exist) {
             $file_update[$pk]          = $file_exist[$pk];
             $file_update['storage']    = $param['storage'];
             $file_update['domain']     = $param['domain'];
@@ -149,6 +154,7 @@ class FileService
             self::edit($file_update);
             $id = $file_exist[$pk];
         } else {
+            unset($param[$pk]);
             $param['create_time'] = $datetime;
             $param['update_time'] = $datetime;
             $id = $model->strict(false)->insertGetId($param);
@@ -442,13 +448,17 @@ class FileService
             return [];
         }
 
-        $file = [];
-        $ids = explode(',', $ids);
-        foreach ($ids as $v) {
-            $info = self::info($v);
-            if ($info) {
-                $file[] = $info;
+        $model = new FileModel();
+        $field = 'file_id,storage,domain,file_name,file_size,file_hash,file_path,file_ext';
+        $where[] = [['file_id', 'in', $ids], ['is_disable', '=', 0], ['is_delete', '=', 0]];
+        $file = $model->field($field)->where($where)->select()->toArray();
+        foreach ($file as $k => $v) {
+            if ($v['storage'] == 'local') {
+                $file[$k]['file_url'] = file_url($v['file_path']);
+            } else {
+                $file[$k]['file_url'] = $v['domain'] . '/' . $v['file_hash'] . '.' . $v['file_ext'];
             }
+            $file[$k]['file_size'] = SettingService::fileSize($v['file_size']);
         }
 
         return $file;
