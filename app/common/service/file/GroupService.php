@@ -32,17 +32,14 @@ class GroupService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',group_name,group_desc,group_sort,is_disable,create_time,update_time';
+            $field = $pk . ',group_name,group_desc,group_sort,is_disable,create_time,update_time,delete_time';
         }
-
         if (empty($order)) {
             $order = ['group_sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -85,7 +82,6 @@ class GroupService
         $pk = $model->getPk();
 
         $param['create_time'] = datetime();
-
         $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
@@ -99,87 +95,55 @@ class GroupService
     /**
      * 文件分组修改
      *
-     * @param array $param 文件分组信息
+     * @param array $ids    文件分组id
+     * @param array $update 文件分组信息
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new GroupModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        GroupCache::del($id);
-
-        $param[$pk] = $id;
-
-        return $param;
-    }
-
-    /**
-     * 文件分组删除
-     *
-     * @param array $ids       文件分组id
-     * @param int   $is_delete 是否删除
-     * 
-     * @return array
-     */
-    public static function dele($ids, $is_delete = 1)
-    {
-        $model = new GroupModel();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = $is_delete;
-        $update['delete_time'] = datetime();
-
+        $update['update_time'] = datetime();
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            GroupCache::del($v);
-        }
-
+        GroupCache::del($ids);
         $update['ids'] = $ids;
 
         return $update;
     }
 
     /**
-     * 文件分组禁用
+     * 文件分组删除
      *
-     * @param array $ids        文件分组id
-     * @param int   $is_disable 是否禁用
+     * @param array $ids  文件分组id
+     * @param bool  $dele 是否真实删除
      * 
      * @return array
      */
-    public static function disable($ids, $is_disable = 0)
+    public static function dele($ids, $dele = false)
     {
         $model = new GroupModel();
         $pk = $model->getPk();
 
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
+        if ($dele) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            GroupCache::del($v);
-        }
-
+        GroupCache::del($ids);
         $update['ids'] = $ids;
 
         return $update;

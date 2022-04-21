@@ -34,33 +34,21 @@ class FileService
 
         if (empty($field)) {
             $field = $pk . ',storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable';
-        } else {
-            $field = str_merge($field, 'file_id,storage,domain,file_hash,file_path,file_ext,is_disable');
         }
-
         if (empty($order)) {
-            $order = ['is_disable' => 'asc', 'update_time' => 'desc',  'sort' => 'desc', $pk => 'desc'];
+            $order = ['sort' => 'desc', 'is_disable' => 'asc', 'update_time' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
+        $ids = [];
         foreach ($list as $k => $v) {
-            $list[$k]['file_url'] = '';
-            if ($v['storage'] == 'local') {
-                $list[$k]['file_url'] = file_url($v['file_path']);
-            } else {
-                $list[$k]['file_url'] = $v['domain'] . '/' . $v['file_hash'] . '.' . $v['file_ext'];
-            }
-            if (isset($v['file_size'])) {
-                $list[$k]['file_size'] = SettingService::fileSize($v['file_size']);
-            }
+            $ids[] = $v['file_id'];
+            $list[$k]['file_url'] = SettingService::fileUrl($v);
+            $list[$k]['file_size'] = SettingService::fileSize($v['file_size']);
         }
-
-        $ids = array_column($list, $pk);
 
         return compact('count', 'pages', 'page', 'limit', 'list', 'ids');
     }
@@ -86,11 +74,7 @@ class FileService
                 return [];
             } else {
                 $info = $info->toArray();
-                if ($info['storage'] == 'local') {
-                    $info['file_url'] = file_url($info['file_path']);
-                } else {
-                    $info['file_url'] = $info['domain'] . '/' . $info['file_hash'] . '.' . $info['file_ext'];
-                }
+                $info['file_url'] = SettingService::fileUrl($info);
                 $info['file_size'] = SettingService::fileSize($info['file_size']);
 
                 FileCache::set($id, $info);
@@ -133,25 +117,26 @@ class FileService
             $param['file_name'] = mb_substr($file->getOriginalName(), 0, - (mb_strlen($param['file_ext']) + 1));
         }
 
-        $param['file_id'] = '';
         $model = new FileModel();
         $pk = $model->getPk();
         $file_exist = $model->field($pk)->where('file_hash', $file_hash)->find();
         if ($file_exist) {
             $file_exist = $file_exist->toArray();
-            $param['file_id'] = $file_exist[$pk];
+            $param[$pk] = $file_exist[$pk];
+        } else {
+            $param[$pk] = '';
         }
 
         // 对象存储
         $param = StorageService::upload($param);
 
         if ($file_exist) {
-            $file_update[$pk]          = $file_exist[$pk];
-            $file_update['storage']    = $param['storage'];
-            $file_update['domain']     = $param['domain'];
-            $file_update['is_disable'] = 0;
-            $file_update['is_delete']  = 0;
-            self::edit($file_update);
+            $param[$pk]          = $file_exist[$pk];
+            $param['storage']    = $param['storage'];
+            $param['domain']     = $param['domain'];
+            $param['is_disable'] = 0;
+            $param['is_delete']  = 0;
+            self::edit([$file_exist[$pk]], $param);
             $id = $file_exist[$pk];
         } else {
             unset($param[$pk]);
@@ -171,239 +156,61 @@ class FileService
     /**
      * 文件修改
      *
-     * @param array $param 文件信息
+     * @param array $ids    文件id
+     * @param array $update 文件信息
      * 
      * @return array|Exception
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new FileModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        FileCache::del($id);
+        FileCache::del($ids);
+        $update['ids'] = $ids;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $update;
     }
 
     /**
      * 文件删除
      *
-     * @param array $ids       文件id
-     * @param int   $is_delete 是否删除
+     * @param array $ids  文件id
+     * @param bool  $dele 是否真实删除
      * 
      * @return array|Exception
      */
-    public static function dele($ids, $is_delete = 1)
+    public static function dele($ids, $dele = false)
     {
         $model = new FileModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = $is_delete;
-        $update['delete_time'] = datetime();
+        $file = [];
+        if ($dele) {
+            $file = $model->field('file_path')->where($pk, 'in', $ids)->select();
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            FileCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 文件修改分组
-     *
-     * @param array $ids      文件id
-     * @param int   $group_id 分组id
-     * 
-     * @return array|Exception
-     */
-    public static function editgroup($ids, $group_id = 0)
-    {
-        $model = new FileModel();
-        $pk = $model->getPk();
-
-        $update['group_id']    = $group_id;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            FileCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 文件修改类型
-     *
-     * @param array  $ids       文件id
-     * @param string $file_type 文件类型
-     * 
-     * @return array|Exception
-     */
-    public static function edittype($ids, $file_type = 'image')
-    {
-        $model = new FileModel();
-        $pk = $model->getPk();
-
-        $update['file_type']   = $file_type;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            FileCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 文件修改域名
-     *
-     * @param array  $ids    文件id
-     * @param string $domain 文件域名
-     * 
-     * @return array|Exception
-     */
-    public static function editdomain($ids, $domain = '')
-    {
-        $model = new FileModel();
-        $pk = $model->getPk();
-
-        $update['domain']      = $domain;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            FileCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 文件是否禁用
-     *
-     * @param array $ids        文件id
-     * @param int   $is_disable 是否禁用
-     * 
-     * @return array|Exception
-     */
-    public static function disable($ids, $is_disable = 0)
-    {
-        $model = new FileModel();
-        $pk = $model->getPk();
-
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            FileCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-
-    /**
-     * 文件回收站恢复
-     * 
-     * @param array $ids 文件id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverReco($ids)
-    {
-        $model = new FileModel();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = 0;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            FileCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 文件回收站删除
-     * 
-     * @param array $ids 文件id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverDele($ids)
-    {
-        $model = new FileModel();
-        $pk = $model->getPk();
-
-        $file = $model->field($pk . ',file_path')->where($pk, 'in', $ids)->select();
-
-        $res = $model->where($pk, 'in', $ids)->delete();
-        if (empty($res)) {
-            exception();
-        }
-
-        $del = [];
+        FileCache::del($ids);
         foreach ($file as $v) {
-            FileCache::del($v[$pk]);
-            $del[] = @unlink($v['file_path']);
+            @unlink($v['file_path']);
         }
-
         $update['ids'] = $ids;
-        $update['del'] = $del;
 
         return $update;
     }
@@ -424,11 +231,7 @@ class FileService
         $file_url = '';
         if ($file) {
             if (!$file['is_disable']) {
-                if ($file['storage'] == 'local') {
-                    $file_url = file_url($file['file_path']);
-                } else {
-                    $file_url = $file['domain'] . '/' . $file['file_hash'] . '.' . $file['file_ext'];
-                }
+                $file_url = SettingService::fileUrl($file);
             }
         }
 
@@ -449,15 +252,12 @@ class FileService
         }
 
         $model = new FileModel();
-        $field = 'file_id,storage,domain,file_name,file_size,file_hash,file_path,file_ext';
-        $where[] = [['file_id', 'in', $ids], ['is_disable', '=', 0], ['is_delete', '=', 0]];
+        $pk = $model->getPk();
+        $field = $pk . ',storage,domain,file_name,file_size,file_hash,file_path,file_ext';
+        $where[] = [[$pk, 'in', $ids], ['is_disable', '=', 0]];
         $file = $model->field($field)->where($where)->select()->toArray();
         foreach ($file as $k => $v) {
-            if ($v['storage'] == 'local') {
-                $file[$k]['file_url'] = file_url($v['file_path']);
-            } else {
-                $file[$k]['file_url'] = $v['domain'] . '/' . $v['file_hash'] . '.' . $v['file_ext'];
-            }
+            $file[$k]['file_url'] = SettingService::fileurl($v);
             $file[$k]['file_size'] = SettingService::fileSize($v['file_size']);
         }
 

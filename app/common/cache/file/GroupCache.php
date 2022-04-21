@@ -17,50 +17,60 @@ class GroupCache
     /**
      * 缓存key
      *
-     * @param int $group_id 文件分组id
+     * @param int $id 文件分组id
      * 
      * @return string
      */
-    public static function key($group_id)
+    public static function key($id)
     {
-        return 'file_group:' . $group_id;
+        return 'file_group:' . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int   $group_id   文件分组id
-     * @param array $file_group 文件分组信息
-     * @param int   $ttl        有效时间（秒）0永久
+     * @param int   $id   文件分组id
+     * @param array $info 文件分组信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($group_id, $file_group, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($group_id), $file_group, $ttl);
+        return Cache::set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $group_id 文件分组id
+     * @param int $id 文件分组id
      * 
      * @return array 文件分组信息
      */
-    public static function get($group_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($group_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $group_id 文件分组id
+     * @param mixed $id 文件分组id
      * 
      * @return bool
      */
-    public static function del($group_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($group_id));
+        if (is_array($id)) {
+            $keys = $id;
+        } else {
+            $keys = [$id];
+        }
+
+        foreach ($keys as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+
+        return $res;
     }
 }

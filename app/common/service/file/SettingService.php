@@ -57,11 +57,9 @@ class SettingService
     {
         $model = new SettingModel();
         $pk = $model->getPk();
-
         $id = self::$id;
-        
-        $param['update_time'] = datetime();
 
+        $param['update_time'] = datetime();
         $info = $model->where($pk, $id)->update($param);
         if (empty($info)) {
             exception();
@@ -79,15 +77,13 @@ class SettingService
      */
     public static function fileType()
     {
-        $filetype = [
+        return [
             'image' => '图片',
             'video' => '视频',
             'audio' => '音频',
             'word'  => '文档',
             'other' => '其它'
         ];
-
-        return $filetype;
     }
 
     /**
@@ -97,15 +93,13 @@ class SettingService
      */
     public static function storage()
     {
-        $storage = [
+        return [
             'local'   => '本地(服务器)',
             'qiniu'   => '七牛云Kodo',
             'aliyun'  => '阿里云OSS',
             'tencent' => '腾讯云COS',
             'baidu'   => '百度云BOS'
         ];
-
-        return $storage;
     }
 
     /**
@@ -187,5 +181,29 @@ class SettingService
         } else {
             return 'other';
         }
+    }
+
+    /**
+     * 文件链接
+     *
+     * @param array $file 文件信息
+     *
+     * @return string
+     */
+    public static function fileUrl($file)
+    {
+        $file_url = '';
+        if ($file) {
+            if ($file['storage'] == 'local') {
+                $file_url = file_url($file['file_path']);
+            } else {
+                $file_url = $file['domain'] . '/' . $file['file_path'];
+                if (strpos($file_url, 'http') !== 0) {
+                    $file_url = 'http://' . $file_url;
+                }
+            }
+        }
+
+        return $file_url;
     }
 }

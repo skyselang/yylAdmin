@@ -21,7 +21,6 @@ class FileValidate extends Validate
         'file'      => ['require', 'file', 'checkLimit'],
         'file_id'   => ['require'],
         'file_type' => ['require'],
-        'group_id'  => ['require'],
     ];
 
     // 错误信息
@@ -29,7 +28,6 @@ class FileValidate extends Validate
         'file.require'      => '请选择上传文件',
         'file_id.require'   => '缺少参数：file_id',
         'file_type.require' => '请选择文件类型',
-        'group_id.require'  => '缺少参数：group_id',
     ];
 
     // 验证场景

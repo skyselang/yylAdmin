@@ -29,7 +29,7 @@ class File
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="分组列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
      * )
      */
@@ -40,7 +40,7 @@ class File
         $sort_field = Request::param('sort_field/s', '');
         $sort_value = Request::param('sort_value/s', '');
 
-        $where[] = ['is_delete', '=', 0];
+        $where = [['is_disable', '=', 0], ['is_delete', '=', 0]];
 
         $order = [];
         if ($sort_field && $sort_value) {
@@ -67,7 +67,7 @@ class File
      * @Apidoc\Param("is_front", require=false, default="0")
      * @Apidoc\Param("storage", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="文件列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
      * )
      */
@@ -122,8 +122,8 @@ class File
         }
 
         $data = FileService::list($where, $page, $limit, $order);
+        $data['storage'] = SettingService::storage();
         $data['filetype'] = SettingService::fileType();
-        $data['storage']  = SettingService::storage();
 
         return success($data);
     }
@@ -185,7 +185,7 @@ class File
 
         validate(FileValidate::class)->scene('edit')->check($param);
 
-        $data = FileService::edit($param);
+        $data = FileService::edit([$param['file_id']], $param);
 
         return success($data);
     }
@@ -219,7 +219,7 @@ class File
 
         validate(FileValidate::class)->scene('editgroup')->check($param);
 
-        $data = FileService::editgroup($param['ids'], $param['group_id']);
+        $data = FileService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -237,7 +237,7 @@ class File
 
         validate(FileValidate::class)->scene('edittype')->check($param);
 
-        $data = FileService::edittype($param['ids'], $param['file_type']);
+        $data = FileService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -251,11 +251,11 @@ class File
     public function editdomain()
     {
         $param['ids']    = Request::param('ids/a', '');
-        $param['domain'] = Request::param('domain/s', 'image');
+        $param['domain'] = Request::param('domain/s', '');
 
         validate(FileValidate::class)->scene('editdomain')->check($param);
 
-        $data = FileService::editdomain($param['ids'], $param['domain']);
+        $data = FileService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -273,7 +273,7 @@ class File
 
         validate(FileValidate::class)->scene('disable')->check($param);
 
-        $data = FileService::disable($param['ids'], $param['is_disable']);
+        $data = FileService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -291,7 +291,7 @@ class File
      * @Apidoc\Param("is_front", require=false, default="0")
      * @Apidoc\Param("storage", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="文件列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
      * )
      */
@@ -340,16 +340,15 @@ class File
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
-        $order = [];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
         } else {
-            $order = ['delete_time' => 'desc', 'update_time' => 'desc', 'is_disable' => 'desc'];
+            $order = ['delete_time' => 'desc', 'is_disable' => 'desc', 'update_time' => 'desc'];
         }
 
         $data = FileService::list($where, $page, $limit, $order);
+        $data['storage'] = SettingService::storage();
         $data['filetype'] = SettingService::fileType();
-        $data['storage']  = SettingService::storage();
 
         return success($data);
     }
@@ -361,11 +360,12 @@ class File
      */
     public function recoverReco()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids']       = Request::param('ids/a', '');
+        $param['is_delete'] = 0;
 
         validate(FileValidate::class)->scene('reco')->check($param);
 
-        $data = FileService::recoverReco($param['ids']);
+        $data = FileService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -381,7 +381,7 @@ class File
 
         validate(FileValidate::class)->scene('dele')->check($param);
 
-        $data = FileService::recoverDele($param['ids']);
+        $data = FileService::dele($param['ids'], true);
 
         return success($data);
     }

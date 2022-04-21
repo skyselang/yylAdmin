@@ -30,19 +30,28 @@ class GroupValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'id'      => ['group_id'],
-        'info'    => ['group_id'],
-        'add'     => ['group_name'],
-        'edit'    => ['group_id', 'group_name'],
-        'dele'    => ['ids'],
-        'disable' => ['ids'],
+        'id'          => ['group_id'],
+        'info'        => ['group_id'],
+        'add'         => ['group_name'],
+        'edit'        => ['group_id', 'group_name'],
+        'dele'        => ['ids'],
+        'disable'     => ['ids'],
+        'recoverReco' => ['ids'],
+        'recoverDele' => ['ids'],
     ];
 
     // 验证场景定义：删除
-    protected function scenedele()
+    protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkGroupFile');
+    }
+
+    // 验证场景定义：恢复删除
+    protected function sceneRecoverReco()
+    {
+        return $this->only(['ids'])
+            ->append('ids', 'checkRecoverReco');
     }
 
     // 自定义验证规则：分组名称是否已存在
@@ -64,7 +73,7 @@ class GroupValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分组是否有文件
+    // 自定义验证规则：分组下是否有文件
     protected function checkGroupFile($value, $rule, $data = [])
     {
         $GroupModel = new GroupModel();
@@ -78,6 +87,22 @@ class GroupValidate extends Validate
         $file = $FileModel->field($FilePk)->where($where)->find();
         if ($file) {
             return '分组下有文件，无法删除';
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：回收站恢复：分组名称是否已存在
+    protected function checkRecoverReco($value, $rule, $data = [])
+    {
+        $GroupModel = new GroupModel();
+        $GroupPk = $GroupModel->getPk();
+
+        $member = $GroupModel->field('group_name')->where($GroupPk, 'in', $data['ids'])->select()->toArray();
+        $group_names = array_filter(array_column($member, 'group_name'));
+        $group_name = $GroupModel->field('group_name')->where('group_name', 'in', $group_names)->where('is_delete', 0)->find();
+        if ($group_name) {
+            return '分组名称已存在：' . $group_name['group_name'];
         }
 
         return true;

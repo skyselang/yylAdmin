@@ -33,7 +33,7 @@ class StorageService
         $errmsg = '';
         $file_info['domain'] = '';
         $file_path = './' . $file_info['file_path'];
-        $file_name = $file_info['file_hash'] . '.' . $file_info['file_ext'];
+        $file_name = $file_info['file_path'];
         $setting = SettingService::info();
         $storage = $setting['storage'];
         if ($storage == 'qiniu') {
@@ -130,12 +130,12 @@ class StorageService
 
         if ($errmsg) {
             if (empty($file_info['file_id'])) {
-                unlink($file_path);
+                @unlink($file_path);
             }
             exception($errmsg);
         } else {
             if ($storage != 'local') {
-                unlink($file_path);
+                @unlink($file_path);
             }
         }
 

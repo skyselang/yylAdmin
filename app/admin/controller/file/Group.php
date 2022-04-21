@@ -29,7 +29,7 @@ class Group
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="文件分组列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
      * )
      */
@@ -87,9 +87,6 @@ class Group
         validate(GroupValidate::class)->scene('info')->check($param);
 
         $data = GroupService::info($param['group_id']);
-        if ($data['is_delete'] == 1) {
-            exception('文件分组已被删除：' . $param['group_id']);
-        }
 
         return success($data);
     }
@@ -129,7 +126,7 @@ class Group
 
         validate(GroupValidate::class)->scene('edit')->check($param);
 
-        $data = GroupService::edit($param);
+        $data = GroupService::edit([$param['group_id']], $param);
 
         return success($data);
     }
@@ -163,7 +160,94 @@ class Group
 
         validate(GroupValidate::class)->scene('disable')->check($param);
 
-        $data = GroupService::disable($param['ids'], $param['is_disable']);
+        $data = GroupService::edit($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("文件分组回收站")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Param(ref="sortParam")
+     * @Apidoc\Param(ref="searchParam")
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
+     * )
+     */
+    public function recover()
+    {
+        $page         = Request::param('page/d', 1);
+        $limit        = Request::param('limit/d', 10);
+        $sort_field   = Request::param('sort_field/s', '');
+        $sort_value   = Request::param('sort_value/s', '');
+        $search_field = Request::param('search_field/s', '');
+        $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
+
+        if ($search_field && $search_value) {
+            if (in_array($search_field, ['group_id'])) {
+                $exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $exp, $search_value];
+            } elseif (in_array($search_field, ['is_disable'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
+            } else {
+                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+            }
+        }
+        $where[] = ['is_delete', '=', 1];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
+        }
+
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
+        } else {
+            $order = ['delete_time' => 'desc', 'group_sort' => 'desc'];
+        }
+
+        $data = GroupService::list($where, $page, $limit, $order);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("文件分组回收站恢复")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function recoverReco()
+    {
+        $param['ids']       = Request::param('ids/a', '');
+        $param['is_delete'] = 0;
+
+        validate(GroupValidate::class)->scene('recoverReco')->check($param);
+
+        $data = GroupService::edit($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("文件分组回收站删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function recoverDele()
+    {
+        $param['ids'] = Request::param('ids/a', '');
+
+        validate(GroupValidate::class)->scene('recoverDele')->check($param);
+
+        $data = GroupService::dele($param['ids'], true);
 
         return success($data);
     }
