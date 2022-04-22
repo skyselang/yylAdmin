@@ -29,10 +29,9 @@ class EmailUtils
     {
         $captcha = CaptchaEmailCache::get($address);
         if (empty($captcha)) {
-            $setting = SettingService::info();
             $captcha = mt_rand(100000, 999999);
-            $subject = $setting['system_name'] . '-验证码';
-            $body = $setting['system_name'] . ', 您的验证码为：<b>' . $captcha . '</b>。';
+            $subject = '邮箱验证码';
+            $body = '您的验证码为：<b>' . $captcha . '</b>。';
             self::send($address, $subject, $body);
             CaptchaEmailCache::set($address, $captcha);
         }
@@ -42,7 +41,7 @@ class EmailUtils
      * 发送邮件
      *
      * @param string $address 收件人
-     * @param string $subject 标题
+     * @param string $subject 主题
      * @param string $body    内容
      *
      * @return void
@@ -52,22 +51,28 @@ class EmailUtils
         $setting = SettingService::info();
         $mail = new PHPMailer(true); // 传递`true`会启用异常
         try {
+            $address = explode(',', $address);
+            $email_setfrom = $setting['email_setfrom'] ?: ($setting['system_name'] ?: $setting['email_username']);
+
+            // 语言
             $mail->setLanguage('zh_cn', '/optional/path/to/language/directory/');
+
             // 配置
             $mail->SMTPDebug  = SMTP::DEBUG_OFF;             // 调试模式输出 
-            $mail->isSMTP();                                 // 使用SMTP 
-            $mail->Host       = $setting['email_host'];      // SMTP服务器 
+            $mail->isSMTP();                                 // 使用 SMTP 
             $mail->SMTPAuth   = true;                        // 允许 SMTP 认证 
-            $mail->Username   = $setting['email_username'];  // SMTP 用户名  即邮箱的用户名 
-            $mail->Password   = $setting['email_password'];  // SMTP 密码  部分邮箱是授权码(例如163邮箱) 
-            $mail->SMTPSecure = $setting['email_secure'];    // 允许 tls 或者ssl协议 
-            $mail->Port       = $setting['email_port'];      // 服务器端口 25 或者465 具体要看邮箱服务器支持 
+            $mail->Host       = $setting['email_host'];      // SMTP 服务器 
+            $mail->SMTPSecure = $setting['email_secure'];    // 允许 ssl 或者 tls 协议 
+            $mail->Port       = $setting['email_port'];      // 服务器端口 465 或者 25 具体要看邮箱服务器支持 
+            $mail->Username   = $setting['email_username'];  // SMTP 用户名 即邮箱地址
+            $mail->Password   = $setting['email_password'];  // SMTP 密码 部分邮箱是授权码(例如 QQ 邮箱) 
 
             // 收件人
-            $mail->setFrom($setting['email_setfrom'], $setting['email_setfrom']); // 发件人 
-            $mail->addAddress($address, $address); // 收件人 
-            // $mail->addAddress('address@example.com'); // 可添加多个收件人 
-            $mail->addReplyTo($setting['email_setfrom'], $setting['email_setfrom']); // 回复的时候回复给哪个邮箱 建议和发件人一致 
+            $mail->setFrom($setting['email_username'], $email_setfrom); // 发件人 
+            foreach ($address as $val) {
+                $mail->addAddress($val); //收件人 可添加多个
+            }
+            $mail->addReplyTo($setting['email_username'], $email_setfrom); // 回复的时候回复给哪个邮箱 建议和发件人一致 
             // $mail->addCC('cc@example.com'); // 抄送 
             // $mail->addBCC('bcc@example.com'); // 密送 
 
@@ -76,10 +81,10 @@ class EmailUtils
             // $mail->addAttachment('../Attachment.jpg', 'AttachmentRename.jpg'); // 发送附件并且重命名 
 
             // 内容
-            $mail->isHTML(true); // 是否以HTML文档格式发送  发送后客户端可直接显示对应HTML内容 
-            $mail->Subject = $subject;
-            $mail->Body    = $body;
-            // $mail->AltBody = '如果邮件客户端不支持HTML则显示此内容';
+            $mail->isHTML(true); // 是否以HTML文档格式发送 发送后客户端可直接显示对应 HTML 内容 
+            $mail->Subject = $subject; // 主题
+            $mail->Body    = $body; // $mail->isHTML(true), HTML 内容 
+            $mail->AltBody = $body; // 如果邮件客户端不支持 HTML 则显示此内容
 
             $mail->send();
         } catch (Exception $e) {

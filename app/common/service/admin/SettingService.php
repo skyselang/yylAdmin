@@ -147,10 +147,8 @@ class SettingService
      */
     public static function emailTest($param)
     {
-        $setting = self::info();
-
         $address = $param['email_test'];
-        $subject = $setting['system_name'] . '-测试邮件';
+        $subject = '测试邮件';
         $body    = '这是一封测试邮件，收到此邮件说明邮件设置和发送正常。';
 
         EmailUtils::send($address, $subject, $body);
