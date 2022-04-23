@@ -29,7 +29,7 @@ class Member
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="会员列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\member\MemberModel\listReturn")
      * )
      */
@@ -48,6 +48,13 @@ class Member
             if ($search_field == 'member_id') {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
+            } elseif (in_array($search_field, ['is_disable'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -135,7 +142,7 @@ class Member
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
-        $data = MemberService::edit($param);
+        $data = MemberService::edit([$param['member_id']], $param);
 
         return success($data);
     }
@@ -169,7 +176,7 @@ class Member
 
         validate(MemberValidate::class)->scene('region')->check($param);
 
-        $data = MemberService::region($param['ids'], $param['region_id']);
+        $data = MemberService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -187,7 +194,7 @@ class Member
 
         validate(MemberValidate::class)->scene('repwd')->check($param);
 
-        $data = MemberService::repwd($param['ids'], $param['password']);
+        $data = MemberService::edit($param['ids'], ['password' => md5($param['password'])]);
 
         return success($data);
     }
@@ -205,7 +212,7 @@ class Member
 
         validate(MemberValidate::class)->scene('disable')->check($param);
 
-        $data = MemberService::disable($param['ids'], $param['is_disable']);
+        $data = MemberService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -239,7 +246,7 @@ class Member
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="会员列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *    @Apidoc\Returned(ref="app\common\model\member\MemberModel\listReturn")
      * )
      */
@@ -258,6 +265,13 @@ class Member
             if ($search_field == 'member_id') {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
+            } elseif (in_array($search_field, ['is_disable'])) {
+                if ($search_value == '是' || $search_value == '1') {
+                    $search_value = 1;
+                } else {
+                    $search_value = 0;
+                }
+                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -285,11 +299,12 @@ class Member
      */
     public function recoverReco()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids']       = Request::param('ids/a', '');
+        $param['is_delete'] = 0;
 
         validate(MemberValidate::class)->scene('recoverReco')->check($param);
 
-        $data = MemberService::recoverReco($param['ids']);
+        $data = MemberService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -305,7 +320,7 @@ class Member
 
         validate(MemberValidate::class)->scene('recoverDele')->check($param);
 
-        $data = MemberService::recoverDele($param['ids']);
+        $data = MemberService::dele($param['ids'], true);
 
         return success($data);
     }

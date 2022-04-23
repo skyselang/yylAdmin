@@ -18,54 +18,54 @@ class MemberCache
     /**
      * 缓存key
      *
-     * @param mixed $member_id 会员id、统计时间
+     * @param mixed $id 会员id、统计时间
      * 
      * @return string
      */
-    public static function key($member_id)
+    public static function key($id)
     {
-        return 'member:' . $member_id;
+        return 'member:' . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param mixed $member_id 会员id、统计时间
-     * @param array $member    会员信息
-     * @param int   $ttl       有效时间（秒）0永久
+     * @param mixed $id   会员id、统计时间
+     * @param array $info 会员信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($member_id, $member, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($member_id), $member, $ttl);
+        return Cache::set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param mixed $member_id 会员id、统计时间
+     * @param mixed $id 会员id、统计时间
      * 
      * @return array 会员信息
      */
-    public static function get($member_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($member_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param mixed $member_id 会员id、统计时间
+     * @param mixed $id 会员id、统计时间
      * 
      * @return bool
      */
-    public static function del($member_id = '')
+    public static function del($id = '')
     {
-        if (is_array($member_id)) {
-            $keys = $member_id;
+        if (is_array($id)) {
+            $keys = $id;
         } else {
-            $keys = [$member_id];
+            $keys = [$id];
         }
 
         foreach ($keys as $v) {
@@ -78,14 +78,14 @@ class MemberCache
     /**
      * 缓存更新
      *
-     * @param int $member_id 会员id
+     * @param int $id 会员id
      * 
      * @return array 会员信息
      */
-    public static function upd($member_id)
+    public static function upd($id)
     {
-        self::del($member_id);
+        self::del($id);
 
-        return MemberService::info($member_id);
+        return MemberService::info($id);
     }
 }

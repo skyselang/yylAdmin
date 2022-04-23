@@ -13,12 +13,12 @@ namespace app\common\service\member;
 use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\member\MemberCache;
-use app\common\model\file\FileModel;
 use app\common\service\setting\WechatService;
 use app\common\service\setting\TokenService;
 use app\common\service\file\FileService;
 use app\common\model\member\MemberModel;
 use app\common\model\member\WechatModel;
+use app\common\model\file\FileModel;
 
 class MemberService
 {
@@ -41,15 +41,12 @@ class MemberService
         if (empty($field)) {
             $field = $pk . ',username,nickname,phone,email,avatar_id,sort,remark,is_disable,create_time,delete_time';
         }
-
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         $file = $avatar = [];
@@ -160,12 +157,10 @@ class MemberService
 
         $param['password']    = md5($param['password']);
         $param['create_time'] = datetime();
-
         $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
         }
-
         $param[$pk] = $id;
 
         return $param;
@@ -174,139 +169,65 @@ class MemberService
     /**
      * 会员修改
      *
-     * @param array $param 会员信息
+     * @param mixed $ids    会员id
+     * @param array $update 会员信息
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
         $model = new MemberModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        MemberCache::del($id);
+        MemberCache::del($ids);
+        $update['ids'] = $ids;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $update;
     }
 
     /**
      * 会员删除
      *
-     * @param array $ids 会员id
+     * @param mixed $ids  会员id
+     * @param bool  $dele 是否真实删除
      * 
      * @return array
      */
-    public static function dele($ids)
+    public static function dele($ids, $dele = false)
     {
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
         $model = new MemberModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
+        if ($dele) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
-
-        MemberCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 会员修改地区
-     *
-     * @param array $ids       会员id
-     * @param int   $region_id 地区id
-     * 
-     * @return array
-     */
-    public static function region($ids, $region_id = 0)
-    {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
-        $update['region_id']   = $region_id;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
+        if ($dele) {
+            $WechatModel = new WechatModel();
+            $WechatModel->where($pk, 'in', $ids)->delete();
         }
 
         MemberCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 会员修改密码
-     *
-     * @param array $ids      会员id
-     * @param int   $password 新密码
-     * 
-     * @return array
-     */
-    public static function repwd($ids, $password)
-    {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
-        $update['password']    = md5($password);
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        MemberCache::del($ids);
-
-        $update['ids']      = $ids;
-        $update['password'] = $password;
-
-        return $update;
-    }
-
-    /**
-     * 会员是否禁用
-     *
-     * @param array $ids        会员id
-     * @param int   $is_disable 是否禁用
-     * 
-     * @return array
-     */
-    public static function disable($ids, $is_disable = 0)
-    {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        MemberCache::del($ids);
-
         $update['ids'] = $ids;
 
         return $update;
@@ -537,11 +458,9 @@ class MemberService
         $pk = $model->getPk();
 
         $update['logout_time'] = datetime();
-
         $model->where($pk, $id)->update($update);
 
         MemberCache::del($id);
-
         $update[$pk] = $id;
 
         return $update;
@@ -766,58 +685,5 @@ class MemberService
         }
 
         return $data;
-    }
-
-    /**
-     * 会员回收站恢复
-     * 
-     * @param array $ids 会员id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverReco($ids)
-    {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = 0;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        MemberCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 会员回收站删除
-     * 
-     * @param array $ids 会员id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverDele($ids)
-    {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
-        $res = $model->where($pk, 'in', $ids)->delete();
-        if (empty($res)) {
-            exception();
-        }
-        $WechatModel = new WechatModel();
-        $WechatModel->where('member_id', 'in', $ids)->delete();
-
-        MemberCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
     }
 }

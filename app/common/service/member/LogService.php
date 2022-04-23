@@ -15,8 +15,8 @@ use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\member\LogCache;
 use app\common\service\setting\ApiService;
-use app\common\model\setting\ApiModel;
 use app\common\model\member\LogModel;
+use app\common\model\setting\ApiModel;
 use app\common\model\member\MemberModel;
 
 class LogService
@@ -46,37 +46,40 @@ class LogService
         if (empty($field)) {
             $field = $pk . ',' . $MemberPk . ',' . $ApiPk . ',request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
-
-        $where[] = ['is_delete', '=', 0];
-
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
+
+        $member_ids = array_column($list, $MemberPk);
+        $member = $MemberModel->field($MemberPk . ',username,nickname')->where($MemberPk, 'in', $member_ids)->select()->toArray();
+
+        $api_ids = array_column($list, $ApiPk);
+        $api = $ApiModel->field($ApiPk . ',api_name,api_url')->where($ApiPk, 'in', $api_ids)->select()->toArray();
 
         foreach ($list as $k => $v) {
             if (isset($v[$MemberPk])) {
                 $list[$k]['username'] = '';
                 $list[$k]['nickname'] = '';
-                $member = MemberService::info($v[$MemberPk], false);
-                if ($member) {
-                    $list[$k]['username'] = $member['username'];
-                    $list[$k]['nickname'] = $member['nickname'];
+                foreach ($member as $km => $vm) {
+                    if ($v[$MemberPk] == $vm[$MemberPk]) {
+                        $list[$k]['username'] = $vm['username'];
+                        $list[$k]['nickname'] = $vm['nickname'];
+                    }
                 }
             }
 
             if (isset($v[$ApiPk])) {
                 $list[$k]['api_name'] = '';
                 $list[$k]['api_url']  = '';
-                $api = ApiService::info($v[$ApiPk], false);
-                if ($api) {
-                    $list[$k]['api_name'] = $api['api_name'];
-                    $list[$k]['api_url']  = $api['api_url'];
+                foreach ($api as $ka => $va) {
+                    if ($v[$ApiPk] == $va[$ApiPk]) {
+                        $list[$k]['api_name'] = $va['api_name'];
+                        $list[$k]['api_url']  = $va['api_url'];
+                    }
                 }
             }
         }
@@ -199,19 +202,16 @@ class LogService
     {
         $model = new LogModel();
         $pk = $model->getPk();
-
         $id = $param[$pk];
         unset($param[$pk]);
 
         $param['update_time'] = datetime();
-
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
         }
 
         LogCache::del($id);
-
         $param[$pk] = $id;
 
         return $param;
@@ -231,16 +231,12 @@ class LogService
 
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
-
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            LogCache::del($v);
-        }
-
+        LogCache::del($ids);
         $update['ids'] = $ids;
 
         return $update;

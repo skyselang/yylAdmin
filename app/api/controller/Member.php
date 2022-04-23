@@ -41,14 +41,13 @@ class Member
         validate(MemberValidate::class)->scene('info')->check($param);
 
         $data = MemberService::info($param['member_id']);
-        if ($data['is_delete'] == 1) {
+        if ($data['is_disable'] == 1) {
+            exception('会员已被禁用');
+        } else if ($data['is_delete'] == 1) {
             exception('会员已被注销');
         }
 
-        $unset = ['password', 'remark', 'sort', 'is_disable', 'is_delete', 'delete_time'];
-        foreach ($unset as $v) {
-            unset($data[$v]);
-        }
+        unset($data['password'], $data['remark'], $data['sort'], $data['is_disable'], $data['is_delete'], $data['delete_time']);
 
         return success($data);
     }
@@ -68,7 +67,7 @@ class Member
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
-        $data = MemberService::edit($param);
+        $data = MemberService::edit($param['member_id'], $param);
 
         return success($data);
     }
@@ -115,7 +114,7 @@ class Member
             validate(MemberValidate::class)->scene('editpwd0')->check($param);
         }
 
-        $data = MemberService::repwd([$param['member_id']], $param['password_new']);
+        $data = MemberService::edit($param['member_id'], ['password' => md5($param['password_new'])]);
 
         return success($data);
     }
@@ -127,13 +126,12 @@ class Member
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="日志列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\member\LogModel\listReturn")
      * )
      */
     public function log()
     {
-        $member_id   = member_id();
         $page        = Request::param('page/d', 1);
         $limit       = Request::param('limit/d', 10);
         $log_type    = Request::param('log_type/d', '');
@@ -141,10 +139,11 @@ class Member
         $sort_value  = Request::param('sort_value/s', '');
         $create_time = Request::param('create_time/a', []);
 
-        $where[] = ['member_id', '=', $member_id];
+        $where[] = ['member_id', '=', member_id()];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
+        $where[] = ['is_delete', '=', 0];
         if ($create_time) {
             $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
             $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
@@ -193,9 +192,7 @@ class Member
             exception('验证码错误');
         }
 
-        unset($param['captcha_code']);
-
-        $data = MemberService::edit($param);
+        $data = MemberService::edit($param['member_id'], ['phone' => $param['phone']]);
         CaptchaSmsCache::del($param['phone']);
 
         return success($data, '绑定成功');
@@ -258,9 +255,7 @@ class Member
             exception('验证码错误');
         }
 
-        unset($param['captcha_code']);
-
-        $data = MemberService::edit($param);
+        $data = MemberService::edit($param['member_id'], ['email' => $param['email']]);
         CaptchaEmailCache::del($param['email']);
 
         return success($data, '绑定成功');

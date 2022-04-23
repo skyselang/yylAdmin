@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 21/04/2022 17:12:47
+ Date: 23/04/2022 14:58:07
 */
 
 SET NAMES utf8mb4;
@@ -341,14 +341,14 @@ CREATE TABLE `yyl_admin_setting`  (
   `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码开关，1开启0关闭',
   `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型，1数字，2字母，3数字字母，4算术，5中文',
   `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关，1开启0关闭',
-  `log_save_time` int(11) NULL DEFAULT 0 COMMENT '日志保留时间，0永久保留',
+  `log_save_time` int(11) NULL DEFAULT 30 COMMENT '日志保留时间（天），0永久保留',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
   `email_host` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'SMTP服务器',
   `email_port` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'SMTP端口',
   `email_secure` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'ssl' COMMENT 'SMTP协议',
-  `email_setfrom` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '发件人邮箱',
-  `email_username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户名/账号',
+  `email_setfrom` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱名称',
+  `email_username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱账号',
   `email_password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '授权码/密码',
   `email_test` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '测试邮箱',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
@@ -4589,7 +4589,7 @@ CREATE TABLE `yyl_setting`  (
   `captcha_register` tinyint(1) NULL DEFAULT 1 COMMENT '注册验证码，1开启0关闭',
   `captcha_login` tinyint(1) NULL DEFAULT 0 COMMENT '登录验证码，1开启0关闭',
   `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关，1开启0关闭',
-  `log_save_time` int(11) NULL DEFAULT 0 COMMENT '日志保留时间，0永久保留',
+  `log_save_time` int(11) NULL DEFAULT 30 COMMENT '日志保留时间（天），0永久保留',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
   `diy_config` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '自定义设置',

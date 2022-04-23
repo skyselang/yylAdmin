@@ -17,50 +17,60 @@ class LogCache
     /**
      * 缓存key
      *
-     * @param mixed $member_log_id 会员日志id、统计时间
+     * @param mixed $id 会员日志id、统计时间
      * 
      * @return string
      */
-    public static function key($member_log_id)
+    public static function key($id)
     {
-        return 'member_log:' . $member_log_id;
+        return 'member_log:' . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param mixed $member_log_id 会员日志id、统计时间
-     * @param array $member_log    会员日志信息
-     * @param int   $ttl           有效时间（秒）0永久
+     * @param mixed $id   会员日志id、统计时间
+     * @param array $info 会员日志信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($member_log_id, $member_log, $ttl = 3600)
+    public static function set($id, $info, $ttl = 3600)
     {
-        return Cache::set(self::key($member_log_id), $member_log, $ttl);
+        return Cache::set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param mixed $member_log_id 会员日志id、统计时间
+     * @param mixed $id 会员日志id、统计时间
      * 
      * @return array 会员日志信息
      */
-    public static function get($member_log_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($member_log_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param mixed $member_log_id 会员日志id、统计时间
+     * @param mixed $id 会员日志id、统计时间
      * 
      * @return bool
      */
-    public static function del($member_log_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($member_log_id));
+        if (is_array($id)) {
+            $keys = $id;
+        } else {
+            $keys = [$id];
+        }
+
+        foreach ($keys as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+
+        return $res;
     }
 }

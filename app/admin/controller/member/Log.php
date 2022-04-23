@@ -33,7 +33,7 @@ class Log
      * @Apidoc\Param(ref="app\common\model\member\LogModel\log_type")
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="会员日志列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\member\LogModel\listReturn")
      * )
      */
@@ -49,7 +49,6 @@ class Log
         $date_field   = Request::param('date_field/s', 'create_time');
         $date_value   = Request::param('date_value/a', '');
 
-        $where = [];
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
@@ -72,6 +71,7 @@ class Log
                 $where[] = [$search_field, '=', $search_value];
             }
         }
+        $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
@@ -99,9 +99,6 @@ class Log
         validate(LogValidate::class)->scene('info')->check($param);
 
         $data = LogService::info($param['member_log_id']);
-        if ($data['is_delete'] == 1) {
-            exception('会员日志已被删除：' . $param['member_log_id']);
-        }
 
         return success($data);
     }
@@ -141,8 +138,7 @@ class Log
         $date_value = Request::param('date_value/a', '');
         $clean      = Request::param('clean/d', 0);
 
-        $where = [];
-        $member_ids = [];
+        $where = $member_ids =[];
         if ($member_id) {
             $member_ids = array_merge(explode(',', $member_id), $member_ids);
         }

@@ -157,7 +157,7 @@ class MemberValidate extends Validate
     // 验证场景定义：邮箱绑定验证码
     protected function sceneEmailBindCaptcha()
     {
-        return $this->only(['email', 'captcha_code'])
+        return $this->only(['email'])
             ->append('email', ['require', 'checkEmailExisted']);
     }
 
@@ -328,7 +328,6 @@ class MemberValidate extends Validate
     {
         $MemberModel = new MemberModel();
         $MemberPk = $MemberModel->getPk();
-
         $member = $MemberModel->field('username,phone,email')->where($MemberPk, 'in', $data['ids'])->select()->toArray();
 
         $usernames = array_filter(array_column($member, 'username'));
