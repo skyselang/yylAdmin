@@ -10,6 +10,7 @@
 // 内容控制器
 namespace app\api\controller\cms;
 
+use app\common\cache\cms\CategoryCache;
 use think\facade\Request;
 use app\common\validate\cms\ContentValidate;
 use app\common\service\cms\CategoryService;
@@ -31,14 +32,13 @@ class Content
      */
     public function category()
     {
-        $data = [];
-        $list = CategoryService::list('list');
-        foreach ($list as $v) {
-            if ($v['is_hide'] == 0) {
-                $data[] = $v;
-            }
+        $key = 'api';
+        $data = CategoryCache::get($key);
+        if (empty($data)) {
+            $list = CategoryService::list('list', ['is_delete' => 0, 'is_hide' => 0], [], 'category_id,category_pid,category_name');
+            $data = list_to_tree($list, 'category_id', 'category_pid');
+            CategoryCache::set($key, $data);
         }
-        $data = CategoryService::toTree($data, 0);
 
         return success($data);
     }
@@ -66,20 +66,18 @@ class Content
         $category_id = Request::param('category_id/d', '');
         $name        = Request::param('name/s', '');
 
-        $where[] = ['is_hide', '=', 0];
-        $where[] = ['is_delete', '=', 0];
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
         }
         if ($name) {
             $where[] = ['name', 'like', '%' . $name . '%'];
         }
+        $where[] = ['is_hide', '=', 0];
+        $where[] = ['is_delete', '=', 0];
 
-        $order = [];
+        $order = ['is_top' => 'desc', 'is_hot' => 'desc', 'is_rec' => 'desc', 'sort' => 'desc', 'create_time' => 'desc'];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
-        } else {
-            $order = ['is_top' => 'desc', 'is_hot' => 'desc', 'is_rec' => 'desc', 'sort' => 'desc', 'create_time' => 'desc'];
         }
 
         $data = ContentService::list($where, $page, $limit, $order);

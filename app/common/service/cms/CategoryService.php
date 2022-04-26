@@ -25,14 +25,15 @@ class CategoryService
      * 
      * @return array
      */
-    public static function list($type = 'tree', $where = [], $order = [])
+    public static function list($type = 'tree', $where = [], $order = [], $field = '')
     {
         if ($type == 'list') {
             $model = new CategoryModel();
             $pk = $model->getPk();
 
-            $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time,delete_time';
-
+            if (empty($field)) {
+                $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time,delete_time';
+            }
             if (empty($order)) {
                 $order = ['sort' => 'desc', $pk => 'desc'];
             }
@@ -45,14 +46,15 @@ class CategoryService
                 $model = new CategoryModel();
                 $pk = $model->getPk();
 
-                $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
-
+                if (empty($field)) {
+                    $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
+                }
                 if (empty($order)) {
                     $order = ['sort' => 'desc', $pk => 'desc'];
                 }
 
                 $data = $model->field($field)->where($where)->order($order)->select()->toArray();
-                $data = listToTree($data, $pk, 'category_pid');
+                $data = list_to_tree($data, $pk, 'category_pid');
 
                 CategoryCache::set($key, $data);
             }
@@ -99,189 +101,79 @@ class CategoryService
     /**
      * 内容分类添加
      *
-     * @param array $param 内容分类信息
+     * @param array $insert 内容分类信息
      *
      * @return array|Exception
      */
-    public static function add($param)
+    public static function add($insert)
     {
         $model = new CategoryModel();
         $pk = $model->getPk();
 
-        $param['img_ids']     = file_ids($param['imgs']);
-        $param['create_time'] = datetime();
-
-        $id = $model->insertGetId($param);
+        $insert['create_time'] = datetime();
+        $id = $model->insertGetId($insert);
         if (empty($id)) {
             exception();
         }
 
         CategoryCache::del();
+        $insert[$pk] = $id;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $insert;
     }
 
     /**
      * 内容分类修改 
      *     
-     * @param array $param 内容分类信息
+     * @param mixed $ids    内容分类信息id
+     * @param array $update 内容分类信息
      *     
      * @return array|Exception
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new CategoryModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['img_ids']     = file_ids($param['imgs']);
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        CategoryCache::del($id);
+        CategoryCache::del($ids);
+        $update['ids'] = $ids;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $update;
     }
 
     /**
      * 内容分类删除
      * 
-     * @param array $ids 内容分类id
+     * @param mixed $ids  内容分类id
+     * @param bool  $real 是否真实删除
      * 
      * @return array|Exception
      */
-    public static function dele($ids)
+    public static function dele($ids, $real = false)
     {
         $model = new CategoryModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
         CategoryCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容分类修改上级
-     *
-     * @param array $ids          内容分类id
-     * @param int   $category_pid 内容分类pid
-     * 
-     * @return array
-     */
-    public static function pid($ids, $category_pid = 0)
-    {
-        $model = new CategoryModel();
-        $pk = $model->getPk();
-
-        $update['category_pid'] = $category_pid;
-        $update['update_time']  = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        CategoryCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容分类是否隐藏
-     *
-     * @param array $ids     内容分类id
-     * @param int   $is_hide 是否隐藏
-     * 
-     * @return array|Exception
-     */
-    public static function ishide($ids, $is_hide)
-    {
-        $model = new CategoryModel();
-        $pk = $model->getPk();
-
-        $update['is_hide']     = $is_hide;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        CategoryCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容分类回收站恢复
-     * 
-     * @param array $ids 内容分类id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverReco($ids)
-    {
-        $model = new CategoryModel();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = 0;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        CategoryCache::del($ids);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容分类回收站删除
-     * 
-     * @param array $ids 内容分类id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverDele($ids)
-    {
-        $model = new CategoryModel();
-        $pk = $model->getPk();
-
-        $res = $model->where($pk, 'in', $ids)->delete();
-        if (empty($res)) {
-            exception();
-        }
-
-        CategoryCache::del($ids);
-
         $update['ids'] = $ids;
 
         return $update;

@@ -48,6 +48,13 @@ class CategoryValidate extends Validate
             ->append('ids', ['checkCategoryChildren', 'checkCategoryContent']);
     }
 
+    // 验证场景定义：分类修改上级
+    protected function scenePid()
+    {
+        return $this->only(['ids'])
+            ->append('ids', ['checkCategoryPid']);
+    }
+
     // 自定义验证规则：分类名称是否已存在
     protected function checkCategoryName($value, $rule, $data = [])
     {
@@ -110,6 +117,18 @@ class CategoryValidate extends Validate
         $content = $ContentModel->field($ContentPk)->where($where)->find();
         if ($content) {
             return '分类下存在内容，无法删除';
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：分类修改上级
+    protected function checkCategoryPid($value, $rule, $data = [])
+    {
+        foreach ($data['ids'] as $v) {
+            if ($v == $data['category_pid']) {
+                return '分类上级不能等于分类本身';
+            }
         }
 
         return true;

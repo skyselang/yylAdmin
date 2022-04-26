@@ -17,63 +17,68 @@ class ContentCache
     /**
      * 缓存键名
      *
-     * @param mixed $content_id 内容id
+     * @param mixed $id 内容id
      * 
      * @return string
      */
-    public static function key($content_id)
+    public static function key($id)
     {
-        return 'cms_content:' . $content_id;
+        return 'cms_content:' . $id;
     }
 
     /**
      * 缓存写入
      *
-     * @param mixed $content_id 内容id
-     * @param mixed $content    内容信息
-     * @param int   $ttl        有效时间（秒）0永久
+     * @param mixed $id   内容id
+     * @param mixed $info 内容信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($content_id, $content, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($content_id), $content, $ttl);
+        return Cache::set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存读取
      *
-     * @param mixed $content_id 内容id
+     * @param mixed $id 内容id
      * 
      * @return mixed
      */
-    public static function get($content_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($content_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param mixed $content_id 内容id
+     * @param mixed $id 内容id
      * 
      * @return bool
      */
-    public static function del($content_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($content_id));
+        $keys = var_to_array($id);
+        foreach ($keys as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+
+        return $res;
     }
 
     /**
      * 缓存自增
      *
-     * @param string $content_id 内容key
-     * @param int    $step       步长
+     * @param string $key  内容key
+     * @param int    $step 步长
      *
      * @return bool
      */
-    public static function inc($content_key, $step = 1)
+    public static function inc($key, $step = 1)
     {
-        return Cache::inc(self::key($content_key), $step);
+        return Cache::inc(self::key($key), $step);
     }
 }

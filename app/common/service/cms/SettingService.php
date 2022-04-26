@@ -46,7 +46,6 @@ class SettingService
             } else {
                 $info['diy_config'] = [];
             }
-
             $info['logo_url']    = FileService::fileUrl($info['logo_id']);
             $info['off_acc_url'] = FileService::fileUrl($info['off_acc_id']);
 
@@ -59,24 +58,24 @@ class SettingService
     /**
      * 内容设置修改
      *
-     * @param array $param 内容信息
+     * @param array $update 内容信息
      *
      * @return array
      */
-    public static function edit($param)
+    public static function edit($update)
     {
         $model = new SettingModel();
         $pk = $model->getPk();
         $id = self::$id;
 
-        $param['update_time'] = datetime();
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, $id)->update($update);
         if (empty($res)) {
             exception();
         }
 
         SettingCache::del($id);
 
-        return $param;
+        return $update;
     }
 }

@@ -17,57 +17,52 @@ class CategoryCache
     /**
      * 缓存键名
      *
-     * @param mixed $category_id 内容分类id、key
+     * @param mixed $id 内容分类id、key
      * 
      * @return string
      */
-    public static function key($category_id)
+    public static function key($id)
     {
-        return 'cms_category:' . $category_id;
+        return 'cms_category:' . $id;
     }
 
     /**
      * 缓存写入
      *
-     * @param mixed $category_id 内容分类id、key
-     * @param array $category    内容分类信息
-     * @param int   $ttl         有效时间（秒）0永久
+     * @param mixed $id   内容分类id、key
+     * @param array $info 内容分类信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($category_id, $category, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($category_id), $category, $ttl);
+        return Cache::set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存读取
      *
-     * @param mixed $category_id 内容分类id、key
+     * @param mixed $id 内容分类id、key
      * 
      * @return mixed
      */
-    public static function get($category_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($category_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param mixed $category_id 内容分类id、key
+     * @param mixed $id 内容分类id、key
      * 
      * @return bool
      */
-    public static function del($category_id = '')
+    public static function del($id = 0)
     {
-        if (is_array($category_id)) {
-            $keys = $category_id;
-        } else {
-            $keys[] = $category_id;
-        }
-
-        $keys = array_merge($keys, ['list', 'tree']);
+        $keys = var_to_array($id);
+        $keys = array_merge($keys, ['list', 'tree', 'api']);
         foreach ($keys as $v) {
             $res = Cache::delete(self::key($v));
         }

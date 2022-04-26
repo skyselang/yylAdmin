@@ -29,7 +29,7 @@ class Comment
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="留言列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\listReturn")
      * )
      */
@@ -45,25 +45,18 @@ class Comment
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value) {
-            if (in_array($search_field, ['comment_id'])) {
+            if (in_array($search_field, ['comment_id', 'is_unread'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_unread'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
-        $where[] = ['is_delete', '=', 0];
 
         $order = [];
         if ($sort_field && $sort_value) {
@@ -87,9 +80,6 @@ class Comment
         validate(CommentValidate::class)->scene('info')->check($param);
 
         $data = CommentService::info($param['comment_id']);
-        if ($data['is_delete'] == 1) {
-            exception('留言已被删除：' . $param['comment_id']);
-        }
 
         return success($data);
     }
@@ -142,7 +132,7 @@ class Comment
 
         validate(CommentValidate::class)->scene('edit')->check($param);
 
-        $data = CommentService::edit($param);
+        $data = CommentService::edit($param['comment_id'], $param);
 
         return success($data);
     }
@@ -174,7 +164,9 @@ class Comment
 
         validate(CommentValidate::class)->scene('isread')->check($param);
 
-        $data = CommentService::isread($param['ids']);
+        $param['is_unread'] = 0;
+        $param['read_time'] = datetime();
+        $data = CommentService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -202,16 +194,9 @@ class Comment
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value) {
-            if (in_array($search_field, ['comment_id'])) {
+            if (in_array($search_field, ['comment_id', 'is_unread'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_unread'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -222,11 +207,9 @@ class Comment
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
-        $order = [];
+        $order = ['delete_time' => 'desc'];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
-        } else {
-            $order = ['delete_time' => 'desc'];
         }
 
         $data = CommentService::list($where, $page, $limit, $order);
@@ -245,7 +228,7 @@ class Comment
 
         validate(CommentValidate::class)->scene('reco')->check($param);
 
-        $data = CommentService::recoverReco($param['ids']);
+        $data = CommentService::edit($param['ids'], ['is_delete' => 0]);
 
         return success($data);
     }
@@ -261,7 +244,7 @@ class Comment
 
         validate(CommentValidate::class)->scene('dele')->check($param);
 
-        $data = CommentService::recoverDele($param['ids']);
+        $data = CommentService::dele($param['ids'], true);
 
         return success($data);
     }

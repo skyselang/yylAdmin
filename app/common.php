@@ -257,7 +257,7 @@ function str_merge($str1 = '', $str2 = '', $is_rep = true)
  *
  * @return array
  */
-function listToTree($list = [], $pk = 'id', $pid = 'pid', $root = 0,  $child = 'children')
+function list_to_tree($list = [], $pk = 'id', $pid = 'pid', $root = 0,  $child = 'children')
 {
     $tree = [];
     $refer = [];
@@ -289,7 +289,7 @@ function listToTree($list = [], $pk = 'id', $pid = 'pid', $root = 0,  $child = '
  *
  * @return array
  */
-function treeToList($tree = [], $child = 'children')
+function tree_to_list($tree = [], $child = 'children')
 {
     $list = [];
     foreach ($tree as $val) {
@@ -298,11 +298,30 @@ function treeToList($tree = [], $child = 'children')
             unset($val[$child]);
             $list[] = $val;
             if (is_array($children)) {
-                $list = array_merge($list, treeToList($children, $child));
+                $list = array_merge($list, tree_to_list($children, $child));
             }
         } else {
             $list[] = $val;
         }
     }
     return $list;
+}
+
+/**
+ * 变量类型转换为数组类型
+ *
+ * @param mixed $var 要转换的变量
+ *
+ * @return array
+ */
+function var_to_array($var)
+{
+    if (is_string($var)) {
+        if (strpos(',', $var) !== false) {
+            $var = explode(',', $var);
+        }
+    }
+    settype($var, 'array');
+
+    return $var;
 }

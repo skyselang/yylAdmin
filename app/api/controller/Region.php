@@ -37,9 +37,7 @@ class Region
         $where[] = ['is_delete', '=', 0];
         $where[] = ['region_pid', '=', $region_pid];
 
-        $order = [];
-
-        $data = RegionService::list($where, $order);
+        $data = RegionService::list($where);
 
         return success($data);
     }

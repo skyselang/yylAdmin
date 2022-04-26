@@ -39,15 +39,12 @@ class ContentService
         if (empty($field)) {
             $field = $pk . ',' . $CategoryPk . ',name,img_ids,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
         }
-
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         $category_ids = $file_ids = [];
@@ -61,6 +58,7 @@ class ContentService
             }
         }
         $category = $CategoryModel->where('category_id', 'in', $category_ids)->column('category_name', 'category_id');
+
         $file = FileService::fileArray($file_ids);
 
         foreach ($list as $k => $v) {
@@ -138,236 +136,78 @@ class ContentService
     /**
      * 内容添加
      *
-     * @param $param 内容信息
+     * @param array $insert 内容信息
      *
      * @return array|Exception
      */
-    public static function add($param)
+    public static function add($insert)
     {
         $model = new ContentModel();
         $pk = $model->getPk();
 
-        $param['img_ids']     = file_ids($param['imgs']);
-        $param['file_ids']    = file_ids($param['files']);
-        $param['video_ids']   = file_ids($param['videos']);
-        $param['create_time'] = datetime();
-
-        $id = $model->insertGetId($param);
+        $insert['create_time'] = datetime();
+        $id = $model->insertGetId($insert);
         if (empty($id)) {
             exception();
         }
 
-        $param[$pk] = $id;
+        $insert[$pk] = $id;
 
-        return $param;
+        return $insert;
     }
 
     /**
      * 内容修改 
      *     
-     * @param $param 内容信息
+     * @param mixed $ids    内容信息id
+     * @param array $update 内容信息
      *     
      * @return array|Exception
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new ContentModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['img_ids']     = file_ids($param['imgs']);
-        $param['file_ids']    = file_ids($param['files']);
-        $param['video_ids']   = file_ids($param['videos']);
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        ContentCache::del($id);
+        ContentCache::del($ids);
+        $update['ids'] = $ids;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $update;
     }
 
     /**
      * 内容删除
      * 
-     * @param array $ids 内容id
+     * @param mixed $ids  内容id
+     * @param bool  $real 是否真实删除
      * 
      * @return array|Exception
      */
-    public static function dele($ids)
+    public static function dele($ids, $real = false)
     {
         $model = new ContentModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容修改分类
-     *
-     * @param array $ids         内容id
-     * @param int   $category_id 分类id
-     * 
-     * @return array
-     */
-    public static function cate($ids, $category_id = 0)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $update['category_id'] = $category_id;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容是否置顶
-     *
-     * @param array $ids    内容id
-     * @param int   $is_top 是否置顶
-     * 
-     * @return array
-     */
-    public static function istop($ids, $is_top = 0)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $update['is_top']      = $is_top;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容是否热门
-     *
-     * @param array $ids    内容id
-     * @param int   $is_hot 是否热门
-     * 
-     * @return array
-     */
-    public static function ishot($ids, $is_hot = 0)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $update['is_hot']      = $is_hot;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容是否推荐
-     *
-     * @param array $ids    内容id
-     * @param int   $is_rec 是否推荐
-     * 
-     * @return array
-     */
-    public static function isrec($ids, $is_rec = 0)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $update['is_rec']      = $is_rec;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容是否隐藏
-     *
-     * @param array $ids     内容id
-     * @param int   $is_hide 是否隐藏
-     * 
-     * @return array
-     */
-    public static function ishide($ids, $is_hide = 0)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $update['is_hide']     = $is_hide;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
+        ContentCache::del($ids);
         $update['ids'] = $ids;
 
         return $update;
@@ -376,19 +216,19 @@ class ContentService
     /**
      * 内容上一条
      *
-     * @param int $id          内容id
-     * @param int $is_category 是否当前分类
+     * @param int $id      内容id
+     * @param int $is_cate 是否当前分类
      * 
      * @return array 上一条内容
      */
-    public static function prev($id, $is_category = 0)
+    public static function prev($id, $is_cate = 0)
     {
         $model = new ContentModel();
         $pk = $model->getPk();
 
         $where[] = [$pk, '<', $id];
         $where[] = ['is_delete', '=', 0];
-        if ($is_category) {
+        if ($is_cate) {
             $content = self::info($id);
             $where[] = ['category_id', '=', $content['category_id']];
         }
@@ -405,19 +245,19 @@ class ContentService
     /**
      * 内容下一条
      *
-     * @param int $id          内容id
-     * @param int $is_category 是否当前分类
+     * @param int $id      内容id
+     * @param int $is_cate 是否当前分类
      * 
      * @return array 下一条内容
      */
-    public static function next($id, $is_category = 0)
+    public static function next($id, $is_cate = 0)
     {
         $model = new ContentModel();
         $pk = $model->getPk();
 
         $where[] = [$pk, '>', $id];
         $where[] = ['is_delete', '=', 0];
-        if ($is_category) {
+        if ($is_cate) {
             $content = self::info($id);
             $where[] = ['category_id', '=', $content['category_id']];
         }
@@ -429,61 +269,6 @@ class ContentService
         $info = $info->toArray();
 
         return $info;
-    }
-
-    /**
-     * 内容回收站恢复
-     * 
-     * @param array $ids 内容id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverReco($ids)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = 0;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 内容回收站删除
-     * 
-     * @param array $ids 内容id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverDele($ids)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $res = $model->where($pk, 'in', $ids)->delete();
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            ContentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
     }
 
     /**

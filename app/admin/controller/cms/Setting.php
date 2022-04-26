@@ -69,7 +69,6 @@ class Setting
         validate(SettingValidate::class)->scene('edit')->check($param);
 
         $param['diy_config'] = serialize($param['diy_config']);
-
         $data = SettingService::edit($param);
 
         return success($data);

@@ -25,7 +25,8 @@ class Category
     /**
      * @Apidoc\Title("内容分类列表")
      * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Returned("list", type="array", desc="树形列表", 
+     * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )
      */
@@ -33,22 +34,24 @@ class Category
     {
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
-        $where[] = ['is_delete', '=', 0];
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['category_id', 'category_pid'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['category_id', 'category_pid', 'is_hide', 'sort'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_hide'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
+        }
+        $where[] = ['is_delete', '=', 0];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
+        }
+
+        if (count($where) > 1) {
             $data['list'] = CategoryService::list('list', $where);
         } else {
             $data['list'] = CategoryService::list('tree', $where);
@@ -93,6 +96,7 @@ class Category
 
         validate(CategoryValidate::class)->scene('add')->check($param);
 
+        $param['img_ids'] = file_ids($param['imgs']);
         $data = CategoryService::add($param);
 
         return success($data);
@@ -117,7 +121,8 @@ class Category
 
         validate(CategoryValidate::class)->scene('edit')->check($param);
 
-        $data = CategoryService::edit($param);
+        $param['img_ids'] = file_ids($param['imgs']);
+        $data = CategoryService::edit($param['category_id'], $param);
 
         return success($data);
     }
@@ -129,7 +134,8 @@ class Category
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids']     = Request::param('ids/a', '');
+        $param['recycle'] = 0;
 
         validate(CategoryValidate::class)->scene('dele')->check($param);
 
@@ -151,7 +157,7 @@ class Category
 
         validate(CategoryValidate::class)->scene('pid')->check($param);
 
-        $data = CategoryService::pid($param['ids'], $param['category_pid']);
+        $data = CategoryService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -169,7 +175,7 @@ class Category
 
         validate(CategoryValidate::class)->scene('ishide')->check($param);
 
-        $data = CategoryService::ishide($param['ids'], $param['is_hide']);
+        $data = CategoryService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -181,7 +187,7 @@ class Category
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="内容列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
      *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
@@ -190,22 +196,21 @@ class Category
     {
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
-        $where[] = ['is_delete', '=', 1];
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['category_id', 'category_pid'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['category_id', 'category_pid', 'is_hide', 'sort'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_hide'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
+        }
+        $where[] = ['is_delete', '=', 1];
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
         $order = ['delete_time' => 'desc', 'sort' => 'desc'];
@@ -226,7 +231,7 @@ class Category
 
         validate(CategoryValidate::class)->scene('reco')->check($param);
 
-        $data = CategoryService::recoverReco($param['ids']);
+        $data = CategoryService::edit($param['ids'], ['is_delete' => 0]);
 
         return success($data);
     }
@@ -243,7 +248,7 @@ class Category
 
         validate(CategoryValidate::class)->scene('dele')->check($param);
 
-        $data = CategoryService::recoverDele($param['ids']);
+        $data = CategoryService::dele($param['ids'], true);
 
         return success($data);
     }

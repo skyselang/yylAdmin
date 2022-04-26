@@ -25,7 +25,7 @@ class Content
 {
     /**
      * @Apidoc\Title("分类列表")
-     * @Apidoc\Returned("list", type="array", desc="树形列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )
      */
@@ -43,7 +43,7 @@ class Content
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="内容列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
@@ -58,22 +58,11 @@ class Content
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
-        $category_id  = Request::param('category_id/d', '');
 
-        if ($category_id) {
-            $where[] = ['category_id', '=', $category_id];
-        }
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['content_id'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['content_id', 'category_id', 'is_top', 'is_hot', 'is_rec', 'is_hide'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -139,6 +128,9 @@ class Content
 
         validate(ContentValidate::class)->scene('add')->check($param);
 
+        $param['img_ids']   = file_ids($param['imgs']);
+        $param['file_ids']  = file_ids($param['files']);
+        $param['video_ids'] = file_ids($param['videos']);
         $data = ContentService::add($param);
 
         return success($data);
@@ -169,7 +161,10 @@ class Content
 
         validate(ContentValidate::class)->scene('edit')->check($param);
 
-        $data = ContentService::edit($param);
+        $param['img_ids']   = file_ids($param['imgs']);
+        $param['file_ids']  = file_ids($param['files']);
+        $param['video_ids'] = file_ids($param['videos']);
+        $data = ContentService::edit($param['content_id'], $param);
 
         return success($data);
     }
@@ -203,7 +198,7 @@ class Content
 
         validate(ContentValidate::class)->scene('cate')->check($param);
 
-        $data = ContentService::cate($param['ids'], $param['category_id']);
+        $data = ContentService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -221,7 +216,7 @@ class Content
 
         validate(ContentValidate::class)->scene('istop')->check($param);
 
-        $data = ContentService::istop($param['ids'], $param['is_top']);
+        $data = ContentService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -239,7 +234,7 @@ class Content
 
         validate(ContentValidate::class)->scene('ishot')->check($param);
 
-        $data = ContentService::ishot($param['ids'], $param['is_hot']);
+        $data = ContentService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -257,7 +252,7 @@ class Content
 
         validate(ContentValidate::class)->scene('isrec')->check($param);
 
-        $data = ContentService::isrec($param['ids'], $param['is_rec']);
+        $data = ContentService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -275,7 +270,7 @@ class Content
 
         validate(ContentValidate::class)->scene('ishide')->check($param);
 
-        $data = ContentService::ishide($param['ids'], $param['is_hide']);
+        $data = ContentService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -307,17 +302,10 @@ class Content
         if ($category_id) {
             $where[] = ['category_id', '=', $category_id];
         }
-        if ($search_field && $search_value) {
-            if ($search_field == 'content_id') {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['content_id', 'is_top', 'is_hot', 'is_rec', 'is_hide'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_top', 'is_hot', 'is_rec', 'is_hide'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -349,7 +337,7 @@ class Content
 
         validate(ContentValidate::class)->scene('reco')->check($param);
 
-        $data = ContentService::recoverReco($param['ids']);
+        $data = ContentService::edit($param['ids'], ['is_delete' => 0]);
 
         return success($data);
     }
@@ -365,7 +353,7 @@ class Content
 
         validate(ContentValidate::class)->scene('dele')->check($param);
 
-        $data = ContentService::recoverDele($param['ids']);
+        $data = ContentService::dele($param['ids'], true);
 
         return success($data);
     }

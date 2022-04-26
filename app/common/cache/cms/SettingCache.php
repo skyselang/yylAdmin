@@ -15,52 +15,52 @@ use think\facade\Cache;
 class SettingCache
 {
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param int $setting_id 设置id
+     * @param int $id 设置id
      * 
      * @return string
      */
-    public static function key($setting_id)
+    public static function key($id)
     {
-        return 'cms_setting:' . $setting_id;
+        return 'cms_setting:' . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int   $setting_id 设置id
-     * @param array $setting    设置信息
-     * @param int   $ttl        有效时间（秒）0永久
+     * @param int   $id   设置id
+     * @param array $info 设置信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($setting_id, $setting, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($setting_id), $setting, $ttl);
+        return Cache::set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $setting_id 设置id
+     * @param int $id 设置id
      * 
      * @return array 设置信息
      */
-    public static function get($setting_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($setting_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $setting_id 设置id
+     * @param int $id 设置id
      * 
      * @return bool
      */
-    public static function del($setting_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($setting_id));
+        return Cache::delete(self::key($id));
     }
 }

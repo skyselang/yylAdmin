@@ -32,17 +32,14 @@ class CommentService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',call,mobile,tel,title,remark,is_unread,create_time,update_time,delete_time';
+            $field = $pk . ',call,mobile,tel,title,remark,is_unread,read_time,create_time,update_time,delete_time';
         }
-
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list  = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -51,7 +48,7 @@ class CommentService
     /**
      * 留言信息
      * 
-     * @param $id 留言id
+     * @param int $id 留言id
      * 
      * @return array|Exception
      */
@@ -60,7 +57,6 @@ class CommentService
         $info = CommentCache::get($id);
         if (empty($info)) {
             $model = new CommentModel();
-            $pk = $model->getPk();
 
             $info = $model->find($id);
             if (empty($info)) {
@@ -71,7 +67,7 @@ class CommentService
             if ($info['is_unread']) {
                 $update['is_unread'] = 0;
                 $update['read_time'] = $info['read_time'] = datetime();
-                $model->where($pk, $id)->update($update);
+                self::edit($id, $update);
             }
         }
 
@@ -81,164 +77,78 @@ class CommentService
     /**
      * 留言添加
      *
-     * @param $param 留言信息
+     * @param array $insert 留言信息
      *
      * @return array|Exception
      */
-    public static function add($param)
+    public static function add($insert)
     {
         $model = new CommentModel();
         $pk = $model->getPk();
 
-        $param['create_time'] = datetime();
-
-        $id = $model->insertGetId($param);
+        $insert['create_time'] = datetime();
+        $id = $model->insertGetId($insert);
         if (empty($id)) {
             exception();
         }
 
-        $param[$pk] = $id;
+        $insert[$pk] = $id;
 
-        return $param;
+        return $insert;
     }
 
     /**
      * 留言修改 
      *     
-     * @param $param 留言信息
+     * @param mixed $ids    留言id
+     * @param array $update 留言信息
      *     
      * @return array|Exception
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new CommentModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        CommentCache::del($id);
+        CommentCache::del($ids);
+        $update['ids'] = $ids;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $update;
     }
 
     /**
      * 留言删除
      * 
-     * @param array $ids 留言id
+     * @param mixed $ids  留言id
+     * @param bool  $real 是否真实删除
      * 
      * @return array|Exception
      */
-    public static function dele($ids)
+    public static function dele($ids, $real = false)
     {
         $model = new CommentModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            CommentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 留言已读
-     *
-     * @param array $ids 留言id
-     * 
-     * @return array
-     */
-    public static function isread($ids)
-    {
-        $model = new CommentModel();
-        $pk = $model->getPk();
-
-        $update['is_unread'] = 0;
-        $update['read_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->where('is_unread', 1)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            CommentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 留言回收站恢复
-     * 
-     * @param array $ids 留言id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverReco($ids)
-    {
-        $model = new CommentModel();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = 0;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            CommentCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 留言回收站删除
-     * 
-     * @param array $ids 留言id
-     * 
-     * @return array|Exception
-     */
-    public static function recoverDele($ids)
-    {
-        $model = new CommentModel();
-        $pk = $model->getPk();
-
-        $res = $model->where($pk, 'in', $ids)->delete();
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            CommentCache::del($v);
-        }
-
+        CommentCache::del($ids);
         $update['ids'] = $ids;
 
         return $update;
