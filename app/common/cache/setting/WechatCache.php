@@ -14,53 +14,68 @@ use think\facade\Cache;
 
 class WechatCache
 {
+    // 缓存标签
+    protected static $tag = 'setting_wechat';
+    // 缓存前缀
+    protected static $prefix = 'setting_wechat:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param int $setting_wechat_id 微信设置id
+     * @param int $id 微信设置id
      * 
      * @return string
      */
-    public static function key($setting_wechat_id)
+    public static function key($id)
     {
-        return 'setting_wechat:' . $setting_wechat_id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int   $setting_wechat_id 微信设置id
-     * @param array $setting_wechat    微信设置信息
-     * @param int   $ttl               有效时间（秒）0永久
+     * @param int   $id   微信设置id
+     * @param array $info 微信设置信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($setting_wechat_id, $setting_wechat, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($setting_wechat_id), $setting_wechat, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $setting_wechat_id 微信设置id
+     * @param int $id 微信设置id
      * 
      * @return array 微信设置信息
      */
-    public static function get($setting_wechat_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($setting_wechat_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $setting_wechat_id 微信设置id
+     * @param int $id 微信设置id
      * 
      * @return bool
      */
-    public static function del($setting_wechat_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($setting_wechat_id));
+        return Cache::delete(self::key($id));
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

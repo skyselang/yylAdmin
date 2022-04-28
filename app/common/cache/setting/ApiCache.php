@@ -14,64 +14,68 @@ use think\facade\Cache;
 
 class ApiCache
 {
+    // 缓存标签
+    protected static $tag = 'api';
+    // 缓存前缀
+    protected static $prefix = 'api:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param mixed $api_id 接口id
+     * @param mixed $id 接口id
      * 
      * @return string
      */
-    public static function key($api_id)
+    public static function key($id)
     {
-        return 'api:' . $api_id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param mixed $api_id 接口id
-     * @param array $api    接口信息
-     * @param int   $ttl    有效时间（秒）0永久
+     * @param mixed $id   接口id
+     * @param array $info 接口信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($api_id = '', $api = [], $ttl = 86400)
+    public static function set($id, $info = [], $ttl = 86400)
     {
-        return Cache::set(self::key($api_id), $api, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param mixed $api_id 接口id
+     * @param mixed $id 接口id
      * 
      * @return array
      */
-    public static function get($api_id = '')
+    public static function get($id)
     {
-        return Cache::get(self::key($api_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param mixed $api_id 接口id、key
+     * @param mixed $id 接口id、key
      * 
      * @return bool
      */
-    public static function del($api_id = '')
+    public static function del($id)
     {
-        if (is_array($api_id)) {
-            $keys = $api_id;
-        } else {
-            $keys[] = $api_id;
-        }
+        return Cache::delete(self::key($id));
+    }
 
-        $keys = array_merge($keys, ['list', 'tree', 'urlList', 'unloginUrl', 'unrateUrl']);
-        foreach ($keys as $v) {
-            $res = Cache::delete(self::key($v));
-        }
-
-        return $res;
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

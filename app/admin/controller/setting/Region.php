@@ -29,7 +29,7 @@ class Region
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Returned("list", type="array", desc="地区列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\setting\RegionModel\listReturn")
      * )
      */
@@ -195,6 +195,42 @@ class Region
         validate(RegionValidate::class)->scene('pid')->check($param);
 
         $data = RegionService::pid($param['ids'], $param['region_pid']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("地区修改区号")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\setting\RegionModel\region_citycode")
+     */
+    public function citycode()
+    {
+        $param['ids']             = Request::param('ids/a', '');
+        $param['region_citycode'] = Request::param('region_citycode/d', 0);
+
+        validate(RegionValidate::class)->scene('citycode')->check($param);
+
+        $data = RegionService::update($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("地区修改邮编")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\setting\RegionModel\region_zipcode")
+     */
+    public function zipcode()
+    {
+        $param['ids']            = Request::param('ids/a', '');
+        $param['region_zipcode'] = Request::param('region_zipcode/d', 0);
+
+        validate(RegionValidate::class)->scene('zipcode')->check($param);
+
+        $data = RegionService::update($param['ids'], $param);
 
         return success($data);
     }

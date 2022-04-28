@@ -14,8 +14,13 @@ use think\facade\Cache;
 
 class ApiRateCache
 {
+    // 缓存标签
+    protected static $tag = 'apirate';
+    // 缓存前缀
+    protected static $prefix = 'apirate:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
      * @param int    $member_id 会员id
      * @param string $api_url   接口url
@@ -24,7 +29,7 @@ class ApiRateCache
      */
     public static function key($member_id, $api_url)
     {
-        return 'apirate:' . $member_id . ':' . $api_url;
+        return self::$prefix . $member_id . ':' . $api_url;
     }
 
     /**
@@ -32,13 +37,13 @@ class ApiRateCache
      *
      * @param int    $member_id 会员id
      * @param string $api_url   接口url
-     * @param int    $ttl       有效时间（秒）0永久
+     * @param int    $ttl       有效时间（秒，0永久）
      * 
      * @return bool
      */
     public static function set($member_id, $api_url, $ttl = 60)
     {
-        return Cache::set(self::key($member_id, $api_url), 1, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($member_id, $api_url), 1, $ttl);
     }
 
     /**
@@ -65,6 +70,16 @@ class ApiRateCache
     public static function del($member_id, $api_url)
     {
         return Cache::delete(self::key($member_id, $api_url));
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 
     /**

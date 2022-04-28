@@ -34,23 +34,19 @@ class RegionService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',region_pid,region_path,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_sort';
+            $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort';
         }
-
         $where[] = ['is_delete', '=', 0];
-
         if (empty($order)) {
             $order = ['region_sort' => 'desc', $pk => 'asc'];
         }
 
         $list = $model->field($field)->where($where)->order($order)->select()->toArray();
-
         $count = count($list);
 
         foreach ($list as $k => $v) {
-            $v['children']    = [];
-            $v['hasChildren'] = true;
-            $list[$k] = $v;
+            $list[$k]['children']    = [];
+            $list[$k]['hasChildren'] = true;
         }
 
         return compact('count', 'list');
@@ -59,11 +55,12 @@ class RegionService
     /**
      * 地区信息
      *
-     * @param mixed $id 地区id、树形key（tree)
+     * @param mixed $id   地区id、树形key（tree)
+     * @param bool  $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = RegionCache::get($id);
         if (empty($info)) {
@@ -72,11 +69,14 @@ class RegionService
 
             if ($id == self::$tree) {
                 $info = $model->field($pk . ',region_pid,region_name')->where('is_delete', 0)->select()->toArray();
-                $info = self::toTree($info, 0);
+                $info = list_to_tree($info, 'region_id', 'region_pid');
             } else {
                 $info = $model->find($id);
                 if (empty($info)) {
-                    exception('地区不存在：' . $id);
+                    if ($exce) {
+                        exception('地区不存在：' . $id);
+                    }
+                    return [];
                 }
                 $info = $info->toArray();
 
@@ -140,17 +140,16 @@ class RegionService
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = '添加失败：' . $e->getMessage() . '：' . $e->getLine();
+            $errmsg = '添加失败：' . $e->getMessage();
             // 回滚事务
             $model->rollback();
         }
 
-        if (empty($errmsg)) {
+        if ($errmsg) {
             exception($errmsg);
         }
 
-        RegionCache::del(self::$tree);
-
+        RegionCache::clear();
         $param[$pk]           = $region_id;
         $param['region_path'] = $region_path;
 
@@ -197,18 +196,16 @@ class RegionService
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = '修改失败：' . $e->getMessage() . '：' . $e->getLine();
+            $errmsg = '修改失败：' . $e->getMessage();
             // 回滚事务
             $model->rollback();
         }
 
-        if (empty($errmsg)) {
+        if ($errmsg) {
             exception($errmsg);
         }
 
-        RegionCache::del($region_id);
-        RegionCache::del(self::$tree);
-
+        RegionCache::clear();
         $param[$pk]           = $region_id;
         $param['region_path'] = $region_path;
 
@@ -229,17 +226,12 @@ class RegionService
 
         $update['is_delete']   = 1;
         $update['delete_time'] = datetime();
-
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            RegionCache::del($v);
-        }
-        RegionCache::del(self::$tree);
-
+        RegionCache::clear();
         $update['ids'] = $ids;
 
         return $update;
@@ -264,11 +256,14 @@ class RegionService
         try {
             $update['region_pid']  = $region_pid;
             $update['update_time'] = datetime();
+            $region = [];
+            if ($region_pid) {
+                $region = self::info($region_pid);
+            }
             foreach ($ids as $v) {
                 $region_level = 1;
                 $region_path  = $v;
-                if ($region_pid) {
-                    $region = self::info($region_pid);
+                if ($region) {
                     $region_level = $region['region_level'] + 1;
                     $region_path  = $region['region_path'] . ',' . $v;
                 }
@@ -279,7 +274,7 @@ class RegionService
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = '修改失败：' . $e->getMessage() . '：' . $e->getLine();
+            $errmsg = '修改失败：' . $e->getMessage();
             // 回滚事务
             $model->rollback();
         }
@@ -288,62 +283,36 @@ class RegionService
             exception($errmsg);
         }
 
-        foreach ($ids as $v) {
-            RegionCache::del($v);
-        }
-        RegionCache::del(self::$tree);
-
+        RegionCache::clear();
         $update['ids'] = $ids;
 
         return $update;
     }
 
     /**
-     * 地区获取所有子级
+     * 地区修改
      *
-     * @param array $region    地区列表
-     * @param int   $region_id 地区id
+     * @param array $ids    地区id
+     * @param array $update 地区信息
      * 
      * @return array
      */
-    public static function getChildren($region, $region_id)
+    public static function update($ids, $update = [])
     {
         $model = new RegionModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $children = [];
-        foreach ($region as $v) {
-            if ($v['region_pid'] == $region_id) {
-                $children[] = $v[$pk];
-                $children   = array_merge($children, self::getChildren($region, $v[$pk]));
-            }
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
+        if (empty($res)) {
+            exception();
         }
 
-        return $children;
-    }
+        RegionCache::clear();
+        $update['ids'] = $ids;
 
-    /**
-     * 地区列表转换树形
-     *
-     * @param array $region     地区列表
-     * @param int   $region_pid 地区pid
-     * 
-     * @return array
-     */
-    public static function toTree($region, $region_pid)
-    {
-        $model = new RegionModel();
-        $pk = $model->getPk();
-
-        $tree = [];
-        foreach ($region as $v) {
-            if ($v['region_pid'] == $region_pid) {
-                $v['children'] = self::toTree($region, $v[$pk]);
-                $tree[] = $v;
-            }
-        }
-
-        return $tree;
+        return $update;
     }
 
     /**

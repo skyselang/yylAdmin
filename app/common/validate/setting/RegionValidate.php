@@ -29,23 +29,25 @@ class RegionValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'id'   => ['region_id'],
-        'info' => ['region_id'],
-        'add'  => ['region_name'],
-        'edit' => ['region_id', 'region_name'],
-        'pid'  => ['ids'],
-        'dele' => ['ids'],
+        'id'       => ['region_id'],
+        'info'     => ['region_id'],
+        'add'      => ['region_name'],
+        'edit'     => ['region_id', 'region_name'],
+        'dele'     => ['ids'],
+        'pid'      => ['ids'],
+        'citycode' => ['ids'],
+        'zipcode'  => ['ids'],
     ];
 
     // 验证场景定义：删除
-    protected function scenedele()
+    protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkRegionChild');
     }
 
     // 验证场景定义：修改上级
-    protected function scenepid()
+    protected function scenePid()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkRegionPidNeq');

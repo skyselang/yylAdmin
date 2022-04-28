@@ -14,63 +14,68 @@ use think\facade\Cache;
 
 class RegionCache
 {
+    // 缓存标签
+    protected static $tag = 'region';
+    // 缓存前缀
+    protected static $prefix = 'region:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param mixed $region_id 地区id
+     * @param mixed $id 地区id
      * 
      * @return string
      */
-    public static function key($region_id)
+    public static function key($id)
     {
-        return 'region:' . $region_id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param mixed $region_id 地区id
-     * @param array $region    地区信息
-     * @param int   $ttl       有效时间（秒）0永久
+     * @param mixed $id   地区id
+     * @param array $info 地区信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool 
      */
-    public static function set($region_id, $region, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($region_id), $region, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param mixed $region_id 地区id
+     * @param mixed $id 地区id
      * 
      * @return array 地区信息
      */
-    public static function get($region_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($region_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param mixed $region_id 地区id
+     * @param mixed $id 地区id
      * 
      * @return bool
      */
-    public static function del($region_id)
+    public static function del($id = '')
     {
-        if (is_array($region_id)) {
-            $keys = $region_id;
-        } else {
-            $keys[] = $region_id;
-        }
+        return Cache::delete(self::key($id));
+    }
 
-        $keys = array_merge($keys, ['tree']);
-        foreach ($keys as $v) {
-            $res = Cache::delete(self::key($v));
-        }
-        return $res;
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

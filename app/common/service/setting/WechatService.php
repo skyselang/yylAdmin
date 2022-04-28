@@ -68,11 +68,9 @@ class WechatService
     {
         $model = new WechatModel();
         $pk = $model->getPk();
-
         $id = self::$offi_id;
 
         $param['update_time'] = datetime();
-
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
@@ -124,11 +122,9 @@ class WechatService
     {
         $model = new WechatModel();
         $pk = $model->getPk();
-
         $id = self::$mini_id;
 
         $param['update_time'] = datetime();
-
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
@@ -225,6 +221,8 @@ class WechatService
             exception('小程序 appsecret 未设置');
         }
 
+        $log_level = Config::get('app.app_debug') ? 'debug' : 'error';
+
         $config_info = [
             'app_id' => $mini_info['appid'],
             'secret' => $mini_info['appsecret'],
@@ -240,7 +238,7 @@ class WechatService
              * path：日志文件位置(绝对路径!!!)，要求可写权限
              */
             'log' => [
-                'level' => 'debug',
+                'level' => $log_level,
                 'file' => runtime_path() . 'easywechatMiniProgram.log',
             ],
         ];

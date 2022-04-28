@@ -25,6 +25,7 @@ TRUNCATE yyl_setting;
 TRUNCATE yyl_setting_wechat;
 DELETE FROM yyl_api WHERE is_delete=1;
 UPDATE yyl_api SET create_time=null, update_time=null, delete_time=null;
+DELETE FROM yyl_region WHERE is_delete=1;
 UPDATE yyl_region SET create_time=null, update_time=null, delete_time=null;
 
 DELETE FROM yyl_admin_menu WHERE is_delete=1;

@@ -40,14 +40,14 @@ class ApiValidate extends Validate
     ];
 
     // 验证场景定义：删除
-    protected function scenedele()
+    protected function sceneDele()
     {
         return $this->only(['ids'])
-            ->append('ids', 'checkApiPid');
+            ->append('ids', 'checkApiChild');
     }
 
     // 验证场景定义：修改上级
-    protected function scenepid()
+    protected function scenePid()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkApiPidNeq');
@@ -65,7 +65,7 @@ class ApiValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：接口是否已存在
+    // 自定义验证规则：接口名称/链接是否已存在
     protected function checkApiExist($value, $rule, $data = [])
     {
         $ApiModel = new ApiModel();
@@ -101,7 +101,7 @@ class ApiValidate extends Validate
     }
 
     // 自定义验证规则：接口是否存在下级接口
-    protected function checkApiPid($value, $rule, $data = [])
+    protected function checkApiChild($value, $rule, $data = [])
     {
         $ApiModel = new ApiModel();
         $ApiPk = $ApiModel->getPk();

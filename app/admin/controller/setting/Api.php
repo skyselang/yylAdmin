@@ -34,24 +34,21 @@ class Api
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
 
-        $where = [];
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['api_id', 'api_pid'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['api_id', 'api_pid', 'is_unauth', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_unauth', 'is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $where[] = ['is_delete', '=', 0];
 
-        $data['list'] = ApiService::list('tree', $where);
+        if (count($where) > 1) {
+            $data['list'] = ApiService::list('list', $where);
+        } else {
+            $data['list'] = ApiService::list('tree', $where);
+        }
 
         return success($data);
     }
@@ -109,7 +106,7 @@ class Api
 
         validate(ApiValidate::class)->scene('edit')->check($param);
 
-        $data = ApiService::edit($param);
+        $data = ApiService::edit($param['api_id'], $param);
 
         return success($data);
     }
@@ -143,7 +140,7 @@ class Api
 
         validate(ApiValidate::class)->scene('pid')->check($param);
 
-        $data = ApiService::pid($param['ids'], $param['api_pid']);
+        $data = ApiService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -161,7 +158,7 @@ class Api
 
         validate(ApiValidate::class)->scene('unlogin')->check($param);
 
-        $data = ApiService::unlogin($param['ids'], $param['is_unlogin']);
+        $data = ApiService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -179,7 +176,7 @@ class Api
 
         validate(ApiValidate::class)->scene('disable')->check($param);
 
-        $data = ApiService::disable($param['ids'], $param['is_disable']);
+        $data = ApiService::edit($param['ids'], $param);
 
         return success($data);
     }

@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 26/04/2022 17:27:25
+ Date: 28/04/2022 14:45:11
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 510 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 513 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -268,6 +268,9 @@ INSERT INTO `yyl_admin_menu` VALUES (506, 298, '内容分类回收站删除', 'a
 INSERT INTO `yyl_admin_menu` VALUES (507, 410, '文件分组回收站', 'admin/file.Group/recover', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (508, 410, '文件分组回收站恢复', 'admin/file.Group/recoverReco', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (509, 410, '文件分组回收站删除', 'admin/file.Group/recoverDele', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (510, 150, '地区修改上级', 'admin/setting.Region/pid', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (511, 150, '地区修改区号', 'admin/setting.Region/citycode', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (512, 150, '地区修改邮编', 'admin/setting.Region/zipcode', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_notice
@@ -461,7 +464,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -873,48 +876,48 @@ CREATE TABLE `yyl_region`  (
   INDEX `region_id`(`region_id`) USING BTREE,
   INDEX `region_name`(`region_name`) USING BTREE,
   INDEX `region_pid`(`region_pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 659006102 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '地区' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 659006106 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '地区' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_region
 -- ----------------------------
-INSERT INTO `yyl_region` VALUES (11, 0, '11', 1, '北京', 'BeiJing', 'BJ', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (12, 0, '12', 1, '天津', 'TianJin', 'TJ', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (13, 0, '13', 1, '河北省', 'HeBeiSheng', 'HBS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (14, 0, '14', 1, '山西省', 'ShanXiSheng', 'SXS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (15, 0, '15', 1, '内蒙古自治区', 'NeiMengGuZiZhiQu', 'NMGZZQ', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (21, 0, '21', 1, '辽宁省', 'LiaoNingSheng', 'LNS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (22, 0, '22', 1, '吉林省', 'JiLinSheng', 'JLS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (23, 0, '23', 1, '黑龙江省', 'HeiLongJiangSheng', 'HLJS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (31, 0, '31', 1, '上海', 'ShangHai', 'SH', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (32, 0, '32', 1, '江苏省', 'JiangSuSheng', 'JSS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (33, 0, '33', 1, '浙江省', 'ZheJiangSheng', 'ZJS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (34, 0, '34', 1, '安徽省', 'AnHuiSheng', 'AHS', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (35, 0, '35', 1, '福建省', 'FuJianSheng', 'FJS', 'F', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (36, 0, '36', 1, '江西省', 'JiangXiSheng', 'JXS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (37, 0, '37', 1, '山东省', 'ShanDongSheng', 'SDS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (41, 0, '41', 1, '河南省', 'HeNanSheng', 'HNS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (42, 0, '42', 1, '湖北省', 'HuBeiSheng', 'HBS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (43, 0, '43', 1, '湖南省', 'HuNanSheng', 'HNS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (44, 0, '44', 1, '广东省', 'GuangDongSheng', 'GDS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (45, 0, '45', 1, '广西壮族自治区', 'GuangXiZhuangZuZiZhiQu', 'GXZZZZQ', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (46, 0, '46', 1, '海南省', 'HaiNanSheng', 'HNS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (50, 0, '50', 1, '重庆', 'ChongQing', 'CQ', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (51, 0, '51', 1, '四川省', 'SiChuanSheng', 'SCS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (52, 0, '52', 1, '贵州省', 'GuiZhouSheng', 'GZS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (53, 0, '53', 1, '云南省', 'YunNanSheng', 'YNS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (54, 0, '54', 1, '西藏自治区', 'XiZangZiZhiQu', 'XZZZQ', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (61, 0, '61', 1, '陕西省', 'ShanXiSheng', 'SXS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (62, 0, '62', 1, '甘肃省', 'GanSuSheng', 'GSS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (63, 0, '63', 1, '青海省', 'QingHaiSheng', 'QHS', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (64, 0, '64', 1, '宁夏回族自治区', 'NingXiaHuiZuZiZhiQu', 'NXHZZZQ', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (65, 0, '65', 1, '新疆维吾尔自治区', 'XinJiangWeiWuErZiZhiQu', 'XJWWEZZQ', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (82, 0, '82', 1, '香港特别行政区', 'XiangGangTeBieXingZhengQu', 'XGTBXZQ', 'X', '00852', '999077', '114.182343', '22.295803', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (83, 0, '83', 1, '澳门特别行政区', 'AoMenTeBieXingZhengQu', 'AMTBXZQ', 'A', '00853', '999078', '113.552565', '22.200858', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (88, 0, '88', 1, '台湾省', 'TaiWanSheng', 'TWS', 'T', '00886', '222', '121.566349', '25.047042', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (11, 0, '11', 1, '北京', 'BeiJing', 'BJ', 'B', '010', '100000', '116.403613', '39.914909', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (12, 0, '12', 1, '天津', 'TianJin', 'TJ', 'T', '022', '300000', '117.209241', '39.116637', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (13, 0, '13', 1, '河北省', 'HeBeiSheng', 'HBS', 'H', '', '500000', '114.519921', '38.049111', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (14, 0, '14', 1, '山西省', 'ShanXiSheng', 'SXS', 'S', '', '030000', '112.556728', '37.877097', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (15, 0, '15', 1, '内蒙古自治区', 'NeiMengGuZiZhiQu', 'NMGZZQ', 'N', '', '010000', '111.749609', '40.849356', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (21, 0, '21', 1, '辽宁省', 'LiaoNingSheng', 'LNS', 'L', '', '110000', '123.444218', '41.816525', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (22, 0, '22', 1, '吉林省', 'JiLinSheng', 'JLS', 'J', '', '130000', '126.560808', '43.856048', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (23, 0, '23', 1, '黑龙江省', 'HeiLongJiangSheng', 'HLJS', 'H', '', '150000', '126.64091', '45.760003', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (31, 0, '31', 1, '上海', 'ShangHai', 'SH', 'S', '021', '200000', '121.472491', '31.236917', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (32, 0, '32', 1, '江苏省', 'JiangSuSheng', 'JSS', 'J', '', '210000', '118.798874', '32.065798', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (33, 0, '33', 1, '浙江省', 'ZheJiangSheng', 'ZJS', 'Z', '', '310000', '120.203231', '30.298993', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (34, 0, '34', 1, '安徽省', 'AnHuiSheng', 'AHS', 'A', '', '230000', '117.243152', '31.826135', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (35, 0, '35', 1, '福建省', 'FuJianSheng', 'FJS', 'F', '', '350000', '119.300721', '26.079863', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (36, 0, '36', 1, '江西省', 'JiangXiSheng', 'JXS', 'J', '', '330000', '115.863104', '28.690816', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (37, 0, '37', 1, '山东省', 'ShanDongSheng', 'SDS', 'S', '', '250000', '117.124028', '36.657256', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (41, 0, '41', 1, '河南省', 'HeNanSheng', 'HNS', 'H', '', '450000', '113.627149', '34.755581', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (42, 0, '42', 1, '湖北省', 'HuBeiSheng', 'HBS', 'H', '', '430000', '114.307624', '30.599358', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (43, 0, '43', 1, '湖南省', 'HuNanSheng', 'HNS', 'H', '', '410000', '112.944761', '28.235447', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (44, 0, '44', 1, '广东省', 'GuangDongSheng', 'GDS', 'G', '', '510000', '113.270701', '23.135822', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (45, 0, '45', 1, '广西壮族自治区', 'GuangXiZhuangZuZiZhiQu', 'GXZZZZQ', 'G', '', '530000', '108.371892', '22.820735', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (46, 0, '46', 1, '海南省', 'HaiNanSheng', 'HNS', 'H', '0898', '570000', '110.20606', '20.051883', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (50, 0, '50', 1, '重庆', 'ChongQing', 'CQ', 'C', '023', '400000', '106.556137', '29.570001', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (51, 0, '51', 1, '四川省', 'SiChuanSheng', 'SCS', 'S', '', '610000', '104.075188', '30.578041', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (52, 0, '52', 1, '贵州省', 'GuiZhouSheng', 'GZS', 'G', '', '550000', '106.635135', '26.653119', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (53, 0, '53', 1, '云南省', 'YunNanSheng', 'YNS', 'Y', '', '650000', '102.837727', '24.887519', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (54, 0, '54', 1, '西藏自治区', 'XiZangZiZhiQu', 'XZZZQ', 'X', '', '850000', '91.178386', '29.660929', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (61, 0, '61', 1, '陕西省', 'ShanXiSheng', 'SXS', 'S', '', '710000', '108.944291', '34.346415', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (62, 0, '62', 1, '甘肃省', 'GanSuSheng', 'GSS', 'G', '', '730000', '103.838799', '36.067333', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (63, 0, '63', 1, '青海省', 'QingHaiSheng', 'QHS', 'Q', '', '810000', '101.783008', '36.623451', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (64, 0, '64', 1, '宁夏回族自治区', 'NingXiaHuiZuZiZhiQu', 'NXHZZZQ', 'N', '', '750000', '106.239161', '38.491791', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (65, 0, '65', 1, '新疆维吾尔自治区', 'XinJiangWeiWuErZiZhiQu', 'XJWWEZZQ', 'X', '', '830000', '87.620827', '43.832957', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (82, 0, '82', 1, '香港特别行政区', 'XiangGangTeBieXingZhengQu', 'XGTBXZQ', 'X', '00852', '999077', '114.172318', '22.281325', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (83, 0, '83', 1, '澳门特别行政区', 'AoMenTeBieXingZhengQu', 'AMTBXZQ', 'A', '00853', '999078', '113.578035', '22.140678', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (88, 0, '88', 1, '台湾省', 'TaiWanSheng', 'TWS', 'T', '00886', '999079', '120.999623', '23.919772', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1101, 11, '11,1101', 2, '北京市', 'BeiJingShi', 'BJS', 'S', '010', '100000', '116.402544', '39.915378', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1201, 12, '12,1201', 2, '天津市', 'TianJinShi', 'TJS', 'S', '022', '300000', '117.208214', '39.133908', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (1301, 13, '13,1301', 2, '石家庄市', 'ShiJiaZhuangShi', 'SJZS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (1301, 13, '13,1301', 2, '石家庄市', 'ShiJiaZhuangShi', 'SJZS', 'S', '0311', '050000', '114.519804', '38.048767', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1302, 13, '13,1302', 2, '唐山市', 'TangShanShi', 'TSS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1303, 13, '13,1303', 2, '秦皇岛市', 'QinHuangDaoShi', 'QHDS', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1304, 13, '13,1304', 2, '邯郸市', 'HanDanShi', 'HDS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -925,7 +928,7 @@ INSERT INTO `yyl_region` VALUES (1308, 13, '13,1308', 2, '承德市', 'ChengDeSh
 INSERT INTO `yyl_region` VALUES (1309, 13, '13,1309', 2, '沧州市', 'CangZhouShi', 'CZS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1310, 13, '13,1310', 2, '廊坊市', 'LangFangShi', 'LFS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1311, 13, '13,1311', 2, '衡水市', 'HengShuiShi', 'HSS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (1401, 14, '14,1401', 2, '太原市', 'TaiYuanShi', 'TYS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (1401, 14, '14,1401', 2, '太原市', 'TaiYuanShi', 'TYS', 'T', '0351', '030000', '112.556396', '37.876079', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1402, 14, '14,1402', 2, '大同市', 'DaTongShi', 'DTS', 'D', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1403, 14, '14,1403', 2, '阳泉市', 'YangQuanShi', 'YQS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1404, 14, '14,1404', 2, '长治市', 'ChangZhiShi', 'CZS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -936,7 +939,7 @@ INSERT INTO `yyl_region` VALUES (1408, 14, '14,1408', 2, '运城市', 'YunChengS
 INSERT INTO `yyl_region` VALUES (1409, 14, '14,1409', 2, '忻州市', 'XinZhouShi', 'XZS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1410, 14, '14,1410', 2, '临汾市', 'LinFenShi', 'LFS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1411, 14, '14,1411', 2, '吕梁市', 'LyuLiangShi', 'LLS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (1501, 15, '15,1501', 2, '呼和浩特市', 'HuHeHaoTeShi', 'HHHTS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (1501, 15, '15,1501', 2, '呼和浩特市', 'HuHeHaoTeShi', 'HHHTS', 'H', '0471', '010000', '111.751488', '40.848422', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1502, 15, '15,1502', 2, '包头市', 'BaoTouShi', 'BTS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1503, 15, '15,1503', 2, '乌海市', 'WuHaiShi', 'WHS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1504, 15, '15,1504', 2, '赤峰市', 'ChiFengShi', 'CFS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -948,7 +951,7 @@ INSERT INTO `yyl_region` VALUES (1509, 15, '15,1509', 2, '乌兰察布市', 'WuL
 INSERT INTO `yyl_region` VALUES (1522, 15, '15,1522', 2, '兴安盟', 'XingAnMeng', 'XAM', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1525, 15, '15,1525', 2, '锡林郭勒盟', 'XiLinGuoLeMeng', 'XLGLM', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (1529, 15, '15,1529', 2, '阿拉善盟', 'ALaShanMeng', 'ALSM', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (2101, 21, '21,2101', 2, '沈阳市', 'ShenYangShi', 'SYS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (2101, 21, '21,2101', 2, '沈阳市', 'ShenYangShi', 'SYS', 'S', '024', '110000', '123.469945', '41.68383', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2102, 21, '21,2102', 2, '大连市', 'DaLianShi', 'DLS', 'D', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2103, 21, '21,2103', 2, '鞍山市', 'AnShanShi', 'ASS', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2104, 21, '21,2104', 2, '抚顺市', 'FuShunShi', 'FSS', 'F', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -962,7 +965,7 @@ INSERT INTO `yyl_region` VALUES (2111, 21, '21,2111', 2, '盘锦市', 'PanJinShi
 INSERT INTO `yyl_region` VALUES (2112, 21, '21,2112', 2, '铁岭市', 'TieLingShi', 'TLS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2113, 21, '21,2113', 2, '朝阳市', 'ZhaoYangShi', 'ZYS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2114, 21, '21,2114', 2, '葫芦岛市', 'HuLuDaoShi', 'HLDS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (2201, 22, '22,2201', 2, '长春市', 'ChangChunShi', 'CCS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (2201, 22, '22,2201', 2, '长春市', 'ChangChunShi', 'CCS', 'C', '0431', '130000', '125.329456', '43.822787', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2202, 22, '22,2202', 2, '吉林市', 'JiLinShi', 'JLS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2203, 22, '22,2203', 2, '四平市', 'SiPingShi', 'SPS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2204, 22, '22,2204', 2, '辽源市', 'LiaoYuanShi', 'LYS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -971,7 +974,7 @@ INSERT INTO `yyl_region` VALUES (2206, 22, '22,2206', 2, '白山市', 'BaiShanSh
 INSERT INTO `yyl_region` VALUES (2207, 22, '22,2207', 2, '松原市', 'SongYuanShi', 'SYS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2208, 22, '22,2208', 2, '白城市', 'BaiChengShi', 'BCS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2224, 22, '22,2224', 2, '延边朝鲜族自治州', 'YanBianChaoXianZuZiZhiZhou', 'YBCXZZZZ', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (2301, 23, '23,2301', 2, '哈尔滨市', 'HaErBinShi', 'HEBS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (2301, 23, '23,2301', 2, '哈尔滨市', 'HaErBinShi', 'HEBS', 'H', '0451', '150000', '126.542186', '45.808823', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2302, 23, '23,2302', 2, '齐齐哈尔市', 'QiQiHaErShi', 'QQHES', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2303, 23, '23,2303', 2, '鸡西市', 'JiXiShi', 'JXS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2304, 23, '23,2304', 2, '鹤岗市', 'HeGangShi', 'HGS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -985,7 +988,7 @@ INSERT INTO `yyl_region` VALUES (2311, 23, '23,2311', 2, '黑河市', 'HeiHeShi'
 INSERT INTO `yyl_region` VALUES (2312, 23, '23,2312', 2, '绥化市', 'SuiHuaShi', 'SHS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (2327, 23, '23,2327', 2, '大兴安岭地区', 'DaXingAnLingDiQu', 'DXALDQ', 'D', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3101, 31, '31,3101', 2, '上海市', 'ShangHaiShi', 'SHS', 'S', '021', '2000000', '121.462415', '31.242974', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (3201, 32, '32,3201', 2, '南京市', 'NanJingShi', 'NJS', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (3201, 32, '32,3201', 2, '南京市', 'NanJingShi', 'NJS', 'N', '025', '210000', '118.802422', '32.066121', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3202, 32, '32,3202', 2, '无锡市', 'WuXiShi', 'WXS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3203, 32, '32,3203', 2, '徐州市', 'XuZhouShi', 'XZS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3204, 32, '32,3204', 2, '常州市', 'ChangZhouShi', 'CZS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -998,7 +1001,7 @@ INSERT INTO `yyl_region` VALUES (3210, 32, '32,3210', 2, '扬州市', 'YangZhouS
 INSERT INTO `yyl_region` VALUES (3211, 32, '32,3211', 2, '镇江市', 'ZhenJiangShi', 'ZJS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3212, 32, '32,3212', 2, '泰州市', 'TaiZhouShi', 'TZS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3213, 32, '32,3213', 2, '宿迁市', 'SuQianShi', 'SQS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (3301, 33, '33,3301', 2, '杭州市', 'HangZhouShi', 'HZS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (3301, 33, '33,3301', 2, '杭州市', 'HangZhouShi', 'HZS', 'H', '0571', '310000', '120.216085', '30.253581', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3302, 33, '33,3302', 2, '宁波市', 'NingBoShi', 'NBS', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3303, 33, '33,3303', 2, '温州市', 'WenZhouShi', 'WZS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3304, 33, '33,3304', 2, '嘉兴市', 'JiaXingShi', 'JXS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1009,7 +1012,7 @@ INSERT INTO `yyl_region` VALUES (3308, 33, '33,3308', 2, '衢州市', 'QuZhouShi
 INSERT INTO `yyl_region` VALUES (3309, 33, '33,3309', 2, '舟山市', 'ZhouShanShi', 'ZSS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3310, 33, '33,3310', 2, '台州市', 'TaiZhouShi', 'TZS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3311, 33, '33,3311', 2, '丽水市', 'LiShuiShi', 'LSS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (3401, 34, '34,3401', 2, '合肥市', 'HeFeiShi', 'HFS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (3401, 34, '34,3401', 2, '合肥市', 'HeFeiShi', 'HFS', 'H', '0551', '230000', '117.232291', '31.826087', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3402, 34, '34,3402', 2, '芜湖市', 'WuHuShi', 'WHS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3403, 34, '34,3403', 2, '蚌埠市', 'BengBuShi', 'BBS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3404, 34, '34,3404', 2, '淮南市', 'HuaiNanShi', 'HNS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1025,7 +1028,7 @@ INSERT INTO `yyl_region` VALUES (3415, 34, '34,3415', 2, '六安市', 'LuAnShi',
 INSERT INTO `yyl_region` VALUES (3416, 34, '34,3416', 2, '亳州市', 'BoZhouShi', 'BZS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3417, 34, '34,3417', 2, '池州市', 'ChiZhouShi', 'CZS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3418, 34, '34,3418', 2, '宣城市', 'XuanChengShi', 'XCS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (3501, 35, '35,3501', 2, '福州市', 'FuZhouShi', 'FZS', 'F', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (3501, 35, '35,3501', 2, '福州市', 'FuZhouShi', 'FZS', 'F', '0591', '350000', '119.30347', '26.080429', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3502, 35, '35,3502', 2, '厦门市', 'XiaMenShi', 'XMS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3503, 35, '35,3503', 2, '莆田市', 'PuTianShi', 'PTS', 'P', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3504, 35, '35,3504', 2, '三明市', 'SanMingShi', 'SMS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1034,7 +1037,7 @@ INSERT INTO `yyl_region` VALUES (3506, 35, '35,3506', 2, '漳州市', 'ZhangZhou
 INSERT INTO `yyl_region` VALUES (3507, 35, '35,3507', 2, '南平市', 'NanPingShi', 'NPS', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3508, 35, '35,3508', 2, '龙岩市', 'LongYanShi', 'LYS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3509, 35, '35,3509', 2, '宁德市', 'NingDeShi', 'NDS', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (3601, 36, '36,3601', 2, '南昌市', 'NanChangShi', 'NCS', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (3601, 36, '36,3601', 2, '南昌市', 'NanChangShi', 'NCS', 'N', '0791', '330000', '115.862285', '28.689455', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3602, 36, '36,3602', 2, '景德镇市', 'JingDeZhenShi', 'JDZS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3603, 36, '36,3603', 2, '萍乡市', 'PingXiangShi', 'PXS', 'P', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3604, 36, '36,3604', 2, '九江市', 'JiuJiangShi', 'JJS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1045,7 +1048,7 @@ INSERT INTO `yyl_region` VALUES (3608, 36, '36,3608', 2, '吉安市', 'JiAnShi',
 INSERT INTO `yyl_region` VALUES (3609, 36, '36,3609', 2, '宜春市', 'YiChunShi', 'YCS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3610, 36, '36,3610', 2, '抚州市', 'FuZhouShi', 'FZS', 'F', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3611, 36, '36,3611', 2, '上饶市', 'ShangRaoShi', 'SRS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (3701, 37, '37,3701', 2, '济南市', 'JiNanShi', 'JNS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (3701, 37, '37,3701', 2, '济南市', 'JiNanShi', 'JNS', 'J', '0531', '250000', '117.125249', '36.656091', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3702, 37, '37,3702', 2, '青岛市', 'QingDaoShi', 'QDS', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3703, 37, '37,3703', 2, '淄博市', 'ZiBoShi', 'ZBS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3704, 37, '37,3704', 2, '枣庄市', 'ZaoZhuangShi', 'ZZS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1061,7 +1064,7 @@ INSERT INTO `yyl_region` VALUES (3714, 37, '37,3714', 2, '德州市', 'DeZhouShi
 INSERT INTO `yyl_region` VALUES (3715, 37, '37,3715', 2, '聊城市', 'LiaoChengShi', 'LCS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3716, 37, '37,3716', 2, '滨州市', 'BinZhouShi', 'BZS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (3717, 37, '37,3717', 2, '菏泽市', 'HeZeShi', 'HZS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (4101, 41, '41,4101', 2, '郑州市', 'ZhengZhouShi', 'ZZS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (4101, 41, '41,4101', 2, '郑州市', 'ZhengZhouShi', 'ZZS', 'Z', '0371', '450000', '113.630841', '34.752965', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4102, 41, '41,4102', 2, '开封市', 'KaiFengShi', 'KFS', 'K', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4103, 41, '41,4103', 2, '洛阳市', 'LuoYangShi', 'LYS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4104, 41, '41,4104', 2, '平顶山市', 'PingDingShanShi', 'PDSS', 'P', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1078,7 +1081,7 @@ INSERT INTO `yyl_region` VALUES (4114, 41, '41,4114', 2, '商丘市', 'ShangQiuS
 INSERT INTO `yyl_region` VALUES (4115, 41, '41,4115', 2, '信阳市', 'XinYangShi', 'XYS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4116, 41, '41,4116', 2, '周口市', 'ZhouKouShi', 'ZKS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4117, 41, '41,4117', 2, '驻马店市', 'ZhuMaDianShi', 'ZMDS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (4201, 42, '42,4201', 2, '武汉市', 'WuHanShi', 'WHS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (4201, 42, '42,4201', 2, '武汉市', 'WuHanShi', 'WHS', 'W', '027', '430000', '114.310436', '30.598964', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4202, 42, '42,4202', 2, '黄石市', 'HuangShiShi', 'HSS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4203, 42, '42,4203', 2, '十堰市', 'ShiYanShi', 'SYS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4205, 42, '42,4205', 2, '宜昌市', 'YiChangShi', 'YCS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1091,7 +1094,7 @@ INSERT INTO `yyl_region` VALUES (4211, 42, '42,4211', 2, '黄冈市', 'HuangGang
 INSERT INTO `yyl_region` VALUES (4212, 42, '42,4212', 2, '咸宁市', 'XianNingShi', 'XNS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4213, 42, '42,4213', 2, '随州市', 'SuiZhouShi', 'SZS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4228, 42, '42,4228', 2, '恩施土家族苗族自治州', 'EnShiTuJiaZuMiaoZuZiZhiZhou', 'ESTJZMZZZZ', 'E', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (4301, 43, '43,4301', 2, '长沙市', 'ChangShaShi', 'CSS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (4301, 43, '43,4301', 2, '长沙市', 'ChangShaShi', 'CSS', 'C', '0731', '410000', '112.94432', '28.235399', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4302, 43, '43,4302', 2, '株洲市', 'ZhuZhouShi', 'ZZS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4303, 43, '43,4303', 2, '湘潭市', 'XiangTanShi', 'XTS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4304, 43, '43,4304', 2, '衡阳市', 'HengYangShi', 'HYS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1105,7 +1108,7 @@ INSERT INTO `yyl_region` VALUES (4311, 43, '43,4311', 2, '永州市', 'YongZhouS
 INSERT INTO `yyl_region` VALUES (4312, 43, '43,4312', 2, '怀化市', 'HuaiHuaShi', 'HHS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4313, 43, '43,4313', 2, '娄底市', 'LouDiShi', 'LDS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4331, 43, '43,4331', 2, '湘西土家族苗族自治州', 'XiangXiTuJiaZuMiaoZuZiZhiZhou', 'XXTJZMZZZZ', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (4401, 44, '44,4401', 2, '广州市', 'GuangZhouShi', 'GZS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (4401, 44, '44,4401', 2, '广州市', 'GuangZhouShi', 'GZS', 'G', '020', '510000', '113.271429', '23.135868', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4402, 44, '44,4402', 2, '韶关市', 'ShaoGuanShi', 'SGS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4403, 44, '44,4403', 2, '深圳市', 'ShenZhenShi', 'SZS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4404, 44, '44,4404', 2, '珠海市', 'ZhuHaiShi', 'ZHS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1126,7 +1129,7 @@ INSERT INTO `yyl_region` VALUES (4420, 44, '44,4420', 2, '中山市', 'ZhongShan
 INSERT INTO `yyl_region` VALUES (4451, 44, '44,4451', 2, '潮州市', 'ChaoZhouShi', 'CZS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4452, 44, '44,4452', 2, '揭阳市', 'JieYangShi', 'JYS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4453, 44, '44,4453', 2, '云浮市', 'YunFuShi', 'YFS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (4501, 45, '45,4501', 2, '南宁市', 'NanNingShi', 'NNS', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (4501, 45, '45,4501', 2, '南宁市', 'NanNingShi', 'NNS', 'N', '0771', '530000', '108.374029', '22.822074', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4502, 45, '45,4502', 2, '柳州市', 'LiuZhouShi', 'LZS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4503, 45, '45,4503', 2, '桂林市', 'GuiLinShi', 'GLS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4504, 45, '45,4504', 2, '梧州市', 'WuZhouShi', 'WZS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1140,12 +1143,12 @@ INSERT INTO `yyl_region` VALUES (4511, 45, '45,4511', 2, '贺州市', 'HeZhouShi
 INSERT INTO `yyl_region` VALUES (4512, 45, '45,4512', 2, '河池市', 'HeChiShi', 'HCS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4513, 45, '45,4513', 2, '来宾市', 'LaiBinShi', 'LBS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4514, 45, '45,4514', 2, '崇左市', 'ChongZuoShi', 'CZS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (4601, 46, '46,4601', 2, '海口市', 'HaiKouShi', 'HKS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (4601, 46, '46,4601', 2, '海口市', 'HaiKouShi', 'HKS', 'H', '0898', '570100', '110.206141', '20.0532', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4602, 46, '46,4602', 2, '三亚市', 'SanYaShi', 'SYS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4603, 46, '46,4603', 2, '三沙市', 'SanShaShi', 'SSS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (4604, 46, '46,4604', 2, '儋州市', 'DanZhouShi', 'DZS', 'D', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5001, 50, '50,5001', 2, '重庆市', 'ChongQingShi', 'CQS', 'S', '023', '400000', '106.547391', '29.587079', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (5101, 51, '51,5101', 2, '成都市', 'ChengDuShi', 'CDS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (5101, 51, '51,5101', 2, '成都市', 'ChengDuShi', 'CDS', 'C', '028', '610000', '104.07332', '30.578994', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5103, 51, '51,5103', 2, '自贡市', 'ZiGongShi', 'ZGS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5104, 51, '51,5104', 2, '攀枝花市', 'PanZhiHuaShi', 'PZHS', 'P', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5105, 51, '51,5105', 2, '泸州市', 'LuZhouShi', 'LZS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1166,7 +1169,7 @@ INSERT INTO `yyl_region` VALUES (5120, 51, '51,5120', 2, '资阳市', 'ZiYangShi
 INSERT INTO `yyl_region` VALUES (5132, 51, '51,5132', 2, '阿坝藏族羌族自治州', 'ABaZangZuQiangZuZiZhiZhou', 'ABZZQZZZZ', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5133, 51, '51,5133', 2, '甘孜藏族自治州', 'GanZiZangZuZiZhiZhou', 'GZZZZZZ', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5134, 51, '51,5134', 2, '凉山彝族自治州', 'LiangShanYiZuZiZhiZhou', 'LSYZZZZ', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (5201, 52, '52,5201', 2, '贵阳市', 'GuiYangShi', 'GYS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (5201, 52, '52,5201', 2, '贵阳市', 'GuiYangShi', 'GYS', 'G', '0851', '550000', '106.633131', '26.653324', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5202, 52, '52,5202', 2, '六盘水市', 'LiuPanShuiShi', 'LPSS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5203, 52, '52,5203', 2, '遵义市', 'ZunYiShi', 'ZYS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5204, 52, '52,5204', 2, '安顺市', 'AnShunShi', 'ASS', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1175,7 +1178,7 @@ INSERT INTO `yyl_region` VALUES (5206, 52, '52,5206', 2, '铜仁市', 'TongRenSh
 INSERT INTO `yyl_region` VALUES (5223, 52, '52,5223', 2, '黔西南布依族苗族自治州', 'QianXiNanBuYiZuMiaoZuZiZhiZhou', 'QXNBYZMZZZZ', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5226, 52, '52,5226', 2, '黔东南苗族侗族自治州', 'QianDongNanMiaoZuDongZuZiZhiZhou', 'QDNMZDZZZZ', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5227, 52, '52,5227', 2, '黔南布依族苗族自治州', 'QianNanBuYiZuMiaoZuZiZhiZhou', 'QNBYZMZZZZ', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (5301, 53, '53,5301', 2, '昆明市', 'KunMingShi', 'KMS', 'K', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (5301, 53, '53,5301', 2, '昆明市', 'KunMingShi', 'KMS', 'K', '0871', '650000', '102.838868', '24.887845', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5303, 53, '53,5303', 2, '曲靖市', 'QuJingShi', 'QJS', 'Q', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5304, 53, '53,5304', 2, '玉溪市', 'YuXiShi', 'YXS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5305, 53, '53,5305', 2, '保山市', 'BaoShanShi', 'BSS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1191,14 +1194,14 @@ INSERT INTO `yyl_region` VALUES (5329, 53, '53,5329', 2, '大理白族自治州'
 INSERT INTO `yyl_region` VALUES (5331, 53, '53,5331', 2, '德宏傣族景颇族自治州', 'DeHongDaiZuJingPoZuZiZhiZhou', 'DHDZJPZZZZ', 'D', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5333, 53, '53,5333', 2, '怒江傈僳族自治州', 'NuJiangLiSuZuZiZhiZhou', 'NJLSZZZZ', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5334, 53, '53,5334', 2, '迪庆藏族自治州', 'DiQingZangZuZiZhiZhou', 'DQZZZZZ', 'D', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (5401, 54, '54,5401', 2, '拉萨市', 'LaSaShi', 'LSS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (5401, 54, '54,5401', 2, '拉萨市', 'LaSaShi', 'LSS', 'L', '0891', '850000', '102.838868', '24.887845', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5402, 54, '54,5402', 2, '日喀则市', 'RiKaZeShi', 'RKZS', 'R', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5403, 54, '54,5403', 2, '昌都市', 'ChangDuShi', 'CDS', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5404, 54, '54,5404', 2, '林芝市', 'LinZhiShi', 'LZS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5405, 54, '54,5405', 2, '山南市', 'ShanNanShi', 'SNS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5406, 54, '54,5406', 2, '那曲市', 'NaQuShi', 'NQS', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (5425, 54, '54,5425', 2, '阿里地区', 'ALiDiQu', 'ALDQ', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (6101, 61, '61,6101', 2, '西安市', 'XiAnShi', 'XAS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (6101, 61, '61,6101', 2, '西安市', 'XiAnShi', 'XAS', 'X', '029', '710000', '108.94589', '34.347269', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6102, 61, '61,6102', 2, '铜川市', 'TongChuanShi', 'TCS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6103, 61, '61,6103', 2, '宝鸡市', 'BaoJiShi', 'BJS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6104, 61, '61,6104', 2, '咸阳市', 'XianYangShi', 'XYS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1208,7 +1211,7 @@ INSERT INTO `yyl_region` VALUES (6107, 61, '61,6107', 2, '汉中市', 'HanZhongS
 INSERT INTO `yyl_region` VALUES (6108, 61, '61,6108', 2, '榆林市', 'YuLinShi', 'YLS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6109, 61, '61,6109', 2, '安康市', 'AnKangShi', 'AKS', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6110, 61, '61,6110', 2, '商洛市', 'ShangLuoShi', 'SLS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (6201, 62, '62,6201', 2, '兰州市', 'LanZhouShi', 'LZS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (6201, 62, '62,6201', 2, '兰州市', 'LanZhouShi', 'LZS', 'L', '0931', '730000', '103.841099', '36.067235', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6202, 62, '62,6202', 2, '嘉峪关市', 'JiaYuGuanShi', 'JYGS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6203, 62, '62,6203', 2, '金昌市', 'JinChangShi', 'JCS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6204, 62, '62,6204', 2, '白银市', 'BaiYinShi', 'BYS', 'B', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1222,7 +1225,7 @@ INSERT INTO `yyl_region` VALUES (6211, 62, '62,6211', 2, '定西市', 'DingXiShi
 INSERT INTO `yyl_region` VALUES (6212, 62, '62,6212', 2, '陇南市', 'LongNanShi', 'LNS', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6229, 62, '62,6229', 2, '临夏回族自治州', 'LinXiaHuiZuZiZhiZhou', 'LXHZZZZ', 'L', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6230, 62, '62,6230', 2, '甘南藏族自治州', 'GanNanZangZuZiZhiZhou', 'GNZZZZZ', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (6301, 63, '63,6301', 2, '西宁市', 'XiNingShi', 'XNS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (6301, 63, '63,6301', 2, '西宁市', 'XiNingShi', 'XNS', 'X', '0971', '810000', '101.783871', '36.623848', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6302, 63, '63,6302', 2, '海东市', 'HaiDongShi', 'HDS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6322, 63, '63,6322', 2, '海北藏族自治州', 'HaiBeiZangZuZiZhiZhou', 'HBZZZZZ', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6323, 63, '63,6323', 2, '黄南藏族自治州', 'HuangNanZangZuZiZhiZhou', 'HNZZZZZ', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1230,12 +1233,12 @@ INSERT INTO `yyl_region` VALUES (6325, 63, '63,6325', 2, '海南藏族自治州'
 INSERT INTO `yyl_region` VALUES (6326, 63, '63,6326', 2, '果洛藏族自治州', 'GuoLuoZangZuZiZhiZhou', 'GLZZZZZ', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6327, 63, '63,6327', 2, '玉树藏族自治州', 'YuShuZangZuZiZhiZhou', 'YSZZZZZ', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6328, 63, '63,6328', 2, '海西蒙古族藏族自治州', 'HaiXiMengGuZuZangZuZiZhiZhou', 'HXMGZZZZZZ', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (6401, 64, '64,6401', 2, '银川市', 'YinChuanShi', 'YCS', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (6401, 64, '64,6401', 2, '银川市', 'YinChuanShi', 'YCS', 'Y', '0951', '750000', '106.236771', '38.492462', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6402, 64, '64,6402', 2, '石嘴山市', 'ShiZuiShanShi', 'SZSS', 'S', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6403, 64, '64,6403', 2, '吴忠市', 'WuZhongShi', 'WZS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6404, 64, '64,6404', 2, '固原市', 'GuYuanShi', 'GYS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6405, 64, '64,6405', 2, '中卫市', 'ZhongWeiShi', 'ZWS', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (6501, 65, '65,6501', 2, '乌鲁木齐市', 'WuLuMuQiShi', 'WLMQS', 'W', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (6501, 65, '65,6501', 2, '乌鲁木齐市', 'WuLuMuQiShi', 'WLMQS', 'W', '0991', '830000', '87.624438', '43.832012', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6502, 65, '65,6502', 2, '克拉玛依市', 'KeLaMaYiShi', 'KLMYS', 'K', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6504, 65, '65,6504', 2, '吐鲁番市', 'TuLuFanShi', 'TLFS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6505, 65, '65,6505', 2, '哈密市', 'HaMiShi', 'HMS', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
@@ -1249,31 +1252,31 @@ INSERT INTO `yyl_region` VALUES (6532, 65, '65,6532', 2, '和田地区', 'HeTian
 INSERT INTO `yyl_region` VALUES (6540, 65, '65,6540', 2, '伊犁哈萨克自治州', 'YiLiHaSaKeZiZhiZhou', 'YLHSKZZZ', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6542, 65, '65,6542', 2, '塔城地区', 'TaChengDiQu', 'TCDQ', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (6543, 65, '65,6543', 2, '阿勒泰地区', 'ALeTaiDiQu', 'ALTDQ', 'A', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8200, 82, '82,8200', 2, '香港岛', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8201, 82, '82,8201', 2, '九龙', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8202, 82, '82,8202', 2, '新界', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8300, 83, '83,8300', 2, '澳门半岛', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8301, 83, '83,8301', 2, '澳门外岛', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8800, 88, '88,8800', 2, '台北市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8801, 88, '88,8801', 2, '新北市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8802, 88, '88,8802', 2, '桃园市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8803, 88, '88,8803', 2, '台中市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8804, 88, '88,8804', 2, '台南市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8805, 88, '88,8805', 2, '高雄市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8806, 88, '88,8806', 2, '基隆市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8807, 88, '88,8807', 2, '新竹市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8808, 88, '88,8808', 2, '嘉义市', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8809, 88, '88,8809', 2, '新竹县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8810, 88, '88,8810', 2, '苗栗县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8811, 88, '88,8811', 2, '彰化县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8812, 88, '88,8812', 2, '南投县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8813, 88, '88,8813', 2, '云林县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8814, 88, '88,8814', 2, '嘉义县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8815, 88, '88,8815', 2, '屏东县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8816, 88, '88,8816', 2, '宜兰县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8817, 88, '88,8817', 2, '花莲县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8818, 88, '88,8818', 2, '台东县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_region` VALUES (8819, 88, '88,8819', 2, '澎湖县', '', '', '', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8200, 82, '82,8200', 2, '香港岛', 'XiangGangDao', 'XGD', 'X', '852', '999077', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8201, 82, '82,8201', 2, '九龙', 'JiuLong', 'JL', 'J', '852', '999077', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8202, 82, '82,8202', 2, '新界', 'XinJie', 'XJ', 'X', '852', '999077', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8300, 83, '83,8300', 2, '澳门半岛', 'AoMenBanDao', 'AMBD', 'A', '853', '999078', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8301, 83, '83,8301', 2, '澳门外岛', 'AoMenWaiDao', 'AMWD', 'A', '853', '999078', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8800, 88, '88,8800', 2, '台北市', 'TaiBeiShi', 'TBS', 'T', '222', '08862', '121.56534', '25.039477', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8801, 88, '88,8801', 2, '新北市', 'XinBeiShi', 'XBS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8802, 88, '88,8802', 2, '桃园市', 'TaoYuanShi', 'TYS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8803, 88, '88,8803', 2, '台中市', 'TaiZhongShi', 'TZS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8804, 88, '88,8804', 2, '台南市', 'TaiNanShi', 'TNS', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8805, 88, '88,8805', 2, '高雄市', 'GaoXiongShi', 'GXS', 'G', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8806, 88, '88,8806', 2, '基隆市', 'JiLongShi', 'JLS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8807, 88, '88,8807', 2, '新竹市', 'XinZhuShi', 'XZS', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8808, 88, '88,8808', 2, '嘉义市', 'JiaYiShi', 'JYS', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8809, 88, '88,8809', 2, '新竹县', 'XinZhuXian', 'XZX', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8810, 88, '88,8810', 2, '苗栗县', 'MiaoLiXian', 'MLX', 'M', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8811, 88, '88,8811', 2, '彰化县', 'ZhangHuaXian', 'ZHX', 'Z', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8812, 88, '88,8812', 2, '南投县', 'NanTouXian', 'NTX', 'N', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8813, 88, '88,8813', 2, '云林县', 'YunLinXian', 'YLX', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8814, 88, '88,8814', 2, '嘉义县', 'JiaYiXian', 'JYX', 'J', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8815, 88, '88,8815', 2, '屏东县', 'PingDongXian', 'PDX', 'P', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8816, 88, '88,8816', 2, '宜兰县', 'YiLanXian', 'YLX', 'Y', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8817, 88, '88,8817', 2, '花莲县', 'HuaLianXian', 'HLX', 'H', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8818, 88, '88,8818', 2, '台东县', 'TaiDongXian', 'TDX', 'T', '', '', '', '', 2250, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_region` VALUES (8819, 88, '88,8819', 2, '澎湖县', 'PengHuXian', 'PHX', 'P', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (110101, 1101, '11,1101,110101', 3, '东城区', 'DongChengQu', 'DCQ', 'D', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (110102, 1101, '11,1101,110102', 3, '西城区', 'XiChengQu', 'XCQ', 'X', '', '', '', '', 2250, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_region` VALUES (110105, 1101, '11,1101,110105', 3, '朝阳区', 'ChaoYangQu', 'CYQ', 'C', '', '', '', '', 2250, 0, NULL, NULL, NULL);

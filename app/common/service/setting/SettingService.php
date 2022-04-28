@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 设置
+// 设置管理
 namespace app\common\service\setting;
 
 use think\facade\Config;
@@ -43,6 +43,7 @@ class SettingService
                 $info = $model->find($id);
             }
             $info = $info->toArray();
+            
             if ($info['diy_config']) {
                 $info['diy_config'] = unserialize($info['diy_config']);
             } else {

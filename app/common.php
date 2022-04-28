@@ -316,11 +316,16 @@ function tree_to_list($tree = [], $child = 'children')
  */
 function var_to_array($var)
 {
+    if (empty($var)) {
+        return [];
+    }
+
     if (is_string($var)) {
         if (strpos(',', $var) !== false) {
             $var = explode(',', $var);
         }
     }
+    
     settype($var, 'array');
 
     return $var;
