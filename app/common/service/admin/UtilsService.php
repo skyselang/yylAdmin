@@ -257,26 +257,4 @@ class UtilsService
 
         return $data;
     }
-
-    /**
-     * 树形转换
-     *
-     * @param array  $tree     树形
-     * @param string $children 树形键
-     * 
-     * @return array
-     */
-    public static function treeTran($tree, $key = 'key', $value = 'value', $children = 'children')
-    {
-        $array = [];
-        foreach ($tree as $v) {
-            if ($v[$children]) {
-                $array[$v[$key]] = self::treeTran($v[$children]);
-            } else {
-                $array[$v[$key]] = $v[$value];
-            }
-        }
-
-        return $array;
-    }
 }

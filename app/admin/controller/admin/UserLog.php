@@ -32,7 +32,7 @@ class UserLog
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="日志列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
      * )
      */
@@ -147,8 +147,7 @@ class UserLog
         $date_value    = Request::param('date_value/a', '');
         $clean         = Request::param('clean/b', false);
 
-        $where = [];
-        $admin_user_ids = [];
+        $where = $admin_user_ids = [];
         if ($admin_user_id) {
             $admin_user_ids = array_merge(explode(',', $admin_user_id), $admin_user_ids);
         }
@@ -205,10 +204,9 @@ class UserLog
         $date  = Request::param('date/a', []);
         $field = Request::param('field/s', 'user');
 
-        $data  = [];
+        $data  = $num = [];
         $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
         if ($type == 'num') {
-            $num = [];
             foreach ($range as $v) {
                 $num[$v] = UserLogService::statNum($v);
             }
@@ -218,7 +216,6 @@ class UserLog
         } elseif ($type == 'field') {
             $data['field'] = UserLogService::statField($date, $field);
         } else {
-            $num = [];
             foreach ($range as $v) {
                 $num[$v] = UserLogService::statNum($v);
             }

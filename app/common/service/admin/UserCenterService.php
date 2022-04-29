@@ -54,7 +54,6 @@ class UserCenterService
         }
 
         UserCache::upd($admin_user_id);
-
         $param[$pk] = $admin_user_id;
 
         return $param;
@@ -90,7 +89,6 @@ class UserCenterService
         }
 
         UserCache::upd($admin_user_id);
-
         $update[$pk] = $admin_user_id;
 
         return $update;

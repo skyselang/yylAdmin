@@ -255,10 +255,13 @@ class LogService
         $model = new LogModel();
         $pk = $model->getPk();
 
+        $count = 0;
         if ($clean) {
             $count = $model->where($pk, '>', 0)->delete(true);
         } else {
-            $count = $model->where($where)->delete();
+            if (count($where)) {
+                $count = $model->where($where)->delete();
+            }
         }
 
         $data['count'] = $count;

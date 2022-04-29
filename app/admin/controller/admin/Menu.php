@@ -28,7 +28,7 @@ class Menu
     /**
      * @Apidoc\Title("菜单列表")
      * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Returned("list", type="array", desc="树形列表",
+     * @Apidoc\Returned("list", type="array", desc="列表",
      *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\listReturn")
      * )
      */
@@ -38,23 +38,20 @@ class Menu
         $search_value = Request::param('search_value/s', '');
 
         $where = [];
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['admin_menu_id', 'menu_pid'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['admin_menu_id', 'menu_pid', 'is_unlogin', 'is_unauth', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_unlogin', 'is_unauth', 'is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
 
-        $data['list'] = MenuService::list('tree', $where);
+        if (empty($where)) {
+            $data['list'] = MenuService::list('tree', $where);
+        } else {
+            $data['list'] = MenuService::list('list', $where);
+        }
 
         return success($data);
     }
@@ -161,7 +158,7 @@ class Menu
 
         validate(MenuValidate::class)->scene('pid')->check($param);
 
-        $data = MenuService::pid($param['ids'], $param['menu_pid']);
+        $data = MenuService::update($param['ids'], $param);
 
         return success($data);
     }
@@ -179,7 +176,7 @@ class Menu
 
         validate(MenuValidate::class)->scene('unlogin')->check($param);
 
-        $data = MenuService::unlogin($param['ids'], $param['is_unlogin']);
+        $data = MenuService::update($param['ids'], $param);
 
         return success($data);
     }
@@ -197,7 +194,7 @@ class Menu
 
         validate(MenuValidate::class)->scene('unauth')->check($param);
 
-        $data = MenuService::unauth($param['ids'], $param['is_unauth']);
+        $data = MenuService::update($param['ids'], $param);
 
         return success($data);
     }
@@ -215,7 +212,7 @@ class Menu
 
         validate(MenuValidate::class)->scene('disable')->check($param);
 
-        $data = MenuService::disable($param['ids'], $param['is_disable']);
+        $data = MenuService::update($param['ids'], $param);
 
         return success($data);
     }

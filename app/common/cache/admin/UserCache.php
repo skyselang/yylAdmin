@@ -16,76 +16,91 @@ use app\common\service\admin\SettingService;
 
 class UserCache
 {
+    // 缓存标签
+    protected static $tag = 'admin_user';
+    // 缓存前缀
+    protected static $prefix = 'admin_user:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param int $admin_user_id 用户id
+     * @param int $id 用户id
      * 
      * @return string
      */
-    public static function key($admin_user_id)
+    public static function key($id)
     {
-        return 'admin_user:' . $admin_user_id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int   $admin_user_id 用户id
-     * @param array $admin_user    用户信息
-     * @param int   $ttl           有效时间（秒）0永久
+     * @param int   $id   用户id
+     * @param array $info 用户信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($admin_user_id, $admin_user, $ttl = null)
+    public static function set($id, $info, $ttl = null)
     {
         if ($ttl === null) {
             $setting = SettingService::info();
             $ttl     = $setting['token_exp'] * 3600;
         }
 
-        return Cache::set(self::key($admin_user_id), $admin_user, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $admin_user_id 用户id
+     * @param int $id 用户id
      * 
      * @return array 用户信息
      */
-    public static function get($admin_user_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($admin_user_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $admin_user_id 用户id
+     * @param int $id 用户id
      * 
      * @return bool
      */
-    public static function del($admin_user_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($admin_user_id));
+        return Cache::delete(self::key($id));
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 
     /**
      * 缓存更新
      *
-     * @param int $admin_user_id 用户id
+     * @param int $id 用户id
      * 
      * @return bool
      */
-    public static function upd($admin_user_id)
+    public static function upd($id)
     {
-        $old = UserService::info($admin_user_id);
-        self::del($admin_user_id);
+        $old = UserService::info($id);
+        self::del($id);
 
-        $new = UserService::info($admin_user_id);
+        $new = UserService::info($id);
         $new['admin_token'] = $old['admin_token'];
 
-        return self::set($admin_user_id, $new);
+        return self::set($id, $new);
     }
 }

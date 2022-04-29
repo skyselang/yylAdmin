@@ -24,23 +24,31 @@ class MenuService
      * 菜单列表
      *
      * @param string $type  list列表，tree树形
-     * @param array  $where 搜索条件
+     * @param array  $where 条件
+     * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array 
      */
-    public static function list($type = 'list', $where = [])
+    public static function list($type = 'list', $where = [], $order = [], $field = '')
     {
-        if ($where) {
+        $where[] = ['is_delete', '=', 0];
+        if ($type == 'list') {
             $model = new MenuModel();
             $pk = $model->getPk();
 
-            $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unauth,is_unlogin,is_disable';
-
-            $where[] = ['is_delete', '=', 0];
-
-            $order = ['menu_sort' => 'desc', $pk => 'asc'];
+            if (empty($field)) {
+                $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unauth,is_unlogin,is_disable';
+            }
+            if (empty($order)) {
+                $order = ['menu_sort' => 'desc', $pk => 'asc'];
+            }
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            foreach ($data as $k => $v) {
+                $data[$k]['children']    = [];
+                $data[$k]['hasChildren'] = true;
+            }
         } else {
             $key = $type;
             $data = MenuCache::get($key);
@@ -48,17 +56,15 @@ class MenuService
                 $model = new MenuModel();
                 $pk = $model->getPk();
 
-                $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unauth,is_unlogin,is_disable';
-
-                $where[] = ['is_delete', '=', 0];
-
-                $order = ['menu_sort' => 'desc', $pk => 'asc'];
+                if (empty($field)) {
+                    $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unauth,is_unlogin,is_disable';
+                }
+                if (empty($order)) {
+                    $order = ['menu_sort' => 'desc', $pk => 'asc'];
+                }
 
                 $data = $model->field($field)->where($where)->order($order)->select()->toArray();
-
-                if ($type == 'tree') {
-                    $data = self::toTree($data, 0);
-                }
+                $data = list_to_tree($data, $pk, 'menu_pid');
 
                 MenuCache::set($key, $data);
             }
@@ -170,7 +176,7 @@ class MenuService
                 // 提交事务
                 $model->commit();
             } catch (\Exception $e) {
-                $errmsg = '添加失败：' . $e->getMessage() . ':' . $e->getLine();
+                $errmsg = '添加失败：' . $e->getMessage();
                 // 回滚事务
                 $model->rollback();
             }
@@ -184,8 +190,7 @@ class MenuService
             }
         }
 
-        MenuCache::del();
-
+        MenuCache::clear();
         $param[$pk] = $id;
 
         return $param;
@@ -205,8 +210,6 @@ class MenuService
 
         $id = $param[$pk];
         unset($param[$pk]);
-        $info = self::info($id);
-
         $param['update_time'] = datetime();
 
         $add = false;
@@ -290,7 +293,7 @@ class MenuService
                 // 提交事务
                 $model->commit();
             } catch (\Exception $e) {
-                $errmsg = '修改失败：' . $e->getMessage() . ':' . $e->getLine();
+                $errmsg = '修改失败：' . $e->getMessage();
                 // 回滚事务
                 $model->rollback();
             }
@@ -304,8 +307,7 @@ class MenuService
             }
         }
 
-        MenuCache::del([$id, $info['menu_url']]);
-
+        MenuCache::clear();
         $param[$pk] = $id;
 
         return $param;
@@ -314,166 +316,54 @@ class MenuService
     /**
      * 菜单删除
      *
-     * @param array $ids 菜单id
+     * @param array $ids  菜单id
+     * @param bool  $real 是否真实删除
      * 
      * @return array
      */
-    public static function dele($ids)
+    public static function dele($ids, $real = false)
     {
-        foreach ($ids as $v) {
-            self::info($v);
-        }
-
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
-
         $model = new MenuModel();
         $pk = $model->getPk();
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
         if (empty($res)) {
             exception();
         }
 
-        $ids_arr = $ids;
-        foreach ($ids as $v) {
-            $info = self::info($v);
-            $ids_arr[] = $info['menu_url'];
-        }
-        MenuCache::del($ids_arr);
-
+        MenuCache::clear();
         $update['ids'] = $ids;
 
         return $update;
     }
 
     /**
-     * 菜单修改上级
+     * 菜单修改
      *
-     * @param array $ids      菜单id
-     * @param int   $menu_pid 菜单pid
+     * @param array $ids    菜单id
+     * @param array $update 菜单信息
      * 
      * @return array
      */
-    public static function pid($ids, $menu_pid)
+    public static function update($ids, $update = [])
     {
         $model = new MenuModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $update['menu_pid']    = $menu_pid;
         $update['update_time'] = datetime();
-
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        $ids_arr = $ids;
-        foreach ($ids as $v) {
-            $info = self::info($v);
-            $ids_arr[] = $info['menu_url'];
-        }
-        MenuCache::del($ids_arr);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 菜单是否无需登录
-     *
-     * @param array $ids        菜单id
-     * @param int   $is_unlogin 是否无需登录
-     * 
-     * @return array
-     */
-    public static function unlogin($ids, $is_unlogin)
-    {
-        $model = new MenuModel();
-        $pk = $model->getPk();
-
-        $update['is_unlogin']  = $is_unlogin;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        $ids_arr = $ids;
-        foreach ($ids as $v) {
-            $info = self::info($v);
-            $ids_arr[] = $info['menu_url'];
-        }
-        MenuCache::del($ids_arr);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 菜单是否无需权限
-     *
-     * @param array $ids       菜单id
-     * @param int   $is_unauth 是否无需权限
-     * 
-     * @return array
-     */
-    public static function unauth($ids, $is_unauth)
-    {
-        $model = new MenuModel();
-        $pk = $model->getPk();
-
-        $update['is_unauth']   = $is_unauth;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        $ids_arr = $ids;
-        foreach ($ids as $v) {
-            $info = self::info($v);
-            $ids_arr[] = $info['menu_url'];
-        }
-        MenuCache::del($ids_arr);
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 菜单是否禁用
-     *
-     * @param array $ids        菜单id
-     * @param int   $is_disable 是否禁用
-     * 
-     * @return array
-     */
-    public static function disable($ids, $is_disable)
-    {
-        $model = new MenuModel();
-        $pk = $model->getPk();
-
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        $ids_arr = $ids;
-        foreach ($ids as $v) {
-            $info = self::info($v);
-            $ids_arr[] = $info['menu_url'];
-        }
-        MenuCache::del($ids_arr);
-
+        MenuCache::clear();
         $update['ids'] = $ids;
 
         return $update;
@@ -604,54 +494,6 @@ class MenuService
     }
 
     /**
-     * 菜单获取所有子级
-     *
-     * @param array $menu          菜单列表
-     * @param int   $admin_menu_id 菜单id
-     * 
-     * @return array
-     */
-    public static function getChildren($menu, $admin_menu_id)
-    {
-        $model = new MenuModel();
-        $pk = $model->getPk();
-
-        $children = [];
-        foreach ($menu as $v) {
-            if ($v['menu_pid'] == $admin_menu_id) {
-                $children[] = $v[$pk];
-                $children   = array_merge($children, self::getChildren($menu, $v[$pk]));
-            }
-        }
-
-        return $children;
-    }
-
-    /**
-     * 菜单列表转树形
-     *
-     * @param array $menu     菜单列表
-     * @param int   $menu_pid 菜单pid
-     * 
-     * @return array
-     */
-    public static function toTree($menu, $menu_pid)
-    {
-        $model = new MenuModel();
-        $pk = $model->getPk();
-
-        $tree = [];
-        foreach ($menu as $v) {
-            if ($v['menu_pid'] == $menu_pid) {
-                $v['children'] = self::toTree($menu, $v[$pk]);
-                $tree[] = $v;
-            }
-        }
-
-        return $tree;
-    }
-
-    /**
      * 菜单url列表
      *
      * @return array 
@@ -684,10 +526,9 @@ class MenuService
         if (empty($list)) {
             $model = new MenuModel();
 
-            $list    = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('menu_url');
-            $unlogin = Config::get('admin.menu_is_unlogin');
-            $list    = array_merge($list, $unlogin);
-            $list    = array_unique(array_filter($list));
+            $list = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('menu_url');
+            $list = array_merge($list, Config::get('admin.menu_is_unlogin', []));
+            $list = array_unique(array_filter($list));
 
             MenuCache::set($key, $list);
         }
@@ -707,11 +548,9 @@ class MenuService
         if (empty($list)) {
             $model = new MenuModel();
 
-            $list    = $model->where('is_unauth', 1)->where('is_delete', 0)->column('menu_url');
-            $unlogin = self::unloginUrl();
-            $unauth  = Config::get('admin.menu_is_unauth');
-            $list    = array_merge($list, $unlogin, $unauth);
-            $list    = array_unique(array_filter($list));
+            $list = $model->where('is_unauth', 1)->where('is_delete', 0)->column('menu_url');
+            $list = array_merge($list, self::unloginUrl(), Config::get('admin.menu_is_unauth', []));
+            $list = array_unique(array_filter($list));
 
             MenuCache::set($key, $list);
         }
@@ -729,8 +568,8 @@ class MenuService
         $key = 'unrateUrl';
         $list = MenuCache::get($key);
         if (empty($list)) {
-            $unrate = Config::get('admin.menu_is_unrate');
-            $list   = array_unique(array_filter($unrate));
+            $list = Config::get('admin.menu_is_unrate', []);
+            $list = array_unique(array_filter($list));
 
             MenuCache::set($key, $list);
         }

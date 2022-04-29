@@ -36,17 +36,13 @@ class RoleService
         if (empty($field)) {
             $field = $pk . ',role_name,role_desc,role_sort,is_disable,create_time,update_time';
         }
-
         if (empty($order)) {
             $order = ['role_sort' => 'desc', $pk => 'desc'];
         }
-
         $where[] = ['is_delete', '=', 0];
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -55,18 +51,22 @@ class RoleService
     /**
      * 角色信息
      *
-     * @param int $id 角色id
+     * @param int  $id   角色id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = RoleCache::get($id);
         if (empty($info)) {
             $model = new RoleModel();
             $info = $model->find($id);
             if (empty($info)) {
-                exception('角色不存在：' . $id);
+                if ($exce) {
+                    exception('角色不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
@@ -118,96 +118,65 @@ class RoleService
     /**
      * 角色修改
      *
+     * @param mixed $ids   角色id
      * @param array $param 角色信息
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new RoleModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        sort($param['admin_menu_ids']);
-
-        if (count($param['admin_menu_ids']) > 0) {
-            if (empty($param['admin_menu_ids'][0])) {
-                unset($param['admin_menu_ids'][0]);
+        if (isset($update['admin_menu_ids'])) {
+            sort($update['admin_menu_ids']);
+            if (count($update['admin_menu_ids']) > 0) {
+                if (empty($update['admin_menu_ids'][0])) {
+                    unset($update['admin_menu_ids'][0]);
+                }
             }
+            $update['admin_menu_ids'] = implode(',', $update['admin_menu_ids']);
+            $update['admin_menu_ids'] = str_join($update['admin_menu_ids']);
         }
 
-        $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-        $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
-        $param['update_time']    = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        RoleCache::del($id);
-
-        $param[$pk] = $id;
-
-        return $param;
-    }
-
-    /**
-     * 角色删除
-     *
-     * @param array $ids 角色id
-     * 
-     * @return array
-     */
-    public static function dele($ids)
-    {
-        $model = new RoleModel();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
-
+        $update['update_time'] = datetime();
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            RoleCache::del($v);
-        }
-
+        RoleCache::clear();
         $update['ids'] = $ids;
 
         return $update;
     }
 
     /**
-     * 角色禁用
+     * 角色删除
      *
-     * @param array $ids        角色id
-     * @param int   $is_disable 是否禁用
+     * @param array $ids  角色id
+     * @param bool  $real 是否真实删除
      * 
      * @return array
      */
-    public static function disable($ids, $is_disable)
+    public static function dele($ids, $real = false)
     {
         $model = new RoleModel();
         $pk = $model->getPk();
 
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            RoleCache::del($v);
-        }
-
+        RoleCache::clear();
         $update['ids'] = $ids;
 
         return $update;
@@ -293,18 +262,18 @@ class RoleService
         }
 
         if (is_numeric($id)) {
-            $admin_role_ids[] = $id;
+            $admin_role_ids = [$id];
         } elseif (is_array($id)) {
             $admin_role_ids = $id;
         } else {
-            $id = str_trim($id);
-            $admin_role_ids = explode(',', $id);
+            $admin_role_ids = explode(',', str_trim($id));
         }
 
         $admin_menu_ids = [];
+
         foreach ($admin_role_ids as $v) {
-            $info = self::info($v);
-            $admin_menu_ids = array_merge($admin_menu_ids, $info['admin_menu_ids']);
+            $admin_role = self::info($v);
+            $admin_menu_ids = array_merge($admin_menu_ids, $admin_role['admin_menu_ids']);
         }
         $admin_menu_ids = array_unique($admin_menu_ids);
 

@@ -14,53 +14,68 @@ use think\facade\Cache;
 
 class RoleCache
 {
+    // 缓存标签
+    protected static $tag = 'admin_role';
+    // 缓存前缀
+    protected static $prefix = 'admin_role:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param int $admin_role_id 角色id
+     * @param int $id 角色id
      * 
      * @return string
      */
-    public static function key($admin_role_id)
+    public static function key($id)
     {
-        return 'admin_role:' . $admin_role_id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int   $admin_role_id 角色id
-     * @param array $admin_role    角色信息
-     * @param int   $ttl           有效时间（秒）0永久
+     * @param int   $id   角色id
+     * @param array $info 角色信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($admin_role_id, $admin_role, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($admin_role_id), $admin_role, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $admin_role_id 角色id
+     * @param int $id 角色id
      * 
      * @return array 角色信息
      */
-    public static function get($admin_role_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($admin_role_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $admin_role_id 角色id
+     * @param int $id 角色id
      * 
      * @return bool
      */
-    public static function del($admin_role_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($admin_role_id));
+        return Cache::delete(self::key($id));
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

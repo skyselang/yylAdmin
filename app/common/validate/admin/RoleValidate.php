@@ -41,7 +41,7 @@ class RoleValidate extends Validate
     ];
 
     // 验证场景定义：删除
-    protected function scenedele()
+    protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkAdminRoleMenuUser');

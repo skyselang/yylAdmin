@@ -26,7 +26,7 @@ class Role
 {
     /**
      * @Apidoc\Title("菜单列表")
-     * @Apidoc\Returned("list", type="array", desc="树形列表",
+     * @Apidoc\Returned("list", type="array", desc="列表",
      *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\listReturn")
      * )
      */
@@ -44,7 +44,7 @@ class Role
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="角色列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\RoleModel\listReturn")
      * )
      */
@@ -60,17 +60,10 @@ class Role
         $date_value   = Request::param('date_value/a', '');
 
         $where = [];
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['admin_role_id'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['admin_role_id', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -143,7 +136,7 @@ class Role
 
         validate(RoleValidate::class)->scene('edit')->check($param);
 
-        $data = RoleService::edit($param, 'post');
+        $data = RoleService::edit($param['admin_role_id'], $param);
 
         return success($data);
     }
@@ -177,7 +170,7 @@ class Role
 
         validate(RoleValidate::class)->scene('disable')->check($param);
 
-        $data = RoleService::disable($param['ids'], $param['is_disable']);
+        $data = RoleService::edit($param['ids'], $param);
 
         return success($data);
     }

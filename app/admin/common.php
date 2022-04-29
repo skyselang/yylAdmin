@@ -170,7 +170,7 @@ function admin_user_id()
 }
 
 /**
- * 用户是否超管
+ * 用户是否系统超管
  *
  * @param int $admin_user_id 用户id
  * 

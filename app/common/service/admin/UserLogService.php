@@ -36,46 +36,31 @@ class UserLogService
         $model = new UserLogModel();
         $pk = $model->getPk();
 
-        $UserModel = new UserModel();
-        $UserPk = $UserModel->getPk();
-
-        $MenuModel = new MenuModel();
-        $MenuPk = $MenuModel->getPk();
-
         if (empty($field)) {
-            $field = $pk . ',' . $UserPk . ',' . $MenuPk . ',request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
-
         $where[] = ['is_delete', '=', 0];
-
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        foreach ($list as $k => $v) {
-            if (isset($v[$UserPk])) {
-                $list[$k]['username'] = '';
-                $user = UserService::info($v[$UserPk], false);
-                if ($user) {
-                    $list[$k]['username'] = $user['username'];
-                }
-            }
+        $UserModel = new UserModel();
+        $admin_user_ids = array_column($list, 'admin_user_id');
+        $admin_users = $UserModel->where('admin_user_id', 'in', $admin_user_ids)->column('username', 'admin_user_id');
 
-            if (isset($v[$MenuPk])) {
-                $list[$k]['menu_name'] = '';
-                $list[$k]['menu_url']  = '';
-                $menu = MenuService::info($v[$MenuPk], false);
-                if ($menu) {
-                    $list[$k]['menu_name'] = $menu['menu_name'];
-                    $list[$k]['menu_url']  = $menu['menu_url'];
-                }
-            }
+        $MenuModel = new MenuModel();
+        $admin_menu_ids = array_column($list, 'admin_menu_id');
+        $admin_menu_urls = $MenuModel->where('admin_menu_id', 'in', $admin_menu_ids)->column('menu_url', 'admin_menu_id');
+        $admin_menu_names = $MenuModel->where('admin_menu_id', 'in', $admin_menu_ids)->column('menu_name', 'admin_menu_id');
+
+        foreach ($list as $k => $v) {
+            $list[$k]['username'] = isset($admin_users[$v['admin_user_id']]) ? $admin_users[$v['admin_user_id']] : '';
+            $list[$k]['menu_url'] = isset($admin_menu_urls[$v['admin_menu_id']]) ? $admin_menu_urls[$v['admin_menu_id']] : '';
+            $list[$k]['menu_name'] = isset($admin_menu_names[$v['admin_menu_id']]) ? $admin_menu_names[$v['admin_menu_id']] : '';
         }
 
         return compact('count', 'pages', 'page', 'limit', 'list');

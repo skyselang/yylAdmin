@@ -29,7 +29,7 @@ class User
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn"),
-     * @Apidoc\Returned("list", type="array", desc="用户列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\UserModel\listReturn")
      * )
      */
@@ -45,17 +45,10 @@ class User
         $date_value   = Request::param('date_value/a', '');
 
         $where = [];
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['admin_user_id'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['admin_user_id', 'is_super', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_super', 'is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -135,7 +128,7 @@ class User
 
         validate(UserValidate::class)->scene('edit')->check($param);
 
-        $data = UserService::edit($param);
+        $data = UserService::edit($param['admin_user_id'], $param);
 
         return success($data);
     }
@@ -192,7 +185,8 @@ class User
 
         validate(UserValidate::class)->scene('pwd')->check($param);
 
-        $data = UserService::pwd($param['ids'], $param['password']);
+        $param['password'] = md5($param['password']);
+        $data = UserService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -210,7 +204,7 @@ class User
 
         validate(UserValidate::class)->scene('super')->check($param);
 
-        $data = UserService::super($param['ids'], $param['is_super']);
+        $data = UserService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -228,7 +222,7 @@ class User
 
         validate(UserValidate::class)->scene('disable')->check($param);
 
-        $data = UserService::disable($param['ids'], $param['is_disable']);
+        $data = UserService::edit($param['ids'], $param);
 
         return success($data);
     }

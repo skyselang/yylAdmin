@@ -14,64 +14,68 @@ use think\facade\Cache;
 
 class MenuCache
 {
+    // 缓存标签
+    protected static $tag = 'admin_menu';
+    // 缓存前缀
+    protected static $prefix = 'admin_menu:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param mixed $admin_menu_id 菜单id、key
+     * @param mixed $id 菜单id、key
      * 
      * @return string
      */
-    public static function key($admin_menu_id = '')
+    public static function key($id)
     {
-        return 'admin_menu:' . $admin_menu_id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param mixed $admin_menu_id 菜单id、key
-     * @param array $admin_menu    菜单信息
-     * @param int   $ttl           有效时间（秒）0永久
+     * @param mixed $id   菜单id、key
+     * @param array $info 菜单信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($admin_menu_id = '', $admin_menu = [], $ttl = 86400)
+    public static function set($id = '', $info = [], $ttl = 86400)
     {
-        return Cache::set(self::key($admin_menu_id), $admin_menu, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param mixed $admin_menu_id 菜单id、key
+     * @param mixed $id 菜单id、key
      * 
      * @return array 菜单信息
      */
-    public static function get($admin_menu_id = '')
+    public static function get($id)
     {
-        return Cache::get(self::key($admin_menu_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param mixed $admin_menu_id 菜单id、key
+     * @param mixed $id 菜单id、key
      * 
      * @return bool
      */
-    public static function del($admin_menu_id = '')
+    public static function del($id)
     {
-        if (is_array($admin_menu_id)) {
-            $keys = $admin_menu_id;
-        } else {
-            $keys[] = $admin_menu_id;
-        }
+        return  Cache::delete(self::key($id));
+    }
 
-        $keys = array_merge($keys, ['list', 'tree', 'urlList', 'unloginUrl', 'unauthUrl', 'unrateUrl']);
-        foreach ($keys as $v) {
-            $res = Cache::delete(self::key($v));
-        }
-
-        return $res;
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

@@ -32,31 +32,26 @@ class NoticeService
         $model = new NoticeModel();
         $pk = $model->getPk();
 
-        $UserModel = new UserModel();
-        $UserPk = $UserModel->getPk();
-
         if (empty($field)) {
-            $field = $pk . ',' . $UserPk . ',title,color,sort,is_open,open_time_start,open_time_end,create_time';
+            $field = $pk . ',admin_user_id,title,color,sort,is_open,open_time_start,open_time_end,create_time';
         }
-
         if (empty($order)) {
-            $order = ['is_open' => 'desc', 'sort' => 'desc', $pk => 'desc'];
+            $order = ['is_open' => 'desc', 'sort' => 'desc', 'open_time_start' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
+        $admin_users = [];
+        if (strpos($field, 'admin_user_id')) {
+            $UserModel = new UserModel();
+            $admin_user_ids = array_column($list, 'admin_user_id');
+            $admin_users = $UserModel->where('admin_user_id', 'in', $admin_user_ids)->column('username', 'admin_user_id');
+        }
+
         foreach ($list as $k => $v) {
-            $list[$k]['username'] = '';
-            if (isset($v[$UserPk])) {
-                $user = UserService::info($v[$UserPk], false);
-                if ($user) {
-                    $list[$k]['username'] = $user['username'];
-                }
-            }
+            $list[$k]['username'] = isset($admin_users[$v['admin_user_id']]) ? $admin_users[$v['admin_user_id']] : '';
         }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -81,9 +76,7 @@ class NoticeService
             $info = $info->toArray();
 
             $info['username'] = '';
-            $UserModel = new UserModel();
-            $UserPk = $UserModel->getPk();
-            $user = UserService::info($info[$UserPk]);
+            $user = UserService::info($info['admin_user_id']);
             if ($user) {
                 $info['username'] = $user['username'];
             }
@@ -121,48 +114,52 @@ class NoticeService
     /**
      * 公告修改
      *
-     * @param array $param 公告信息
+     * @param mixed $ids    公告id
+     * @param array $update 公告信息
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new NoticeModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        NoticeCache::del($id);
+        settype($ids, 'array');
+        foreach ($ids as $v) {
+            NoticeCache::del($v);
+        }
+        $update['ids'] = $ids;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $update;
     }
 
     /**
      * 公告删除
      *
-     * @param array $ids 公告id
+     * @param array $ids  公告id
+     * @param bool  $real 是否真实删除
      * 
      * @return array
      */
-    public static function dele($ids)
+    public static function dele($ids, $real = false)
     {
         $model = new NoticeModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
         if (empty($res)) {
             exception();
         }
@@ -170,68 +167,6 @@ class NoticeService
         foreach ($ids as $v) {
             NoticeCache::del($v);
         }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 公告是否开启
-     *
-     * @param array $ids     公告id
-     * @param int   $is_open 是否开启
-     * 
-     * @return array
-     */
-    public static function is_open($ids, $is_open)
-    {
-        $model = new NoticeModel();
-        $pk = $model->getPk();
-
-        $update['is_open']     = $is_open;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            NoticeCache::del($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 公告开启时间
-     *
-     * @param array $ids   公告id
-     * @param array $param 开始时间、结束时间
-     * 
-     * @return array
-     */
-    public static function opentime($ids, $param)
-    {
-        $model = new NoticeModel();
-        $pk = $model->getPk();
-
-        $update['open_time_start'] = $param['open_time_start'];
-        $update['open_time_end']   = $param['open_time_end'];
-        $update['update_time']     = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            NoticeCache::del($v);
-        }
-
         $update['ids'] = $ids;
 
         return $update;

@@ -21,13 +21,13 @@ class ApidocService
      */
     public static function apidoc()
     {
-        $user            = UserService::info(admin_user_id());
-        $admin_token     = $user['admin_token'];
+        $admin_user      = UserService::info(admin_user_id());
+        $admin_token     = $admin_user['admin_token'];
         $admin_token_sub = substr($admin_token, 0, 16) . '...';
 
         $data['apidoc_url']      = server_url() . '/apidoc';
         $data['apidoc_pwd']      = config('apidoc.auth.password');
-        $data['admin_user_id']   = $user['admin_user_id'];
+        $data['admin_user_id']   = $admin_user['admin_user_id'];
         $data['admin_token']     = $admin_token;
         $data['admin_token_sub'] = $admin_token_sub;
 

@@ -30,7 +30,7 @@ class Notice
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="公告列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\admin\NoticeModel\listReturn")
      * )
      */
@@ -46,7 +46,7 @@ class Notice
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value) {
-            if (in_array($search_field, ['admin_notice_id', 'admin_user_id'])) {
+            if (in_array($search_field, ['admin_notice_id', 'admin_user_id', 'is_open'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } elseif (in_array($search_field, ['username'])) {
@@ -56,13 +56,6 @@ class Notice
                 $user_where[] = [$search_field, $user_exp, $search_value];
                 $admin_user_ids = $UserModel->where($user_where)->column($UserPk);
                 $where[] = [$UserPk, 'in', $admin_user_ids];
-            } elseif (in_array($search_field, ['is_open'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -154,7 +147,7 @@ class Notice
 
         validate(NoticeValidate::class)->scene('edit')->check($param);
 
-        $data = NoticeService::edit($param);
+        $data = NoticeService::edit($param['admin_notice_id'], $param);
 
         return success($data);
     }
@@ -188,7 +181,7 @@ class Notice
 
         validate(NoticeValidate::class)->scene('isopen')->check($param);
 
-        $data = NoticeService::is_open($param['ids'], $param['is_open']);
+        $data = NoticeService::edit($param['ids'], $param);
 
         return success($data);
     }
@@ -208,7 +201,7 @@ class Notice
 
         validate(NoticeValidate::class)->scene('opentime')->check($param);
 
-        $data = NoticeService::opentime($param['ids'], $param);
+        $data = NoticeService::edit($param['ids'], $param);
 
         return success($data);
     }

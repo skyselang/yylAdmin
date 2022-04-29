@@ -54,7 +54,7 @@ class UserValidate extends Validate
     ];
 
     // 验证场景定义：登录
-    protected function scenelogin()
+    protected function sceneLogin()
     {
         return $this->only(['username', 'password'])
             ->remove('username', ['length', 'checkUsername'])
@@ -62,42 +62,42 @@ class UserValidate extends Validate
     }
 
     // 验证场景定义：修改
-    protected function sceneedit()
+    protected function sceneEdit()
     {
         return $this->only(['admin_user_id', 'username', 'nickname', 'email', 'phone'])
             ->append('admin_user_id', ['checkAdminUserIsSuper']);
     }
 
     // 验证场景定义：删除
-    protected function scenedele()
+    protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkAdminUserIsDelete', 'checkAdminUserRoleMenu']);
     }
 
     // 验证场景定义：分配权限
-    protected function scenerule()
+    protected function sceneRule()
     {
         return $this->only(['admin_user_id'])
             ->append('admin_user_id', ['checkAdminUserIsSuper']);
     }
 
     // 验证场景定义：是否超管
-    protected function scenesuper()
+    protected function sceneSuper()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkAdminUserIsSuper']);
     }
 
     // 验证场景定义：是否禁用
-    protected function scenedisable()
+    protected function sceneDisable()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkAdminUserIsDisable']);
     }
 
     // 验证场景定义：重置密码
-    protected function scenepwd()
+    protected function scenePwd()
     {
         return $this->only(['ids', 'password'])
             ->append('ids', ['checkAdminUserIsSuper']);
@@ -106,11 +106,9 @@ class UserValidate extends Validate
     // 自定义验证规则：用户删除
     protected function checkAdminUserIsDelete($value, $rule, $data = [])
     {
-        $ids = $data['ids'];
-        foreach ($ids as $v) {
-            $admin_is_super = admin_is_super($v);
-            if ($admin_is_super) {
-                return '无法对系统用户进行操作:' . $v;
+        foreach ($data['ids'] as $v) {
+            if (admin_is_super($v)) {
+                return '无法对系统超管用户进行操作:' . $v;
             }
         }
 
@@ -200,16 +198,14 @@ class UserValidate extends Validate
         if (isset($data['ids'])) {
             $ids = $data['ids'];
         } else {
-            $UserModel = new UserModel();
-            $UserPk = $UserModel->getPk();
-            $ids[] = $data[$UserPk];
+            $ids = [$data['admin_user_id']];
         }
 
         foreach ($ids as $v) {
             $admin_is_super = admin_is_super(admin_user_id());
             $admin_user_id  = admin_is_super($v);
             if (!$admin_is_super && $admin_user_id) {
-                return '无法对系统用户进行操作:' . $v;
+                return '无法对系统超管用户进行操作:' . $v;
             }
         }
 
@@ -219,11 +215,9 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否禁用
     protected function checkAdminUserIsDisable($value, $rule, $data = [])
     {
-        $ids = $data['ids'];
-        foreach ($ids as $v) {
-            $admin_is_super = admin_is_super($v);
-            if ($admin_is_super) {
-                return '无法对系统用户进行操作:' . $v;
+        foreach ($data['ids'] as $v) {
+            if (admin_is_super($v)) {
+                return '无法对系统超管用户进行操作:' . $v;
             }
         }
 
@@ -233,11 +227,13 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否已分配角色或菜单
     protected function checkAdminUserRoleMenu($value, $rule, $data = [])
     {
-        $ids = $data['ids'];
-        foreach ($ids as $v) {
-            $user = UserService::info($v);
-            if ($user['admin_role_ids'] || $user['admin_menu_ids']) {
-                return '请在[权限]中取消所有角色和菜单后再删除';
+        $UserModel = new UserModel();
+        $UserPk = $UserModel->getPk();
+        $user = $UserModel->field($UserPk . ',admin_role_ids,admin_menu_ids')->where($UserPk, 'in', $data['ids'])->select()->toArray();
+
+        foreach ($user as $v) {
+            if (str_trim($v['admin_role_ids']) || str_trim($v['admin_menu_ids'])) {
+                return '请在[权限]中取消所有角色和菜单后再删除：' . $v[$UserPk];
             }
         }
 

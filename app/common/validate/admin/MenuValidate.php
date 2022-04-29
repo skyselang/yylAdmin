@@ -47,14 +47,14 @@ class MenuValidate extends Validate
     ];
 
     // 验证场景定义：删除
-    protected function scenedele()
+    protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkAdminMenuRole');
     }
 
     // 验证场景定义：角色解除
-    protected function sceneroleRemove()
+    protected function sceneRoleRemove()
     {
         return $this->only(['admin_menu_id'])
             ->append('admin_menu_id', 'checkAdminMenuRoleRemove');

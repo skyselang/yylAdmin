@@ -40,17 +40,13 @@ class UserService
         if (empty($field)) {
             $field = $pk . ',username,nickname,phone,email,sort,is_disable,is_super,login_num,create_time,login_time';
         }
-
         $where[] = ['is_delete', '=', 0];
-
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
-
         $pages = ceil($count / $limit);
-
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -198,48 +194,52 @@ class UserService
     /**
      * 用户修改
      *
-     * @param array $param 用户信息
+     * @param mixed $ids    用户ids
+     * @param array $update 用户信息
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new UserModel();
         $pk = $model->getPk();
+        unset($update[$pk], $update['ids']);
 
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+        $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        UserCache::upd($id);
+        settype($ids, 'array');
+        foreach ($ids as $v) {
+            UserCache::upd($v);
+        }
+        $update[$pk] = $ids;
 
-        $param[$pk] = $id;
-
-        return $param;
+        return $update;
     }
 
     /**
      * 用户删除
      *
-     * @param array $ids 用户id
+     * @param array $ids  用户id
+     * @param bool  $real 是否真实删除
      * 
      * @return array
      */
-    public static function dele($ids)
+    public static function dele($ids, $real = false)
     {
         $model = new UserModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
         if (empty($res)) {
             exception();
         }
@@ -300,7 +300,7 @@ class UserService
                 }
             }
 
-            $admin_menu = MenuService::toTree($admin_menu, 0);
+            $admin_menu = list_to_tree($admin_menu, 'admin_menu_id', 'menu_pid');
 
             $data[$pk]              = $admin_user_id;
             $data['admin_menu_ids'] = $admin_menu_ids;
@@ -335,96 +335,6 @@ class UserService
 
             return $update;
         }
-    }
-
-    /**
-     * 用户重置密码
-     *
-     * @param array  $ids      用户id
-     * @param string $password 新密码
-     * 
-     * @return array
-     */
-    public static function pwd($ids, $password)
-    {
-        $model = new UserModel();
-        $pk = $model->getPk();
-
-        $update['password']    = md5($password);
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            UserCache::upd($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 用户是否超管
-     *
-     * @param array $ids      用户id
-     * @param int   $is_super 是否超管
-     * 
-     * @return array
-     */
-    public static function super($ids, $is_super)
-    {
-        $model = new UserModel();
-        $pk = $model->getPk();
-
-        $update['is_super']    = $is_super;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            UserCache::upd($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
-    }
-
-    /**
-     * 用户是否禁用
-     *
-     * @param array $ids        用户id
-     * @param int   $is_disable 是否禁用
-     * 
-     * @return array
-     */
-    public static function disable($ids, $is_disable)
-    {
-        $model = new UserModel();
-        $pk = $model->getPk();
-
-        $update['is_disable']  = $is_disable;
-        $update['update_time'] = datetime();
-
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
-        }
-
-        foreach ($ids as $v) {
-            UserCache::upd($v);
-        }
-
-        $update['ids'] = $ids;
-
-        return $update;
     }
 
     /**

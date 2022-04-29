@@ -75,4 +75,18 @@ class RegionModel extends Model
     public function region_pinyin()
     {
     }
+
+    /**
+     * @Apidoc\Field("region_citycode")
+     */
+    public function region_citycode()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("region_zipcode")
+     */
+    public function region_zipcode()
+    {
+    }
 }
