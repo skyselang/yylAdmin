@@ -57,7 +57,6 @@ class RegionService
 
             $key = $type . md5(serialize($where) . $field);
             $list = RegionCache::get($key);
-            $count = count($list);
             if (empty($list)) {
                 $model = new RegionModel();
                 $pk = $model->getPk();
@@ -68,10 +67,10 @@ class RegionService
 
                 $list = $model->field($field)->where($where)->order($order)->select()->toArray();
                 $list = list_to_tree($list, 'region_id', 'region_pid');
-                $count = count($list);
 
                 RegionCache::set($key, $list);
             }
+            $count = count($list);
         }
 
         return compact('count', 'list');
