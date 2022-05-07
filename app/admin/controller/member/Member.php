@@ -44,17 +44,10 @@ class Member
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        if ($search_field && $search_value) {
-            if ($search_field == 'member_id') {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['member_id', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -142,7 +135,7 @@ class Member
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
-        $data = MemberService::edit([$param['member_id']], $param);
+        $data = MemberService::edit($param['member_id'], $param);
 
         return success($data);
     }
@@ -218,28 +211,6 @@ class Member
     }
 
     /**
-     * @Apidoc\Title("会员统计")
-     */
-    public function stat()
-    {
-        $date = Request::param('date/a', []);
-
-        $number = $active = [];
-        $date_range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-        foreach ($date_range as $v) {
-            $number[$v] = MemberService::statNum($v);
-            $active[$v] = MemberService::statNum($v, 'act');
-        }
-
-        $data['number'] = $number;
-        $data['active'] = $active;
-        $data['date']   = MemberService::statDate($date);
-        $data['count']  = MemberService::statCount();
-
-        return success($data);
-    }
-
-    /**
      * @Apidoc\Title("会员回收站")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
@@ -261,17 +232,10 @@ class Member
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        if ($search_field && $search_value) {
-            if ($search_field == 'member_id') {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['member_id', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -321,6 +285,28 @@ class Member
         validate(MemberValidate::class)->scene('recoverDele')->check($param);
 
         $data = MemberService::dele($param['ids'], true);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员统计")
+     */
+    public function stat()
+    {
+        $date = Request::param('date/a', []);
+
+        $number = $active = [];
+        $date_range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
+        foreach ($date_range as $v) {
+            $number[$v] = MemberService::statNum($v);
+            $active[$v] = MemberService::statNum($v, 'act');
+        }
+
+        $data['number'] = $number;
+        $data['active'] = $active;
+        $data['date']   = MemberService::statDate($date);
+        $data['count']  = MemberService::statCount();
 
         return success($data);
     }

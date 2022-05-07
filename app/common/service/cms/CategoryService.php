@@ -22,6 +22,7 @@ class CategoryService
      * @param string $type  tree树形，list列表
      * @param array  $where 条件
      * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array
      */
@@ -40,15 +41,16 @@ class CategoryService
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
         } else {
-            $key = $type;
+            if (empty($field)) {
+                $field = 'category_id,category_pid,category_name,sort,is_hide,create_time,update_time';
+            }
+
+            $key = $type . md5(serialize($where) . $field);
             $data = CategoryCache::get($key);
             if (empty($data)) {
                 $model = new CategoryModel();
                 $pk = $model->getPk();
 
-                if (empty($field)) {
-                    $field = $pk . ',category_pid,category_name,sort,is_hide,create_time,update_time';
-                }
                 if (empty($order)) {
                     $order = ['sort' => 'desc', $pk => 'desc'];
                 }
@@ -73,10 +75,6 @@ class CategoryService
      */
     public static function info($id, $exce = true)
     {
-        if (empty($id)) {
-            return [];
-        }
-
         $info = CategoryCache::get($id);
         if (empty($info)) {
             $model = new CategoryModel();
@@ -90,6 +88,7 @@ class CategoryService
                 return [];
             }
             $info = $info->toArray();
+
             $info['imgs'] = FileService::fileArray($info['img_ids']);
 
             CategoryCache::set($id, $info);
@@ -101,25 +100,27 @@ class CategoryService
     /**
      * 内容分类添加
      *
-     * @param array $insert 内容分类信息
+     * @param array $param 内容分类信息
      *
      * @return array|Exception
      */
-    public static function add($insert)
+    public static function add($param)
     {
         $model = new CategoryModel();
         $pk = $model->getPk();
 
-        $insert['create_time'] = datetime();
-        $id = $model->insertGetId($insert);
+        $param['create_time'] = datetime();
+
+        $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
         }
 
-        CategoryCache::del();
-        $insert[$pk] = $id;
+        $param[$pk] = $id;
 
-        return $insert;
+        CategoryCache::clear();
+
+        return $param;
     }
 
     /**
@@ -134,16 +135,19 @@ class CategoryService
     {
         $model = new CategoryModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        CategoryCache::del($ids);
         $update['ids'] = $ids;
+
+        CategoryCache::clear();
 
         return $update;
     }
@@ -173,8 +177,9 @@ class CategoryService
             exception();
         }
 
-        CategoryCache::del($ids);
         $update['ids'] = $ids;
+
+        CategoryCache::clear();
 
         return $update;
     }

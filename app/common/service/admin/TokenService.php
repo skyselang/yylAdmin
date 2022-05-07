@@ -36,24 +36,18 @@ class TokenService
     {
         $config = self::config();
 
-        $key = $config['token_key'];                  //密钥
-        $iat = time();                                //签发时间
-        $nbf = time();                                //生效时间
-        $exp = time() + $config['token_exp'] * 3600;  //过期时间
-
-        $data = [
-            'admin_user_id' => $user['admin_user_id'],
-            'login_time'    => $user['login_time'],
-            'login_ip'      => $user['login_ip'],
-        ];
-
         $payload = [
-            'iat'  => $iat,
-            'nbf'  => $nbf,
-            'exp'  => $exp,
-            'data' => $data,
+            'iat'  => time(),                               //签发时间
+            'nbf'  => time(),                               //生效时间
+            'exp'  => time() + $config['token_exp'] * 3600, //过期时间
+            'data' => [
+                'admin_user_id' => $user['admin_user_id'],
+                'login_time'    => $user['login_time'],
+                'login_ip'      => $user['login_ip'],
+            ],
         ];
 
+        $key = $config['token_key']; //密钥
         $token = JWT::encode($payload, $key);
 
         return $token;
@@ -70,7 +64,7 @@ class TokenService
     {
         try {
             $config = self::config();
-            $decode = JWT::decode($token, $config['token_key'], array('HS256'));
+            $decode = JWT::decode($token, $config['token_key'], ['HS256']);
             $admin_user_id = $decode->data->admin_user_id;
         } catch (\Exception $e) {
             exception('账号登录状态已过期', 401);
@@ -108,7 +102,7 @@ class TokenService
 
         try {
             $config = self::config();
-            $decode = JWT::decode($token, $config['token_key'], array('HS256'));
+            $decode = JWT::decode($token, $config['token_key'], ['HS256']);
             $admin_user_id = $decode->data->admin_user_id;
         } catch (\Exception $e) {
             $admin_user_id = 0;

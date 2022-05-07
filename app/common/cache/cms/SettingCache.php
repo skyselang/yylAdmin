@@ -14,6 +14,11 @@ use think\facade\Cache;
 
 class SettingCache
 {
+    // 缓存标签
+    protected static $tag = 'cms_setting';
+    // 缓存前缀
+    protected static $prefix = 'cms_setting:';
+
     /**
      * 缓存键名
      *
@@ -23,7 +28,7 @@ class SettingCache
      */
     public static function key($id)
     {
-        return 'cms_setting:' . $id;
+        return self::$prefix . $id;
     }
 
     /**
@@ -37,7 +42,7 @@ class SettingCache
      */
     public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($id), $info, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
@@ -61,6 +66,20 @@ class SettingCache
      */
     public static function del($id)
     {
-        return Cache::delete(self::key($id));
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

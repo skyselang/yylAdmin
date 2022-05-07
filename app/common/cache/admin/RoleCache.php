@@ -22,7 +22,7 @@ class RoleCache
     /**
      * 缓存键名
      *
-     * @param int $id 角色id
+     * @param mixed $id 角色id
      * 
      * @return string
      */
@@ -34,7 +34,7 @@ class RoleCache
     /**
      * 缓存设置
      *
-     * @param int   $id   角色id
+     * @param mixed $id   角色id
      * @param array $info 角色信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
@@ -48,7 +48,7 @@ class RoleCache
     /**
      * 缓存获取
      *
-     * @param int $id 角色id
+     * @param mixed $id 角色id
      * 
      * @return array 角色信息
      */
@@ -60,13 +60,17 @@ class RoleCache
     /**
      * 缓存删除
      *
-     * @param int $id 角色id
+     * @param mixed $id 角色id
      * 
      * @return bool
      */
     public static function del($id)
     {
-        return Cache::delete(self::key($id));
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
     }
 
     /**

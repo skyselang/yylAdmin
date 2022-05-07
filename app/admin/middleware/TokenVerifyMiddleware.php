@@ -30,7 +30,7 @@ class TokenVerifyMiddleware
         if (!menu_is_unlogin()) {
             $admin_token = admin_token();
             if (empty($admin_token)) {
-                exception('Requests Headers：AdminToken must');
+                exception('请登录');
             }
 
             // 用户Token验证

@@ -22,31 +22,55 @@ class RegionService
     /**
      * 地区列表
      * 
+     * @param string $type  list列表，tree树形
      * @param array  $where 条件
      * @param array  $order 排序
      * @param string $field 字段
      *
      * @return array 
      */
-    public static function list($where = [], $order = [], $field = '')
+    public static function list($type = 'list', $where = [], $order = [], $field = '')
     {
-        $model = new RegionModel();
-        $pk = $model->getPk();
-
-        if (empty($field)) {
-            $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort';
-        }
         $where[] = ['is_delete', '=', 0];
-        if (empty($order)) {
-            $order = ['region_sort' => 'desc', $pk => 'asc'];
-        }
+        if ($type == 'list') {
+            $model = new RegionModel();
+            $pk = $model->getPk();
 
-        $list = $model->field($field)->where($where)->order($order)->select()->toArray();
-        $count = count($list);
+            if (empty($field)) {
+                $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort';
+            }
+            if (empty($order)) {
+                $order = ['region_sort' => 'desc', $pk => 'asc'];
+            }
 
-        foreach ($list as $k => $v) {
-            $list[$k]['children']    = [];
-            $list[$k]['hasChildren'] = true;
+            $list = $model->field($field)->where($where)->order($order)->select()->toArray();
+            $count = count($list);
+
+            foreach ($list as $k => $v) {
+                $list[$k]['children']    = [];
+                $list[$k]['hasChildren'] = true;
+            }
+        } else {
+            if (empty($field)) {
+                $field = 'region_id,region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort';
+            }
+
+            $key = $type . md5(serialize($where) . $field);
+            $list = RegionCache::get($key);
+            if (empty($list)) {
+                $model = new RegionModel();
+                $pk = $model->getPk();
+
+                if (empty($order)) {
+                    $order = ['region_sort' => 'desc', $pk => 'asc'];
+                }
+
+                $list = $model->field($field)->where($where)->order($order)->select()->toArray();
+                $count = count($list);
+                $list = list_to_tree($list, 'region_id', 'region_pid');
+
+                RegionCache::set($key, $list);
+            }
         }
 
         return compact('count', 'list');
@@ -55,7 +79,7 @@ class RegionService
     /**
      * 地区信息
      *
-     * @param mixed $id   地区id、树形key（tree)
+     * @param mixed $id   地区id
      * @param bool  $exce 不存在是否抛出异常
      * 
      * @return array
@@ -67,37 +91,32 @@ class RegionService
             $model = new RegionModel();
             $pk = $model->getPk();
 
-            if ($id == self::$tree) {
-                $info = $model->field($pk . ',region_pid,region_name')->where('is_delete', 0)->select()->toArray();
-                $info = list_to_tree($info, 'region_id', 'region_pid');
-            } else {
-                $info = $model->find($id);
-                if (empty($info)) {
-                    if ($exce) {
-                        exception('地区不存在：' . $id);
-                    }
-                    return [];
+            $info = $model->find($id);
+            if (empty($info)) {
+                if ($exce) {
+                    exception('地区不存在：' . $id);
                 }
-                $info = $info->toArray();
-
-                // 地区完整名称
-                $region_path = explode(',', $info['region_path']);
-                if (count($region_path) == 1) {
-                    $region_fullname    = $info['region_name'];
-                    $region_fullname_py = $info['region_pinyin'];
-                } else {
-                    $region_pid = [];
-                    foreach ($region_path as $v) {
-                        $region_pid[] = $model->field('region_name,region_pinyin')->where($pk, $v)->find();
-                    }
-                    $region_fullname    = array_column($region_pid, 'region_name');
-                    $region_fullname    = implode('-', $region_fullname);
-                    $region_fullname_py = array_column($region_pid, 'region_pinyin');
-                    $region_fullname_py = implode('-', $region_fullname_py);
-                }
-                $info['region_fullname']    = $region_fullname;
-                $info['region_fullname_py'] = $region_fullname_py;
+                return [];
             }
+            $info = $info->toArray();
+
+            // 地区完整名称
+            $region_path = explode(',', $info['region_path']);
+            if (count($region_path) == 1) {
+                $region_fullname    = $info['region_name'];
+                $region_fullname_py = $info['region_pinyin'];
+            } else {
+                $region_pid = [];
+                foreach ($region_path as $v) {
+                    $region_pid[] = $model->field('region_name,region_pinyin')->where($pk, $v)->find();
+                }
+                $region_fullname    = array_column($region_pid, 'region_name');
+                $region_fullname    = implode('-', $region_fullname);
+                $region_fullname_py = array_column($region_pid, 'region_pinyin');
+                $region_fullname_py = implode('-', $region_fullname_py);
+            }
+            $info['region_fullname']    = $region_fullname;
+            $info['region_fullname_py'] = $region_fullname_py;
 
             RegionCache::set($id, $info);
         }
@@ -149,9 +168,10 @@ class RegionService
             exception($errmsg);
         }
 
-        RegionCache::clear();
         $param[$pk]           = $region_id;
         $param['region_path'] = $region_path;
+
+        RegionCache::clear();
 
         return $param;
     }
@@ -205,9 +225,10 @@ class RegionService
             exception($errmsg);
         }
 
-        RegionCache::clear();
         $param[$pk]           = $region_id;
         $param['region_path'] = $region_path;
+
+        RegionCache::clear();
 
         return $param;
     }
@@ -215,24 +236,31 @@ class RegionService
     /**
      * 地区删除
      *
-     * @param array $ids 地区id
+     * @param mixed $ids  地区id
+     * @param bool  $real 是否真实删除
      * 
      * @return array
      */
-    public static function dele($ids)
+    public static function dele($ids, $real = false)
     {
         $model = new RegionModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
+
         if (empty($res)) {
             exception();
         }
 
-        RegionCache::clear();
         $update['ids'] = $ids;
+
+        RegionCache::clear();
 
         return $update;
     }
@@ -283,8 +311,9 @@ class RegionService
             exception($errmsg);
         }
 
-        RegionCache::clear();
         $update['ids'] = $ids;
+
+        RegionCache::clear();
 
         return $update;
     }
@@ -301,16 +330,19 @@ class RegionService
     {
         $model = new RegionModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        RegionCache::clear();
         $update['ids'] = $ids;
+
+        RegionCache::clear();
 
         return $update;
     }

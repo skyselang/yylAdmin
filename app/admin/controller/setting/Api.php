@@ -25,7 +25,7 @@ class Api
     /**
      * @Apidoc\Title("接口列表")
      * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Returned("list", type="array", desc="树形列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\setting\ApiModel\listReturn")
      * )
      */
@@ -34,6 +34,7 @@ class Api
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
 
+        $where = [];
         if ($search_field && $search_value !== '') {
             if (in_array($search_field, ['api_id', 'api_pid', 'is_unauth', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
@@ -42,9 +43,8 @@ class Api
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
-        $where[] = ['is_delete', '=', 0];
 
-        if (count($where) > 1) {
+        if ($where) {
             $data['list'] = ApiService::list('list', $where);
         } else {
             $data['list'] = ApiService::list('tree', $where);

@@ -319,7 +319,7 @@ class File
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
-        if ($group_id) {
+        if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
         }
         if ($storage != '') {
@@ -340,10 +340,9 @@ class File
             $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
         }
 
+        $order = ['delete_time' => 'desc', 'is_disable' => 'desc', 'update_time' => 'desc'];
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
-        } else {
-            $order = ['delete_time' => 'desc', 'is_disable' => 'desc', 'update_time' => 'desc'];
         }
 
         $data = FileService::list($where, $page, $limit, $order);
@@ -360,12 +359,11 @@ class File
      */
     public function recoverReco()
     {
-        $param['ids']       = Request::param('ids/a', '');
-        $param['is_delete'] = 0;
+        $param['ids'] = Request::param('ids/a', '');
 
         validate(FileValidate::class)->scene('reco')->check($param);
 
-        $data = FileService::edit($param['ids'], $param);
+        $data = FileService::edit($param['ids'], ['is_delete' => 0]);
 
         return success($data);
     }

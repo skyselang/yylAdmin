@@ -14,6 +14,11 @@ use think\facade\Cache;
 
 class CommentCache
 {
+    // 缓存标签
+    protected static $tag = 'cms_comment';
+    // 缓存前缀
+    protected static $prefix = 'cms_comment:';
+
     /**
      * 缓存键名
      *
@@ -23,7 +28,7 @@ class CommentCache
      */
     public static function key($id)
     {
-        return 'cms_comment:' . $id;
+        return self::$prefix . $id;
     }
 
     /**
@@ -37,7 +42,7 @@ class CommentCache
      */
     public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($id), $info, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
@@ -61,11 +66,20 @@ class CommentCache
      */
     public static function del($id)
     {
-        $keys = var_to_array($id);
-        foreach ($keys as $v) {
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
             $res = Cache::delete(self::key($v));
         }
-
         return $res;
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

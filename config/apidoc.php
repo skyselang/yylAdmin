@@ -34,6 +34,9 @@ return [
             ],
             'headers' => [
                 ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token']
+            ],
+            'parameters' => [
+                ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token']
             ]
         ],
         [
@@ -51,6 +54,9 @@ return [
                 ['title' => '内容', 'name' => 'cms']
             ],
             'headers' => [
+                ['name' => 'ApiToken', 'type' => 'string', 'require' => true, 'desc' => 'api_token']
+            ],
+            'parameters' => [
                 ['name' => 'ApiToken', 'type' => 'string', 'require' => true, 'desc' => 'api_token']
             ]
         ]

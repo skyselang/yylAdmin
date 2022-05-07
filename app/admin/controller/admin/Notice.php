@@ -92,8 +92,6 @@ class Notice
             exception('公告已被删除：' . $param['admin_notice_id']);
         }
 
-        unset($data['password'], $data['token']);
-
         return success($data);
     }
 

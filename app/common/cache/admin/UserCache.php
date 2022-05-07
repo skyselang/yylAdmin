@@ -24,7 +24,7 @@ class UserCache
     /**
      * 缓存键名
      *
-     * @param int $id 用户id
+     * @param mixed $id 用户id
      * 
      * @return string
      */
@@ -36,17 +36,17 @@ class UserCache
     /**
      * 缓存设置
      *
-     * @param int   $id   用户id
+     * @param mixed $id   用户id
      * @param array $info 用户信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = null)
+    public static function set($id, $info, $ttl = -1)
     {
-        if ($ttl === null) {
-            $setting = SettingService::info();
-            $ttl     = $setting['token_exp'] * 3600;
+        if ($ttl === -1) {
+            $set = SettingService::info();
+            $ttl = $set['token_exp'] * 3600;
         }
 
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
@@ -55,7 +55,7 @@ class UserCache
     /**
      * 缓存获取
      *
-     * @param int $id 用户id
+     * @param mixed $id 用户id
      * 
      * @return array 用户信息
      */
@@ -67,13 +67,17 @@ class UserCache
     /**
      * 缓存删除
      *
-     * @param int $id 用户id
+     * @param mixed $id 用户id
      * 
      * @return bool
      */
     public static function del($id)
     {
-        return Cache::delete(self::key($id));
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
     }
 
     /**

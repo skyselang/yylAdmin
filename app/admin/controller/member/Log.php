@@ -60,7 +60,7 @@ class Log
                 $member_where[] = [$search_field, $member_exp, $search_value];
                 $member_ids = $MemberModel->where($member_where)->column($MemberPk);
                 $where[] = [$MemberPk, 'in', $member_ids];
-            } elseif (in_array($search_field, ['api_url', 'api_name'])) {
+            } elseif (in_array($search_field, ['api_id', 'api_name', 'api_url'])) {
                 $ApiModel = new ApiModel();
                 $ApiPk = $ApiModel->getPk();
                 $api_exp = strpos($search_value, ',') ? 'in' : '=';
@@ -138,7 +138,7 @@ class Log
         $date_value = Request::param('date_value/a', '');
         $clean      = Request::param('clean/d', 0);
 
-        $where = $member_ids =[];
+        $where = $member_ids = [];
         if ($member_id) {
             $member_ids = array_merge(explode(',', $member_id), $member_ids);
         }

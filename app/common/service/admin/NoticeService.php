@@ -43,15 +43,12 @@ class NoticeService
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        $admin_users = [];
-        if (strpos($field, 'admin_user_id')) {
-            $UserModel = new UserModel();
-            $admin_user_ids = array_column($list, 'admin_user_id');
-            $admin_users = $UserModel->where('admin_user_id', 'in', $admin_user_ids)->column('username', 'admin_user_id');
-        }
+        $UserModel = new UserModel();
+        $admin_user_ids = array_column($list, 'admin_user_id');
+        $admin_users = $UserModel->where('admin_user_id', 'in', $admin_user_ids)->column('username', 'admin_user_id');
 
         foreach ($list as $k => $v) {
-            $list[$k]['username'] = isset($admin_users[$v['admin_user_id']]) ? $admin_users[$v['admin_user_id']] : '';
+            $list[$k]['username'] = $admin_users[$v['admin_user_id']] ?? '';
         }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -60,26 +57,28 @@ class NoticeService
     /**
      * 公告信息
      *
-     * @param int $id 公告id
+     * @param int  $id   公告id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = NoticeCache::get($id);
         if (empty($info)) {
             $model = new NoticeModel();
+
             $info = $model->find($id);
             if (empty($info)) {
-                exception('公告不存在：' . $id);
+                if ($exce) {
+                    exception('公告不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
-            $info['username'] = '';
-            $user = UserService::info($info['admin_user_id']);
-            if ($user) {
-                $info['username'] = $user['username'];
-            }
+            $user = UserService::info($info['admin_user_id'], false);
+            $info['username'] = $user['username'] ?? '';
 
             NoticeCache::set($id, $info);
         }
@@ -123,19 +122,19 @@ class NoticeService
     {
         $model = new NoticeModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        settype($ids, 'array');
-        foreach ($ids as $v) {
-            NoticeCache::del($v);
-        }
         $update['ids'] = $ids;
+
+        NoticeCache::del($ids);
 
         return $update;
     }
@@ -164,10 +163,9 @@ class NoticeService
             exception();
         }
 
-        foreach ($ids as $v) {
-            NoticeCache::del($v);
-        }
         $update['ids'] = $ids;
+
+        NoticeCache::del($ids);
 
         return $update;
     }

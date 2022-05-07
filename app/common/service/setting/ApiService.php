@@ -28,6 +28,7 @@ class ApiService
      */
     public static function list($type = 'list', $where = [], $order = [], $field = '')
     {
+        $where[] = ['is_delete', '=', 0];
         if ($type == 'list') {
             $model = new ApiModel();
             $pk = $model->getPk();
@@ -41,15 +42,16 @@ class ApiService
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
         } else {
-            $key = $type;
+            if (empty($field)) {
+                $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+            }
+
+            $key = $type . md5(serialize($where) . $field);
             $data = ApiCache::get($key);
             if (empty($data)) {
                 $model = new ApiModel();
                 $pk = $model->getPk();
 
-                if (empty($field)) {
-                    $field = $pk . ',api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
-                }
                 if (empty($order)) {
                     $order = ['api_sort' => 'desc', $pk => 'asc'];
                 }
@@ -118,13 +120,15 @@ class ApiService
         $pk = $model->getPk();
 
         $param['create_time'] = datetime();
+
         $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
         }
 
-        ApiCache::clear();
         $param[$pk] = $id;
+
+        ApiCache::clear();
 
         return $param;
     }
@@ -141,16 +145,19 @@ class ApiService
     {
         $model = new ApiModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        ApiCache::clear();
         $update['ids'] = $ids;
+
+        ApiCache::clear();
 
         return $update;
     }
@@ -175,12 +182,14 @@ class ApiService
             $update['delete_time'] = datetime();
             $res = $model->where($pk, 'in', $ids)->update($update);
         }
+
         if (empty($res)) {
             exception();
         }
 
-        ApiCache::clear();
         $update['ids'] = $ids;
+
+        ApiCache::clear();
 
         return $update;
     }
@@ -196,8 +205,10 @@ class ApiService
         $list = ApiCache::get($key);
         if (empty($list)) {
             $model = new ApiModel();
+
             $list = $model->where('is_delete', 0)->column('api_url');
             $list = array_filter($list);
+
             ApiCache::set($key, $list);
         }
 
@@ -215,9 +226,11 @@ class ApiService
         $list = ApiCache::get($key);
         if (empty($list)) {
             $model = new ApiModel();
+
             $list = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('api_url');
             $list = array_merge($list, Config::get('api.api_is_unlogin', []));
             $list = array_unique(array_filter($list));
+
             ApiCache::set($key, $list);
         }
 
@@ -236,6 +249,7 @@ class ApiService
         if (empty($list)) {
             $list = Config::get('api.api_is_unrate', []);
             $list = array_unique(array_filter($list));
+
             ApiCache::set($key, $list);
         }
 

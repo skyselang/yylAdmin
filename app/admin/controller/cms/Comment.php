@@ -44,7 +44,7 @@ class Comment
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        if ($search_field && $search_value) {
+        if ($search_field && $search_value !== '') {
             if (in_array($search_field, ['comment_id', 'is_unread'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];

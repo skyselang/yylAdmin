@@ -26,6 +26,7 @@ class SettingService
     public static function info()
     {
         $id = self::$id;
+
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
@@ -49,25 +50,27 @@ class SettingService
     /**
      * 文件设置修改
      *
-     * @param array $param 设置信息
+     * @param array $update 设置信息
      *
      * @return array
      */
-    public static function edit($param)
+    public static function edit($update)
     {
         $model = new SettingModel();
         $pk = $model->getPk();
+
         $id = self::$id;
 
-        $param['update_time'] = datetime();
-        $info = $model->where($pk, $id)->update($param);
+        $update['update_time'] = datetime();
+
+        $info = $model->where($pk, $id)->update($update);
         if (empty($info)) {
             exception();
         }
 
         SettingCache::del($id);
 
-        return $param;
+        return $update;
     }
 
     /**

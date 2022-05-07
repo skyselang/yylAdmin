@@ -26,19 +26,13 @@ class Content
 {
     /**
      * @Apidoc\Title("分类列表")
-     * @Apidoc\Returned("list", type="array", desc="分类树形", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
      * )
      */
     public function category()
     {
-        $key = 'api';
-        $data = CategoryCache::get($key);
-        if (empty($data)) {
-            $list = CategoryService::list('list', ['is_delete' => 0, 'is_hide' => 0], [], 'category_id,category_pid,category_name');
-            $data = list_to_tree($list, 'category_id', 'category_pid');
-            CategoryCache::set($key, $data);
-        }
+        $data = CategoryService::list('tree', ['is_delete' => 0, 'is_hide' => 0], [], 'category_id,category_pid,category_name');
 
         return success($data);
     }
@@ -52,7 +46,7 @@ class Content
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
      * @Apidoc\Param("category_id", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="内容列表", 
+     * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
@@ -108,6 +102,9 @@ class Content
         validate(ContentValidate::class)->scene('info')->check($param);
 
         $data = ContentService::info($param['content_id']);
+        if ($data['is_hide'] == 1) {
+            exception('内容已被下架');
+        }
         if ($data['is_delete'] == 1) {
             exception('内容已被删除');
         }

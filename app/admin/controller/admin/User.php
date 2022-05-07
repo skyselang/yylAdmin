@@ -185,8 +185,7 @@ class User
 
         validate(UserValidate::class)->scene('pwd')->check($param);
 
-        $param['password'] = md5($param['password']);
-        $data = UserService::edit($param['ids'], $param);
+        $data = UserService::edit($param['ids'], ['password' => md5($param['password'])]);
 
         return success($data);
     }

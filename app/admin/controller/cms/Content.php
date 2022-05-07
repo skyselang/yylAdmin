@@ -31,7 +31,7 @@ class Content
      */
     public function category()
     {
-        $data['list'] = CategoryService::list('tree');
+        $data['list'] = CategoryService::list('tree', ['is_delete' => 0], [], 'category_id,category_pid,category_name');
 
         return success($data);
     }

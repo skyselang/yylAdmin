@@ -110,34 +110,18 @@ function api_is_unrate($api_url = '')
 }
 
 /**
- * 接口token是否设置
- *
- * @return bool
- */
-function api_token_has()
-{
-    $setting   = SettingService::info();
-    $token_key = $setting['token_name'];
-    $token_key = strtolower($token_key);
-
-    $header = Request::header();
-    if (isset($header[$token_key])) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
  * 接口token获取
  *
  * @return string
  */
 function api_token()
 {
-    $setting   = SettingService::info();
-    $token_key = $setting['token_name'];
-    $api_token = Request::header($token_key, '');
+    $setting = SettingService::info();
+
+    $api_token = Request::header($setting['token_name'], '');
+    if (empty($api_token)) {
+        $api_token = Request::param($setting['token_name'], '');
+    }
 
     return $api_token;
 }

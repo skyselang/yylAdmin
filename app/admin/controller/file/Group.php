@@ -44,17 +44,10 @@ class Group
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['group_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
-            } elseif (in_array($search_field, ['is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['group_id', 'is_disable'])) {
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }

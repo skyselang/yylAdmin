@@ -49,43 +49,23 @@ class MemberService
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        $file = $avatar = [];
-        $avatar_ids = array_filter(array_column($list, 'avatar_id'));
-        if ($avatar_ids) {
-            $FileModel = new FileModel();
-            $file = $FileModel->field('file_id,storage,domain,file_path,file_hash,file_ext,is_disable')->where('file_id', 'in', $avatar_ids)->select()->toArray();
-        }
-        foreach ($file as $kf => $vf) {
-            $avatar[$vf['file_id']] = FileService::fileUrl($vf);
-        }
+        $avatar_ids = array_column($list, 'avatar_id');
+        $file = FileService::fileArray($avatar_ids);
+        $file = array_column($file, 'file_url', 'file_id');
 
-        $headimgurl = $nickname = [];
-        $member_ids = array_filter(array_column($list, $pk));
-        if ($member_ids) {
-            $WechatModel = new WechatModel();
-            $member_wechat = $WechatModel->field($pk . ',nickname,headimgurl')->where($pk, 'in', $member_ids)->select()->toArray();
-            foreach ($member_wechat as $k => $v) {
-                $nickname[$v['member_id']] = $v['nickname'];
-                $headimgurl[$v['member_id']] = $v['headimgurl'];
-            }
-        }
+        $member_ids = array_column($list, $pk);
+        $WechatModel = new WechatModel();
+        $member_wechat = $WechatModel->field($pk . ',nickname,headimgurl')->where($pk, 'in', $member_ids)->select()->toArray();
+        $headimgurl = array_column($member_wechat, 'headimgurl', $pk);
+        $nickname = array_column($member_wechat, 'nickname', $pk);
 
         foreach ($list as $k => $v) {
-            $list[$k]['avatar_url'] = '';
-            if (isset($v['avatar_id'])) {
-                if (isset($avatar[$v['avatar_id']]) && $avatar[$v['avatar_id']]) {
-                    $list[$k]['avatar_url'] = $avatar[$v['avatar_id']];
-                }
-            }
+            $list[$k]['avatar_url'] = $file[$v['avatar_id']] ?? '';
             if (empty($list[$k]['avatar_url'])) {
-                if (isset($headimgurl[$v['member_id']]) && $headimgurl[$v['member_id']]) {
-                    $list[$k]['avatar_url'] = $headimgurl[$v['member_id']];
-                }
+                $list[$k]['avatar_url'] = $headimgurl[$v[$pk]] ?? '';
             }
             if (empty($v['nickname'])) {
-                if (isset($nickname[$v['member_id']]) && $nickname[$v['member_id']]) {
-                    $list[$k]['nickname'] = $nickname[$v['member_id']];
-                }
+                $list[$k]['nickname'] = $nickname[$v[$pk]] ?? '';
             }
         }
 
@@ -114,6 +94,7 @@ class MemberService
                 return [];
             }
             $info = $info->toArray();
+
             $info['avatar_url'] = FileService::fileUrl($info['avatar_id']);
 
             $WechatModel = new WechatModel();
@@ -157,10 +138,12 @@ class MemberService
 
         $param['password']    = md5($param['password']);
         $param['create_time'] = datetime();
+
         $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
         }
+
         $param[$pk] = $id;
 
         return $param;
@@ -176,21 +159,21 @@ class MemberService
      */
     public static function edit($ids, $update = [])
     {
-        if (!is_array($ids)) {
-            $ids = [$ids];
-        }
         $model = new MemberModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        MemberCache::del($ids);
         $update['ids'] = $ids;
+
+        MemberCache::del($ids);
 
         return $update;
     }
@@ -199,19 +182,16 @@ class MemberService
      * 会员删除
      *
      * @param mixed $ids  会员id
-     * @param bool  $dele 是否真实删除
+     * @param bool  $real 是否真实删除
      * 
      * @return array
      */
-    public static function dele($ids, $dele = false)
+    public static function dele($ids, $real = false)
     {
-        if (!is_array($ids)) {
-            $ids = [$ids];
-        }
         $model = new MemberModel();
         $pk = $model->getPk();
 
-        if ($dele) {
+        if ($real) {
             $res = $model->where($pk, 'in', $ids)->delete();
         } else {
             $update['is_delete']   = 1;
@@ -222,13 +202,15 @@ class MemberService
         if (empty($res)) {
             exception();
         }
-        if ($dele) {
+
+        if ($real) {
             $WechatModel = new WechatModel();
             $WechatModel->where($pk, 'in', $ids)->delete();
         }
 
-        MemberCache::del($ids);
         $update['ids'] = $ids;
+
+        MemberCache::del($ids);
 
         return $update;
     }
@@ -406,7 +388,7 @@ class MemberService
             // 提交事务
             $MemberModel->commit();
         } catch (\Exception $e) {
-            $errmsg = '微信登录失败：' . $e->getMessage() . '：' . $e->getLine();
+            $errmsg = '微信登录失败：' . $e->getMessage();
             // 回滚事务
             $MemberModel->rollback();
         }
@@ -460,8 +442,9 @@ class MemberService
         $update['logout_time'] = datetime();
         $model->where($pk, $id)->update($update);
 
-        MemberCache::del($id);
         $update[$pk] = $id;
+
+        MemberCache::del($id);
 
         return $update;
     }

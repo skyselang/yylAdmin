@@ -131,23 +131,6 @@ function menu_is_unrate($menu_url = '')
 }
 
 /**
- * 用户token是否设置
- *
- * @return bool
- */
-function admin_token_has()
-{
-    $setting    = SettingService::info();
-    $token_name = strtolower($setting['token_name']);
-    $header     = Request::header();
-    if (isset($header[$token_name])) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
  * 用户token获取
  *
  * @return string
@@ -156,7 +139,12 @@ function admin_token()
 {
     $setting = SettingService::info();
 
-    return Request::header($setting['token_name'], '');
+    $admin_token = Request::header($setting['token_name'], '');
+    if (empty($admin_token)) {
+        $admin_token = Request::param($setting['token_name'], '');
+    }
+
+    return $admin_token;
 }
 
 /**

@@ -38,7 +38,7 @@ class MenuService
             $pk = $model->getPk();
 
             if (empty($field)) {
-                $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unauth,is_unlogin,is_disable';
+                $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unlogin,is_unauth,is_disable';
             }
             if (empty($order)) {
                 $order = ['menu_sort' => 'desc', $pk => 'asc'];
@@ -50,14 +50,14 @@ class MenuService
                 $data[$k]['hasChildren'] = true;
             }
         } else {
-            $key = $type;
+            $key = $type . md5(serialize($where));
             $data = MenuCache::get($key);
             if (empty($data)) {
                 $model = new MenuModel();
                 $pk = $model->getPk();
 
                 if (empty($field)) {
-                    $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unauth,is_unlogin,is_disable';
+                    $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unlogin,is_unauth,is_disable';
                 }
                 if (empty($order)) {
                     $order = ['menu_sort' => 'desc', $pk => 'asc'];
@@ -180,6 +180,7 @@ class MenuService
                 // 回滚事务
                 $model->rollback();
             }
+
             if ($errmsg) {
                 exception($errmsg);
             }
@@ -191,6 +192,7 @@ class MenuService
         }
 
         MenuCache::clear();
+
         $param[$pk] = $id;
 
         return $param;
@@ -210,6 +212,7 @@ class MenuService
 
         $id = $param[$pk];
         unset($param[$pk]);
+
         $param['update_time'] = datetime();
 
         $add = false;
@@ -297,6 +300,7 @@ class MenuService
                 // 回滚事务
                 $model->rollback();
             }
+
             if ($errmsg) {
                 exception($errmsg);
             }
@@ -307,8 +311,9 @@ class MenuService
             }
         }
 
-        MenuCache::clear();
         $param[$pk] = $id;
+
+        MenuCache::clear();
 
         return $param;
     }
@@ -337,8 +342,9 @@ class MenuService
             exception();
         }
 
-        MenuCache::clear();
         $update['ids'] = $ids;
+
+        MenuCache::clear();
 
         return $update;
     }
@@ -355,16 +361,19 @@ class MenuService
     {
         $model = new MenuModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        MenuCache::clear();
         $update['ids'] = $ids;
+
+        MenuCache::clear();
 
         return $update;
     }
@@ -422,11 +431,11 @@ class MenuService
         if (empty($res)) {
             exception();
         }
-
-        RoleCache::del($admin_role_id);
-
+        
         $update[$MenuPk] = $admin_menu_id;
         $update[$RolePk] = $admin_role_id;
+
+        RoleCache::del($admin_role_id);
 
         return $update;
     }
@@ -485,10 +494,10 @@ class MenuService
             exception();
         }
 
-        UserCache::upd($admin_user_id);
-
         $update[$MenuPk] = $admin_menu_id;
         $update[$UserPk] = $admin_user_id;
+
+        UserCache::upd($admin_user_id);
 
         return $update;
     }

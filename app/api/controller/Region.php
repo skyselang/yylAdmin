@@ -37,7 +37,7 @@ class Region
         $where[] = ['is_delete', '=', 0];
         $where[] = ['region_pid', '=', $region_pid];
 
-        $data = RegionService::list($where);
+        $data = RegionService::list('list', $where);
 
         return success($data);
     }
@@ -48,7 +48,7 @@ class Region
      */
     public function tree()
     {
-        $data = RegionService::info('tree');
+        $data = RegionService::list('tree', [], [], 'region_id,region_pid,region_name');
 
         return success($data);
     }

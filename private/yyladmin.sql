@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 29/04/2022 18:34:46
+ Date: 07/05/2022 14:21:53
 */
 
 SET NAMES utf8mb4;
@@ -27,9 +27,9 @@ CREATE TABLE `yyl_admin_menu`  (
   `menu_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '菜单名称',
   `menu_url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单链接',
   `menu_sort` int(10) NULL DEFAULT 250 COMMENT '菜单排序',
-  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
-  `is_unauth` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需权限，1是0否',
   `is_unlogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需登录，1是0否',
+  `is_unauth` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否无需权限，1是0否',
+  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
@@ -79,7 +79,7 @@ INSERT INTO `yyl_admin_menu` VALUES (45, 12, '我的信息', 'admin/admin.UserCe
 INSERT INTO `yyl_admin_menu` VALUES (46, 12, '修改信息', 'admin/admin.UserCenter/edit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (47, 12, '修改密码', 'admin/admin.UserCenter/pwd', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (49, 1, '首页', 'admin/Index/index', 300, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/admin.Login/login', 160, 0, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (51, 111, '登录', 'admin/admin.Login/login', 160, 1, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (52, 111, '退出', 'admin/admin.Login/logout', 150, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (53, 0, '系统管理', '', 120, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (54, 12, '我的日志', 'admin/admin.UserCenter/log', 250, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -87,7 +87,7 @@ INSERT INTO `yyl_admin_menu` VALUES (58, 53, '实用工具', 'admin/admin.Utils/
 INSERT INTO `yyl_admin_menu` VALUES (63, 58, '字符串转换', 'admin/admin.Utils/strtran', 290, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (71, 188, '缓存设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (73, 188, '验证码设置', '', 150, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/admin.Login/captcha', 170, 0, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (75, 111, '验证码', 'admin/admin.Login/captcha', 170, 1, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (85, 188, 'Token设置', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (86, 58, '字节转换', 'admin/admin.Utils/bytetran', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (87, 58, 'IP信息', 'admin/admin.Utils/ipinfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -235,7 +235,7 @@ INSERT INTO `yyl_admin_menu` VALUES (426, 123, '会员统计', 'admin/member.Mem
 INSERT INTO `yyl_admin_menu` VALUES (427, 188, '系统设置', '', 100, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (428, 427, '系统设置信息', 'admin/admin.Setting/systemInfo', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (429, 427, '系统设置修改', 'admin/admin.Setting/systemEdit', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (430, 111, '设置信息', 'admin/admin.Login/setting', 250, 0, 0, 1, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (430, 111, '设置信息', 'admin/admin.Login/setting', 250, 1, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (432, 298, '内容分类修改上级', 'admin/cms.Category/pid', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (433, 283, '内容修改分类', 'admin/cms.Content/cate', 255, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (434, 123, '会员修改地区', 'admin/member.Member/region', 250, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -325,7 +325,7 @@ CREATE TABLE `yyl_admin_role`  (
 -- ----------------------------
 INSERT INTO `yyl_admin_role` VALUES (1, ',,', '管理员', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (2, ',1,13,17,22,29,37,38,40,42,43,45,49,51,52,54,58,63,75,86,87,111,113,114,115,116,117,122,124,125,126,133,134,141,142,144,151,152,158,172,173,187,191,193,196,198,204,218,221,224,227,284,285,286,289,291,292,293,294,295,299,300,301,382,383,384,388,392,396,399,400,401,402,411,412,413,417,420,422,424,426,428,430,436,437,442,445,495,499,501,504,507,', '演示', '', 250, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (3, ',,', '前端', '', 250, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (3, ',1,49,51,52,75,111,172,396,420,424,430,442,', '前端', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (4, ',,', '4', '4', 250, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (5, ',,', '5', '5', 250, 0, 1, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (6, ',,', '6', '6', 250, 0, 1, NULL, NULL, NULL);
@@ -383,8 +383,8 @@ CREATE TABLE `yyl_admin_user`  (
   `avatar_id` int(11) NULL DEFAULT 0 COMMENT '头像id',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   `sort` int(10) NULL DEFAULT 250 COMMENT '排序',
-  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
   `is_super` tinyint(1) NULL DEFAULT 0 COMMENT '是否超管，1是0否',
+  `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
   `login_ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '登录IP',
@@ -398,7 +398,7 @@ CREATE TABLE `yyl_admin_user`  (
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `email`(`email`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_user
@@ -408,7 +408,7 @@ INSERT INTO `yyl_admin_user` VALUES (2, ',2,', ',,', 'yyladmin', 'yyladmin', 'e1
 INSERT INTO `yyl_admin_user` VALUES (3, ',2,', ',,', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (4, ',2,', ',,', 'demo', '演示', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_user` VALUES (5, ',2,', ',,', 'php', '拍簧片', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_user` VALUES (6, ',,', ',,', 'test', '测试', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_user` VALUES (6, ',1,2,', ',1,3,4,5,12,13,14,15,16,17,18,19,20,22,23,24,25,27,28,29,30,31,32,33,35,37,38,40,41,42,43,44,45,46,47,49,51,52,53,54,58,63,71,73,75,85,86,87,88,111,113,114,115,116,117,118,119,120,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,138,139,140,141,142,143,144,150,151,152,153,154,155,156,157,158,170,171,172,173,186,187,188,189,190,191,192,193,194,196,197,198,199,200,201,202,203,204,205,215,217,218,219,220,221,222,223,224,225,226,227,228,229,230,283,284,285,286,287,288,289,291,292,293,294,295,296,297,298,299,300,301,302,303,308,381,382,383,384,385,386,387,388,389,390,391,392,393,396,397,398,399,400,401,402,403,404,405,406,407,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,426,427,428,429,430,432,433,434,435,436,437,438,439,440,441,442,443,444,445,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,', 'test', '测试', 'e10adc3949ba59abbe56e057f20f883e', '', '', 0, '', 200, 0, 0, 0, 0, '', '', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_user_log

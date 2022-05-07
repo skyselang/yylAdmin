@@ -58,21 +58,12 @@ class ContentService
             }
         }
         $category = $CategoryModel->where('category_id', 'in', $category_ids)->column('category_name', 'category_id');
-
         $file = FileService::fileArray($file_ids);
+        $file = array_column($file, 'file_url', 'file_id');
 
         foreach ($list as $k => $v) {
-            $list[$k]['category_name'] = '';
-            if (isset($category[$v['category_id']]) && !empty($category[$v['category_id']])) {
-                $list[$k]['category_name'] = $category[$v['category_id']];
-            }
-
-            $list[$k]['img_url'] = '';
-            foreach ($file as $kf => $vf) {
-                if ($v['img_id'] == $vf['file_id']) {
-                    $list[$k]['img_url'] = $vf['file_url'];
-                }
-            }
+            $list[$k]['category_name'] = $category[$v['category_id']] ?? '';
+            $list[$k]['img_url'] = $file[$v['img_id']] ?? '';
         }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -81,30 +72,31 @@ class ContentService
     /**
      * 内容信息
      * 
-     * @param $id 内容id
+     * @param int  $id   内容id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
         $info = ContentCache::get($id);
         if (empty($info)) {
+            $model = new ContentModel();
+            $pk = $model->getPk();
+
             $info = $model->find($id);
             if (empty($info)) {
-                exception('内容不存在：' . $id);
+                if ($exce) {
+                    exception('内容不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
-            $info['category_name'] = '';
             $CategoryModel = new CategoryModel();
             $CategoryPk = $CategoryModel->getPk();
             $category = CategoryService::info($info[$CategoryPk], false);
-            if ($category) {
-                $info['category_name'] = $category['category_name'];
-            }
+            $info['category_name'] = $category['category_name'] ?? '';
 
             $info['imgs']   = FileService::fileArray($info['img_ids']);
             $info['files']  = FileService::fileArray($info['file_ids']);
@@ -114,14 +106,17 @@ class ContentService
         }
 
         // 点击量
-        $gate = 10;
-        $key  = $info[$pk] . 'hits';
+        $key  = $id . 'hits';
         $hits = ContentCache::get($key);
         if ($hits) {
+            $gate = 10;
             if ($hits >= $gate) {
-                $res = $model->where($pk, $info[$pk])->inc('hits', $hits)->update();
+                $model = new ContentModel();
+                $pk = $model->getPk();
+
+                $res = $model->where($pk, $id)->inc('hits', $hits)->update();
                 if ($res) {
-                    ContentCache::del($key);
+                    ContentCache::del([$key, $id]);
                 }
             } else {
                 ContentCache::inc($key, 1);
@@ -136,24 +131,25 @@ class ContentService
     /**
      * 内容添加
      *
-     * @param array $insert 内容信息
+     * @param array $param 内容信息
      *
      * @return array|Exception
      */
-    public static function add($insert)
+    public static function add($param)
     {
         $model = new ContentModel();
         $pk = $model->getPk();
 
-        $insert['create_time'] = datetime();
-        $id = $model->insertGetId($insert);
+        $param['create_time'] = datetime();
+
+        $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
         }
 
-        $insert[$pk] = $id;
+        $param[$pk] = $id;
 
-        return $insert;
+        return $param;
     }
 
     /**
@@ -168,16 +164,19 @@ class ContentService
     {
         $model = new ContentModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        ContentCache::del($ids);
         $update['ids'] = $ids;
+
+        ContentCache::del($ids);
 
         return $update;
     }
@@ -207,8 +206,9 @@ class ContentService
             exception();
         }
 
-        ContentCache::del($ids);
         $update['ids'] = $ids;
+
+        ContentCache::del($ids);
 
         return $update;
     }
@@ -306,7 +306,7 @@ class ContentService
             }
 
             $ss = array_column($xs_data, 's');
-            array_multisort($ss,  SORT_DESC, $xs_data);
+            array_multisort($ss, SORT_DESC, $xs_data);
             foreach ($xs_data as $v) {
                 $x_data[] = $v['x'];
                 $s_data[] = $v['s'];

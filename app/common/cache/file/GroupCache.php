@@ -14,8 +14,13 @@ use think\facade\Cache;
 
 class GroupCache
 {
+    // 缓存标签
+    protected static $tag = 'file_group';
+    // 缓存前缀
+    protected static $prefix = 'file_group:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
      * @param int $id 文件分组id
      * 
@@ -23,7 +28,7 @@ class GroupCache
      */
     public static function key($id)
     {
-        return 'file_group:' . $id;
+        return self::$prefix . $id;
     }
 
     /**
@@ -37,7 +42,7 @@ class GroupCache
      */
     public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($id), $info, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
@@ -61,16 +66,20 @@ class GroupCache
      */
     public static function del($id)
     {
-        if (is_array($id)) {
-            $keys = $id;
-        } else {
-            $keys = [$id];
-        }
-
-        foreach ($keys as $v) {
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
             $res = Cache::delete(self::key($v));
         }
-
         return $res;
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

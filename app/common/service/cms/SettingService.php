@@ -27,6 +27,7 @@ class SettingService
     public static function info()
     {
         $id = self::$id;
+        
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
@@ -41,6 +42,7 @@ class SettingService
                 $info = $model->find($id);
             }
             $info = $info->toArray();
+            
             if ($info['diy_config']) {
                 $info['diy_config'] = unserialize($info['diy_config']);
             } else {
@@ -58,7 +60,7 @@ class SettingService
     /**
      * 内容设置修改
      *
-     * @param array $update 内容信息
+     * @param array $update 内容设置信息
      *
      * @return array
      */
@@ -66,9 +68,11 @@ class SettingService
     {
         $model = new SettingModel();
         $pk = $model->getPk();
+
         $id = self::$id;
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, $id)->update($update);
         if (empty($res)) {
             exception();

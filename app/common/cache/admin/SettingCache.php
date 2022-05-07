@@ -14,53 +14,68 @@ use think\facade\Cache;
 
 class SettingCache
 {
+    // 缓存标签
+    protected static $tag = 'admin_setting';
+    // 缓存前缀
+    protected static $prefix = 'admin_setting:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param int $admin_setting_id 设置id
+     * @param int $id 设置id
      * 
      * @return string
      */
-    public static function key($admin_setting_id)
+    public static function key($id)
     {
-        return 'admin_setting:' . $admin_setting_id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param int   $admin_setting_id 设置id
-     * @param array $admin_setting    设置信息
-     * @param int   $ttl              有效时间（秒）0永久
+     * @param int   $id   设置id
+     * @param array $info 设置信息
+     * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($admin_setting_id, $admin_setting, $ttl = 86400)
+    public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($admin_setting_id), $admin_setting, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param int $admin_setting_id 设置id
+     * @param int $id 设置id
      * 
      * @return array 设置信息
      */
-    public static function get($admin_setting_id)
+    public static function get($id)
     {
-        return Cache::get(self::key($admin_setting_id));
+        return Cache::get(self::key($id));
     }
 
     /**
      * 缓存删除
      *
-     * @param int $admin_setting_id 设置id
+     * @param int $id 设置id
      * 
      * @return bool
      */
-    public static function del($admin_setting_id)
+    public static function del($id)
     {
-        return Cache::delete(self::key($admin_setting_id));
+        return Cache::delete(self::key($id));
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

@@ -32,6 +32,7 @@ class WechatService
     public static function offiInfo()
     {
         $id = self::$offi_id;
+
         $info = WechatCache::get($id);
         if (empty($info)) {
             $model = new WechatModel();
@@ -68,9 +69,11 @@ class WechatService
     {
         $model = new WechatModel();
         $pk = $model->getPk();
+
         $id = self::$offi_id;
 
         $param['update_time'] = datetime();
+
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
@@ -89,6 +92,7 @@ class WechatService
     public static function miniInfo()
     {
         $id = self::$mini_id;
+
         $info = WechatCache::get($id);
         if (empty($info)) {
             $model = new WechatModel();
@@ -122,9 +126,11 @@ class WechatService
     {
         $model = new WechatModel();
         $pk = $model->getPk();
+
         $id = self::$mini_id;
 
         $param['update_time'] = datetime();
+
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
@@ -182,13 +188,13 @@ class WechatService
                     // 测试环境
                     'dev' => [
                         'driver' => 'single',
-                        'path' => runtime_path() . 'easywechatOfficialAccountDev.log',
+                        'path' => runtime_path() . '/easywechat/' . date('Ymd') . '/officialAccountDev.log',
                         'level' => 'debug',
                     ],
                     // 生产环境
                     'prod' => [
                         'driver' => 'daily',
-                        'path' => runtime_path() . 'easywechatOfficialAccount.log',
+                        'path' => runtime_path() . '/easywechat/' . date('Ymd') . '/officialAccountProd.log',
                         'level' => 'info',
                         'days' => 30,
                     ],
@@ -239,7 +245,7 @@ class WechatService
              */
             'log' => [
                 'level' => $log_level,
-                'file' => runtime_path() . 'easywechatMiniProgram.log',
+                'file' => runtime_path() . '/easywechat/' . date('Ymd') . '/miniProgram.log',
             ],
         ];
 

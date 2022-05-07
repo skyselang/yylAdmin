@@ -38,7 +38,7 @@ class UserService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',username,nickname,phone,email,sort,is_disable,is_super,login_num,create_time,login_time';
+            $field = $pk . ',username,nickname,phone,email,sort,is_super,is_disable,login_num,create_time,login_time';
         }
         $where[] = ['is_delete', '=', 0];
         if (empty($order)) {
@@ -65,6 +65,7 @@ class UserService
         $info = UserCache::get($id);
         if (empty($info)) {
             $model = new UserModel();
+
             $info = $model->find($id);
             if (empty($info)) {
                 if ($exce) {
@@ -152,6 +153,7 @@ class UserService
             $menu_url        = array_merge($menu_url, $unlogin_unauth);
             $menu_url        = array_unique($menu_url);
 
+            sort($menu_ids);
             sort($menu_url);
 
             $info['admin_token']    = TokenService::create($info);
@@ -203,9 +205,11 @@ class UserService
     {
         $model = new UserModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
@@ -215,7 +219,8 @@ class UserService
         foreach ($ids as $v) {
             UserCache::upd($v);
         }
-        $update[$pk] = $ids;
+
+        $update['ids'] = $ids;
 
         return $update;
     }
@@ -244,11 +249,9 @@ class UserService
             exception();
         }
 
-        foreach ($ids as $v) {
-            UserCache::del($v);
-        }
-
         $update['ids'] = $ids;
+
+        UserCache::del($ids);
 
         return $update;
     }
@@ -277,7 +280,7 @@ class UserService
 
             $menu_ids       = $admin_user['menu_ids'];
             $admin_menu_ids = $admin_user['admin_menu_ids'];
-            $role_menu_ids  = RoleService::getMenuId($admin_user['admin_role_ids']);
+            $role_menu_ids  = RoleService::menu_ids($admin_user['admin_role_ids']);
 
             foreach ($admin_menu as $k => $v) {
                 $admin_menu[$k]['is_check'] = 0;
@@ -329,9 +332,9 @@ class UserService
                 exception();
             }
 
-            UserCache::upd($admin_user_id);
-
             $update[$pk] = $admin_user_id;
+
+            UserCache::upd($admin_user_id);
 
             return $update;
         }
@@ -381,7 +384,7 @@ class UserService
         $admin_user_id = $user[$pk];
         $admin_token = $user['admin_token'];
 
-        return compact($pk, 'admin_token');
+        return compact('admin_user_id', 'admin_token');
     }
 
     /**

@@ -66,7 +66,11 @@ class RegionCache
      */
     public static function del($id = '')
     {
-        return Cache::delete(self::key($id));
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
     }
 
     /**

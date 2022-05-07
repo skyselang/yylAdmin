@@ -11,6 +11,7 @@
 namespace app\common\service\member;
 
 use think\facade\Request;
+use think\facade\Config;
 use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\member\LogCache;
@@ -56,32 +57,20 @@ class LogService
 
         $member_ids = array_column($list, $MemberPk);
         $member = $MemberModel->field($MemberPk . ',username,nickname')->where($MemberPk, 'in', $member_ids)->select()->toArray();
+        $member_username = array_column($member, 'username', $MemberPk);
+        $member_nickname = array_column($member, 'nickname', $MemberPk);
 
         $api_ids = array_column($list, $ApiPk);
         $api = $ApiModel->field($ApiPk . ',api_name,api_url')->where($ApiPk, 'in', $api_ids)->select()->toArray();
+        $api_name = array_column($api, 'api_name', $ApiPk);
+        $api_url = array_column($api, 'api_url', $ApiPk);
 
         foreach ($list as $k => $v) {
-            if (isset($v[$MemberPk])) {
-                $list[$k]['username'] = '';
-                $list[$k]['nickname'] = '';
-                foreach ($member as $km => $vm) {
-                    if ($v[$MemberPk] == $vm[$MemberPk]) {
-                        $list[$k]['username'] = $vm['username'];
-                        $list[$k]['nickname'] = $vm['nickname'];
-                    }
-                }
-            }
+            $list[$k]['username'] = $member_username[$v[$MemberPk]] ?? '';
+            $list[$k]['nickname'] = $member_nickname[$v[$MemberPk]] ?? '';
 
-            if (isset($v[$ApiPk])) {
-                $list[$k]['api_name'] = '';
-                $list[$k]['api_url']  = '';
-                foreach ($api as $ka => $va) {
-                    if ($v[$ApiPk] == $va[$ApiPk]) {
-                        $list[$k]['api_name'] = $va['api_name'];
-                        $list[$k]['api_url']  = $va['api_url'];
-                    }
-                }
-            }
+            $list[$k]['api_name'] = $api_name[$v[$ApiPk]] ?? '';
+            $list[$k]['api_url']  = $api_url[$v[$ApiPk]] ?? '';
         }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -90,11 +79,12 @@ class LogService
     /**
      * 会员日志信息
      *
-     * @param int $id 会员日志id
+     * @param int  $id   会员日志id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = LogCache::get($id);
         if (empty($info)) {
@@ -103,32 +93,28 @@ class LogService
 
             $info = $model->where($pk, $id)->find();
             if (empty($info)) {
-                exception('会员日志不存在：' . $id);
+                if ($exce) {
+                    exception('会员日志不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
+
             if ($info['request_param']) {
                 $info['request_param'] = unserialize($info['request_param']);
             }
 
-            $info['username'] = '';
-            $info['nickname'] = '';
             $MemberModel = new MemberModel();
             $MemberPk = $MemberModel->getPk();
             $member = MemberService::info($info[$MemberPk], false);
-            if ($member) {
-                $info['username'] = $member['username'];
-                $info['nickname'] = $member['nickname'];
-            }
+            $info['username'] = $member['username'] ?? '';
+            $info['nickname'] = $member['nickname'] ?? '';
 
-            $info['api_name'] = '';
-            $info['api_url']  = '';
             $ApiModel = new ApiModel();
             $ApiPk = $ApiModel->getPk();
             $api = ApiService::info($info[$ApiPk], false);
-            if ($api) {
-                $info['api_name'] = $api['api_name'];
-                $info['api_url']  = $api['api_url'];
-            }
+            $info['api_name'] = $api['api_name'] ?? '';
+            $info['api_url']  = $api['api_url'] ?? '';
 
             LogCache::set($id, $info);
         }
@@ -159,15 +145,12 @@ class LogService
                 $param['response_msg']  = '退出成功';
             }
 
+            // 请求参数排除字段
             $request_param = Request::param();
-            if (isset($request_param['password'])) {
-                unset($request_param['password']);
-            }
-            if (isset($request_param['new_password'])) {
-                unset($request_param['new_password']);
-            }
-            if (isset($request_param['old_password'])) {
-                unset($request_param['old_password']);
+            $param_without = Config::get('api.log_param_without', []);
+            array_push($param_without, Config::get('api.token_name'));
+            foreach ($param_without as $v) {
+                unset($request_param[$v]);
             }
 
             $api     = ApiService::info();
@@ -198,46 +181,55 @@ class LogService
      * 
      * @return array
      */
-    public static function edit($param)
-    {
-        $model = new LogModel();
-        $pk = $model->getPk();
-        $id = $param[$pk];
-        unset($param[$pk]);
-
-        $param['update_time'] = datetime();
-        $res = $model->where($pk, $id)->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        LogCache::del($id);
-        $param[$pk] = $id;
-
-        return $param;
-    }
-
-    /**
-     * 会员日志删除
-     *
-     * @param array $ids 会员日志id
-     * 
-     * @return array
-     */
-    public static function dele($ids)
+    public static function edit($ids, $update = [])
     {
         $model = new LogModel();
         $pk = $model->getPk();
 
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
+        unset($update[$pk], $update['ids']);
+
+        $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        LogCache::del($ids);
         $update['ids'] = $ids;
+
+        LogCache::del($ids);
+
+        return $update;
+    }
+
+    /**
+     * 会员日志删除
+     *
+     * @param mixed $ids  会员日志id
+     * @param bool  $real 是否真实删除
+     * 
+     * @return array
+     */
+    public static function dele($ids, $real = false)
+    {
+        $model = new LogModel();
+        $pk = $model->getPk();
+
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
+
+        if (empty($res)) {
+            exception();
+        }
+
+        $update['ids'] = $ids;
+
+        LogCache::del($ids);
 
         return $update;
     }
@@ -259,7 +251,7 @@ class LogService
         if ($clean) {
             $count = $model->where($pk, '>', 0)->delete(true);
         } else {
-            if (count($where)) {
+            if ($where) {
                 $count = $model->where($where)->delete();
             }
         }

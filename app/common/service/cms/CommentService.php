@@ -35,7 +35,7 @@ class CommentService
             $field = $pk . ',call,mobile,tel,title,remark,is_unread,read_time,create_time,update_time,delete_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
+            $order = ['is_unread' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count($pk);
@@ -48,11 +48,12 @@ class CommentService
     /**
      * 留言信息
      * 
-     * @param int $id 留言id
+     * @param int  $id   留言id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = CommentCache::get($id);
         if (empty($info)) {
@@ -60,7 +61,10 @@ class CommentService
 
             $info = $model->find($id);
             if (empty($info)) {
-                exception('留言不存在：' . $id);
+                if ($exce) {
+                    exception('留言不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
@@ -77,24 +81,25 @@ class CommentService
     /**
      * 留言添加
      *
-     * @param array $insert 留言信息
+     * @param array $param 留言信息
      *
      * @return array|Exception
      */
-    public static function add($insert)
+    public static function add($param)
     {
         $model = new CommentModel();
         $pk = $model->getPk();
 
-        $insert['create_time'] = datetime();
-        $id = $model->insertGetId($insert);
+        $param['create_time'] = datetime();
+
+        $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
         }
 
-        $insert[$pk] = $id;
+        $param[$pk] = $id;
 
-        return $insert;
+        return $param;
     }
 
     /**
@@ -109,16 +114,19 @@ class CommentService
     {
         $model = new CommentModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        CommentCache::del($ids);
         $update['ids'] = $ids;
+
+        CommentCache::del($ids);
 
         return $update;
     }
@@ -148,8 +156,9 @@ class CommentService
             exception();
         }
 
-        CommentCache::del($ids);
         $update['ids'] = $ids;
+
+        CommentCache::del($ids);
 
         return $update;
     }

@@ -22,7 +22,7 @@ class NoticeCache
     /**
      * 缓存键名
      *
-     * @param int $id 公告id
+     * @param mixed $id 公告id
      * 
      * @return string
      */
@@ -34,7 +34,7 @@ class NoticeCache
     /**
      * 缓存设置
      *
-     * @param int   $id   公告id
+     * @param mixed $id   公告id
      * @param array $info 公告信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
@@ -48,7 +48,7 @@ class NoticeCache
     /**
      * 缓存获取
      *
-     * @param int $id 公告id
+     * @param mixed $id 公告id
      * 
      * @return array 公告信息
      */
@@ -60,13 +60,17 @@ class NoticeCache
     /**
      * 缓存删除
      *
-     * @param int $id 公告id
+     * @param mixed $id 公告id
      * 
      * @return bool
      */
     public static function del($id)
     {
-        return Cache::delete(self::key($id));
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
     }
 
     /**

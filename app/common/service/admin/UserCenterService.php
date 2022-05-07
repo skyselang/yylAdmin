@@ -44,6 +44,7 @@ class UserCenterService
         $pk = $model->getPk();
 
         $admin_user_id = $param[$pk];
+
         unset($param[$pk]);
 
         $param['update_time'] = datetime();
@@ -53,8 +54,9 @@ class UserCenterService
             exception();
         }
 
-        UserCache::upd($admin_user_id);
         $param[$pk] = $admin_user_id;
+
+        UserCache::upd($admin_user_id);
 
         return $param;
     }
@@ -82,14 +84,15 @@ class UserCenterService
 
         $update['password']    = md5($password_new);
         $update['update_time'] = datetime();
-
+        
         $res = $model->where($pk, $admin_user_id)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        UserCache::upd($admin_user_id);
         $update[$pk] = $admin_user_id;
+
+        UserCache::upd($admin_user_id);
 
         return $update;
     }

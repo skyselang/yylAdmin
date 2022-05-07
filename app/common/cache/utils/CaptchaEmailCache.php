@@ -14,8 +14,13 @@ use think\facade\Cache;
 
 class CaptchaEmailCache
 {
+    // 缓存标签
+    protected static $tag = 'captcha-email';
+    // 缓存前缀
+    protected static $prefix = 'captcha-email:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
      * @param string $email 邮箱
      * 
@@ -23,7 +28,7 @@ class CaptchaEmailCache
      */
     public static function key($email)
     {
-        return 'captcha-email:' . $email;
+        return self::$prefix . $email;
     }
 
     /**
@@ -31,7 +36,7 @@ class CaptchaEmailCache
      *
      * @param string $email   邮箱
      * @param string $captcha 验证码
-     * @param int    $ttl     有效时间（秒）0永久
+     * @param int    $ttl     有效时间（秒，0永久）
      * 
      * @return bool
      */
@@ -55,12 +60,26 @@ class CaptchaEmailCache
     /**
      * 缓存删除
      *
-     * @param string $email 邮箱
+     * @param mixed $email 邮箱
      * 
      * @return bool
      */
     public static function del($email)
     {
-        return Cache::delete(self::key($email));
+        $ids = var_to_array($email);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

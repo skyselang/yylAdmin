@@ -11,6 +11,7 @@
 namespace app\common\service\admin;
 
 use think\facade\Request;
+use think\facade\Config;
 use app\common\utils\IpInfoUtils;
 use app\common\utils\DatetimeUtils;
 use app\common\cache\admin\UserLogCache;
@@ -58,9 +59,9 @@ class UserLogService
         $admin_menu_names = $MenuModel->where('admin_menu_id', 'in', $admin_menu_ids)->column('menu_name', 'admin_menu_id');
 
         foreach ($list as $k => $v) {
-            $list[$k]['username'] = isset($admin_users[$v['admin_user_id']]) ? $admin_users[$v['admin_user_id']] : '';
-            $list[$k]['menu_url'] = isset($admin_menu_urls[$v['admin_menu_id']]) ? $admin_menu_urls[$v['admin_menu_id']] : '';
-            $list[$k]['menu_name'] = isset($admin_menu_names[$v['admin_menu_id']]) ? $admin_menu_names[$v['admin_menu_id']] : '';
+            $list[$k]['username'] = $admin_users[$v['admin_user_id']] ?? '';
+            $list[$k]['menu_url'] = $admin_menu_urls[$v['admin_menu_id']] ?? '';
+            $list[$k]['menu_name'] = $admin_menu_names[$v['admin_menu_id']] ?? '';
         }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -69,18 +70,23 @@ class UserLogService
     /**
      * 用户日志信息
      *
-     * @param int $id 用户日志id
+     * @param int  $id   用户日志id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = UserLogCache::get($id);
         if (empty($info)) {
             $model = new UserLogModel();
+
             $info = $model->find($id);
             if (empty($info)) {
-                exception('用户日志不存在：' . $id);
+                if ($exce) {
+                    exception('用户日志不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
@@ -88,25 +94,17 @@ class UserLogService
                 $info['request_param'] = unserialize($info['request_param']);
             }
 
-            $info['username'] = '';
-            $info['nickname'] = '';
             $UserModel = new UserModel();
             $UserPk = $UserModel->getPk();
             $user = UserService::info($info[$UserPk], false);
-            if ($user) {
-                $info['username'] = $user['username'];
-                $info['nickname'] = $user['nickname'];
-            }
+            $info['username'] = $user['username'] ?? '';
+            $info['nickname'] = $user['nickname'] ?? '';
 
-            $info['menu_name'] = '';
-            $info['menu_url']  = '';
             $MenuModel = new MenuModel();
             $MenuPk = $MenuModel->getPk();
             $menu = MenuService::info($info[$MenuPk], false);
-            if ($menu) {
-                $info['menu_name'] = $menu['menu_name'];
-                $info['menu_url']  = $menu['menu_url'];
-            }
+            $info['menu_name'] = $menu['menu_name'] ?? '';
+            $info['menu_url']  = $menu['menu_url'] ?? '';
 
             UserLogCache::set($id, $info);
         }
@@ -125,21 +123,18 @@ class UserLogService
     {
         // 日志记录是否开启
         if (admin_log_switch()) {
+            // 请求参数排除字段
             $request_param = Request::param();
-            if (isset($request_param['password'])) {
-                unset($request_param['password']);
-            }
-            if (isset($request_param['new_password'])) {
-                unset($request_param['new_password']);
-            }
-            if (isset($request_param['old_password'])) {
-                unset($request_param['old_password']);
+            $param_without = Config::get('admin.log_param_without', []);
+            array_push($param_without, Config::get('admin.token_name'));
+            foreach ($param_without as $v) {
+                unset($request_param[$v]);
             }
 
-            $menu    = MenuService::info();
+            $menu    = MenuService::info('', false);
             $ip_info = IpInfoUtils::info();
 
-            $param['admin_menu_id']    = $menu['admin_menu_id'];
+            $param['admin_menu_id']    = $menu['admin_menu_id'] ?? 0;
             $param['request_ip']       = $ip_info['ip'];
             $param['request_country']  = $ip_info['country'];
             $param['request_province'] = $ip_info['province'];
@@ -152,7 +147,7 @@ class UserLogService
             $param['create_time']      = datetime();
 
             $model = new UserLogModel();
-            $model->insert($param);
+            $model->strict(false)->insert($param);
         }
     }
 
@@ -169,6 +164,7 @@ class UserLogService
         $pk = $model->getPk();
 
         $id = $param[$pk];
+
         unset($param[$pk]);
 
         $param['request_param'] = serialize($param['request_param']);
@@ -179,9 +175,9 @@ class UserLogService
             exception();
         }
 
-        UserLogCache::del($id);
-
         $param[$pk] = $id;
+
+        UserLogCache::del($id);
 
         return $param;
     }
@@ -206,11 +202,9 @@ class UserLogService
             exception();
         }
 
-        foreach ($ids as $v) {
-            UserLogCache::del($v);
-        }
-
         $update[$pk] = $ids;
+
+        UserLogCache::del($ids);
 
         return $update;
     }
@@ -226,10 +220,15 @@ class UserLogService
     public static function clear($where = [], $clean = false)
     {
         $model = new UserLogModel();
+
         if ($clean) {
             $count = $model->delete(true);
         } else {
-            $count = $model->where($where)->delete();
+            if ($where) {
+                $count = $model->where($where)->delete();
+            } else {
+                $count = 0;
+            }
         }
 
         $data['count'] = $count;

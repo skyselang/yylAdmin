@@ -36,10 +36,10 @@ class RoleService
         if (empty($field)) {
             $field = $pk . ',role_name,role_desc,role_sort,is_disable,create_time,update_time';
         }
+        $where[] = ['is_delete', '=', 0];
         if (empty($order)) {
             $order = ['role_sort' => 'desc', $pk => 'desc'];
         }
-        $where[] = ['is_delete', '=', 0];
 
         $count = $model->where($where)->count($pk);
         $pages = ceil($count / $limit);
@@ -61,6 +61,7 @@ class RoleService
         $info = RoleCache::get($id);
         if (empty($info)) {
             $model = new RoleModel();
+
             $info = $model->find($id);
             if (empty($info)) {
                 if ($exce) {
@@ -139,15 +140,16 @@ class RoleService
             $update['admin_menu_ids'] = implode(',', $update['admin_menu_ids']);
             $update['admin_menu_ids'] = str_join($update['admin_menu_ids']);
         }
-
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        RoleCache::clear();
         $update['ids'] = $ids;
+
+        RoleCache::del($ids);
 
         return $update;
     }
@@ -176,8 +178,9 @@ class RoleService
             exception();
         }
 
-        RoleCache::clear();
         $update['ids'] = $ids;
+
+        RoleCache::del($ids);
 
         return $update;
     }
@@ -240,22 +243,22 @@ class RoleService
             exception();
         }
 
-        UserCache::upd($admin_user_id);
-
         $update[$RolePk] = $admin_role_id;
         $update[$UserPk] = $admin_user_id;
+
+        UserCache::upd($admin_user_id);
 
         return $update;
     }
 
     /**
-     * 角色获取菜单id
+     * 角色菜单id
      *
      * @param mixed $id 角色id
      *
-     * @return array
+     * @return array 菜单id
      */
-    public static function getMenuId($id)
+    public static function menu_ids($id)
     {
         if (empty($id)) {
             return [];
@@ -270,13 +273,13 @@ class RoleService
         }
 
         $admin_menu_ids = [];
-
-        foreach ($admin_role_ids as $v) {
-            $admin_role = self::info($v);
-            $admin_menu_ids = array_merge($admin_menu_ids, $admin_role['admin_menu_ids']);
+        $RoleModel = new RoleModel();
+        $role_menu_ids = $RoleModel->where('admin_role_id', 'in', $admin_role_ids)->column('admin_menu_ids');
+        foreach ($role_menu_ids as $v) {
+            $v = explode(',', trim($v, ','));
+            $admin_menu_ids = array_merge($admin_menu_ids, $v);
         }
-        $admin_menu_ids = array_unique($admin_menu_ids);
-
+        $admin_menu_ids = array_unique(array_filter($admin_menu_ids));
         sort($admin_menu_ids);
 
         return $admin_menu_ids;

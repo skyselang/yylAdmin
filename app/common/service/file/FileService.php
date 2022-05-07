@@ -56,29 +56,30 @@ class FileService
     /**
      * 文件信息
      *
-     * @param int $id 文件id
+     * @param int  $id   文件id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
-        if (empty($id)) {
-            return [];
-        }
-
         $info = FileCache::get($id);
         if (empty($info)) {
             $model = new FileModel();
+
             $info = $model->find($id);
             if (empty($info)) {
+                if ($exce) {
+                    exception('文件不存在：' . $id);
+                }
                 return [];
-            } else {
-                $info = $info->toArray();
-                $info['file_url'] = SettingService::fileUrl($info);
-                $info['file_size'] = SettingService::fileSize($info['file_size']);
-
-                FileCache::set($id, $info);
             }
+            $info = $info->toArray();
+
+            $info['file_url'] = SettingService::fileUrl($info);
+            $info['file_size'] = SettingService::fileSize($info['file_size']);
+
+            FileCache::set($id, $info);
         }
 
         return $info;
@@ -165,16 +166,19 @@ class FileService
     {
         $model = new FileModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        FileCache::del($ids);
         $update['ids'] = $ids;
+
+        FileCache::del($ids);
 
         return $update;
     }
@@ -183,17 +187,17 @@ class FileService
      * 文件删除
      *
      * @param array $ids  文件id
-     * @param bool  $dele 是否真实删除
+     * @param bool  $real 是否真实删除
      * 
      * @return array|Exception
      */
-    public static function dele($ids, $dele = false)
+    public static function dele($ids, $real = false)
     {
         $model = new FileModel();
         $pk = $model->getPk();
 
         $file = [];
-        if ($dele) {
+        if ($real) {
             $file = $model->field('file_path')->where($pk, 'in', $ids)->select();
             $res = $model->where($pk, 'in', $ids)->delete();
         } else {
@@ -206,11 +210,13 @@ class FileService
             exception();
         }
 
+        $update['ids'] = $ids;
+
         FileCache::del($ids);
+
         foreach ($file as $v) {
             @unlink($v['file_path']);
         }
-        $update['ids'] = $ids;
 
         return $update;
     }
@@ -225,7 +231,7 @@ class FileService
     public static function fileUrl($file)
     {
         if (is_numeric($file)) {
-            $file = self::info($file);
+            $file = self::info($file, false);
         }
 
         $file_url = '';
@@ -247,15 +253,22 @@ class FileService
      */
     public static function fileArray($ids = '')
     {
+        if (is_array($ids)) {
+            $ids = implode(',', array_unique(array_filter($ids)));
+        }
+
         if (empty($ids)) {
             return [];
         }
 
         $model = new FileModel();
         $pk = $model->getPk();
+
         $field = $pk . ',storage,domain,file_name,file_size,file_hash,file_path,file_ext';
-        $where[] = [[$pk, 'in', $ids], ['is_disable', '=', 0]];
-        $file = $model->field($field)->where($where)->select()->toArray();
+        $where = [[$pk, 'in', $ids], ['is_disable', '=', 0]];
+        $order = "field(file_id," . $ids . ")";
+
+        $file = $model->field($field)->where($where)->orderRaw($order)->select()->toArray();
         foreach ($file as $k => $v) {
             $file[$k]['file_url'] = SettingService::fileurl($v);
             $file[$k]['file_size'] = SettingService::fileSize($v['file_size']);

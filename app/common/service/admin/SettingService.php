@@ -89,7 +89,7 @@ class SettingService
         $id = self::$id;
 
         $param['update_time'] = datetime();
-
+        
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();

@@ -48,18 +48,22 @@ class GroupService
     /**
      * 文件分组信息
      *
-     * @param int $id 文件分组id
-     * 
+     * @param int  $id   文件分组id
+     * @param bool $exce 不存在是否抛出异常
      * @return array
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = GroupCache::get($id);
         if (empty($info)) {
             $model = new GroupModel();
+
             $info = $model->find($id);
             if (empty($info)) {
-                exception('文件分组不存在：' . $id);
+                if ($exce) {
+                    exception('文件分组不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
@@ -82,6 +86,7 @@ class GroupService
         $pk = $model->getPk();
 
         $param['create_time'] = datetime();
+
         $id = $model->insertGetId($param);
         if (empty($id)) {
             exception();
@@ -104,16 +109,19 @@ class GroupService
     {
         $model = new GroupModel();
         $pk = $model->getPk();
+
         unset($update[$pk], $update['ids']);
 
         $update['update_time'] = datetime();
+
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        GroupCache::del($ids);
         $update['ids'] = $ids;
+
+        GroupCache::del($ids);
 
         return $update;
     }
@@ -122,16 +130,16 @@ class GroupService
      * 文件分组删除
      *
      * @param array $ids  文件分组id
-     * @param bool  $dele 是否真实删除
+     * @param bool  $real 是否真实删除
      * 
      * @return array
      */
-    public static function dele($ids, $dele = false)
+    public static function dele($ids, $real = false)
     {
         $model = new GroupModel();
         $pk = $model->getPk();
 
-        if ($dele) {
+        if ($real) {
             $res = $model->where($pk, 'in', $ids)->delete();
         } else {
             $update['is_delete']   = 1;
@@ -143,8 +151,9 @@ class GroupService
             exception();
         }
 
-        GroupCache::del($ids);
         $update['ids'] = $ids;
+
+        GroupCache::del($ids);
 
         return $update;
     }

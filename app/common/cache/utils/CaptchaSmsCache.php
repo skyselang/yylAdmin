@@ -14,8 +14,13 @@ use think\facade\Cache;
 
 class CaptchaSmsCache
 {
+    // 缓存标签
+    protected static $tag = 'captcha-phone';
+    // 缓存前缀
+    protected static $prefix = 'captcha-phone:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
      * @param string $phone 手机
      * 
@@ -23,7 +28,7 @@ class CaptchaSmsCache
      */
     public static function key($phone)
     {
-        return 'captcha-phone:' . $phone;
+        return self::$prefix . $phone;
     }
 
     /**
@@ -31,7 +36,7 @@ class CaptchaSmsCache
      *
      * @param int    $phone   手机
      * @param string $captcha 验证码
-     * @param int    $ttl     有效时间（秒）0永久
+     * @param int    $ttl     有效时间（秒，0永久）
      * 
      * @return bool
      */
@@ -55,12 +60,26 @@ class CaptchaSmsCache
     /**
      * 缓存删除
      *
-     * @param string $phone 手机
+     * @param mixed $phone 手机
      * 
      * @return bool
      */
     public static function del($phone)
     {
-        return Cache::delete(self::key($phone));
+        $ids = var_to_array($phone);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

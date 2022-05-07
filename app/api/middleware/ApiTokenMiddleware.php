@@ -27,19 +27,15 @@ class ApiTokenMiddleware
     {
         // 接口是否无需登录
         if (!api_is_unlogin()) {
-            
-            // 接口token是否已设置
-            if (!api_token_has()) {
-                exception('Requests Headers：Token must');
-            }
 
-            // 接口token是否为空
-            if (empty(api_token())) {
+            // 接口token获取
+            $api_token = api_token();
+            if (empty($api_token)) {
                 exception('请登录', 401);
             }
 
             // 接口token验证
-            api_token_verify();
+            api_token_verify($api_token);
         }
 
         return $next($request);

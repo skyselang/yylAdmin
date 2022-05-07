@@ -44,9 +44,12 @@ class Region
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        if ($type == 'tree') {
-            $data = RegionService::info('tree');
-        } else {
+        $where = $order = [];
+        if ($sort_field && $sort_value) {
+            $order = [$sort_field => $sort_value];
+        }
+
+        if ($type == 'list') {
             if ($search_field && $search_value) {
                 if (in_array($search_field, ['region_id', 'region_pid', 'region_jianpin', 'region_initials', 'region_citycode', 'region_zipcode'])) {
                     $search_exp = strpos($search_value, ',') ? 'in' : '=';
@@ -68,12 +71,9 @@ class Region
                 $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
             }
 
-            $order = [];
-            if ($sort_field && $sort_value) {
-                $order = [$sort_field => $sort_value];
-            }
-
-            $data = RegionService::list($where, $order);
+            $data = RegionService::list('list', $where, $order);
+        } else {
+            $data = RegionService::list('tree', $where, $order, 'region_id,region_pid,region_name');
         }
 
         return success($data);
