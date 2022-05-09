@@ -151,7 +151,7 @@ class CaptchaUtils
         // 绘验证码
         $text = self::$useZh ? preg_split('/(?<!^)(?!$)/u', $generator['val']) : str_split($generator['val']); // 验证码
         foreach ($text as $index => $char) {
-            $x     = self::$fontSize * ($index + 1) * mt_rand(1.2, 1.6) * (self::$math ? 1 : 1.5);
+            $x     = self::$fontSize * ($index + 1) * mt_rand(1, 1) * (self::$math ? 1 : 1.5);
             $y     = self::$fontSize + mt_rand(10, 20);
             $angle = self::$math ? 0 : mt_rand(-40, 40);
             putenv('GDFONTPATH=' . realpath('.'));
