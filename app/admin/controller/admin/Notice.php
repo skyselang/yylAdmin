@@ -19,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("公告管理")
  * @Apidoc\Group("adminSystem")
- * @Apidoc\Sort("705")
+ * @Apidoc\Sort("735")
  */
 class Notice
 {

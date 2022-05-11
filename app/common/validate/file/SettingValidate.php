@@ -37,6 +37,11 @@ class SettingValidate extends Validate
         'baidu_bucket'             => ['require'],
         'baidu_endpoint'           => ['require'],
         'baidu_domain'             => ['require'],
+        'image_size'               => ['checkFileSize'],
+        'video_size'               => ['checkFileSize'],
+        'audio_size'               => ['checkFileSize'],
+        'word_size'                => ['checkFileSize'],
+        'other_size'               => ['checkFileSize'],
     ];
 
     // 错误信息
@@ -63,10 +68,27 @@ class SettingValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'local'   => ['storage'],
-        'qiniu'   => ['storage', 'qiniu_access_key', 'qiniu_secret_key', 'qiniu_bucket', 'qiniu_domain'],
-        'aliyun'  => ['storage', 'aliyun_access_key_id', 'aliyun_access_key_secret', 'aliyun_bucket', 'aliyun_endpoint',  'aliyun_bucket_domain'],
-        'tencent' => ['storage', 'tencent_secret_id', 'tencent_secret_key', 'tencent_bucket', 'tencent_region', 'tencent_domain'],
-        'baidu'   => ['storage', 'baidu_access_key', 'baidu_secret_key', 'baidu_bucket', 'baidu_endpoint', 'baidu_domain'],
+        'local'   => ['storage', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
+        'qiniu'   => ['storage', 'qiniu_access_key', 'qiniu_secret_key', 'qiniu_bucket', 'qiniu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
+        'aliyun'  => ['storage', 'aliyun_access_key_id', 'aliyun_access_key_secret', 'aliyun_bucket', 'aliyun_endpoint',  'aliyun_bucket_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
+        'tencent' => ['storage', 'tencent_secret_id', 'tencent_secret_key', 'tencent_bucket', 'tencent_region', 'tencent_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
+        'baidu'   => ['storage', 'baidu_access_key', 'baidu_secret_key', 'baidu_bucket', 'baidu_endpoint', 'baidu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
     ];
+
+    // 自定义验证规则：文件大小
+    protected function checkFileSize($value, $rule, $data = [])
+    {
+        $type = ['image' => '图片', 'video' => '视频', 'audio' => '音频', 'word' => '文档', 'other' => '其它'];
+        $message = '大小：只能为数字且不能为负数';
+        foreach ($type as $k => $v) {
+            if (!is_numeric($data[$k . '_size'])) {
+                return $v . $message;
+            }
+            if ($data[$k . '_size'] < 0) {
+                return $v . $message;
+            }
+        }
+
+        return true;
+    }
 }

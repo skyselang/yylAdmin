@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 07/05/2022 14:21:53
+ Date: 11/05/2022 18:34:46
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 513 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 2000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -239,7 +239,7 @@ INSERT INTO `yyl_admin_menu` VALUES (430, 111, '设置信息', 'admin/admin.Logi
 INSERT INTO `yyl_admin_menu` VALUES (432, 298, '内容分类修改上级', 'admin/cms.Category/pid', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (433, 283, '内容修改分类', 'admin/cms.Content/cate', 255, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (434, 123, '会员修改地区', 'admin/member.Member/region', 250, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (435, 53, '公告管理', '', 250, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (435, 53, '公告管理', '', 155, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (436, 435, '公告列表', 'admin/admin.Notice/list', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (437, 435, '公告信息', 'admin/admin.Notice/info', 250, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (438, 435, '公告添加', 'admin/admin.Notice/add', 250, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -398,7 +398,7 @@ CREATE TABLE `yyl_admin_user`  (
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `email`(`email`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_user
