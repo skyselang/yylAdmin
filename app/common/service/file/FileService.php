@@ -288,7 +288,6 @@ class FileService
         $data = FileCache::get($key);
         if (empty($data)) {
             $model = new FileModel();
-            $pk = $model->getPk();
 
             $file_types = SettingService::fileType();
             $file_field = 'file_type,count(file_type) as count';
@@ -304,7 +303,7 @@ class FileService
                 }
                 $data['data'][] = $temp;
             }
-            $data['count'] = $model->where('is_delete', 0)->count($pk);
+            $data['count'] = $model->where('is_delete', 0)->count();
 
             FileCache::set($key, $data);
         }

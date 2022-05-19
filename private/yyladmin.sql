@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 11/05/2022 18:34:46
+ Date: 19/05/2022 17:55:01
 */
 
 SET NAMES utf8mb4;
@@ -347,7 +347,7 @@ CREATE TABLE `yyl_admin_setting`  (
   `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码开关，1开启0关闭',
   `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型，1数字，2字母，3数字字母，4算术，5中文',
   `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关，1开启0关闭',
-  `log_save_time` int(11) NULL DEFAULT 30 COMMENT '日志保留时间（天），0永久保留',
+  `log_save_time` int(11) NULL DEFAULT 90 COMMENT '日志保留时间（天），0永久保留',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',
   `api_rate_time` int(5) NULL DEFAULT 1 COMMENT '接口请求速率（时间）',
   `email_host` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'SMTP服务器',
@@ -434,13 +434,15 @@ CREATE TABLE `yyl_admin_user_log`  (
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
-  INDEX `admin_user_log_id`(`admin_user_log_id`) USING BTREE,
+  PRIMARY KEY (`admin_user_log_id`) USING BTREE,
+  UNIQUE INDEX `admin_user_log_id`(`admin_user_log_id`) USING BTREE,
   INDEX `request_isp`(`request_isp`) USING BTREE,
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
   INDEX `request_city`(`request_city`(191)) USING BTREE,
   INDEX `request_province`(`request_province`(191)) USING BTREE,
-  INDEX `request_country`(`request_country`(191)) USING BTREE
+  INDEX `request_country`(`request_country`(191)) USING BTREE,
+  INDEX `statistics`(`is_delete`, `create_time`, `log_type`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户日志' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
@@ -609,7 +611,7 @@ CREATE TABLE `yyl_cms_content`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`content_id`) USING BTREE,
-  INDEX `content_id`(`content_id`) USING BTREE
+  INDEX `content_id`(`content_id`, `is_delete`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
@@ -671,8 +673,9 @@ CREATE TABLE `yyl_file`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`file_id`) USING BTREE,
-  INDEX `file_id`(`file_id`) USING BTREE,
-  INDEX `file_hash`(`file_hash`) USING BTREE
+  INDEX `file_id`(`file_id`, `is_delete`) USING BTREE,
+  INDEX `file_hash`(`is_delete`, `file_hash`) USING BTREE,
+  INDEX `file_type`(`is_delete`, `file_type`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
@@ -764,7 +767,8 @@ CREATE TABLE `yyl_member`  (
   `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   `sort` int(10) NULL DEFAULT 250 COMMENT '排序',
-  `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道，1Web2公众号3小程序4安卓5苹果',
+  `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道，1Web2公众号3小程序4安卓5苹果6后台',
+  `reg_type` tinyint(1) NULL DEFAULT 1 COMMENT '注册方式，1用户名2手机3邮箱4公众号5小程序6后台',
   `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `login_num` int(10) NULL DEFAULT 0 COMMENT '登录次数',
@@ -779,8 +783,9 @@ CREATE TABLE `yyl_member`  (
   INDEX `username`(`username`, `password`) USING BTREE,
   INDEX `phone`(`phone`) USING BTREE,
   INDEX `member_id`(`member_id`) USING BTREE,
-  INDEX `email`(`email`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = COMPACT;
+  INDEX `email`(`email`(191)) USING BTREE,
+  INDEX `statistics`(`is_delete`, `create_time`, `reg_channel`, `reg_type`, `login_time`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of yyl_member
@@ -816,7 +821,8 @@ CREATE TABLE `yyl_member_log`  (
   INDEX `member_id`(`member_id`) USING BTREE,
   INDEX `request_city`(`request_city`(191)) USING BTREE,
   INDEX `request_province`(`request_province`(191)) USING BTREE,
-  INDEX `request_country`(`request_country`(191)) USING BTREE
+  INDEX `request_country`(`request_country`(191)) USING BTREE,
+  INDEX `statistics`(`is_delete`, `create_time`, `log_type`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员日志' ROW_FORMAT = COMPACT;
 
 -- ----------------------------

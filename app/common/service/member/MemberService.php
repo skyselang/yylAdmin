@@ -11,14 +11,13 @@
 namespace app\common\service\member;
 
 use app\common\utils\IpInfoUtils;
-use app\common\utils\DatetimeUtils;
 use app\common\cache\member\MemberCache;
 use app\common\service\setting\WechatService;
 use app\common\service\setting\TokenService;
 use app\common\service\file\FileService;
 use app\common\model\member\MemberModel;
 use app\common\model\member\WechatModel;
-use app\common\model\file\FileModel;
+use hg\apidoc\annotation\Field;
 
 class MemberService
 {
@@ -298,6 +297,7 @@ class MemberService
         $openid      = $userinfo['openid'];
         $login_ip    = $userinfo['login_ip'];
         $reg_channel = $userinfo['reg_channel'];
+        $reg_type    = $userinfo['reg_type'];
         $ip_info     = IpInfoUtils::info($login_ip);
 
         foreach ($userinfo as $k => $v) {
@@ -305,7 +305,7 @@ class MemberService
                 $userinfo[$k] = serialize($v);
             }
         }
-        unset($userinfo['login_ip'], $userinfo['reg_channel']);
+        unset($userinfo['login_ip'], $userinfo['reg_channel'], $userinfo['reg_type']);
 
         $MemberModel = new MemberModel();
         $MemberPk = $MemberModel->getPk();
@@ -372,6 +372,7 @@ class MemberService
                 $member_insert['login_region'] = $ip_info['region'];
                 $member_insert['create_time']  = $datetime;
                 $member_insert['reg_channel']  = $reg_channel;
+                $member_insert['reg_type']     = $reg_type;
                 $member_insert['nickname']     = $userinfo['nickname'] ?: $member_insert['username'];
                 $member_insert['password']     = '';
                 $member_id = $MemberModel->insertGetId($member_insert);
@@ -490,179 +491,198 @@ class MemberService
     }
 
     /**
-     * 会员统计（数量）
+     * 会员统计
      *
-     * @param string $date 日期
-     * @param string $type 类型：new新增，act活跃
-     *
-     * @return int
-     */
-    public static function statNum($date = 'total', $type = 'new')
-    {
-        $key = $date . ':' . $type;
-        $data = MemberCache::get($key);
-        if (empty($data)) {
-            $model = new MemberModel();
-            $pk = $model->getPk();
-
-            $where[] = ['is_delete', '=', 0];
-            if ($date == 'total') {
-                $where[] = [$pk, '>', 0];
-            } else {
-                if ($date == 'yesterday') {
-                    $yesterday = DatetimeUtils::yesterday();
-                    list($sta_time, $end_time) = DatetimeUtils::datetime($yesterday);
-                } elseif ($date == 'thisweek') {
-                    list($start, $end) = DatetimeUtils::thisWeek();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } elseif ($date == 'lastweek') {
-                    list($start, $end) = DatetimeUtils::lastWeek();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } elseif ($date == 'thismonth') {
-                    list($start, $end) = DatetimeUtils::thisMonth();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } elseif ($date == 'lastmonth') {
-                    list($start, $end) = DatetimeUtils::lastMonth();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } else {
-                    $today = DatetimeUtils::today();
-                    list($sta_time, $end_time) = DatetimeUtils::datetime($today);
-                }
-
-                if ($type == 'act') {
-                    $where[] = ['login_time', '>=', $sta_time];
-                    $where[] = ['login_time', '<=', $end_time];
-                } else {
-                    $where[] = ['create_time', '>=', $sta_time];
-                    $where[] = ['create_time', '<=', $end_time];
-                }
-            }
-
-            $data = $model->where($where)->count($pk);
-
-            MemberCache::set($key, $data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * 会员统计（日期）
-     *
-     * @param array $date 日期范围
+     * @param string $type 日期类型：day，month
+     * @param array  $date 日期范围：[开始日期，结束日期]
+     * @param string $stat 统计类型：count总计，number数量，reg_channel注册渠道，reg_type注册方式
      * 
      * @return array
      */
-    public static function statDate($date = [])
+    public static function stat($type = 'month', $date = [], $stat = 'count')
     {
         if (empty($date)) {
-            $date[0] = DatetimeUtils::daysAgo(29);
-            $date[1] = DatetimeUtils::today();
+            if ($type == 'day') {
+                $date[0] = date('Y-m-d', strtotime('-29 days'));
+                $date[1] = date('Y-m-d');
+            } else {
+                $date[0] = date('Y-m', strtotime('-11 months'));
+                $date[1] = date('Y-m');
+            }
         }
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key = 'date:' . $sta_date . '-' . $end_date;
+        $key = $type . ':' . $stat . $sta_date . '-' . $end_date;
         $data = MemberCache::get($key);
         if (empty($data)) {
-            $data['date'] = $date;
-            $dates = DatetimeUtils::betweenDates($sta_date, $end_date);
-            $sta_time = DatetimeUtils::dateStartTime($sta_date);
-            $end_time = DatetimeUtils::dateEndTime($end_date);
+            $dates = [];
+
+            if ($type == 'day') {
+                $s_time = strtotime(date('Y-m-d', strtotime($sta_date)));
+                $e_time = strtotime(date('Y-m-d', strtotime($end_date)));
+                while ($s_time <= $e_time) {
+                    $dates[] = date('Y-m-d', $s_time);
+                    $s_time = strtotime('next day', $s_time);
+                }
+
+                $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
+                $group = "date_format(create_time,'%Y-%m-%d')";
+            } else {
+                $s_time = strtotime(date('Y-m-01', strtotime($sta_date)));
+                $e_time = strtotime(date('Y-m-01', strtotime($end_date)));
+                while ($s_time <= $e_time) {
+                    $dates[] = date('Y-m', $s_time);
+                    $s_time = strtotime('next month', $s_time);
+                }
+
+                $sta_date = date('Y-m-01', strtotime($sta_date));
+                $end_date = date('Y-m-d', strtotime('next month -1 day', strtotime(date('Y-m-01', strtotime($end_date)))));
+
+                $field = "count(create_time) as num, date_format(create_time,'%Y-%m') as date";
+                $group = "date_format(create_time,'%Y-%m')";
+            }
+
+            $where[] = ['is_delete', '=', 0];
+            $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
+            $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
 
             $model = new MemberModel();
             $pk = $model->getPk();
 
-            // 新增会员
-            $new = $model
-                ->field("count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date")
-                ->where('create_time', '>=', $sta_time)
-                ->where('create_time', '<=', $end_time)
-                ->group("date_format(create_time,'%Y-%m-%d')")
-                ->select()
-                ->toArray();
-            $new_x = $new_s = [];
-            foreach ($dates as $k => $v) {
-                $new_x[$k] = $v;
-                $new_s[$k] = 0;
-                foreach ($new as $vn) {
-                    if ($v == $vn['date']) {
-                        $new_s[$k] = $vn['num'];
+            if ($stat == 'count') {
+                $data = [
+                    ['date' => 'total', 'name' => '会员', 'title' => '总数', 'count' => 0],
+                    ['date' => 'online', 'name' => '在线', 'title' => '数量', 'count' => 0],
+                    ['date' => 'today', 'name' => '今天', 'title' => '新增', 'count' => 0],
+                    ['date' => 'yesterday', 'name' => '昨天', 'title' => '新增', 'count' => 0],
+                    ['date' => 'thisweek', 'name' => '本周', 'title' => '新增', 'count' => 0],
+                    ['date' => 'lastweek', 'name' => '上周', 'title' => '新增', 'count' => 0],
+                    ['date' => 'thismonth', 'name' => '本月', 'title' => '新增', 'count' => 0],
+                    ['date' => 'lastmonth', 'name' => '上月', 'title' => '新增', 'count' => 0],
+                ];
+
+                foreach ($data as $k => $v) {
+                    $where = [];
+                    $where = [['is_delete', '=', 0]];
+
+                    if ($v['date'] == 'total') {
+                        $where[] = [$pk, '>', 0];
+                    } elseif ($v['date'] == 'online') {
+                        $where[] = ['login_time', '>=', date('Y-m-d H:i:s', time() - 3600)];
+                        $where[] = ['login_time', '<=', date('Y-m-d H:i:s')];
+                    } else {
+                        if ($v['date'] == 'yesterday') {
+                            $sta_date = $end_date = date('Y-m-d', strtotime('-1 day'));
+                        } elseif ($v['date'] == 'thisweek') {
+                            $sta_date = date('Y-m-d', strtotime('this week'));
+                            $end_date = date('Y-m-d', strtotime('last day next week +0 day'));
+                        } elseif ($v['date'] == 'lastweek') {
+                            $sta_date = date('Y-m-d', strtotime('last week'));
+                            $end_date = date('Y-m-d', strtotime('last day last week +7 day'));
+                        } elseif ($v['date'] == 'thismonth') {
+                            $sta_date = date('Y-m-01');
+                            $end_date = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-01', strtotime('next month')))));
+                        } elseif ($v['date'] == 'lastmonth') {
+                            $sta_date = date('Y-m-01', strtotime('last month'));
+                            $end_date = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-01', time()))));
+                        } else {
+                            $sta_date = $end_date = date('Y-m-d');
+                        }
+
+                        $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
+                        $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
+                    }
+
+                    $data[$k]['count'] = $model->where($where)->count();
+                }
+
+                MemberCache::set($key, $data, 120);
+
+                return $data;
+            } elseif ($stat == 'number') {
+                $data['title'] = '数量';
+                $add = $total = [];
+                // 新增会员
+                $adds = $model
+                    ->field($field)
+                    ->where($where)
+                    ->group($group)
+                    ->select()
+                    ->column('num', 'date');
+                // 会员总数
+                foreach ($dates as $k => $v) {
+                    $add[$k] = $adds[$v] ?? 0;
+
+                    if ($type == 'month') {
+                        $e_t = date('Y-m-d', strtotime('next month -1 day', strtotime(date('Y-m-01', strtotime($v)))));
+                    } else {
+                        $e_t = $v;
+                    }
+                    $total[$k] = $model->where('is_delete', 0)->where('create_time', '<=', $e_t . ' 23:59:59')->count();
+                }
+
+                $series = [
+                    ['name' => '会员总数', 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '新增会员', 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
+                ];
+            } elseif ($stat == 'reg_channel') {
+                $data['title'] = '注册渠道';
+
+                $series = [
+                    ['name' => 'Web', 'reg_channel' => '1', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '公众号', 'reg_channel' => '2', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '小程序', 'reg_channel' => '3', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '安卓', 'reg_channel' => '4', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '苹果', 'reg_channel' => '5', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '后台', 'reg_channel' => '6', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                ];
+
+                foreach ($series as $k => $v) {
+                    $series_data = $model
+                        ->field($field)
+                        ->where($where)
+                        ->where('reg_channel', $v['reg_channel'])
+                        ->group($group)
+                        ->select()
+                        ->column('num', 'date');
+                    foreach ($dates as $kx => $vx) {
+                        $series[$k]['data'][$kx] = $series_data[$vx] ?? 0;
+                    }
+                }
+            } elseif ($stat == 'reg_type') {
+                $data['title'] = '注册方式';
+
+                $series = [
+                    ['name' => '用户名', 'reg_type' => '1', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '手机', 'reg_type' => '2', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '邮箱', 'reg_type' => '3', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '公众号', 'reg_type' => '4', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '小程序', 'reg_type' => '5', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '后台', 'reg_type' => '6', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                ];
+
+                foreach ($series as $k => $v) {
+                    $series_data = $model
+                        ->field($field)
+                        ->where($where)
+                        ->where('reg_type', $v['reg_type'])
+                        ->group($group)
+                        ->select()
+                        ->column('num', 'date');
+                    foreach ($dates as $kx => $vx) {
+                        $series[$k]['data'][$kx] = $series_data[$vx] ?? 0;
                     }
                 }
             }
-            $data['new'] = ['x' => $new_x, 's' => $new_s];
 
-            // 活跃会员
-            $act = $model
-                ->field("count(login_time) as num, date_format(login_time,'%Y-%m-%d') as date")
-                ->where('login_time', '>=', $sta_time)
-                ->where('login_time', '<=', $end_time)
-                ->group("date_format(login_time,'%Y-%m-%d')")
-                ->select()
-                ->toArray();
-            $act_x = $act_s = [];
-            foreach ($dates as $k => $v) {
-                $act_x[$k] = $v;
-                $act_s[$k] = 0;
-                foreach ($act as $va) {
-                    if ($v == $va['date']) {
-                        $act_s[$k] = $va['num'];
-                    }
-                }
-            }
-            $data['act'] = ['x' => $act_x, 's' => $act_s];
+            $legend = array_column($series, 'name');
 
-            // 会员总数
-            $count_x = $count_s = [];
-            foreach ($dates as $k => $v) {
-                $count_t = DatetimeUtils::dateEndTime($v);
-                $count_x[] = $v;
-                $count_s[] = $model->where('is_delete', 0)->where('create_time', '<=', $count_t)->count($pk);
-            }
-            $data['count'] = ['x' => $count_x, 's' => $count_s];
-
-            MemberCache::set($key, $data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * 会员统计（总数）
-     *
-     * @return array
-     */
-    public static function statCount()
-    {
-        $month = DatetimeUtils::months();
-        $key   = 'count:' . reset($month) . '-' . end($month);
-        $data  = MemberCache::get($key);
-        if (empty($data)) {
-            $model = new MemberModel();
-            $pk = $model->getPk();
-
-            $x = $s = [];
-            foreach ($month as $v) {
-                $time = DatetimeUtils::monthStartEnd($v);
-                $time = DatetimeUtils::dateEndTime($time[1]);
-                $x[] = $v;
-                $s[] = $model->where('is_delete', 0)->where('create_time', '<=', $time)->count($pk);
-            }
-            $data['x'] = $x;
-            $data['s'] = $s;
+            $data['type']   = $type;
+            $data['date']   = $date;
+            $data['legend'] = $legend;
+            $data['xAxis']  = $dates;
+            $data['series'] = $series;
 
             MemberCache::set($key, $data);
         }

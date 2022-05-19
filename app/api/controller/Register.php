@@ -64,6 +64,8 @@ class Register
         $param['password']     = Request::param('password/s', '');
         $param['captcha_id']   = Request::param('captcha_id/s', '');
         $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['reg_channel']  = Request::param('reg_channel/s', 1);;
+        $param['reg_type']     = 1;
 
         $setting = SettingService::info();
         if ($setting['captcha_register']) {
@@ -118,6 +120,8 @@ class Register
         $param['nickname']     = Request::param('nickname/s', '');
         $param['password']     = Request::param('password/s', '');
         $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['reg_channel']  = Request::param('reg_channel/s', 1);;
+        $param['reg_type']     = 2;
 
         validate(MemberValidate::class)->scene('phoneRegister')->check($param);
         if (empty($param['captcha_code'])) {
@@ -169,6 +173,8 @@ class Register
         $param['nickname']     = Request::param('nickname/s', '');
         $param['password']     = Request::param('password/s', '');
         $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['reg_channel']  = Request::param('reg_channel/s', 1);;
+        $param['reg_type']     = 3;
 
         validate(MemberValidate::class)->scene('emailRegister')->check($param);
         if (empty($param['captcha_code'])) {

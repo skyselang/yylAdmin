@@ -184,38 +184,32 @@ class Log
 
     /**
      * @Apidoc\Title("会员日志统计")
-     * @Apidoc\Param("type", type="string", default="", desc="类型：field字段，date日期")
-     * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Param("field", type="string", default="", desc="统计字段")
+     * @Apidoc\Param("type", type="string", default="month", desc="日期类型：day、month")
+     * @Apidoc\Param("date", type="array", default="[]", desc="日期范围，默认30天、12个月")
+     * @Apidoc\Returned("count", type="object", desc="数量统计",
+     *     @Apidoc\Returned("name", type="string", desc="名称"),
+     *     @Apidoc\Returned("date", type="string", desc="时间"),
+     *     @Apidoc\Returned("count", type="string", desc="数量"),
+     *     @Apidoc\Returned("title", type="string", desc="title")
+     * )
+     * @Apidoc\Returned("echart", type="array", desc="图表数据",
+     *     @Apidoc\Returned("type", type="string", desc="日期类型"),
+     *     @Apidoc\Returned("date", type="array", desc="日期范围"),
+     *     @Apidoc\Returned("title", type="string", desc="图表title.text"),
+     *     @Apidoc\Returned("legend", type="array", desc="图表legend.data"),
+     *     @Apidoc\Returned("xAxis", type="string", desc="图表xAxis.data"),
+     *     @Apidoc\Returned("series", type="string", desc="图表series")
+     * )
      */
     public function stat()
     {
-        $type  = Request::param('type/s', '');
+        $type  = Request::param('type/s', 'day');
         $date  = Request::param('date/a', []);
-        $field = Request::param('field/s', 'member');
+        $field = Request::param('field/s', 'request_province');
 
-        $data  = [];
-        $dates = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-
-        if ($type == 'num') {
-            $num = [];
-            foreach ($dates as $v) {
-                $num[$v] = LogService::statNum($v);
-            }
-            $data['num'] = $num;
-        } elseif ($type == 'date') {
-            $data['date'] = LogService::statDate($date);
-        } elseif ($type == 'field') {
-            $data['field'] = LogService::statField($date, $field);
-        } else {
-            $num = [];
-            foreach ($dates as $v) {
-                $num[$v] = LogService::statNum($v);
-            }
-            $data['num']   = $num;
-            $data['date']  = LogService::statDate($date);
-            $data['field'] = LogService::statField($date, $field);
-        }
+        $data['count'] = LogService::stat($type, $date, 'count');
+        $data['echart'][] = LogService::stat($type, $date, 'number');
+        $data['field'] = LogService::statField($type, $date, $field);
 
         return success($data);
     }

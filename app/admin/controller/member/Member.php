@@ -99,15 +99,17 @@ class Member
      */
     public function add()
     {
-        $param['avatar_id'] = Request::param('avatar_id/d', 0);
-        $param['username']  = Request::param('username/s', '');
-        $param['nickname']  = Request::param('nickname/s', '');
-        $param['password']  = Request::param('password/s', '');
-        $param['phone']     = Request::param('phone/s', '');
-        $param['email']     = Request::param('email/s', '');
-        $param['region_id'] = Request::param('region_id/d', 0);
-        $param['remark']    = Request::param('remark/s', '');
-        $param['sort']      = Request::param('sort/d', 250);
+        $param['avatar_id']   = Request::param('avatar_id/d', 0);
+        $param['username']    = Request::param('username/s', '');
+        $param['nickname']    = Request::param('nickname/s', '');
+        $param['password']    = Request::param('password/s', '');
+        $param['phone']       = Request::param('phone/s', '');
+        $param['email']       = Request::param('email/s', '');
+        $param['region_id']   = Request::param('region_id/d', 0);
+        $param['remark']      = Request::param('remark/s', '');
+        $param['sort']        = Request::param('sort/d', 250);
+        $param['reg_channel'] = 6;
+        $param['reg_type']    = 6;
 
         validate(MemberValidate::class)->scene('add')->check($param);
 
@@ -291,22 +293,36 @@ class Member
 
     /**
      * @Apidoc\Title("会员统计")
+     * @Apidoc\Method("GET")
+     * @Apidoc\Param("type", type="string", default="month", desc="日期类型：day、month")
+     * @Apidoc\Param("date", type="array", default="[]", desc="日期范围，默认30天、12个月")
+     * @Apidoc\Returned("count", type="object", desc="数量统计",
+     *     @Apidoc\Returned("name", type="string", desc="名称"),
+     *     @Apidoc\Returned("date", type="string", desc="时间"),
+     *     @Apidoc\Returned("count", type="string", desc="数量"),
+     *     @Apidoc\Returned("title", type="string", desc="title")
+     * )
+     * @Apidoc\Returned("echart", type="array", desc="图表数据",
+     *     @Apidoc\Returned("type", type="string", desc="日期类型"),
+     *     @Apidoc\Returned("date", type="array", desc="日期范围"),
+     *     @Apidoc\Returned("title", type="string", desc="图表title.text"),
+     *     @Apidoc\Returned("legend", type="array", desc="图表legend.data"),
+     *     @Apidoc\Returned("xAxis", type="string", desc="图表xAxis.data"),
+     *     @Apidoc\Returned("series", type="string", desc="图表series")
+     * )
      */
     public function stat()
     {
+        $type = Request::param('type/s', '');
         $date = Request::param('date/a', []);
 
-        $number = $active = [];
-        $date_range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-        foreach ($date_range as $v) {
-            $number[$v] = MemberService::statNum($v);
-            $active[$v] = MemberService::statNum($v, 'act');
-        }
+        $data['count'] = MemberService::stat($type, $date, 'count');
 
-        $data['number'] = $number;
-        $data['active'] = $active;
-        $data['date']   = MemberService::statDate($date);
-        $data['count']  = MemberService::statCount();
+        $stat = ['number', 'reg_channel', 'reg_type'];
+        foreach ($stat as $v) {
+            $echart[] = MemberService::stat($type, $date, $v);
+        }
+        $data['echart'] = $echart ?? [];
 
         return success($data);
     }

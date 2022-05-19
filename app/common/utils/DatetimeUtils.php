@@ -404,4 +404,29 @@ class DatetimeUtils
 
         return $date;
     }
+
+    /**
+     * 获取日期范围的所有月份
+     *
+     * @param string $start_date 开始日期
+     * @param string $end_date   结束日期
+     *
+     * @return array
+     */
+    public static function dateMonths($start_date, $end_date)
+    {
+        $i = 0;
+        $months = [];
+        $itime = strtotime($start_date);
+        $stime = strtotime($start_date);
+        $etime = strtotime($end_date);
+        while ($itime < $etime) {
+            $month = date('Y-m', strtotime($i . ' month', $stime));
+            $itime = strtotime($month);
+            $months[] = $month;
+            $i++;
+        }
+
+        return $months;
+    }
 }

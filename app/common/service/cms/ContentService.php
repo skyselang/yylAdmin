@@ -284,11 +284,10 @@ class ContentService
             $CategoryModel = new CategoryModel();
             $CategoryPk = $CategoryModel->getPk();
             $category = $CategoryModel->field($CategoryPk . ',category_name')->where('is_delete', 0)->select()->toArray();
+            $category[] = [$CategoryPk => 0, 'category_name' => '未分类'];
 
             $ContentModel = new ContentModel();
-            $ContentPk = $ContentModel->getPk();
-
-            $count = $ContentModel->where('is_delete', 0)->count($ContentPk);
+            $count = $ContentModel->where('is_delete', 0)->count();
             $field = $CategoryPk . ',count(' . $CategoryPk . ') as count';
             $content = $ContentModel->field($field)->where('is_delete', 0)->group($CategoryPk)->select()->toArray();
 

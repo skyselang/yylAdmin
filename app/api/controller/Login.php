@@ -234,6 +234,7 @@ class Login
         }
         $userinfo['login_ip']    = Request::ip();
         $userinfo['reg_channel'] = 2;
+        $userinfo['reg_type']    = 4;
 
         $data = LoginService::wechat($userinfo);
 
@@ -297,6 +298,7 @@ class Login
         }
         $userinfo['login_ip']    = Request::ip();
         $userinfo['reg_channel'] = 3;
+        $userinfo['reg_type']    = 5;
 
         $data = LoginService::wechat($userinfo);
 

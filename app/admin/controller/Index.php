@@ -51,9 +51,10 @@ class Index
      */
     public function member()
     {
+        $type = Request::param('type/s', '');
         $date = Request::param('date/a', []);
 
-        $data = MemberService::statDate($date);
+        $data['number'] = MemberService::stat($type, $date, 'number');
 
         return success($data);
     }

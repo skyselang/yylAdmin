@@ -200,30 +200,13 @@ class UserLog
      */
     public function stat()
     {
-        $type  = Request::param('type/s', '');
+        $type  = Request::param('type/s', 'day');
         $date  = Request::param('date/a', []);
-        $field = Request::param('field/s', 'user');
+        $field = Request::param('field/s', 'request_province');
 
-        $data  = $num = [];
-        $range = ['total', 'today', 'yesterday', 'thisweek', 'lastweek', 'thismonth', 'lastmonth'];
-        if ($type == 'num') {
-            foreach ($range as $v) {
-                $num[$v] = UserLogService::statNum($v);
-            }
-            $data['num'] = $num;
-        } elseif ($type == 'date') {
-            $data['date'] = UserLogService::statDate($date);
-        } elseif ($type == 'field') {
-            $data['field'] = UserLogService::statField($date, $field);
-        } else {
-            foreach ($range as $v) {
-                $num[$v] = UserLogService::statNum($v);
-            }
-
-            $data['num']   = $num;
-            $data['date']  = UserLogService::statDate($date);
-            $data['field'] = UserLogService::statField($date, $field);
-        }
+        $data['count'] = UserLogService::stat($type, $date, 'count');
+        $data['echart'][] = UserLogService::stat($type, $date, 'number');
+        $data['field'] = UserLogService::statField($type, $date, $field);
 
         return success($data);
     }

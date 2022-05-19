@@ -13,7 +13,6 @@ namespace app\common\service\member;
 use think\facade\Request;
 use think\facade\Config;
 use app\common\utils\IpInfoUtils;
-use app\common\utils\DatetimeUtils;
 use app\common\cache\member\LogCache;
 use app\common\service\setting\ApiService;
 use app\common\model\member\LogModel;
@@ -263,184 +262,240 @@ class LogService
     }
 
     /**
-     * 会员日志数量统计
+     * 会员日志统计
      *
-     * @param string $date 日期
-     *
-     * @return int
+     * @param string $type 日期类型：day，month
+     * @param array  $date 日期范围：[开始日期，结束日期]
+     * @param string $stat 统计类型：count总计，number数量
+     * 
+     * @return array
      */
-    public static function statNum($date = 'total')
+    public static function stat($type = 'month', $date = [], $stat = 'count')
     {
-        $key = 'num:' . $date;
+        if (empty($date)) {
+            if ($type == 'day') {
+                $date[0] = date('Y-m-d', strtotime('-29 days'));
+                $date[1] = date('Y-m-d');
+            } else {
+                $date[0] = date('Y-m', strtotime('-11 months'));
+                $date[1] = date('Y-m');
+            }
+        }
+        $sta_date = $date[0];
+        $end_date = $date[1];
+
+        $key = $type . ':' . $stat . $sta_date . '-' . $end_date;
+        $data = LogCache::get($key);
+        if (empty($data)) {
+            $dates = [];
+
+            if ($type == 'day') {
+                $s_time = strtotime(date('Y-m-d', strtotime($sta_date)));
+                $e_time = strtotime(date('Y-m-d', strtotime($end_date)));
+                while ($s_time <= $e_time) {
+                    $dates[] = date('Y-m-d', $s_time);
+                    $s_time = strtotime('next day', $s_time);
+                }
+
+                $field = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
+                $group = "date_format(create_time,'%Y-%m-%d')";
+            } else {
+                $s_time = strtotime(date('Y-m-01', strtotime($sta_date)));
+                $e_time = strtotime(date('Y-m-01', strtotime($end_date)));
+                while ($s_time <= $e_time) {
+                    $dates[] = date('Y-m', $s_time);
+                    $s_time = strtotime('next month', $s_time);
+                }
+
+                $sta_date = date('Y-m-01', strtotime($sta_date));
+                $end_date = date('Y-m-d', strtotime('next month -1 day', strtotime(date('Y-m-01', strtotime($end_date)))));
+
+                $field = "count(create_time) as num, date_format(create_time,'%Y-%m') as date";
+                $group = "date_format(create_time,'%Y-%m')";
+            }
+
+            $where[] = ['is_delete', '=', 0];
+            $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
+            $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
+
+            $model = new LogModel();
+            $pk = $model->getPk();
+
+            if ($stat == 'count') {
+                $data = [
+                    ['date' => 'total', 'name' => '日志', 'title' => '总数', 'count' => 0],
+                    ['date' => 'online', 'name' => '1小时', 'title' => '数量', 'count' => 0],
+                    ['date' => 'today', 'name' => '今天', 'title' => '新增', 'count' => 0],
+                    ['date' => 'yesterday', 'name' => '昨天', 'title' => '新增', 'count' => 0],
+                    ['date' => 'thisweek', 'name' => '本周', 'title' => '新增', 'count' => 0],
+                    ['date' => 'lastweek', 'name' => '上周', 'title' => '新增', 'count' => 0],
+                    ['date' => 'thismonth', 'name' => '本月', 'title' => '新增', 'count' => 0],
+                    ['date' => 'lastmonth', 'name' => '上月', 'title' => '新增', 'count' => 0],
+                ];
+
+                foreach ($data as $k => $v) {
+                    $where = [];
+                    $where = [['is_delete', '=', 0]];
+
+                    if ($v['date'] == 'total') {
+                        $where[] = [$pk, '>', 0];
+                    } elseif ($v['date'] == 'online') {
+                        $where[] = ['create_time', '>=', date('Y-m-d H:i:s', time() - 3600)];
+                        $where[] = ['create_time', '<=', date('Y-m-d H:i:s')];
+                    } else {
+                        if ($v['date'] == 'yesterday') {
+                            $sta_date = $end_date = date('Y-m-d', strtotime('-1 day'));
+                        } elseif ($v['date'] == 'thisweek') {
+                            $sta_date = date('Y-m-d', strtotime('this week'));
+                            $end_date = date('Y-m-d', strtotime('last day next week +0 day'));
+                        } elseif ($v['date'] == 'lastweek') {
+                            $sta_date = date('Y-m-d', strtotime('last week'));
+                            $end_date = date('Y-m-d', strtotime('last day last week +7 day'));
+                        } elseif ($v['date'] == 'thismonth') {
+                            $sta_date = date('Y-m-01');
+                            $end_date = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-01', strtotime('next month')))));
+                        } elseif ($v['date'] == 'lastmonth') {
+                            $sta_date = date('Y-m-01', strtotime('last month'));
+                            $end_date = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-01', time()))));
+                        } else {
+                            $sta_date = $end_date = date('Y-m-d');
+                        }
+
+                        $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
+                        $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
+                    }
+
+                    $data[$k]['count'] = $model->where($where)->count();
+                }
+
+                LogCache::set($key, $data);
+
+                return $data;
+            } elseif ($stat == 'number') {
+                $data['title'] = '数量';
+                $add = $total = [];
+                // 新增日志
+                $adds = $model
+                    ->field($field)
+                    ->where($where)
+                    ->group($group)
+                    ->select()
+                    ->column('num', 'date');
+                // 日志总数
+                foreach ($dates as $k => $v) {
+                    $add[$k] = $adds[$v] ?? 0;
+
+                    if ($type == 'month') {
+                        $e_t = date('Y-m-d', strtotime('next month -1 day', strtotime(date('Y-m-01', strtotime($v)))));
+                    } else {
+                        $e_t = $v;
+                    }
+                    $total[$k] = $model->where('is_delete', 0)->where('create_time', '<=', $e_t . ' 23:59:59')->count();
+                }
+
+                $series = [
+                    ['name' => '日志总数', 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '新增日志', 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '操作日志', 'log_type' => 3, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '登录日志', 'log_type' => 2, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '注册日志', 'log_type' => 1, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
+                ];
+                foreach ($series as $k => $v) {
+                    if (isset($v['log_type'])) {
+                        $series_data = $model
+                            ->field($field)
+                            ->where($where)
+                            ->where('log_type', $v['log_type'])
+                            ->group($group)
+                            ->select()
+                            ->column('num', 'date');
+                        foreach ($dates as $kx => $vx) {
+                            $series[$k]['data'][$kx] = $series_data[$vx] ?? 0;
+                        }
+                    }
+                }
+            }
+
+            $legend = array_column($series, 'name');
+
+            $data['type']   = $type;
+            $data['date']   = $date;
+            $data['legend'] = $legend;
+            $data['xAxis']  = $dates;
+            $data['series'] = $series;
+
+            LogCache::set($key, $data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * 会员日志统计（字段）
+     *
+     * @param string $type 日期类型：day，month
+     * @param array  $date 日期范围：[开始日期，结束日期]
+     * @param string $stat 统计字段
+     * @param int    $top  top排行
+     *   
+     * @return array
+     */
+    public static function statField($type = 'month', $date = [], $stat = 'request_province', $top = 30)
+    {
+        if (empty($date)) {
+            if ($type == 'day') {
+                $date[0] = date('Y-m-d', strtotime('-29 days'));
+                $date[1] = date('Y-m-d');
+            } else {
+                $date[0] = date('Y-m', strtotime('-11 months'));
+                $date[1] = date('Y-m');
+            }
+        }
+        $sta_date = $date[0];
+        $end_date = $date[1];
+
+        if ($type == 'month') {
+            $sta_date = date('Y-m-01', strtotime($sta_date));
+            $end_date = date('Y-m-d', strtotime('next month -1 day', strtotime(date('Y-m-01', strtotime($end_date)))));
+        }
+
+        $key = $type . ':' . $stat . $sta_date . '-' . $end_date . '-top' . $top;
         $data = LogCache::get($key);
         if (empty($data)) {
             $model = new LogModel();
             $pk = $model->getPk();
 
-            $where[] = ['is_delete', '=', 0];
-            if ($date == 'total') {
-                $where[] = [$pk, '>', 0];
-            } else {
-                if ($date == 'yesterday') {
-                    $yesterday = DatetimeUtils::yesterday();
-                    list($sta_time, $end_time) = DatetimeUtils::datetime($yesterday);
-                } elseif ($date == 'thisweek') {
-                    list($start, $end) = DatetimeUtils::thisWeek();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } elseif ($date == 'lastweek') {
-                    list($start, $end) = DatetimeUtils::lastWeek();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } elseif ($date == 'thismonth') {
-                    list($start, $end) = DatetimeUtils::thisMonth();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } elseif ($date == 'lastmonth') {
-                    list($start, $end) = DatetimeUtils::lastMonth();
-                    $sta_time = DatetimeUtils::datetime($start);
-                    $sta_time = $sta_time[0];
-                    $end_time = DatetimeUtils::datetime($end);
-                    $end_time = $end_time[1];
-                } else {
-                    $today = DatetimeUtils::today();
-                    list($sta_time, $end_time) = DatetimeUtils::datetime($today);
-                }
-
-                $where[] = ['create_time', '>=', $sta_time];
-                $where[] = ['create_time', '<=', $end_time];
-            }
-
-            $data = $model->field($pk)->where($where)->count($pk);
-
-            LogCache::set($key, $data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * 会员日志日期统计
-     *
-     * @param array $date 日期范围
-     *
-     * @return array
-     */
-    public static function statDate($date = [])
-    {
-        if (empty($date)) {
-            $date[0] = DatetimeUtils::daysAgo(29);
-            $date[1] = DatetimeUtils::today();
-        }
-
-        $sta_date = $date[0];
-        $end_date = $date[1];
-
-        $key  = 'date:' . $sta_date . '-' . $end_date;
-        $data = LogCache::get($key);
-        if (empty($data)) {
-            $model = new LogModel();
-
-            $field   = "count(create_time) as num, date_format(create_time,'%Y-%m-%d') as date";
-            $where[] = ['create_time', '>=', DatetimeUtils::dateStartTime($sta_date)];
-            $where[] = ['create_time', '<=', DatetimeUtils::dateEndTime($end_date)];
-            $group   = "date_format(create_time,'%Y-%m-%d')";
-
-            $member_log = $model->field($field)->where($where)->group($group)->select();
-
-            $x_data = DatetimeUtils::betweenDates($sta_date, $end_date);
-            $y_data = [];
-            foreach ($x_data as $k => $v) {
-                $y_data[$k] = 0;
-                foreach ($member_log as $vu) {
-                    if ($v == $vu['date']) {
-                        $y_data[$k] = $vu['num'];
-                    }
+            $fields = [
+                ['title' => '国家', 'field' => 'request_country'],
+                ['title' => '省份', 'field' => 'request_province'],
+                ['title' => '城市', 'field' => 'request_city'],
+                ['title' => 'ISP', 'field' => 'request_isp'],
+                ['title' => '会员', 'field' => 'member_id'],
+            ];
+            foreach ($fields as $vf) {
+                if ($stat == $vf['field']) {
+                    $data['title'] = $vf['title'] . 'top' . $top;
+                    $group = $vf['field'];
+                    $field = $group . ' as x_data';
                 }
             }
 
-            $data['x_data'] = $x_data;
-            $data['y_data'] = $y_data;
-            $data['date']   = $date;
-
-            LogCache::set($key, $data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * 会员日志字段统计
-     *
-     * @param array  $date 日期范围
-     * @param string $type 字段类型
-     * @param int    $top  top排行
-     *   
-     * @return array
-     */
-    public static function statField($date = [], $type = 'city', $top = 20)
-    {
-        if (empty($date)) {
-            $date[0] = DatetimeUtils::daysAgo(29);
-            $date[1] = DatetimeUtils::today();
-        }
-
-        if ($type == 'country') {
-            $group = 'request_country';
-            $field = $group . ' as x_data';
-            $where[] = [$group, '<>', ''];
-        } elseif ($type == 'province') {
-            $group = 'request_province';
-            $field = $group . ' as x_data';
-            $where[] = [$group, '<>', ''];
-        } elseif ($type == 'isp') {
-            $group = 'request_isp';
-            $field = $group . ' as x_data';
-            $where[] = [$group, '<>', ''];
-        } elseif ($type == 'city') {
-            $group = 'request_city';
-            $field = $group . ' as x_data';
-            $where[] = [$group, '<>', ''];
-        } else {
-            $group = 'member_id';
-            $field = $group . ' as x_data';
-            $where[] = [$group, '<>', ''];
-        }
-
-        $sta_date = $date[0];
-        $end_date = $date[1];
-
-        $key = 'field:' . 'top' . $top . $type . '-' . $sta_date . '-' . $end_date;
-        $data = LogCache::get($key);
-        if (empty($data)) {
-            $LogModel = new LogModel();
-            $LogPk = $LogModel->getPk();
-
             $where[] = ['is_delete', '=', 0];
-            $where[] = ['create_time', '>=', DatetimeUtils::dateStartTime($date[0])];
-            $where[] = ['create_time', '<=', DatetimeUtils::dateEndTime($date[1])];
+            $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
+            $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
 
-            $mlog_field = $field . ', COUNT(' . $LogPk . ') as y_data';
-            $member_log = $LogModel->field($mlog_field)->where($where)->group($group)->order('y_data desc')->limit($top)->select()->toArray();
+            $log = $model->field($field . ', COUNT(' . $pk . ') as y_data')->where($where)->group($group)->order('y_data desc')->limit($top)->select()->toArray();
 
-            if ($type == 'member') {
-                $member_ids = array_column($member_log, 'x_data');
+            if ($stat == 'member_id') {
+                $member_ids = array_column($log, 'x_data');
                 $MemberModel = new MemberModel();
                 $MemberPk = $MemberModel->getPk();
                 $member = $MemberModel->field($MemberPk . ',username')->where($MemberPk, 'in', $member_ids)->select()->toArray();
             }
 
-            $x_data = [];
-            $y_data = [];
-            $p_data = [];
-            foreach ($member_log as $v) {
-                if ($type == 'member') {
+            $x_data = $y_data = [];
+            foreach ($log as $v) {
+                if ($stat == 'member_id') {
                     foreach ($member as $vm) {
                         if ($v['x_data'] == $vm['member_id']) {
                             $v['x_data'] = $vm['username'];
@@ -450,13 +505,19 @@ class LogService
 
                 $x_data[] = $v['x_data'];
                 $y_data[] = $v['y_data'];
-                $p_data[] = ['value' => $v['y_data'], 'name' => $v['x_data']];
             }
 
-            $data['x_data'] = $x_data;
-            $data['y_data'] = $y_data;
-            $data['p_data'] = $p_data;
+            $series = [
+                ['name' => '日志数量', 'type' => 'line', 'data' => $y_data, 'label' => ['show' => true, 'position' => 'top']]
+            ];
+
+            $legend = array_column($series, 'name');
+
+            $data['type']   = $type;
             $data['date']   = $date;
+            $data['legend'] = $legend;
+            $data['xAxis']  = $x_data;
+            $data['series'] = $series;
 
             LogCache::set($key, $data);
         }
