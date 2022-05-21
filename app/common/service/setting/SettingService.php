@@ -33,10 +33,12 @@ class SettingService
             $model = new SettingModel();
             $pk = $model->getPk();
 
+            $token_name = Config::get('api.token_name');
+            
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['token_name']  = Config::get('api.token_name');
+                $info['token_name']  = $token_name;
                 $info['token_key']   = uniqid();
                 $info['diy_config']  = serialize([]);
                 $info['create_time'] = datetime();
@@ -44,11 +46,16 @@ class SettingService
                 $info = $model->find($id);
             }
             $info = $info->toArray();
-            
+
             if ($info['diy_config']) {
                 $info['diy_config'] = unserialize($info['diy_config']);
             } else {
                 $info['diy_config'] = [];
+            }
+
+            if ($token_name != $info['token_name']) {
+                self::edit(['token_name' => $token_name]);
+                $info['token_name'] = $token_name;
             }
 
             SettingCache::set($id, $info);

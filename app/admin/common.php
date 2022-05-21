@@ -148,6 +148,22 @@ function admin_token()
 }
 
 /**
+ * 用户token验证
+ *
+ * @param string $admin_token 用户token
+ *
+ * @return Exception
+ */
+function admin_token_verify($admin_token = '')
+{
+    if (empty($admin_token)) {
+        $admin_token = admin_token();
+    }
+
+    TokenService::verify($admin_token);
+}
+
+/**
  * 用户id获取
  *
  * @return int

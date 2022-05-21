@@ -13,7 +13,6 @@ namespace app\admin\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use app\common\service\admin\TokenService;
 
 class TokenVerifyMiddleware
 {
@@ -28,13 +27,15 @@ class TokenVerifyMiddleware
     {
         // 菜单是否无需登录
         if (!menu_is_unlogin()) {
+
+            // 用户token获取
             $admin_token = admin_token();
             if (empty($admin_token)) {
-                exception('请登录');
+                exception('请登录', 401);
             }
 
             // 用户Token验证
-            TokenService::verify($admin_token);
+            admin_token_verify($admin_token);
         }
 
         return $next($request);

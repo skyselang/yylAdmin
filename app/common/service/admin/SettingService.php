@@ -32,15 +32,18 @@ class SettingService
     public static function info()
     {
         $id = self::$id;
+        
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
 
+            $token_name = Config::get('admin.token_name');
+
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['token_name']  = Config::get('admin.token_name');
+                $info['token_name']  = $token_name;
                 $info['token_key']   = uniqid();
                 $info['create_time'] = datetime();
                 $model->insert($info);
@@ -68,6 +71,11 @@ class SettingService
                 $info['login_bg_url'] = FileService::fileUrl($info['login_bg_id']);
             }
 
+            if ($token_name != $info['token_name']) {
+                self::edit(['token_name' => $token_name]);
+                $info['token_name'] = $token_name;
+            }
+
             SettingCache::set($id, $info);
         }
 
@@ -89,7 +97,7 @@ class SettingService
         $id = self::$id;
 
         $param['update_time'] = datetime();
-        
+
         $res = $model->where($pk, $id)->update($param);
         if (empty($res)) {
             exception();
