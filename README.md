@@ -64,7 +64,7 @@ composer install
 数据库文件：private/yyladmin.sql
 
 # 修改配置
-重命名.env.example成.env环境变量文件修改里面配置（或修改config文件夹里面的配置）
+重命名.env.example成.env环境变量文件修改里面配置
 
 # 环境配置（phpStudy）
 根据你的实际环境软件配置
@@ -89,15 +89,15 @@ git clone https://gitee.com/skyselang/yylAdminWeb.git
 # 进入项目目录
 cd yylAdminWeb
 
-# 使用cnpm
-npm install -g cnpm --registry=https://registry.npm.taobao.org
+# 使用cnpm （或yarn、pnpm）
+npm install -g cnpm --registry=https://registry.npmmirror.com
 
 # 安装依赖
 cnpm install
 
 # 修改配置
-在.env.xxx环境变量文件里面修改接口地址（后端环境配置域名端口）
-VUE_APP_BASE_API = 'http://localhost:9526'
+在.env.xxx环境变量文件里面修改接口baseURL
+VUE_APP_BASE_URL = 'http://localhost:9526'
 
 # 本地开发 启动项目
 cnpm run dev
@@ -108,6 +108,7 @@ cnpm run build:prod
 # 开发完打包测试环境
 cnpm run build:stage
 ```
+>包管理工具： [cnpm](http://www.npmmirror.com) [yarn](https://yarn.bootcss.com) [pnpm](https://www.pnpm.cn)
 
 ### 访问后台
 
