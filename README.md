@@ -4,7 +4,7 @@
 
 ## 文档
 
-- [yylAdmin文档](http://skyselang.gitee.io/yyladmindoc/)
+- [码云](http://skyselang.gitee.io/yyladmindoc/) | [看云](https://www.kancloud.cn/skyselang/yyladmin)
 
 ## 简介
 
