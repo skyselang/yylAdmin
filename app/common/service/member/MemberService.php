@@ -17,7 +17,6 @@ use app\common\service\setting\TokenService;
 use app\common\service\file\FileService;
 use app\common\model\member\MemberModel;
 use app\common\model\member\WechatModel;
-use hg\apidoc\annotation\Field;
 
 class MemberService
 {
@@ -74,7 +73,8 @@ class MemberService
     /**
      * 会员信息
      *
-     * @param int $id 会员id
+     * @param int  $id   会员id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array
      */
@@ -92,10 +92,11 @@ class MemberService
                 }
                 return [];
             }
-            $info = $info->toArray();
+            $info = $info->append(['gender_name', 'reg_channel_name', 'reg_type_name'])->toArray();
 
             $info['avatar_url'] = FileService::fileUrl($info['avatar_id']);
 
+            $info['wechat'] = [];
             $WechatModel = new WechatModel();
             $member_wechat = $WechatModel->where($pk, $id)->find();
             if ($member_wechat) {
@@ -107,8 +108,6 @@ class MemberService
                 }
                 $member_wechat['privilege'] = unserialize($member_wechat['privilege']);
                 $info['wechat'] = $member_wechat;
-            } else {
-                $info['wechat'] = [];
             }
 
             // 0原密码修改密码，1直接设置新密码
@@ -629,14 +628,11 @@ class MemberService
             } elseif ($stat == 'reg_channel') {
                 $data['title'] = '注册渠道';
 
-                $series = [
-                    ['name' => 'Web', 'reg_channel' => '1', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '公众号', 'reg_channel' => '2', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '小程序', 'reg_channel' => '3', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '安卓', 'reg_channel' => '4', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '苹果', 'reg_channel' => '5', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '后台', 'reg_channel' => '6', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                ];
+                $series = [];
+                $reg_channel_arr = $model->reg_channel_arr;
+                foreach ($reg_channel_arr as $k => $v) {
+                    $series[] = ['name' => $v, 'reg_channel' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
+                }
 
                 foreach ($series as $k => $v) {
                     $series_data = $model
@@ -653,14 +649,11 @@ class MemberService
             } elseif ($stat == 'reg_type') {
                 $data['title'] = '注册方式';
 
-                $series = [
-                    ['name' => '用户名', 'reg_type' => '1', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '手机', 'reg_type' => '2', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '邮箱', 'reg_type' => '3', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '公众号', 'reg_type' => '4', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '小程序', 'reg_type' => '5', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '后台', 'reg_type' => '6', 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']],
-                ];
+                $series = [];
+                $reg_type_arr = $model->reg_type_arr;
+                foreach ($reg_type_arr as $k => $v) {
+                    $series[] = ['name' => $v, 'reg_type' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
+                }
 
                 foreach ($series as $k => $v) {
                     $series_data = $model

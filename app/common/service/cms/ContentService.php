@@ -37,7 +37,7 @@ class ContentService
         $CategoryPk = $CategoryModel->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',' . $CategoryPk . ',name,img_ids,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
+            $field = $pk . ',' . $CategoryPk . ',name,img_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time';
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
@@ -47,23 +47,15 @@ class ContentService
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        $category_ids = $file_ids = [];
-        foreach ($list as $kc => $vc) {
-            $category_ids[] = $vc['category_id'];
-            $list[$kc]['img_id'] = 0;
-            $img_ids = explode(',', $vc['img_ids']);
-            if ($img_ids) {
-                $list[$kc]['img_id'] = $img_ids[0];
-                $file_ids[] = $img_ids[0];
-            }
-        }
-        $category = $CategoryModel->where('category_id', 'in', $category_ids)->column('category_name', 'category_id');
-        $file = FileService::fileArray($file_ids);
-        $file = array_column($file, 'file_url', 'file_id');
+        $file_ids = array_column($list, 'img_id', 'img_id');
+        $category_ids = array_column($list, $CategoryPk);
+
+        $file = array_column(FileService::fileArray($file_ids), 'file_url', 'file_id');
+        $category = $CategoryModel->where($CategoryPk, 'in', $category_ids)->column('category_name', $CategoryPk);
 
         foreach ($list as $k => $v) {
-            $list[$k]['category_name'] = $category[$v['category_id']] ?? '';
             $list[$k]['img_url'] = $file[$v['img_id']] ?? '';
+            $list[$k]['category_name'] = $category[$v[$CategoryPk]] ?? '(未分类)';
         }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -96,11 +88,12 @@ class ContentService
             $CategoryModel = new CategoryModel();
             $CategoryPk = $CategoryModel->getPk();
             $category = CategoryService::info($info[$CategoryPk], false);
-            $info['category_name'] = $category['category_name'] ?? '';
+            $info['category_name'] = $category['category_name'] ?? '(未分类)';
 
-            $info['imgs']   = FileService::fileArray($info['img_ids']);
-            $info['files']  = FileService::fileArray($info['file_ids']);
-            $info['videos'] = FileService::fileArray($info['video_ids']);
+            $info['img_url'] = FileService::fileUrl($info['img_id']);
+            $info['imgs']    = FileService::fileArray($info['img_ids']);
+            $info['files']   = FileService::fileArray($info['file_ids']);
+            $info['videos']  = FileService::fileArray($info['video_ids']);
 
             ContentCache::set($id, $info);
         }
@@ -284,7 +277,7 @@ class ContentService
             $CategoryModel = new CategoryModel();
             $CategoryPk = $CategoryModel->getPk();
             $category = $CategoryModel->field($CategoryPk . ',category_name')->where('is_delete', 0)->select()->toArray();
-            $category[] = [$CategoryPk => 0, 'category_name' => '未分类'];
+            $category[] = [$CategoryPk => 0, 'category_name' => '(未分类)'];
 
             $ContentModel = new ContentModel();
             $count = $ContentModel->where('is_delete', 0)->count();

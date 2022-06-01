@@ -41,6 +41,10 @@ class ApiService
             }
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            foreach ($data as $k => $v) {
+                $data[$k]['children']    = [];
+                $data[$k]['hasChildren'] = true;
+            }
         } else {
             if (empty($field)) {
                 $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
@@ -57,7 +61,7 @@ class ApiService
                 }
 
                 $data = $model->field($field)->where($where)->order($order)->select()->toArray();
-                $data = list_to_tree($data, 'api_id', 'api_pid');
+                $data = list_to_tree($data, $pk, 'api_pid');
 
                 ApiCache::set($key, $data);
             }

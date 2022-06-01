@@ -47,10 +47,10 @@ class Menu
             }
         }
 
-        if (empty($where)) {
-            $data['list'] = MenuService::list('tree', $where);
-        } else {
+        if ($where) {
             $data['list'] = MenuService::list('list', $where);
+        } else {
+            $data['list'] = MenuService::list('tree', $where);
         }
 
         return success($data);

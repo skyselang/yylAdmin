@@ -50,15 +50,16 @@ class MenuService
                 $data[$k]['hasChildren'] = true;
             }
         } else {
-            $key = $type . md5(serialize($where));
+            if (empty($field)) {
+                $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_unlogin,is_unauth,is_disable';
+            }
+
+            $key = $type . md5(serialize($where) . $field);
             $data = MenuCache::get($key);
             if (empty($data)) {
                 $model = new MenuModel();
                 $pk = $model->getPk();
 
-                if (empty($field)) {
-                    $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unlogin,is_unauth,is_disable';
-                }
                 if (empty($order)) {
                     $order = ['menu_sort' => 'desc', $pk => 'asc'];
                 }
@@ -431,7 +432,7 @@ class MenuService
         if (empty($res)) {
             exception();
         }
-        
+
         $update[$MenuPk] = $admin_menu_id;
         $update[$RolePk] = $admin_role_id;
 

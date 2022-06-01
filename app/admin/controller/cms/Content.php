@@ -31,7 +31,11 @@ class Content
      */
     public function category()
     {
-        $data['list'] = CategoryService::list('tree', ['is_delete' => 0], [], 'category_id,category_pid,category_name');
+        $where = ['is_delete' => 0];
+        $order = [];
+        $field = 'category_id,category_pid,category_name';
+
+        $data['list'] = CategoryService::list('tree', $where, $order, $field);
 
         return success($data);
     }
@@ -60,7 +64,7 @@ class Content
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['content_id', 'category_id', 'is_top', 'is_hot', 'is_rec', 'is_hide'])) {
+            if (in_array($search_field, ['content_id', 'is_top', 'is_hot', 'is_rec', 'is_hide', 'category_id'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } else {
@@ -119,10 +123,12 @@ class Content
         $param['title']       = Request::param('title/s', '');
         $param['keywords']    = Request::param('keywords/s', '');
         $param['description'] = Request::param('description/s', '');
+        $param['img_id']      = Request::param('img_id/d', 0);
+        $param['author']      = Request::param('author/s', '');
+        $param['url']         = Request::param('url/s', '');
         $param['imgs']        = Request::param('imgs/a', []);
         $param['files']       = Request::param('files/a', []);
         $param['videos']      = Request::param('videos/a', []);
-        $param['url']         = Request::param('url/s', '');
         $param['sort']        = Request::param('sort/d', 250);
         $param['content']     = Request::param('content/s', '');
 
@@ -152,10 +158,12 @@ class Content
         $param['title']       = Request::param('title/s', '');
         $param['keywords']    = Request::param('keywords/s', '');
         $param['description'] = Request::param('description/s', '');
+        $param['img_id']      = Request::param('img_id/d', 0);
+        $param['author']      = Request::param('author/s', '');
+        $param['url']         = Request::param('url/s', '');
         $param['imgs']        = Request::param('imgs/a', []);
         $param['files']       = Request::param('files/a', []);
         $param['videos']      = Request::param('videos/a', []);
-        $param['url']         = Request::param('url/s', '');
         $param['sort']        = Request::param('sort/d', 250);
         $param['content']     = Request::param('content/s', '');
 
@@ -297,13 +305,9 @@ class Content
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
-        $category_id  = Request::param('category_id/d', '');
 
-        if ($category_id) {
-            $where[] = ['category_id', '=', $category_id];
-        }
         if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['content_id', 'is_top', 'is_hot', 'is_rec', 'is_hide'])) {
+            if (in_array($search_field, ['content_id', 'is_top', 'is_hot', 'is_rec', 'is_hide', 'category_id'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } else {

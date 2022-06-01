@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 19/05/2022 17:55:01
+ Date: 01/06/2022 18:33:30
 */
 
 SET NAMES utf8mb4;
@@ -469,7 +469,7 @@ CREATE TABLE `yyl_api`  (
   INDEX `api_id`(`api_id`) USING BTREE,
   INDEX `api_pid`(`api_pid`, `api_name`(191)) USING BTREE,
   INDEX `api_url`(`api_url`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 90 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_api
@@ -590,9 +590,11 @@ CREATE TABLE `yyl_cms_content`  (
   `category_id` int(11) NULL DEFAULT 0 COMMENT '内容分类id',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名称',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题',
+  `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '作者（来源）',
   `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '关键词',
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
+  `img_id` int(11) NULL DEFAULT 0 COMMENT '封面id',
   `img_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '图片id，逗号,隔开',
   `imgs` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '图片',
   `file_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '附件id，逗号,隔开',
@@ -673,9 +675,9 @@ CREATE TABLE `yyl_file`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`file_id`) USING BTREE,
-  INDEX `file_id`(`file_id`, `is_delete`) USING BTREE,
   INDEX `file_hash`(`is_delete`, `file_hash`) USING BTREE,
-  INDEX `file_type`(`is_delete`, `file_type`) USING BTREE
+  INDEX `file_type`(`is_delete`, `file_type`) USING BTREE,
+  INDEX `file_id`(`file_id`, `is_delete`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
@@ -764,7 +766,9 @@ CREATE TABLE `yyl_member`  (
   `phone` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机',
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱',
   `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '密码',
-  `region_id` int(10) NULL DEFAULT 0 COMMENT '地区id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '姓名',
+  `gender` tinyint(1) NULL DEFAULT 0 COMMENT '性别，0未知，1男，2女',
+  `region_id` int(10) NULL DEFAULT 0 COMMENT '所在地id',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   `sort` int(10) NULL DEFAULT 250 COMMENT '排序',
   `reg_channel` tinyint(1) NULL DEFAULT 1 COMMENT '注册渠道，1Web2公众号3小程序4安卓5苹果6后台',

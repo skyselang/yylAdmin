@@ -28,6 +28,7 @@ class ContentModel extends Model
     }
 
     /**
+     * 列表
      * @Apidoc\Field("content_id,name,category_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time")
      * @Apidoc\AddField("img_url", type="string", default="", desc="图片链接")
      */
@@ -36,27 +37,30 @@ class ContentModel extends Model
     }
 
     /**
-     * 
+     * 信息
      */
     public function infoReturn()
     {
     }
 
     /**
-     * @Apidoc\Field("category_id,name,title,keywords,description,content,url,sort")
+     * 添加
+     * @Apidoc\Field("category_id,name,title,keywords,description,author,url,sort,content")
      */
     public function addParam()
     {
     }
 
     /**
-     * @Apidoc\Field("content_id,category_id,name,title,keywords,description,content,url,sort")
+     * 修改
+     * @Apidoc\Field("content_id,category_id,name,title,keywords,description,author,url,sort,content")
      */
     public function editParam()
     {
     }
 
     /**
+     * 名称
      * @Apidoc\Field("name")
      */
     public function name()
@@ -64,6 +68,7 @@ class ContentModel extends Model
     }
 
     /**
+     * 分类id
      * @Apidoc\Field("category_id")
      */
     public function category_id()
@@ -71,6 +76,7 @@ class ContentModel extends Model
     }
 
     /**
+     * 是否置顶
      * @Apidoc\Field("is_top")
      */
     public function is_top()
@@ -78,6 +84,7 @@ class ContentModel extends Model
     }
 
     /**
+     * 是否热门
      * @Apidoc\Field("is_hot")
      */
     public function is_hot()
@@ -85,6 +92,7 @@ class ContentModel extends Model
     }
 
     /**
+     * 是否推荐
      * @Apidoc\Field("is_rec")
      */
     public function is_rec()
@@ -92,6 +100,7 @@ class ContentModel extends Model
     }
 
     /**
+     * 是否隐藏
      * @Apidoc\Field("is_hide")
      */
     public function is_hide()

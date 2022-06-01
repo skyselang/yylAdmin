@@ -32,7 +32,11 @@ class Content
      */
     public function category()
     {
-        $data = CategoryService::list('tree', ['is_delete' => 0, 'is_hide' => 0], [], 'category_id,category_pid,category_name');
+        $where = ['is_delete' => 0, 'is_hide' => 0];
+        $order = [];
+        $field = 'category_id,category_pid,category_name';
+
+        $data = CategoryService::list('tree', $where, $order, $field);
 
         return success($data);
     }
@@ -41,10 +45,10 @@ class Content
      * @Apidoc\Title("内容列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\name")
-     * @Apidoc\Param("name", require=false)
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
      * @Apidoc\Param("category_id", require=false, default="")
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\name")
+     * @Apidoc\Param("name", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),

@@ -45,7 +45,7 @@ class Member
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['member_id', 'is_disable'])) {
+            if (in_array($search_field, ['member_id', 'is_disable', 'gender'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } else {
@@ -105,6 +105,8 @@ class Member
         $param['password']    = Request::param('password/s', '');
         $param['phone']       = Request::param('phone/s', '');
         $param['email']       = Request::param('email/s', '');
+        $param['name']        = Request::param('name/s', '');
+        $param['gender']      = Request::param('gender/d', 0);
         $param['region_id']   = Request::param('region_id/d', 0);
         $param['remark']      = Request::param('remark/s', '');
         $param['sort']        = Request::param('sort/d', 250);
@@ -131,6 +133,8 @@ class Member
         $param['nickname']  = Request::param('nickname/s', '');
         $param['phone']     = Request::param('phone/s', '');
         $param['email']     = Request::param('email/s', '');
+        $param['name']      = Request::param('name/s', '');
+        $param['gender']    = Request::param('gender/d', 0);
         $param['region_id'] = Request::param('region_id/d', 0);
         $param['remark']    = Request::param('remark/s', '');
         $param['sort']      = Request::param('sort/d', 250);
@@ -235,7 +239,7 @@ class Member
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['member_id', 'is_disable'])) {
+            if (in_array($search_field, ['member_id', 'is_disable', 'gender'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } else {
@@ -295,7 +299,7 @@ class Member
      * @Apidoc\Title("会员统计")
      * @Apidoc\Method("GET")
      * @Apidoc\Param("type", type="string", default="month", desc="日期类型：day、month")
-     * @Apidoc\Param("date", type="array", default="[]", desc="日期范围，默认30天、12个月")
+     * @Apidoc\Param("date", type="array", default="", desc="日期范围，默认30天、12个月")
      * @Apidoc\Returned("count", type="object", desc="数量统计",
      *     @Apidoc\Returned("name", type="string", desc="名称"),
      *     @Apidoc\Returned("date", type="string", desc="时间"),
