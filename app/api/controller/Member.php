@@ -201,15 +201,11 @@ class Member
     /**
      * @Apidoc\Title("手机绑定（小程序）")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
-     * @Apidoc\Param("iv", type="string", require=true, desc="加密算法的初始向量")
-     * @Apidoc\Param("encrypted_data", type="string", require=true, desc="包括敏感数据在内的完整用户信息的加密数据")
+     * @Apidoc\Param("code", type="string", require=true, desc="button 组件 open-type 的值为 getPhoneNumber，bindgetphonenumber 事件回调获取到的动态令牌code")
      */
     public function bindPhoneMini()
     {
-        $param['code']           = Request::param('code/s', '');
-        $param['iv']             = Request::param('iv/s', '');
-        $param['encrypted_data'] = Request::param('encrypted_data/s', '');
+        $param['code'] = Request::param('code/s', '');
 
         foreach ($param as $k => $v) {
             if (empty($v)) {
@@ -217,7 +213,7 @@ class Member
             }
         }
 
-        $data = MemberService::bindPhoneMini($param['code'], $param['iv'], $param['encrypted_data']);
+        $data = MemberService::bindPhoneMini($param['code']);
 
         return success($data);
     }

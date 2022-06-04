@@ -45,7 +45,7 @@ class Member
         $date_value   = Request::param('date_value/a', '');
 
         if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['member_id', 'is_disable', 'gender'])) {
+            if (in_array($search_field, ['member_id', 'gender', 'is_disable', 'reg_channel', 'reg_type'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } else {

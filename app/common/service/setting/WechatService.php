@@ -49,7 +49,7 @@ class WechatService
             }
             $info = $info->toArray();
 
-            $info['server_url'] = server_url() . '/index/Wechat/access';
+            $info['server_url'] = server_url() . '/api/Wechat/access';
             $info['qrcode_url'] = FileService::fileUrl($info['qrcode_id']);
 
             WechatCache::set($id, $info);
@@ -188,13 +188,13 @@ class WechatService
                     // 测试环境
                     'dev' => [
                         'driver' => 'single',
-                        'path' => runtime_path() . '/easywechat/' . date('Ymd') . '/officialAccountDev.log',
+                        'path' => runtime_path() . '/easywechat/' . date('Ym') . '/officialAccountDev.log',
                         'level' => 'debug',
                     ],
                     // 生产环境
                     'prod' => [
                         'driver' => 'daily',
-                        'path' => runtime_path() . '/easywechat/' . date('Ymd') . '/officialAccountProd.log',
+                        'path' => runtime_path() . '/easywechat/' . date('Ym') . '/officialAccountProd.log',
                         'level' => 'info',
                         'days' => 30,
                     ],
@@ -245,7 +245,7 @@ class WechatService
              */
             'log' => [
                 'level' => $log_level,
-                'file' => runtime_path() . '/easywechat/' . date('Ymd') . '/miniProgram.log',
+                'file' => runtime_path() . '/easywechat/' . date('Ym') . '/miniProgram.log',
             ],
         ];
 

@@ -67,7 +67,10 @@ class MemberService
             }
         }
 
-        return compact('count', 'pages', 'page', 'limit', 'list');
+        $reg_channels = $model->reg_channel_arr;
+        $reg_types = $model->reg_type_arr;
+
+        return compact('count', 'pages', 'page', 'limit', 'list', 'reg_channels', 'reg_types');
     }
 
     /**
@@ -189,21 +192,30 @@ class MemberService
         $model = new MemberModel();
         $pk = $model->getPk();
 
-        if ($real) {
-            $res = $model->where($pk, 'in', $ids)->delete();
-        } else {
-            $update['is_delete']   = 1;
-            $update['delete_time'] = datetime();
-            $res = $model->where($pk, 'in', $ids)->update($update);
-        }
-
-        if (empty($res)) {
-            exception();
-        }
-
-        if ($real) {
+        $errmsg = '';
+        // 启动事务
+        $model::startTrans();
+        try {
             $WechatModel = new WechatModel();
-            $WechatModel->where($pk, 'in', $ids)->delete();
+            if ($real) {
+                $model->where($pk, 'in', $ids)->delete();
+                $WechatModel->where($pk, 'in', $ids)->delete();
+            } else {
+                $update['is_delete']   = 1;
+                $update['delete_time'] = datetime();
+                $model->where($pk, 'in', $ids)->update($update);
+                $WechatModel->where($pk, 'in', $ids)->update($update);
+            }
+            // 提交事务
+            $model::commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model::rollback();
+        }
+
+        if ($errmsg) {
+            exception($errmsg);
         }
 
         $update['ids'] = $ids;
@@ -337,14 +349,12 @@ class MemberService
 
             $member_field = $MemberPk . ',nickname,login_num,is_disable,is_delete';
             $member_where[] = [$MemberPk, '=', $member_id];
+            $member_where[] = ['is_delete', '=', 0];
             $member = $MemberModel->field($member_field)->where($member_where)->find();
             if ($member) {
                 $member = $member->toArray();
                 if ($member['is_disable']) {
                     exception('账号已被禁用');
-                }
-                if ($member['is_delete']) {
-                    exception('账号已被删除');
                 }
                 if (empty($member['nickname'])) {
                     $member_update['nickname'] = $userinfo['nickname'];
@@ -358,12 +368,13 @@ class MemberService
                 $member_log[$MemberPk] = $member_id;
                 LogService::add($member_log, 2);
             } else {
+                $wx_username = $member_wechat_id . '-' . uniqid();
                 if ($reg_channel == 2) {
-                    $member_insert['username'] = 'wechatOffi' . $member_wechat_id;
+                    $member_insert['username'] = 'wxoffi' . $wx_username;
                 } elseif ($reg_channel == 3) {
-                    $member_insert['username'] = 'wechatMini' . $member_wechat_id;
+                    $member_insert['username'] = 'wxmini' . $wx_username;
                 } else {
-                    $member_insert['username'] = 'wechat' . $member_wechat_id;
+                    $member_insert['username'] = 'wx' . $wx_username;
                 }
                 $member_insert['login_num']    = 1;
                 $member_insert['login_ip']     = $login_ip;
@@ -415,11 +426,8 @@ class MemberService
      */
     public static function field($member)
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
         $data = [];
-        $field = [$pk, 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url'];
+        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url'];
         foreach ($field as $v) {
             $data[$v] = $member[$v];
         }
@@ -453,26 +461,33 @@ class MemberService
      * 绑定手机（小程序）
      *
      * @param string $code
-     * @param string $iv
-     * @param string $encrypted_data
      * @param int    $member_id
      *
      * @return array
      */
-    public static function bindPhoneMini($code, $iv, $encrypted_data, $member_id = 0)
+    public static function bindPhoneMini($code, $member_id = 0)
     {
         if (empty($member_id)) {
             $member_id = member_id();
         }
 
         $app = WechatService::mini();
-        $session = $app->auth->session($code);
-        $decrypted_data = $app->encryptor->decryptData($session['session_key'], $iv, $encrypted_data);
-        if (isset($decrypted_data['phoneNumber'])) {
+
+        // 获取 access token 实例
+        $accessToken = $app->access_token;
+        $token = $accessToken->getToken(); // token 数组 token['access_token'] 字符串
+        // 获取手机号（新版本接口）
+        $res = http_post('https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=' . $token['access_token'], ['code' => $code]);
+        $errcode = $res['errcode'] ?? 0;
+        if ($errcode) {
+            exception('绑定失败:' . $errcode . ',' . $res['errmsg'] ?? '');
+        }
+
+        $phone = $res['phone_info']['phoneNumber'] ?? 0;
+        if ($phone) {
             $model = new MemberModel();
             $pk = $model->getPk();
 
-            $phone = $decrypted_data['phoneNumber'];
             $phone_where[] = [$pk, '<>', $member_id];
             $phone_where[] = ['phone', '=', $phone];
             $phone_where[] = ['is_delete', '=', 0];
@@ -483,7 +498,7 @@ class MemberService
 
             $model->where($pk, $member_id)->update(['phone' => $phone, 'update_time' => datetime()]);
 
-            return $decrypted_data;
+            return $res;
         } else {
             exception('绑定失败');
         }

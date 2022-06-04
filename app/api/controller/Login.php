@@ -182,7 +182,7 @@ class Login
     {
         $api_token = Request::param('api_token/s', '');
         if ($api_token) {
-            die('Please save member_id and api_token');
+            die('登录成功，请保存 api_token 。');
         }
 
         $offiurl = Request::param('offiurl/s', '');
@@ -285,9 +285,9 @@ class Login
 
         if ($iv && $encrypted_data) {
             $decrypted_data = $app->encryptor->decryptData($user['session_key'], $iv, $encrypted_data);
+            $user = array_merge($user, $user_info, $decrypted_data);
         }
 
-        $user = array_merge($user, $user_info, $decrypted_data);
         $user['nickname']   = isset($user['nickName']) ? $user['nickName'] : '';
         $user['sex']        = isset($user['gender']) ? $user['gender'] : 0;
         $user['headimgurl'] = isset($user['avatarUrl']) ? $user['avatarUrl'] : '';
