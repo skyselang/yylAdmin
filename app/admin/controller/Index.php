@@ -99,7 +99,9 @@ class Index
 
         $order = ['sort' => 'desc', 'open_time_start' => 'desc'];
 
-        $data = NoticeService::list($where, $page, $limit, $order);
+        $field = 'admin_notice_id,admin_user_id,title,color,intro,create_time';
+
+        $data = NoticeService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }

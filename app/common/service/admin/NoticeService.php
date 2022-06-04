@@ -33,7 +33,7 @@ class NoticeService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',admin_user_id,title,color,sort,is_open,open_time_start,open_time_end,create_time';
+            $field = $pk . ',admin_user_id,title,color,sort,intro,is_open,open_time_start,open_time_end,create_time';
         }
         if (empty($order)) {
             $order = ['is_open' => 'desc', 'sort' => 'desc', 'open_time_start' => 'desc', $pk => 'desc'];
