@@ -98,10 +98,12 @@ class SettingService
     {
         return [
             'local'   => '本地(服务器)',
-            'qiniu'   => '七牛云Kodo',
-            'aliyun'  => '阿里云OSS',
-            'tencent' => '腾讯云COS',
-            'baidu'   => '百度云BOS'
+            'qiniu'   => '七牛云 Kodo',
+            'aliyun'  => '阿里云 OSS',
+            'tencent' => '腾讯云 COS',
+            'baidu'   => '百度云 BOS',
+            'upyun'   => '又拍云 USS',
+            's3'      => 'AWS S3'
         ];
     }
 

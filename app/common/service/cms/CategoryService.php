@@ -40,6 +40,13 @@ class CategoryService
             }
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            if (strpos($field, 'img_id') !== false) {
+                $file_ids = array_column($data, 'img_id', 'img_id');
+                $file = array_column(FileService::fileArray($file_ids), 'file_url', 'file_id');
+                foreach ($data as &$v) {
+                    $v['img_url'] = $file[$v['img_id']] ?? '';
+                }
+            }
         } else {
             if (empty($field)) {
                 $field = 'category_id,category_pid,category_name,sort,is_hide,create_time,update_time';
@@ -56,6 +63,13 @@ class CategoryService
                 }
 
                 $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+                if (strpos($field, 'img_id') !== false) {
+                    $file_ids = array_column($data, 'img_id', 'img_id');
+                    $file = array_column(FileService::fileArray($file_ids), 'file_url', 'file_id');
+                    foreach ($data as &$v) {
+                        $v['img_url'] = $file[$v['img_id']] ?? '';
+                    }
+                }
                 $data = list_to_tree($data, $pk, 'category_pid');
 
                 CategoryCache::set($key, $data);
@@ -89,6 +103,7 @@ class CategoryService
             }
             $info = $info->toArray();
 
+            $info['img_url'] = FileService::fileUrl($info['img_id']);
             $info['imgs'] = FileService::fileArray($info['img_ids']);
 
             CategoryCache::set($id, $info);

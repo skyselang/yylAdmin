@@ -94,6 +94,11 @@ class FileService
      */
     public static function add($param)
     {
+        $setting = SettingService::info();
+        if (!$setting['is_open']) {
+            exception('文件上传未开启，无法上传文件！');
+        }
+
         $file = $param['file'];
         unset($param['file']);
         $datetime = datetime();
@@ -236,7 +241,7 @@ class FileService
 
         $file_url = '';
         if ($file) {
-            if (!$file['is_disable']) {
+            if ($file['is_disable'] == 0 && $file['is_delete'] == 0) {
                 $file_url = SettingService::fileUrl($file);
             }
         }
@@ -265,7 +270,7 @@ class FileService
         $pk = $model->getPk();
 
         $field = $pk . ',storage,domain,file_name,file_size,file_hash,file_path,file_ext';
-        $where = [[$pk, 'in', $ids], ['is_disable', '=', 0]];
+        $where = [[$pk, 'in', $ids], ['is_disable', '=', 0], ['is_delete', '=', 0]];
         $order = "field(file_id," . $ids . ")";
 
         $file = $model->field($field)->where($where)->orderRaw($order)->select()->toArray();

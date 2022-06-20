@@ -36,22 +36,45 @@ class Menu
     {
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
-        $where = [];
+        $where = $order = [];
         if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['admin_menu_id', 'menu_pid', 'is_unlogin', 'is_unauth', 'is_disable'])) {
+            if ($search_field == 'show_lv') {
+                if ($search_value == 1) {
+                    $where[] = ['menu_pid', '=', 0];
+                } elseif ($search_value == 2) {
+                    $admin_menu_ids = MenuService::list('list', [['menu_pid', '=', 0]], [], 'admin_menu_id');
+                    $admin_menu_ids = array_column($admin_menu_ids, 'admin_menu_id');
+                    $where[] = ['menu_pid', 'in', $admin_menu_ids];
+                    $order = ['menu_pid' => 'asc', 'menu_sort' => 'desc'];
+                } elseif ($search_value == 3) {
+                    $admin_menu_ids = MenuService::list('list', [['menu_pid', '=', 0]], [], 'admin_menu_id');
+                    $admin_menu_ids = array_column($admin_menu_ids, 'admin_menu_id');
+                    $admin_menu_ids = MenuService::list('list', [['menu_pid', 'in', $admin_menu_ids]], [], 'admin_menu_id');
+                    $admin_menu_ids = array_column($admin_menu_ids, 'admin_menu_id');
+                    $where[] = ['menu_pid', 'in', $admin_menu_ids];
+                    $order = ['menu_pid' => 'asc', 'menu_sort' => 'desc'];
+                }
+            } elseif (in_array($search_field, ['admin_menu_id', 'menu_pid', 'menu_type', 'is_unlogin', 'is_unauth', 'is_disable', 'hidden'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
+        }
 
         if ($where) {
-            $data['list'] = MenuService::list('list', $where);
+            $data['list'] = MenuService::list('list', $where, $order);
         } else {
-            $data['list'] = MenuService::list('tree', $where);
+            $data['list'] = MenuService::list('tree', $where, $order);
         }
+        $data['tree'] = MenuService::list('tree', [], [], 'admin_menu_id,menu_pid,menu_name');
 
         return success($data);
     }
@@ -82,15 +105,21 @@ class Menu
      */
     public function add()
     {
-        $param['menu_pid']  = Request::param('menu_pid/d', 0);
-        $param['menu_name'] = Request::param('menu_name/s', '');
-        $param['menu_url']  = Request::param('menu_url/s', '');
-        $param['menu_sort'] = Request::param('menu_sort/d', 250);
-        $param['add_list']  = Request::param('add_list/b', false);
-        $param['add_info']  = Request::param('add_info/b', false);
-        $param['add_add']   = Request::param('add_add/b', false);
-        $param['add_edit']  = Request::param('add_edit/b', false);
-        $param['add_dele']  = Request::param('add_dele/b', false);
+        $param['menu_pid']     = Request::param('menu_pid/d', 0);
+        $param['menu_type']    = Request::param('menu_type/d', 1);
+        $param['meta_icon']    = Request::param('meta_icon/s', '');
+        $param['menu_name']    = Request::param('menu_name/s', '');
+        $param['menu_url']     = Request::param('menu_url/s', '');
+        $param['path']         = Request::param('path/s', '');
+        $param['component']    = Request::param('component/s', '');
+        $param['name']         = Request::param('name/s', '');
+        $param['meta_query']   = Request::param('meta_query/s', '');
+        $param['hidden']       = Request::param('hidden/d', 0);
+        $param['menu_sort']    = Request::param('menu_sort/d', 250);
+        $param['add_info']     = Request::param('add_info/b', false);
+        $param['add_add']      = Request::param('add_add/b', false);
+        $param['add_edit']     = Request::param('add_edit/b', false);
+        $param['add_dele']     = Request::param('add_dele/b', false);
 
         validate(MenuValidate::class)->scene('add')->check($param);
 
@@ -108,15 +137,20 @@ class Menu
     {
         $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
         $param['menu_pid']      = Request::param('menu_pid/d', 0);
+        $param['menu_type']     = Request::param('menu_type/d', 1);
+        $param['meta_icon']     = Request::param('meta_icon/s', '');
         $param['menu_name']     = Request::param('menu_name/s', '');
         $param['menu_url']      = Request::param('menu_url/s', '');
+        $param['path']          = Request::param('path/s', '');
+        $param['component']     = Request::param('component/s', '');
+        $param['name']          = Request::param('name/s', '');
+        $param['meta_query']    = Request::param('meta_query/s', '');
+        $param['hidden']        = Request::param('hidden/d', 0);
         $param['menu_sort']     = Request::param('menu_sort/d', 250);
-        $param['add_list']      = Request::param('add_list/b', false);
         $param['add_info']      = Request::param('add_info/b', false);
         $param['add_add']       = Request::param('add_add/b', false);
         $param['add_edit']      = Request::param('add_edit/b', false);
         $param['add_dele']      = Request::param('add_dele/b', false);
-        $param['edit_list']     = Request::param('edit_list/b', false);
         $param['edit_info']     = Request::param('edit_info/b', false);
         $param['edit_add']      = Request::param('edit_add/b', false);
         $param['edit_edit']     = Request::param('edit_edit/b', false);
@@ -164,7 +198,7 @@ class Menu
     }
 
     /**
-     * @Apidoc\Title("菜单是否无需登录")
+     * @Apidoc\Title("菜单是否免登")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\is_unlogin")
@@ -182,7 +216,7 @@ class Menu
     }
 
     /**
-     * @Apidoc\Title("菜单是否无需权限")
+     * @Apidoc\Title("菜单是否免权")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\is_unauth")
@@ -193,6 +227,24 @@ class Menu
         $param['is_unauth'] = Request::param('is_unauth/d', 0);
 
         validate(MenuValidate::class)->scene('unauth')->check($param);
+
+        $data = MenuService::update($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("菜单是否隐藏")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\is_hidden")
+     */
+    public function hidden()
+    {
+        $param['ids']    = Request::param('ids/a', '');
+        $param['hidden'] = Request::param('hidden/d', 0);
+
+        validate(MenuValidate::class)->scene('hidden')->check($param);
 
         $data = MenuService::update($param['ids'], $param);
 

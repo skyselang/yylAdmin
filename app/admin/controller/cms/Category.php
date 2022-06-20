@@ -26,9 +26,8 @@ class Category
      * @Apidoc\Title("内容分类列表")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="树形")
      */
     public function list()
     {
@@ -56,6 +55,7 @@ class Category
         } else {
             $data['list'] = CategoryService::list('tree', $where);
         }
+        $data['tree'] = CategoryService::list('tree', [['is_delete', '=', 0]], [], 'category_id,category_pid,category_name');
 
         return success($data);
     }
@@ -91,6 +91,7 @@ class Category
         $param['title']         = Request::param('title/s', '');
         $param['keywords']      = Request::param('keywords/s', '');
         $param['description']   = Request::param('description/s', '');
+        $param['img_id']        = Request::param('img_id/d', 0);
         $param['imgs']          = Request::param('imgs/a', []);
         $param['sort']          = Request::param('sort/d', 250);
 
@@ -116,6 +117,7 @@ class Category
         $param['title']         = Request::param('title/s', '');
         $param['keywords']      = Request::param('keywords/s', '');
         $param['description']   = Request::param('description/s', '');
+        $param['img_id']        = Request::param('img_id/d', 0);
         $param['imgs']          = Request::param('imgs/a', []);
         $param['sort']          = Request::param('sort/d', 250);
 
@@ -187,10 +189,8 @@ class Category
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
-     *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="树形")
      */
     public function recover()
     {
@@ -216,6 +216,7 @@ class Category
         $order = ['delete_time' => 'desc', 'sort' => 'desc'];
 
         $data['list'] = CategoryService::list('list', $where, $order);
+        $data['tree'] = CategoryService::list('tree', [['is_delete', '=', 1]], [], 'category_id,category_pid,category_name');
 
         return success($data);
     }

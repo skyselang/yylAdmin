@@ -123,6 +123,7 @@ class Setting
     {
         $setting = SettingService::info();
 
+        $data['api_manage']    = $setting['api_manage'];
         $data['api_rate_num']  = $setting['api_rate_num'];
         $data['api_rate_time'] = $setting['api_rate_time'];
 
@@ -136,6 +137,7 @@ class Setting
      */
     public function apiEdit()
     {
+        $param['api_manage']    = Request::param('api_manage/d', 1);
         $param['api_rate_num']  = Request::param('api_rate_num/d', 3);
         $param['api_rate_time'] = Request::param('api_rate_time/d', 1);
 
@@ -147,12 +149,47 @@ class Setting
     }
 
     /**
+     * @Apidoc\Title("登录注册设置信息")
+     * @Apidoc\Returned(ref="app\common\model\setting\SettingModel\logregInfoParam")
+     */
+    public function logregInfo()
+    {
+        $setting = SettingService::info();
+
+        $data['is_register']      = $setting['is_register'];
+        $data['is_login']         = $setting['is_login'];
+        $data['is_offi_register'] = $setting['is_offi_register'];
+        $data['is_offi_login']    = $setting['is_offi_login'];
+        $data['is_mini_register'] = $setting['is_mini_register'];
+        $data['is_mini_login']    = $setting['is_mini_login'];
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("登录注册设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\setting\SettingModel\logregInfoParam")
+     */
+    public function logregEdit()
+    {
+        $param['is_register']      = Request::param('is_register/d', 1);
+        $param['is_login']         = Request::param('is_login/d', 1);
+        $param['is_offi_register'] = Request::param('is_offi_register/d', 1);
+        $param['is_offi_login']    = Request::param('is_offi_login/d', 1);
+        $param['is_mini_register'] = Request::param('is_mini_register/d', 1);
+        $param['is_mini_login']    = Request::param('is_mini_login/d', 1);
+
+        validate(SettingValidate::class)->scene('logreg_edit')->check($param);
+
+        $data = SettingService::edit($param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("自定义设置信息")
-     * @Apidoc\Returned("diy_config", type="array", default="", desc="自定义设置",
-     *     @Apidoc\Returned("config_key", type="string", require=true, default="", desc="键名"),
-     *     @Apidoc\Returned("config_val", type="string", require=false, default="", desc="键值"),
-     *     @Apidoc\Returned("config_desc", type="string", require=false, default="", desc="说明")
-     * )
+     * @Apidoc\Returned(ref="diyConReturn")
      */
     public function diyInfo()
     {
@@ -166,11 +203,7 @@ class Setting
     /**
      * @Apidoc\Title("自定义设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("diy_config", type="array", default="", desc="自定义设置",
-     *     @Apidoc\Param("config_key", type="string", require=true, default="", desc="键名"),
-     *     @Apidoc\Param("config_val", type="string", require=false, default="", desc="键值"),
-     *     @Apidoc\Param("config_desc", type="string", require=false, default="", desc="说明")
-     * )
+     * @Apidoc\Param(ref="diyConParam")
      */
     public function diyEdit()
     {

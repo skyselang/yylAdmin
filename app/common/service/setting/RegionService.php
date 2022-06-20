@@ -43,12 +43,11 @@ class RegionService
                 $order = ['region_sort' => 'desc', $pk => 'asc'];
             }
 
-            $list = $model->field($field)->where($where)->order($order)->select()->toArray();
-            $count = count($list);
+            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
 
-            foreach ($list as $k => $v) {
-                $list[$k]['children']    = [];
-                $list[$k]['hasChildren'] = true;
+            foreach ($data as $k => $v) {
+                $data[$k]['children']    = [];
+                $data[$k]['hasChildren'] = true;
             }
         } else {
             if (empty($field)) {
@@ -56,8 +55,8 @@ class RegionService
             }
 
             $key = $type . md5(serialize($where) . $field);
-            $list = RegionCache::get($key);
-            if (empty($list)) {
+            $data = RegionCache::get($key);
+            if (empty($data)) {
                 $model = new RegionModel();
                 $pk = $model->getPk();
 
@@ -65,15 +64,14 @@ class RegionService
                     $order = ['region_sort' => 'desc', $pk => 'asc'];
                 }
 
-                $list = $model->field($field)->where($where)->order($order)->select()->toArray();
-                $list = list_to_tree($list, 'region_id', 'region_pid');
+                $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+                $data = list_to_tree($data, $pk, 'region_pid');
 
-                RegionCache::set($key, $list);
+                RegionCache::set($key, $data);
             }
-            $count = count($list);
         }
 
-        return compact('count', 'list');
+        return $data;
     }
 
     /**

@@ -25,7 +25,7 @@ class TokenVerifyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        // 菜单是否无需登录
+        // 菜单是否免登
         if (!menu_is_unlogin()) {
 
             // 用户token获取

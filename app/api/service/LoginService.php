@@ -11,6 +11,7 @@
 namespace app\api\service;
 
 use app\common\service\member\MemberService;
+use app\common\service\setting\SettingService;
 
 class LoginService
 {
@@ -24,6 +25,11 @@ class LoginService
      */
     public static function login($param, $type = '')
     {
+        $setting = SettingService::info();
+        if (!$setting['is_login']) {
+            exception('系统维护，无法登录！');
+        }
+
         return MemberService::login($param, $type);
     }
 

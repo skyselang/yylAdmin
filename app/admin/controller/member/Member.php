@@ -29,9 +29,8 @@ class Member
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\member\MemberModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel\listReturn", type="array", desc="会员列表")
+     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="地区列表")
      */
     public function list()
     {
@@ -43,9 +42,10 @@ class Member
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
+        $is_extra     = Request::param('is_extra/d', 0);
 
         if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['member_id', 'gender', 'is_disable', 'reg_channel', 'reg_type'])) {
+            if (in_array($search_field, ['member_id', 'gender', 'region_id', 'reg_channel', 'reg_type', 'is_disable'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
             } else {
@@ -63,7 +63,7 @@ class Member
             $order = [$sort_field => $sort_value];
         }
 
-        $data = MemberService::list($where, $page, $limit, $order);
+        $data = MemberService::list($where, $page, $limit, $order, '', $is_extra);
 
         return success($data);
     }
@@ -223,9 +223,8 @@ class Member
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *    @Apidoc\Returned(ref="app\common\model\member\MemberModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel\listReturn", type="array", desc="会员列表")
+     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="地区列表")
      */
     public function recover()
     {
@@ -237,6 +236,7 @@ class Member
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
+        $is_extra     = Request::param('is_extra/d', 0);
 
         if ($search_field && $search_value !== '') {
             if (in_array($search_field, ['member_id', 'is_disable', 'gender'])) {
@@ -257,7 +257,7 @@ class Member
             $order = [$sort_field => $sort_value];
         }
 
-        $data = MemberService::list($where, $page, $limit, $order);
+        $data = MemberService::list($where, $page, $limit, $order, '', $is_extra);
 
         return success($data);
     }

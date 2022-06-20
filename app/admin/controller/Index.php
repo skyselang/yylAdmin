@@ -12,10 +12,10 @@ namespace app\admin\controller;
 
 use think\facade\Request;
 use app\common\service\IndexService;
+use app\common\service\admin\NoticeService;
 use app\common\service\member\MemberService;
 use app\common\service\cms\ContentService;
 use app\common\service\file\FileService;
-use app\common\service\admin\NoticeService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -34,6 +34,33 @@ class Index
         $msg  = '后端安装成功，欢迎使用，如有帮助，敬请Star！';
 
         return success($data, $msg);
+    }
+
+    /**
+     * @Apidoc\Title("公告")
+     * @Apidoc\Param(ref="pagingParam")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="公告列表", 
+     *     @Apidoc\Returned(ref="app\common\model\admin\NoticeModel\listReturn")
+     * )
+     */
+    public function notice()
+    {
+        $page  = Request::param('page/d', 1);
+        $limit = Request::param('limit/d', 10);
+
+        $where[] = ['open_time_start', '<=', datetime()];
+        $where[] = ['open_time_end', '>=', datetime()];
+        $where[] = ['is_open', '=', 1];
+        $where[] = ['is_delete', '=', 0];
+
+        $order = ['sort' => 'desc', 'open_time_start' => 'desc'];
+
+        $field = 'admin_notice_id,admin_user_id,title,color,intro,create_time';
+
+        $data = NoticeService::list($where, $page, $limit, $order, $field);
+
+        return success($data);
     }
 
     /**
@@ -75,33 +102,6 @@ class Index
     public function file()
     {
         $data = FileService::statistics();
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("公告")
-     * @Apidoc\Param(ref="pagingParam")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="公告列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\NoticeModel\listReturn")
-     * )
-     */
-    public function notice()
-    {
-        $page  = Request::param('page/d', 1);
-        $limit = Request::param('limit/d', 10);
-
-        $where[] = ['open_time_start', '<=', datetime()];
-        $where[] = ['open_time_end', '>=', datetime()];
-        $where[] = ['is_open', '=', 1];
-        $where[] = ['is_delete', '=', 0];
-
-        $order = ['sort' => 'desc', 'open_time_start' => 'desc'];
-
-        $field = 'admin_notice_id,admin_user_id,title,color,intro,create_time';
-
-        $data = NoticeService::list($where, $page, $limit, $order, $field);
 
         return success($data);
     }

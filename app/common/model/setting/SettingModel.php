@@ -61,4 +61,12 @@ class SettingModel extends Model
     public function apiInfoParam()
     {
     }
+
+    /**
+     * 登录注册设置参数
+     * @Apidoc\Field("is_register,is_login,is_offi_register,is_offi_login,is_mini_register,is_mini_login")
+     */
+    public function logregInfoParam()
+    {
+    }
 }

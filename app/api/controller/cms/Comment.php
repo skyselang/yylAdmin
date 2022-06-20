@@ -14,6 +14,7 @@ use think\facade\Request;
 use app\common\validate\cms\CommentValidate;
 use app\common\cache\cms\CommentCache;
 use app\common\service\cms\CommentService;
+use app\common\service\cms\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -34,6 +35,11 @@ class Comment
      */
     public function add()
     {
+        $setting = SettingService::info();
+        if (!$setting['is_comment']) {
+            exception('留言功能维护中...');
+        }
+
         $param['call']    = Request::param('call/s', '');
         $param['mobile']  = Request::param('mobile/s', '');
         $param['tel']     = Request::param('tel/s', '');
@@ -48,7 +54,7 @@ class Comment
         $comment_key = 'rep' . $param['mobile'];
         $comment = CommentCache::get($comment_key);
         if ($comment) {
-            exception('请稍后再试');
+            exception('系统繁忙，请稍后再试');
         } else {
             CommentCache::set($comment_key, $param['call'], 60);
         }

@@ -12,14 +12,14 @@ return [
     // 超管用户ID（所有权限）
     'super_ids' => [1],
 
-    // 无需登录菜单url
+    // 菜单免登url（无需登录）
     'menu_is_unlogin' => [
         'admin/admin.Login/setting',
         'admin/admin.Login/captcha',
         'admin/admin.Login/login'
     ],
 
-    // 无需权限菜单url
+    // 菜单免权url（无需权限）
     'menu_is_unauth' => [
         'admin/Index/index',
         'admin/Index/notice',
@@ -28,7 +28,7 @@ return [
         'admin/admin.UserCenter/info'
     ],
 
-    // 无需限率菜单url
+    // 菜单无需限率url
     'menu_is_unrate' => [
         'admin/file.File/add',
         'admin/file.File/list'

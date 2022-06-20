@@ -68,7 +68,7 @@ function api_is_disable($api_url = '')
 }
 
 /**
- * 接口是否无需登录
+ * 接口是否免登
  *
  * @param string $api_url 接口url
  *

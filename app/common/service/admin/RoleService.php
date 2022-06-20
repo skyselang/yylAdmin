@@ -82,6 +82,17 @@ class RoleService
             }
             $info['admin_menu_ids'] = $admin_menu_ids;
 
+            $admin_menu_pids = str_trim($info['admin_menu_pids']);
+            if (empty($admin_menu_pids)) {
+                $admin_menu_pids = [];
+            } else {
+                $admin_menu_pids = explode(',', $admin_menu_pids);
+                foreach ($admin_menu_pids as $k => $v) {
+                    $admin_menu_pids[$k] = (int) $v;
+                }
+            }
+            $info['admin_menu_pids'] = $admin_menu_pids;
+
             RoleCache::set($id, $info);
         }
 
@@ -101,10 +112,13 @@ class RoleService
         $pk = $model->getPk();
 
         sort($param['admin_menu_ids']);
+        sort($param['admin_menu_pids']);
 
-        $param['admin_menu_ids'] = implode(',', $param['admin_menu_ids']);
-        $param['admin_menu_ids'] = str_join($param['admin_menu_ids']);
-        $param['create_time']    = datetime();
+        $param['admin_menu_ids']  = implode(',', $param['admin_menu_ids']);
+        $param['admin_menu_ids']  = str_join($param['admin_menu_ids']);
+        $param['admin_menu_pids'] = implode(',', $param['admin_menu_pids']);
+        $param['admin_menu_pids'] = str_join($param['admin_menu_pids']);
+        $param['create_time']     = datetime();
 
         $id = $model->insertGetId($param);
         if (empty($id)) {
@@ -139,6 +153,16 @@ class RoleService
             }
             $update['admin_menu_ids'] = implode(',', $update['admin_menu_ids']);
             $update['admin_menu_ids'] = str_join($update['admin_menu_ids']);
+        }
+        if (isset($update['admin_menu_pids'])) {
+            sort($update['admin_menu_pids']);
+            if (count($update['admin_menu_pids']) > 0) {
+                if (empty($update['admin_menu_pids'][0])) {
+                    unset($update['admin_menu_pids'][0]);
+                }
+            }
+            $update['admin_menu_pids'] = implode(',', $update['admin_menu_pids']);
+            $update['admin_menu_pids'] = str_join($update['admin_menu_pids']);
         }
         $update['update_time'] = datetime();
 
@@ -254,11 +278,12 @@ class RoleService
     /**
      * 角色菜单id
      *
-     * @param mixed $id 角色id
+     * @param mixed $id    角色id
+     * @param array $where 条件
      *
      * @return array 菜单id
      */
-    public static function menu_ids($id)
+    public static function menu_ids($id, $where = [])
     {
         if (empty($id)) {
             return [];
@@ -272,12 +297,17 @@ class RoleService
             $admin_role_ids = explode(',', str_trim($id));
         }
 
-        $admin_menu_ids = [];
         $RoleModel = new RoleModel();
-        $role_menu_ids = $RoleModel->where('admin_role_id', 'in', $admin_role_ids)->column('admin_menu_ids');
+        $role_menu_ids = $RoleModel
+            ->field('admin_menu_ids,admin_menu_pids')
+            ->where('admin_role_id', 'in', $admin_role_ids)
+            ->where($where)
+            ->select();
+        $admin_menu_ids = [];
         foreach ($role_menu_ids as $v) {
-            $v = explode(',', trim($v, ','));
-            $admin_menu_ids = array_merge($admin_menu_ids, $v);
+            $menu_ids = explode(',', trim($v['admin_menu_ids'], ','));
+            $menu_pids = explode(',', trim($v['admin_menu_pids'], ','));
+            $admin_menu_ids = array_merge($admin_menu_ids, $menu_ids,  $menu_pids);
         }
         $admin_menu_ids = array_unique(array_filter($admin_menu_ids));
         sort($admin_menu_ids);

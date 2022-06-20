@@ -40,7 +40,7 @@ class AuthVerifyMiddleware
             exception($msg, 404);
         }
 
-        // 菜单是否无需权限
+        // 菜单是否免权
         if (!menu_is_unauth($menu_url)) {
             $admin_user_id = admin_user_id();
 

@@ -28,12 +28,15 @@ class SettingModel extends Model
     }
 
     /**
+     * 设置信息参数
      */
     public function infoReturn()
     {
     }
 
     /**
+     * 设置修改参数
+     * @Apidoc\WithoutField("setting_id,create_time,update_time")
      */
     public function editParam()
     {

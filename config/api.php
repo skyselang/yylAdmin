@@ -9,7 +9,7 @@
 
 // api配置
 return [
-    // 无需登录接口url
+    // 接口免登url（无需登录）
     'api_is_unlogin' => [
         'api/',
         'api/Index/index',
@@ -19,13 +19,13 @@ return [
         'api/Login/login'
     ],
 
-    // 无需限率接口url
+    // 接口无需限率url
     'api_is_unrate' => [],
 
     // token名称，必须与前端设置一致
     'token_name' => env('token.api_token_name', 'ApiToken'),
 
-    // 日志记录请求参数排除字段（敏感、内容等信息）
+    // 日志记录请求参数排除字段（敏感、内容多等信息）
     'log_param_without' => [
         'password',
         'password_new',

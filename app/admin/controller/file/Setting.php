@@ -41,6 +41,7 @@ class Setting
      */
     public function edit()
     {
+        $param['is_open']                  = Request::param('is_open/d', 1);
         $param['storage']                  = Request::param('storage/s', 'local');
         $param['qiniu_access_key']         = Request::param('qiniu_access_key/s', '');
         $param['qiniu_secret_key']         = Request::param('qiniu_secret_key/s', '');
@@ -61,6 +62,15 @@ class Setting
         $param['baidu_bucket']             = Request::param('baidu_bucket/s', '');
         $param['baidu_endpoint']           = Request::param('baidu_endpoint/s', '');
         $param['baidu_domain']             = Request::param('baidu_domain/s', '');
+        $param['upyun_service_name']       = Request::param('upyun_service_name/s', '');
+        $param['upyun_operator_name']      = Request::param('upyun_operator_name/s', '');
+        $param['upyun_operator_pwd']       = Request::param('upyun_operator_pwd/s', '');
+        $param['upyun_domain']             = Request::param('upyun_domain/s', '');
+        $param['s3_access_key_id']         = Request::param('s3_access_key_id/s', '');
+        $param['s3_secret_access_key']     = Request::param('s3_secret_access_key/s', '');
+        $param['s3_bucket']                = Request::param('s3_bucket/s', '');
+        $param['s3_region']                = Request::param('s3_region/s', '');
+        $param['s3_domain']                = Request::param('s3_domain/s', '');
         $param['image_ext']                = Request::param('image_ext/s', '');
         $param['image_size']               = Request::param('image_size/s', 0);
         $param['video_ext']                = Request::param('video_ext/s', '');

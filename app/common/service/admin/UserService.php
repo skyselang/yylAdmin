@@ -92,31 +92,21 @@ class UserService
                 $menu_url = array_column($menu, 'menu_url');
                 $menu_url = array_filter($menu_url);
             } else {
-                $RoleModel = new RoleModel();
-                $RolePk = $RoleModel->getPk();
+                $role_where = [];
+                $role_where[] = ['is_disable', '=', 0];
+                $role_where[] = ['is_delete', '=', 0];
+                $role_menu_ids = RoleService::menu_ids($info['admin_role_ids'], $role_where);
+                $unauth_menu_ids = MenuService::unauthUrl('id');
 
-                $menu_where[] = [$RolePk, 'in', $info['admin_role_ids']];
+                $menu_ids = explode(',', $info['admin_menu_ids']);
+                $menu_ids = array_merge($role_menu_ids, $unauth_menu_ids, $menu_ids);
+
+                $menu_where = [];
+                $menu_where[] = ['admin_menu_id', 'in', $menu_ids];
                 $menu_where[] = ['is_disable', '=', 0];
                 $menu_where[] = ['is_delete', '=', 0];
-                $menu_ids = $RoleModel->where($menu_where)->column('admin_menu_ids');
-
-                $menu_ids[]   = $info['admin_menu_ids'];
-                $menu_ids_str = implode(',', $menu_ids);
-                $menu_ids_arr = explode(',', $menu_ids_str);
-                $menu_ids     = array_unique($menu_ids_arr);
-                $menu_ids     = array_filter($menu_ids);
-
-                $where[] = ['admin_menu_id', 'in', $menu_ids];
-                $where[] = ['menu_url', '<>', ''];
-                $where[] = ['is_disable', '=', 0];
-                $where[] = ['is_delete', '=', 0];
-
-                $where_un[] = ['menu_url', '<>', ''];
-                $where_un[] = ['is_unauth', '=', 1];
-                $where_un[] = ['is_disable', '=', 0];
-                $where_un[] = ['is_delete', '=', 0];
-
-                $menu_url = $MenuModel->whereOr([$where, $where_un])->column('menu_url');
+                $menu_url = $MenuModel->where($menu_where)->column('menu_url');
+                $menu_url = array_filter($menu_url);
             }
 
             $admin_role_ids = $info['admin_role_ids'];
@@ -161,6 +151,7 @@ class UserService
             $info['admin_menu_ids'] = $admin_menu_ids;
             $info['menu_ids']       = $menu_ids;
             $info['roles']          = $menu_url;
+            $info['menus']          = MenuService::menus($menu_ids);
 
             UserCache::set($id, $info);
         }
@@ -260,7 +251,7 @@ class UserService
      * 用户分配权限
      *
      * @param array  $param  用户信息
-     * @param string $method 请求方式
+     * @param string $method get获取权限，post修改权限
      * 
      * @return array
      */
@@ -274,7 +265,7 @@ class UserService
             $RolePk = $RoleModel->getPk();
 
             $admin_user_id = $param[$pk];
-            $admin_menu    = MenuService::list();
+            $admin_menu    = MenuService::list('list', [], [], 'admin_menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth');
             $admin_role    = $RoleModel->field($RolePk . ',role_name')->where('is_delete', 0)->select()->toArray();
             $admin_user    = UserService::info($admin_user_id);
 
@@ -282,23 +273,23 @@ class UserService
             $admin_menu_ids = $admin_user['admin_menu_ids'];
             $role_menu_ids  = RoleService::menu_ids($admin_user['admin_role_ids']);
 
-            foreach ($admin_menu as $k => $v) {
-                $admin_menu[$k]['is_check'] = 0;
-                $admin_menu[$k]['is_role']  = 0;
-                $admin_menu[$k]['is_menu']  = 0;
+            foreach ($admin_menu as &$v) {
+                $v['is_check'] = 0;
+                $v['is_role']  = 0;
+                $v['is_menu']  = 0;
                 foreach ($menu_ids as $vmis) {
                     if ($v['admin_menu_id'] == $vmis) {
-                        $admin_menu[$k]['is_check'] = 1;
+                        $v['is_check'] = 1;
                     }
                 }
                 foreach ($admin_menu_ids as $vami) {
                     if ($v['admin_menu_id'] == $vami) {
-                        $admin_menu[$k]['is_menu'] = 1;
+                        $v['is_menu'] = 1;
                     }
                 }
                 foreach ($role_menu_ids as $vrmi) {
                     if ($v['admin_menu_id'] == $vrmi) {
-                        $admin_menu[$k]['is_role'] = 1;
+                        $v['is_role'] = 1;
                     }
                 }
             }
@@ -365,23 +356,23 @@ class UserService
             exception('账号已被禁用，请联系管理员');
         }
 
+        $admin_user_id = $user[$pk];
         $ip_info = IpInfoUtils::info();
 
         $update['login_ip']     = $ip_info['ip'];
         $update['login_region'] = $ip_info['region'];
         $update['login_time']   = datetime();
         $update['login_num']    = $user['login_num'] + 1;
-        $model->where($pk, $user[$pk])->update($update);
+        $model->where($pk, $admin_user_id)->update($update);
 
-        $user_log[$pk]             = $user[$pk];
+        $user_log[$pk]             = $admin_user_id;
         $user_log['log_type']      = 1;
         $user_log['response_code'] = 200;
         $user_log['response_msg']  = '登录成功';
         UserLogService::add($user_log);
 
-        UserCache::del($user[$pk]);
-        $user = self::info($user[$pk]);
-        $admin_user_id = $user[$pk];
+        UserCache::del($admin_user_id);
+        $user = self::info($admin_user_id);
         $admin_token = $user['admin_token'];
 
         return compact('admin_user_id', 'admin_token');

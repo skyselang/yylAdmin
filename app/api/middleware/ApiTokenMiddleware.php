@@ -25,7 +25,7 @@ class ApiTokenMiddleware
      */
     public function handle($request, Closure $next)
     {
-        // 接口是否无需登录
+        // 接口是否免登
         if (!api_is_unlogin()) {
 
             // 接口token获取

@@ -24,6 +24,12 @@ class SettingValidate extends Validate
         'log_save_time'    => ['require', 'between' => '0,99999'],
         'api_rate_num'     => ['require', 'between' => '0,999'],
         'api_rate_time'    => ['require', 'between' => '1,999'],
+        'is_register'      => ['require', 'in' => '0,1'],
+        'is_login'         => ['require', 'in' => '0,1'],
+        'is_offi_register' => ['require', 'in' => '0,1'],
+        'is_offi_login'    => ['require', 'in' => '0,1'],
+        'is_mini_register' => ['require', 'in' => '0,1'],
+        'is_mini_login'    => ['require', 'in' => '0,1'],
         'diy_config'       => ['array', 'checkDiyConfig'],
     ];
 
@@ -45,6 +51,12 @@ class SettingValidate extends Validate
         'api_rate_num.between'     => '速率次数：0-999',
         'api_rate_time.require'    => '请输入速率时间',
         'api_rate_time.between'    => '速率时间：1-999',
+        'is_register.in'           => '注册：1开启0关闭',
+        'is_login.in'              => '登录：1开启0关闭',
+        'is_offi_register.in'      => '公众号注册：1开启0关闭',
+        'is_offi_login.in'         => '公众号登录：1开启0关闭',
+        'is_mini_register.in'      => '小程序注册：1开启0关闭',
+        'is_mini_login.in'         => '小程序登录：1开启0关闭',
     ];
 
     // 验证场景
@@ -53,6 +65,7 @@ class SettingValidate extends Validate
         'captcha_edit' => ['captcha_register', 'captcha_login'],
         'log_edit'     => ['log_switch', 'log_save_time'],
         'api_edit'     => ['api_rate_num', 'api_rate_time'],
+        'logreg_edit'  => ['is_register', 'is_login', 'is_offi_register', 'is_offi_login', 'is_mini_register', 'is_mini_login'],
         'diy_edit'     => ['diy_config'],
     ];
 

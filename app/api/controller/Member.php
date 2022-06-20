@@ -73,7 +73,7 @@ class Member
     }
 
     /**
-     * @Apidoc\Title("上传头像")
+     * @Apidoc\Title("更换头像")
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="fileParam")
@@ -82,17 +82,20 @@ class Member
      */
     public function avatar()
     {
+        $member_id          = member_id();
         $param['file']      = Request::file('file');
         $param['group_id']  = Request::param('group_id/d', 0);
         $param['file_type'] = Request::param('file_type/s', 'image');
         $param['file_name'] = Request::param('file_name/s', '');
         $param['is_front']  = 1;
 
+        validate(MemberValidate::class)->scene('id')->check(['member_id' => $member_id]);
         validate(FileValidate::class)->scene('add')->check($param);
 
         $data = FileService::add($param);
+        MemberService::edit($member_id, ['avatar_id' => $data['file_id']]);
 
-        return success($data, '上传成功');
+        return success($data, '更换成功');
     }
 
     /**

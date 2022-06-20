@@ -25,11 +25,7 @@ class Setting
     /**
      * @Apidoc\Title("内容设置信息")
      * @Apidoc\Returned(ref="app\common\model\cms\SettingModel\InfoReturn")
-     * @Apidoc\Returned("diy_config", type="array", default="", desc="自定义信息",
-     *     @Apidoc\Returned("config_key", type="string", require=true, default="", desc="键名"),
-     *     @Apidoc\Returned("config_val", type="string", require=false, default="", desc="键值"),
-     *     @Apidoc\Returned("config_desc", type="string", require=false, default="", desc="说明")
-     * )
+     * @Apidoc\Returned(ref="diyConReturn")
      */
     public function info()
     {
@@ -42,11 +38,7 @@ class Setting
      * @Apidoc\Title("内容设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\cms\SettingModel\editParam")
-     * @Apidoc\Param("diy_config", type="array", default="", desc="自定义信息",
-     *     @Apidoc\Param("config_key", type="string", require=true, default="", desc="键名"),
-     *     @Apidoc\Param("config_val", type="string", require=false, default="", desc="键值"),
-     *     @Apidoc\Param("config_desc", type="string", require=false, default="", desc="说明")
-     * )
+     * @Apidoc\Param(ref="diyConParam")
      */
     public function edit()
     {
@@ -65,6 +57,7 @@ class Setting
         $param['qq']          = Request::param('qq/s', '');
         $param['wechat']      = Request::param('wechat/s', '');
         $param['diy_config']  = Request::param('diy_config/a', []);
+        $param['is_comment']  = Request::param('is_comment/d', 1);
 
         validate(SettingValidate::class)->scene('edit')->check($param);
 

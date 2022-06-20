@@ -28,7 +28,7 @@ class ApiModel extends Model
     }
 
     /**
-     * @Apidoc\Field("api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin,create_time,update_time")
+     * @Apidoc\Field("api_id,api_pid,api_name,api_url,api_sort,is_unlogin,is_disable")
      */
     public function listReturn()
     {

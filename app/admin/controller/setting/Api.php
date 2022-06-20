@@ -25,14 +25,15 @@ class Api
     /**
      * @Apidoc\Title("接口列表")
      * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\setting\ApiModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\setting\ApiModel\listReturn", type="array", desc="列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\setting\ApiModel\listReturn", type="array", desc="树形")
      */
     public function list()
     {
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
+        $date_field   = Request::param('date_field/s', '');
+        $date_value   = Request::param('date_value/a', '');
 
         $where = [];
         if ($search_field && $search_value !== '') {
@@ -43,12 +44,17 @@ class Api
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
+        }
 
         if ($where) {
             $data['list'] = ApiService::list('list', $where);
         } else {
             $data['list'] = ApiService::list('tree', $where);
         }
+        $data['tree'] = ApiService::list('tree', [], [], 'api_id,api_pid,api_name');
 
         return success($data);
     }
@@ -98,7 +104,7 @@ class Api
      */
     public function edit()
     {
-        $param['api_id']   = Request::param('api_id/d', '');
+        $param['api_id']   = Request::param('api_id/d', 0);
         $param['api_pid']  = Request::param('api_pid/d', 0);
         $param['api_name'] = Request::param('api_name/s', '');
         $param['api_url']  = Request::param('api_url/s', '');
@@ -146,7 +152,7 @@ class Api
     }
 
     /**
-     * @Apidoc\Title("接口是否无需登录")
+     * @Apidoc\Title("接口是否免登")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\setting\ApiModel\is_unlogin")

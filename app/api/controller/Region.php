@@ -18,7 +18,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("地区")
  * @Apidoc\Sort("510")
- * @Apidoc\Group("region")
+ * @Apidoc\Group("setting")
  */
 class Region
 {
@@ -34,10 +34,9 @@ class Region
     {
         $region_pid = Request::param('region_id/d', 0);
 
-        $where[] = ['is_delete', '=', 0];
         $where[] = ['region_pid', '=', $region_pid];
 
-        $data = RegionService::list('list', $where);
+        $data['list'] = RegionService::list('list', $where);
 
         return success($data);
     }
@@ -48,7 +47,7 @@ class Region
      */
     public function tree()
     {
-        $data = RegionService::list('tree', [], [], 'region_id,region_pid,region_name');
+        $data['list'] = RegionService::list('tree', [], [], 'region_id,region_pid,region_name');
 
         return success($data);
     }

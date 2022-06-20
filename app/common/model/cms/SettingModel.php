@@ -29,7 +29,7 @@ class SettingModel extends Model
 
     /**
      * 设置信息
-     * @Apidoc\WithoutField("setting_id,logo_id,off_acc_id,diy_config")
+     * @Apidoc\WithoutField("setting_id,diy_config")
      * @Apidoc\AddField("logo_url", type="string", default="", desc="logo链接")
      * @Apidoc\AddField("off_acc_url", type="string", default="", desc="公众号链接")
      */

@@ -100,7 +100,7 @@ class GroupService
     /**
      * 文件分组修改
      *
-     * @param array $ids    文件分组id
+     * @param mixed $ids    文件分组id
      * @param array $update 文件分组信息
      * 
      * @return array
@@ -129,7 +129,7 @@ class GroupService
     /**
      * 文件分组删除
      *
-     * @param array $ids  文件分组id
+     * @param mixed $ids  文件分组id
      * @param bool  $real 是否真实删除
      * 
      * @return array

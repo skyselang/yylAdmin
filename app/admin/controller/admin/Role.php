@@ -25,19 +25,6 @@ use hg\apidoc\annotation as Apidoc;
 class Role
 {
     /**
-     * @Apidoc\Title("菜单列表")
-     * @Apidoc\Returned("list", type="array", desc="列表",
-     *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\listReturn")
-     * )
-     */
-    public function menu()
-    {
-        $data['list'] = MenuService::list('tree');
-
-        return success($data);
-    }
-
-    /**
      * @Apidoc\Title("角色列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
@@ -79,6 +66,7 @@ class Role
         }
 
         $data = RoleService::list($where, $page, $limit, $order);
+        $data['menu'] = MenuService::list('tree', [], [], 'admin_menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth');
 
         return success($data);
     }
@@ -109,10 +97,11 @@ class Role
      */
     public function add()
     {
-        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
-        $param['role_name']      = Request::param('role_name/s', '');
-        $param['role_desc']      = Request::param('role_desc/s', '');
-        $param['role_sort']      = Request::param('role_sort/d', 250);
+        $param['admin_menu_ids']  = Request::param('admin_menu_ids/a', '');
+        $param['admin_menu_pids'] = Request::param('admin_menu_pids/a', '');
+        $param['role_name']       = Request::param('role_name/s', '');
+        $param['role_desc']       = Request::param('role_desc/s', '');
+        $param['role_sort']       = Request::param('role_sort/d', 250);
 
         validate(RoleValidate::class)->scene('add')->check($param);
 
@@ -128,11 +117,12 @@ class Role
      */
     public function edit()
     {
-        $param['admin_role_id']  = Request::param('admin_role_id/d', '');
-        $param['admin_menu_ids'] = Request::param('admin_menu_ids/a', '');
-        $param['role_name']      = Request::param('role_name/s', '');
-        $param['role_desc']      = Request::param('role_desc/s', '');
-        $param['role_sort']      = Request::param('role_sort/d', 250);
+        $param['admin_role_id']   = Request::param('admin_role_id/d', '');
+        $param['admin_menu_ids']  = Request::param('admin_menu_ids/a', '');
+        $param['admin_menu_pids'] = Request::param('admin_menu_pids/a', '');
+        $param['role_name']       = Request::param('role_name/s', '');
+        $param['role_desc']       = Request::param('role_desc/s', '');
+        $param['role_sort']       = Request::param('role_sort/d', 250);
 
         validate(RoleValidate::class)->scene('edit')->check($param);
 

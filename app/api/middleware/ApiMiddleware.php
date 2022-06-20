@@ -7,13 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口中间件
+// 接口校验中间件
 namespace app\api\middleware;
 
 use Closure;
 use think\Request;
 use think\Response;
 use think\facade\Config;
+use app\common\service\setting\SettingService;
 
 class ApiMiddleware
 {
@@ -28,22 +29,26 @@ class ApiMiddleware
     {
         $debug = Config::get('app.app_debug');
 
-        // 接口是否存在
-        if (!api_is_exist()) {
-            $msg = 'api url error';
-            if ($debug) {
-                $msg .= '：' . api_url();
-            }
-            exception($msg, 404);
-        }
+        $setting = SettingService::info();
 
-        // 接口是否已禁用
-        if (api_is_disable()) {
-            $msg = 'api is disable';
-            if ($debug) {
-                $msg .= '：' . api_url();
+        if ($setting['api_manage']) {
+            // 接口是否存在
+            if (!api_is_exist()) {
+                $msg = 'api url error';
+                if ($debug) {
+                    $msg .= '：' . api_url();
+                }
+                exception($msg, 404);
             }
-            exception($msg, 404);
+
+            // 接口是否已禁用
+            if (api_is_disable()) {
+                $msg = 'api is disable';
+                if ($debug) {
+                    $msg .= '：' . api_url();
+                }
+                exception($msg, 404);
+            }
         }
 
         return $next($request);

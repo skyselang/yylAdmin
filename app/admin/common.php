@@ -68,7 +68,7 @@ function menu_is_disable($menu_url = '')
 }
 
 /**
- * 菜单是否无需权限
+ * 菜单是否免权
  *
  * @param string $menu_url 菜单url
  *
@@ -89,7 +89,7 @@ function menu_is_unauth($menu_url = '')
 }
 
 /**
- * 菜单是否无需登录
+ * 菜单是否免登
  *
  * @param string $menu_url 菜单url
  *

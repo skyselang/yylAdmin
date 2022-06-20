@@ -11,6 +11,7 @@
 namespace app\api\service;
 
 use app\common\service\member\MemberService;
+use app\common\service\setting\SettingService;
 use app\common\service\member\LogService;
 
 class RegisterService
@@ -24,6 +25,11 @@ class RegisterService
      */
     public static function register($param)
     {
+        $setting = SettingService::info();
+        if (!$setting['is_register']) {
+            exception('系统维护，无法注册！');
+        }
+
         if (empty($param['username'])) {
             $param['username'] = md5(uniqid(mt_rand(), true));
         }

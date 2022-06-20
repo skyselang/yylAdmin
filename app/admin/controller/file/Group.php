@@ -29,9 +29,7 @@ class Group
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="文件分组列表")
      */
     public function list()
     {
@@ -42,7 +40,7 @@ class Group
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $date_value   = Request::param('date_value/a', []);
 
         if ($search_field && $search_value !== '') {
             if (in_array($search_field, ['group_id', 'is_disable'])) {
@@ -95,7 +93,6 @@ class Group
         $param['group_name'] = Request::param('group_name/s', '');
         $param['group_desc'] = Request::param('group_desc/s', '');
         $param['group_sort'] = Request::param('group_sort/d', 250);
-        $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(GroupValidate::class)->scene('add')->check($param);
 
@@ -115,11 +112,10 @@ class Group
         $param['group_name'] = Request::param('group_name/s', '');
         $param['group_desc'] = Request::param('group_desc/s', '');
         $param['group_sort'] = Request::param('group_sort/d', 250);
-        $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(GroupValidate::class)->scene('edit')->check($param);
 
-        $data = GroupService::edit([$param['group_id']], $param);
+        $data = GroupService::edit($param['group_id'], $param);
 
         return success($data);
     }
@@ -131,7 +127,7 @@ class Group
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = Request::param('ids/a', []);
 
         validate(GroupValidate::class)->scene('dele')->check($param);
 
@@ -148,7 +144,7 @@ class Group
      */
     public function disable()
     {
-        $param['ids']        = Request::param('ids/a', '');
+        $param['ids']        = Request::param('ids/a', []);
         $param['is_disable'] = Request::param('is_disable/d', 0);
 
         validate(GroupValidate::class)->scene('disable')->check($param);
@@ -165,9 +161,7 @@ class Group
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="文件分组列表")
      */
     public function recover()
     {
@@ -178,7 +172,7 @@ class Group
         $search_field = Request::param('search_field/s', '');
         $search_value = Request::param('search_value/s', '');
         $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $date_value   = Request::param('date_value/a', []);
 
         if ($search_field && $search_value) {
             if (in_array($search_field, ['group_id'])) {
@@ -219,7 +213,7 @@ class Group
      */
     public function recoverReco()
     {
-        $param['ids']       = Request::param('ids/a', '');
+        $param['ids']       = Request::param('ids/a', []);
         $param['is_delete'] = 0;
 
         validate(GroupValidate::class)->scene('recoverReco')->check($param);
@@ -236,7 +230,7 @@ class Group
      */
     public function recoverDele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = Request::param('ids/a', []);
 
         validate(GroupValidate::class)->scene('recoverDele')->check($param);
 

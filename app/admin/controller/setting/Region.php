@@ -11,8 +11,8 @@
 namespace app\admin\controller\setting;
 
 use think\facade\Request;
-use app\common\service\setting\RegionService;
 use app\common\validate\setting\RegionValidate;
+use app\common\service\setting\RegionService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -29,13 +29,11 @@ class Region
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\setting\RegionModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="树形")
      */
     public function list()
     {
-        $type         = Request::param('type/s', 'list');
         $region_pid   = Request::param('region_pid/d', 0);
         $sort_field   = Request::param('sort_field/s', '');
         $sort_value   = Request::param('sort_value/s', '');
@@ -45,36 +43,37 @@ class Region
         $date_value   = Request::param('date_value/a', '');
 
         $where = $order = [];
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['region_id', 'region_pid', 'region_jianpin', 'region_initials', 'region_citycode', 'region_zipcode'])) {
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
+                $where[] = [$search_field, $search_exp, $search_value];
+            } else {
+                if (strpos($search_value, ',')) {
+                    $search_exp = 'in';
+                } else {
+                    $search_exp = 'like';
+                    $search_value = '%' . $search_value . '%';
+                }
+                $where[] = [$search_field, $search_exp, $search_value];
+            }
+        } else {
+            $where[] = ['region_pid', '=', $region_pid];
+        }
+        if ($date_field && $date_value) {
+            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
+            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
+        }
+
         if ($sort_field && $sort_value) {
             $order = [$sort_field => $sort_value];
         }
 
-        if ($type == 'list') {
-            if ($search_field && $search_value) {
-                if (in_array($search_field, ['region_id', 'region_pid', 'region_jianpin', 'region_initials', 'region_citycode', 'region_zipcode'])) {
-                    $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                    $where[] = [$search_field, $search_exp, $search_value];
-                } else {
-                    if (strpos($search_value, ',')) {
-                        $search_exp = 'in';
-                    } else {
-                        $search_exp = 'like';
-                        $search_value = '%' . $search_value . '%';
-                    }
-                    $where[] = [$search_field, $search_exp, $search_value];
-                }
-            } else {
-                $where[] = ['region_pid', '=', $region_pid];
-            }
-            if ($date_field && $date_value) {
-                $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-                $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-            }
-
-            $data = RegionService::list('list', $where, $order);
+        if ($where) {
+            $data['list'] = RegionService::list('list', $where, $order);
         } else {
-            $data = RegionService::list('tree', $where, $order, 'region_id,region_pid,region_name');
+            $data['list'] = RegionService::list('tree', $where, $order);
         }
+        $data['tree'] = RegionService::list('tree', [], $order, 'region_id,region_pid,region_name');
 
         return success($data);
     }

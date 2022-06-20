@@ -33,9 +33,7 @@ class Log
      * @Apidoc\Param(ref="app\common\model\member\LogModel\log_type")
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\member\LogModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel\listReturn", type="array", desc="列表")
      */
     public function list()
     {

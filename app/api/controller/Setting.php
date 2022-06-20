@@ -20,6 +20,21 @@ use hg\apidoc\annotation as Apidoc;
  */
 class Setting
 {
+
+    /**
+     * @Apidoc\Title("验证码设置")
+     * @Apidoc\Returned(ref="app\common\model\setting\SettingModel\captchaInfoParam")
+     */
+    public function captcha()
+    {
+        $setting = SettingService::info();
+
+        $data['captcha_register'] = $setting['captcha_register'];
+        $data['captcha_login']    = $setting['captcha_login'];
+
+        return success($data);
+    }
+
     /**
      * @Apidoc\Title("自定义设置")
      */

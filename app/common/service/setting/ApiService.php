@@ -205,7 +205,7 @@ class ApiService
      */
     public static function urlList()
     {
-        $key = 'urlList';
+        $key = 'url';
         $list = ApiCache::get($key);
         if (empty($list)) {
             $model = new ApiModel();
@@ -220,13 +220,13 @@ class ApiService
     }
 
     /**
-     * 接口无需登录url列表
+     * 接口免登url列表
      *
      * @return array
      */
     public static function unloginUrl()
     {
-        $key = 'unloginUrl';
+        $key = 'unlogin';
         $list = ApiCache::get($key);
         if (empty($list)) {
             $model = new ApiModel();
@@ -248,7 +248,7 @@ class ApiService
      */
     public static function unrateUrl()
     {
-        $key = 'unrateUrl';
+        $key = 'unrate';
         $list = ApiCache::get($key);
         if (empty($list)) {
             $list = Config::get('api.api_is_unrate', []);

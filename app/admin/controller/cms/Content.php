@@ -24,33 +24,17 @@ use hg\apidoc\annotation as Apidoc;
 class Content
 {
     /**
-     * @Apidoc\Title("分类列表")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
-     * )
-     */
-    public function category()
-    {
-        $where = ['is_delete' => 0];
-        $order = [];
-        $field = 'category_id,category_pid,category_name';
-
-        $data['list'] = CategoryService::list('tree', $where, $order, $field);
-
-        return success($data);
-    }
-
-    /**
      * @Apidoc\Title("内容列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
+     * @Apidoc\Returned("list", type="array", desc="内容列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
+     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="分类列表")
      */
     public function list()
     {
@@ -83,6 +67,7 @@ class Content
         }
 
         $data = ContentService::list($where, $page, $limit, $order);
+        $data['category'] = CategoryService::list('tree', [['is_delete', '=', 0]], [], 'category_id,category_pid,category_name');
 
         return success($data);
     }
@@ -294,6 +279,7 @@ class Content
      *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
      *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
+     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="分类列表")
      */
     public function recover()
     {
@@ -326,6 +312,7 @@ class Content
         }
 
         $data = ContentService::list($where, $page, $limit, $order);
+        $data['category'] = CategoryService::list('tree', [['is_delete', '=', 0]], [], 'category_id,category_pid,category_name');
 
         return success($data);
     }

@@ -38,7 +38,7 @@ class MenuService
             $pk = $model->getPk();
 
             if (empty($field)) {
-                $field = $pk . ',menu_pid,menu_name,menu_url,menu_sort,is_unlogin,is_unauth,is_disable';
+                $field = $pk . ',menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,menu_sort,is_unlogin,is_unauth,is_disable,hidden';
             }
             if (empty($order)) {
                 $order = ['menu_sort' => 'desc', $pk => 'asc'];
@@ -51,7 +51,7 @@ class MenuService
             }
         } else {
             if (empty($field)) {
-                $field = 'admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_unlogin,is_unauth,is_disable';
+                $field = 'admin_menu_id,menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,menu_sort,is_unlogin,is_unauth,is_disable,hidden';
             }
 
             $key = $type . md5(serialize($where) . $field);
@@ -127,11 +127,11 @@ class MenuService
         $param['create_time'] = datetime();
 
         $add = false;
-        $add_arr = ['list' => '列表', 'info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
+        $add_arr = ['info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
         foreach ($add_arr as $k => $v) {
             $add_key = '';
             $add_key = 'add_' . $k;
-            if ($param[$add_key]) {
+            if ($param[$add_key] ?? '') {
                 $add = true;
             }
         }
@@ -141,8 +141,9 @@ class MenuService
 
         if ($add) {
             if (empty($param['menu_url'])) {
-                exception('请输入菜单链接：应用/控制器，不含操作');
+                exception('请输入菜单链接：应用/控制器/操作');
             }
+            $menu_url_pre = substr($param['menu_url'], 0, strripos($param['menu_url'], '/'));
 
             $errmsg = '';
             // 启动事务
@@ -154,16 +155,17 @@ class MenuService
                 foreach ($add_arr as $k => $v) {
                     $add_key = '';
                     $add_key = 'add_' . $k;
-                    if ($param[$add_key]) {
+                    if ($param[$add_key] ?? '') {
                         $add_where = [];
-                        $add_where[] = ['menu_url', '=', $param['menu_url'] . '/' . $k];
+                        $add_where[] = ['menu_url', '=', $menu_url_pre . '/' . $k];
                         $add_where[] = ['is_delete', '=', 0];
                         $add_menu = $model->field($pk)->where($add_where)->find();
                         if (empty($add_menu)) {
                             $add_temp = [];
                             $add_temp['menu_pid']    = $id;
+                            $add_temp['menu_type']   = 3;
                             $add_temp['menu_name']   = $param['menu_name'] . $v;
-                            $add_temp['menu_url']    = $param['menu_url'] . '/' . $k;
+                            $add_temp['menu_url']    = $menu_url_pre . '/' . $k;
                             $add_temp['create_time'] = datetime();
                             $add_data[] = $add_temp;
                         }
@@ -216,29 +218,29 @@ class MenuService
 
         $param['update_time'] = datetime();
 
-        $add = false;
-        $add_arr = $edit_arr = ['list' => '列表', 'info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
+        $add = $edit = false;
+        $add_arr = $edit_arr = ['info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
         foreach ($add_arr as $k => $v) {
             $add_key = '';
             $add_key = 'add_' . $k;
-            if ($param[$add_key]) {
+            if ($param[$add_key] ?? '') {
                 $add = true;
             }
         }
 
-        $edit = false;
         foreach ($edit_arr as $k => $v) {
             $edit_key = '';
             $edit_key = 'edit_' . $k;
-            if ($param[$edit_key]) {
+            if ($param[$edit_key] ?? '') {
                 $edit = true;
             }
         }
 
         if ($add || $edit) {
             if (empty($param['menu_url'])) {
-                exception('请输入菜单链接：应用/控制器，不含操作');
+                exception('请输入菜单链接：应用/控制器/操作');
             }
+            $menu_url_pre = substr($param['menu_url'], 0, strripos($param['menu_url'], '/'));
 
             $errmsg = '';
             // 启动事务
@@ -250,17 +252,18 @@ class MenuService
                 foreach ($add_arr as $k => $v) {
                     $add_key = '';
                     $add_key = 'add_' . $k;
-                    if ($param[$add_key]) {
+                    if ($param[$add_key] ?? '') {
                         $add_where = [];
                         $add_where[] = ['menu_pid', '=', $id];
-                        $add_where[] = ['menu_url', '=', $param['menu_url'] . '/' . $k];
+                        $add_where[] = ['menu_url', '=', $menu_url_pre . '/' . $k];
                         $add_where[] = ['is_delete', '=', 0];
                         $add_menu = $model->field($pk)->where($add_where)->find();
                         if (empty($add_menu)) {
                             $add_temp = [];
                             $add_temp['menu_pid']    = $id;
+                            $add_temp['menu_type']   = 3;
                             $add_temp['menu_name']   = $param['menu_name'] . $v;
-                            $add_temp['menu_url']    = $param['menu_url'] . '/' . $k;
+                            $add_temp['menu_url']    = $menu_url_pre . '/' . $k;
                             $add_temp['create_time'] = datetime();
                             $add_data[] = $add_temp;
                         }
@@ -275,7 +278,7 @@ class MenuService
                 foreach ($edit_arr as $k => $v) {
                     $edit_key = '';
                     $edit_key = 'edit_' . $k;
-                    if ($param[$edit_key]) {
+                    if ($param[$edit_key] ?? '') {
                         $edit_where = [];
                         $edit_where[] = ['menu_pid', '=', $id];
                         $edit_where[] = ['menu_url', 'like', '%/' . $k];
@@ -284,8 +287,9 @@ class MenuService
                         if ($edit_menu) {
                             $edit_menu->toArray();
                             $edit_temp = [];
+                            $edit_temp['menu_type']   = 3;
                             $edit_temp['menu_name']   = $param['menu_name'] . $v;
-                            $edit_temp['menu_url']    = $param['menu_url'] . '/' . $k;
+                            $edit_temp['menu_url']    = $menu_url_pre . '/' . $k;
                             $edit_temp['update_time'] = datetime();
                             $edit_data[] = $edit_temp;
                             $model->where($pk, $edit_menu[$pk])->update($edit_temp);
@@ -504,18 +508,25 @@ class MenuService
     }
 
     /**
-     * 菜单url列表
+     * 菜单url或id列表
+     * 
+     * @param string $type url菜单url，id菜单id
      *
      * @return array 
      */
-    public static function urlList()
+    public static function urlList($type = 'url')
     {
-        $key = 'urlList';
+        $key = $type;
         $list = MenuCache::get($key);
         if (empty($list)) {
             $model = new MenuModel();
 
-            $list = $model->where('is_delete', 0)->column('menu_url');
+            $column = 'menu_url';
+            if ($type == 'id') {
+                $column = $model->getPk();
+            }
+
+            $list = $model->where('is_delete', 0)->column($column);
             $list = array_filter($list);
 
             MenuCache::set($key, $list);
@@ -525,19 +536,30 @@ class MenuService
     }
 
     /**
-     * 菜单无需登录url列表
+     * 菜单免登url或id列表
+     * 
+     * @param string $type url菜单url，id菜单id
      *
      * @return array
      */
-    public static function unloginUrl()
+    public static function unloginUrl($type = 'url')
     {
-        $key = 'unloginUrl';
+        $key = 'unlogin-' . $type;
         $list = MenuCache::get($key);
         if (empty($list)) {
             $model = new MenuModel();
 
-            $list = $model->where('is_unlogin', 1)->where('is_delete', 0)->column('menu_url');
-            $list = array_merge($list, Config::get('admin.menu_is_unlogin', []));
+            $column = 'menu_url';
+            $menu_is_unlogin = Config::get('admin.menu_is_unlogin', []);
+            if ($type == 'id') {
+                $column = $model->getPk();
+                if ($menu_is_unlogin) {
+                    $menu_is_unlogin = $model->where('menu_url', 'in', $menu_is_unlogin)->column($column);
+                }
+            }
+
+            $list = $model->where('is_unlogin', 1)->where('is_delete', 0)->column($column);
+            $list = array_merge($list, $menu_is_unlogin);
             $list = array_unique(array_filter($list));
 
             MenuCache::set($key, $list);
@@ -547,19 +569,31 @@ class MenuService
     }
 
     /**
-     * 菜单无需权限url列表
+     * 菜单免权url或id列表
+     * 
+     * @param string $type url菜单url，id菜单id
      *
      * @return array
      */
-    public static function unauthUrl()
+    public static function unauthUrl($type = 'url')
     {
-        $key = 'unauthUrl';
+        $key = 'unauth-' . $type;
         $list = MenuCache::get($key);
         if (empty($list)) {
             $model = new MenuModel();
 
-            $list = $model->where('is_unauth', 1)->where('is_delete', 0)->column('menu_url');
-            $list = array_merge($list, self::unloginUrl(), Config::get('admin.menu_is_unauth', []));
+            $column = 'menu_url';
+            $menu_is_unauth = Config::get('admin.menu_is_unauth', []);
+            if ($type == 'id') {
+                $column = $model->getPk();
+                if ($menu_is_unauth) {
+                    $menu_is_unauth = $model->where('menu_url', 'in', $menu_is_unauth)->column($column);
+                }
+            }
+            $menu_is_unlogin = self::unloginUrl($type);
+
+            $list = $model->where('is_unauth', 1)->where('is_delete', 0)->column($column);
+            $list = array_merge($list, $menu_is_unlogin, $menu_is_unauth);
             $list = array_unique(array_filter($list));
 
             MenuCache::set($key, $list);
@@ -569,21 +603,98 @@ class MenuService
     }
 
     /**
-     * 菜单无需限率url列表
+     * 菜单无需限率url或id列表
+     * 
+     * @param string $type url菜单url，id菜单id
      *
      * @return array
      */
-    public static function unrateUrl()
+    public static function unrateUrl($type = 'url')
     {
-        $key = 'unrateUrl';
+        $key = 'unrate-' . $type;
         $list = MenuCache::get($key);
         if (empty($list)) {
-            $list = Config::get('admin.menu_is_unrate', []);
+            $menu_is_unrate = Config::get('admin.menu_is_unrate', []);
+            if ($type == 'id') {
+                $model = new MenuModel();
+                $column = $model->getPk();
+                if ($menu_is_unrate) {
+                    $menu_is_unrate = $model->where('menu_url', 'in', $menu_is_unrate)->column($column);
+                }
+            }
+
+            $list = $menu_is_unrate;
             $list = array_unique(array_filter($list));
 
             MenuCache::set($key, $list);
         }
 
         return $list;
+    }
+
+    /**
+     * 菜单路由
+     *
+     * @param array   $ids   菜单id
+     * @param string  $pk    主键名称
+     * @param string  $pid   父键名称
+     * @param integer $root  根节点id
+     * @param string  $child 子节点名称
+     *
+     * @return array
+     */
+    public static function menus($ids = [], $pk = 'admin_menu_id', $pid = 'menu_pid', $root = 0,  $child = 'children')
+    {
+        $tree = $refer = $list = [];
+        $where = [['admin_menu_id', 'in', $ids]];
+        $field = 'admin_menu_id,menu_pid,menu_name,menu_type,path,name,component,meta_icon,meta_query,is_disable,hidden';
+        $menu = self::list('list', $where, [], $field);
+
+        foreach ($menu as $v) {
+            if ($v['is_disable'] == 0 && $v['menu_type'] != 3) {
+                $tmp = [];
+                $tmp['admin_menu_id'] = $v['admin_menu_id'];
+                $tmp['menu_pid'] = $v['menu_pid'];
+                $tmp['path'] = $v['path'];
+                $tmp['name'] = $v['name'];
+                $tmp['meta']['title'] = $v['menu_name'];
+                $tmp['meta']['icon'] = $v['meta_icon'];
+                if ($v['menu_type'] == 1) {
+                    $tmp['redirect'] = 'noRedirect';
+                    $tmp['component'] = 'Layout';
+                    $tmp['alwaysShow'] = true;
+                } elseif ($v['menu_type'] == 2) {
+                    $tmp['meta']['query'] = $v['meta_query'] ? json_decode($v['meta_query'], true) : [];
+                    $tmp['component'] = $v['component'];
+                    // 外链
+                    if (strpos($v['path'], 'http') === 0) {
+                        unset($tmp['name']);
+                    }
+                }
+                $tmp['hidden'] = $v['hidden'] ? true : false;
+                $list[] = $tmp;
+            }
+        }
+
+        foreach ($list as $kl => $vl) {
+            $refer[$vl[$pk]] = &$list[$kl];
+        }
+
+        foreach ($list as $key => $val) {
+            $parent_id = 0;
+            if (isset($val[$pid])) {
+                $parent_id = $val[$pid];
+            }
+            if ($root == $parent_id) {
+                $tree[] = &$list[$key];
+            } else {
+                if (isset($refer[$parent_id])) {
+                    $parent = &$refer[$parent_id];
+                    $parent[$child][] = &$list[$key];
+                }
+            }
+        }
+
+        return $tree;
     }
 }

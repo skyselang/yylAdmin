@@ -18,6 +18,12 @@ use OSS\OssClient;
 use OSS\Core\OssException;
 use Qcloud\Cos\Client;
 use BaiduBce\Services\Bos\BosClient;
+use Upyun\Upyun;
+use Upyun\Config;
+use Aws\Credentials\Credentials;
+use Aws\S3\S3Client;
+use Aws\S3\MultipartUploader;
+use Aws\S3\Exception\S3MultipartUploadException;
 
 class StorageService
 {
@@ -125,7 +131,74 @@ class StorageService
             } catch (\Exception $e) {
                 $errmsg = $e->getMessage() ?: 'BOS upload error';
             }
+        } elseif ($storage == 'upyun') {
+            try {
+                $serviceConfig = new Config($setting['upyun_service_name'], $setting['upyun_operator_name'], $setting['upyun_operator_pwd']);
+                $client = new Upyun($serviceConfig);
+                $path = $file_name;
+                $content = fopen($file_path, "rb");
+                $client->write($path, $content);
+                $file_info['domain'] = $setting['upyun_domain'];
+            } catch (\Exception $e) {
+                $errmsg = $e->getMessage() ?: 'USS upload error';
+            }
+        } elseif ($storage == 's3') {
+            try {
+                $credentials = new Credentials($setting['s3_access_key_id'], $setting['s3_secret_access_key']);
+                //s3客户端
+                $s3 = new S3Client([
+                    'version' => 'latest',
+                    //AWS区域和终端节点： http://docs.amazonaws.cn/general/latest/gr/rande.html
+                    'region' => $setting['s3_region'],
+                    //加载证书
+                    'credentials' => $credentials,
+                    //bug调试
+                    'debug' => config('app_debug')
+                ]);
+
+                //存储桶 获取AWS存储桶的名称
+                $bucket = $setting['s3_bucket'];
+                //需要上传的文件，文件的本地路径例:D:/www/abc.jpg;
+                $source = $file_path;
+                //多部件上传
+                $uploader = new MultipartUploader($s3, $source, [
+                    //存储桶
+                    'bucket' => $bucket,
+                    //上传后的新地址
+                    'key'    => $file_name,
+                    //设置访问权限 公开，不然访问不了
+                    'ACL'    => 'public-read',
+                    //分段上传
+                    'before_initiate' => function (\Aws\Command $command) {
+                        // $command is a CreateMultipartUpload operation
+                        $command['CacheControl'] = 'max-age=3600';
+                    },
+                    'before_upload'   => function (\Aws\Command $command) {
+                        // $command is an UploadPart operation
+                        $command['RequestPayer'] = 'requester';
+                    },
+                    'before_complete' => function (\Aws\Command $command) {
+                        // $command is a CompleteMultipartUpload operation
+                        $command['RequestPayer'] = 'requester';
+                    },
+                ]);
+            } catch (\Exception $e) {
+                $errmsg = $e->getMessage() ?: 's3 upload error';
+            }
+
+            try {
+                $result = $uploader->upload();
+                //上传成功--返回上传后的地址
+                urldecode($result['ObjectURL']);
+            } catch (S3MultipartUploadException $e) {
+                //上传失败--返回错误信息
+                $uploader =  new MultipartUploader($s3, $source, [
+                    'state' => $e->getState(),
+                ]);
+                $errmsg = $e->getMessage() ?: 's3 upload error';
+            }
         }
+
         $file_info['storage'] = $storage;
 
         if ($errmsg) {

@@ -19,6 +19,8 @@ class MenuModel extends Model
     protected $name = 'admin_menu';
     // 表主键
     protected $pk = 'admin_menu_id';
+    // 菜单类型
+    public $menu_types = [1 => '目录', 2 => '菜单', 3 => '按钮'];
 
     /**
      * @Apidoc\Field("admin_menu_id")
@@ -62,7 +64,7 @@ class MenuModel extends Model
     {
     }
 
-     /**
+    /**
      * @Apidoc\Field("menu_url")
      */
     public function menu_url()
@@ -80,6 +82,13 @@ class MenuModel extends Model
      * @Apidoc\Field("is_unauth")
      */
     public function is_unauth()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("hidden")
+     */
+    public function is_hidden()
     {
     }
 

@@ -17,6 +17,8 @@ use app\common\service\setting\TokenService;
 use app\common\service\file\FileService;
 use app\common\model\member\MemberModel;
 use app\common\model\member\WechatModel;
+use app\common\service\setting\SettingService;
+use app\common\service\setting\RegionService;
 
 class MemberService
 {
@@ -31,7 +33,7 @@ class MemberService
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '', $is_extra = 0)
     {
         $model = new MemberModel();
         $pk = $model->getPk();
@@ -67,10 +69,14 @@ class MemberService
             }
         }
 
-        $reg_channels = $model->reg_channel_arr;
-        $reg_types = $model->reg_type_arr;
+        $reg_channels = $reg_types = $region = [];
+        if ($is_extra) {
+            $reg_channels = $model->reg_channel_arr;
+            $reg_types = $model->reg_type_arr;
+            $region = RegionService::list('tree', [], [], 'region_id,region_pid,region_name');
+        }
 
-        return compact('count', 'pages', 'page', 'limit', 'list', 'reg_channels', 'reg_types');
+        return compact('count', 'pages', 'page', 'limit', 'list', 'reg_channels', 'reg_types', 'region');
     }
 
     /**
@@ -295,7 +301,7 @@ class MemberService
     }
 
     /**
-     * 会员微信登录
+     * 会员微信登录注册
      *
      * @param array $userinfo 会员微信信息
      *
@@ -336,11 +342,25 @@ class MemberService
         // 启动事务
         $MemberModel->startTrans();
         try {
+            $setting = SettingService::info();
+
             if ($member_wechat) {
+                if ($reg_channel == 2 && !$setting['is_offi_login']) {
+                    exception('系统维护，无法登录2！');
+                } elseif ($reg_channel == 3 && !$setting['is_mini_login']) {
+                    exception('系统维护，无法登录3！');
+                }
+
                 $member_wechat_id = $member_wechat[$MemberWechatPk];
                 $WechatModel->where($MemberWechatPk, $member_wechat_id)->update($userinfo);
                 $member_id = $member_wechat[$MemberPk];
             } else {
+                if ($reg_channel == 2 && !$setting['is_offi_register']) {
+                    exception('系统维护，无法注册2！');
+                } elseif ($reg_channel == 3 && !$setting['is_mini_register']) {
+                    exception('系统维护，无法注册3！');
+                }
+
                 $wechat_insert = $userinfo;
                 $wechat_insert['create_time'] = $datetime;
                 $member_wechat_id = $WechatModel->insertGetId($wechat_insert);

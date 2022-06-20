@@ -151,7 +151,8 @@ class User
 
     /**
      * @Apidoc\Title("用户分配权限")
-     * @Apidoc\Method("POST")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Desc("GET获取权限信息，POST提交权限信息")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\ruleParam")
      */
     public function rule()

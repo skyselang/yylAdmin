@@ -39,6 +39,7 @@ class MenuValidate extends Validate
         'pid'        => ['ids'],
         'unauth'     => ['ids'],
         'unlogin'    => ['ids'],
+        'hidden'     => ['ids'],
         'disable'    => ['ids'],
         'role'       => ['admin_menu_id'],
         'roleRemove' => ['admin_menu_id'],

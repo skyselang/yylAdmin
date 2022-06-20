@@ -191,4 +191,28 @@ class ApidocDefinitions
     public function videosReturn()
     {
     }
+
+    /**
+     * 自定义设置请求参数
+     * @Apidoc\Param("diy_config", type="array", default="", desc="自定义设置",
+     *     @Apidoc\Param("config_key", type="string", require=true, default="", desc="键名"),
+     *     @Apidoc\Param("config_val", type="string", require=false, default="", desc="键值"),
+     *     @Apidoc\Param("config_desc", type="string", require=false, default="", desc="说明")
+     * )
+     */
+    public function diyConParam()
+    {
+    }
+
+    /**
+     * 自定义设置返回参数
+     * @Apidoc\Returned("diy_config", type="array", default="", desc="自定义设置",
+     *     @Apidoc\Returned("config_key", type="string", require=true, default="", desc="键名"),
+     *     @Apidoc\Returned("config_val", type="string", require=false, default="", desc="键值"),
+     *     @Apidoc\Returned("config_desc", type="string", require=false, default="", desc="说明")
+     * )
+     */
+    public function diyConReturn()
+    {
+    }
 }

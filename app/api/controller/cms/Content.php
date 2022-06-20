@@ -10,7 +10,6 @@
 // 内容控制器
 namespace app\api\controller\cms;
 
-use app\common\cache\cms\CategoryCache;
 use think\facade\Request;
 use app\common\validate\cms\ContentValidate;
 use app\common\service\cms\CategoryService;
@@ -32,9 +31,9 @@ class Content
      */
     public function category()
     {
-        $where = ['is_delete' => 0, 'is_hide' => 0];
+        $where = [['is_hide', '=', 0], ['is_delete', '=', 0]];
         $order = [];
-        $field = 'category_id,category_pid,category_name';
+        $field = 'category_id,category_pid,category_name,img_id';
 
         $data = CategoryService::list('tree', $where, $order, $field);
 

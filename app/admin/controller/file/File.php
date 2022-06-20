@@ -25,36 +25,6 @@ use hg\apidoc\annotation as Apidoc;
 class File
 {
     /**
-     * @Apidoc\Title("分组列表")
-     * @Apidoc\Param(ref="pagingParam")
-     * @Apidoc\Param(ref="sortParam")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\listReturn")
-     * )
-     */
-    public function group()
-    {
-        $page       = Request::param('page/d', 1);
-        $limit      = Request::param('limit/d', 9999);
-        $sort_field = Request::param('sort_field/s', '');
-        $sort_value = Request::param('sort_value/s', '');
-
-        $where = [['is_disable', '=', 0], ['is_delete', '=', 0]];
-
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $field = 'group_id,group_name';
-
-        $data = GroupService::list($where, $page, $limit, $order, $field);
-
-        return success($data);
-    }
-
-    /**
      * @Apidoc\Title("文件列表")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Param(ref="sortParam")
@@ -67,9 +37,8 @@ class File
      * @Apidoc\Param("is_front", require=false, default="0")
      * @Apidoc\Param("storage", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表")
+     * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="分组列表")
      */
     public function list()
     {
@@ -124,6 +93,7 @@ class File
         $data = FileService::list($where, $page, $limit, $order);
         $data['storage'] = SettingService::storage();
         $data['filetype'] = SettingService::fileType();
+        $data['group'] = GroupService::list([['is_disable', '=', 0], ['is_delete', '=', 0]], 1, 9999, [], 'group_id,group_name')['list'];
 
         return success($data);
     }
@@ -291,9 +261,8 @@ class File
      * @Apidoc\Param("is_front", require=false, default="0")
      * @Apidoc\Param("storage", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表")
+     * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="分组列表")
      */
     public function recover()
     {
@@ -348,6 +317,7 @@ class File
         $data = FileService::list($where, $page, $limit, $order);
         $data['storage'] = SettingService::storage();
         $data['filetype'] = SettingService::fileType();
+        $data['group'] = GroupService::list([['is_disable', '=', 0], ['is_delete', '=', 0]], 1, 9999, [], 'group_id,group_name')['list'];
 
         return success($data);
     }

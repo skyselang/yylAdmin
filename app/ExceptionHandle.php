@@ -80,8 +80,9 @@ class ExceptionHandle extends Handle
         $debug = Config::get('app.app_debug');
         if ($debug) {
             $data['data'] = [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine(),
+                'msg'   => $e->getMessage(),
                 'trace' => $e->getTrace()
             ];
         }
