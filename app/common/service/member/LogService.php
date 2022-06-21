@@ -37,14 +37,8 @@ class LogService
         $model = new LogModel();
         $pk = $model->getPk();
 
-        $MemberModel = new MemberModel();
-        $MemberPk = $MemberModel->getPk();
-
-        $ApiModel = new ApiModel();
-        $ApiPk = $ApiModel->getPk();
-
         if (empty($field)) {
-            $field = $pk . ',' . $MemberPk . ',' . $ApiPk . ',request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',member_id,username,api_id,api_name,api_url,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
@@ -53,24 +47,6 @@ class LogService
         $count = $model->where($where)->count($pk);
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
-
-        $member_ids = array_column($list, $MemberPk);
-        $member = $MemberModel->field($MemberPk . ',username,nickname')->where($MemberPk, 'in', $member_ids)->select()->toArray();
-        $member_username = array_column($member, 'username', $MemberPk);
-        $member_nickname = array_column($member, 'nickname', $MemberPk);
-
-        $api_ids = array_column($list, $ApiPk);
-        $api = $ApiModel->field($ApiPk . ',api_name,api_url')->where($ApiPk, 'in', $api_ids)->select()->toArray();
-        $api_name = array_column($api, 'api_name', $ApiPk);
-        $api_url = array_column($api, 'api_url', $ApiPk);
-
-        foreach ($list as $k => $v) {
-            $list[$k]['username'] = $member_username[$v[$MemberPk]] ?? '';
-            $list[$k]['nickname'] = $member_nickname[$v[$MemberPk]] ?? '';
-
-            $list[$k]['api_name'] = $api_name[$v[$ApiPk]] ?? '';
-            $list[$k]['api_url']  = $api_url[$v[$ApiPk]] ?? '';
-        }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -102,18 +78,6 @@ class LogService
             if ($info['request_param']) {
                 $info['request_param'] = unserialize($info['request_param']);
             }
-
-            $MemberModel = new MemberModel();
-            $MemberPk = $MemberModel->getPk();
-            $member = MemberService::info($info[$MemberPk], false);
-            $info['username'] = $member['username'] ?? '';
-            $info['nickname'] = $member['nickname'] ?? '';
-
-            $ApiModel = new ApiModel();
-            $ApiPk = $ApiModel->getPk();
-            $api = ApiService::info($info[$ApiPk], false);
-            $info['api_name'] = $api['api_name'] ?? '';
-            $info['api_url']  = $api['api_url'] ?? '';
 
             LogCache::set($id, $info);
         }
@@ -152,10 +116,14 @@ class LogService
                 unset($request_param[$v]);
             }
 
-            $api     = ApiService::info();
+            $member  = MemberService::info($param['member_id'] ?? 0, false);
+            $api     = ApiService::info('', false);
             $ip_info = IpInfoUtils::info();
 
-            $param['api_id']           = $api['api_id'];
+            $param['username']         = $member['username'] ?? '';
+            $param['api_id']           = $api['api_id'] ?? 0;
+            $param['api_url']          = $api['api_url'] ?? '';
+            $param['api_name']         = $api['api_name'] ?? '';
             $param['log_type']         = $log_type;
             $param['request_ip']       = $ip_info['ip'];
             $param['request_country']  = $ip_info['country'];
@@ -237,11 +205,11 @@ class LogService
      * 会员日志清除
      *
      * @param array $where 清除条件
-     * @param int   $clean 清空所有
+     * @param bool  $clean 清空所有
      * 
      * @return array
      */
-    public static function clear($where = [], $clean = 0)
+    public static function clear($where = [], $clean = false)
     {
         $model = new LogModel();
         $pk = $model->getPk();

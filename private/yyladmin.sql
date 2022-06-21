@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 20/06/2022 17:35:03
+ Date: 21/06/2022 11:46:59
 */
 
 SET NAMES utf8mb4;
@@ -250,6 +250,8 @@ INSERT INTO `yyl_admin_menu` VALUES (512, 150, 3, '地区修改邮编', 'admin/s
 INSERT INTO `yyl_admin_menu` VALUES (513, 3, 3, '菜单是否隐藏', 'admin/admin.Menu/hidden', 165, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (514, 157, 3, '登录注册设置', 'admin/setting.Setting/logregInfo', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (516, 514, 3, '登录注册设置修改', 'admin/setting.Setting/logregEdit', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (517, 140, 3, '会员日志清空', 'admin/member.Log/clean', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (518, 41, 3, '用户日志清空', 'admin/admin.UserLog/clean', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_notice
@@ -396,14 +398,17 @@ DROP TABLE IF EXISTS `yyl_admin_user_log`;
 CREATE TABLE `yyl_admin_user_log`  (
   `admin_user_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户日志id',
   `admin_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户账号',
   `admin_menu_id` int(11) NULL DEFAULT 0 COMMENT '菜单id',
+  `menu_url` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单链接',
+  `menu_name` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '菜单名称',
   `log_type` tinyint(1) NULL DEFAULT 2 COMMENT '1登录2操作3退出',
   `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
   `request_ip` varchar(130) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ip',
-  `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
-  `request_province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
-  `request_city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
-  `request_area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
+  `request_country` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
+  `request_province` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
+  `request_city` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
+  `request_area` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
   `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
   `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
   `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
@@ -418,9 +423,9 @@ CREATE TABLE `yyl_admin_user_log`  (
   INDEX `request_isp`(`request_isp`) USING BTREE,
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `admin_user_id`(`admin_user_id`) USING BTREE,
-  INDEX `request_city`(`request_city`(191)) USING BTREE,
-  INDEX `request_province`(`request_province`(191)) USING BTREE,
-  INDEX `request_country`(`request_country`(191)) USING BTREE,
+  INDEX `request_city`(`request_city`) USING BTREE,
+  INDEX `request_province`(`request_province`) USING BTREE,
+  INDEX `request_country`(`request_country`) USING BTREE,
   INDEX `statistics`(`is_delete`, `create_time`, `log_type`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户日志' ROW_FORMAT = COMPACT;
 
@@ -793,14 +798,17 @@ DROP TABLE IF EXISTS `yyl_member_log`;
 CREATE TABLE `yyl_member_log`  (
   `member_log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '会员日志id',
   `member_id` int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '会员用户名',
   `log_type` tinyint(1) NULL DEFAULT 3 COMMENT '日志类型，1注册2登录3操作4退出',
   `api_id` int(11) NULL DEFAULT 0 COMMENT '接口id',
+  `api_url` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '接口链接',
+  `api_name` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '接口名称',
   `request_method` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求方式',
   `request_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求IP',
-  `request_country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
-  `request_province` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
-  `request_city` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
-  `request_area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
+  `request_country` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求国家',
+  `request_province` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求省份',
+  `request_city` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求城市',
+  `request_area` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
   `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
   `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
   `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
@@ -814,9 +822,9 @@ CREATE TABLE `yyl_member_log`  (
   INDEX `request_isp`(`request_isp`) USING BTREE,
   INDEX `member_log_id`(`member_log_id`) USING BTREE,
   INDEX `member_id`(`member_id`) USING BTREE,
-  INDEX `request_city`(`request_city`(191)) USING BTREE,
-  INDEX `request_province`(`request_province`(191)) USING BTREE,
-  INDEX `request_country`(`request_country`(191)) USING BTREE,
+  INDEX `request_city`(`request_city`) USING BTREE,
+  INDEX `request_province`(`request_province`) USING BTREE,
+  INDEX `request_country`(`request_country`) USING BTREE,
   INDEX `statistics`(`is_delete`, `create_time`, `log_type`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员日志' ROW_FORMAT = COMPACT;
 

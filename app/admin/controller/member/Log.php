@@ -13,8 +13,6 @@ namespace app\admin\controller\member;
 use think\facade\Request;
 use app\common\validate\member\LogValidate;
 use app\common\service\member\LogService;
-use app\common\model\member\MemberModel;
-use app\common\model\setting\ApiModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -50,24 +48,14 @@ class Log
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['member_id', 'username'])) {
-                $MemberModel = new MemberModel();
-                $MemberPk = $MemberModel->getPk();
-                $member_exp = strpos($search_value, ',') ? 'in' : '=';
-                $member_where[] = [$search_field, $member_exp, $search_value];
-                $member_ids = $MemberModel->where($member_where)->column($MemberPk);
-                $where[] = [$MemberPk, 'in', $member_ids];
-            } elseif (in_array($search_field, ['api_id', 'api_name', 'api_url'])) {
-                $ApiModel = new ApiModel();
-                $ApiPk = $ApiModel->getPk();
-                $api_exp = strpos($search_value, ',') ? 'in' : '=';
-                $api_where[] = [$search_field, $api_exp, $search_value];
-                $api_ids = $ApiModel->where($api_where)->column($ApiPk);
-                $where[] = [$ApiPk, 'in', $api_ids];
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['member_id', 'username', 'api_id', 'api_url', 'api_name'])) {
+                $search_exp = strpos($search_value, ',') ? 'in' : '=';
             } else {
-                $where[] = [$search_field, '=', $search_value];
+                $search_exp = strpos($search_value, ',') ? 'in' : 'like';
+                $search_value = strpos($search_value, ',') ? $search_value : '%' . $search_value . '%';
             }
+            $where[] = [$search_field, $search_exp, $search_value];
         }
         $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
@@ -121,11 +109,14 @@ class Log
      * @Apidoc\Title("会员日志清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\id")
+     * @Apidoc\Param("member_id", require=false, default="")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\username")
+     * @Apidoc\Param("username", require=false, default="")
      * @Apidoc\Param(ref="app\common\model\setting\ApiModel\id")
+     * @Apidoc\Param("api_id", require=false, default="")
      * @Apidoc\Param(ref="app\common\model\setting\ApiModel\api_url")
+     * @Apidoc\Param("api_url", require=false, default="")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Param("clean", type="int", default="0", desc="是否清空所有,1是0否")
      */
     public function clear()
     {
@@ -134,48 +125,41 @@ class Log
         $api_id     = Request::param('api_id/s', '');
         $api_url    = Request::param('api_url/s', '');
         $date_value = Request::param('date_value/a', '');
-        $clean      = Request::param('clean/d', 0);
 
-        $where = $member_ids = [];
+        $where = [];
         if ($member_id) {
-            $member_ids = array_merge(explode(',', $member_id), $member_ids);
+            $exp = strpos($member_id, ',') ? 'in' : '=';
+            $where[] = ['member_id', $exp, $member_id];
         }
         if ($username) {
-            $MemberModel = new MemberModel();
-            $MemberPk = $MemberModel->getPk();
-            $member_exp = strstr($username, ',') ? 'in' : '=';
-            $memberids = $MemberModel->where('username', $member_exp, $username)->column($MemberPk);
-            if ($memberids) {
-                $member_ids = array_merge($memberids, $member_ids);
-            }
+            $exp = strpos($username, ',') ? 'in' : '=';
+            $where[] = ['username', $exp, $username];
         }
-        if ($member_ids) {
-            $where[] = ['member_id', 'in', $member_ids];
-        }
-
-        $api_ids = [];
         if ($api_id) {
-            $api_ids = array_merge(explode(',', $api_id), $api_ids);
+            $exp = strpos($api_id, ',') ? 'in' : '=';
+            $where[] = ['api_id', $exp, $api_id];
         }
         if ($api_url) {
-            $ApiModel = new ApiModel();
-            $ApiPk = $ApiModel->getPk();
-            $api_exp = strstr($api_url, ',') ? 'in' : '=';
-            $apiids = $ApiModel->where('api_url', $api_exp, $api_url)->column($ApiPk);
-            if ($apiids) {
-                $api_ids = array_merge($apiids, $api_ids);
-            }
+            $exp = strpos($api_url, ',') ? 'in' : '=';
+            $where[] = ['api_url', $exp, $api_url];
         }
-        if ($api_ids) {
-            $where[] = ['api_id', 'in', $api_ids];
-        }
-
         if ($date_value) {
             $where[] = ['create_time', '>=', $date_value[0] . ' 00:00:00'];
             $where[] = ['create_time', '<=', $date_value[1] . ' 23:59:59'];
         }
 
-        $data = LogService::clear($where, $clean);
+        $data = LogService::clear($where);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员日志清空")
+     * @Apidoc\Method("POST")
+     */
+    public function clean()
+    {
+        $data = LogService::clear([], true);
 
         return success($data);
     }

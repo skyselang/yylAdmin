@@ -13,8 +13,6 @@ namespace app\admin\controller\admin;
 use think\facade\Request;
 use app\common\validate\admin\UserLogValidate;
 use app\common\service\admin\UserLogService;
-use app\common\model\admin\MenuModel;
-use app\common\model\admin\UserModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -52,27 +50,14 @@ class UserLog
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['admin_user_log_id', 'admin_user_id', 'admin_menu_id'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['admin_user_log_id', 'admin_user_id', 'username', 'admin_menu_id', 'menu_url', 'menu_name', 'response_code'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['username'])) {
-                $UserModel = new UserModel();
-                $UserPk = $UserModel->getPk();
-                $user_exp = strpos($search_value, ',') ? 'in' : '=';
-                $user_where[] = [$search_field, $user_exp, $search_value];
-                $admin_user_ids = $UserModel->where($user_where)->column($UserPk);
-                $where[] = [$UserPk, 'in', $admin_user_ids];
-            } elseif (in_array($search_field, ['menu_url', 'menu_name'])) {
-                $MenuModel = new MenuModel();
-                $MenuPk = $MenuModel->getPk();
-                $menu_exp = strpos($search_value, ',') ? 'in' : '=';
-                $menu_where[] = [$search_field, $menu_exp, $search_value];
-                $admin_menu_ids = $MenuModel->where($menu_where)->column($MenuPk);
-                $where[] = [$MenuPk, 'in', $admin_menu_ids];
             } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
+                $search_exp = strpos($search_value, ',') ? 'in' : 'like';
+                $search_value = strpos($search_value, ',') ? $search_value : '%' . $search_value . '%';
             }
+            $where[] = [$search_field, $search_exp, $search_value];
         }
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
@@ -128,15 +113,14 @@ class UserLog
      * @Apidoc\Title("用户日志清除")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\id")
-     * @Apidoc\Param("admin_user_id", require=false,default="")
+     * @Apidoc\Param("admin_user_id", require=false, default="")
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\username")
-     * @Apidoc\Param("username", require=false,default="")
+     * @Apidoc\Param("username", require=false, default="")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
-     * @Apidoc\Param("admin_menu_id", require=false,default="")
+     * @Apidoc\Param("admin_menu_id", require=false, default="")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\menu_url")
-     * @Apidoc\Param("menu_url", require=false,default="")
-     * @Apidoc\Param("date_value", type="array", default="", desc="日期范围eg:['2022-02-22','2022-02-28']")
-     * @Apidoc\Param("clean", type="int", default="0", desc="是否清空所有1是0否")
+     * @Apidoc\Param("menu_url", require=false, default="")
+     * @Apidoc\Param(ref="dateParam")
      */
     public function clear()
     {
@@ -145,48 +129,41 @@ class UserLog
         $admin_menu_id = Request::param('admin_menu_id/d', '');
         $menu_url      = Request::param('menu_url/s', '');
         $date_value    = Request::param('date_value/a', '');
-        $clean         = Request::param('clean/b', false);
 
-        $where = $admin_user_ids = [];
+        $where = [];
         if ($admin_user_id) {
-            $admin_user_ids = array_merge(explode(',', $admin_user_id), $admin_user_ids);
+            $exp = strpos($admin_user_id, ',') ? 'in' : '=';
+            $where[] = ['admin_user_id', $exp, $admin_user_id];
         }
         if ($username) {
-            $UserModel = new UserModel();
-            $UserPk = $UserModel->getPk();
-            $user_exp = strstr($username, ',') ? 'in' : '=';
-            $user_ids = $UserModel->where('username', $user_exp, $username)->column($UserPk);
-            if ($user_ids) {
-                $admin_user_ids = array_merge($user_ids, $admin_user_ids);
-            }
+            $exp = strpos($username, ',') ? 'in' : '=';
+            $where[] = ['username', $exp, $username];
         }
-        if ($admin_user_ids) {
-            $where[] = ['admin_user_id', 'in', $admin_user_ids];
-        }
-
-        $admin_menu_ids = [];
         if ($admin_menu_id) {
-            $admin_menu_ids = array_merge(explode(',', $admin_menu_id), $admin_menu_ids);
+            $exp = strpos($admin_menu_id, ',') ? 'in' : '=';
+            $where[] = ['admin_menu_id', $exp, $admin_menu_id];
         }
         if ($menu_url) {
-            $MenuModel = new MenuModel();
-            $MenuPk = $MenuModel->getPk();
-            $menu_exp = strstr($menu_url, ',') ? 'in' : '=';
-            $menu_ids = $MenuModel->where('menu_url', $menu_exp, $menu_url)->column($MenuPk);
-            if ($menu_ids) {
-                $admin_menu_ids = array_merge($menu_ids, $admin_menu_ids);
-            }
+            $exp = strpos($menu_url, ',') ? 'in' : '=';
+            $where[] = ['menu_url', $exp, $menu_url];
         }
-        if ($admin_menu_ids) {
-            $where[] = ['admin_menu_id', 'in', $admin_menu_ids];
-        }
-
         if ($date_value) {
             $where[] = ['create_time', '>=', $date_value[0] . ' 00:00:00'];
             $where[] = ['create_time', '<=', $date_value[1] . ' 23:59:59'];
         }
 
-        $data = UserLogService::clear($where, $clean);
+        $data = UserLogService::clear($where);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("用户日志清空")
+     * @Apidoc\Method("POST")
+     */
+    public function clean()
+    {
+        $data = UserLogService::clear([], true);
 
         return success($data);
     }

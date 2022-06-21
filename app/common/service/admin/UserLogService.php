@@ -37,7 +37,7 @@ class UserLogService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',admin_user_id,username,admin_menu_id,menu_url,menu_name,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
         $where[] = ['is_delete', '=', 0];
         if (empty($order)) {
@@ -47,21 +47,6 @@ class UserLogService
         $count = $model->where($where)->count($pk);
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
-
-        $UserModel = new UserModel();
-        $admin_user_ids = array_column($list, 'admin_user_id');
-        $admin_users = $UserModel->where('admin_user_id', 'in', $admin_user_ids)->column('username', 'admin_user_id');
-
-        $MenuModel = new MenuModel();
-        $admin_menu_ids = array_column($list, 'admin_menu_id');
-        $admin_menu_urls = $MenuModel->where('admin_menu_id', 'in', $admin_menu_ids)->column('menu_url', 'admin_menu_id');
-        $admin_menu_names = $MenuModel->where('admin_menu_id', 'in', $admin_menu_ids)->column('menu_name', 'admin_menu_id');
-
-        foreach ($list as $k => $v) {
-            $list[$k]['username'] = $admin_users[$v['admin_user_id']] ?? '';
-            $list[$k]['menu_url'] = $admin_menu_urls[$v['admin_menu_id']] ?? '';
-            $list[$k]['menu_name'] = $admin_menu_names[$v['admin_menu_id']] ?? '';
-        }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -93,18 +78,6 @@ class UserLogService
                 $info['request_param'] = unserialize($info['request_param']);
             }
 
-            $UserModel = new UserModel();
-            $UserPk = $UserModel->getPk();
-            $user = UserService::info($info[$UserPk], false);
-            $info['username'] = $user['username'] ?? '';
-            $info['nickname'] = $user['nickname'] ?? '';
-
-            $MenuModel = new MenuModel();
-            $MenuPk = $MenuModel->getPk();
-            $menu = MenuService::info($info[$MenuPk], false);
-            $info['menu_name'] = $menu['menu_name'] ?? '';
-            $info['menu_url']  = $menu['menu_url'] ?? '';
-
             UserLogCache::set($id, $info);
         }
 
@@ -130,10 +103,14 @@ class UserLogService
                 unset($request_param[$v]);
             }
 
+            $user    = UserService::info($param['admin_user_id'] ?? 0, false);
             $menu    = MenuService::info('', false);
             $ip_info = IpInfoUtils::info();
 
+            $param['username']         = $user['username'] ?? '';
             $param['admin_menu_id']    = $menu['admin_menu_id'] ?? 0;
+            $param['menu_url']         = $menu['menu_url'] ?? '';
+            $param['menu_name']        = $menu['menu_name'] ?? '';
             $param['request_ip']       = $ip_info['ip'];
             $param['request_country']  = $ip_info['country'];
             $param['request_province'] = $ip_info['province'];
@@ -219,14 +196,14 @@ class UserLogService
     public static function clear($where = [], $clean = false)
     {
         $model = new UserLogModel();
+        $pk = $model->getPk();
 
+        $count = 0;
         if ($clean) {
-            $count = $model->delete(true);
+            $count = $model->where($pk, '>', 0)->delete(true);
         } else {
             if ($where) {
                 $count = $model->where($where)->delete();
-            } else {
-                $count = 0;
             }
         }
 
