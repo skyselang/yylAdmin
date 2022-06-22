@@ -364,7 +364,7 @@ class UserLogService
                     }
                     $total_where[] = ['is_delete', '=', 0];
                     $total_where[] = ['create_time', '<=', $e_t . ' 23:59:59'];
-                    $total[$k] = $model->where($where)->count();
+                    $total[$k] = $model->where($total_where)->count();
                 }
 
                 $series = [
