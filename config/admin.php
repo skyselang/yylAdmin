@@ -9,8 +9,11 @@
 
 // admin配置
 return [
-    // 超管用户ID（所有权限）
+    // 系统超管用户ID（所有权限）
     'super_ids' => [1],
+
+    // 系统超管是否隐藏
+    'super_is_hide' => true,
 
     // 菜单免登url（无需登录）
     'menu_is_unlogin' => [

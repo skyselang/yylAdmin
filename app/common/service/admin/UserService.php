@@ -38,7 +38,11 @@ class UserService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',username,nickname,phone,email,sort,is_super,is_disable,login_num,create_time,login_time';
+            $field = $pk . ',username,nickname,admin_role_ids,sort,is_super,is_disable,login_num,create_time,login_time,update_time';
+        }
+        $admin_super_hide_where = admin_super_hide_where($pk);
+        if ($admin_super_hide_where) {
+            $where[] = $admin_super_hide_where;
         }
         $where[] = ['is_delete', '=', 0];
         if (empty($order)) {
@@ -48,6 +52,27 @@ class UserService
         $count = $model->where($where)->count($pk);
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
+
+        $admin_role_ids = [];
+        foreach ($list as &$vl) {
+            $vl['admin_role_ida'] = explode(',', str_trim($vl['admin_role_ids']));
+            foreach ($vl['admin_role_ida'] as $vr) {
+                $admin_role_ids[$vr] = $vr;
+            }
+        }
+        $RoleModel = new RoleModel();
+        $RolePk = $RoleModel->getPk();
+        $role_name = $RoleModel->where($RolePk, 'in', $admin_role_ids)->column('role_name', $RolePk);
+
+        foreach ($list as &$v) {
+            $v['admin_role_names'] = [];
+            foreach ($v['admin_role_ida'] as $vva) {
+                if ($role_name[$vva] ?? '') {
+                    $v['admin_role_names'][] = $role_name[$vva];
+                }
+            }
+            $v['admin_role_names'] = implode(',', $v['admin_role_names']);
+        }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }

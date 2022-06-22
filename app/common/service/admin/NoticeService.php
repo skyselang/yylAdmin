@@ -35,6 +35,10 @@ class NoticeService
         if (empty($field)) {
             $field = $pk . ',admin_user_id,title,color,sort,intro,is_open,open_time_start,open_time_end,create_time';
         }
+        $admin_super_hide_where = admin_super_hide_where($pk);
+        if ($admin_super_hide_where) {
+            $where[] = $admin_super_hide_where;
+        }
         if (empty($order)) {
             $order = ['is_open' => 'desc', 'sort' => 'desc', 'open_time_start' => 'desc', $pk => 'desc'];
         }

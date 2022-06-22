@@ -174,6 +174,16 @@ function admin_user_id()
 }
 
 /**
+ * 系统超管用户id
+ *
+ * @return array
+ */
+function admin_super_ids()
+{
+    return Config::get('admin.super_ids', []);
+}
+
+/**
  * 用户是否系统超管
  *
  * @param int $admin_user_id 用户id
@@ -186,7 +196,7 @@ function admin_is_super($admin_user_id = 0)
         return false;
     }
 
-    $admin_super_ids = Config::get('admin.super_ids', []);
+    $admin_super_ids = admin_super_ids();
     if (empty($admin_super_ids)) {
         return false;
     }
@@ -210,4 +220,28 @@ function admin_log_switch()
     } else {
         return false;
     }
+}
+
+/**
+ * 系统超管信息记录隐藏条件
+ * 
+ * @param int $pk 用户id字段
+ *
+ * @return array
+ */
+function admin_super_hide_where($pk = 'admin_user_id')
+{
+    $where = [];
+    $super_is_hide = Config::get('admin.super_is_hide', false);
+    if ($super_is_hide) {
+        $admin_user_id = admin_user_id();
+        if (!admin_is_super($admin_user_id)) {
+            $admin_super_ids = admin_super_ids();
+            if ($admin_super_ids) {
+                $where = [$pk, 'not in', $admin_super_ids];
+            }
+        }
+    }
+
+    return $where;
 }

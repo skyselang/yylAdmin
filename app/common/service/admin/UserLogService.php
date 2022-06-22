@@ -16,7 +16,6 @@ use app\common\utils\IpInfoUtils;
 use app\common\cache\admin\UserLogCache;
 use app\common\model\admin\UserLogModel;
 use app\common\model\admin\UserModel;
-use app\common\model\admin\MenuModel;
 
 class UserLogService
 {
@@ -39,7 +38,12 @@ class UserLogService
         if (empty($field)) {
             $field = $pk . ',admin_user_id,username,admin_menu_id,menu_url,menu_name,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
+        $admin_super_hide_where = admin_super_hide_where();
+        if ($admin_super_hide_where) {
+            $where[] = $admin_super_hide_where;
+        }
         $where[] = ['is_delete', '=', 0];
+
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
@@ -214,9 +218,9 @@ class UserLogService
     }
 
     /**
-     * 会员日志统计
+     * 用户日志统计
      *
-     * @param string $type 日期类型：day，month
+     * @param string $type 日期类型：day日，month月
      * @param array  $date 日期范围：[开始日期，结束日期]
      * @param string $stat 统计类型：count总计，number数量
      * 
@@ -237,6 +241,9 @@ class UserLogService
         $end_date = $date[1];
 
         $key = $type . ':' . $stat . $sta_date . '-' . $end_date;
+        if (admin_is_super(admin_user_id())) {
+            $key = $key . 'super';
+        }
         $data = UserLogCache::get($key);
         if (empty($data)) {
             $dates = [];
@@ -266,6 +273,11 @@ class UserLogService
                 $group = "date_format(create_time,'%Y-%m')";
             }
 
+            $admin_super_hide_where = admin_super_hide_where();
+            if ($admin_super_hide_where) {
+                $where[] = $admin_super_hide_where;
+            }
+
             $where[] = ['is_delete', '=', 0];
             $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
@@ -287,7 +299,10 @@ class UserLogService
 
                 foreach ($data as $k => $v) {
                     $where = [];
-                    $where = [['is_delete', '=', 0]];
+                    if ($admin_super_hide_where) {
+                        $where[] = $admin_super_hide_where;
+                    }
+                    $where[] = ['is_delete', '=', 0];
 
                     if ($v['date'] == 'total') {
                         $where[] = [$pk, '>', 0];
@@ -342,7 +357,14 @@ class UserLogService
                     } else {
                         $e_t = $v;
                     }
-                    $total[$k] = $model->where('is_delete', 0)->where('create_time', '<=', $e_t . ' 23:59:59')->count();
+
+                    $total_where = [];
+                    if ($admin_super_hide_where) {
+                        $total_where[] = $admin_super_hide_where;
+                    }
+                    $total_where[] = ['is_delete', '=', 0];
+                    $total_where[] = ['create_time', '<=', $e_t . ' 23:59:59'];
+                    $total[$k] = $model->where($where)->count();
                 }
 
                 $series = [
@@ -382,7 +404,7 @@ class UserLogService
     }
 
     /**
-     * 会员日志统计（字段）
+     * 用户日志统计（字段）
      *
      * @param string $type 日期类型：day，month
      * @param array  $date 日期范围：[开始日期，结束日期]
@@ -411,6 +433,9 @@ class UserLogService
         }
 
         $key = $type . ':' . $stat . $sta_date . '-' . $end_date . '-top' . $top;
+        if (admin_is_super(admin_user_id())) {
+            $key = $key . 'super';
+        }
         $data = UserLogCache::get($key);
         if (empty($data)) {
             $model = new UserLogModel();
@@ -429,6 +454,11 @@ class UserLogService
                     $group = $vf['field'];
                     $field = $group . ' as x_data';
                 }
+            }
+
+            $admin_super_hide_where = admin_super_hide_where();
+            if ($admin_super_hide_where) {
+                $where[] = $admin_super_hide_where;
             }
 
             $where[] = ['is_delete', '=', 0];
