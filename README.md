@@ -173,3 +173,7 @@ cnpm run build:stage
 ## 交流群
 
 - QQ交流群：679883097
+
+## 安全
+
+[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdminWeb.svg?size=small)](https://www.oscs1024.com/project/skyselang/yylAdminWeb?ref=badge_small)
