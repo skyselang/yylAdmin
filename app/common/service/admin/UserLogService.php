@@ -78,9 +78,14 @@ class UserLogService
             }
             $info = $info->toArray();
 
-            if ($info['request_param']) {
-                $info['request_param'] = unserialize($info['request_param']);
-            }
+            $user = UserService::info($info['admin_user_id'], false);
+            $info['username_now'] = $user['username'] ?? '';
+
+            $menu = MenuService::info($info['admin_menu_id'], false);
+            $info['menu_name_now'] = $menu['menu_name'] ?? '';
+            $info['menu_url_now'] = $menu['menu_url'] ?? '';
+
+            $info['request_param'] = unserialize($info['request_param']);
 
             UserLogCache::set($id, $info);
         }

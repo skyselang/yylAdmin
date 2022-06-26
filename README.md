@@ -176,4 +176,4 @@ cnpm run build:stage
 
 ## 安全
 
-[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdminWeb.svg?size=small)](https://www.oscs1024.com/project/skyselang/yylAdminWeb?ref=badge_small)
+- yylAdminWeb ：[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdminWeb.svg?size=small)](https://www.oscs1024.com/project/skyselang/yylAdminWeb?ref=badge_small) [REPORT](https://www.murphysec.com/dr/DAcNBM8aGWLb6vAf3I)

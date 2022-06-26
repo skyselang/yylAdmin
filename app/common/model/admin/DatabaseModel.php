@@ -7,28 +7,28 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 公告管理模型
+// 数据库管理模型
 namespace app\common\model\admin;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
-class NoticeModel extends Model
+class DatabaseModel extends Model
 {
     // 表名
-    protected $name = 'admin_notice';
+    protected $name = 'admin_database';
     // 表主键
-    protected $pk = 'admin_notice_id';
+    protected $pk = 'admin_database_id';
 
     /**
-     * @Apidoc\Field("admin_notice_id")
+     * @Apidoc\Field("admin_database_id")
      */
     public function id()
     {
     }
 
     /**
-     * @Apidoc\WithoutField("type,intro,content,is_delete,update_time,delete_time")
+     * @Apidoc\WithoutField("path,table,is_delete,delete_time")
      */
     public function listReturn()
     {
@@ -42,37 +42,24 @@ class NoticeModel extends Model
     }
 
     /**
-     * @Apidoc\WithoutField("admin_notice_id,admin_user_id,username,is_open,is_delete,create_time,update_time,delete_time")
+     * @Apidoc\Field("table")
      */
     public function addParam()
     {
     }
 
     /**
-     * @Apidoc\WithoutField("admin_user_id,username,is_open,is_delete,create_time,update_time,delete_time")
+     * @Apidoc\Field("admin_database_id,remark")
      */
     public function editParam()
     {
     }
 
     /**
-     * @Apidoc\Field("is_open")
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("table", type="array", require=true, desc="表名")
      */
-    public function is_open()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("open_time_start")
-     */
-    public function open_time_start()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("open_time_end")
-     */
-    public function open_time_end()
+    public function table()
     {
     }
 }

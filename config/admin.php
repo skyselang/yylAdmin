@@ -47,5 +47,12 @@ return [
         'password_new',
         'password_confirm',
         'content'
-    ]
+    ],
+
+    // 数据库备份忽略的表（不含前缀）
+    'database_ignore_table' => [
+        'admin_database',
+        'admin_user_log',
+        'member_log'
+    ],
 ];

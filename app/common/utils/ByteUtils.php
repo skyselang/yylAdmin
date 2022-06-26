@@ -21,6 +21,10 @@ class ByteUtils
      */
     public static function format($num = 0)
     {
+        if ($num == 0) {
+            return $num;
+        }
+
         $p = 0;
         $format = 'bytes';
         if ($num > 0 && $num < 1024) {
@@ -52,7 +56,7 @@ class ByteUtils
     /**
      * 字节转换
      *
-     * @param int    $value 字节数值
+     * @param mixed  $value 字节数值
      * @param string $type  字节类型
      *
      * @return array
@@ -107,8 +111,6 @@ class ByteUtils
             $data['MB'] = $data['KB'] / $hex_B;
             $data['GB'] = $data['MB'] / $hex_B;
             $data['TB'] = $data['GB'] / $hex_B;
-
-            return $data['MB'];
         }
 
         return $data;

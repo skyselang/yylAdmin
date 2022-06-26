@@ -1,30 +1,26 @@
-## BASE_API
+### BASE_URL
 
-### 本地BASE_API
+本地BASE_URL：[http://localhost:9526](http://localhost:9526)
 
-[http://localhost:9526](http://localhost:9526)
+测试BASE_URL：
 
-### 测试BASE_API
+正式BASE_URL：
 
+### Token
 
-### 正式BASE_API
+#### admin
 
+请求头部Headers或请求参数Params需带上参数：AdminToken
 
-## 请求头部
+#### api
 
-### admin
+请求头部Headers或请求参数Params需带上参数：ApiToken 
 
-请求头部Headers需带上参数：AdminToken
-
-### api
-
-请求头部Headers需带上参数：ApiToken 
-
-## 全局参数
+### 全局参数
 
 接口调试的时候请在全局参数中设置对应的全局 Headers、Params  
 
-## 响应参数
+### 响应参数
 
 {
   "code": 200,
@@ -40,7 +36,7 @@
   "data": {}
 }
 
-## code说明
+### code说明
 |code|说明|
 |-|-|
 |200| 操作成功|

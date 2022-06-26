@@ -11,11 +11,37 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 21/06/2022 11:46:59
+ Date: 26/06/2022 15:53:15
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for yyl_admin_database
+-- ----------------------------
+DROP TABLE IF EXISTS `yyl_admin_database`;
+CREATE TABLE `yyl_admin_database`  (
+  `admin_database_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '备份id',
+  `admin_user_id` int(11) NULL DEFAULT 0 COMMENT '用户id',
+  `username` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户账号',
+  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '路径',
+  `file` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件',
+  `size` int(11) NULL DEFAULT 0 COMMENT '大小',
+  `table` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备份表',
+  `table_num` int(11) NULL DEFAULT 0 COMMENT '备份表数',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '备份时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`admin_database_id`) USING BTREE,
+  INDEX `admin_message_id`(`admin_database_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '数据库备份' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of yyl_admin_database
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yyl_admin_menu
@@ -54,7 +80,7 @@ INSERT INTO `yyl_admin_menu` VALUES (1, 0, 3, '控制台', '', 300, '', '', '', 
 INSERT INTO `yyl_admin_menu` VALUES (3, 88, 2, '菜单管理', 'admin/admin.Menu/list', 250, 'menu', 'AdminMenu', 'admin/menu', 'el-icon-menu', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (4, 88, 2, '用户管理', 'admin/admin.User/list', 180, 'user', 'AdminUser', 'admin/user', 'el-icon-user-solid', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (5, 88, 2, '角色管理', 'admin/admin.Role/list', 250, 'role', 'AdminRole', 'admin/role', 'el-icon-s-custom', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (12, 88, 2, '个人中心', '', 130, 'user-center', 'AdminUserCenter', 'admin/user-center', 'el-icon-user', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (12, 53, 2, '个人中心', '', 200, 'user-center', 'AdminUserCenter', 'admin/user-center', 'el-icon-user', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (14, 3, 3, '菜单添加', 'admin/admin.Menu/add', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (15, 3, 3, '菜单修改', 'admin/admin.Menu/edit', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (16, 3, 3, '菜单删除', 'admin/admin.Menu/dele', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -137,7 +163,7 @@ INSERT INTO `yyl_admin_menu` VALUES (172, 1, 3, '会员统计', 'admin/Index/mem
 INSERT INTO `yyl_admin_menu` VALUES (173, 53, 2, '接口文档', 'admin/admin.Apidoc/apidoc', 180, 'apidoc', 'AdminApidoc', 'admin/apidoc', 'el-icon-document', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (186, 0, 1, '设置管理', '', 155, '/setting', '', '', 'el-icon-setting', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (187, 5, 3, '角色信息', 'admin/admin.Role/info', 255, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (188, 53, 2, '系统设置', '', 150, 'setting', 'AdminSetting', 'admin/setting', 'el-icon-set-up', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (188, 53, 2, '系统设置', '', 135, 'setting', 'AdminSetting', 'admin/setting', 'el-icon-set-up', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (189, 41, 3, '用户日志清除', 'admin/admin.UserLog/clear', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (190, 186, 2, '微信设置', '', 130, 'wechat', 'SettingWechat', 'setting/wechat', 'el-icon-chat-dot-round', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (191, 190, 3, '公众号设置信息', 'admin/setting.Wechat/offiInfo', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -252,6 +278,15 @@ INSERT INTO `yyl_admin_menu` VALUES (514, 157, 3, '登录注册设置', 'admin/s
 INSERT INTO `yyl_admin_menu` VALUES (516, 514, 3, '登录注册设置修改', 'admin/setting.Setting/logregEdit', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (517, 140, 3, '会员日志清空', 'admin/member.Log/clean', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (518, 41, 3, '用户日志清空', 'admin/admin.UserLog/clean', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (519, 53, 2, '数据库管理', 'admin/admin.Database/list', 130, 'database', 'AdminDatabase', 'admin/database', 'el-icon-coin', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (520, 519, 3, '备份信息', 'admin/admin.Database/info', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (521, 519, 3, '备份添加', 'admin/admin.Database/add', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (522, 519, 3, '备份修改', 'admin/admin.Database/edit', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (523, 519, 3, '备份删除', 'admin/admin.Database/dele', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (524, 519, 3, '备份还原', 'admin/admin.Database/restore', 230, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (525, 519, 3, '优化表', 'admin/admin.Database/optimize', 200, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (526, 519, 3, '修复表', 'admin/admin.Database/repair', 180, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (527, 519, 3, '备份下载', 'admin/admin.Database/down', 250, '', '', '', '', '', 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_notice
@@ -260,13 +295,14 @@ DROP TABLE IF EXISTS `yyl_admin_notice`;
 CREATE TABLE `yyl_admin_notice`  (
   `admin_notice_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '公告id',
   `admin_user_id` int(11) NULL DEFAULT 0 COMMENT '用户id',
+  `username` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户账号',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
   `color` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '#606266' COMMENT '标题颜色',
   `type` tinyint(1) NULL DEFAULT 1 COMMENT '类型',
   `sort` int(1) NULL DEFAULT 250 COMMENT '排序',
   `intro` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '简介',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '内容',
-  `is_open` tinyint(1) NULL DEFAULT 1 COMMENT '是否开启，1是0否',
+  `is_open` tinyint(1) NULL DEFAULT 0 COMMENT '是否开启，1是0否',
   `open_time_start` datetime NOT NULL COMMENT '开启开始时间',
   `open_time_end` datetime NOT NULL COMMENT '开启结束时间',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
@@ -306,7 +342,7 @@ CREATE TABLE `yyl_admin_role`  (
 -- Records of yyl_admin_role
 -- ----------------------------
 INSERT INTO `yyl_admin_role` VALUES (1, ',,', ',,', '管理员', '', 250, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (2, ',1,3,4,5,12,18,29,37,38,40,41,43,45,49,51,52,53,54,58,63,71,73,75,86,87,88,111,113,114,115,116,117,122,123,125,126,132,134,140,142,144,150,152,156,157,158,170,172,173,186,187,188,190,191,193,217,220,223,226,230,283,285,286,291,292,293,294,295,298,300,381,383,384,388,391,396,397,398,401,402,410,412,417,420,421,424,426,427,430,435,437,442,494,498,501,504,507,508,514,', ',,', '演示', '', 250, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (2, ',1,3,4,5,12,18,29,37,38,40,41,43,45,49,51,52,53,54,58,63,71,73,75,86,87,88,111,113,114,115,116,117,122,123,125,126,132,134,140,142,144,150,152,156,157,158,170,172,173,186,187,188,190,191,193,217,220,223,226,230,283,285,286,291,292,293,294,295,298,300,381,383,384,388,391,396,397,398,401,402,410,412,417,420,421,424,426,427,430,435,437,442,494,498,501,504,507,508,514,519,520,521,', ',,', '演示', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',1,12,45,49,51,52,75,88,111,172,396,420,424,430,442,', ',,', '前端', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (5, ',1,12,45,49,51,52,75,88,111,172,396,420,424,430,442,', ',,', '测试', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (6, ',1,12,45,49,51,52,75,88,111,172,396,420,424,430,442,', ',,', '运营', '', 250, 0, 0, NULL, NULL, NULL);

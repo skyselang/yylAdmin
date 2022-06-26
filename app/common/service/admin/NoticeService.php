@@ -12,7 +12,6 @@ namespace app\common\service\admin;
 
 use app\common\cache\admin\NoticeCache;
 use app\common\model\admin\NoticeModel;
-use app\common\model\admin\UserModel;
 
 class NoticeService
 {
@@ -33,7 +32,7 @@ class NoticeService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',admin_user_id,title,color,sort,intro,is_open,open_time_start,open_time_end,create_time';
+            $field = $pk . ',admin_user_id,username,title,color,sort,is_open,open_time_start,open_time_end,create_time';
         }
         $admin_super_hide_where = admin_super_hide_where();
         if ($admin_super_hide_where) {
@@ -46,14 +45,6 @@ class NoticeService
         $count = $model->where($where)->count($pk);
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
-
-        $UserModel = new UserModel();
-        $admin_user_ids = array_column($list, 'admin_user_id');
-        $admin_users = $UserModel->where('admin_user_id', 'in', $admin_user_ids)->column('username', 'admin_user_id');
-
-        foreach ($list as $k => $v) {
-            $list[$k]['username'] = $admin_users[$v['admin_user_id']] ?? '';
-        }
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -82,7 +73,7 @@ class NoticeService
             $info = $info->toArray();
 
             $user = UserService::info($info['admin_user_id'], false);
-            $info['username'] = $user['username'] ?? '';
+            $info['username_now'] = $user['username'] ?? '';
 
             NoticeCache::set($id, $info);
         }
@@ -102,7 +93,11 @@ class NoticeService
         $model = new NoticeModel();
         $pk = $model->getPk();
 
-        $param['create_time'] = datetime();
+        $user = UserService::info(admin_user_id(), false);
+
+        $param['admin_user_id'] = $user['admin_user_id'] ?? 0;
+        $param['username']      = $user['username'] ?? '';
+        $param['create_time']   = datetime();
 
         $id = $model->insertGetId($param);
         if (empty($id)) {

@@ -16,7 +16,6 @@ use app\common\utils\IpInfoUtils;
 use app\common\cache\member\LogCache;
 use app\common\service\setting\ApiService;
 use app\common\model\member\LogModel;
-use app\common\model\setting\ApiModel;
 use app\common\model\member\MemberModel;
 
 class LogService
@@ -75,9 +74,14 @@ class LogService
             }
             $info = $info->toArray();
 
-            if ($info['request_param']) {
-                $info['request_param'] = unserialize($info['request_param']);
-            }
+            $member = MemberService::info($info['member_id'], false);
+            $info['username_now'] = $member['username'] ?? '';
+
+            $api = ApiService::info($info['api_id'], false);
+            $info['api_name_now'] = $api['api_name'] ?? '';
+            $info['api_url_now'] = $api['api_url'] ?? '';
+
+            $info['request_param'] = unserialize($info['request_param']);
 
             LogCache::set($id, $info);
         }

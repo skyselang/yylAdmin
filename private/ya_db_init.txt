@@ -37,3 +37,4 @@ TRUNCATE yyl_admin_user_log;
 
 TRUNCATE yyl_admin_setting;
 TRUNCATE yyl_admin_notice;
+TRUNCATE yyl_admin_database;

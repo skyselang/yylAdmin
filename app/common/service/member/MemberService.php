@@ -30,6 +30,7 @@ class MemberService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param int    $is_extra 额外数据
      * 
      * @return array 
      */

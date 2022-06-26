@@ -13,7 +13,6 @@ namespace app\admin\controller\admin;
 use think\facade\Request;
 use app\common\validate\admin\NoticeValidate;
 use app\common\service\admin\NoticeService;
-use app\common\model\admin\UserModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -45,17 +44,10 @@ class Notice
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['admin_notice_id', 'admin_user_id', 'is_open'])) {
+        if ($search_field && $search_value !== '') {
+            if (in_array($search_field, ['admin_notice_id', 'admin_user_id', 'username', 'is_open'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
-            } elseif (in_array($search_field, ['username'])) {
-                $UserModel = new UserModel();
-                $UserPk = $UserModel->getPk();
-                $user_exp = strpos($search_value, ',') ? 'in' : '=';
-                $user_where[] = [$search_field, $user_exp, $search_value];
-                $admin_user_ids = $UserModel->where($user_where)->column($UserPk);
-                $where[] = [$UserPk, 'in', $admin_user_ids];
             } else {
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
@@ -112,7 +104,6 @@ class Notice
         $param['color']           = Request::param('color/s', '#606266');
         $param['type']            = Request::param('type/d', 1);
         $param['sort']            = Request::param('sort/d', 250);
-        $param['is_open']         = Request::param('is_open/d', 1);
         $param['open_time_start'] = Request::param('open_time_start/s', '');
         $param['open_time_end']   = Request::param('open_time_end/s', '');
         $param['intro']           = Request::param('intro/s', '');
@@ -137,7 +128,6 @@ class Notice
         $param['color']           = Request::param('color/s', '#606266');
         $param['type']            = Request::param('type/d', 1);
         $param['sort']            = Request::param('sort/d', 250);
-        $param['is_open']         = Request::param('is_open/d', 1);
         $param['open_time_start'] = Request::param('open_time_start/s', '');
         $param['open_time_end']   = Request::param('open_time_end/s', '');
         $param['intro']           = Request::param('intro/s', '');
