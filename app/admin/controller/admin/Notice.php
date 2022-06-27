@@ -52,6 +52,10 @@ class Notice
                 $where[] = [$search_field, 'like', '%' . $search_value . '%'];
             }
         }
+        $admin_super_hide_where = admin_super_hide_where();
+        if ($admin_super_hide_where) {
+            $where[] = $admin_super_hide_where;
+        }
         $where[] = ['is_delete', '=', 0];
         if ($date_field && $date_value) {
             $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
