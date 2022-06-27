@@ -34,7 +34,7 @@ class Content
      *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
-     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="分类列表")
+     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\listReturn", type="tree", childrenField="children", desc="分类列表")
      */
     public function list()
     {

@@ -28,9 +28,8 @@ class Menu
     /**
      * @Apidoc\Title("菜单列表")
      * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Returned("list", type="array", desc="列表",
-     *     @Apidoc\Returned(ref="app\common\model\admin\MenuModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\MenuModel\listReturn", type="array", desc="列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\admin\MenuModel\listReturn", type="tree", childrenField="children", desc="树形")
      */
     public function list()
     {

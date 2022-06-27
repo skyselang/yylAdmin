@@ -28,7 +28,7 @@ class DatabaseModel extends Model
     }
 
     /**
-     * @Apidoc\WithoutField("path,table,is_delete,delete_time")
+     * @Apidoc\WithoutField("path,table,is_delete,update_time,delete_time")
      */
     public function listReturn()
     {

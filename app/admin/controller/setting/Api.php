@@ -26,7 +26,7 @@ class Api
      * @Apidoc\Title("接口列表")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Returned("list", ref="app\common\model\setting\ApiModel\listReturn", type="array", desc="列表")
-     * @Apidoc\Returned("tree", ref="app\common\model\setting\ApiModel\listReturn", type="array", desc="树形")
+     * @Apidoc\Returned("tree", ref="app\common\model\setting\ApiModel\listReturn", type="tree", childrenField="children", desc="树形")
      */
     public function list()
     {

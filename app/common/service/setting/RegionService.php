@@ -16,9 +16,6 @@ use Overtrue\Pinyin\Pinyin;
 
 class RegionService
 {
-    // 树形key
-    protected static $tree = 'tree';
-
     /**
      * 地区列表
      * 

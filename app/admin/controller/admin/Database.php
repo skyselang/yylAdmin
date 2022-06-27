@@ -29,9 +29,8 @@ class Database
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\DatabaseModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\DatabaseModel\listReturn", type="array", desc="备份列表")
+     * @Apidoc\Returned("table", type="array", desc="数据库表")
      */
     public function list()
     {
@@ -72,7 +71,8 @@ class Database
     /**
      * @Apidoc\Title("备份信息")
      * @Apidoc\Param(ref="app\common\model\admin\DatabaseModel\id")
-     * @Apidoc\Returned(ref="app\common\model\admin\DatabaseModel\infoReturn")
+     * @Apidoc\Param("table_name", type="string", desc="表名")
+     * @Apidoc\Returned(ref="app\common\model\admin\DatabaseModel\infoReturn", desc="备份信息或表信息")
      */
     public function info()
     {

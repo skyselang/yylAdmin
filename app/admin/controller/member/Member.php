@@ -30,7 +30,7 @@ class Member
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel\listReturn", type="array", desc="会员列表")
-     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="地区列表")
+     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\listReturn", type="tree", childrenField="children", desc="地区列表")
      */
     public function list()
     {

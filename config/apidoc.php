@@ -30,7 +30,8 @@ return [
                 ['title' => '文件管理', 'name' => 'adminFile'],
                 ['title' => '设置管理', 'name' => 'adminSetting'],
                 ['title' => '权限管理', 'name' => 'adminAuth'],
-                ['title' => '系统管理', 'name' => 'adminSystem']
+                ['title' => '系统管理', 'name' => 'adminSystem'],
+                ['title' => '登录退出', 'name' => 'adminLogout']
             ],
             'headers' => [
                 ['name' => 'AdminToken', 'type' => 'string', 'require' => true, 'desc' => 'admin_token']

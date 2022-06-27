@@ -109,4 +109,15 @@ class SettingModel extends Model
     public function smsTestParam()
     {
     }
+
+    /**
+     * 系统信息
+     * @Apidoc\Field("system_name,page_title")
+     * @Apidoc\AddField("logo_url", type="string", require=false, default="", desc="logo链接")
+     * @Apidoc\AddField("favicon_url", type="string", require=false, default="", desc="favicon链接")
+     * @Apidoc\AddField("login_bg_url", type="string", require=false, default="", desc="登录背景图链接")
+     */
+    public function loginSettingParam()
+    {
+    }
 }

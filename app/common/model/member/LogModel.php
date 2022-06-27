@@ -28,7 +28,7 @@ class LogModel extends Model
     }
 
     /**
-     * @Apidoc\Field("member_log_id,member_id,api_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time")
+     * @Apidoc\Field("member_log_id,member_id,username,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time")
      */
     public function listReturn()
     {

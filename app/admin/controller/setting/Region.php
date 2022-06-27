@@ -30,7 +30,7 @@ class Region
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="列表")
-     * @Apidoc\Returned("tree", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="树形")
+     * @Apidoc\Returned("tree", ref="app\common\model\setting\RegionModel\listReturn", type="tree", childrenField="children", desc="树形")
      */
     public function list()
     {

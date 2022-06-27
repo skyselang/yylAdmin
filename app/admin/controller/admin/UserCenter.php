@@ -17,7 +17,7 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("个人中心")
- * @Apidoc\Group("adminAuth")
+ * @Apidoc\Group("adminSystem")
  * @Apidoc\Sort("650")
  */
 class UserCenter

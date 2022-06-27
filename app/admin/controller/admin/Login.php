@@ -19,15 +19,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("登录退出")
- * @Apidoc\Group("adminAuth")
+ * @Apidoc\Group("adminLogout")
  * @Apidoc\Sort("660")
  */
 class Login
 {
     /**
-     * @Apidoc\Title("设置信息")
+     * @Apidoc\Title("系统信息")
      * @Apidoc\Method("GET")
-     * @Apidoc\Returned(ref="app\common\model\admin\SettingModel\infoReturn")
+     * @Apidoc\Returned(ref="app\common\model\admin\SettingModel\loginSettingParam")
      */
     public function setting()
     {

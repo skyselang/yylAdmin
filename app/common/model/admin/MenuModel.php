@@ -30,7 +30,7 @@ class MenuModel extends Model
     }
 
     /**
-     * @Apidoc\Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort,is_disable,is_unauth,create_time,update_time")
+     * @Apidoc\WithoutField("meta_query,create_time,update_time,is_delete,delete_time")
      */
     public function listReturn()
     {
@@ -44,14 +44,14 @@ class MenuModel extends Model
     }
 
     /**
-     * @Apidoc\Field("menu_pid,menu_name,menu_url,menu_sort")
+     * @Apidoc\WithoutField("admin_menu_id,is_unlogin,is_unauth,is_disable,is_delete,create_time,update_time,delete_time")
      */
     public function addParam()
     {
     }
 
     /**
-     * @Apidoc\Field("admin_menu_id,menu_pid,menu_name,menu_url,menu_sort")
+     * @Apidoc\WithoutField("is_unlogin,is_unauth,is_disable,is_delete,create_time,update_time,delete_time")
      */
     public function editParam()
     {

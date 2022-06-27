@@ -28,7 +28,7 @@ class UserModel extends Model
     }
 
     /**
-     * 
+     * @Apidoc\AddField("admin_role_names", type="string", desc="角色名称")
      */
     public function listParam()
     {

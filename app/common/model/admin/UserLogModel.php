@@ -35,7 +35,7 @@ class UserLogModel extends Model
     }
 
     /**
-     * @Apidoc\Field("admin_user_log_id,admin_user_id,admin_menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time")
+     * @Apidoc\Field("admin_user_log_id,admin_user_id,username,admin_menu_id,request_ip,request_region,request_isp,response_code,response_msg,create_time")
      */
     public function listReturn()
     {
