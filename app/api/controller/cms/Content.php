@@ -25,9 +25,7 @@ class Content
 {
     /**
      * @Apidoc\Title("分类列表")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="tree", childrenField="children", desc="树形列表")
      */
     public function category()
     {

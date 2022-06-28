@@ -24,7 +24,7 @@
         "topthink/framework": "^6.0.0",
         "topthink/think-orm": "^2.0",
         "topthink/think-multi-app": "^1.0",
-        "firebase/php-jwt": "^5.2",
+        "firebase/php-jwt": "^6.2",
         "overtrue/pinyin": "~4.0",
         "hg/apidoc": "~3.1.5",
         "overtrue/wechat": "~4.0",

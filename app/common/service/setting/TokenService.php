@@ -11,6 +11,7 @@
 namespace app\common\service\setting;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class TokenService
 {
@@ -47,7 +48,7 @@ class TokenService
         ];
 
         $key = $config['token_key']; //密钥
-        $token = JWT::encode($payload, $key);
+        $token = JWT::encode($payload, $key, 'HS256');
 
         return $token;
     }
@@ -63,7 +64,8 @@ class TokenService
     {
         try {
             $config = self::config();
-            JWT::decode($token, $config['token_key'], ['HS256']);
+            $key = $config['token_key'];
+            JWT::decode($token, new Key($key, 'HS256'));
         } catch (\Exception $e) {
             exception('登录已失效', 401);
         }
@@ -81,10 +83,11 @@ class TokenService
         if (empty($token)) {
             return 0;
         }
-
+        
         try {
             $config = self::config();
-            $decode = JWT::decode($token, $config['token_key'], ['HS256']);
+            $key = $config['token_key'];
+            $decode = JWT::decode($token, new Key($key, 'HS256'));
             $member_id = $decode->data->member_id;
         } catch (\Exception $e) {
             $member_id = 0;

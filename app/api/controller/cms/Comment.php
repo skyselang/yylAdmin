@@ -37,7 +37,7 @@ class Comment
     {
         $setting = SettingService::info();
         if (!$setting['is_comment']) {
-            exception('留言功能维护中...');
+            exception('功能维护中...');
         }
 
         $param['call']    = Request::param('call/s', '');

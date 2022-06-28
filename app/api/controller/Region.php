@@ -26,9 +26,7 @@ class Region
      * @Apidoc\Title("地区列表")
      * @Apidoc\Param("region_id", type="int", require=false, default="0", desc="地区id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="地区列表", 
-     *     @Apidoc\Returned(ref="app\common\model\setting\RegionModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="地区列表")
      */
     public function list()
     {
@@ -43,7 +41,7 @@ class Region
 
     /**
      * @Apidoc\Title("地区树形")
-     * @Apidoc\Returned(ref="app\common\model\setting\RegionModel\infoReturn")
+     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="tree", childrenField="children", desc="树形列表")
      */
     public function tree()
     {

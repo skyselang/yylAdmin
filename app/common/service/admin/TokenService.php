@@ -12,6 +12,7 @@ namespace app\common\service\admin;
 
 use app\common\cache\admin\UserCache;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class TokenService
 {
@@ -48,7 +49,7 @@ class TokenService
         ];
 
         $key = $config['token_key']; //密钥
-        $token = JWT::encode($payload, $key);
+        $token = JWT::encode($payload, $key, 'HS256');
 
         return $token;
     }
@@ -64,7 +65,8 @@ class TokenService
     {
         try {
             $config = self::config();
-            $decode = JWT::decode($token, $config['token_key'], ['HS256']);
+            $key = $config['token_key'];
+            $decode = JWT::decode($token, new Key($key, 'HS256'));
             $admin_user_id = $decode->data->admin_user_id;
         } catch (\Exception $e) {
             exception('账号登录状态已过期', 401);
@@ -99,10 +101,11 @@ class TokenService
         if (empty($token)) {
             return 0;
         }
-
+        
         try {
             $config = self::config();
-            $decode = JWT::decode($token, $config['token_key'], ['HS256']);
+            $key = $config['token_key'];
+            $decode = JWT::decode($token, new Key($key, 'HS256'));
             $admin_user_id = $decode->data->admin_user_id;
         } catch (\Exception $e) {
             $admin_user_id = 0;

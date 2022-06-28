@@ -129,9 +129,7 @@ class Member
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\member\LogModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel\listReturn", type="array", desc="列表")
      */
     public function log()
     {
