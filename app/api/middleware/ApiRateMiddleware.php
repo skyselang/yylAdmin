@@ -41,7 +41,6 @@ class ApiRateMiddleware
 
                     if ($count) {
                         if ($count >= $api_rate_num) {
-                            ApiRateCache::del($member_id, $api_url);
                             exception('慢点，太快了！', 429);
                         } else {
                             ApiRateCache::inc($member_id, $api_url);
