@@ -24,7 +24,6 @@ class ApidocCrud
     // 生成文件及数据表后执行
     public function after($tplParams)
     {
-        trace($tplParams, 'error');
         $add_menu = [
             'menu_pid'   => 0,
             'menu_type'  => 2,
