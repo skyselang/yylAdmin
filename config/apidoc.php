@@ -101,7 +101,7 @@ return [
             'enable' => env('apidoc.generator_enable', false),
             // 执行中间件，具体请查看下方中间件介绍
             'middleware' => [
-                // \app\middleware\CreateCrudMiddleware::class
+                \app\common\middleware\ApidocCrud::class
             ],
             // 生成器窗口的表单配置
             'form' => [

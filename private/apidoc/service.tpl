@@ -53,18 +53,22 @@ class {$service.class_name}
     /**
      * {$form.controller_title}信息
      * 
-     * @param int $id {$form.controller_title}id
+     * @param int  $id   {$form.controller_title}id
+     * @param bool $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
-    public static function info($id)
+    public static function info($id, $exce = true)
     {
         $info = {$cache.class_name}Cache::get($id);
         if (empty($info)) {
             $model = new {$tables[0].model_name}Model();
             $info = $model->find($id);
             if (empty($info)) {
-                exception('{$form.controller_title}不存在：' . $id);
+                if ($exce) {
+                    exception('{$form.controller_title}不存在：' . $id);
+                }
+                return [];
             }
             $info = $info->toArray();
 
@@ -101,57 +105,59 @@ class {$service.class_name}
     /**
      * {$form.controller_title}修改 
      *     
-     * @param array $param {$form.controller_title}信息
+     * @param mixed $ids    {$form.controller_title}id
+     * @param array $update {$form.controller_title}信息
      *     
      * @return array|Exception
      */
-    public static function edit($param)
+    public static function edit($ids, $update = [])
     {
         $model = new {$tables[0].model_name}Model();
         $pk = $model->getPk();
 
-        $id = $param[$pk];
-        unset($param[$pk]);
+        unset($update[$pk], $update['ids']);
 
-        $param['update_time'] = datetime();
-
-        $res = $model->where($pk, $id)->update($param);
-        if (empty($res)) {
-            exception();
-        }
-
-        {$cache.class_name}Cache::del($id);
-
-        $param[$pk] = $id;
-
-        return $param;
-    }
-
-    /**
-     * {$form.controller_title}删除
-     * 
-     * @param array $ids {$form.controller_title}id
-     * 
-     * @return array|Exception
-     */
-    public static function dele($ids)
-    {
-        $model = new {$tables[0].model_name}Model();
-        $pk = $model->getPk();
-
-        $update['is_delete']   = 1;
-        $update['delete_time'] = datetime();
+        $update['update_time'] = datetime();
 
         $res = $model->where($pk, 'in', $ids)->update($update);
         if (empty($res)) {
             exception();
         }
 
-        foreach ($ids as $v) {
-            {$cache.class_name}Cache::del($v);
+        $update['ids'] = $ids;
+
+        {$cache.class_name}Cache::del($ids);
+
+        return $update;
+    }
+
+    /**
+     * {$form.controller_title}删除
+     * 
+     * @param array $ids  {$form.controller_title}id
+     * @param bool  $real 是否真实删除
+     * 
+     * @return array|Exception
+     */
+    public static function dele($ids, $real = false)
+    {
+        $model = new {$tables[0].model_name}Model();
+        $pk = $model->getPk();
+
+        if ($real) {
+            $res = $model->where($pk, 'in', $ids)->delete();
+        } else {
+            $update['is_delete']   = 1;
+            $update['delete_time'] = datetime();
+            $res = $model->where($pk, 'in', $ids)->update($update);
+        }
+        if (empty($res)) {
+            exception();
         }
 
         $update['ids'] = $ids;
+
+        {$cache.class_name}Cache::del($ids);
 
         return $update;
     }

@@ -14,36 +14,41 @@ use think\facade\Cache;
 
 class {$cache.class_name}
 {
+    // 缓存标签
+    protected static $tag = '{$tables[0].table_name}';
+    // 缓存前缀
+    protected static $prefix = '{$tables[0].table_name}:';
+
     /**
-     * 缓存key
+     * 缓存键名
      *
-     * @param string $id {$form.controller_title}id
+     * @param mixed $id {$form.controller_title}id
      * 
      * @return string
      */
     public static function key($id)
     {
-        return '{$controller.class_name}:' . $id;
+        return self::$prefix . $id;
     }
 
     /**
      * 缓存设置
      *
-     * @param string  $id   {$form.controller_title}id
-     * @param array   $info {$form.controller_title}信息
-     * @param integer $ttl  有效时间（秒）0永久
+     * @param mixed $id   {$form.controller_title}id
+     * @param array $info {$form.controller_title}信息
+     * @param int   $ttl  有效时间（秒）0永久
      * 
      * @return bool
      */
     public static function set($id, $info, $ttl = 86400)
     {
-        return Cache::set(self::key($id), $info, $ttl);
+        return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param string $id {$form.controller_title}id
+     * @param mixed $id {$form.controller_title}id
      * 
      * @return mixed
      */
@@ -55,12 +60,26 @@ class {$cache.class_name}
     /**
      * 缓存删除
      *
-     * @param string $id {$form.controller_title}id
+     * @param mixed $id {$form.controller_title}id
      * 
      * @return bool
      */
     public static function del($id)
     {
-        return Cache::delete(self::key($id));
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            $res = Cache::delete(self::key($v));
+        }
+        return $res;
+    }
+
+    /**
+     * 缓存清除
+     * 
+     * @return bool
+     */
+    public static function clear()
+    {
+        return Cache::tag(self::$tag)->clear();
     }
 }

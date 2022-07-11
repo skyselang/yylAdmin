@@ -45,7 +45,7 @@ class {$controller.class_name}
         $date_field   = Request::param('date_field/s', '');
         $date_value   = Request::param('date_value/a', '');
 
-        if ($search_field && $search_value) {
+        if ($search_field && $search_value !== '') {
             if (in_array($search_field, ['id'])) {
                 $search_exp = strpos($search_value, ',') ? 'in' : '=';
                 $where[] = [$search_field, $search_exp, $search_value];
@@ -119,7 +119,7 @@ class {$controller.class_name}
 
         validate({$validate.class_name}Validate::class)->scene('edit')->check($param);
 
-        $data = {$service.class_name}Service::edit($param);
+        $data = {$service.class_name}Service::edit($param['id'], $param);
 
         return success($data);
     }

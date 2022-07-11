@@ -34,8 +34,8 @@ class {$validate.class_name} extends Validate
     // 验证场景
     protected $scene = [
         'id' => ['id'],
-        'info' => [{foreach $tables[0].datas as $k=>$item}{if '{$item.info}' && ('{$item.not_null}' || '{$item.check}')}'{$item.field}', {/if}{/foreach}],
-        'add' => [{foreach $tables[0].datas as $k=>$item}{if '{$item.add}' && ('{$item.not_null}' || '{$item.check}')}'{$item.field}', {/if}{/foreach}],
-        'edit' => [{foreach $tables[0].datas as $k=>$item}{if '{$item.edit}' && ('{$item.not_null}' || '{$item.check}')}'{$item.field}', {/if}{/foreach}],
+        'info' => [{foreach $tables[0].datas as $k=>$item}{if '{$item.info}' && ('{$item.not_null}' || '{$item.check}')}'{$item.field}'{if 'count({$tables[0].datas})'<'{$k+1}'}, {/if}{/if}{/foreach}],
+        'add' => [{foreach $tables[0].datas as $k=>$item}{if '{$item.add}' && ('{$item.not_null}' || '{$item.check}')}'{$item.field}'{if 'count({$tables[0].datas})'<'{$k+1}'}, {/if}{/if}{/foreach}],
+        'edit' => [{foreach $tables[0].datas as $k=>$item}{if '{$item.edit}' && ('{$item.not_null}' || '{$item.check}')}'{$item.field}'{if 'count({$tables[0].datas})'<'{$k+1}'}, {/if}{/if}{/foreach}],
     ];
 }
