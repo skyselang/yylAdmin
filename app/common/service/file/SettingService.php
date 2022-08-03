@@ -20,10 +20,12 @@ class SettingService
 
     /**
      * 文件设置信息
+     * 
+     * @param string $field 返回字段，默认所有
      *
      * @return array
      */
-    public static function info()
+    public static function info($field = '')
     {
         $id = self::$id;
 
@@ -41,7 +43,20 @@ class SettingService
             }
             $info = $info->toArray();
 
+            $info['accept_ext'] = self::fileAccept($info);
+
             SettingCache::set($id, $info);
+        }
+
+        if ($field) {
+            $res = [];
+            $fields = explode(',', $field);
+            foreach ($fields as $v) {
+                if ($info[$v] ?? '') {
+                    $res[$v] = $info[$v];
+                }
+            }
+            return $res;
         }
 
         return $info;
@@ -210,5 +225,28 @@ class SettingService
         }
 
         return $file_url;
+    }
+
+    /**
+     * 文件上传accept
+     *
+     * @param array $setting 文件设置信息
+     *
+     * @return string
+     */
+    public static function fileAccept($setting = [])
+    {
+        $accept = '';
+        $file_type = ['image', 'video', 'audio', 'word', 'other'];
+        foreach ($file_type as $vt) {
+            if ($setting[$vt . '_ext'] ?? '') {
+                $file_ext = explode(',', $setting[$vt . '_ext']);
+                foreach ($file_ext as $ve) {
+                    $accept .= '.' . $ve . ',';
+                }
+            }
+        }
+
+        return rtrim($accept, ',');
     }
 }

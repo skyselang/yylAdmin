@@ -12,9 +12,7 @@ namespace app\admin\controller\file;
 
 use think\facade\Request;
 use app\common\validate\file\FileValidate;
-use app\common\service\file\GroupService;
 use app\common\service\file\FileService;
-use app\common\service\file\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -32,13 +30,18 @@ class File
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\listParam")
      * @Apidoc\Param("group_id", require=false, default="")
-     * @Apidoc\Param("file_type", require=false, default="")
-     * @Apidoc\Param("is_disable", require=false, default="")
-     * @Apidoc\Param("is_front", require=false, default="0")
      * @Apidoc\Param("storage", require=false, default="")
+     * @Apidoc\Param("file_type", require=false, default="")
+     * @Apidoc\Param("is_front", require=false, default="0")
+     * @Apidoc\Param("is_disable", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表")
+     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表",
+     *     @Apidoc\Param(ref="app\common\model\file\FileModel\file_url")
+     * )
      * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="分组列表")
+     * @Apidoc\Returned("storage", type="object", desc="存储方式")
+     * @Apidoc\Returned("filetype", type="object", desc="文件类型")
+     * @Apidoc\Returned("setting", type="object", desc="文件设置")
      */
     public function list()
     {
@@ -91,9 +94,6 @@ class File
         }
 
         $data = FileService::list($where, $page, $limit, $order);
-        $data['storage'] = SettingService::storage();
-        $data['filetype'] = SettingService::fileType();
-        $data['group'] = GroupService::list([['is_disable', '=', 0], ['is_delete', '=', 0]], 1, 9999, [], 'group_id,group_name')['list'];
 
         return success($data);
     }
@@ -102,6 +102,7 @@ class File
      * @Apidoc\Title("文件信息")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\id")
      * @Apidoc\Returned(ref="app\common\model\file\FileModel\infoReturn")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\file_url")
      */
     public function info()
     {
@@ -256,13 +257,18 @@ class File
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\listParam")
      * @Apidoc\Param("group_id", require=false, default="")
-     * @Apidoc\Param("file_type", require=false, default="")
-     * @Apidoc\Param("is_disable", require=false, default="")
-     * @Apidoc\Param("is_front", require=false, default="0")
      * @Apidoc\Param("storage", require=false, default="")
+     * @Apidoc\Param("file_type", require=false, default="")
+     * @Apidoc\Param("is_front", require=false, default="0")
+     * @Apidoc\Param("is_disable", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表")
+     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\file_url")
+     * )
      * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="分组列表")
+     * @Apidoc\Returned("storage", type="object", desc="存储方式")
+     * @Apidoc\Returned("filetype", type="object", desc="文件类型")
+     * @Apidoc\Returned("setting", type="object", desc="文件设置")
      */
     public function recover()
     {
@@ -315,9 +321,6 @@ class File
         }
 
         $data = FileService::list($where, $page, $limit, $order);
-        $data['storage'] = SettingService::storage();
-        $data['filetype'] = SettingService::fileType();
-        $data['group'] = GroupService::list([['is_disable', '=', 0], ['is_delete', '=', 0]], 1, 9999, [], 'group_id,group_name')['list'];
 
         return success($data);
     }

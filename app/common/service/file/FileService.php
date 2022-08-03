@@ -50,7 +50,12 @@ class FileService
             $list[$k]['file_size'] = SettingService::fileSize($v['file_size']);
         }
 
-        return compact('count', 'pages', 'page', 'limit', 'list', 'ids');
+        $storage  = SettingService::storage();
+        $filetype = SettingService::fileType();
+        $setting  = SettingService::info('limit_max,accept_ext');
+        $group    = GroupService::list([['is_disable', '=', 0], ['is_delete', '=', 0]], 1, 9999, [], 'group_id,group_name')['list'];
+
+        return compact('count', 'pages', 'page', 'limit', 'list', 'ids', 'storage', 'filetype', 'setting', 'group');
     }
 
     /**

@@ -28,14 +28,14 @@ class FileModel extends Model
     }
 
     /**
-     * @Apidoc\Field("group_id,file_type,is_disable,is_front,storage")
+     * @Apidoc\Field("group_id,storage,file_type,is_front,is_disable")
      */
     public function listParam()
     {
     }
 
     /**
-     * @Apidoc\Field("file_id,group_id,storage,file_type,file_name,sort,is_disable,create_time,update_time")
+     * @Apidoc\Field("file_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable")
      */
     public function listReturn()
     {

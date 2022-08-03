@@ -16,99 +16,54 @@ class SettingValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'setting_id'                  => ['require'],
-        'storage'                     => ['require'],
-        'qiniu_access_key'            => ['require'],
-        'qiniu_secret_key'            => ['require'],
-        'qiniu_bucket'                => ['require'],
-        'qiniu_domain'                => ['require'],
-        'aliyun_access_key_id'        => ['require'],
-        'aliyun_access_key_secret'    => ['require'],
-        'aliyun_bucket'               => ['require'],
-        'aliyun_endpoint'             => ['require'],
-        'aliyun_bucket_domain'        => ['require'],
-        'tencent_secret_id'           => ['require'],
-        'tencent_secret_key'          => ['require'],
-        'tencent_bucket'              => ['require'],
-        'tencent_region'              => ['require'],
-        'tencent_domain'              => ['require'],
-        'baidu_access_key'            => ['require'],
-        'baidu_secret_key'            => ['require'],
-        'baidu_bucket'                => ['require'],
-        'baidu_endpoint'              => ['require'],
-        'baidu_domain'                => ['require'],
-        'upyun_service_name.require'  => ['require'],
-        'upyun_operator_name.require' => ['require'],
-        'upyun_operator_pwd.require'  => ['require'],
-        'upyun_domain.require'        => ['require'],
-        's3_access_key_id'            => ['require'],
-        's3_secret_access_key'        => ['require'],
-        's3_bucket'                   => ['require'],
-        's3_region'                   => ['require'],
-        's3_domain'                   => ['require'],
-        'image_size'                  => ['checkFileSize'],
-        'video_size'                  => ['checkFileSize'],
-        'audio_size'                  => ['checkFileSize'],
-        'word_size'                   => ['checkFileSize'],
-        'other_size'                  => ['checkFileSize'],
+        'storage|存储方式'                              => ['require'],
+        'qiniu_access_key|AccessKey'                => ['require'],
+        'qiniu_secret_key|SecretKey'                => ['require'],
+        'qiniu_bucket|空间名称'                         => ['require'],
+        'qiniu_domain|外链域名'                         => ['require'],
+        'aliyun_access_key_id|AccessKey ID'         => ['require'],
+        'aliyun_access_key_secret|AccessKey Secret' => ['require'],
+        'aliyun_bucket|Bucket名称'                    => ['require'],
+        'aliyun_bucket_domain|Bucket域名'             => ['require'],
+        'aliyun_endpoint|Endpoint（地域节点）'            => ['require'],
+        'tencent_secret_id|SecretId'                => ['require'],
+        'tencent_secret_key|SecretKey'              => ['require'],
+        'tencent_bucket|存储桶名称'                      => ['require'],
+        'tencent_region|所属地域'                       => ['require'],
+        'tencent_domain|访问域名'                       => ['require'],
+        'baidu_access_key|Access Key'               => ['require'],
+        'baidu_secret_key|Secret Key'               => ['require'],
+        'baidu_bucket|Bucket名称'                     => ['require'],
+        'baidu_domain|官方域名'                         => ['require'],
+        'baidu_endpoint|所属地域'                       => ['require'],
+        'upyun_service_name|服务名称'                   => ['require'],
+        'upyun_operator_name|操作员'                   => ['require'],
+        'upyun_operator_pwd|操作员密码'                  => ['require'],
+        'upyun_domain|加速域名'                         => ['require'],
+        's3_access_key_id|Access Key ID'            => ['require'],
+        's3_secret_access_key|Secret Access KEY'    => ['require'],
+        's3_region|区域终端节点'                          => ['require'],
+        's3_bucket|存储桶名称'                           => ['require'],
+        's3_domain|访问域名'                            => ['require'],
+        'image_size|图片大小'                           => ['require', '>=:0', 'float'],
+        'video_size|视频大小'                           => ['require', '>=:0', 'float'],
+        'audio_size|音频大小'                           => ['require', '>=:0', 'float'],
+        'word_size|文档大小'                            => ['require', '>=:0', 'float'],
+        'other_size|其它大小'                           => ['require', '>=:0', 'float'],
+        'limit_max|最大上传个数'                          => ['require', '>:0', 'number'],
     ];
 
     // 错误信息
-    protected $message = [
-        'qiniu_access_key.require'         => '请输入 AccessKey',
-        'qiniu_secret_key.require'         => '请输入 SecretKey',
-        'qiniu_bucket.require'             => '请输入空间名称',
-        'qiniu_domain.require'             => '请输入外链域名',
-        'aliyun_access_key_id.require'     => '请输入 AccessKey ID',
-        'aliyun_access_key_secret.require' => '请输入 AccessKey Secret',
-        'aliyun_endpoint.require'          => '请输入 Endpoint（地域节点）',
-        'aliyun_bucket.require'            => '请输入 Bucket 名称',
-        'tencent_secret_id.require'        => '请输入 SecretId',
-        'tencent_secret_key.require'       => '请输入 SecretKey',
-        'tencent_bucket.require'           => '请输入存储桶名称',
-        'tencent_region.require'           => '请输入所属地域',
-        'tencent_domain.require'           => '请输入访问域名',
-        'baidu_access_key.require'         => '请输入 AccessKey',
-        'baidu_secret_key.require'         => '请输入 SecretKey',
-        'baidu_bucket.require'             => '请输入 Bucket 名称',
-        'baidu_endpoint.require'           => '请输入所属地域',
-        'baidu_domain.require'             => '请输入官方域名',
-        'upyun_service_name.require'       => '请输入服务名称',
-        'upyun_operator_name.require'      => '请输入操作员',
-        'upyun_operator_pwd.require'       => '请输入操作员密码',
-        'upyun_domain.require'             => '请输入加速域名',
-        's3_access_key_id.require'         => '请输入 Access Key ID',
-        's3_secret_access_key.require'     => '请输入 Secret Access Key',
-        's3_bucket.require'                => '请输入存储桶名称',
-        's3_region.require'                => '请输入区域终端节点',
-        's3_domain.require'                => '请输入访问域名',
-    ];
+    protected $message = [];
 
     // 验证场景
     protected $scene = [
-        'local'   => ['storage', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
-        'qiniu'   => ['storage', 'qiniu_access_key', 'qiniu_secret_key', 'qiniu_bucket', 'qiniu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
-        'aliyun'  => ['storage', 'aliyun_access_key_id', 'aliyun_access_key_secret', 'aliyun_bucket', 'aliyun_endpoint',  'aliyun_bucket_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
-        'tencent' => ['storage', 'tencent_secret_id', 'tencent_secret_key', 'tencent_bucket', 'tencent_region', 'tencent_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
-        'baidu'   => ['storage', 'baidu_access_key', 'baidu_secret_key', 'baidu_bucket', 'baidu_endpoint', 'baidu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
-        'upyun'   => ['storage', 'upyun_service_name', 'upyun_operator_name', 'upyun_operator_pwd', 'upyun_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
-        's3' => ['storage', 's3_access_key_id', 's3_secret_access_key', 's3_bucket', 's3_region', 's3_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size'],
+        'local'   => ['storage', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        'qiniu'   => ['storage', 'qiniu_access_key', 'qiniu_secret_key', 'qiniu_bucket', 'qiniu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        'aliyun'  => ['storage', 'aliyun_access_key_id', 'aliyun_access_key_secret', 'aliyun_bucket', 'aliyun_endpoint',  'aliyun_bucket_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        'tencent' => ['storage', 'tencent_secret_id', 'tencent_secret_key', 'tencent_bucket', 'tencent_region', 'tencent_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        'baidu'   => ['storage', 'baidu_access_key', 'baidu_secret_key', 'baidu_bucket', 'baidu_endpoint', 'baidu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        'upyun'   => ['storage', 'upyun_service_name', 'upyun_operator_name', 'upyun_operator_pwd', 'upyun_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        's3'      => ['storage', 's3_access_key_id', 's3_secret_access_key', 's3_bucket', 's3_region', 's3_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
     ];
-
-    // 自定义验证规则：文件大小
-    protected function checkFileSize($value, $rule, $data = [])
-    {
-        $type = ['image' => '图片', 'video' => '视频', 'audio' => '音频', 'word' => '文档', 'other' => '其它'];
-        $message = '大小：只能为数字且不能为负数';
-        foreach ($type as $k => $v) {
-            if (!is_numeric($data[$k . '_size'])) {
-                return $v . $message;
-            }
-            if ($data[$k . '_size'] < 0) {
-                return $v . $message;
-            }
-        }
-
-        return true;
-    }
 }

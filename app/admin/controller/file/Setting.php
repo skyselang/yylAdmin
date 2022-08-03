@@ -24,7 +24,8 @@ class Setting
 {
     /**
      * @Apidoc\Title("文件设置信息")
-     * @Apidoc\Returned(ref="app\common\model\file\SettingModel\infoReturn")
+     * @Apidoc\Returned("setting", type="object", desc="设置信息", ref="app\common\model\file\SettingModel\infoReturn")
+     * @Apidoc\Returned("storage", type="object", desc="存储方式")
      */
     public function info()
     {
@@ -72,15 +73,16 @@ class Setting
         $param['s3_region']                = Request::param('s3_region/s', '');
         $param['s3_domain']                = Request::param('s3_domain/s', '');
         $param['image_ext']                = Request::param('image_ext/s', '');
-        $param['image_size']               = Request::param('image_size/s', 0);
+        $param['image_size']               = Request::param('image_size/f', 0);
         $param['video_ext']                = Request::param('video_ext/s', '');
-        $param['video_size']               = Request::param('video_size/s', 0);
+        $param['video_size']               = Request::param('video_size/f', 0);
         $param['audio_ext']                = Request::param('audio_ext/s', '');
-        $param['audio_size']               = Request::param('audio_size/s', 0);
+        $param['audio_size']               = Request::param('audio_size/f', 0);
         $param['word_ext']                 = Request::param('word_ext/s', '');
-        $param['word_size']                = Request::param('word_size/s', 0);
+        $param['word_size']                = Request::param('word_size/f', 0);
         $param['other_ext']                = Request::param('other_ext/s', '');
-        $param['other_size']               = Request::param('other_size/s', 0);
+        $param['other_size']               = Request::param('other_size/f', 0);
+        $param['limit_max']                = Request::param('limit_max/d', 9);
 
         validate(SettingValidate::class)->scene($param['storage'])->check($param);
 

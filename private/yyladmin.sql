@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 26/06/2022 15:53:15
+ Date: 03/08/2022 17:22:09
 */
 
 SET NAMES utf8mb4;
@@ -344,7 +344,7 @@ CREATE TABLE `yyl_admin_role`  (
 INSERT INTO `yyl_admin_role` VALUES (1, ',,', ',,', '管理员', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (2, ',1,3,4,5,12,18,29,37,38,40,41,43,45,49,51,52,53,54,58,63,71,73,75,86,87,88,111,113,114,115,116,117,122,123,125,126,132,134,140,142,144,150,152,156,157,158,170,172,173,186,187,188,190,191,193,217,220,223,226,230,283,285,286,291,292,293,294,295,298,300,381,383,384,388,391,396,397,398,401,402,410,412,417,420,421,424,426,427,430,435,437,442,494,498,501,504,507,508,514,519,520,521,', ',,', '演示', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (3, ',1,12,45,49,51,52,75,88,111,172,396,420,424,430,442,', ',,', '前端', '', 250, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_role` VALUES (5, ',1,12,45,49,51,52,75,88,111,172,396,420,424,430,442,', ',,', '测试', '', 250, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_role` VALUES (5, ',1,12,45,49,51,52,75,111,172,396,420,424,430,442,', ',,', '测试', '', 250, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_role` VALUES (6, ',1,12,45,49,51,52,75,88,111,172,396,420,424,430,442,', ',,', '运营', '', 250, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
@@ -687,10 +687,10 @@ CREATE TABLE `yyl_file`  (
   `file_hash` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件散列（sha1）',
   `file_name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件名称',
   `file_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件路径',
-  `file_size` int(11) NULL DEFAULT 0 COMMENT '文件大小，单位字节(b)',
+  `file_size` int(11) NULL DEFAULT 0 COMMENT '文件大小，单位字节（b）',
   `file_ext` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件后缀',
   `sort` int(11) NULL DEFAULT 250 COMMENT '排序',
-  `is_front` tinyint(1) NULL DEFAULT 0 COMMENT '是否前台上传',
+  `is_front` tinyint(1) NULL DEFAULT 0 COMMENT '是否前台上传，1是0否',
   `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
@@ -774,6 +774,7 @@ CREATE TABLE `yyl_file_setting`  (
   `word_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '5' COMMENT '允许上传的文档大小，单位MB',
   `other_ext` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'zip,rar' COMMENT '允许上传的其它文件后缀，多个逗号\",\"隔开',
   `other_size` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '30' COMMENT '允许上传的其它文件大小，单位MB',
+  `limit_max` int(10) NULL DEFAULT 9 COMMENT '允许上传最大文件个数',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
