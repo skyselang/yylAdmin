@@ -36,7 +36,8 @@
         "phpmailer/phpmailer": "^6.5",
         "overtrue/easy-sms": "^2.1",
         "upyun/sdk": "^3.5",
-        "aws/aws-sdk-php": "^3.227"
+        "aws/aws-sdk-php": "^3.227",
+        "fastknife/ajcaptcha": "^1.1"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"

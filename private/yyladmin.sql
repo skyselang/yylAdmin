@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 03/08/2022 17:22:09
+ Date: 05/08/2022 16:11:48
 */
 
 SET NAMES utf8mb4;
@@ -362,7 +362,8 @@ CREATE TABLE `yyl_admin_setting`  (
   `token_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
   `token_exp` int(5) NULL DEFAULT 12 COMMENT 'Token有效时间（小时）',
   `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码开关，1开启0关闭',
-  `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型，1数字，2字母，3数字字母，4算术，5中文',
+  `captcha_mode` tinyint(1) NULL DEFAULT 1 COMMENT '验证码方式，1字符验证码，2行为验证码',
+  `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型；字符验证码：1数字，2字母，3数字字母，4算术，5中文；行为验证码：1滑动blockPuzzle，2文字clickWord',
   `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关，1开启0关闭',
   `log_save_time` int(11) NULL DEFAULT 90 COMMENT '日志保留时间（天），0永久保留',
   `api_rate_num` int(5) NULL DEFAULT 3 COMMENT '接口请求速率（次数）',

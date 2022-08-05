@@ -86,6 +86,7 @@ class Setting
         $setting = SettingService::info();
 
         $data['captcha_switch'] = $setting['captcha_switch'];
+        $data['captcha_mode']   = $setting['captcha_mode'];
         $data['captcha_type']   = $setting['captcha_type'];
 
         return success($data);
@@ -99,6 +100,7 @@ class Setting
     public function captchaEdit()
     {
         $param['captcha_switch'] = Request::param('captcha_switch/d', 0);
+        $param['captcha_mode']   = Request::param('captcha_mode/d', 1);
         $param['captcha_type']   = Request::param('captcha_type/d', 1);
 
         validate(SettingValidate::class)->scene('captcha_edit')->check($param);
