@@ -36,10 +36,8 @@ class Login
 
         $data = [];
         $field = ['system_name', 'page_title', 'logo_url', 'favicon_url', 'login_bg_url', 'captcha_switch', 'captcha_mode', 'captcha_type'];
-        foreach ($field as $k) {
-            if ($setting[$k] ?? '') {
-                $data[$k] = $setting[$k];
-            }
+        foreach ($field as $v) {
+            $data[$v] = $setting[$v] ?? '';
         }
 
         if ($data['captcha_switch']) {
@@ -64,10 +62,8 @@ class Login
         $data = [];
         if (Request::isGet()) {
             $field = ['captcha_switch', 'captcha_mode', 'captcha_type'];
-            foreach ($field as $k) {
-                if ($setting[$k] ?? '') {
-                    $data[$k] = $setting[$k];
-                }
+            foreach ($field as $v) {
+                $data[$v] = $setting[$v] ?? '';
             }
 
             if ($data['captcha_switch']) {
