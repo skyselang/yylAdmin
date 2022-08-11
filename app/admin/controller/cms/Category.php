@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容分类控制器
 namespace app\admin\controller\cms;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\cms\CategoryValidate;
 use app\common\service\cms\CategoryService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,35 +19,18 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("320")
  */
-class Category
+class Category extends BaseController
 {
     /**
      * @Apidoc\Title("内容分类列表")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="列表")
-     * @Apidoc\Returned("tree", ref="app\common\model\cms\CategoryModel\listReturn", type="tree", childrenField="children", desc="树形")
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="分类列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\cms\CategoryModel\treeReturn", type="tree", childrenField="children", desc="分类树形")
      */
     public function list()
     {
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['category_id', 'category_pid', 'is_hide', 'sort'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where(['is_delete', '=', 0], 'category_id,category_pid,is_hide,sort');
 
         if (count($where) > 1) {
             $data['list'] = CategoryService::list('list', $where);
@@ -68,7 +50,7 @@ class Category
      */
     public function info()
     {
-        $param['category_id'] = Request::param('category_id/d', '');
+        $param['category_id'] = $this->request->param('category_id/d', '');
 
         validate(CategoryValidate::class)->scene('info')->check($param);
 
@@ -86,14 +68,14 @@ class Category
      */
     public function add()
     {
-        $param['category_pid']  = Request::param('category_pid/d', 0);
-        $param['category_name'] = Request::param('category_name/s', '');
-        $param['title']         = Request::param('title/s', '');
-        $param['keywords']      = Request::param('keywords/s', '');
-        $param['description']   = Request::param('description/s', '');
-        $param['img_id']        = Request::param('img_id/d', 0);
-        $param['imgs']          = Request::param('imgs/a', []);
-        $param['sort']          = Request::param('sort/d', 250);
+        $param['category_pid']  = $this->request->param('category_pid/d', 0);
+        $param['category_name'] = $this->request->param('category_name/s', '');
+        $param['title']         = $this->request->param('title/s', '');
+        $param['keywords']      = $this->request->param('keywords/s', '');
+        $param['description']   = $this->request->param('description/s', '');
+        $param['img_id']        = $this->request->param('img_id/d', 0);
+        $param['imgs']          = $this->request->param('imgs/a', []);
+        $param['sort']          = $this->request->param('sort/d', 250);
 
         validate(CategoryValidate::class)->scene('add')->check($param);
 
@@ -111,15 +93,15 @@ class Category
      */
     public function edit()
     {
-        $param['category_id']   = Request::param('category_id/d', '');
-        $param['category_pid']  = Request::param('category_pid/d', 0);
-        $param['category_name'] = Request::param('category_name/s', '');
-        $param['title']         = Request::param('title/s', '');
-        $param['keywords']      = Request::param('keywords/s', '');
-        $param['description']   = Request::param('description/s', '');
-        $param['img_id']        = Request::param('img_id/d', 0);
-        $param['imgs']          = Request::param('imgs/a', []);
-        $param['sort']          = Request::param('sort/d', 250);
+        $param['category_id']   = $this->request->param('category_id/d', '');
+        $param['category_pid']  = $this->request->param('category_pid/d', 0);
+        $param['category_name'] = $this->request->param('category_name/s', '');
+        $param['title']         = $this->request->param('title/s', '');
+        $param['keywords']      = $this->request->param('keywords/s', '');
+        $param['description']   = $this->request->param('description/s', '');
+        $param['img_id']        = $this->request->param('img_id/d', 0);
+        $param['imgs']          = $this->request->param('imgs/a', []);
+        $param['sort']          = $this->request->param('sort/d', 250);
 
         validate(CategoryValidate::class)->scene('edit')->check($param);
 
@@ -136,7 +118,7 @@ class Category
      */
     public function dele()
     {
-        $param['ids']     = Request::param('ids/a', '');
+        $param['ids']     = $this->request->param('ids/a', '');
         $param['recycle'] = 0;
 
         validate(CategoryValidate::class)->scene('dele')->check($param);
@@ -154,8 +136,8 @@ class Category
      */
     public function pid()
     {
-        $param['ids']          = Request::param('ids/a', '');
-        $param['category_pid'] = Request::param('category_pid/d', 0);
+        $param['ids']          = $this->request->param('ids/a', '');
+        $param['category_pid'] = $this->request->param('category_pid/d', 0);
 
         validate(CategoryValidate::class)->scene('pid')->check($param);
 
@@ -172,8 +154,8 @@ class Category
      */
     public function ishide()
     {
-        $param['ids']     = Request::param('ids/a', '');
-        $param['is_hide'] = Request::param('is_hide/d', 0);
+        $param['ids']     = $this->request->param('ids/a', '');
+        $param['is_hide'] = $this->request->param('is_hide/d', 0);
 
         validate(CategoryValidate::class)->scene('ishide')->check($param);
 
@@ -189,33 +171,16 @@ class Category
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="列表")
-     * @Apidoc\Returned("tree", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="树形")
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="分类列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\cms\CategoryModel\treeReturn", type="tree", childrenField="children", desc="分类树形")
      */
     public function recover()
     {
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['category_id', 'category_pid', 'is_hide', 'sort'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 1];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where(['is_delete', '=', 1], 'category_id,category_pid,is_hide,sort');
 
         $order = ['delete_time' => 'desc', 'sort' => 'desc'];
 
-        $data['list'] = CategoryService::list('list', $where, $order);
+        $data['list'] = CategoryService::list('list', $where, $this->order($order));
         $data['tree'] = CategoryService::list('tree', [['is_delete', '=', 1]], [], 'category_id,category_pid,category_name');
 
         return success($data);
@@ -228,7 +193,7 @@ class Category
      */
     public function recoverReco()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->request->param('ids/a', '');
 
         validate(CategoryValidate::class)->scene('reco')->check($param);
 
@@ -244,7 +209,7 @@ class Category
      */
     public function recoverDele()
     {
-        $param['ids']     = Request::param('ids/a', '');
+        $param['ids']     = $this->request->param('ids/a', '');
         $param['recycle'] = 1;
 
         validate(CategoryValidate::class)->scene('dele')->check($param);

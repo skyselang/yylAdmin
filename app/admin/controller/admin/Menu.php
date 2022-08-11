@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 菜单管理控制器
 namespace app\admin\controller\admin;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\admin\MenuValidate;
 use app\common\validate\admin\RoleValidate;
 use app\common\validate\admin\UserValidate;
@@ -23,20 +22,20 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("610")
  */
-class Menu
+class Menu extends BaseController
 {
     /**
      * @Apidoc\Title("菜单列表")
      * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Returned("list", ref="app\common\model\admin\MenuModel\listReturn", type="array", desc="列表")
-     * @Apidoc\Returned("tree", ref="app\common\model\admin\MenuModel\listReturn", type="tree", childrenField="children", desc="树形")
+     * @Apidoc\Returned("list", ref="app\common\model\admin\MenuModel\listReturn", type="array", desc="菜单列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\admin\MenuModel\treeReturn", type="tree", childrenField="children", desc="菜单树形")
      */
     public function list()
     {
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $search_field = $this->param('search_field/s', '');
+        $search_value = $this->param('search_value/s', '');
+        $date_field   = $this->param('date_field/s', '');
+        $date_value   = $this->param('date_value/a', '');
 
         $where = $order = [];
         if ($search_field && $search_value !== '') {
@@ -85,7 +84,7 @@ class Menu
      */
     public function info()
     {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
+        $param['admin_menu_id'] = $this->param('admin_menu_id/d', '');
 
         validate(MenuValidate::class)->scene('info')->check($param);
 
@@ -104,21 +103,21 @@ class Menu
      */
     public function add()
     {
-        $param['menu_pid']     = Request::param('menu_pid/d', 0);
-        $param['menu_type']    = Request::param('menu_type/d', 1);
-        $param['meta_icon']    = Request::param('meta_icon/s', '');
-        $param['menu_name']    = Request::param('menu_name/s', '');
-        $param['menu_url']     = Request::param('menu_url/s', '');
-        $param['path']         = Request::param('path/s', '');
-        $param['component']    = Request::param('component/s', '');
-        $param['name']         = Request::param('name/s', '');
-        $param['meta_query']   = Request::param('meta_query/s', '');
-        $param['hidden']       = Request::param('hidden/d', 0);
-        $param['menu_sort']    = Request::param('menu_sort/d', 250);
-        $param['add_info']     = Request::param('add_info/b', false);
-        $param['add_add']      = Request::param('add_add/b', false);
-        $param['add_edit']     = Request::param('add_edit/b', false);
-        $param['add_dele']     = Request::param('add_dele/b', false);
+        $param['menu_pid']   = $this->param('menu_pid/d', 0);
+        $param['menu_type']  = $this->param('menu_type/d', 1);
+        $param['meta_icon']  = $this->param('meta_icon/s', '');
+        $param['menu_name']  = $this->param('menu_name/s', '');
+        $param['menu_url']   = $this->param('menu_url/s', '');
+        $param['path']       = $this->param('path/s', '');
+        $param['component']  = $this->param('component/s', '');
+        $param['name']       = $this->param('name/s', '');
+        $param['meta_query'] = $this->param('meta_query/s', '');
+        $param['hidden']     = $this->param('hidden/d', 0);
+        $param['menu_sort']  = $this->param('menu_sort/d', 250);
+        $param['add_info']   = $this->param('add_info/b', false);
+        $param['add_add']    = $this->param('add_add/b', false);
+        $param['add_edit']   = $this->param('add_edit/b', false);
+        $param['add_dele']   = $this->param('add_dele/b', false);
 
         validate(MenuValidate::class)->scene('add')->check($param);
 
@@ -134,26 +133,26 @@ class Menu
      */
     public function edit()
     {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['menu_pid']      = Request::param('menu_pid/d', 0);
-        $param['menu_type']     = Request::param('menu_type/d', 1);
-        $param['meta_icon']     = Request::param('meta_icon/s', '');
-        $param['menu_name']     = Request::param('menu_name/s', '');
-        $param['menu_url']      = Request::param('menu_url/s', '');
-        $param['path']          = Request::param('path/s', '');
-        $param['component']     = Request::param('component/s', '');
-        $param['name']          = Request::param('name/s', '');
-        $param['meta_query']    = Request::param('meta_query/s', '');
-        $param['hidden']        = Request::param('hidden/d', 0);
-        $param['menu_sort']     = Request::param('menu_sort/d', 250);
-        $param['add_info']      = Request::param('add_info/b', false);
-        $param['add_add']       = Request::param('add_add/b', false);
-        $param['add_edit']      = Request::param('add_edit/b', false);
-        $param['add_dele']      = Request::param('add_dele/b', false);
-        $param['edit_info']     = Request::param('edit_info/b', false);
-        $param['edit_add']      = Request::param('edit_add/b', false);
-        $param['edit_edit']     = Request::param('edit_edit/b', false);
-        $param['edit_dele']     = Request::param('edit_dele/b', false);
+        $param['admin_menu_id'] = $this->param('admin_menu_id/d', '');
+        $param['menu_pid']      = $this->param('menu_pid/d', 0);
+        $param['menu_type']     = $this->param('menu_type/d', 1);
+        $param['meta_icon']     = $this->param('meta_icon/s', '');
+        $param['menu_name']     = $this->param('menu_name/s', '');
+        $param['menu_url']      = $this->param('menu_url/s', '');
+        $param['path']          = $this->param('path/s', '');
+        $param['component']     = $this->param('component/s', '');
+        $param['name']          = $this->param('name/s', '');
+        $param['meta_query']    = $this->param('meta_query/s', '');
+        $param['hidden']        = $this->param('hidden/d', 0);
+        $param['menu_sort']     = $this->param('menu_sort/d', 250);
+        $param['add_info']      = $this->param('add_info/b', false);
+        $param['add_add']       = $this->param('add_add/b', false);
+        $param['add_edit']      = $this->param('add_edit/b', false);
+        $param['add_dele']      = $this->param('add_dele/b', false);
+        $param['edit_info']     = $this->param('edit_info/b', false);
+        $param['edit_add']      = $this->param('edit_add/b', false);
+        $param['edit_edit']     = $this->param('edit_edit/b', false);
+        $param['edit_dele']     = $this->param('edit_dele/b', false);
 
         validate(MenuValidate::class)->scene('edit')->check($param);
 
@@ -169,7 +168,7 @@ class Menu
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(MenuValidate::class)->scene('dele')->check($param);
 
@@ -186,8 +185,8 @@ class Menu
      */
     public function pid()
     {
-        $param['ids']      = Request::param('ids/a', '');
-        $param['menu_pid'] = Request::param('menu_pid/d', 0);
+        $param['ids']      = $this->param('ids/a', '');
+        $param['menu_pid'] = $this->param('menu_pid/d', 0);
 
         validate(MenuValidate::class)->scene('pid')->check($param);
 
@@ -204,8 +203,8 @@ class Menu
      */
     public function unlogin()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_unlogin'] = Request::param('is_unlogin/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['is_unlogin'] = $this->param('is_unlogin/d', 0);
 
         validate(MenuValidate::class)->scene('unlogin')->check($param);
 
@@ -222,8 +221,8 @@ class Menu
      */
     public function unauth()
     {
-        $param['ids']       = Request::param('ids/a', '');
-        $param['is_unauth'] = Request::param('is_unauth/d', 0);
+        $param['ids']       = $this->param('ids/a', '');
+        $param['is_unauth'] = $this->param('is_unauth/d', 0);
 
         validate(MenuValidate::class)->scene('unauth')->check($param);
 
@@ -240,8 +239,8 @@ class Menu
      */
     public function hidden()
     {
-        $param['ids']    = Request::param('ids/a', '');
-        $param['hidden'] = Request::param('hidden/d', 0);
+        $param['ids']    = $this->param('ids/a', '');
+        $param['hidden'] = $this->param('hidden/d', 0);
 
         validate(MenuValidate::class)->scene('hidden')->check($param);
 
@@ -258,8 +257,8 @@ class Menu
      */
     public function disable()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_disable'] = Request::param('is_disable/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['is_disable'] = $this->param('is_disable/d', 0);
 
         validate(MenuValidate::class)->scene('disable')->check($param);
 
@@ -274,28 +273,18 @@ class Menu
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="角色列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\RoleModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\RoleModel\listReturn", type="array", desc="角色列表")
      */
     public function role()
     {
-        $page          = Request::param('page/d', 1);
-        $limit         = Request::param('limit/d', 10);
-        $sort_field    = Request::param('sort_field/s', '');
-        $sort_value    = Request::param('sort_value/s', '');
-        $admin_menu_id = Request::param('admin_menu_id/d', '');
+        $admin_menu_id = $this->param('admin_menu_id/d', '');
 
         validate(MenuValidate::class)->scene('role')->check(['admin_menu_id' => $admin_menu_id]);
 
-        $where[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
+        $where = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
+        $where = $this->where($where);
 
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = MenuService::role($where, $page, $limit, $order);
+        $data = MenuService::role($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -307,8 +296,8 @@ class Menu
      */
     public function roleRemove()
     {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
+        $param['admin_menu_id'] = $this->param('admin_menu_id/d', '');
+        $param['admin_role_id'] = $this->param('admin_role_id/d', '');
 
         validate(MenuValidate::class)->scene('id')->check($param);
         validate(RoleValidate::class)->scene('id')->check($param);
@@ -325,43 +314,29 @@ class Menu
      * @Apidoc\Param(ref="app\common\model\admin\MenuModel\id")
      * @Apidoc\Param(ref="app\common\model\admin\RoleModel\id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="用户列表",
-     *     @Apidoc\Returned(ref="app\common\model\admin\UserModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\UserModel\listReturn", type="array", desc="用户列表")
      */
     public function user()
     {
-        $page          = Request::param('page/d', 1);
-        $limit         = Request::param('limit/d', 10);
-        $sort_field    = Request::param('sort_field/s', '');
-        $sort_value    = Request::param('sort_value/s', '');
-        $admin_role_id = Request::param('admin_role_id/d', '');
-        $admin_menu_id = Request::param('admin_menu_id/d', '');
+        $admin_role_id = $this->param('admin_role_id/d', '');
+        $admin_menu_id = $this->param('admin_menu_id/d', '');
 
         if ($admin_menu_id) {
             validate(MenuValidate::class)->scene('user')->check(['admin_menu_id' => $admin_menu_id]);
 
-            $where[] = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
+            $where = ['admin_menu_ids', 'like', '%' . str_join($admin_menu_id) . '%'];
+            $where = $this->where($where);
 
-            $order = [];
-            if ($sort_field && $sort_value) {
-                $order = [$sort_field => $sort_value];
-            }
-
-            $data = UserService::list($where, $page, $limit, $order);
+            $data = UserService::list($where, $this->page(), $this->limit(), $this->order());
 
             return success($data);
         } else {
             validate(RoleValidate::class)->scene('id')->check(['admin_role_id' => $admin_role_id]);
 
-            $where[] = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
+            $where = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
+            $where = $this->where($where);
 
-            $order = [];
-            if ($sort_field && $sort_value) {
-                $order = [$sort_field => $sort_value];
-            }
-
-            $data = MenuService::user($where, $page, $limit, $order);
+            $data = MenuService::user($where, $this->page(), $this->limit(), $this->order());
 
             return success($data);
         }
@@ -374,8 +349,8 @@ class Menu
      */
     public function userRemove()
     {
-        $param['admin_menu_id'] = Request::param('admin_menu_id/d', '');
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_menu_id'] = $this->param('admin_menu_id/d', '');
+        $param['admin_user_id'] = $this->param('admin_user_id/d', '');
 
         validate(MenuValidate::class)->scene('id')->check($param);
         validate(UserValidate::class)->scene('id')->check($param);

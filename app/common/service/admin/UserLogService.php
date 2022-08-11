@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 用户日志
 namespace app\common\service\admin;
 
 use think\facade\Request;
@@ -17,6 +16,9 @@ use app\common\cache\admin\UserLogCache;
 use app\common\model\admin\UserLogModel;
 use app\common\model\admin\UserModel;
 
+/**
+ * 用户日志
+ */
 class UserLogService
 {
     /**

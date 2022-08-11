@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员管理模型
 namespace app\common\model\member;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 会员管理模型
+ */
 class MemberModel extends Model
 {
     // 表名

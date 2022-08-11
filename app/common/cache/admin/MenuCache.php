@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 菜单管理缓存
 namespace app\common\cache\admin;
 
 use think\facade\Cache;
 
+/**
+ * 菜单管理缓存
+ */
 class MenuCache
 {
     // 缓存标签

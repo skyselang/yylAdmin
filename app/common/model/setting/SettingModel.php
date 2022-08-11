@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 设置管理模型
 namespace app\common\model\setting;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 设置管理模型
+ */
 class SettingModel extends Model
 {
     // 表名

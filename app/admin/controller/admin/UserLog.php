@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 用户日志控制器
 namespace app\admin\controller\admin;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\admin\UserLogValidate;
 use app\common\service\admin\UserLogService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("640")
  */
-class UserLog
+class UserLog extends BaseController
 {
     /**
      * @Apidoc\Title("用户日志列表")
@@ -30,46 +29,19 @@ class UserLog
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\UserLogModel\listReturn", type="array", desc="日志列表")
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-        $log_type     = Request::param('log_type/d', '');
+        $log_type = $this->param('log_type/d', '');
 
         $where = [];
-        if ($log_type) {
+        if ($log_type !== '') {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['admin_user_log_id', 'admin_user_id', 'username', 'admin_menu_id', 'menu_url', 'menu_name', 'response_code'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-            } else {
-                $search_exp = strpos($search_value, ',') ? 'in' : 'like';
-                $search_value = strpos($search_value, ',') ? $search_value : '%' . $search_value . '%';
-            }
-            $where[] = [$search_field, $search_exp, $search_value];
-        }
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where($where, 'admin_user_log_id,admin_user_id,username,admin_menu_id,menu_url,menu_name,response_code');
 
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = UserLogService::list($where, $page, $limit, $order);
+        $data = UserLogService::list($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -81,7 +53,7 @@ class UserLog
      */
     public function info()
     {
-        $param['admin_user_log_id'] = Request::param('admin_user_log_id/d', '');
+        $param['admin_user_log_id'] = $this->param('admin_user_log_id/d', '');
 
         validate(UserLogValidate::class)->scene('info')->check($param);
 
@@ -100,7 +72,7 @@ class UserLog
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(UserLogValidate::class)->scene('dele')->check($param);
 
@@ -124,11 +96,11 @@ class UserLog
      */
     public function clear()
     {
-        $admin_user_id = Request::param('admin_user_id/d', '');
-        $username      = Request::param('username/s', '');
-        $admin_menu_id = Request::param('admin_menu_id/d', '');
-        $menu_url      = Request::param('menu_url/s', '');
-        $date_value    = Request::param('date_value/a', '');
+        $admin_user_id = $this->param('admin_user_id/d', '');
+        $username      = $this->param('username/s', '');
+        $admin_menu_id = $this->param('admin_menu_id/d', '');
+        $menu_url      = $this->param('menu_url/s', '');
+        $date_value    = $this->param('date_value/a', '');
 
         $where = [];
         if ($admin_user_id) {
@@ -177,9 +149,9 @@ class UserLog
      */
     public function stat()
     {
-        $type  = Request::param('type/s', 'day');
-        $date  = Request::param('date/a', []);
-        $field = Request::param('field/s', 'request_province');
+        $type  = $this->param('type/s', 'day');
+        $date  = $this->param('date/a', []);
+        $field = $this->param('field/s', 'request_province');
 
         $data['count'] = UserLogService::stat($type, $date, 'count');
         $data['echart'][] = UserLogService::stat($type, $date, 'number');

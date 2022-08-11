@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件管理
 namespace app\common\service\file;
 
 use think\facade\Filesystem;
 use app\common\cache\file\FileCache;
 use app\common\model\file\FileModel;
 
+/**
+ * 文件管理
+ */
 class FileService
 {
     /**

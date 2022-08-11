@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口管理模型
 namespace app\common\model\setting;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 接口管理模型
+ */
 class ApiModel extends Model
 {
     // 表名

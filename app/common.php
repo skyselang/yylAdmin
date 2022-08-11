@@ -111,7 +111,7 @@ function file_url($file_path = '')
 function file_ids($files = [])
 {
     if (empty($files)) {
-        return 0;
+        return '';
     }
 
     $file_ids = array_column($files, 'file_id');
@@ -259,7 +259,7 @@ function str_merge($str1 = '', $str2 = '', $is_rep = true)
  */
 function list_to_tree($list = [], $pk = 'id', $pid = 'pid', $root = 0,  $child = 'children')
 {
-    $tree = [];
+    $tree  = [];
     $refer = [];
     foreach ($list as $k => $v) {
         $refer[$v[$pk]] = &$list[$k];
@@ -325,7 +325,7 @@ function var_to_array($var)
             $var = explode(',', $var);
         }
     }
-    
+
     settype($var, 'array');
 
     return $var;

@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员管理缓存
 namespace app\common\cache\member;
 
 use think\facade\Cache;
 use app\common\service\member\MemberService;
 
+/**
+ * 会员管理缓存
+ */
 class MemberCache
 {
     // 缓存标签

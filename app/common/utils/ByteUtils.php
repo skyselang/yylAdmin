@@ -7,9 +7,11 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 字节
 namespace app\common\utils;
 
+/**
+ * 字节
+ */
 class ByteUtils
 {
     /**

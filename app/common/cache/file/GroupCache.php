@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件分组缓存
 namespace app\common\cache\file;
 
 use think\facade\Cache;
 
+/**
+ * 文件分组缓存
+ */
 class GroupCache
 {
     // 缓存标签

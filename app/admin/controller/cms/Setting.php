@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容设置控制器
 namespace app\admin\controller\cms;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\cms\SettingValidate;
 use app\common\service\cms\SettingService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("340")
  */
-class Setting
+class Setting extends BaseController
 {
     /**
      * @Apidoc\Title("内容设置信息")
@@ -42,22 +41,22 @@ class Setting
      */
     public function edit()
     {
-        $param['logo_id']     = Request::param('logo_id/d', 0);
-        $param['name']        = Request::param('name/s', '');
-        $param['title']       = Request::param('title/s', '');
-        $param['keywords']    = Request::param('keywords/s', '');
-        $param['description'] = Request::param('description/s', '');
-        $param['icp']         = Request::param('icp/s', '');
-        $param['copyright']   = Request::param('copyright/s', '');
-        $param['off_acc_id']  = Request::param('off_acc_id/d', 0);
-        $param['address']     = Request::param('address/s', '');
-        $param['tel']         = Request::param('tel/s', '');
-        $param['mobile']      = Request::param('mobile/s', '');
-        $param['email']       = Request::param('email/s', '');
-        $param['qq']          = Request::param('qq/s', '');
-        $param['wechat']      = Request::param('wechat/s', '');
-        $param['diy_config']  = Request::param('diy_config/a', []);
-        $param['is_comment']  = Request::param('is_comment/d', 1);
+        $param['logo_id']     = $this->param('logo_id/d', 0);
+        $param['name']        = $this->param('name/s', '');
+        $param['title']       = $this->param('title/s', '');
+        $param['keywords']    = $this->param('keywords/s', '');
+        $param['description'] = $this->param('description/s', '');
+        $param['icp']         = $this->param('icp/s', '');
+        $param['copyright']   = $this->param('copyright/s', '');
+        $param['off_acc_id']  = $this->param('off_acc_id/d', 0);
+        $param['address']     = $this->param('address/s', '');
+        $param['tel']         = $this->param('tel/s', '');
+        $param['mobile']      = $this->param('mobile/s', '');
+        $param['email']       = $this->param('email/s', '');
+        $param['qq']          = $this->param('qq/s', '');
+        $param['wechat']      = $this->param('wechat/s', '');
+        $param['diy_config']  = $this->param('diy_config/a', []);
+        $param['is_comment']  = $this->param('is_comment/d', 1);
 
         validate(SettingValidate::class)->scene('edit')->check($param);
 

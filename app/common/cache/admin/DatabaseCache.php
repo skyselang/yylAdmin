@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 数据库管理缓存
 namespace app\common\cache\admin;
 
 use think\facade\Cache;
 
+/**
+ * 数据库管理缓存
+ */
 class DatabaseCache
 {
     // 缓存标签

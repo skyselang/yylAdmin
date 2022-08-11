@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员中心控制器
 namespace app\api\controller;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\member\MemberValidate;
 use app\common\validate\file\FileValidate;
 use app\common\service\member\MemberService;
@@ -24,15 +23,15 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("会员中心")
- * @Apidoc\Sort("310")
  * @Apidoc\Group("member")
+ * @Apidoc\Sort("310")
  */
-class Member
+class Member extends BaseController
 {
     /**
      * @Apidoc\Title("我的信息")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\indexInfoReturn")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\avatar_url")
      */
     public function info()
     {
@@ -60,10 +59,10 @@ class Member
     public function edit()
     {
         $param['member_id'] = member_id();
-        $param['avatar_id'] = Request::param('avatar_id/d', 0);
-        $param['username']  = Request::param('username/s', '');
-        $param['nickname']  = Request::param('nickname/s', '');
-        $param['region_id'] = Request::param('region_id/d', 0);
+        $param['avatar_id'] = $this->param('avatar_id/d', 0);
+        $param['username']  = $this->param('username/s', '');
+        $param['nickname']  = $this->param('nickname/s', '');
+        $param['region_id'] = $this->param('region_id/d', 0);
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
@@ -83,10 +82,10 @@ class Member
     public function avatar()
     {
         $member_id          = member_id();
-        $param['file']      = Request::file('file');
-        $param['group_id']  = Request::param('group_id/d', 0);
-        $param['file_type'] = Request::param('file_type/s', 'image');
-        $param['file_name'] = Request::param('file_name/s', '');
+        $param['file']      = $this->request->file('file');
+        $param['group_id']  = $this->param('group_id/d', 0);
+        $param['file_type'] = $this->param('file_type/s', 'image');
+        $param['file_name'] = $this->param('file_name/s', '');
         $param['is_front']  = 1;
 
         validate(MemberValidate::class)->scene('id')->check(['member_id' => $member_id]);
@@ -107,8 +106,8 @@ class Member
     public function pwd()
     {
         $param['member_id']    = member_id();
-        $param['password_old'] = Request::param('password_old/s', '');
-        $param['password_new'] = Request::param('password_new/s', '');
+        $param['password_old'] = $this->param('password_old/s', '');
+        $param['password_new'] = $this->param('password_new/s', '');
 
         $member = MemberService::info($param['member_id']);
         if ($member['pwd_edit_type']) {
@@ -129,33 +128,20 @@ class Member
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel\listReturn", type="array", desc="列表")
+     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel\listReturn", type="array", desc="日志列表")
      */
     public function log()
     {
-        $page        = Request::param('page/d', 1);
-        $limit       = Request::param('limit/d', 10);
-        $log_type    = Request::param('log_type/d', '');
-        $sort_field  = Request::param('sort_field/s', '');
-        $sort_value  = Request::param('sort_value/s', '');
-        $create_time = Request::param('create_time/a', []);
+        $log_type = $this->param('log_type/d', '');
 
         $where[] = ['member_id', '=', member_id()];
-        if ($log_type) {
+        if ($log_type !== '') {
             $where[] = ['log_type', '=', $log_type];
         }
         $where[] = ['is_delete', '=', 0];
-        if ($create_time) {
-            $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
-            $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
-        }
+        $this->where($where);
 
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = LogService::list($where, $page, $limit, $order);
+        $data = LogService::list($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -166,7 +152,7 @@ class Member
      */
     public function phoneCaptcha()
     {
-        $param['phone'] = Request::param('phone/s', '');
+        $param['phone'] = $this->param('phone/s', '');
 
         validate(MemberValidate::class)->scene('phoneBindCaptcha')->check($param);
 
@@ -184,8 +170,8 @@ class Member
     public function phoneBind()
     {
         $param['member_id']    = member_id();
-        $param['phone']        = Request::param('phone/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['phone']        = $this->param('phone/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
 
         validate(MemberValidate::class)->scene('phoneBind')->check($param);
         $captcha = CaptchaSmsCache::get($param['phone']);
@@ -206,7 +192,7 @@ class Member
      */
     public function bindPhoneMini()
     {
-        $param['code'] = Request::param('code/s', '');
+        $param['code'] = $this->param('code/s', '');
 
         foreach ($param as $k => $v) {
             if (empty($v)) {
@@ -225,7 +211,7 @@ class Member
      */
     public function emailCaptcha()
     {
-        $param['email'] = Request::param('email/s', '');
+        $param['email'] = $this->param('email/s', '');
 
         validate(MemberValidate::class)->scene('emailBindCaptcha')->check($param);
 
@@ -243,8 +229,8 @@ class Member
     public function emailBind()
     {
         $param['member_id']    = member_id();
-        $param['email']        = Request::param('email/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['email']        = $this->param('email/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
 
         validate(MemberValidate::class)->scene('emailBind')->check($param);
         $captcha = CaptchaEmailCache::get($param['email']);

@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件分组模型
 namespace app\common\model\file;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 文件分组模型
+ */
 class GroupModel extends Model
 {
     // 表名
@@ -59,6 +61,13 @@ class GroupModel extends Model
      * @Apidoc\Field("is_disable")
      */
     public function is_disable()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("group_name")
+     */
+    public function group_name()
     {
     }
 }

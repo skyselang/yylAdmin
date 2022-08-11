@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 角色管理缓存
 namespace app\common\cache\admin;
 
 use think\facade\Cache;
 
+/**
+ * 角色管理缓存
+ */
 class RoleCache
 {
     // 缓存标签

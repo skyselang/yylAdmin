@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 日志清除中间件
 namespace app\common\middleware;
 
 use Closure;
@@ -20,6 +19,9 @@ use app\common\service\member\LogService;
 use app\common\service\admin\SettingService as AdminSettingService;
 use app\common\service\admin\UserLogService;
 
+/**
+ * 日志清除中间件
+ */
 class LogClear
 {
     /**

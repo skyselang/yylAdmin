@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 行为验证码
 namespace app\common\utils;
 
 use think\facade\Config;
 use Fastknife\Service\ClickWordCaptchaService;
 use Fastknife\Service\BlockPuzzleCaptchaService;
 
+/**
+ * 行为验证码
+ */
 class AjCaptchaUtils
 {
     // 配置

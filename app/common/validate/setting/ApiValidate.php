@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口管理验证器
 namespace app\common\validate\setting;
 
 use think\Validate;
 use app\common\model\setting\ApiModel;
 
+/**
+ * 接口管理验证器
+ */
 class ApiValidate extends Validate
 {
     // 验证规则

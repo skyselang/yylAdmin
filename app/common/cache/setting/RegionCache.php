@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 地区管理缓存
 namespace app\common\cache\setting;
 
 use think\facade\Cache;
 
+/**
+ * 地区管理缓存
+ */
 class RegionCache
 {
     // 缓存标签

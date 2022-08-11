@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 用户管理
 namespace app\common\service\admin;
 
 use think\facade\Config;
@@ -19,6 +18,9 @@ use app\common\model\admin\UserModel;
 use app\common\service\file\FileService;
 use app\common\service\admin\TokenService;
 
+/**
+ * 用户管理
+ */
 class UserService
 {
     /**

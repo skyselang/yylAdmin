@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员微信模型
 namespace app\common\model\member;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 会员微信模型
+ */
 class WechatModel extends Model
 {
     // 表名

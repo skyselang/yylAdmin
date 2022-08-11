@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 权限验证中间件
 namespace app\admin\middleware;
 
 use Closure;
@@ -17,6 +16,9 @@ use think\facade\Config;
 use app\common\cache\admin\UserCache;
 use app\common\service\admin\MenuService;
 
+/**
+ * 权限验证中间件
+ */
 class AuthVerifyMiddleware
 {
     /**

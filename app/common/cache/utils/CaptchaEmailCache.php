@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 邮件验证码缓存
 namespace app\common\cache\utils;
 
 use think\facade\Cache;
 
+/**
+ * 邮件验证码缓存
+ */
 class CaptchaEmailCache
 {
     // 缓存标签

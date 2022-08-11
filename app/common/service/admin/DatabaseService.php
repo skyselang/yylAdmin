@@ -7,18 +7,20 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 数据库管理
 namespace app\common\service\admin;
 
-use think\facade\Config;
-use think\facade\Db;
 use app\common\cache\admin\DatabaseCache;
 use app\common\model\admin\DatabaseModel;
 use app\common\utils\ByteUtils;
 use app\common\utils\ServerUtils;
 use app\common\utils\StringUtils;
+use think\facade\Config;
+use think\facade\Db;
 use PDO;
 
+/**
+ * 数据库管理
+ */
 class DatabaseService
 {
     /**

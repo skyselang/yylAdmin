@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 用户日志缓存
 namespace app\common\cache\admin;
 
 use think\facade\Cache;
 
+/**
+ * 用户日志缓存
+ */
 class UserLogCache
 {
     // 缓存标签

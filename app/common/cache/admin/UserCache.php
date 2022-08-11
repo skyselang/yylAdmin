@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 用户管理缓存
 namespace app\common\cache\admin;
 
 use think\facade\Cache;
 use app\common\service\admin\UserService;
 use app\common\service\admin\SettingService;
 
+/**
+ * 用户管理缓存
+ */
 class UserCache
 {
     // 缓存标签

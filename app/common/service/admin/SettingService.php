@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 系统设置
 namespace app\common\service\admin;
 
 use think\facade\Cache;
@@ -19,6 +18,9 @@ use app\common\model\admin\UserModel;
 use app\common\model\admin\SettingModel;
 use app\common\utils\EmailUtils;
 
+/**
+ * 系统设置
+ */
 class SettingService
 {
     // 设置id

@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口Token中间件
 namespace app\api\middleware;
 
 use Closure;
 use think\Request;
 use think\Response;
 
+/**
+ * 接口Token中间件
+ */
 class ApiTokenMiddleware
 {
     /**

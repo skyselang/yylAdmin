@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// Token验证中间件
 namespace app\admin\middleware;
 
 use Closure;
 use think\Request;
 use think\Response;
 
+/**
+ * Token验证中间件
+ */
 class TokenVerifyMiddleware
 {
     /**

@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容管理控制器
 namespace app\admin\controller\cms;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\cms\ContentValidate;
 use app\common\service\cms\ContentService;
 use app\common\service\cms\CategoryService;
@@ -21,7 +20,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("310")
  */
-class Content
+class Content extends BaseController
 {
     /**
      * @Apidoc\Title("内容列表")
@@ -30,43 +29,16 @@ class Content
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="内容列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
+     * @Apidoc\Returned("list", ref="app\common\model\cms\ContentModel\listReturn", type="array", desc="内容列表", 
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
-     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\listReturn", type="tree", childrenField="children", desc="分类列表")
+     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\treeReturn", type="tree", childrenField="children", desc="分类树形")
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $where = $this->where(['is_delete', '=', 0], 'content_id,is_top,is_hot,is_rec,is_hide,category_id');
 
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['content_id', 'is_top', 'is_hot', 'is_rec', 'is_hide', 'category_id'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = ContentService::list($where, $page, $limit, $order);
+        $data = ContentService::list($where, $this->page(), $this->limit(), $this->order());
         $data['category'] = CategoryService::list('tree', [['is_delete', '=', 0]], [], 'category_id,category_pid,category_name');
 
         return success($data);
@@ -82,7 +54,7 @@ class Content
      */
     public function info()
     {
-        $param['content_id'] = Request::param('content_id/d', '');
+        $param['content_id'] = $this->param('content_id/d', '');
 
         validate(ContentValidate::class)->scene('info')->check($param);
 
@@ -103,19 +75,19 @@ class Content
      */
     public function add()
     {
-        $param['category_id'] = Request::param('category_id/d', 0);
-        $param['name']        = Request::param('name/s', '');
-        $param['title']       = Request::param('title/s', '');
-        $param['keywords']    = Request::param('keywords/s', '');
-        $param['description'] = Request::param('description/s', '');
-        $param['img_id']      = Request::param('img_id/d', 0);
-        $param['author']      = Request::param('author/s', '');
-        $param['url']         = Request::param('url/s', '');
-        $param['imgs']        = Request::param('imgs/a', []);
-        $param['files']       = Request::param('files/a', []);
-        $param['videos']      = Request::param('videos/a', []);
-        $param['sort']        = Request::param('sort/d', 250);
-        $param['content']     = Request::param('content/s', '');
+        $param['category_id'] = $this->param('category_id/d', 0);
+        $param['name']        = $this->param('name/s', '');
+        $param['title']       = $this->param('title/s', '');
+        $param['keywords']    = $this->param('keywords/s', '');
+        $param['description'] = $this->param('description/s', '');
+        $param['img_id']      = $this->param('img_id/d', 0);
+        $param['author']      = $this->param('author/s', '');
+        $param['url']         = $this->param('url/s', '');
+        $param['imgs']        = $this->param('imgs/a', []);
+        $param['files']       = $this->param('files/a', []);
+        $param['videos']      = $this->param('videos/a', []);
+        $param['sort']        = $this->param('sort/d', 250);
+        $param['content']     = $this->param('content/s', '');
 
         validate(ContentValidate::class)->scene('add')->check($param);
 
@@ -137,20 +109,20 @@ class Content
      */
     public function edit()
     {
-        $param['content_id']  = Request::param('content_id/d', '');
-        $param['category_id'] = Request::param('category_id/d', 0);
-        $param['name']        = Request::param('name/s', '');
-        $param['title']       = Request::param('title/s', '');
-        $param['keywords']    = Request::param('keywords/s', '');
-        $param['description'] = Request::param('description/s', '');
-        $param['img_id']      = Request::param('img_id/d', 0);
-        $param['author']      = Request::param('author/s', '');
-        $param['url']         = Request::param('url/s', '');
-        $param['imgs']        = Request::param('imgs/a', []);
-        $param['files']       = Request::param('files/a', []);
-        $param['videos']      = Request::param('videos/a', []);
-        $param['sort']        = Request::param('sort/d', 250);
-        $param['content']     = Request::param('content/s', '');
+        $param['content_id']  = $this->param('content_id/d', '');
+        $param['category_id'] = $this->param('category_id/d', 0);
+        $param['name']        = $this->param('name/s', '');
+        $param['title']       = $this->param('title/s', '');
+        $param['keywords']    = $this->param('keywords/s', '');
+        $param['description'] = $this->param('description/s', '');
+        $param['img_id']      = $this->param('img_id/d', 0);
+        $param['author']      = $this->param('author/s', '');
+        $param['url']         = $this->param('url/s', '');
+        $param['imgs']        = $this->param('imgs/a', []);
+        $param['files']       = $this->param('files/a', []);
+        $param['videos']      = $this->param('videos/a', []);
+        $param['sort']        = $this->param('sort/d', 250);
+        $param['content']     = $this->param('content/s', '');
 
         validate(ContentValidate::class)->scene('edit')->check($param);
 
@@ -169,7 +141,7 @@ class Content
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(ContentValidate::class)->scene('dele')->check($param);
 
@@ -186,8 +158,8 @@ class Content
      */
     public function cate()
     {
-        $param['ids']         = Request::param('ids/a', '');
-        $param['category_id'] = Request::param('category_id/d', 0);
+        $param['ids']         = $this->param('ids/a', '');
+        $param['category_id'] = $this->param('category_id/d', 0);
 
         validate(ContentValidate::class)->scene('cate')->check($param);
 
@@ -204,8 +176,8 @@ class Content
      */
     public function istop()
     {
-        $param['ids']    = Request::param('ids/a', '');
-        $param['is_top'] = Request::param('is_top/d', 0);
+        $param['ids']    = $this->param('ids/a', '');
+        $param['is_top'] = $this->param('is_top/d', 0);
 
         validate(ContentValidate::class)->scene('istop')->check($param);
 
@@ -222,8 +194,8 @@ class Content
      */
     public function ishot()
     {
-        $param['ids']    = Request::param('ids/a', '');
-        $param['is_hot'] = Request::param('is_hot/d', 0);
+        $param['ids']    = $this->param('ids/a', '');
+        $param['is_hot'] = $this->param('is_hot/d', 0);
 
         validate(ContentValidate::class)->scene('ishot')->check($param);
 
@@ -240,8 +212,8 @@ class Content
      */
     public function isrec()
     {
-        $param['ids']    = Request::param('ids/a', '');
-        $param['is_rec'] = Request::param('is_rec/d', 0);
+        $param['ids']    = $this->param('ids/a', '');
+        $param['is_rec'] = $this->param('is_rec/d', 0);
 
         validate(ContentValidate::class)->scene('isrec')->check($param);
 
@@ -258,8 +230,8 @@ class Content
      */
     public function ishide()
     {
-        $param['ids']     = Request::param('ids/a', '');
-        $param['is_hide'] = Request::param('is_hide/d', 0);
+        $param['ids']     = $this->param('ids/a', '');
+        $param['is_hide'] = $this->param('is_hide/d', 0);
 
         validate(ContentValidate::class)->scene('ishide')->check($param);
 
@@ -275,43 +247,16 @@ class Content
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="内容列表", 
-     *    @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
+     * @Apidoc\Returned("list", ref="app\common\model\cms\ContentModel\listReturn", type="array", desc="内容列表",
      *    @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
-     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\listReturn", type="array", desc="分类列表")
+     * @Apidoc\Returned("category", ref="app\common\model\cms\CategoryModel\treeReturn", type="tree", childrenField="children", desc="分类树形")
      */
     public function recover()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $where = $this->where(['is_delete', '=', 1], 'content_id,is_top,is_hot,is_rec,is_hide,category_id');
 
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['content_id', 'is_top', 'is_hot', 'is_rec', 'is_hide', 'category_id'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 1];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = ['delete_time' => 'desc', 'content_id' => 'desc'];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = ContentService::list($where, $page, $limit, $order);
+        $data = ContentService::list($where, $this->page(), $this->limit(), $this->order());
         $data['category'] = CategoryService::list('tree', [['is_delete', '=', 0]], [], 'category_id,category_pid,category_name');
 
         return success($data);
@@ -324,7 +269,7 @@ class Content
      */
     public function recoverReco()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(ContentValidate::class)->scene('reco')->check($param);
 
@@ -340,7 +285,7 @@ class Content
      */
     public function recoverDele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(ContentValidate::class)->scene('dele')->check($param);
 

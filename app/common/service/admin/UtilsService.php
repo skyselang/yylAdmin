@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 实用工具
 namespace app\common\service\admin;
 
 use app\common\utils\ByteUtils;
 use app\common\utils\IpInfoUtils;
 use app\common\utils\ServerUtils;
 
+/**
+ * 实用工具
+ */
 class UtilsService
 {
     /**
@@ -61,21 +63,11 @@ class UtilsService
      */
     public static function strtran($str = '')
     {
-        if ($str == '') {
-            $str = 'yylAdmin';
-        }
-
-        $rev = '';
-        $len = mb_strlen($str, 'utf-8');
-        for ($i = $len - 1; $i >= 0; $i--) {
-            $rev = $rev . mb_substr($str, $i, 1, 'utf-8');
-        }
-
         $data['str']   = $str;
-        $data['len']   = $len;
+        $data['len']   = mb_strlen($str, 'utf-8');
         $data['lower'] = strtolower($str);
         $data['upper'] = strtoupper($str);
-        $data['rev']   = $rev;
+        $data['rev']   = strrev($str);
         $data['md5']   = md5($str);
 
         return $data;
@@ -84,14 +76,13 @@ class UtilsService
     /**
      * 时间戳转换
      *
-     * @param array $param
+     * @param string $type  转换类型，timestamp时间戳、datetime日期时间
+     * @param string $value 转换的值，时间戳、日期时间
      * 
      * @return array
      */
-    public static function timestamp($param)
+    public static function timestamp($type, $value)
     {
-        $type  = $param['type'] ?: 'timestamp';
-        $value = $param['value'] ?: time();
         if ($type == 'timestamp') {
             $data['datetime']  = date('Y-m-d H:i:s', $value);
             $data['timestamp'] = $value;
@@ -109,15 +100,13 @@ class UtilsService
     /**
      * 字节转换
      *
-     * @param array $param 类型、数值
+     * @param string $type  转换类型
+     * @param string $value 转换数值
      *
      * @return array
      */
-    public static function bytetran($param)
+    public static function bytetran($type, $value)
     {
-        $value = $param['value'] ?: 1024;
-        $type  = $param['type'] ?: 'B';
-
         return ByteUtils::shift($value, $type);
     }
 

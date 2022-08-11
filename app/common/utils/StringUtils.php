@@ -7,9 +7,11 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 字符串
 namespace app\common\utils;
 
+/**
+ * 字符串
+ */
 class StringUtils
 {
     /**

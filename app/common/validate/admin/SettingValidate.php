@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 系统设置验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
 
+/**
+ * 系统设置验证器
+ */
 class SettingValidate extends Validate
 {
     // 验证规则

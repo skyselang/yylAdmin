@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员日志
 namespace app\common\service\member;
 
 use think\facade\Request;
@@ -18,6 +17,9 @@ use app\common\service\setting\ApiService;
 use app\common\model\member\LogModel;
 use app\common\model\member\MemberModel;
 
+/**
+ * 会员日志
+ */
 class LogService
 {
     /**

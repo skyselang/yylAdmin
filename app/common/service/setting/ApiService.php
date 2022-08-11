@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口管理
 namespace app\common\service\setting;
 
 use think\facade\Config;
 use app\common\cache\setting\ApiCache;
 use app\common\model\setting\ApiModel;
 
+/**
+ * 接口管理
+ */
 class ApiService
 {
     /**

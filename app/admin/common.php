@@ -225,11 +225,11 @@ function admin_log_switch()
 /**
  * 系统超管信息记录隐藏条件
  * 
- * @param int $pk 用户id字段
+ * @param string $user_id_field 用户id字段
  *
  * @return array
  */
-function admin_super_hide_where($pk = 'admin_user_id')
+function admin_super_hide_where($user_id_field = 'admin_user_id')
 {
     $where = [];
     $super_is_hide = Config::get('admin.super_is_hide', false);
@@ -238,7 +238,7 @@ function admin_super_hide_where($pk = 'admin_user_id')
         if (!admin_is_super($admin_user_id)) {
             $admin_super_ids = admin_super_ids();
             if ($admin_super_ids) {
-                $where = [$pk, 'not in', $admin_super_ids];
+                $where = [$user_id_field, 'not in', $admin_super_ids];
             }
         }
     }

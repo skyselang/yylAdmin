@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 验证码
 namespace app\common\utils;
 
 use think\facade\Cache;
 use think\facade\Config;
 
+/**
+ * 验证码
+ */
 class CaptchaUtils
 {
     // 验证码开关

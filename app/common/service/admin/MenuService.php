@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 菜单管理
 namespace app\common\service\admin;
 
 use think\facade\Config;
@@ -18,6 +17,9 @@ use app\common\model\admin\MenuModel;
 use app\common\model\admin\RoleModel;
 use app\common\model\admin\UserModel;
 
+/**
+ * 菜单管理
+ */
 class MenuService
 {
     /**

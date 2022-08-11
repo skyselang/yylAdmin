@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件分组
 namespace app\common\service\file;
 
 use app\common\cache\file\GroupCache;
 use app\common\model\file\GroupModel;
 
+/**
+ * 文件分组
+ */
 class GroupService
 {
     /**

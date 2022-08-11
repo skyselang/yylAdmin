@@ -7,18 +7,18 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 首页控制器
 namespace app\api\controller;
 
+use app\common\BaseController;
 use app\api\service\IndexService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("首页")
- * @Apidoc\Sort("110")
  * @Apidoc\Group("index")
+ * @Apidoc\Sort("110")
  */
-class Index
+class Index extends BaseController
 {
     /**
      * @Apidoc\Title("首页")

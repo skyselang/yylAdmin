@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// IP信息
 namespace app\common\utils;
 
 use think\facade\Cache;
 use think\facade\Request;
 
+/**
+ * IP信息
+ */
 class IpInfoUtils
 {
     /**

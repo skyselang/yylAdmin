@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// {$form.controller_title}缓存
 namespace {$cache.namespace};
 
 use think\facade\Cache;
 
+/**
+ * {$form.controller_title}缓存
+ */
 class {$cache.class_name}
 {
     // 缓存标签

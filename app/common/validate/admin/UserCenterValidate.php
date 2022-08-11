@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 个人中心验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
 use app\common\model\admin\UserModel;
 
+/**
+ * 个人中心验证器
+ */
 class UserCenterValidate extends Validate
 {
     // 验证规则

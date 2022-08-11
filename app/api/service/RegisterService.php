@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 注册
 namespace app\api\service;
 
 use app\common\service\member\MemberService;
 use app\common\service\setting\SettingService;
 use app\common\service\member\LogService;
 
+/**
+ * 注册
+ */
 class RegisterService
 {
     /**

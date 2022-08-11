@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// {$form.controller_title}模型
 namespace {$tables[0].namespace};
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * {$form.controller_title}模型
+ */
 class {$tables[0].model_name} extends Model
 {
     protected $name = '{$tables[0].table_name}';

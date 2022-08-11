@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 公告管理验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
 
+/**
+ * 公告管理验证器
+ */
 class NoticeValidate extends Validate
 {
     // 验证规则

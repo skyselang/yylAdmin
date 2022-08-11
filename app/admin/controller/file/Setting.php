@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件设置控制器
 namespace app\admin\controller\file;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\file\SettingValidate;
 use app\common\service\file\SettingService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,11 +19,11 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminFile")
  * @Apidoc\Sort("430")
  */
-class Setting
+class Setting extends BaseController
 {
     /**
      * @Apidoc\Title("文件设置信息")
-     * @Apidoc\Returned("setting", type="object", desc="设置信息", ref="app\common\model\file\SettingModel\infoReturn")
+     * @Apidoc\Returned("setting", ref="app\common\model\file\SettingModel\infoReturn", type="object", desc="设置信息")
      * @Apidoc\Returned("storage", type="object", desc="存储方式")
      */
     public function info()
@@ -42,47 +41,47 @@ class Setting
      */
     public function edit()
     {
-        $param['is_open']                  = Request::param('is_open/d', 1);
-        $param['storage']                  = Request::param('storage/s', 'local');
-        $param['qiniu_access_key']         = Request::param('qiniu_access_key/s', '');
-        $param['qiniu_secret_key']         = Request::param('qiniu_secret_key/s', '');
-        $param['qiniu_bucket']             = Request::param('qiniu_bucket/s', '');
-        $param['qiniu_domain']             = Request::param('qiniu_domain/s', '');
-        $param['aliyun_access_key_id']     = Request::param('aliyun_access_key_id/s', '');
-        $param['aliyun_access_key_secret'] = Request::param('aliyun_access_key_secret/s', '');
-        $param['aliyun_bucket']            = Request::param('aliyun_bucket/s', '');
-        $param['aliyun_bucket_domain']     = Request::param('aliyun_bucket_domain/s', '');
-        $param['aliyun_endpoint']          = Request::param('aliyun_endpoint/s', '');
-        $param['tencent_secret_id']        = Request::param('tencent_secret_id/s', '');
-        $param['tencent_secret_key']       = Request::param('tencent_secret_key/s', '');
-        $param['tencent_bucket']           = Request::param('tencent_bucket/s', '');
-        $param['tencent_region']           = Request::param('tencent_region/s', '');
-        $param['tencent_domain']           = Request::param('tencent_domain/s', '');
-        $param['baidu_access_key']         = Request::param('baidu_access_key/s', '');
-        $param['baidu_secret_key']         = Request::param('baidu_secret_key/s', '');
-        $param['baidu_bucket']             = Request::param('baidu_bucket/s', '');
-        $param['baidu_endpoint']           = Request::param('baidu_endpoint/s', '');
-        $param['baidu_domain']             = Request::param('baidu_domain/s', '');
-        $param['upyun_service_name']       = Request::param('upyun_service_name/s', '');
-        $param['upyun_operator_name']      = Request::param('upyun_operator_name/s', '');
-        $param['upyun_operator_pwd']       = Request::param('upyun_operator_pwd/s', '');
-        $param['upyun_domain']             = Request::param('upyun_domain/s', '');
-        $param['s3_access_key_id']         = Request::param('s3_access_key_id/s', '');
-        $param['s3_secret_access_key']     = Request::param('s3_secret_access_key/s', '');
-        $param['s3_bucket']                = Request::param('s3_bucket/s', '');
-        $param['s3_region']                = Request::param('s3_region/s', '');
-        $param['s3_domain']                = Request::param('s3_domain/s', '');
-        $param['image_ext']                = Request::param('image_ext/s', '');
-        $param['image_size']               = Request::param('image_size/f', 0);
-        $param['video_ext']                = Request::param('video_ext/s', '');
-        $param['video_size']               = Request::param('video_size/f', 0);
-        $param['audio_ext']                = Request::param('audio_ext/s', '');
-        $param['audio_size']               = Request::param('audio_size/f', 0);
-        $param['word_ext']                 = Request::param('word_ext/s', '');
-        $param['word_size']                = Request::param('word_size/f', 0);
-        $param['other_ext']                = Request::param('other_ext/s', '');
-        $param['other_size']               = Request::param('other_size/f', 0);
-        $param['limit_max']                = Request::param('limit_max/d', 9);
+        $param['is_open']                  = $this->param('is_open/d', 1);
+        $param['storage']                  = $this->param('storage/s', 'local');
+        $param['qiniu_access_key']         = $this->param('qiniu_access_key/s', '');
+        $param['qiniu_secret_key']         = $this->param('qiniu_secret_key/s', '');
+        $param['qiniu_bucket']             = $this->param('qiniu_bucket/s', '');
+        $param['qiniu_domain']             = $this->param('qiniu_domain/s', '');
+        $param['aliyun_access_key_id']     = $this->param('aliyun_access_key_id/s', '');
+        $param['aliyun_access_key_secret'] = $this->param('aliyun_access_key_secret/s', '');
+        $param['aliyun_bucket']            = $this->param('aliyun_bucket/s', '');
+        $param['aliyun_bucket_domain']     = $this->param('aliyun_bucket_domain/s', '');
+        $param['aliyun_endpoint']          = $this->param('aliyun_endpoint/s', '');
+        $param['tencent_secret_id']        = $this->param('tencent_secret_id/s', '');
+        $param['tencent_secret_key']       = $this->param('tencent_secret_key/s', '');
+        $param['tencent_bucket']           = $this->param('tencent_bucket/s', '');
+        $param['tencent_region']           = $this->param('tencent_region/s', '');
+        $param['tencent_domain']           = $this->param('tencent_domain/s', '');
+        $param['baidu_access_key']         = $this->param('baidu_access_key/s', '');
+        $param['baidu_secret_key']         = $this->param('baidu_secret_key/s', '');
+        $param['baidu_bucket']             = $this->param('baidu_bucket/s', '');
+        $param['baidu_endpoint']           = $this->param('baidu_endpoint/s', '');
+        $param['baidu_domain']             = $this->param('baidu_domain/s', '');
+        $param['upyun_service_name']       = $this->param('upyun_service_name/s', '');
+        $param['upyun_operator_name']      = $this->param('upyun_operator_name/s', '');
+        $param['upyun_operator_pwd']       = $this->param('upyun_operator_pwd/s', '');
+        $param['upyun_domain']             = $this->param('upyun_domain/s', '');
+        $param['s3_access_key_id']         = $this->param('s3_access_key_id/s', '');
+        $param['s3_secret_access_key']     = $this->param('s3_secret_access_key/s', '');
+        $param['s3_bucket']                = $this->param('s3_bucket/s', '');
+        $param['s3_region']                = $this->param('s3_region/s', '');
+        $param['s3_domain']                = $this->param('s3_domain/s', '');
+        $param['image_ext']                = $this->param('image_ext/s', '');
+        $param['image_size']               = $this->param('image_size/f', 0);
+        $param['video_ext']                = $this->param('video_ext/s', '');
+        $param['video_size']               = $this->param('video_size/f', 0);
+        $param['audio_ext']                = $this->param('audio_ext/s', '');
+        $param['audio_size']               = $this->param('audio_size/f', 0);
+        $param['word_ext']                 = $this->param('word_ext/s', '');
+        $param['word_size']                = $this->param('word_size/f', 0);
+        $param['other_ext']                = $this->param('other_ext/s', '');
+        $param['other_size']               = $this->param('other_size/f', 0);
+        $param['limit_max']                = $this->param('limit_max/d', 9);
 
         validate(SettingValidate::class)->scene($param['storage'])->check($param);
 

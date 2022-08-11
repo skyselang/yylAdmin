@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口管理缓存
 namespace app\common\cache\setting;
 
 use think\facade\Cache;
 
+/**
+ * 接口管理缓存
+ */
 class ApiCache
 {
     // 缓存标签

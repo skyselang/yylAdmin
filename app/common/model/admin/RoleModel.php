@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 角色管理模型
 namespace app\common\model\admin;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 角色管理模型
+ */
 class RoleModel extends Model
 {
     // 表名

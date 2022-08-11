@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 公告管理缓存
 namespace app\common\cache\admin;
 
 use think\facade\Cache;
 
+/**
+ * 公告管理缓存
+ */
 class NoticeCache
 {
     // 缓存标签

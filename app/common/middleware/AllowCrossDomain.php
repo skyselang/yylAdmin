@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 跨域请求中间件
 namespace app\common\middleware;
 
 use Closure;
 use think\Request;
 use think\Response;
 
+/**
+ * 跨域请求中间件
+ */
 class AllowCrossDomain
 {
     /**

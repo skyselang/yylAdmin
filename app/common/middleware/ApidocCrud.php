@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// Apidoc CRUD 中间件
 namespace app\common\middleware;
 
 use app\common\service\admin\MenuService;
 
+/**
+ * Apidoc CRUD 中间件
+ */
 class ApidocCrud
 {
     // 生成文件及数据表前执行

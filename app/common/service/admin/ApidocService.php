@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口文档
 namespace app\common\service\admin;
 
 use app\common\service\admin\UserService;
 
+/**
+ * 接口文档
+ */
 class ApidocService
 {
     /**

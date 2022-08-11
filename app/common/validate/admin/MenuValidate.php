@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 菜单管理验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
@@ -15,6 +14,9 @@ use app\common\model\admin\MenuModel;
 use app\common\model\admin\RoleModel;
 use app\common\model\admin\UserModel;
 
+/**
+ * 菜单管理验证器
+ */
 class MenuValidate extends Validate
 {
     // 验证规则

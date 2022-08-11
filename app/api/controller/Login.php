@@ -7,11 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 登录退出控制器
 namespace app\api\controller;
 
-use think\facade\Request;
-use think\facade\Cache;
+use app\common\BaseController;
 use app\common\validate\member\MemberValidate;
 use app\common\cache\utils\CaptchaSmsCache;
 use app\common\cache\utils\CaptchaEmailCache;
@@ -21,14 +19,15 @@ use app\common\utils\CaptchaUtils;
 use app\common\utils\SmsUtils;
 use app\common\utils\EmailUtils;
 use app\api\service\LoginService;
+use think\facade\Cache;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("登录退出")
- * @Apidoc\Sort("220")
  * @Apidoc\Group("login")
+ * @Apidoc\Sort("220")
  */
-class Login
+class Login extends BaseController
 {
     /**
      * @Apidoc\Title("登录验证码")
@@ -58,10 +57,10 @@ class Login
      */
     public function login()
     {
-        $param['account']      = Request::param('account/s', '');
-        $param['password']     = Request::param('password/s', '');
-        $param['captcha_id']   = Request::param('captcha_id/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['account']      = $this->param('account/s', '');
+        $param['password']     = $this->param('password/s', '');
+        $param['captcha_id']   = $this->param('captcha_id/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
 
         if (empty($param['account'])) {
             exception('请输入账号');
@@ -93,7 +92,7 @@ class Login
      */
     public function phoneCaptcha()
     {
-        $param['phone'] = Request::param('phone/s', '');
+        $param['phone'] = $this->param('phone/s', '');
 
         validate(MemberValidate::class)->scene('phoneLoginCaptcha')->check($param);
 
@@ -112,8 +111,8 @@ class Login
      */
     public function phoneLogin()
     {
-        $param['phone']        = Request::param('phone/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['phone']        = $this->param('phone/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
 
         validate(MemberValidate::class)->scene('phoneLogin')->check($param);
         if (empty($param['captcha_code'])) {
@@ -137,7 +136,7 @@ class Login
      */
     public function emailCaptcha()
     {
-        $param['email'] = Request::param('email/s', '');
+        $param['email'] = $this->param('email/s', '');
 
         validate(MemberValidate::class)->scene('emailLoginCaptcha')->check($param);
 
@@ -156,8 +155,8 @@ class Login
      */
     public function emailLogin()
     {
-        $param['email']        = Request::param('email/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
+        $param['email']        = $this->param('email/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
 
         validate(MemberValidate::class)->scene('emailLogin')->check($param);
         if (empty($param['captcha_code'])) {
@@ -180,12 +179,12 @@ class Login
      */
     public function offi()
     {
-        $api_token = Request::param('api_token/s', '');
+        $api_token = $this->param('api_token/s', '');
         if ($api_token) {
             die('登录成功，请保存 api_token 。');
         }
 
-        $offiurl = Request::param('offiurl/s', '');
+        $offiurl = $this->param('offiurl/s', '');
         if (empty($offiurl)) {
             $offiurl = (string) url('', [], false);
             // exception('offiurl must');
@@ -232,7 +231,7 @@ class Login
                 $userinfo[$k] = $user[$k];
             }
         }
-        $userinfo['login_ip']    = Request::ip();
+        $userinfo['login_ip']    = $this->request->ip();
         $userinfo['reg_channel'] = 2;
         $userinfo['reg_type']    = 4;
 
@@ -255,15 +254,15 @@ class Login
      */
     public function mini()
     {
-        $code           = Request::param('code/s', '');
-        $user_info      = Request::param('user_info/a', []);
-        $iv             = Request::param('iv/s', '');
-        $encrypted_data = Request::param('encrypted_data/s', '');
+        $code           = $this->param('code/s', '');
+        $user_info      = $this->param('user_info/a', []);
+        $iv             = $this->param('iv/s', '');
+        $encrypted_data = $this->param('encrypted_data/s', '');
         if (empty($code)) {
             exception('code must');
         }
 
-        $app = WechatService::mini();
+        $app  = WechatService::mini();
         $user = $app->auth->session($code);
 
         if (empty($user) || !isset($user['openid'])) {
@@ -296,7 +295,7 @@ class Login
                 $userinfo[$k] = $user[$k];
             }
         }
-        $userinfo['login_ip']    = Request::ip();
+        $userinfo['login_ip']    = $this->request->ip();
         $userinfo['reg_channel'] = 3;
         $userinfo['reg_type']    = 5;
 

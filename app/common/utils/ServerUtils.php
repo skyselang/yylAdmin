@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 服务器信息
 namespace app\common\utils;
 
 use think\facade\Db;
 use think\facade\Cache;
 
+/**
+ * 服务器信息
+ */
 class ServerUtils
 {
     /**

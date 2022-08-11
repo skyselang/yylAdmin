@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件分组控制器
 namespace app\admin\controller\file;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\file\GroupValidate;
 use app\common\service\file\GroupService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminFile")
  * @Apidoc\Sort("420")
  */
-class Group
+class Group extends BaseController
 {
     /**
      * @Apidoc\Title("文件分组列表")
@@ -33,35 +32,9 @@ class Group
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', []);
+        $where = $this->where(['is_delete', '=', 0], 'group_id,is_disable');
 
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['group_id', 'is_disable'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = GroupService::list($where, $page, $limit, $order);
+        $data = GroupService::list($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -73,7 +46,7 @@ class Group
      */
     public function info()
     {
-        $param['group_id'] = Request::param('group_id/d', '');
+        $param['group_id'] = $this->param('group_id/d', '');
 
         validate(GroupValidate::class)->scene('info')->check($param);
 
@@ -90,9 +63,9 @@ class Group
      */
     public function add()
     {
-        $param['group_name'] = Request::param('group_name/s', '');
-        $param['group_desc'] = Request::param('group_desc/s', '');
-        $param['group_sort'] = Request::param('group_sort/d', 250);
+        $param['group_name'] = $this->param('group_name/s', '');
+        $param['group_desc'] = $this->param('group_desc/s', '');
+        $param['group_sort'] = $this->param('group_sort/d', 250);
 
         validate(GroupValidate::class)->scene('add')->check($param);
 
@@ -108,10 +81,10 @@ class Group
      */
     public function edit()
     {
-        $param['group_id']   = Request::param('group_id/d', '');
-        $param['group_name'] = Request::param('group_name/s', '');
-        $param['group_desc'] = Request::param('group_desc/s', '');
-        $param['group_sort'] = Request::param('group_sort/d', 250);
+        $param['group_id']   = $this->param('group_id/d', '');
+        $param['group_name'] = $this->param('group_name/s', '');
+        $param['group_desc'] = $this->param('group_desc/s', '');
+        $param['group_sort'] = $this->param('group_sort/d', 250);
 
         validate(GroupValidate::class)->scene('edit')->check($param);
 
@@ -127,7 +100,7 @@ class Group
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', []);
+        $param['ids'] = $this->param('ids/a', []);
 
         validate(GroupValidate::class)->scene('dele')->check($param);
 
@@ -144,8 +117,8 @@ class Group
      */
     public function disable()
     {
-        $param['ids']        = Request::param('ids/a', []);
-        $param['is_disable'] = Request::param('is_disable/d', 0);
+        $param['ids']        = $this->param('ids/a', []);
+        $param['is_disable'] = $this->param('is_disable/d', 0);
 
         validate(GroupValidate::class)->scene('disable')->check($param);
 
@@ -165,43 +138,11 @@ class Group
      */
     public function recover()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', []);
+        $where = $this->where(['is_delete', '=', 1], 'group_id,is_disable');
 
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['group_id'])) {
-                $exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $exp, $search_value];
-            } elseif (in_array($search_field, ['is_disable'])) {
-                if ($search_value == '是' || $search_value == '1') {
-                    $search_value = 1;
-                } else {
-                    $search_value = 0;
-                }
-                $where[] = [$search_field, '=', $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 1];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $order = ['delete_time' => 'desc', 'group_sort' => 'desc'];
 
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        } else {
-            $order = ['delete_time' => 'desc', 'group_sort' => 'desc'];
-        }
-
-        $data = GroupService::list($where, $page, $limit, $order);
+        $data = GroupService::list($where, $this->page(), $this->limit(), $this->order($order));
 
         return success($data);
     }
@@ -213,7 +154,7 @@ class Group
      */
     public function recoverReco()
     {
-        $param['ids']       = Request::param('ids/a', []);
+        $param['ids']       = $this->param('ids/a', []);
         $param['is_delete'] = 0;
 
         validate(GroupValidate::class)->scene('recoverReco')->check($param);
@@ -230,7 +171,7 @@ class Group
      */
     public function recoverDele()
     {
-        $param['ids'] = Request::param('ids/a', []);
+        $param['ids'] = $this->param('ids/a', []);
 
         validate(GroupValidate::class)->scene('recoverDele')->check($param);
 

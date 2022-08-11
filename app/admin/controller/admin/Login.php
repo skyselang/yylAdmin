@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 登录退出控制器
 namespace app\admin\controller\admin;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\admin\UserValidate;
 use app\common\service\admin\SettingService;
 use app\common\service\admin\LoginService;
@@ -23,7 +22,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminLogout")
  * @Apidoc\Sort("660")
  */
-class Login
+class Login extends BaseController
 {
     /**
      * @Apidoc\Title("系统信息")
@@ -52,7 +51,8 @@ class Login
 
     /**
      * @Apidoc\Title("验证码")
-     * @Apidoc\Method("GET|POST")
+     * @Apidoc\Desc("get获取验证码，post验证行为验证码")
+     * @Apidoc\Method("GET,POST")
      * @Apidoc\Returned(ref="captchaReturn")
      */
     public function captcha()
@@ -60,7 +60,7 @@ class Login
         $setting = SettingService::info();
 
         $data = [];
-        if (Request::isGet()) {
+        if ($this->request->isGet()) {
             $field = ['captcha_switch', 'captcha_mode', 'captcha_type'];
             foreach ($field as $v) {
                 $data[$v] = $setting[$v] ?? '';
@@ -77,7 +77,7 @@ class Login
                 }
             }
         } else {
-            $captchaData = Request::param('');
+            $captchaData = $this->param('');
             $AjCaptchaUtils = new AjCaptchaUtils();
             $data = $AjCaptchaUtils->check($setting['captcha_type'], $captchaData);
         }
@@ -94,11 +94,11 @@ class Login
      */
     public function login()
     {
-        $param['username']     = Request::param('username/s', '');
-        $param['password']     = Request::param('password/s', '');
-        $param['captcha_id']   = Request::param('captcha_id/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
-        $param['ajcaptcha']    = Request::param('ajcaptcha');
+        $param['username']     = $this->param('username/s', '');
+        $param['password']     = $this->param('password/s', '');
+        $param['captcha_id']   = $this->param('captcha_id/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
+        $param['ajcaptcha']    = $this->param('ajcaptcha');
 
         validate(UserValidate::class)->scene('login')->check($param);
 

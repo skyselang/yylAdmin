@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 微信设置
 namespace app\common\service\setting;
 
 use think\facade\Config;
@@ -17,6 +16,9 @@ use app\common\model\setting\WechatModel;
 use app\common\service\file\FileService;
 use EasyWeChat\Factory;
 
+/**
+ * 微信设置
+ */
 class WechatService
 {
     // 公众号id

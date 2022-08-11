@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口速率中间件
 namespace app\admin\middleware;
 
 use Closure;
@@ -16,6 +15,9 @@ use think\Response;
 use app\common\cache\admin\ApiRateCache;
 use app\common\service\admin\SettingService;
 
+/**
+ * 接口速率中间件
+ */
 class ApiRateMiddleware
 {
     /**

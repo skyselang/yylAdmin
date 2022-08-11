@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 数据库管理控制器
 namespace app\admin\controller\admin;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\admin\DatabaseValidate;
 use app\common\service\admin\DatabaseService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminSystem")
  * @Apidoc\Sort("780")
  */
-class Database
+class Database extends BaseController
 {
     /**
      * @Apidoc\Title("备份列表")
@@ -28,56 +27,64 @@ class Database
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
+     * @Apidoc\Param(ref="extraParam")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\admin\DatabaseModel\listReturn", type="array", desc="备份列表")
-     * @Apidoc\Returned("table", type="array", desc="数据库表")
+     * @Apidoc\Returned("table", type="array", desc="数据库表", 
+     *     @Apidoc\Returned("Name", type="string", desc="表名"), 
+     *     @Apidoc\Returned("Comment", type="string", desc="注释"), 
+     *     @Apidoc\Returned("Engine", type="string", desc="引擎"), 
+     *     @Apidoc\Returned("Rows", type="string", desc="行"), 
+     *     @Apidoc\Returned("Auto_increment", type="string", desc="自动递增值"), 
+     *     @Apidoc\Returned("Collation", type="string", desc="排序规则"), 
+     *     @Apidoc\Returned("Avg_row_length", type="string", desc="平均每行长度"), 
+     *     @Apidoc\Returned("Index_length", type="string", desc="索引长度"), 
+     *     @Apidoc\Returned("Data_length", type="string", desc="数据长度"), 
+     *     @Apidoc\Returned("Max_data_length", type="string", desc="最大数据长度"), 
+     *     @Apidoc\Returned("Data_free", type="string", desc="数据可用空间"), 
+     *     @Apidoc\Returned("Row_format", type="string", desc="行格式"), 
+     *     @Apidoc\Returned("Create_options", type="string", desc="创建选项"), 
+     *     @Apidoc\Returned("Create_time", type="string", desc="创建日期"), 
+     *     @Apidoc\Returned("is_ignore", type="int", desc="是否备份忽略的表"), 
+     * )
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-        $is_extra     = Request::param('is_extra/d', 0);
+        $where = $this->where(['is_delete', '=', 0], 'admin_database_id,admin_user_id,username');
 
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['admin_database_id', 'admin_user_id', 'username'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = DatabaseService::list($where, $page, $limit, $order, '', $is_extra);
+        $data = DatabaseService::list($where, $this->page(), $this->limit(), $this->order(), '', $this->isExtra());
 
         return success($data);
     }
 
     /**
      * @Apidoc\Title("备份信息")
-     * @Apidoc\Param(ref="app\common\model\admin\DatabaseModel\id")
-     * @Apidoc\Param("table_name", type="string", desc="表名")
-     * @Apidoc\Returned(ref="app\common\model\admin\DatabaseModel\infoReturn", desc="备份信息或表信息")
+     * @Apidoc\Param(ref="app\common\model\admin\DatabaseModel\id", desc="备份id，与表名二选一")
+     * @Apidoc\Param("table_name", type="string", desc="表名，与备份id二选一")
+     * @Apidoc\Returned(ref="app\common\model\admin\DatabaseModel\infoReturn", desc="备份信息")
+     * @Apidoc\Returned("ddl", type="string", desc="表ddl信息")
+     * @Apidoc\Returned("info", type="object", desc="表常规信息", 
+     *     @Apidoc\Returned("Name", type="string", desc="表名"), 
+     *     @Apidoc\Returned("Comment", type="string", desc="注释"), 
+     *     @Apidoc\Returned("Engine", type="string", desc="引擎"), 
+     *     @Apidoc\Returned("Rows", type="string", desc="行"), 
+     *     @Apidoc\Returned("Auto_increment", type="string", desc="自动递增值"), 
+     *     @Apidoc\Returned("Collation", type="string", desc="排序规则"), 
+     *     @Apidoc\Returned("Avg_row_length", type="string", desc="平均每行长度"), 
+     *     @Apidoc\Returned("Index_length", type="string", desc="索引长度"), 
+     *     @Apidoc\Returned("Data_length", type="string", desc="数据长度"), 
+     *     @Apidoc\Returned("Max_data_length", type="string", desc="最大数据长度"), 
+     *     @Apidoc\Returned("Data_free", type="string", desc="数据可用空间"), 
+     *     @Apidoc\Returned("Row_format", type="string", desc="行格式"), 
+     *     @Apidoc\Returned("Create_options", type="string", desc="创建选项"), 
+     *     @Apidoc\Returned("Create_time", type="string", desc="创建日期"), 
+     *     @Apidoc\Returned("is_ignore", type="int", desc="是否备份忽略的表"), 
+     * )
      */
     public function info()
     {
-        $param['admin_database_id'] = Request::param('admin_database_id/d', '');
-        $param['table_name']        = Request::param('table_name/s', '');
+        $param['admin_database_id'] = $this->param('admin_database_id/d', '');
+        $param['table_name']        = $this->param('table_name/s', '');
 
         if ($param['admin_database_id']) {
             validate(DatabaseValidate::class)->scene('info')->check($param);
@@ -102,8 +109,8 @@ class Database
      */
     public function add()
     {
-        $param['table']  = Request::param('table/a', []);
-        $param['remark'] = Request::param('remark/s', '');
+        $param['table']  = $this->param('table/a', []);
+        $param['remark'] = $this->param('remark/s', '');
 
         validate(DatabaseValidate::class)->scene('add')->check($param);
 
@@ -119,8 +126,8 @@ class Database
      */
     public function edit()
     {
-        $param['admin_database_id'] = Request::param('admin_database_id/d', '');
-        $param['remark']            = Request::param('remark/s', '');
+        $param['admin_database_id'] = $this->param('admin_database_id/d', '');
+        $param['remark']            = $this->param('remark/s', '');
 
         validate(DatabaseValidate::class)->scene('edit')->check($param);
 
@@ -136,7 +143,7 @@ class Database
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(DatabaseValidate::class)->scene('dele')->check($param);
 
@@ -152,7 +159,7 @@ class Database
      */
     public function down()
     {
-        $param['admin_database_id'] = Request::param('admin_database_id/d', '');
+        $param['admin_database_id'] = $this->param('admin_database_id/d', '');
 
         validate(DatabaseValidate::class)->scene('down')->check($param);
 
@@ -167,7 +174,7 @@ class Database
      */
     public function restore()
     {
-        $param['admin_database_id'] = Request::param('admin_database_id/d', '');
+        $param['admin_database_id'] = $this->param('admin_database_id/d', '');
 
         validate(DatabaseValidate::class)->scene('restore')->check($param);
 
@@ -182,7 +189,7 @@ class Database
      */
     public function optimize()
     {
-        $param['table'] = Request::param('table/a', []);
+        $param['table'] = $this->param('table/a', []);
 
         validate(DatabaseValidate::class)->scene('optimize')->check($param);
 
@@ -197,7 +204,7 @@ class Database
      */
     public function repair()
     {
-        $param['table'] = Request::param('table/a', []);
+        $param['table'] = $this->param('table/a', []);
 
         validate(DatabaseValidate::class)->scene('repair')->check($param);
 

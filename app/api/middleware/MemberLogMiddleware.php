@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员日志中间件
 namespace app\api\middleware;
 
 use Closure;
@@ -15,6 +14,9 @@ use think\Request;
 use think\Response;
 use app\common\service\member\LogService;
 
+/**
+ * 会员日志中间件
+ */
 class MemberLogMiddleware
 {
     /**

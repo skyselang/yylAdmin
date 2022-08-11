@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 菜单管理模型
 namespace app\common\model\admin;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 菜单管理模型
+ */
 class MenuModel extends Model
 {
     // 表名
@@ -30,9 +32,18 @@ class MenuModel extends Model
     }
 
     /**
+     * 列表
      * @Apidoc\WithoutField("meta_query,create_time,update_time,is_delete,delete_time")
      */
     public function listReturn()
+    {
+    }
+
+    /**
+     * 树形
+     * @Apidoc\Field("admin_menu_id,menu_pid,menu_name")
+     */
+    public function treeReturn()
     {
     }
 

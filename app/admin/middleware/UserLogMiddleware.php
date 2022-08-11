@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 日志记录中间件
 namespace app\admin\middleware;
 
 use Closure;
@@ -15,6 +14,9 @@ use think\Request;
 use think\Response;
 use app\common\service\admin\UserLogService;
 
+/**
+ * 日志记录中间件
+ */
 class UserLogMiddleware
 {
     /**

@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员日志模型
 namespace app\common\model\member;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 会员日志模型
+ */
 class LogModel extends Model
 {
     // 表名

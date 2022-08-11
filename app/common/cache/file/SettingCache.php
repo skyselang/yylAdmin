@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件设置缓存
 namespace app\common\cache\file;
 
 use think\facade\Cache;
 
+/**
+ * 文件设置缓存
+ */
 class SettingCache
 {
     // 缓存标签

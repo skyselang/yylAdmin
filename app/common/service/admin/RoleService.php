@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 角色管理
 namespace app\common\service\admin;
 
 use app\common\cache\admin\RoleCache;
@@ -15,6 +14,9 @@ use app\common\cache\admin\UserCache;
 use app\common\model\admin\RoleModel;
 use app\common\model\admin\UserModel;
 
+/**
+ * 角色管理
+ */
 class RoleService
 {
     /**

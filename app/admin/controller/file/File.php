@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件管理控制器
 namespace app\admin\controller\file;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\file\FileValidate;
 use app\common\service\file\FileService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminFile")
  * @Apidoc\Sort("410")
  */
-class File
+class File extends BaseController
 {
     /**
      * @Apidoc\Title("文件列表")
@@ -35,65 +34,44 @@ class File
      * @Apidoc\Param("is_front", require=false, default="0")
      * @Apidoc\Param("is_disable", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表",
-     *     @Apidoc\Param(ref="app\common\model\file\FileModel\file_url")
+     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表", 
+     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\file_url")
      * )
-     * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="分组列表")
+     * @Apidoc\Returned("group", type="array", desc="分组列表",
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\id"),
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\group_name")
+     * )
      * @Apidoc\Returned("storage", type="object", desc="存储方式")
      * @Apidoc\Returned("filetype", type="object", desc="文件类型")
      * @Apidoc\Returned("setting", type="object", desc="文件设置")
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-        $group_id     = Request::param('group_id/s', '');
-        $storage      = Request::param('storage/s', '');
-        $file_type    = Request::param('file_type/s', '');
-        $is_front     = Request::param('is_front/s', 0);
-        $is_disable   = Request::param('is_disable/s', '');
+        $group_id   = $this->param('group_id/s', '');
+        $storage    = $this->param('storage/s', '');
+        $file_type  = $this->param('file_type/s', '');
+        $is_front   = $this->param('is_front/s', 0);
+        $is_disable = $this->param('is_disable/s', '');
 
-        if ($search_field && $search_value) {
-            if ($search_field == 'file_id') {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
         }
-        if ($storage != '') {
+        if ($storage !== '') {
             $where[] = ['storage', '=', $storage];
         }
         if ($file_type) {
             $where[] = ['file_type', '=', $file_type];
         }
-        if ($is_front != '') {
+        if ($is_front !== '') {
             $where[] = ['is_front', '=', $is_front];
         }
-        if ($is_disable != '') {
+        if ($is_disable !== '') {
             $where[] = ['is_disable', '=', $is_disable];
         }
         $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where($where, 'file_id');
 
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = FileService::list($where, $page, $limit, $order);
+        $data = FileService::list($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -102,11 +80,10 @@ class File
      * @Apidoc\Title("文件信息")
      * @Apidoc\Param(ref="app\common\model\file\FileModel\id")
      * @Apidoc\Returned(ref="app\common\model\file\FileModel\infoReturn")
-     * @Apidoc\Returned(ref="app\common\model\file\FileModel\file_url")
      */
     public function info()
     {
-        $param['file_id'] = Request::param('file_id/d', '');
+        $param['file_id'] = $this->param('file_id/d', '');
 
         validate(FileValidate::class)->scene('info')->check($param);
 
@@ -125,12 +102,12 @@ class File
      */
     public function add()
     {
-        $param['file']      = Request::file('file');
-        $param['group_id']  = Request::param('group_id/d', 0);
-        $param['file_type'] = Request::param('file_type/s', 'image');
-        $param['file_name'] = Request::param('file_name/s', '');
-        $param['is_front']  = Request::param('is_front/s', 0);
-        $param['sort']      = Request::param('sort/d', 250);
+        $param['file']      = $this->request->file('file');
+        $param['group_id']  = $this->param('group_id/d', 0);
+        $param['file_type'] = $this->param('file_type/s', 'image');
+        $param['file_name'] = $this->param('file_name/s', '');
+        $param['is_front']  = $this->param('is_front/s', 0);
+        $param['sort']      = $this->param('sort/d', 250);
 
         validate(FileValidate::class)->scene('add')->check($param);
 
@@ -146,13 +123,13 @@ class File
      */
     public function edit()
     {
-        $param['file_id']   = Request::param('file_id/d', '');
-        $param['group_id']  = Request::param('group_id/d', 0);
-        $param['domain']    = Request::param('domain/s', '');
-        $param['file_type'] = Request::param('file_type/s', 'image');
-        $param['file_name'] = Request::param('file_name/s', '');
-        $param['is_front']  = Request::param('is_front/s', 0);
-        $param['sort']      = Request::param('sort/d', 250);
+        $param['file_id']   = $this->param('file_id/d', '');
+        $param['group_id']  = $this->param('group_id/d', 0);
+        $param['domain']    = $this->param('domain/s', '');
+        $param['file_type'] = $this->param('file_type/s', 'image');
+        $param['file_name'] = $this->param('file_name/s', '');
+        $param['is_front']  = $this->param('is_front/s', 0);
+        $param['sort']      = $this->param('sort/d', 250);
 
         validate(FileValidate::class)->scene('edit')->check($param);
 
@@ -168,7 +145,7 @@ class File
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(FileValidate::class)->scene('dele')->check($param);
 
@@ -185,8 +162,8 @@ class File
      */
     public function editgroup()
     {
-        $param['ids']      = Request::param('ids/a', '');
-        $param['group_id'] = Request::param('group_id/d', 0);
+        $param['ids']      = $this->param('ids/a', '');
+        $param['group_id'] = $this->param('group_id/d', 0);
 
         validate(FileValidate::class)->scene('editgroup')->check($param);
 
@@ -203,8 +180,8 @@ class File
      */
     public function edittype()
     {
-        $param['ids']       = Request::param('ids/a', '');
-        $param['file_type'] = Request::param('file_type/s', 'image');
+        $param['ids']       = $this->param('ids/a', '');
+        $param['file_type'] = $this->param('file_type/s', 'image');
 
         validate(FileValidate::class)->scene('edittype')->check($param);
 
@@ -221,8 +198,8 @@ class File
      */
     public function editdomain()
     {
-        $param['ids']    = Request::param('ids/a', '');
-        $param['domain'] = Request::param('domain/s', '');
+        $param['ids']    = $this->param('ids/a', '');
+        $param['domain'] = $this->param('domain/s', '');
 
         validate(FileValidate::class)->scene('editdomain')->check($param);
 
@@ -239,8 +216,8 @@ class File
      */
     public function disable()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_disable'] = Request::param('is_disable/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['is_disable'] = $this->param('is_disable/d', 0);
 
         validate(FileValidate::class)->scene('disable')->check($param);
 
@@ -265,62 +242,43 @@ class File
      * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表", 
      *     @Apidoc\Returned(ref="app\common\model\file\FileModel\file_url")
      * )
-     * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel\listReturn", type="array", desc="分组列表")
+     * @Apidoc\Returned("group", type="array", desc="分组列表",
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\id"),
+     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\group_name")
+     * )
      * @Apidoc\Returned("storage", type="object", desc="存储方式")
      * @Apidoc\Returned("filetype", type="object", desc="文件类型")
      * @Apidoc\Returned("setting", type="object", desc="文件设置")
      */
     public function recover()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-        $group_id     = Request::param('group_id/s', '');
-        $storage      = Request::param('storage/s', '');
-        $file_type    = Request::param('file_type/s', '');
-        $is_front     = Request::param('is_front/s', '');
-        $is_disable   = Request::param('is_disable/s', '');
+        $group_id   = $this->param('group_id/s', '');
+        $storage    = $this->param('storage/s', '');
+        $file_type  = $this->param('file_type/s', '');
+        $is_front   = $this->param('is_front/s', '');
+        $is_disable = $this->param('is_disable/s', '');
 
-        if ($search_field && $search_value) {
-            if ($search_field == 'file_id') {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
         }
-        if ($storage != '') {
+        if ($storage !== '') {
             $where[] = ['storage', '=', $storage];
         }
         if ($file_type) {
             $where[] = ['file_type', '=', $file_type];
         }
-        if ($is_front != '') {
+        if ($is_front !== '') {
             $where[] = ['is_front', '=', $is_front];
         }
-        if ($is_disable != '') {
+        if ($is_disable !== '') {
             $where[] = ['is_disable', '=', $is_disable];
         }
         $where[] = ['is_delete', '=', 1];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where($where, 'file_id');
 
         $order = ['delete_time' => 'desc', 'is_disable' => 'desc', 'update_time' => 'desc'];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
 
-        $data = FileService::list($where, $page, $limit, $order);
+        $data = FileService::list($where, $this->page(), $this->limit(), $this->order($order));
 
         return success($data);
     }
@@ -332,7 +290,7 @@ class File
      */
     public function recoverReco()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(FileValidate::class)->scene('reco')->check($param);
 
@@ -348,7 +306,7 @@ class File
      */
     public function recoverDele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(FileValidate::class)->scene('dele')->check($param);
 

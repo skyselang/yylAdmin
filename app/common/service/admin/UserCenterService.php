@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 个人中心
 namespace app\common\service\admin;
 
 use app\common\cache\admin\UserCache;
 use app\common\model\admin\UserModel;
 
+/**
+ * 个人中心
+ */
 class UserCenterService
 {
     /**

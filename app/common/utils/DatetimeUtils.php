@@ -7,9 +7,11 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 日期时间
 namespace app\common\utils;
 
+/**
+ * 日期时间
+ */
 class DatetimeUtils
 {
     /**

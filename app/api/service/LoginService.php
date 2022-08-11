@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 登录退出
 namespace app\api\service;
 
 use app\common\service\member\MemberService;
 use app\common\service\setting\SettingService;
 
+/**
+ * 登录退出
+ */
 class LoginService
 {
     /**

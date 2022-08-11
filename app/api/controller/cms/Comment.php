@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 留言控制器
 namespace app\api\controller\cms;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\cms\CommentValidate;
 use app\common\cache\cms\CommentCache;
 use app\common\service\cms\CommentService;
@@ -19,10 +18,10 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("留言")
- * @Apidoc\Sort("620")
  * @Apidoc\Group("cms")
+ * @Apidoc\Sort("620")
  */
-class Comment
+class Comment extends BaseController
 {
     /**
      * @Apidoc\Title("留言")
@@ -40,14 +39,14 @@ class Comment
             exception('功能维护中...');
         }
 
-        $param['call']    = Request::param('call/s', '');
-        $param['mobile']  = Request::param('mobile/s', '');
-        $param['tel']     = Request::param('tel/s', '');
-        $param['email']   = Request::param('email/s', '');
-        $param['qq']      = Request::param('qq/s', '');
-        $param['wechat']  = Request::param('wechat/s', '');
-        $param['title']   = Request::param('title/s', '');
-        $param['content'] = Request::param('content/s', '');
+        $param['call']    = $this->param('call/s', '');
+        $param['mobile']  = $this->param('mobile/s', '');
+        $param['tel']     = $this->param('tel/s', '');
+        $param['email']   = $this->param('email/s', '');
+        $param['qq']      = $this->param('qq/s', '');
+        $param['wechat']  = $this->param('wechat/s', '');
+        $param['title']   = $this->param('title/s', '');
+        $param['content'] = $this->param('content/s', '');
 
         validate(CommentValidate::class)->scene('add')->check($param);
 

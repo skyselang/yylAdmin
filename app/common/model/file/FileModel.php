@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件管理模型
 namespace app\common\model\file;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 文件管理模型
+ */
 class FileModel extends Model
 {
     // 表名

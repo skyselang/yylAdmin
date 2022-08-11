@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容分类缓存
 namespace app\common\cache\cms;
 
 use think\facade\Cache;
 
+/**
+ * 内容分类缓存
+ */
 class CategoryCache
 {
     // 缓存标签

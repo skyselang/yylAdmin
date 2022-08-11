@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容管理
 namespace app\common\service\cms;
 
 use app\common\cache\cms\ContentCache;
@@ -15,6 +14,9 @@ use app\common\model\cms\CategoryModel;
 use app\common\model\cms\ContentModel;
 use app\common\service\file\FileService;
 
+/**
+ * 内容管理
+ */
 class ContentService
 {
     /**

@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 留言管理验证器
 namespace app\common\validate\cms;
 
 use think\Validate;
 
+/**
+ * 留言管理验证器
+ */
 class CommentValidate extends Validate
 {
     // 验证规则

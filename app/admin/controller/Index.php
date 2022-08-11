@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 控制台控制器
 namespace app\admin\controller;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\service\IndexService;
 use app\common\service\admin\NoticeService;
 use app\common\service\member\MemberService;
@@ -23,7 +22,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminConsole")
  * @Apidoc\Sort("150")
  */
-class Index
+class Index extends BaseController
 {
     /**
      * @Apidoc\Title("首页")
@@ -40,25 +39,21 @@ class Index
      * @Apidoc\Title("公告")
      * @Apidoc\Param(ref="pagingParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="公告列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\NoticeModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\NoticeModel\listReturn", type="array", desc="公告列表")
      */
     public function notice()
     {
-        $page  = Request::param('page/d', 1);
-        $limit = Request::param('limit/d', 10);
-
         $where[] = ['open_time_start', '<=', datetime()];
         $where[] = ['open_time_end', '>=', datetime()];
         $where[] = ['is_open', '=', 1];
         $where[] = ['is_delete', '=', 0];
+        $where = $this->where($where);
 
         $order = ['sort' => 'desc', 'open_time_start' => 'desc'];
 
         $field = 'admin_notice_id,admin_user_id,title,color,intro,create_time';
 
-        $data = NoticeService::list($where, $page, $limit, $order, $field);
+        $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
         return success($data);
     }
@@ -78,8 +73,8 @@ class Index
      */
     public function member()
     {
-        $type = Request::param('type/s', '');
-        $date = Request::param('date/a', []);
+        $type = $this->param('type/s', '');
+        $date = $this->param('date/a', []);
 
         $data['number'] = MemberService::stat($type, $date, 'number');
 

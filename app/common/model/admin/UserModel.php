@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 用户管理模型
 namespace app\common\model\admin;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 用户管理模型
+ */
 class UserModel extends Model
 {
     // 表名

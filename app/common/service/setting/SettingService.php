@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 设置管理
 namespace app\common\service\setting;
 
 use think\facade\Config;
 use app\common\cache\setting\SettingCache;
 use app\common\model\setting\SettingModel;
 
+/**
+ * 设置管理
+ */
 class SettingService
 {
     // 设置id

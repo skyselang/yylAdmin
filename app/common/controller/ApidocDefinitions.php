@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口文档公共注释定义
 namespace app\common\controller;
 
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * Apidoc 公共注释定义
+ */
 class ApidocDefinitions
 {
     /**
@@ -58,6 +60,14 @@ class ApidocDefinitions
      * @Apidoc\Param("date_value", type="array", default="", desc="日期范围，eg：['2020-02-02','2020-02-22']")
      */
     public function dateParam()
+    {
+    }
+
+    /**
+     * 额外数据请求参数
+     * @Apidoc\Param("is_extra", type="int", default="0", desc="是否返回额外数据，1是0否")
+     */
+    public function extraParam()
     {
     }
 
@@ -112,10 +122,10 @@ class ApidocDefinitions
      * imgs请求参数
      * @Apidoc\Param("imgs", type="array", require=false, default="[]", desc="图片",
      *     @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
-     *     @Apidoc\Param("file_name", type="string", require=true, default="", desc="图片名称"),
-     *     @Apidoc\Param("file_size", type="string", require=true, default="", desc="图片大小"),
-     *     @Apidoc\Param("file_path", type="string", require=true, default="", desc="图片路径"),
-     *     @Apidoc\Param("file_url", type="string", require=true, default="", desc="图片链接")
+     *     @Apidoc\Param("file_name", type="string", require=false, default="", desc="图片名称"),
+     *     @Apidoc\Param("file_size", type="string", require=false, default="", desc="图片大小"),
+     *     @Apidoc\Param("file_path", type="string", require=false, default="", desc="图片路径"),
+     *     @Apidoc\Param("file_url", type="string", require=false, default="", desc="图片链接")
      * )
      */
     public function imgsParam()
@@ -140,10 +150,10 @@ class ApidocDefinitions
      * files请求参数
      * @Apidoc\Param("files", type="array", require=false, default="[]", desc="附件",
      *     @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
-     *     @Apidoc\Param("file_name", type="string", require=true, default="", desc="附件名称"),
-     *     @Apidoc\Param("file_size", type="string", require=true, default="", desc="附件大小"),
-     *     @Apidoc\Param("file_path", type="string", require=true, default="", desc="附件路径"),
-     *     @Apidoc\Param("file_url", type="string", require=true, default="", desc="附件链接"),
+     *     @Apidoc\Param("file_name", type="string", require=false, default="", desc="附件名称"),
+     *     @Apidoc\Param("file_size", type="string", require=false, default="", desc="附件大小"),
+     *     @Apidoc\Param("file_path", type="string", require=false, default="", desc="附件路径"),
+     *     @Apidoc\Param("file_url", type="string", require=false, default="", desc="附件链接"),
      * )
      */
     public function filesParam()
@@ -168,10 +178,10 @@ class ApidocDefinitions
      * videos请求参数
      * @Apidoc\Param("videos", type="array", require=false, default="[]", desc="视频",
      *     @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
-     *     @Apidoc\Param("file_name", type="string", require=true, default="", desc="视频名称"),
-     *     @Apidoc\Param("file_size", type="string", require=true, default="", desc="视频大小"),
-     *     @Apidoc\Param("file_path", type="string", require=true, default="", desc="视频路径"),
-     *     @Apidoc\Param("file_url", type="string", require=true, default="", desc="视频链接"),
+     *     @Apidoc\Param("file_name", type="string", require=false, default="", desc="视频名称"),
+     *     @Apidoc\Param("file_size", type="string", require=false, default="", desc="视频大小"),
+     *     @Apidoc\Param("file_path", type="string", require=false, default="", desc="视频路径"),
+     *     @Apidoc\Param("file_url", type="string", require=false, default="", desc="视频链接"),
      * )
      */
     public function videosParam()

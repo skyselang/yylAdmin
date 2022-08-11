@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 留言管理缓存
 namespace app\common\cache\cms;
 
 use think\facade\Cache;
 
+/**
+ * 留言管理缓存
+ */
 class CommentCache
 {
     // 缓存标签

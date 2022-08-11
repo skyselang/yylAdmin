@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容分类
 namespace app\common\service\cms;
 
 use app\common\cache\cms\CategoryCache;
 use app\common\model\cms\CategoryModel;
 use app\common\service\file\FileService;
 
+/**
+ * 内容分类
+ */
 class CategoryService
 {
     /**

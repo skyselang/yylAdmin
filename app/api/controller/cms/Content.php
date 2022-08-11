@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容控制器
 namespace app\api\controller\cms;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\cms\ContentValidate;
 use app\common\service\cms\CategoryService;
 use app\common\service\cms\ContentService;
@@ -18,19 +17,20 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("内容")
- * @Apidoc\Sort("610")
  * @Apidoc\Group("cms")
+ * @Apidoc\Sort("610")
  */
-class Content
+class Content extends BaseController
 {
     /**
      * @Apidoc\Title("分类列表")
-     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\listReturn", type="tree", childrenField="children", desc="树形列表")
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CategoryModel\treeReturn", type="tree", childrenField="children", desc="分类树形")
      */
     public function category()
     {
         $where = [['is_hide', '=', 0], ['is_delete', '=', 0]];
-        $order = [];
+        $where = $this->where($where);
+        $order = $this->order();
         $field = 'category_id,category_pid,category_name,img_id';
 
         $data = CategoryService::list('tree', $where, $order, $field);
@@ -47,21 +47,16 @@ class Content
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\name")
      * @Apidoc\Param("name", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\ContentModel\listReturn"),
+     * @Apidoc\Returned("list", ref="app\common\model\cms\ContentModel\listReturn", type="array", desc="内容列表",
      *     @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * )
      */
     public function list()
     {
-        $page        = Request::param('page/d', 1);
-        $limit       = Request::param('limit/d', 10);
-        $sort_field  = Request::param('sort_field/s', '');
-        $sort_value  = Request::param('sort_value/s', '');
-        $category_id = Request::param('category_id/d', '');
-        $name        = Request::param('name/s', '');
+        $category_id = $this->param('category_id/d', '');
+        $name        = $this->param('name/s', '');
 
-        if ($category_id) {
+        if ($category_id !== '') {
             $where[] = ['category_id', '=', $category_id];
         }
         if ($name) {
@@ -71,11 +66,8 @@ class Content
         $where[] = ['is_delete', '=', 0];
 
         $order = ['is_top' => 'desc', 'is_hot' => 'desc', 'is_rec' => 'desc', 'sort' => 'desc', 'create_time' => 'desc'];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
 
-        $data = ContentService::list($where, $page, $limit, $order);
+        $data = ContentService::list($where, $this->page(), $this->limit(), $this->order($order));
 
         return success($data);
     }
@@ -83,7 +75,8 @@ class Content
     /**
      * @Apidoc\Title("内容信息")
      * @Apidoc\Param(ref="app\common\model\cms\ContentModel\id")
-     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id", require=false)
+     * @Apidoc\Param(ref="app\common\model\cms\ContentModel\category_id")
+     * @Apidoc\Param("category_id", require=false, default="")
      * @Apidoc\Returned(ref="app\common\model\cms\ContentModel\infoReturn")
      * @Apidoc\Returned(ref="app\common\model\cms\CategoryModel\category_name")
      * @Apidoc\Returned("prev_info", type="object", desc="上一条",
@@ -97,8 +90,8 @@ class Content
      */
     public function info()
     {
-        $param['content_id']  = Request::param('content_id/d', '');
-        $param['category_id'] = Request::param('category_id/d', 0);
+        $param['content_id']  = $this->param('content_id/d', '');
+        $param['category_id'] = $this->param('category_id/d', 0);
 
         validate(ContentValidate::class)->scene('info')->check($param);
 

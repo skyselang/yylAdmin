@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员日志控制器
 namespace app\admin\controller\member;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\member\LogValidate;
 use app\common\service\member\LogService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminMember")
  * @Apidoc\Sort("220")
  */
-class Log
+class Log extends BaseController
 {
     /**
      * @Apidoc\Title("会员日志列表")
@@ -31,44 +30,18 @@ class Log
      * @Apidoc\Param(ref="app\common\model\member\LogModel\log_type")
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel\listReturn", type="array", desc="列表")
+     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel\listReturn", type="array", desc="会员日志列表")
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $log_type     = Request::param('log_type/d', '');
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', 'create_time');
-        $date_value   = Request::param('date_value/a', '');
-
+        $log_type = $this->param('log_type/d', '');
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['member_id', 'username', 'api_id', 'api_url', 'api_name'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-            } else {
-                $search_exp = strpos($search_value, ',') ? 'in' : 'like';
-                $search_value = strpos($search_value, ',') ? $search_value : '%' . $search_value . '%';
-            }
-            $where[] = [$search_field, $search_exp, $search_value];
-        }
         $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where($where, 'member_id,username,api_id,api_url,api_name');
 
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = LogService::list($where, $page, $limit, $order);
+        $data = LogService::list($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -80,7 +53,7 @@ class Log
      */
     public function info()
     {
-        $param['member_log_id'] = Request::param('member_log_id/d', '');
+        $param['member_log_id'] = $this->param('member_log_id/d', '');
 
         validate(LogValidate::class)->scene('info')->check($param);
 
@@ -96,7 +69,7 @@ class Log
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(LogValidate::class)->scene('dele')->check($param);
 
@@ -120,11 +93,11 @@ class Log
      */
     public function clear()
     {
-        $member_id  = Request::param('member_id/s', '');
-        $username   = Request::param('username/s', '');
-        $api_id     = Request::param('api_id/s', '');
-        $api_url    = Request::param('api_url/s', '');
-        $date_value = Request::param('date_value/a', '');
+        $member_id  = $this->param('member_id/s', '');
+        $username   = $this->param('username/s', '');
+        $api_id     = $this->param('api_id/s', '');
+        $api_url    = $this->param('api_url/s', '');
+        $date_value = $this->param('date_value/a', '');
 
         $where = [];
         if ($member_id) {
@@ -185,9 +158,9 @@ class Log
      */
     public function stat()
     {
-        $type  = Request::param('type/s', 'day');
-        $date  = Request::param('date/a', []);
-        $field = Request::param('field/s', 'request_province');
+        $type  = $this->param('type/s', 'day');
+        $date  = $this->param('date/a', []);
+        $field = $this->param('field/s', 'request_province');
 
         $data['count'] = LogService::stat($type, $date, 'count');
         $data['echart'][] = LogService::stat($type, $date, 'number');

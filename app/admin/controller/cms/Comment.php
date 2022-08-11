@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 留言管理控制器
 namespace app\admin\controller\cms;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\cms\CommentValidate;
 use app\common\service\cms\CommentService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminCms")
  * @Apidoc\Sort("330")
  */
-class Comment
+class Comment extends BaseController
 {
     /**
      * @Apidoc\Title("留言列表")
@@ -29,41 +28,13 @@ class Comment
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CommentModel\listReturn", type="array", desc="留言列表")
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $where = $this->where(['is_delete', '=', 0], 'comment_id,is_unread');
 
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['comment_id', 'is_unread'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = CommentService::list($where, $page, $limit, $order);
+        $data = CommentService::list($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -75,7 +46,7 @@ class Comment
      */
     public function info()
     {
-        $param['comment_id'] = Request::param('comment_id/d', '');
+        $param['comment_id'] = $this->param('comment_id/d', '');
 
         validate(CommentValidate::class)->scene('info')->check($param);
 
@@ -95,15 +66,15 @@ class Comment
      */
     public function add()
     {
-        $param['call']    = Request::param('call/s', '');
-        $param['mobile']  = Request::param('mobile/s', '');
-        $param['tel']     = Request::param('tel/s', '');
-        $param['email']   = Request::param('email/s', '');
-        $param['qq']      = Request::param('qq/s', '');
-        $param['wechat']  = Request::param('wechat/s', '');
-        $param['title']   = Request::param('title/s', '');
-        $param['content'] = Request::param('content/s', '');
-        $param['remark']  = Request::param('remark/s', '');
+        $param['call']    = $this->param('call/s', '');
+        $param['mobile']  = $this->param('mobile/s', '');
+        $param['tel']     = $this->param('tel/s', '');
+        $param['email']   = $this->param('email/s', '');
+        $param['qq']      = $this->param('qq/s', '');
+        $param['wechat']  = $this->param('wechat/s', '');
+        $param['title']   = $this->param('title/s', '');
+        $param['content'] = $this->param('content/s', '');
+        $param['remark']  = $this->param('remark/s', '');
 
         validate(CommentValidate::class)->scene('add')->check($param);
 
@@ -119,16 +90,16 @@ class Comment
      */
     public function edit()
     {
-        $param['comment_id'] = Request::param('comment_id/d', '');
-        $param['call']       = Request::param('call/s', '');
-        $param['mobile']     = Request::param('mobile/s', '');
-        $param['tel']        = Request::param('tel/s', '');
-        $param['email']      = Request::param('email/s', '');
-        $param['qq']         = Request::param('qq/s', '');
-        $param['wechat']     = Request::param('wechat/s', '');
-        $param['title']      = Request::param('title/s', '');
-        $param['content']    = Request::param('content/s', '');
-        $param['remark']     = Request::param('remark/s', '');
+        $param['comment_id'] = $this->param('comment_id/d', '');
+        $param['call']       = $this->param('call/s', '');
+        $param['mobile']     = $this->param('mobile/s', '');
+        $param['tel']        = $this->param('tel/s', '');
+        $param['email']      = $this->param('email/s', '');
+        $param['qq']         = $this->param('qq/s', '');
+        $param['wechat']     = $this->param('wechat/s', '');
+        $param['title']      = $this->param('title/s', '');
+        $param['content']    = $this->param('content/s', '');
+        $param['remark']     = $this->param('remark/s', '');
 
         validate(CommentValidate::class)->scene('edit')->check($param);
 
@@ -144,7 +115,7 @@ class Comment
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(CommentValidate::class)->scene('dele')->check($param);
 
@@ -160,7 +131,7 @@ class Comment
      */
     public function isread()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(CommentValidate::class)->scene('isread')->check($param);
 
@@ -178,41 +149,13 @@ class Comment
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="留言列表", 
-     *     @Apidoc\Returned(ref="app\common\model\cms\CommentModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\cms\CommentModel\listReturn", type="array", desc="留言列表")
      */
     public function recover()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $where = $this->where(['is_delete', '=', 1], 'comment_id,is_unread');
 
-        if ($search_field && $search_value) {
-            if (in_array($search_field, ['comment_id', 'is_unread'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 1];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = ['delete_time' => 'desc'];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = CommentService::list($where, $page, $limit, $order);
+        $data = CommentService::list($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -224,7 +167,7 @@ class Comment
      */
     public function recoverReco()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(CommentValidate::class)->scene('reco')->check($param);
 
@@ -240,7 +183,7 @@ class Comment
      */
     public function recoverDele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(CommentValidate::class)->scene('dele')->check($param);
 

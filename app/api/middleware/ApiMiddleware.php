@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口校验中间件
 namespace app\api\middleware;
 
 use Closure;
@@ -16,6 +15,9 @@ use think\Response;
 use think\facade\Config;
 use app\common\service\setting\SettingService;
 
+/**
+ * 接口校验中间件
+ */
 class ApiMiddleware
 {
     /**

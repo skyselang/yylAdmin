@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 微信设置验证器
 namespace app\common\validate\setting;
 
 use think\Validate;
 
+/**
+ * 微信设置验证器
+ */
 class WechatValidate extends Validate
 {
     // 验证规则

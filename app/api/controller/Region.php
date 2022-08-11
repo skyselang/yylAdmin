@@ -7,20 +7,19 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 地区控制器
 namespace app\api\controller;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\service\setting\RegionService;
 use app\common\validate\setting\RegionValidate;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("地区")
- * @Apidoc\Sort("510")
  * @Apidoc\Group("setting")
+ * @Apidoc\Sort("510")
  */
-class Region
+class Region extends BaseController
 {
     /**
      * @Apidoc\Title("地区列表")
@@ -30,7 +29,7 @@ class Region
      */
     public function list()
     {
-        $region_pid = Request::param('region_id/d', 0);
+        $region_pid = $this->param('region_id/d', 0);
 
         $where[] = ['region_pid', '=', $region_pid];
 
@@ -41,7 +40,7 @@ class Region
 
     /**
      * @Apidoc\Title("地区树形")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="tree", childrenField="children", desc="树形列表")
+     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="tree", childrenField="children", desc="地区树形")
      */
     public function tree()
     {
@@ -57,7 +56,7 @@ class Region
      */
     public function info()
     {
-        $param['region_id'] = Request::param('region_id/d', '');
+        $param['region_id'] = $this->param('region_id/d', '');
 
         validate(RegionValidate::class)->scene('info')->check($param);
 

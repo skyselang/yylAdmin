@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 注册控制器
 namespace app\api\controller;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\utils\CaptchaUtils;
 use app\common\utils\SmsUtils;
 use app\common\utils\EmailUtils;
@@ -23,10 +22,10 @@ use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("注册")
- * @Apidoc\Sort("210")
  * @Apidoc\Group("register")
+ * @Apidoc\Sort("210")
  */
-class Register
+class Register extends BaseController
 {
     /**
      * @Apidoc\Title("用户名注册验证码")
@@ -59,12 +58,12 @@ class Register
      */
     public function register()
     {
-        $param['username']     = Request::param('username/s', '');
-        $param['nickname']     = Request::param('nickname/s', '');
-        $param['password']     = Request::param('password/s', '');
-        $param['captcha_id']   = Request::param('captcha_id/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
-        $param['reg_channel']  = Request::param('reg_channel/s', 1);;
+        $param['username']     = $this->param('username/s', '');
+        $param['nickname']     = $this->param('nickname/s', '');
+        $param['password']     = $this->param('password/s', '');
+        $param['captcha_id']   = $this->param('captcha_id/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
+        $param['reg_channel']  = $this->param('reg_channel/s', 1);;
         $param['reg_type']     = 1;
 
         $setting = SettingService::info();
@@ -94,7 +93,7 @@ class Register
      */
     public function phoneCaptcha()
     {
-        $param['phone'] = Request::param('phone/s', '');
+        $param['phone'] = $this->param('phone/s', '');
 
         validate(MemberValidate::class)->scene('phoneRegisterCaptcha')->check($param);
 
@@ -116,11 +115,11 @@ class Register
      */
     public function phoneRegister()
     {
-        $param['phone']        = Request::param('phone/s', '');
-        $param['nickname']     = Request::param('nickname/s', '');
-        $param['password']     = Request::param('password/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
-        $param['reg_channel']  = Request::param('reg_channel/s', 1);;
+        $param['phone']        = $this->param('phone/s', '');
+        $param['nickname']     = $this->param('nickname/s', '');
+        $param['password']     = $this->param('password/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
+        $param['reg_channel']  = $this->param('reg_channel/s', 1);;
         $param['reg_type']     = 2;
 
         validate(MemberValidate::class)->scene('phoneRegister')->check($param);
@@ -147,7 +146,7 @@ class Register
      */
     public function emailCaptcha()
     {
-        $param['email'] = Request::param('email/s', '');
+        $param['email'] = $this->param('email/s', '');
 
         validate(MemberValidate::class)->scene('emailRegisterCaptcha')->check($param);
 
@@ -169,11 +168,11 @@ class Register
      */
     public function emailRegister()
     {
-        $param['email']        = Request::param('email/s', '');
-        $param['nickname']     = Request::param('nickname/s', '');
-        $param['password']     = Request::param('password/s', '');
-        $param['captcha_code'] = Request::param('captcha_code/s', '');
-        $param['reg_channel']  = Request::param('reg_channel/s', 1);;
+        $param['email']        = $this->param('email/s', '');
+        $param['nickname']     = $this->param('nickname/s', '');
+        $param['password']     = $this->param('password/s', '');
+        $param['captcha_code'] = $this->param('captcha_code/s', '');
+        $param['reg_channel']  = $this->param('reg_channel/s', 1);;
         $param['reg_type']     = 3;
 
         validate(MemberValidate::class)->scene('emailRegister')->check($param);

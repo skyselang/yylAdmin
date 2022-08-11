@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容管理模型
 namespace app\common\model\cms;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 内容管理模型
+ */
 class ContentModel extends Model
 {
     // 表名
@@ -29,8 +31,8 @@ class ContentModel extends Model
 
     /**
      * 列表
-     * @Apidoc\Field("content_id,name,category_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time")
-     * @Apidoc\AddField("img_url", type="string", default="", desc="图片链接")
+     * @Apidoc\Field("content_id,name,img_id,category_id,sort,hits,is_top,is_hot,is_rec,is_hide,create_time,update_time,delete_time")
+     * @Apidoc\AddField("img_url", type="string", default="", desc="封面图片链接")
      */
     public function listReturn()
     {
@@ -45,7 +47,7 @@ class ContentModel extends Model
 
     /**
      * 添加
-     * @Apidoc\Field("category_id,name,title,keywords,description,author,url,sort,content")
+     * @Apidoc\Field("category_id,name,img_id,title,keywords,description,author,url,sort,content")
      */
     public function addParam()
     {
@@ -53,7 +55,7 @@ class ContentModel extends Model
 
     /**
      * 修改
-     * @Apidoc\Field("content_id,category_id,name,title,keywords,description,author,url,sort,content")
+     * @Apidoc\Field("content_id,category_id,name,img_id,title,keywords,description,author,url,sort,content")
      */
     public function editParam()
     {

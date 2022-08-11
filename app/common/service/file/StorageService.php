@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 对象存储
 namespace app\common\service\file;
 
 require_once '../extend/bce-php-sdk-0.9.16/BaiduBce.phar';
@@ -25,6 +24,9 @@ use Aws\S3\S3Client;
 use Aws\S3\MultipartUploader;
 use Aws\S3\Exception\S3MultipartUploadException;
 
+/**
+ * 对象存储
+ */
 class StorageService
 {
     /**

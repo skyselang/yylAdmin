@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// {$form.controller_title}验证器
 namespace {$validate.namespace};
 
 use think\Validate;
 
+/**
+ * {$form.controller_title}验证器
+ */
 class {$validate.class_name} extends Validate
 {
     // 验证规则

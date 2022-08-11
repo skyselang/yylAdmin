@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 留言管理
 namespace app\common\service\cms;
 
 use app\common\cache\cms\CommentCache;
 use app\common\model\cms\CommentModel;
 
+/**
+ * 留言管理
+ */
 class CommentService
 {
     /**

@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 微信设置控制器
 namespace app\admin\controller\setting;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\setting\WechatValidate;
 use app\common\service\setting\WechatService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminSetting")
  * @Apidoc\Sort("535")
  */
-class Wechat
+class Wechat extends BaseController
 {
     /**
      * @Apidoc\Title("公众号信息")
@@ -41,14 +40,14 @@ class Wechat
      */
     public function offiEdit()
     {
-        $param['name']              = Request::param('name/s', '');
-        $param['origin_id']         = Request::param('origin_id/s', '');
-        $param['qrcode_id']         = Request::param('qrcode_id/d', 0);
-        $param['appid']             = Request::param('appid/s', '');
-        $param['appsecret']         = Request::param('appsecret/s', '');
-        $param['token']             = Request::param('token/s', '');
-        $param['encoding_aes_key']  = Request::param('encoding_aes_key/s', '');
-        $param['encoding_aes_type'] = Request::param('encoding_aes_type/d', 1);
+        $param['name']              = $this->param('name/s', '');
+        $param['origin_id']         = $this->param('origin_id/s', '');
+        $param['qrcode_id']         = $this->param('qrcode_id/d', 0);
+        $param['appid']             = $this->param('appid/s', '');
+        $param['appsecret']         = $this->param('appsecret/s', '');
+        $param['token']             = $this->param('token/s', '');
+        $param['encoding_aes_key']  = $this->param('encoding_aes_key/s', '');
+        $param['encoding_aes_type'] = $this->param('encoding_aes_type/d', 1);
 
         validate(WechatValidate::class)->scene('offiEdit')->check($param);
 
@@ -76,11 +75,11 @@ class Wechat
      */
     public function miniEdit()
     {
-        $param['name']      = Request::param('name/s', '');
-        $param['origin_id'] = Request::param('origin_id/s', '');
-        $param['qrcode_id'] = Request::param('qrcode_id/d', 0);
-        $param['appid']     = Request::param('appid/s', '');
-        $param['appsecret'] = Request::param('appsecret/s', '');
+        $param['name']      = $this->param('name/s', '');
+        $param['origin_id'] = $this->param('origin_id/s', '');
+        $param['qrcode_id'] = $this->param('qrcode_id/d', 0);
+        $param['appid']     = $this->param('appid/s', '');
+        $param['appsecret'] = $this->param('appsecret/s', '');
 
         validate(WechatValidate::class)->scene('miniEdit')->check($param);
 

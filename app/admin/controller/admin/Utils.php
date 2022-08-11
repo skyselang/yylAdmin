@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 实用工具控制器
 namespace app\admin\controller\admin;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\admin\UtilsValidate;
 use app\common\service\admin\UtilsService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,17 +19,20 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminSystem")
  * @Apidoc\Sort("730")
  */
-class Utils
+class Utils extends BaseController
 {
     /**
      * @Apidoc\Title("随机字符串")
      * @Apidoc\Param("strrand_ids", type="array", require=true, default="[1,2,3]", desc="所用字符")
      * @Apidoc\Param("strrand_len", type="int", require=true, default="12", desc="字符长度")
+     * @Apidoc\Returned("len", type="int", desc="字符长度")
+     * @Apidoc\Returned("ori", type="string", desc="原始字符")
+     * @Apidoc\Returned("str", type="string", desc="生成字符")
      */
     public function strrand()
     {
-        $param['strrand_ids'] = Request::param('ids/a', [1, 2, 3]);
-        $param['strrand_len'] = Request::param('len/d', 12);
+        $param['strrand_ids'] = $this->param('ids/a', [1, 2, 3]);
+        $param['strrand_len'] = $this->param('len/d', 12);
 
         validate(UtilsValidate::class)->scene('strrand')->check($param);
 
@@ -41,11 +43,17 @@ class Utils
 
     /**
      * @Apidoc\Title("字符串转换")
-     * @Apidoc\Param("str", type="string", default="", desc="字符串")
+     * @Apidoc\Param("str", type="string", default="yylAdmin", desc="字符串")
+     * @Apidoc\Returned("str", type="string", desc="字符串")
+     * @Apidoc\Returned("len", type="int", desc="长度")
+     * @Apidoc\Returned("lower", type="string", desc="小写")
+     * @Apidoc\Returned("upper", type="string", desc="大写")
+     * @Apidoc\Returned("rev", type="string", desc="翻转")
+     * @Apidoc\Returned("md5", type="string", desc="MD5")
      */
     public function strtran()
     {
-        $str = Request::param('str/s', '');
+        $str = $this->param('str/s', '') ?: 'yylAdmin';
 
         $data = UtilsService::strtran($str);
 
@@ -54,30 +62,40 @@ class Utils
 
     /**
      * @Apidoc\Title("时间戳转换")
-     * @Apidoc\Param("type", type="string", default="", desc="转换类型")
-     * @Apidoc\Param("value", type="string", default="", desc="时间、时间戳")
+     * @Apidoc\Param("type", type="string", default="timestamp", desc="转换类型，timestamp时间戳、datetime日期时间")
+     * @Apidoc\Param("value", type="string", default="", desc="转换的值，时间戳、日期时间")
+     * @Apidoc\Returned("type", type="string", desc="转换类型")
+     * @Apidoc\Returned("value", type="string", desc="转换的值")
+     * @Apidoc\Returned("timestamp", type="int", desc="时间戳")
+     * @Apidoc\Returned("datetime", type="string", desc="日期时间")
      */
     public function timestamp()
     {
-        $param['type']  = Request::param('type', '');
-        $param['value'] = Request::param('value', '');
+        $type  = $this->param('type', '') ?: 'timestamp';
+        $value = $this->param('value', '') ?: time();
 
-        $data = UtilsService::timestamp($param);
+        $data = UtilsService::timestamp($type, $value);
 
         return success($data);
     }
 
     /**
      * @Apidoc\Title("字节转换")
-     * @Apidoc\Param("type", type="string", default="B", desc="转换类型")
-     * @Apidoc\Param("value", type="string", default="1024", desc="数值")
+     * @Apidoc\Param("type", type="string", default="B", desc="转换类型，b、B、KB、MB、GB、TB")
+     * @Apidoc\Param("value", type="string", default="1024", desc="转换数值")
+     * @Apidoc\Returned("b", type="int", desc="比特(b)")
+     * @Apidoc\Returned("B", type="int", desc="字节(B)")
+     * @Apidoc\Returned("KB", type="int", desc="千字节(KB)")
+     * @Apidoc\Returned("MB", type="int", desc="兆字节(MB)")
+     * @Apidoc\Returned("GB", type="int", desc="吉字节(GB)")
+     * @Apidoc\Returned("TB", type="int", desc="太字节(TB)")
      */
     public function bytetran()
     {
-        $param['type']  = Request::param('type', 'B');
-        $param['value'] = Request::param('value', 1024);
+        $type  = $this->param('type', '') ?: 'B';
+        $value = $this->param('value', '') ?: 1024;
 
-        $data = UtilsService::bytetran($param);
+        $data = UtilsService::bytetran($type, $value);
 
         return success($data);
     }
@@ -85,13 +103,17 @@ class Utils
     /**
      * @Apidoc\Title("IP信息")
      * @Apidoc\Param("ip", type="string", default="", desc="ip")
+     * @Apidoc\Returned("ip", type="int", desc="ip")
+     * @Apidoc\Returned("country", type="string", desc="国家")
+     * @Apidoc\Returned("province", type="string", desc="省份")
+     * @Apidoc\Returned("city", type="string", desc="城市")
+     * @Apidoc\Returned("area", type="string", desc="区县")
+     * @Apidoc\Returned("isp", type="string", desc="运营商")
+     * @Apidoc\Returned("region", type="string", desc="地区（国省市区）")
      */
     public function ipinfo()
     {
-        $ip = Request::param('ip/s', '');
-        if (empty($ip)) {
-            $ip = Request::ip();
-        }
+        $ip = $this->param('ip/s', '') ?: $this->request->ip();
 
         $data = UtilsService::ipinfo($ip);
 

@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容分类模型
 namespace app\common\model\cms;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 内容分类模型
+ */
 class CategoryModel extends Model
 {
     // 表名
@@ -31,6 +33,13 @@ class CategoryModel extends Model
      * @Apidoc\Field("category_id,category_pid,category_name,sort,is_hide,create_time,update_time")
      */
     public function listReturn()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("category_id,category_pid,category_name")
+     */
+    public function treeReturn()
     {
     }
 

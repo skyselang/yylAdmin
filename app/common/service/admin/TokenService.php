@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// Token
 namespace app\common\service\admin;
 
 use app\common\cache\admin\UserCache;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
+/**
+ * Token
+ */
 class TokenService
 {
     /**

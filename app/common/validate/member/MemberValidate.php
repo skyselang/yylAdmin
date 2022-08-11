@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员管理验证器
 namespace app\common\validate\member;
 
 use think\Validate;
 use app\common\model\member\MemberModel;
 use app\common\service\member\MemberService;
 
+/**
+ * 会员管理验证器
+ */
 class MemberValidate extends Validate
 {
     // 验证规则

@@ -7,18 +7,18 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 微信控制器
 namespace app\api\controller;
 
+use app\common\BaseController;
 use app\common\service\setting\WechatService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("微信")
- * @Apidoc\Sort("410")
  * @Apidoc\Group("setting")
+ * @Apidoc\Sort("410")
  */
-class Wechat
+class Wechat extends BaseController
 {
     /**
      * @Apidoc\Title("微信公众号接入")

@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件设置验证器
 namespace app\common\validate\file;
 
 use think\Validate;
 
+/**
+ * 文件设置验证器
+ */
 class SettingValidate extends Validate
 {
     // 验证规则

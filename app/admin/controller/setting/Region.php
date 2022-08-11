@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 地区管理控制器
 namespace app\admin\controller\setting;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\setting\RegionValidate;
 use app\common\service\setting\RegionService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminSetting")
  * @Apidoc\Sort("530")
  */
-class Region
+class Region extends BaseController
 {
     /**
      * @Apidoc\Title("地区列表")
@@ -29,51 +28,21 @@ class Region
      * @Apidoc\Param(ref="sortParam")
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="列表")
-     * @Apidoc\Returned("tree", ref="app\common\model\setting\RegionModel\listReturn", type="tree", childrenField="children", desc="树形")
+     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="地区列表")
+     * @Apidoc\Returned("tree", ref="app\common\model\setting\RegionModel\treeReturn", type="tree", childrenField="children", desc="地区树形")
      */
     public function list()
     {
-        $region_pid   = Request::param('region_pid/d', 0);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-
-        $where = $order = [];
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['region_id', 'region_pid', 'region_jianpin', 'region_initials', 'region_citycode', 'region_zipcode'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                if (strpos($search_value, ',')) {
-                    $search_exp = 'in';
-                } else {
-                    $search_exp = 'like';
-                    $search_value = '%' . $search_value . '%';
-                }
-                $where[] = [$search_field, $search_exp, $search_value];
-            }
-        } else {
-            $where[] = ['region_pid', '=', $region_pid];
-        }
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
+        $region_pid = $this->param('region_pid/d', 0);
+        
+        $where = ['region_pid', '=', $region_pid];
+        $where = $this->where($where, 'region_id,region_pid,region_jianpin,region_initials,region_citycode,region_zipcode');
         if ($where) {
-            $data['list'] = RegionService::list('list', $where, $order);
+            $data['list'] = RegionService::list('list', $where, $this->order());
         } else {
-            $data['list'] = RegionService::list('tree', $where, $order);
+            $data['list'] = RegionService::list('tree', $where, $this->order());
         }
-        $data['tree'] = RegionService::list('tree', [], $order, 'region_id,region_pid,region_name');
+        $data['tree'] = RegionService::list('tree', [], $this->order(), 'region_id,region_pid,region_name');
 
         return success($data);
     }
@@ -85,7 +54,7 @@ class Region
      */
     public function info()
     {
-        $param['region_id'] = Request::param('region_id/d', '');
+        $param['region_id'] = $this->param('region_id/d', '');
 
         validate(RegionValidate::class)->scene('info')->check($param);
 
@@ -104,17 +73,17 @@ class Region
      */
     public function add()
     {
-        $param['region_pid']       = Request::param('region_pid/d', 0);
-        $param['region_level']     = Request::param('region_level/d', 1);
-        $param['region_name']      = Request::param('region_name/s', '');
-        $param['region_pinyin']    = Request::param('region_pinyin/s', '');
-        $param['region_jianpin']   = Request::param('region_jianpin/s', '');
-        $param['region_initials']  = Request::param('region_initials/s', '');
-        $param['region_citycode']  = Request::param('region_citycode/s', '');
-        $param['region_zipcode']   = Request::param('region_zipcode/s', '');
-        $param['region_longitude'] = Request::param('region_longitude/s', '');
-        $param['region_latitude']  = Request::param('region_latitude/s', '');
-        $param['region_sort']      = Request::param('region_sort/d', 2250);
+        $param['region_pid']       = $this->param('region_pid/d', 0);
+        $param['region_level']     = $this->param('region_level/d', 1);
+        $param['region_name']      = $this->param('region_name/s', '');
+        $param['region_pinyin']    = $this->param('region_pinyin/s', '');
+        $param['region_jianpin']   = $this->param('region_jianpin/s', '');
+        $param['region_initials']  = $this->param('region_initials/s', '');
+        $param['region_citycode']  = $this->param('region_citycode/s', '');
+        $param['region_zipcode']   = $this->param('region_zipcode/s', '');
+        $param['region_longitude'] = $this->param('region_longitude/s', '');
+        $param['region_latitude']  = $this->param('region_latitude/s', '');
+        $param['region_sort']      = $this->param('region_sort/d', 2250);
 
         if (empty($param['region_pid'])) {
             $param['region_pid'] = 0;
@@ -137,18 +106,18 @@ class Region
      */
     public function edit()
     {
-        $param['region_id']        = Request::param('region_id/d', '');
-        $param['region_pid']       = Request::param('region_pid/d', 0);
-        $param['region_level']     = Request::param('region_level/d', 1);
-        $param['region_name']      = Request::param('region_name/s', '');
-        $param['region_pinyin']    = Request::param('region_pinyin/s', '');
-        $param['region_jianpin']   = Request::param('region_jianpin/s', '');
-        $param['region_initials']  = Request::param('region_initials/s', '');
-        $param['region_citycode']  = Request::param('region_citycode/s', '');
-        $param['region_zipcode']   = Request::param('region_zipcode/s', '');
-        $param['region_longitude'] = Request::param('region_longitude/s', '');
-        $param['region_latitude']  = Request::param('region_latitude/s', '');
-        $param['region_sort']      = Request::param('region_sort/d', 2250);
+        $param['region_id']        = $this->param('region_id/d', '');
+        $param['region_pid']       = $this->param('region_pid/d', 0);
+        $param['region_level']     = $this->param('region_level/d', 1);
+        $param['region_name']      = $this->param('region_name/s', '');
+        $param['region_pinyin']    = $this->param('region_pinyin/s', '');
+        $param['region_jianpin']   = $this->param('region_jianpin/s', '');
+        $param['region_initials']  = $this->param('region_initials/s', '');
+        $param['region_citycode']  = $this->param('region_citycode/s', '');
+        $param['region_zipcode']   = $this->param('region_zipcode/s', '');
+        $param['region_longitude'] = $this->param('region_longitude/s', '');
+        $param['region_latitude']  = $this->param('region_latitude/s', '');
+        $param['region_sort']      = $this->param('region_sort/d', 2250);
 
         if (empty($param['region_pid'])) {
             $param['region_pid'] = 0;
@@ -171,7 +140,7 @@ class Region
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(RegionValidate::class)->scene('dele')->check($param);
 
@@ -188,8 +157,8 @@ class Region
      */
     public function pid()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['region_pid'] = Request::param('region_pid/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['region_pid'] = $this->param('region_pid/d', 0);
 
         validate(RegionValidate::class)->scene('pid')->check($param);
 
@@ -206,8 +175,8 @@ class Region
      */
     public function citycode()
     {
-        $param['ids']             = Request::param('ids/a', '');
-        $param['region_citycode'] = Request::param('region_citycode/d', 0);
+        $param['ids']             = $this->param('ids/a', '');
+        $param['region_citycode'] = $this->param('region_citycode/d', 0);
 
         validate(RegionValidate::class)->scene('citycode')->check($param);
 
@@ -224,8 +193,8 @@ class Region
      */
     public function zipcode()
     {
-        $param['ids']            = Request::param('ids/a', '');
-        $param['region_zipcode'] = Request::param('region_zipcode/d', 0);
+        $param['ids']            = $this->param('ids/a', '');
+        $param['region_zipcode'] = $this->param('region_zipcode/d', 0);
 
         validate(RegionValidate::class)->scene('zipcode')->check($param);
 

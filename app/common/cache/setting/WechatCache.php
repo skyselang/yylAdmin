@@ -7,11 +7,13 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 微信设置缓存
 namespace app\common\cache\setting;
 
 use think\facade\Cache;
 
+/**
+ * 微信设置缓存
+ */
 class WechatCache
 {
     // 缓存标签

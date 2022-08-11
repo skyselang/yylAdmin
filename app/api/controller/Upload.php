@@ -7,20 +7,19 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 上传控制器
 namespace app\api\controller;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\file\FileValidate;
 use app\common\service\file\FileService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("上传")
- * @Apidoc\Sort("380")
  * @Apidoc\Group("upload")
+ * @Apidoc\Sort("380")
  */
-class Upload
+class Upload extends BaseController
 {
     /**
      * @Apidoc\Title("上传文件")
@@ -32,10 +31,10 @@ class Upload
      */
     public function file()
     {
-        $param['file']      = Request::file('file');
-        $param['group_id']  = Request::param('group_id/d', 0);
-        $param['file_type'] = Request::param('file_type/s', 'image');
-        $param['file_name'] = Request::param('file_name/s', '');
+        $param['file']      = $this->request->file('file');
+        $param['group_id']  = $this->param('group_id/d', 0);
+        $param['file_type'] = $this->param('file_type/s', 'image');
+        $param['file_name'] = $this->param('file_name/s', '');
         $param['is_front']  = 1;
 
         validate(FileValidate::class)->scene('add')->check($param);

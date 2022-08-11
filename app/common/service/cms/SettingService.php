@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容设置
 namespace app\common\service\cms;
 
 use app\common\cache\cms\SettingCache;
 use app\common\model\cms\SettingModel;
 use app\common\service\file\FileService;
 
+/**
+ * 内容设置
+ */
 class SettingService
 {
     // 内容设置id

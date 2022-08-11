@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// {$form.controller_title}Service
 namespace {$service.namespace};
 
 use {$cache.namespace}\{$cache.class_name} as {$cache.class_name}Cache;
 use {$tables[0].model_path}\{$tables[0].model_name} as {$tables[0].model_name}Model;
 
+/**
+ * {$form.controller_title}Service
+ */
 class {$service.class_name}
 {
     /**
@@ -31,9 +33,7 @@ class {$service.class_name}
         $model = new {$tables[0].model_name}Model();
         $pk = $model->getPk();
         
-        if ($field) {
-            $field = str_merge($field, $pk.',{$list.field}');
-        } else {
+        if (empty($field)) {
             $field = '*';
         }
 

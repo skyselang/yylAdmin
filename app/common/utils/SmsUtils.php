@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 短信 https://gitee.com/skyselang/easy-sms
 namespace app\common\utils;
 
 use think\facade\Config;
@@ -16,6 +15,10 @@ use app\common\cache\utils\CaptchaSmsCache;
 use Overtrue\EasySms\EasySms;
 use Overtrue\EasySms\PhoneNumber;
 
+/**
+ * 短信 
+ * https://gitee.com/skyselang/easy-sms
+ */
 class SmsUtils
 {
     /**

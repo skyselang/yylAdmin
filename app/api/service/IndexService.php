@@ -7,9 +7,11 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 首页
 namespace app\api\service;
 
+/**
+ * 首页
+ */
 class IndexService
 {
     /**

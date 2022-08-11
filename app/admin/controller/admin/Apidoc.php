@@ -7,9 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口文档控制器
 namespace app\admin\controller\admin;
 
+use app\common\BaseController;
 use app\common\service\admin\ApidocService;
 use hg\apidoc\annotation as Apidocs;
 
@@ -18,7 +18,7 @@ use hg\apidoc\annotation as Apidocs;
  * @Apidocs\Group("adminSystem")
  * @Apidocs\Sort("720")
  */
-class Apidoc
+class Apidoc extends BaseController
 {
     /**
      * @Apidocs\Title("接口文档")

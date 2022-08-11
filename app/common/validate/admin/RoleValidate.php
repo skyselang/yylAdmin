@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 角色管理验证器
 namespace app\common\validate\admin;
 
 use think\Validate;
@@ -15,6 +14,9 @@ use app\common\service\admin\RoleService;
 use app\common\model\admin\RoleModel;
 use app\common\model\admin\UserModel;
 
+/**
+ * 角色管理验证器
+ */
 class RoleValidate extends Validate
 {
     // 验证规则

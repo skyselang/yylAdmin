@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 地区管理模型
 namespace app\common\model\setting;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
 
+/**
+ * 地区管理模型
+ */
 class RegionModel extends Model
 {
     // 表名
@@ -31,6 +33,13 @@ class RegionModel extends Model
      * @Apidoc\WithoutField("region_level,is_delete,create_time,update_time,delete_time")
      */
     public function listReturn()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("region_id,region_pid,region_name")
+     */
+    public function treeReturn()
     {
     }
 

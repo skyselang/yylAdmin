@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 内容分类验证器
 namespace app\common\validate\cms;
 
 use think\Validate;
 use app\common\model\cms\CategoryModel;
 use app\common\model\cms\ContentModel;
 
+/**
+ * 内容分类验证器
+ */
 class CategoryValidate extends Validate
 {
     // 验证规则

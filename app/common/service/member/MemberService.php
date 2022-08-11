@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员管理
 namespace app\common\service\member;
 
 use app\common\utils\IpInfoUtils;
@@ -15,21 +14,24 @@ use app\common\cache\member\MemberCache;
 use app\common\service\setting\WechatService;
 use app\common\service\setting\TokenService;
 use app\common\service\file\FileService;
-use app\common\model\member\MemberModel;
-use app\common\model\member\WechatModel;
 use app\common\service\setting\SettingService;
 use app\common\service\setting\RegionService;
+use app\common\model\member\MemberModel;
+use app\common\model\member\WechatModel;
 
+/**
+ * 会员管理
+ */
 class MemberService
 {
     /**
      * 会员列表
      *
-     * @param array  $where 条件
-     * @param int    $page  页数
-     * @param int    $limit 数量
-     * @param array  $order 排序
-     * @param string $field 字段
+     * @param array  $where    条件
+     * @param int    $page     页数
+     * @param int    $limit    数量
+     * @param array  $order    排序
+     * @param string $field    字段
      * @param int    $is_extra 额外数据
      * 
      * @return array 
@@ -60,13 +62,13 @@ class MemberService
         $headimgurl = array_column($member_wechat, 'headimgurl', $pk);
         $nickname = array_column($member_wechat, 'nickname', $pk);
 
-        foreach ($list as $k => $v) {
-            $list[$k]['avatar_url'] = $file[$v['avatar_id']] ?? '';
-            if (empty($list[$k]['avatar_url'])) {
-                $list[$k]['avatar_url'] = $headimgurl[$v[$pk]] ?? '';
+        foreach ($list as &$v) {
+            $v['avatar_url'] = $file[$v['avatar_id']] ?? '';
+            if (empty($v['avatar_url'])) {
+                $v['avatar_url'] = $headimgurl[$v[$pk]] ?? '';
             }
             if (empty($v['nickname'])) {
-                $list[$k]['nickname'] = $nickname[$v[$pk]] ?? '';
+                $v['nickname'] = $nickname[$v[$pk]] ?? '';
             }
         }
 

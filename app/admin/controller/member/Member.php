@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 会员管理控制器
 namespace app\admin\controller\member;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\member\MemberValidate;
 use app\common\service\member\MemberService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminMember")
  * @Apidoc\Sort("210")
  */
-class Member
+class Member extends BaseController
 {
     /**
      * @Apidoc\Title("会员列表")
@@ -30,40 +29,13 @@ class Member
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel\listReturn", type="array", desc="会员列表")
-     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\listReturn", type="tree", childrenField="children", desc="地区列表")
+     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\treeReturn", type="tree", childrenField="children", desc="地区树形")
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-        $is_extra     = Request::param('is_extra/d', 0);
+        $where = $this->where(['is_delete', '=', 0], 'member_id,gender,region_id,reg_channel,reg_type,is_disable');
 
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['member_id', 'gender', 'region_id', 'reg_channel', 'reg_type', 'is_disable'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 0];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = MemberService::list($where, $page, $limit, $order, '', $is_extra);
+        $data = MemberService::list($where, $this->page(), $this->limit(), $this->order(), '', $this->isExtra());
 
         return success($data);
     }
@@ -71,12 +43,12 @@ class Member
     /**
      * @Apidoc\Title("会员信息")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\id")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\infoReturn")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\avatar_url")
      */
     public function info()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
+        $param['member_id'] = $this->param('member_id/d', '');
 
         validate(MemberValidate::class)->scene('info')->check($param);
 
@@ -99,17 +71,17 @@ class Member
      */
     public function add()
     {
-        $param['avatar_id']   = Request::param('avatar_id/d', 0);
-        $param['username']    = Request::param('username/s', '');
-        $param['nickname']    = Request::param('nickname/s', '');
-        $param['password']    = Request::param('password/s', '');
-        $param['phone']       = Request::param('phone/s', '');
-        $param['email']       = Request::param('email/s', '');
-        $param['name']        = Request::param('name/s', '');
-        $param['gender']      = Request::param('gender/d', 0);
-        $param['region_id']   = Request::param('region_id/d', 0);
-        $param['remark']      = Request::param('remark/s', '');
-        $param['sort']        = Request::param('sort/d', 250);
+        $param['avatar_id']   = $this->param('avatar_id/d', 0);
+        $param['username']    = $this->param('username/s', '');
+        $param['nickname']    = $this->param('nickname/s', '');
+        $param['password']    = $this->param('password/s', '');
+        $param['phone']       = $this->param('phone/s', '');
+        $param['email']       = $this->param('email/s', '');
+        $param['name']        = $this->param('name/s', '');
+        $param['gender']      = $this->param('gender/d', 0);
+        $param['region_id']   = $this->param('region_id/d', 0);
+        $param['remark']      = $this->param('remark/s', '');
+        $param['sort']        = $this->param('sort/d', 250);
         $param['reg_channel'] = 6;
         $param['reg_type']    = 6;
 
@@ -127,17 +99,17 @@ class Member
      */
     public function edit()
     {
-        $param['member_id'] = Request::param('member_id/d', '');
-        $param['avatar_id'] = Request::param('avatar_id/d', 0);
-        $param['username']  = Request::param('username/s', '');
-        $param['nickname']  = Request::param('nickname/s', '');
-        $param['phone']     = Request::param('phone/s', '');
-        $param['email']     = Request::param('email/s', '');
-        $param['name']      = Request::param('name/s', '');
-        $param['gender']    = Request::param('gender/d', 0);
-        $param['region_id'] = Request::param('region_id/d', 0);
-        $param['remark']    = Request::param('remark/s', '');
-        $param['sort']      = Request::param('sort/d', 250);
+        $param['member_id'] = $this->param('member_id/d', '');
+        $param['avatar_id'] = $this->param('avatar_id/d', 0);
+        $param['username']  = $this->param('username/s', '');
+        $param['nickname']  = $this->param('nickname/s', '');
+        $param['phone']     = $this->param('phone/s', '');
+        $param['email']     = $this->param('email/s', '');
+        $param['name']      = $this->param('name/s', '');
+        $param['gender']    = $this->param('gender/d', 0);
+        $param['region_id'] = $this->param('region_id/d', 0);
+        $param['remark']    = $this->param('remark/s', '');
+        $param['sort']      = $this->param('sort/d', 250);
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
@@ -153,7 +125,7 @@ class Member
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(MemberValidate::class)->scene('dele')->check($param);
 
@@ -170,8 +142,8 @@ class Member
      */
     public function region()
     {
-        $param['ids']       = Request::param('ids/a', '');
-        $param['region_id'] = Request::param('region_id/d', 0);
+        $param['ids']       = $this->param('ids/a', '');
+        $param['region_id'] = $this->param('region_id/d', 0);
 
         validate(MemberValidate::class)->scene('region')->check($param);
 
@@ -188,8 +160,8 @@ class Member
      */
     public function repwd()
     {
-        $param['ids']      = Request::param('ids/a', '');
-        $param['password'] = Request::param('password/s', '');
+        $param['ids']      = $this->param('ids/a', '');
+        $param['password'] = $this->param('password/s', '');
 
         validate(MemberValidate::class)->scene('repwd')->check($param);
 
@@ -206,8 +178,8 @@ class Member
      */
     public function disable()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_disable'] = Request::param('is_disable/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['is_disable'] = $this->param('is_disable/d', 0);
 
         validate(MemberValidate::class)->scene('disable')->check($param);
 
@@ -224,40 +196,13 @@ class Member
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel\listReturn", type="array", desc="会员列表")
-     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\listReturn", type="array", desc="地区列表")
+     * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel\treeReturn", type="tree", childrenField="children", desc="地区树形")
      */
     public function recover()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-        $is_extra     = Request::param('is_extra/d', 0);
+        $where = $this->where(['is_delete', '=', 1], 'member_id,gender,region_id,reg_channel,reg_type,is_disable');
 
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['member_id', 'is_disable', 'gender'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        $where[] = ['is_delete', '=', 1];
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = ['delete_time' => 'desc', 'create_time' => 'desc'];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = MemberService::list($where, $page, $limit, $order, '', $is_extra);
+        $data = MemberService::list($where, $this->page(), $this->limit(), $this->order(), '', $this->isExtra());
 
         return success($data);
     }
@@ -269,7 +214,7 @@ class Member
      */
     public function recoverReco()
     {
-        $param['ids']       = Request::param('ids/a', '');
+        $param['ids']       = $this->param('ids/a', '');
         $param['is_delete'] = 0;
 
         validate(MemberValidate::class)->scene('recoverReco')->check($param);
@@ -286,7 +231,7 @@ class Member
      */
     public function recoverDele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(MemberValidate::class)->scene('recoverDele')->check($param);
 
@@ -317,8 +262,8 @@ class Member
      */
     public function stat()
     {
-        $type = Request::param('type/s', '');
-        $date = Request::param('date/a', []);
+        $type = $this->param('type/s', '');
+        $date = $this->param('date/a', []);
 
         $data['count'] = MemberService::stat($type, $date, 'count');
 

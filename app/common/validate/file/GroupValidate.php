@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 文件分组验证器
 namespace app\common\validate\file;
 
 use think\Validate;
 use app\common\model\file\GroupModel;
 use app\common\model\file\FileModel;
 
+/**
+ * 文件分组验证器
+ */
 class GroupValidate extends Validate
 {
     // 验证规则

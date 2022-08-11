@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 控制台
 namespace app\common\service;
 
 use think\facade\Db;
 use think\facade\Cache;
 
+/**
+ * 控制台
+ */
 class IndexService
 {
     /**

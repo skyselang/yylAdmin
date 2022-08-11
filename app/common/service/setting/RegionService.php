@@ -7,13 +7,15 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 地区管理
 namespace app\common\service\setting;
 
 use app\common\cache\setting\RegionCache;
 use app\common\model\setting\RegionModel;
 use Overtrue\Pinyin\Pinyin;
 
+/**
+ * 地区管理
+ */
 class RegionService
 {
     /**
@@ -42,9 +44,9 @@ class RegionService
 
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
 
-            foreach ($data as $k => $v) {
-                $data[$k]['children']    = [];
-                $data[$k]['hasChildren'] = true;
+            foreach ($data as &$v) {
+                $v['children']    = [];
+                $v['hasChildren'] = true;
             }
         } else {
             if (empty($field)) {

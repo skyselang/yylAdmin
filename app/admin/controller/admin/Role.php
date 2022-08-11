@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 角色管理控制器
 namespace app\admin\controller\admin;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\admin\RoleValidate;
 use app\common\validate\admin\UserValidate;
 use app\common\service\admin\RoleService;
@@ -22,7 +21,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminAuth")
  * @Apidoc\Sort("620")
  */
-class Role
+class Role extends BaseController
 {
     /**
      * @Apidoc\Title("角色列表")
@@ -31,41 +30,13 @@ class Role
      * @Apidoc\Param(ref="searchParam")
      * @Apidoc\Param(ref="dateParam")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\RoleModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\RoleModel\listReturn", type="array", desc="角色列表")
      */
     public function list()
     {
-        $page         = Request::param('page/d', 1);
-        $limit        = Request::param('limit/d', 10);
-        $sort_field   = Request::param('sort_field/s', '');
-        $sort_value   = Request::param('sort_value/s', '');
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
+        $where = $this->where([], 'admin_role_id,is_disable');
 
-        $where = [];
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['admin_role_id', 'is_disable'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
-
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = RoleService::list($where, $page, $limit, $order);
+        $data = RoleService::list($where, $this->page(), $this->limit(), $this->order());
         $data['menu'] = MenuService::list('tree', [], [], 'admin_menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth');
 
         return success($data);
@@ -78,7 +49,7 @@ class Role
      */
     public function info()
     {
-        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
+        $param['admin_role_id'] = $this->param('admin_role_id/d', '');
 
         validate(RoleValidate::class)->scene('info')->check($param);
 
@@ -97,11 +68,11 @@ class Role
      */
     public function add()
     {
-        $param['admin_menu_ids']  = Request::param('admin_menu_ids/a', '');
-        $param['admin_menu_pids'] = Request::param('admin_menu_pids/a', '');
-        $param['role_name']       = Request::param('role_name/s', '');
-        $param['role_desc']       = Request::param('role_desc/s', '');
-        $param['role_sort']       = Request::param('role_sort/d', 250);
+        $param['admin_menu_ids']  = $this->param('admin_menu_ids/a', '');
+        $param['admin_menu_pids'] = $this->param('admin_menu_pids/a', '');
+        $param['role_name']       = $this->param('role_name/s', '');
+        $param['role_desc']       = $this->param('role_desc/s', '');
+        $param['role_sort']       = $this->param('role_sort/d', 250);
 
         validate(RoleValidate::class)->scene('add')->check($param);
 
@@ -117,12 +88,12 @@ class Role
      */
     public function edit()
     {
-        $param['admin_role_id']   = Request::param('admin_role_id/d', '');
-        $param['admin_menu_ids']  = Request::param('admin_menu_ids/a', '');
-        $param['admin_menu_pids'] = Request::param('admin_menu_pids/a', '');
-        $param['role_name']       = Request::param('role_name/s', '');
-        $param['role_desc']       = Request::param('role_desc/s', '');
-        $param['role_sort']       = Request::param('role_sort/d', 250);
+        $param['admin_role_id']   = $this->param('admin_role_id/d', '');
+        $param['admin_menu_ids']  = $this->param('admin_menu_ids/a', '');
+        $param['admin_menu_pids'] = $this->param('admin_menu_pids/a', '');
+        $param['role_name']       = $this->param('role_name/s', '');
+        $param['role_desc']       = $this->param('role_desc/s', '');
+        $param['role_sort']       = $this->param('role_sort/d', 250);
 
         validate(RoleValidate::class)->scene('edit')->check($param);
 
@@ -138,7 +109,7 @@ class Role
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(RoleValidate::class)->scene('dele')->check($param);
 
@@ -155,8 +126,8 @@ class Role
      */
     public function disable()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_disable'] = Request::param('is_disable/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['is_disable'] = $this->param('is_disable/d', 0);
 
         validate(RoleValidate::class)->scene('disable')->check($param);
 
@@ -174,22 +145,14 @@ class Role
      */
     public function user()
     {
-        $page          = Request::param('page/d', 1);
-        $limit         = Request::param('limit/d', 10);
-        $sort_field    = Request::param('sort_field/s', '');
-        $sort_value    = Request::param('sort_value/s', '');
-        $admin_role_id = Request::param('admin_role_id/s', '');
+        $admin_role_id = $this->param('admin_role_id/s', '');
 
         validate(RoleValidate::class)->scene('user')->check(['admin_role_id' => $admin_role_id]);
 
-        $where[] = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
+        $where = ['admin_role_ids', 'like', '%' . str_join($admin_role_id) . '%'];
+        $where = $this->where($where);
 
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = RoleService::user($where, $page, $limit, $order);
+        $data = RoleService::user($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
@@ -202,8 +165,8 @@ class Role
      */
     public function userRemove()
     {
-        $param['admin_role_id'] = Request::param('admin_role_id/d', '');
-        $param['admin_user_id'] = Request::param('admin_user_id/d', '');
+        $param['admin_role_id'] = $this->param('admin_role_id/d', '');
+        $param['admin_user_id'] = $this->param('admin_user_id/d', '');
 
         validate(RoleValidate::class)->scene('id')->check($param);
         validate(UserValidate::class)->scene('id')->check($param);

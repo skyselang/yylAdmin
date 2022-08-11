@@ -7,7 +7,6 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 邮件 https://gitee.com/skyselang/PHPMailer
 namespace app\common\utils;
 
 use app\common\cache\utils\CaptchaEmailCache;
@@ -16,6 +15,10 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+/**
+ * 邮件
+ * https://gitee.com/skyselang/PHPMailer
+ */
 class EmailUtils
 {
     /**

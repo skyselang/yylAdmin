@@ -7,18 +7,18 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 设置控制器
 namespace app\api\controller\cms;
 
+use app\common\BaseController;
 use app\common\service\cms\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("设置")
- * @Apidoc\Sort("630")
  * @Apidoc\Group("cms")
+ * @Apidoc\Sort("630")
  */
-class Setting
+class Setting extends BaseController
 {
     /**
      * @Apidoc\Title("设置信息")

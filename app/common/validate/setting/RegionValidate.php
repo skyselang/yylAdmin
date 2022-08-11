@@ -7,12 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 地区管理验证器
 namespace app\common\validate\setting;
 
 use think\Validate;
 use app\common\model\setting\RegionModel;
 
+/**
+ * 地区管理验证器
+ */
 class RegionValidate extends Validate
 {
     // 验证规则

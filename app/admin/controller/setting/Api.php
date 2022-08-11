@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 接口管理控制器
 namespace app\admin\controller\setting;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\setting\ApiValidate;
 use app\common\service\setting\ApiService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminSetting")
  * @Apidoc\Sort("510")
  */
-class Api
+class Api extends BaseController
 {
     /**
      * @Apidoc\Title("接口列表")
@@ -30,24 +29,7 @@ class Api
      */
     public function list()
     {
-        $search_field = Request::param('search_field/s', '');
-        $search_value = Request::param('search_value/s', '');
-        $date_field   = Request::param('date_field/s', '');
-        $date_value   = Request::param('date_value/a', '');
-
-        $where = [];
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['api_id', 'api_pid', 'is_unauth', 'is_disable'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where([], 'api_id,api_pid,is_unauth,is_disable');
 
         if ($where) {
             $data['list'] = ApiService::list('list', $where);
@@ -66,7 +48,7 @@ class Api
      */
     public function info()
     {
-        $param['api_id'] = Request::param('api_id/d', '');
+        $param['api_id'] = $this->param('api_id/d', '');
 
         validate(ApiValidate::class)->scene('info')->check($param);
 
@@ -85,10 +67,10 @@ class Api
      */
     public function add()
     {
-        $param['api_pid']  = Request::param('api_pid/d', 0);
-        $param['api_name'] = Request::param('api_name/s', '');
-        $param['api_url']  = Request::param('api_url/s', '');
-        $param['api_sort'] = Request::param('api_sort/d', 250);
+        $param['api_pid']  = $this->param('api_pid/d', 0);
+        $param['api_name'] = $this->param('api_name/s', '');
+        $param['api_url']  = $this->param('api_url/s', '');
+        $param['api_sort'] = $this->param('api_sort/d', 250);
 
         validate(ApiValidate::class)->scene('add')->check($param);
 
@@ -104,11 +86,11 @@ class Api
      */
     public function edit()
     {
-        $param['api_id']   = Request::param('api_id/d', 0);
-        $param['api_pid']  = Request::param('api_pid/d', 0);
-        $param['api_name'] = Request::param('api_name/s', '');
-        $param['api_url']  = Request::param('api_url/s', '');
-        $param['api_sort'] = Request::param('api_sort/d', 250);
+        $param['api_id']   = $this->param('api_id/d', 0);
+        $param['api_pid']  = $this->param('api_pid/d', 0);
+        $param['api_name'] = $this->param('api_name/s', '');
+        $param['api_url']  = $this->param('api_url/s', '');
+        $param['api_sort'] = $this->param('api_sort/d', 250);
 
         validate(ApiValidate::class)->scene('edit')->check($param);
 
@@ -124,7 +106,7 @@ class Api
      */
     public function dele()
     {
-        $param['ids'] = Request::param('ids/a', '');
+        $param['ids'] = $this->param('ids/a', '');
 
         validate(ApiValidate::class)->scene('dele')->check($param);
 
@@ -141,8 +123,8 @@ class Api
      */
     public function pid()
     {
-        $param['ids']     = Request::param('ids/a', '');
-        $param['api_pid'] = Request::param('api_pid/d', 0);
+        $param['ids']     = $this->param('ids/a', '');
+        $param['api_pid'] = $this->param('api_pid/d', 0);
 
         validate(ApiValidate::class)->scene('pid')->check($param);
 
@@ -159,8 +141,8 @@ class Api
      */
     public function unlogin()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_unlogin'] = Request::param('is_unlogin/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['is_unlogin'] = $this->param('is_unlogin/d', 0);
 
         validate(ApiValidate::class)->scene('unlogin')->check($param);
 
@@ -177,8 +159,8 @@ class Api
      */
     public function disable()
     {
-        $param['ids']        = Request::param('ids/a', '');
-        $param['is_disable'] = Request::param('is_disable/d', 0);
+        $param['ids']        = $this->param('ids/a', '');
+        $param['is_disable'] = $this->param('is_disable/d', 0);
 
         validate(ApiValidate::class)->scene('disable')->check($param);
 

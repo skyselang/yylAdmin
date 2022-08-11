@@ -7,10 +7,9 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 个人中心控制器
 namespace app\admin\controller\admin;
 
-use think\facade\Request;
+use app\common\BaseController;
 use app\common\validate\admin\UserCenterValidate;
 use app\common\service\admin\UserCenterService;
 use hg\apidoc\annotation as Apidoc;
@@ -20,7 +19,7 @@ use hg\apidoc\annotation as Apidoc;
  * @Apidoc\Group("adminSystem")
  * @Apidoc\Sort("650")
  */
-class UserCenter
+class UserCenter extends BaseController
 {
     /**
      * @Apidoc\Title("我的信息")
@@ -48,11 +47,11 @@ class UserCenter
     public function edit()
     {
         $param['admin_user_id'] = admin_user_id();
-        $param['avatar_id']     = Request::param('avatar_id/d', 0);
-        $param['username']      = Request::param('username/s', '');
-        $param['nickname']      = Request::param('nickname/s', '');
-        $param['phone']         = Request::param('phone/s', '');
-        $param['email']         = Request::param('email/s', '');
+        $param['avatar_id']     = $this->param('avatar_id/d', 0);
+        $param['username']      = $this->param('username/s', '');
+        $param['nickname']      = $this->param('nickname/s', '');
+        $param['phone']         = $this->param('phone/s', '');
+        $param['email']         = $this->param('email/s', '');
 
         validate(UserCenterValidate::class)->scene('edit')->check($param);
 
@@ -71,8 +70,8 @@ class UserCenter
     public function pwd()
     {
         $param['admin_user_id'] = admin_user_id();
-        $param['password_old']  = Request::param('password_old/s', '');
-        $param['password_new']  = Request::param('password_new/s', '');
+        $param['password_old']  = $this->param('password_old/s', '');
+        $param['password_new']  = $this->param('password_new/s', '');
 
         validate(UserCenterValidate::class)->scene('pwd')->check($param);
 
@@ -90,22 +89,12 @@ class UserCenter
      * @Apidoc\Param("log_type", require=false, default="")
      * @Apidoc\Param("response_code", require=false, default="")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="日志列表", 
-     *     @Apidoc\Returned(ref="app\common\model\admin\UserLogModel\listReturn")
-     * )
+     * @Apidoc\Returned("list", ref="app\common\model\admin\UserLogModel\listReturn", type="array", desc="日志列表")
      */
     public function log()
     {
         $admin_user_id = admin_user_id();
-        $page          = Request::param('page/d', 1);
-        $limit         = Request::param('limit/d', 10);
-        $sort_field    = Request::param('sort_field/s', '');
-        $sort_value    = Request::param('sort_value/s', '');
-        $date_field    = Request::param('date_field/s', '');
-        $date_value    = Request::param('date_value/a', '');
-        $search_field  = Request::param('search_field/s', '');
-        $search_value  = Request::param('search_value/s', '');
-        $log_type      = Request::param('log_type/d', '');
+        $log_type      = $this->param('log_type/d', '');
 
         validate(UserCenterValidate::class)->scene('log')->check(['admin_user_id' => $admin_user_id]);
 
@@ -113,25 +102,9 @@ class UserCenter
         if ($log_type) {
             $where[] = ['log_type', '=', $log_type];
         }
-        if ($search_field && $search_value !== '') {
-            if (in_array($search_field, ['admin_user_log_id', 'admin_menu_id', 'menu_url', 'menu_name'])) {
-                $search_exp = strpos($search_value, ',') ? 'in' : '=';
-                $where[] = [$search_field, $search_exp, $search_value];
-            } else {
-                $where[] = [$search_field, 'like', '%' . $search_value . '%'];
-            }
-        }
-        if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
-        }
+        $where = $this->where($where, 'admin_user_log_id,admin_menu_id,menu_url,menu_name');
 
-        $order = [];
-        if ($sort_field && $sort_value) {
-            $order = [$sort_field => $sort_value];
-        }
-
-        $data = UserCenterService::log($where, $page, $limit, $order);
+        $data = UserCenterService::log($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
