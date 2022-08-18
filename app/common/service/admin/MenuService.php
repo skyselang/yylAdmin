@@ -40,7 +40,7 @@ class MenuService
             $pk = $model->getPk();
 
             if (empty($field)) {
-                $field = $pk . ',menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,menu_sort,is_unlogin,is_unauth,is_disable,hidden';
+                $field = $pk . ',menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,menu_sort,is_unlogin,is_unauth,is_unrate,is_disable,hidden';
             }
             if (empty($order)) {
                 $order = ['menu_sort' => 'desc', $pk => 'asc'];
@@ -53,7 +53,7 @@ class MenuService
             }
         } else {
             if (empty($field)) {
-                $field = 'admin_menu_id,menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,menu_sort,is_unlogin,is_unauth,is_disable,hidden';
+                $field = 'admin_menu_id,menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,menu_sort,is_unlogin,is_unauth,is_unrate,is_disable,hidden';
             }
 
             $key = $type . md5(serialize($where) . $field);
@@ -605,7 +605,7 @@ class MenuService
     }
 
     /**
-     * 菜单无需限率url或id列表
+     * 菜单免限url或id列表
      * 
      * @param string $type url菜单url，id菜单id
      *
@@ -616,16 +616,19 @@ class MenuService
         $key = 'unrate-' . $type;
         $list = MenuCache::get($key);
         if (empty($list)) {
+            $model = new MenuModel();
+
+            $column = 'menu_url';
             $menu_is_unrate = Config::get('admin.menu_is_unrate', []);
             if ($type == 'id') {
-                $model = new MenuModel();
                 $column = $model->getPk();
                 if ($menu_is_unrate) {
                     $menu_is_unrate = $model->where('menu_url', 'in', $menu_is_unrate)->column($column);
                 }
             }
 
-            $list = $menu_is_unrate;
+            $list = $model->where('is_unrate', 1)->where('is_delete', 0)->column($column);
+            $list = array_merge($list, $menu_is_unrate);
             $list = array_unique(array_filter($list));
 
             MenuCache::set($key, $list);

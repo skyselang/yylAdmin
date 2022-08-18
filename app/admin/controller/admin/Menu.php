@@ -232,6 +232,24 @@ class Menu extends BaseController
     }
 
     /**
+     * @Apidoc\Title("菜单是否免限")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\admin\MenuModel\is_unrate")
+     */
+    public function unrate()
+    {
+        $param['ids']       = $this->param('ids/a', '');
+        $param['is_unrate'] = $this->param('is_unrate/d', 0);
+
+        validate(MenuValidate::class)->scene('unrate')->check($param);
+
+        $data = MenuService::update($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("菜单是否隐藏")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")

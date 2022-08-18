@@ -97,6 +97,13 @@ class MenuModel extends Model
     }
 
     /**
+     * @Apidoc\Field("is_unrate")
+     */
+    public function is_unrate()
+    {
+    }
+
+    /**
      * @Apidoc\Field("hidden")
      */
     public function is_hidden()

@@ -29,7 +29,7 @@ class Api extends BaseController
      */
     public function list()
     {
-        $where = $this->where([], 'api_id,api_pid,is_unauth,is_disable');
+        $where = $this->where([], 'api_id,api_pid');
 
         if ($where) {
             $data['list'] = ApiService::list('list', $where);
@@ -145,6 +145,24 @@ class Api extends BaseController
         $param['is_unlogin'] = $this->param('is_unlogin/d', 0);
 
         validate(ApiValidate::class)->scene('unlogin')->check($param);
+
+        $data = ApiService::edit($param['ids'], $param);
+
+        return success($data);
+    }
+
+     /**
+     * @Apidoc\Title("接口是否免限")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\setting\ApiModel\is_unrate")
+     */
+    public function unrate()
+    {
+        $param['ids']       = $this->param('ids/a', '');
+        $param['is_unrate'] = $this->param('is_unrate/d', 0);
+
+        validate(ApiValidate::class)->scene('unrate')->check($param);
 
         $data = ApiService::edit($param['ids'], $param);
 

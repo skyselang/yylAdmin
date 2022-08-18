@@ -36,7 +36,7 @@ class ApiService
             $pk = $model->getPk();
 
             if (empty($field)) {
-                $field = $pk . ',api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+                $field = $pk . ',api_pid,api_name,api_url,api_sort,is_unlogin,is_unrate,is_disable';
             }
             if (empty($order)) {
                 $order = ['api_sort' => 'desc', $pk => 'asc'];
@@ -49,7 +49,7 @@ class ApiService
             }
         } else {
             if (empty($field)) {
-                $field = 'api_id,api_pid,api_name,api_url,api_sort,is_disable,is_unlogin';
+                $field = 'api_id,api_pid,api_name,api_url,api_sort,is_unrate,is_unlogin,is_disable';
             }
 
             $key = $type . md5(serialize($where) . $field);
@@ -244,7 +244,7 @@ class ApiService
     }
 
     /**
-     * 接口无需限率url列表
+     * 接口免限url列表
      *
      * @return array
      */
@@ -253,7 +253,10 @@ class ApiService
         $key = 'unrate';
         $list = ApiCache::get($key);
         if (empty($list)) {
-            $list = Config::get('api.api_is_unrate', []);
+            $model = new ApiModel();
+
+            $list = $model->where('is_unrate', 1)->where('is_delete', 0)->column('api_url');
+            $list = array_merge($list, Config::get('api.api_is_unrate', []));
             $list = array_unique(array_filter($list));
 
             ApiCache::set($key, $list);

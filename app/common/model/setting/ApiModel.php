@@ -72,16 +72,23 @@ class ApiModel extends Model
     }
 
     /**
-     * @Apidoc\Field("is_disable")
+     * @Apidoc\Field("is_unlogin")
      */
-    public function is_disable()
+    public function is_unlogin()
     {
     }
 
     /**
-     * @Apidoc\Field("is_unlogin")
+     * @Apidoc\Field("is_unrate")
      */
-    public function is_unlogin()
+    public function is_unrate()
+    {
+    }
+
+    /**
+     * @Apidoc\Field("is_disable")
+     */
+    public function is_disable()
     {
     }
 }

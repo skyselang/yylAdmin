@@ -31,7 +31,7 @@ return [
         'admin/admin.UserCenter/info'
     ],
 
-    // 菜单无需限率url
+    // 菜单免限url（不限速率）
     'menu_is_unrate' => [
         'admin/file.File/add',
         'admin/file.File/list'

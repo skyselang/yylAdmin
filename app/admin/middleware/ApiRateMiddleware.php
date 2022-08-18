@@ -42,6 +42,9 @@ class ApiRateMiddleware
                     $count = ApiRateCache::get($admin_user_id, $menu_url);
                     if ($count) {
                         if ($count >= $api_rate_num) {
+                            if ($count >= $api_rate_num + 5) {
+                                ApiRateCache::del($admin_user_id, $menu_url);
+                            }
                             exception('你的操作过于频繁', 429);
                         } else {
                             ApiRateCache::inc($admin_user_id, $menu_url);

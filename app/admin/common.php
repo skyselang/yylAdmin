@@ -110,7 +110,7 @@ function menu_is_unlogin($menu_url = '')
 }
 
 /**
- * 菜单是否无需限率
+ * 菜单是否免限
  *
  * @param string $menu_url 菜单url
  *

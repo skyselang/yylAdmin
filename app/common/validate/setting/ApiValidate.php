@@ -38,6 +38,7 @@ class ApiValidate extends Validate
         'dele'    => ['ids'],
         'pid'     => ['ids'],
         'unlogin' => ['ids'],
+        'unrate'  => ['ids'],
         'disable' => ['ids'],
     ];
 

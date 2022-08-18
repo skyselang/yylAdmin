@@ -19,7 +19,7 @@ return [
         'api/Login/login'
     ],
 
-    // 接口无需限率url
+    // 接口免限url（不限速率）
     'api_is_unrate' => [],
 
     // token名称，必须与前端设置一致
