@@ -21,6 +21,7 @@ class MemberValidate extends Validate
     // 验证规则
     protected $rule = [
         'ids'          => ['require', 'array'],
+        'import'       => ['require', 'array'],
         'member_id'    => ['require'],
         'username'     => ['require', 'length' => '2,64'],
         'nickname'     => ['length' => '1,64'],
@@ -61,6 +62,7 @@ class MemberValidate extends Validate
         'editpwd1'             => ['member_id', 'password_new'],
         'disable'              => ['ids'],
         'region'               => ['ids'],
+        'import'               => ['import'],
         'usernameRegister'     => ['username', 'nickname', 'password'],
         'phoneRegisterCaptcha' => ['mobile'],
         'phoneRegister'        => ['mobile', 'nickname', 'password'],

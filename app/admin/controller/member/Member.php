@@ -135,7 +135,7 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("会员修改地区")
+     * @Apidoc\Title("会员修改所在地")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\setting\RegionModel\id")
@@ -186,6 +186,51 @@ class Member extends BaseController
         $data = MemberService::edit($param['ids'], $param);
 
         return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员导入")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param("import", type="array", desc="导入数据")
+     */
+    public function import()
+    {
+        $param['import'] = $this->param('import/a', '');
+
+        validate(MemberValidate::class)->scene('import')->check($param);
+
+        $success = $fail = [];
+        foreach ($param['import'] as $v) {
+            $errmsg = '';
+            try {
+                $add = [
+                    'nickname'    => $v['昵称'] ?? '',
+                    'username'    => $v['用户名'] ?? '',
+                    'phone'       => $v['手机'] ?? '',
+                    'email'       => $v['邮箱'] ?? '',
+                    'password'    => $v['密码'] ?? '',
+                    'reg_channel' => 6,
+                    'reg_type'    => 6,
+                ];
+                validate(MemberValidate::class)->scene('add')->check($add);
+            } catch (\Exception $e) {
+                $errmsg = $e->getMessage();
+            }
+            if ($errmsg) {
+                $v['errmsg'] = $errmsg;
+                $fail[] = $v;
+            } else {
+                $v['errmsg'] = '导入成功';
+                $success[] = $v;
+            }
+        }
+
+        $data['success'] = $success;
+        $data['fail']    = $fail;
+
+        $msg = '导入：' . count($param['import']) . '，成功：' . count($success) . '，失败：' . count($fail);
+
+        return success($data, $msg);
     }
 
     /**

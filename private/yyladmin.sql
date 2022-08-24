@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 18/08/2022 17:16:12
+ Date: 24/08/2022 10:56:08
 */
 
 SET NAMES utf8mb4;
@@ -72,7 +72,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 544 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 546 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -245,7 +245,7 @@ INSERT INTO `yyl_admin_menu` VALUES (429, 427, 3, '系统设置修改', 'admin/a
 INSERT INTO `yyl_admin_menu` VALUES (430, 111, 3, '设置信息', 'admin/admin.Login/setting', 250, '', '', '', '', '', 0, 1, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (432, 298, 3, '内容分类修改上级', 'admin/cms.Category/pid', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (433, 283, 3, '内容修改分类', 'admin/cms.Content/cate', 255, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (434, 123, 3, '会员修改地区', 'admin/member.Member/region', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (434, 123, 3, '会员修改所在地', 'admin/member.Member/region', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (435, 53, 2, '公告管理', 'admin/admin.Notice/list', 155, 'notice', 'AdminNotice', 'admin/notice', 'el-icon-chat-line-round', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (437, 435, 3, '公告信息', 'admin/admin.Notice/info', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (438, 435, 3, '公告添加', 'admin/admin.Notice/add', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -290,6 +290,8 @@ INSERT INTO `yyl_admin_menu` VALUES (526, 519, 3, '修复表', 'admin/admin.Data
 INSERT INTO `yyl_admin_menu` VALUES (527, 519, 3, '备份下载', 'admin/admin.Database/down', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (542, 3, 3, '菜单是否免限', 'admin/admin.Menu/unrate', 168, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (543, 132, 3, '接口是否免限', 'admin/setting.Api/unrate', 123, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (544, 123, 3, '会员导出', 'admin/member.Member/export', 110, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (545, 123, 3, '会员导入', 'admin/member.Member/import', 100, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yyl_admin_notice
