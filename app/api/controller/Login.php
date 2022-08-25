@@ -54,6 +54,8 @@ class Login extends BaseController
      * @Apidoc\Param(ref="app\common\model\member\MemberModel\password")
      * @Apidoc\Param(ref="captchaParam")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
+     * @Apidoc\After(event="setGlobalParam", key="ApiToken", value="res.data.data.api_token", desc="api_token")
+     * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.api_token", desc="api_token")
      */
     public function login()
     {
@@ -108,6 +110,8 @@ class Login extends BaseController
      * @Apidoc\Param("phone", type="string", require=true, desc="手机")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
+     * @Apidoc\After(event="setGlobalParam", key="ApiToken", value="res.data.data.api_token", desc="api_token")
+     * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.api_token", desc="api_token")
      */
     public function phoneLogin()
     {
@@ -152,6 +156,8 @@ class Login extends BaseController
      * @Apidoc\Param("email", type="string", require=true, desc="邮箱")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
+     * @Apidoc\After(event="setGlobalParam", key="ApiToken", value="res.data.data.api_token", desc="api_token")
+     * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.api_token", desc="api_token")
      */
     public function emailLogin()
     {
@@ -251,6 +257,8 @@ class Login extends BaseController
      * @Apidoc\Param("iv", type="string", require=false, desc="加密算法的初始向量")
      * @Apidoc\Param("encrypted_data", type="string", require=false, desc="包括敏感数据在内的完整用户信息的加密数据")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\loginReturn")
+     * @Apidoc\After(event="setGlobalParam", key="ApiToken", value="res.data.data.api_token", desc="api_token")
+     * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.api_token", desc="api_token")
      */
     public function mini()
     {
@@ -307,6 +315,7 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("退出")
      * @Apidoc\Method("POST")
+     * @Apidoc\Before(event="clearGlobalHeader",key="ApiToken")
      */
     public function logout()
     {

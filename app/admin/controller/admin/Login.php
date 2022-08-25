@@ -91,6 +91,8 @@ class Login extends BaseController
      * @Apidoc\Param(ref="app\common\model\admin\UserModel\loginParam")
      * @Apidoc\Param(ref="captchaParam")
      * @Apidoc\Returned(ref="app\common\model\admin\UserModel\loginReturn")
+     * @Apidoc\After(event="setGlobalParam", key="AdminToken", value="res.data.data.admin_token", desc="admin_token")
+     * @Apidoc\After(event="setGlobalHeader", key="AdminToken", value="res.data.data.admin_token", desc="admin_token")
      */
     public function login()
     {
@@ -129,6 +131,7 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("退出")
      * @Apidoc\Method("POST")
+     * @Apidoc\Before(event="clearGlobalHeader",key="AdminToken")
      */
     public function logout()
     {
