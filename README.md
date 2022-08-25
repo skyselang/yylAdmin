@@ -4,7 +4,7 @@
 
 ## 文档
 
-- [看云](https://www.kancloud.cn/skyselang/yyladmin) | [码云](http://skyselang.gitee.io/yyladmindoc/) 
+- [码云](http://skyselang.gitee.io/yyladmindoc/)  |  [看云](https://www.kancloud.cn/skyselang/yyladmin)
 
 ## 简介
 
@@ -23,17 +23,18 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 - 系统管理
 - 数据库管理
 - 代码生成器
+- Excel导出导入
 - 接口文档与调试...
 - 前台基础功能：登录注册、微信登录、Token认证、接口管理...  
 - 更多功能请安装后体验
 
 ## 演示
 
-- 地址：[yylAdmin demo](https://admin.yyladmin.top) 
+- 地址：[demo](https://admin.yyladmin.top) 
 - 账号：yyladmin、admin、demo、test、php  
 - 密码：123456  
 - 提示：演示账号只有部分权限，请安装后体验全部功能
-- 前台：[yylAdmin index](https://www.yyladmin.top) 
+- 前台：[index](https://www.yyladmin.top) 
 ## 安装
 
 ### 环境要求
@@ -43,8 +44,8 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
   开启 putenv、proc_open 函数
 - MySQL >= 5.5
 - Redis
-- node >= 10.15.0
-- npm >= 5.6.0
+- node >= 12.0.0
+- npm >= 6.9.0
 
 ### 安装后端
 
@@ -100,6 +101,7 @@ location / {
   RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
 </IfModule>
 ```
+> 不设置伪静态接口文档无法访问  
 
 ### 安装前端
 
@@ -169,7 +171,7 @@ cnpm run build:stage
 ## 提示
 
 - 项目不定时更新，前后端最新代码保持一致  
-- 拉取代码后请更新前后端依赖（composer update、cnpm install）、同步数据库结构
+- 拉取代码后请更新前后端依赖（composer update、cnpm install）、同步数据库结构、清除缓存  
 
 ## 交流群
 
@@ -177,4 +179,5 @@ cnpm run build:stage
 
 ## 安全
 
-- yylAdminWeb ：[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdminWeb.svg?size=small)](https://www.oscs1024.com/project/skyselang/yylAdminWeb?ref=badge_small) [REPORT](https://www.murphysec.com/dr/DAcNBM8aGWLb6vAf3I)
+- yylAdmin ：[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdmin.svg?size=small)](https://www.murphysec.com/dr/jOuP7HsHeZORjqNlDm)
+- yylAdminWeb ：[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdminWeb.svg?size=small)](https://www.murphysec.com/dr/xygSZedOQLyj4uxyB8)
