@@ -1,6 +1,7 @@
 # https://git-scm.com/book/zh/v2
 /.idea
 /.vscode
+/.workflow
 .DS_Store
 /public/.well-known
 /public/storage
