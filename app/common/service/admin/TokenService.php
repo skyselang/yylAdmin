@@ -65,8 +65,13 @@ class TokenService
      */
     public static function verify($token)
     {
+        if (empty($token)) {
+            exception('请登录', 401);
+        }
+
+        $config = self::config();
+
         try {
-            $config = self::config();
             $key = $config['token_key'];
             $decode = JWT::decode($token, new Key($key, 'HS256'));
             $admin_user_id = $decode->data->admin_user_id;
@@ -74,19 +79,21 @@ class TokenService
             exception('账号登录状态已过期', 401);
         }
 
-        $user = UserCache::get($admin_user_id);
+        $user = UserCache::get($admin_user_id ?? 0);
         if (empty($user)) {
             exception('账号登录状态已失效', 401);
         } else {
-            if ($token != $user['admin_token']) {
-                exception('账号已在另一处登录', 401);
-            } else {
-                if ($user['is_disable'] == 1) {
-                    exception('账号已被禁用', 401);
+            if (!$config['is_multi_login']) {
+                if ($token != $user['admin_token']) {
+                    exception('账号已在另一处登录', 401);
                 }
-                if ($user['is_delete'] == 1) {
-                    exception('账号已被删除', 401);
-                }
+            }
+
+            if ($user['is_disable'] == 1) {
+                exception('账号已被禁用', 401);
+            }
+            if ($user['is_delete'] == 1) {
+                exception('账号已被删除', 401);
             }
         }
     }
@@ -103,7 +110,7 @@ class TokenService
         if (empty($token)) {
             return 0;
         }
-        
+
         try {
             $config = self::config();
             $key = $config['token_key'];

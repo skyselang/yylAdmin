@@ -23,7 +23,7 @@ class SettingModel extends Model
     protected $pk = 'setting_id';
 
     /**
-     * @Apidoc\Field("token_name,token_key,token_exp")
+     * @Apidoc\Field("token_name,token_key,token_exp,is_multi_login")
      */
     public function tokenInfoParam()
     {

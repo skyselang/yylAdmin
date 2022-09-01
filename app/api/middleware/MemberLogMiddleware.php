@@ -43,6 +43,7 @@ class MemberLogMiddleware
                     $member_log['response_msg'] = $response_data['message'];
                 }
             }
+            $member_log['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
             $member_log['member_id'] = $member_id;
             LogService::add($member_log);
         }

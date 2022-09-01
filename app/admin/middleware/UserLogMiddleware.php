@@ -46,6 +46,7 @@ class UserLogMiddleware
                 }
             }
 
+            $admin_user_log['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
             $admin_user_log['admin_user_id'] = $admin_user_id;
             UserLogService::add($admin_user_log);
         }

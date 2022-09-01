@@ -29,8 +29,9 @@ class Setting extends BaseController
     {
         $setting = SettingService::info();
 
-        $data['token_key'] = $setting['token_key'];
-        $data['token_exp'] = $setting['token_exp'];
+        $data['token_key']      = $setting['token_key'];
+        $data['token_exp']      = $setting['token_exp'];
+        $data['is_multi_login'] = $setting['is_multi_login'];
 
         return success($data);
     }
@@ -42,8 +43,9 @@ class Setting extends BaseController
      */
     public function tokenEdit()
     {
-        $param['token_key'] = $this->param('token_key/s', '');
-        $param['token_exp'] = $this->param('token_exp/d', 720);
+        $param['token_key']      = $this->param('token_key/s', '');
+        $param['token_exp']      = $this->param('token_exp/d', 720);
+        $param['is_multi_login'] = $this->param('is_multi_login/d', 0);
 
         validate(SettingValidate::class)->scene('token_edit')->check($param);
 

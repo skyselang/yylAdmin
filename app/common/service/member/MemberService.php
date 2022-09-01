@@ -128,6 +128,9 @@ class MemberService
                 $info['pwd_edit_type'] = 1;
             }
 
+            // token
+            $info['api_token'] = TokenService::create($info);
+
             MemberCache::set($id, $info);
         }
 
@@ -298,7 +301,6 @@ class MemberService
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
         $data = self::field($member);
-        $data['api_token'] = TokenService::create($member);
 
         return $data;
     }
@@ -435,7 +437,6 @@ class MemberService
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
         $data = self::field($member);
-        $data['api_token'] = TokenService::create($member);
 
         return $data;
     }
@@ -450,7 +451,7 @@ class MemberService
     public static function field($member)
     {
         $data = [];
-        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url'];
+        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url', 'api_token'];
         foreach ($field as $v) {
             $data[$v] = $member[$v];
         }

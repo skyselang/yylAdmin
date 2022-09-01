@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 24/08/2022 10:56:08
+ Date: 01/09/2022 11:28:02
 */
 
 SET NAMES utf8mb4;
@@ -72,7 +72,7 @@ CREATE TABLE `yyl_admin_menu`  (
   INDEX `admin_menu_id`(`admin_menu_id`) USING BTREE,
   INDEX `menu_pid`(`menu_pid`, `menu_name`) USING BTREE,
   INDEX `menu_url`(`menu_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 546 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 562 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of yyl_admin_menu
@@ -219,8 +219,8 @@ INSERT INTO `yyl_admin_menu` VALUES (393, 391, 3, '内容设置修改', 'admin/c
 INSERT INTO `yyl_admin_menu` VALUES (396, 1, 3, '内容统计', 'admin/Index/cms', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (397, 0, 1, '文件管理', '', 157, '/file', '', '', 'el-icon-files', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (398, 397, 2, '文件管理', 'admin/file.File/list', 250, 'file', 'FileFile', 'file/file', 'el-icon-files', '{\"recycle\":0}', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (401, 398, 3, '文件信息', 'admin/file.File/info', 350, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `yyl_admin_menu` VALUES (402, 398, 3, '文件添加', 'admin/file.File/add', 350, '', '', '', '', '', 0, 0, 0, 1, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (401, 398, 3, '文件信息', 'admin/file.File/info', 500, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `yyl_admin_menu` VALUES (402, 398, 3, '文件添加', 'admin/file.File/add', 450, '', '', '', '', '', 0, 0, 0, 1, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (403, 398, 3, '文件修改', 'admin/file.File/edit', 350, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (404, 398, 3, '文件删除', 'admin/file.File/dele', 350, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `yyl_admin_menu` VALUES (405, 398, 3, '文件是否禁用', 'admin/file.File/disable', 250, '', '', '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -366,6 +366,7 @@ CREATE TABLE `yyl_admin_setting`  (
   `token_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
   `token_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
   `token_exp` int(5) NULL DEFAULT 12 COMMENT 'Token有效时间（小时）',
+  `is_multi_login` tinyint(1) NULL DEFAULT 0 COMMENT '是否开启多端登录，1是0否',
   `captcha_switch` tinyint(1) NULL DEFAULT 0 COMMENT '验证码开关，1开启0关闭',
   `captcha_mode` tinyint(1) NULL DEFAULT 1 COMMENT '验证码方式，1字符验证码，2行为验证码',
   `captcha_type` tinyint(1) NULL DEFAULT 1 COMMENT '验证码类型；字符验证码：1数字，2字母，3数字字母，4算术，5中文；行为验证码：1滑动blockPuzzle，2文字clickWord',
@@ -456,6 +457,7 @@ CREATE TABLE `yyl_admin_user_log`  (
   `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
   `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回码',
   `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
+  `user_agent` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'USER_AGENT',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
   `create_time` datetime NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
@@ -687,7 +689,7 @@ DROP TABLE IF EXISTS `yyl_file`;
 CREATE TABLE `yyl_file`  (
   `file_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文件id',
   `group_id` int(11) NULL DEFAULT 0 COMMENT '分组id',
-  `storage` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'local' COMMENT '存储方式，local本地(服务器)，qiniu七牛云Kodo，aliyun阿里云OSS，tencent腾讯云COS',
+  `storage` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'local' COMMENT '存储方式，local本地(服务器)，qiniu七牛云Kodo，aliyun阿里云OSS，tencent腾讯云COS，link外部链接',
   `domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '访问域名',
   `file_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'image' COMMENT '文件类型，image图片，video视频，audio音频，word文档，other其它',
   `file_md5` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件MD5',
@@ -4645,6 +4647,7 @@ CREATE TABLE `yyl_setting`  (
   `token_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token名称',
   `token_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT 'Token密钥',
   `token_exp` int(5) NULL DEFAULT 720 COMMENT 'Token有效时间（小时）',
+  `is_multi_login` tinyint(1) NULL DEFAULT 0 COMMENT '是否开启多端登录，1是0否',
   `captcha_register` tinyint(1) NULL DEFAULT 1 COMMENT '注册验证码，1开启0关闭',
   `captcha_login` tinyint(1) NULL DEFAULT 0 COMMENT '登录验证码，1开启0关闭',
   `log_switch` tinyint(1) NULL DEFAULT 1 COMMENT '日志记录开关，1开启0关闭',

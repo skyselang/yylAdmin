@@ -9,6 +9,7 @@
 
 namespace app\common\service\setting;
 
+use app\common\cache\member\MemberCache;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -64,12 +65,36 @@ class TokenService
      */
     public static function verify($token)
     {
+        if (empty($token)) {
+            exception('请登录', 401);
+        }
+
+        $config = self::config();
+
         try {
-            $config = self::config();
             $key = $config['token_key'];
-            JWT::decode($token, new Key($key, 'HS256'));
+            $decode = JWT::decode($token, new Key($key, 'HS256'));
+            $member_id = $decode->data->member_id;
         } catch (\Exception $e) {
-            exception('登录已失效', 401);
+            exception('账号登录状态已过期'.$e->getMessage(), 401);
+        }
+
+        $member = MemberCache::get($member_id ?? 0);
+        if (empty($member)) {
+            exception('账号登录状态已失效', 401);
+        } else {
+            if (!$config['is_multi_login']) {
+                if ($token != $member['api_token']) {
+                    exception('账号已在另一处登录', 401);
+                }
+            }
+
+            if ($member['is_disable'] == 1) {
+                exception('账号已被禁用', 401);
+            }
+            if ($member['is_delete'] == 1) {
+                exception('账号已被删除', 401);
+            }
         }
     }
 
@@ -85,7 +110,7 @@ class TokenService
         if (empty($token)) {
             return 0;
         }
-        
+
         try {
             $config = self::config();
             $key = $config['token_key'];

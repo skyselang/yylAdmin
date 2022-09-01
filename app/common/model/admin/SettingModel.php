@@ -39,7 +39,7 @@ class SettingModel extends Model
 
     /**
      * token设置信息
-     * @Apidoc\Field("token_name,token_key,token_exp")
+     * @Apidoc\Field("token_name,token_key,token_exp,is_multi_login")
      */
     public function tokenInfoParam()
     {
