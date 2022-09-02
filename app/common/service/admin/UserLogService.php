@@ -132,6 +132,7 @@ class UserLogService
             $param['request_param']    = serialize($request_param);
             $param['request_method']   = Request::method();
             $param['create_time']      = datetime();
+            $param['user_agent']       = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
             $model = new UserLogModel();
             $model->strict(false)->insert($param);
