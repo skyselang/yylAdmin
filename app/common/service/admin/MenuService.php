@@ -668,6 +668,10 @@ class MenuService
                     $tmp['redirect'] = 'noRedirect';
                     $tmp['component'] = 'Layout';
                     $tmp['alwaysShow'] = true;
+                    if ($v['menu_pid'] > 0) {
+                        $tmp['redirect'] = $v['component'];
+                        $tmp['component'] = $v['component'];
+                    }
                 } elseif ($v['menu_type'] == 2) {
                     $tmp['meta']['query'] = $v['meta_query'] ? json_decode($v['meta_query'], true) : [];
                     $tmp['component'] = $v['component'];
