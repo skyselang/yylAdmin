@@ -115,7 +115,7 @@ cd yylAdminWeb
 ```
 #### 使用 cnpm
 ```bash
-npm install -g cnpm --registry=https://registry.npmmirror.com
+npm install -g cnpm@6.2.0 --registry=https://registry.npmmirror.com
 ```
 #### 安装依赖
 ```bash
