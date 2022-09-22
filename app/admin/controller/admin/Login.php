@@ -108,8 +108,8 @@ class Login extends BaseController
         if ($setting['captcha_switch']) {
             if ($setting['captcha_mode'] == 2) {
                 $AjCaptchaUtils = new AjCaptchaUtils();
-                $captcha_check = $AjCaptchaUtils->check($setting['captcha_type'], $param['ajcaptcha']);
-                if (empty($captcha_check)) {
+                $captcha_check = $AjCaptchaUtils->checkTwo($setting['captcha_type'], $param['ajcaptcha']);
+                if ($captcha_check['error']) {
                     exception('验证码错误');
                 }
             } else {

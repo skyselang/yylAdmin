@@ -60,7 +60,7 @@ class AjCaptchaUtils
      * @param string $captchaType 1||blockPuzzle 滑动验证码，2||clickWord 文字验证码
      * @param array  $captchaData 验证码数据
      *
-     * @return bool
+     * @return array
      */
     public function check($captchaType, $captchaData)
     {
@@ -74,6 +74,41 @@ class AjCaptchaUtils
                 $service = new ClickWordCaptchaService($this->config);
             }
             $service->check($captchaData['token'], $captchaData['pointJson']);
+        } catch (\Exception $e) {
+            $msg = $e->getMessage();
+            $error = true;
+            $repCode = '6111';
+        }
+
+        return [
+            'error' => $error,
+            'repCode' => $repCode,
+            'repData' => null,
+            'repMsg' => $msg,
+            'success' => !$error,
+        ];
+    }
+
+    /**
+     * 验证验证码（二次验证）
+     *
+     * @param string $captchaType 1||blockPuzzle 滑动验证码，2||clickWord 文字验证码
+     * @param array  $encryptCode 二次验证数据
+     *
+     * @return array
+     */
+    public function checkTwo($captchaType, $encryptCode)
+    {
+        $msg = null;
+        $error = false;
+        $repCode = '0000';
+        try {
+            if ($captchaType == 1 || $captchaType == 'blockPuzzle') {
+                $service = new BlockPuzzleCaptchaService($this->config);
+            } else {
+                $service = new ClickWordCaptchaService($this->config);
+            }
+            $service->verificationByEncryptCode($encryptCode['captchaVerification']);
         } catch (\Exception $e) {
             $msg = $e->getMessage();
             $error = true;
