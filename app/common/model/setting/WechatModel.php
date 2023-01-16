@@ -10,6 +10,7 @@
 namespace app\common\model\setting;
 
 use think\Model;
+use app\common\model\file\FileModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -20,27 +21,16 @@ class WechatModel extends Model
     // 表名
     protected $name = 'setting_wechat';
     // 表主键
-    protected $pk = 'setting_wechat_id';
+    protected $pk = 'setting_id';
 
-    /**
-     * @Apidoc\Field("name,origin_id,qrcode,appid,appsecret,url,token,encoding_aes_key,encoding_aes_type")
-     */
-    public function offiInfoParam()
+    // 关联qrcode文件
+    public function qrcode()
     {
+        return $this->hasOne(FileModel::class, 'file_id', 'qrcode_id')->append(['file_url'])->where(where_disdel());
     }
-
-    /**
-     * @Apidoc\Field("name,origin_id,qrcode,appid,appsecret")
-     */
-    public function miniInfoParam()
+    // 获取qrcode链接
+    public function getQrcodeUrlAttr($value, $data)
     {
-    }
-
-    /**
-     * @Apidoc\Field("qrcode_url")
-     * @Apidoc\AddField("qrcode_url", type="string", default="", desc="二维码链接")
-     */
-    public function qrcode_url()
-    {
+        return $this['qrcode']['file_url'] ?? '';
     }
 }

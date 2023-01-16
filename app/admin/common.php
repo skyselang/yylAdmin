@@ -10,9 +10,9 @@
 // admin公共函数文件
 use think\facade\Config;
 use think\facade\Request;
-use app\common\service\admin\MenuService;
-use app\common\service\admin\SettingService;
-use app\common\service\admin\TokenService;
+use app\common\service\system\MenuService;
+use app\common\service\system\SettingService;
+use app\common\service\system\UserTokenService;
 
 /**
  * 菜单url获取
@@ -38,7 +38,7 @@ function menu_is_exist($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $url_list = MenuService::urlList();
+    $url_list = MenuService::menuList();
     if (in_array($menu_url, $url_list)) {
         return true;
     }
@@ -68,27 +68,6 @@ function menu_is_disable($menu_url = '')
 }
 
 /**
- * 菜单是否免权
- *
- * @param string $menu_url 菜单url
- *
- * @return bool
- */
-function menu_is_unauth($menu_url = '')
-{
-    if (empty($menu_url)) {
-        $menu_url = menu_url();
-    }
-
-    $unauth_url = MenuService::unauthUrl();
-    if (in_array($menu_url, $unauth_url)) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
  * 菜单是否免登
  *
  * @param string $menu_url 菜单url
@@ -101,8 +80,29 @@ function menu_is_unlogin($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $unlogin_url = MenuService::unloginUrl();
+    $unlogin_url = MenuService::unloginList();
     if (in_array($menu_url, $unlogin_url)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * 菜单是否免权
+ *
+ * @param string $menu_url 菜单url
+ *
+ * @return bool
+ */
+function menu_is_unauth($menu_url = '')
+{
+    if (empty($menu_url)) {
+        $menu_url = menu_url();
+    }
+
+    $unauth_url = MenuService::unauthList();
+    if (in_array($menu_url, $unauth_url)) {
         return true;
     }
 
@@ -122,7 +122,7 @@ function menu_is_unrate($menu_url = '')
         $menu_url = menu_url();
     }
 
-    $unrate_url = MenuService::unrateUrl();
+    $unrate_url = MenuService::unrateList();
     if (in_array($menu_url, $unrate_url)) {
         return true;
     }
@@ -131,54 +131,54 @@ function menu_is_unrate($menu_url = '')
 }
 
 /**
- * 用户token获取
+ * 用户token
  *
  * @return string
  */
-function admin_token()
+function user_token()
 {
-    $setting = SettingService::info();
-
-    $admin_token = Request::header($setting['token_name'], '');
-    if (empty($admin_token)) {
-        $admin_token = Request::param($setting['token_name'], '');
+    $system = SettingService::info();
+    if ($system['token_type'] == 'header') {
+        $user_token = Request::header($system['token_name'], '');
+    } else {
+        $user_token = Request::param($system['token_name'], '');
     }
 
-    return $admin_token;
+    return $user_token;
 }
 
 /**
  * 用户token验证
  *
- * @param string $admin_token 用户token
+ * @param string $user_token 用户token
  *
  * @return Exception
  */
-function admin_token_verify($admin_token = '')
+function user_token_verify($user_token = '')
 {
-    if (empty($admin_token)) {
-        $admin_token = admin_token();
+    if (empty($user_token)) {
+        $user_token = user_token();
     }
 
-    TokenService::verify($admin_token);
+    UserTokenService::verify($user_token);
 }
 
 /**
- * 用户id获取
+ * 用户id
  *
  * @return int
  */
-function admin_user_id()
+function user_id()
 {
-    return TokenService::adminUserId(admin_token());
+    return UserTokenService::userId(user_token());
 }
 
 /**
- * 系统超管用户id
+ * 系统超管用户id（所有权限）
  *
  * @return array
  */
-function admin_super_ids()
+function user_super_ids()
 {
     return Config::get('admin.super_ids', []);
 }
@@ -186,21 +186,21 @@ function admin_super_ids()
 /**
  * 用户是否系统超管
  *
- * @param int $admin_user_id 用户id
+ * @param int $user_id 用户id
  * 
  * @return bool
  */
-function admin_is_super($admin_user_id = 0)
+function user_is_super($user_id = 0)
 {
-    if (empty($admin_user_id)) {
+    if (empty($user_id)) {
         return false;
     }
 
-    $admin_super_ids = admin_super_ids();
-    if (empty($admin_super_ids)) {
+    $user_super_ids = user_super_ids();
+    if (empty($user_super_ids)) {
         return false;
     }
-    if (in_array($admin_user_id, $admin_super_ids)) {
+    if (in_array($user_id, $user_super_ids)) {
         return true;
     } else {
         return false;
@@ -208,14 +208,14 @@ function admin_is_super($admin_user_id = 0)
 }
 
 /**
- * 日志记录是否开启
+ * 用户日志记录是否开启
  *
  * @return bool
  */
-function admin_log_switch()
+function user_log_switch()
 {
-    $setting = SettingService::info();
-    if ($setting['log_switch']) {
+    $system = SettingService::info();
+    if ($system['log_switch']) {
         return true;
     } else {
         return false;
@@ -223,25 +223,23 @@ function admin_log_switch()
 }
 
 /**
- * 系统超管信息记录隐藏条件
+ * 系统超管用户记录隐藏条件
  * 
  * @param string $user_id_field 用户id字段
  *
  * @return array
  */
-function admin_super_hide_where($user_id_field = 'admin_user_id')
+function user_hide_where($user_id_field = 'user_id')
 {
-    $where = [];
-    $super_is_hide = Config::get('admin.super_is_hide', false);
-    if ($super_is_hide) {
-        $admin_user_id = admin_user_id();
-        if (!admin_is_super($admin_user_id)) {
-            $admin_super_ids = admin_super_ids();
-            if ($admin_super_ids) {
-                $where = [$user_id_field, 'not in', $admin_super_ids];
+    $super_hide = Config::get('admin.super_hide', false);
+    if ($super_hide) {
+        $user_id = user_id();
+        if (!user_is_super($user_id)) {
+            $user_super_ids = user_super_ids();
+            if ($user_super_ids) {
+                $where = [$user_id_field, 'not in', $user_super_ids];
             }
         }
     }
-
-    return $where;
+    return $where ?? [];
 }

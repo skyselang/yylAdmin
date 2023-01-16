@@ -10,7 +10,7 @@
 namespace app\api\service;
 
 use app\common\service\member\MemberService;
-use app\common\service\setting\SettingService;
+use app\common\service\member\SettingService;
 
 /**
  * 登录退出

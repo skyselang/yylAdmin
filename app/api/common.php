@@ -9,16 +9,15 @@
 
 // api公共函数文件
 use think\facade\Request;
-use app\common\service\setting\ApiService;
-use app\common\service\setting\TokenService;
-use app\common\service\setting\SettingService;
+use app\common\service\member\ApiService;
+use app\common\service\member\TokenService;
+use app\common\service\member\SettingService;
 
 /**
  * 接口url获取
  * 应用/控制器/操作 
- * eg：api/Index/index
  *
- * @return string
+ * @return string eg：api/Index/index
  */
 function api_url()
 {
@@ -38,8 +37,8 @@ function api_is_exist($api_url = '')
         $api_url = api_url();
     }
 
-    $url_list = ApiService::urlList();
-    if (in_array($api_url, $url_list)) {
+    $api_list = ApiService::apiList();
+    if (in_array($api_url, $api_list)) {
         return true;
     }
 
@@ -80,7 +79,7 @@ function api_is_unlogin($api_url = '')
         $api_url = api_url();
     }
 
-    $unlogin_url = ApiService::unloginUrl();
+    $unlogin_url = ApiService::unloginList();
     if (in_array($api_url, $unlogin_url)) {
         return true;
     }
@@ -89,7 +88,28 @@ function api_is_unlogin($api_url = '')
 }
 
 /**
- * 接口是否无需限率
+ * 接口是否免权
+ *
+ * @param string $api_url 接口url
+ *
+ * @return bool
+ */
+function api_is_unauth($api_url = '')
+{
+    if (empty($api_url)) {
+        $api_url = api_url();
+    }
+
+    $unauth_url = ApiService::unauthList();
+    if (in_array($api_url, $unauth_url)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * 接口是否免限
  *
  * @param string $api_url 接口url
  *
@@ -101,7 +121,7 @@ function api_is_unrate($api_url = '')
         $api_url = api_url();
     }
 
-    $unrate_url = ApiService::unrateUrl();
+    $unrate_url = ApiService::unrateList();
     if (in_array($api_url, $unrate_url)) {
         return true;
     }
@@ -149,9 +169,7 @@ function api_token_verify($api_token = '')
  */
 function member_id()
 {
-    $api_token = api_token();
-
-    return TokenService::memberId($api_token);
+    return TokenService::memberId(api_token());
 }
 
 /**

@@ -9,12 +9,11 @@
 
 namespace app\common\service\setting;
 
+use EasyWeChat\Factory;
 use think\facade\Config;
-use app\common\utils\StringUtils;
+use app\common\service\utils\StringUtils;
 use app\common\cache\setting\WechatCache;
 use app\common\model\setting\WechatModel;
-use app\common\service\file\FileService;
-use EasyWeChat\Factory;
 
 /**
  * 微信设置
@@ -46,13 +45,12 @@ class WechatService
                 $info['token']            = StringUtils::random(32);
                 $info['encoding_aes_key'] = StringUtils::random(43);
                 $info['create_time']      = datetime();
-                $model->insert($info);
+                $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->toArray();
+            $info = $info->append(['qrcode_url'])->toArray();
 
             $info['server_url'] = server_url() . '/api/Wechat/access';
-            $info['qrcode_url'] = FileService::fileUrl($info['qrcode_id']);
 
             WechatCache::set($id, $info);
         }
@@ -70,13 +68,13 @@ class WechatService
     public static function offiEdit($param)
     {
         $model = new WechatModel();
-        $pk = $model->getPk();
-
         $id = self::$offi_id;
 
+        $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
-        $res = $model->where($pk, $id)->update($param);
+        $info = $model->find($id);
+        $res = $info->save($param);
         if (empty($res)) {
             exception();
         }
@@ -104,12 +102,10 @@ class WechatService
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['create_time'] = datetime();
-                $model->insert($info);
+                $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->toArray();
-
-            $info['qrcode_url'] = FileService::fileUrl($info['qrcode_id']);
+            $info = $info->append(['qrcode_url'])->toArray();
 
             WechatCache::set($id, $info);
         }
@@ -127,13 +123,13 @@ class WechatService
     public static function miniEdit($param)
     {
         $model = new WechatModel();
-        $pk = $model->getPk();
-
         $id = self::$mini_id;
 
+        $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
-        $res = $model->where($pk, $id)->update($param);
+        $info = $model->find($id);
+        $res = $info->save($param);
         if (empty($res)) {
             exception();
         }
@@ -152,7 +148,7 @@ class WechatService
      */
     public static function offi($config = [])
     {
-        $offi_info = WechatService::offiInfo();
+        $offi_info = self::offiInfo();
 
         if (empty($offi_info['appid'])) {
             exception('公众号 appid 未设置');
@@ -220,7 +216,7 @@ class WechatService
      */
     public static function mini($config = [])
     {
-        $mini_info = WechatService::miniInfo();
+        $mini_info = self::miniInfo();
 
         if (empty($mini_info['appid'])) {
             exception('小程序 appid 未设置');

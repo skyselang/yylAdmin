@@ -9,52 +9,59 @@
 
 namespace app\admin\controller\file;
 
-use app\common\BaseController;
+use app\common\controller\BaseController;
 use app\common\validate\file\FileValidate;
 use app\common\service\file\FileService;
+use app\common\service\file\GroupService;
+use app\common\service\file\TagService;
+use app\common\service\file\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("文件管理")
- * @Apidoc\Group("adminFile")
- * @Apidoc\Sort("410")
+ * @Apidoc\Group("file")
+ * @Apidoc\Sort("100")
  */
 class File extends BaseController
 {
     /**
      * @Apidoc\Title("文件列表")
-     * @Apidoc\Param(ref="pagingParam")
-     * @Apidoc\Param(ref="sortParam")
-     * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\listParam")
-     * @Apidoc\Param("group_id", require=false, default="")
-     * @Apidoc\Param("storage", require=false, default="")
-     * @Apidoc\Param("file_type", require=false, default="")
-     * @Apidoc\Param("is_front", require=false, default="0")
-     * @Apidoc\Param("is_disable", require=false, default="")
+     * @Apidoc\Query(ref="pagingQuery")
+     * @Apidoc\Query(ref="sortQuery")
+     * @Apidoc\Query(ref="searchQuery")
+     * @Apidoc\Query(ref="dateQuery")
+     * @Apidoc\Returned(ref="expsReturn")
+     * @Apidoc\Query(ref="app\common\model\file\FileModel", field="group_id,storage,file_type,is_front,is_disable")
+     * @Apidoc\Query("tag_ids", type="array", desc="标签id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\file_url")
-     * )
-     * @Apidoc\Returned("group", type="array", desc="分组列表",
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\id"),
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\group_name")
+     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time",
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileTypeNameAttr"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr"),
      * )
      * @Apidoc\Returned("storage", type="object", desc="存储方式")
      * @Apidoc\Returned("filetype", type="object", desc="文件类型")
-     * @Apidoc\Returned("setting", type="object", desc="文件设置")
+     * @Apidoc\Returned("setting", ref="app\common\model\file\SettingModel", type="object", desc="文件设置", field="limit_max",
+     *   @Apidoc\Returned("accept_ext", type="string", desc="允许上传文件后缀")
+     * )
+     * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel", type="array", desc="分组列表", field="group_id,group_name")
+     * @Apidoc\Returned("tag", ref="app\common\model\file\TagModel", type="array", desc="标签列表", field="tag_id,tag_name")
      */
     public function list()
     {
-        $group_id   = $this->param('group_id/s', '');
-        $storage    = $this->param('storage/s', '');
-        $file_type  = $this->param('file_type/s', '');
-        $is_front   = $this->param('is_front/s', 0);
-        $is_disable = $this->param('is_disable/s', '');
+        $group_id   = $this->request->param('group_id/s', '');
+        $tag_ids    = $this->request->param('tag_ids/a', []);
+        $storage    = $this->request->param('storage/s', '');
+        $file_type  = $this->request->param('file_type/s', '');
+        $is_front   = $this->request->param('is_front/s', 0);
+        $is_disable = $this->request->param('is_disable/s', '');
 
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
+        }
+        if ($tag_ids ?? []) {
+            $where[] = ['tag_ids', 'in', $tag_ids];
         }
         if ($storage !== '') {
             $where[] = ['storage', '=', $storage];
@@ -68,22 +75,28 @@ class File extends BaseController
         if ($is_disable !== '') {
             $where[] = ['is_disable', '=', $is_disable];
         }
-        $where[] = ['is_delete', '=', 0];
-        $where = $this->where($where, 'file_id');
+        $where[] = where_delete();
+        $where = $this->where($where);
 
         $data = FileService::list($where, $this->page(), $this->limit(), $this->order());
+
+        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name');
+        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name');
+        $data['exps']  = where_exps();
+        $data['where'] = $where;
 
         return success($data);
     }
 
     /**
      * @Apidoc\Title("文件信息")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\id")
-     * @Apidoc\Returned(ref="app\common\model\file\FileModel\infoReturn")
+     * @Apidoc\Query(ref="app\common\model\file\FileModel", field="file_id")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel")
+     * @Apidoc\Returned("tag_ids", type="array", desc="标签id")
      */
     public function info()
     {
-        $param['file_id'] = $this->param('file_id/d', '');
+        $param['file_id'] = $this->request->param('file_id/d', 0);
 
         validate(FileValidate::class)->scene('info')->check($param);
 
@@ -97,17 +110,24 @@ class File extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="fileParam")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\addParam")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="group_id,file_name,file_type,sort")
+     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
      * @Apidoc\Returned(ref="fileReturn")
      */
     public function add()
     {
-        $param['file']      = $this->request->file('file');
-        $param['group_id']  = $this->param('group_id/d', 0);
-        $param['file_type'] = $this->param('file_type/s', 'image');
-        $param['file_name'] = $this->param('file_name/s', '');
-        $param['is_front']  = $this->param('is_front/s', 0);
-        $param['sort']      = $this->param('sort/d', 250);
+        $setting = SettingService::info();
+        if (!$setting['is_upload_admin']) {
+            exception('文件上传未开启，无法上传文件！');
+        }
+
+        $param['file']       = $this->request->file('file');
+        $param['file_name']  = $this->request->param('file_name/s', '');
+        $param['group_id']   = $this->request->param('group_id/d', 0);
+        $param['tag_ids']    = $this->request->param('tag_ids/a', []);
+        $param['file_type']  = $this->request->param('file_type/s', 'image');
+        $param['sort']       = $this->request->param('sort/d', 250);
+        $param['create_uid'] = user_id();
 
         validate(FileValidate::class)->scene('add')->check($param);
 
@@ -119,21 +139,23 @@ class File extends BaseController
     /**
      * @Apidoc\Title("文件修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\editParam")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="file_id,file_name,group_id,file_type,domain,sort")
+     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
      */
     public function edit()
     {
-        $param['file_id']   = $this->param('file_id/d', '');
-        $param['group_id']  = $this->param('group_id/d', 0);
-        $param['domain']    = $this->param('domain/s', '');
-        $param['file_type'] = $this->param('file_type/s', 'image');
-        $param['file_name'] = $this->param('file_name/s', '');
-        $param['is_front']  = $this->param('is_front/s', 0);
-        $param['sort']      = $this->param('sort/d', 250);
+        $param['file_id']    = $this->request->param('file_id/d', 0);
+        $param['file_name']  = $this->request->param('file_name/s', '');
+        $param['group_id']   = $this->request->param('group_id/d', 0);
+        $param['tag_ids']    = $this->request->param('tag_ids/a', []);
+        $param['file_type']  = $this->request->param('file_type/s', 'image');
+        $param['domain']     = $this->request->param('domain/s', '');
+        $param['sort']       = $this->request->param('sort/d', 250);
+        $param['update_uid'] = user_id();
 
         validate(FileValidate::class)->scene('edit')->check($param);
 
-        $data = FileService::edit([$param['file_id']], $param);
+        $data = FileService::edit($param['file_id'], $param);
 
         return success($data);
     }
@@ -145,7 +167,7 @@ class File extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->param('ids/a', '');
+        $param['ids'] = $this->request->param('ids/a', []);
 
         validate(FileValidate::class)->scene('dele')->check($param);
 
@@ -158,14 +180,32 @@ class File extends BaseController
      * @Apidoc\Title("文件修改分组")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\group_id")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="group_id")
      */
     public function editgroup()
     {
-        $param['ids']      = $this->param('ids/a', '');
-        $param['group_id'] = $this->param('group_id/d', 0);
+        $param['ids']      = $this->request->param('ids/a', []);
+        $param['group_id'] = $this->request->param('group_id/d', 0);
 
         validate(FileValidate::class)->scene('editgroup')->check($param);
+
+        $data = FileService::edit($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("文件修改标签")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
+     */
+    public function edittag()
+    {
+        $param['ids']     = $this->request->param('ids/a', []);
+        $param['tag_ids'] = $this->request->param('tag_ids/a', []);
+
+        validate(FileValidate::class)->scene('edittag')->check($param);
 
         $data = FileService::edit($param['ids'], $param);
 
@@ -176,12 +216,12 @@ class File extends BaseController
      * @Apidoc\Title("文件修改类型")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\file_type")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="file_type")
      */
     public function edittype()
     {
-        $param['ids']       = $this->param('ids/a', '');
-        $param['file_type'] = $this->param('file_type/s', 'image');
+        $param['ids']       = $this->request->param('ids/a', []);
+        $param['file_type'] = $this->request->param('file_type/s', 'image');
 
         validate(FileValidate::class)->scene('edittype')->check($param);
 
@@ -194,12 +234,12 @@ class File extends BaseController
      * @Apidoc\Title("文件修改域名")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\domain")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="domain")
      */
     public function editdomain()
     {
-        $param['ids']    = $this->param('ids/a', '');
-        $param['domain'] = $this->param('domain/s', '');
+        $param['ids']    = $this->request->param('ids/a', []);
+        $param['domain'] = $this->request->param('domain/s', '');
 
         validate(FileValidate::class)->scene('editdomain')->check($param);
 
@@ -212,12 +252,12 @@ class File extends BaseController
      * @Apidoc\Title("文件是否禁用")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\is_disable")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="is_disable")
      */
     public function disable()
     {
-        $param['ids']        = $this->param('ids/a', '');
-        $param['is_disable'] = $this->param('is_disable/d', 0);
+        $param['ids']        = $this->request->param('ids/a', []);
+        $param['is_disable'] = $this->request->param('is_disable/d', 0);
 
         validate(FileValidate::class)->scene('disable')->check($param);
 
@@ -228,38 +268,22 @@ class File extends BaseController
 
     /**
      * @Apidoc\Title("文件回收站")
-     * @Apidoc\Param(ref="pagingParam")
-     * @Apidoc\Param(ref="sortParam")
-     * @Apidoc\Param(ref="searchParam")
-     * @Apidoc\Param(ref="dateParam")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel\listParam")
-     * @Apidoc\Param("group_id", require=false, default="")
-     * @Apidoc\Param("storage", require=false, default="")
-     * @Apidoc\Param("file_type", require=false, default="")
-     * @Apidoc\Param("is_front", require=false, default="0")
-     * @Apidoc\Param("is_disable", require=false, default="")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel\listReturn", type="array", desc="文件列表", 
-     *     @Apidoc\Returned(ref="app\common\model\file\FileModel\file_url")
-     * )
-     * @Apidoc\Returned("group", type="array", desc="分组列表",
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\id"),
-     *     @Apidoc\Returned(ref="app\common\model\file\GroupModel\group_name")
-     * )
-     * @Apidoc\Returned("storage", type="object", desc="存储方式")
-     * @Apidoc\Returned("filetype", type="object", desc="文件类型")
-     * @Apidoc\Returned("setting", type="object", desc="文件设置")
+     * @Apidoc\Desc("请求和返回参数同文件列表")
      */
-    public function recover()
+    public function recycle()
     {
-        $group_id   = $this->param('group_id/s', '');
-        $storage    = $this->param('storage/s', '');
-        $file_type  = $this->param('file_type/s', '');
-        $is_front   = $this->param('is_front/s', '');
-        $is_disable = $this->param('is_disable/s', '');
+        $group_id   = $this->request->param('group_id/s', '');
+        $tag_ids    = $this->request->param('tag_ids/a', []);
+        $storage    = $this->request->param('storage/s', '');
+        $file_type  = $this->request->param('file_type/s', '');
+        $is_front   = $this->request->param('is_front/s', '');
+        $is_disable = $this->request->param('is_disable/s', '');
 
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
+        }
+        if ($tag_ids ?? []) {
+            $where[] = ['tag_ids', 'in', $tag_ids];
         }
         if ($storage !== '') {
             $where[] = ['storage', '=', $storage];
@@ -274,11 +298,14 @@ class File extends BaseController
             $where[] = ['is_disable', '=', $is_disable];
         }
         $where[] = ['is_delete', '=', 1];
-        $where = $this->where($where, 'file_id');
+        $where = $this->where($where);
 
-        $order = ['delete_time' => 'desc', 'is_disable' => 'desc', 'update_time' => 'desc'];
+        $data = FileService::list($where, $this->page(), $this->limit(), $this->order());
 
-        $data = FileService::list($where, $this->page(), $this->limit(), $this->order($order));
+        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name');
+        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name');
+        $data['exps']  = where_exps();
+        $data['where'] = $where;
 
         return success($data);
     }
@@ -288,11 +315,11 @@ class File extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      */
-    public function recoverReco()
+    public function recycleReco()
     {
-        $param['ids'] = $this->param('ids/a', '');
+        $param['ids'] = $this->request->param('ids/a', []);
 
-        validate(FileValidate::class)->scene('reco')->check($param);
+        validate(FileValidate::class)->scene('recycleReco')->check($param);
 
         $data = FileService::edit($param['ids'], ['is_delete' => 0]);
 
@@ -304,11 +331,11 @@ class File extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      */
-    public function recoverDele()
+    public function recycleDele()
     {
-        $param['ids'] = $this->param('ids/a', '');
+        $param['ids'] = $this->request->param('ids/a', []);
 
-        validate(FileValidate::class)->scene('dele')->check($param);
+        validate(FileValidate::class)->scene('recycleDele')->check($param);
 
         $data = FileService::dele($param['ids'], true);
 

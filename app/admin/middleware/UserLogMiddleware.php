@@ -12,7 +12,7 @@ namespace app\admin\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use app\common\service\admin\UserLogService;
+use app\common\service\system\UserLogService;
 
 /**
  * 日志记录中间件
@@ -30,24 +30,21 @@ class UserLogMiddleware
     {
         $response = $next($request);
 
-        $admin_user_id = admin_user_id();
-
-        if ($admin_user_id) {
+        $user_id = user_id();
+        if ($user_id) {
             $response_data = $response->getData();
-
             if (isset($response_data['code'])) {
-                $admin_user_log['response_code'] = $response_data['code'];
+                $user_log['response_code'] = $response_data['code'];
             }
             if (isset($response_data['msg'])) {
-                $admin_user_log['response_msg'] = $response_data['msg'];
+                $user_log['response_msg'] = $response_data['msg'];
             } else {
                 if (isset($response_data['message'])) {
-                    $admin_user_log['response_msg'] = $response_data['message'];
+                    $user_log['response_msg'] = $response_data['message'];
                 }
             }
-
-            $admin_user_log['admin_user_id'] = $admin_user_id;
-            UserLogService::add($admin_user_log);
+            $user_log['user_id'] = $user_id;
+            UserLogService::add($user_log);
         }
 
         return $response;

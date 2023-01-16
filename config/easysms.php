@@ -20,9 +20,11 @@ return [
     ],
     // 可用的网关配置
     'gateways' => [
+        // 错误日志
         'errorlog' => [
             'file' => runtime_path() . '/easysms/' . date('Ymd') . 'easysms.log',
         ],
+        // 阿里云
         'aliyun' => [
             'access_key_id' => '',
             'access_key_secret' => '',

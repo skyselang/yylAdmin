@@ -10,6 +10,8 @@
 namespace app\common\model\member;
 
 use think\Model;
+use app\common\model\file\FileModel;
+use app\common\service\member\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -21,156 +23,100 @@ class MemberModel extends Model
     protected $name = 'member';
     // 表主键
     protected $pk = 'member_id';
-    // 性别
-    public $gender_arr = [0 => '未知', 1 => '男', 2 => '女'];
-    // 注册渠道
-    public $reg_channel_arr = [1 => 'Web', 2 => '公众号', 3 => '小程序', 4 => '安卓', 5 => '苹果', 6 => '后台'];
-    // 注册方式
-    public $reg_type_arr = [1 => '用户名', 2 => '手机', 3 => '邮箱', 4 => '公众号', 5 => '小程序', 6 => '后台'];
 
-    // 获取器：性别名称
+    /**
+     * 获取性别名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("gender_name", type="string", desc="性别名称")
+     */
     public function getGenderNameAttr($value, $data)
     {
-        $arr = $this->gender_arr;
-        return $arr[$data['gender']];
+        return SettingService::genders($data['gender']);
     }
 
-    // 获取器：注册渠道名称
+    /**
+     * 获取注册渠道名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("reg_channel_name", type="string", desc="注册渠道名称")
+     */
     public function getRegChannelNameAttr($value, $data)
     {
-        $arr = $this->reg_channel_arr;
-        return $arr[$data['reg_channel']];
+        return SettingService::reg_channels($data['reg_channel']);
     }
 
-    // 获取器：注册方式名称
+    /**
+     * 获取注册方式名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("reg_type_name", type="string", desc="注册方式名称")
+     */
     public function getRegTypeNameAttr($value, $data)
     {
-        $arr = $this->reg_type_arr;
-        return $arr[$data['reg_type']];
+        return SettingService::reg_types($data['reg_type']);
     }
 
-    /**
-     * @Apidoc\Field("member_id")
-     */
-    public function id()
+    // 关联头像
+    public function avatar()
     {
+        return $this->hasOne(FileModel::class, 'file_id', 'avatar_id')->append(['file_url'])->where(where_disdel());
+    }
+    /**
+     * 获取头像链接
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("avatar_url", type="string", desc="头像链接")
+     */
+    public function getAvatarUrlAttr($value, $data)
+    {
+        if (empty($data['headimgurl'])) {
+            return $this['avatar']['file_url'] ?? '';
+        }
+        return $data['headimgurl'];
     }
 
-    /**
-     * 后台列表
-     * @Apidoc\Field("member_id,username,nickname,phone,email,remark,sort,create_time,login_time,is_disable")
-     * @Apidoc\AddField("avatar_url", type="string", require=false, desc="头像链接")
-     */
-    public function listReturn()
+    // 关联标签
+    public function tags()
     {
+        return $this->belongsToMany(TagModel::class, AttributesModel::class, 'tag_id', 'member_id');
+    }
+    /**
+     * 获取标签id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("tag_ids", type="array", desc="标签id")
+     */
+    public function getTagIdsAttr()
+    {
+        return relation_fields($this['tags'], 'tag_id');
+    }
+    /**
+     * 获取标签名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("tag_names", type="string", desc="标签名称")
+     */
+    public function getTagNamesAttr()
+    {
+        return relation_fields($this['tags'], 'tag_name', true);
     }
 
-    /**
-     * 后台信息
-     */
-    public function infoReturn()
+    // 关联分组
+    public function groups()
     {
+        return $this->belongsToMany(GroupModel::class, AttributesModel::class, 'group_id', 'member_id');
     }
-
     /**
-     * 后台添加
-     * @Apidoc\Field("avatar_id,username,nickname,password,phone,email,name,gender,region_id,remark,sort")
+     * 获取分组id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("group_ids", type="array", desc="分组id")
      */
-    public function addParam()
+    public function getGroupIdsAttr()
     {
+        return relation_fields($this['groups'], 'group_id');
     }
-
     /**
-     * 后台修改
-     * @Apidoc\Field("member_id,avatar_id,username,nickname,phone,email,name,gender,region_id,remark,sort")
+     * 获取分组名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("group_names", type="string", desc="分组名称")
      */
-    public function editParam()
+    public function getGroupNamesAttr()
     {
-    }
-
-    /**
-     * @Apidoc\Field("username")
-     */
-    public function username()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("nickname")
-     */
-    public function nickname()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("phone")
-     */
-    public function phone()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("email")
-     */
-    public function email()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("password")
-     */
-    public function password()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("is_disable")
-     */
-    public function is_disable()
-    {
-    }
-
-    /**
-     * 头像链接
-     * @Apidoc\Field("avatar_url")
-     * @Apidoc\AddField("avatar_url", type="string", require=false, desc="头像链接")
-     */
-    public function avatar_url()
-    {
-    }
-
-    /**
-     * 账号注册
-     * @Apidoc\Field("username,nickname,password")
-     */
-    public function registerReturn()
-    {
-    }
-
-    /**
-     * 登录
-     * @Apidoc\Field("member_id,username,nickname,phone,email,avatar_id,login_ip,login_time")
-     * @Apidoc\AddField("menber_token", type="string", require=true, desc="MemberToken")
-     */
-    public function loginReturn()
-    {
-    }
-
-    /**
-     * 会员信息
-     * @Apidoc\WithoutField("password,remark,sort,is_disable,is_delete,logout_time,delete_time")
-     * @Apidoc\AddField("wechat", type="object", default="", desc="微信信息")
-     * @Apidoc\AddField("pwd_edit_type", type="int", default="0", desc="密码修改方式：0原密码设置新密码，1直接设置新密码")
-     */
-    public function indexInfoReturn()
-    {
-    }
-
-    /**
-     * 会员信息修改
-     * @Apidoc\Field("avatar_id,username,nickname,region_id")
-     */
-    public function indexEditParam()
-    {
+        return relation_fields($this['groups'], 'group_name', true);
     }
 }

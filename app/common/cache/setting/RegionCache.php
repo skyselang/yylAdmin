@@ -17,9 +17,9 @@ use think\facade\Cache;
 class RegionCache
 {
     // 缓存标签
-    protected static $tag = 'region';
+    protected static $tag = 'setting_region';
     // 缓存前缀
-    protected static $prefix = 'region:';
+    protected static $prefix = 'setting_region:';
 
     /**
      * 缓存键名
@@ -66,13 +66,13 @@ class RegionCache
      * 
      * @return bool
      */
-    public static function del($id = '')
+    public static function del($id)
     {
         $ids = var_to_array($id);
         foreach ($ids as $v) {
-            $res = Cache::delete(self::key($v));
+            Cache::delete(self::key($v));
         }
-        return $res;
+        return true;
     }
 
     /**

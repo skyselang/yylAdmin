@@ -11,6 +11,8 @@ namespace app\common\validate\file;
 
 use think\Validate;
 use app\common\service\file\SettingService;
+use app\common\model\file\TagsModel;
+use app\common\model\file\FileModel;
 
 /**
  * 文件管理验证器
@@ -28,36 +30,43 @@ class FileValidate extends Validate
     // 错误信息
     protected $message = [
         'file.require'      => '请选择上传文件',
-        'file_id.require'   => '缺少参数：file_id',
         'file_type.require' => '请选择文件类型',
     ];
 
     // 验证场景
     protected $scene = [
-        'id'         => ['file_id'],
-        'info'       => ['file_id'],
-        'add'        => ['file'],
-        'edit'       => ['file_id'],
-        'dele'       => ['ids'],
-        'disable'    => ['ids'],
-        'editgroup'  => ['ids'],
-        'edittype'   => ['ids', 'file_type'],
-        'editdomain' => ['ids'],
-        'reco'       => ['ids'],
+        'info'        => ['file_id'],
+        'add'         => ['file'],
+        'edit'        => ['file_id'],
+        'dele'        => ['ids'],
+        'disable'     => ['ids'],
+        'editgroup'   => ['ids'],
+        'edittag'     => ['ids'],
+        'edittype'    => ['ids', 'file_type'],
+        'editdomain'  => ['ids'],
+        'recycleReco' => ['ids'],
+        'recycleDele' => ['ids'],
     ];
 
-    // 自定义验证规则：上传限制
+    // 验证场景定义：文件删除
+    protected function sceneDele()
+    {
+        return $this->only(['ids'])
+            ->append('ids', 'checkTagGroup');
+    }
+
+    // 自定义验证规则：文件限制
     protected function checkLimit($value, $rule, $data = [])
     {
         $file    = $data['file'];
         $setting = SettingService::info();
 
-        $file_ext = $file->getOriginalExtension();
+        $file_ext = strtolower($file->getOriginalExtension());
         if (empty($file_ext)) {
             return '上传的文件格式不允许';
         }
 
-        $file_type   = SettingService::getFileType($file_ext);
+        $file_type   = SettingService::fileType($file_ext);
         $set_ext_str = $setting[$file_type . '_ext'];
         $set_ext_arr = explode(',', $set_ext_str);
         if (!in_array($file_ext, $set_ext_arr)) {
@@ -69,6 +78,23 @@ class FileValidate extends Validate
         $set_size_b = $set_size_m * 1048576;
         if ($file_size > $set_size_b) {
             return '上传的文件大小不允许，允许大小：' . $set_size_m . ' MB';
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：文件是否存在标签或分组
+    protected function checkTagGroup($value, $rule, $data = [])
+    {
+        $info = TagsModel::field('file_id')->where('file_id', 'in', $data['ids'])->find();
+        if ($info) {
+            return '文件存在标签，请解除后再删除：' . $info['file_id'];
+        }
+
+        $where = where_delete([['file_id', 'in', $data['ids']], ['group_id', '>', 0]]);
+        $info = FileModel::field('file_id')->where($where)->find();
+        if ($info) {
+            return '文件存在分组，请解除后再删除：' . $info['file_id'];
         }
 
         return true;

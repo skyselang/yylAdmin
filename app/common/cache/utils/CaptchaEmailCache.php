@@ -17,9 +17,9 @@ use think\facade\Cache;
 class CaptchaEmailCache
 {
     // 缓存标签
-    protected static $tag = 'captcha-email';
+    protected static $tag = 'captcha_email';
     // 缓存前缀
-    protected static $prefix = 'captcha-email:';
+    protected static $prefix = 'captcha_email:';
 
     /**
      * 缓存键名
@@ -70,9 +70,9 @@ class CaptchaEmailCache
     {
         $ids = var_to_array($email);
         foreach ($ids as $v) {
-            $res = Cache::delete(self::key($v));
+            Cache::delete(self::key($v));
         }
-        return $res;
+        return true;
     }
 
     /**

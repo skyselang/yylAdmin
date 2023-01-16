@@ -12,8 +12,8 @@ namespace app\api\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use app\common\cache\setting\ApiRateCache;
-use app\common\service\setting\SettingService;
+use app\common\cache\member\ApiRateCache;
+use app\common\service\member\SettingService;
 
 /**
  * 接口速率中间件

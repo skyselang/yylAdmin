@@ -9,22 +9,23 @@
 
 namespace app\admin\controller\setting;
 
-use app\common\BaseController;
-use app\common\validate\setting\WechatValidate;
+use app\common\controller\BaseController;
 use app\common\service\setting\WechatService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("微信设置")
- * @Apidoc\Group("adminSetting")
- * @Apidoc\Sort("535")
+ * @Apidoc\Group("setting")
+ * @Apidoc\Sort("600")
  */
 class Wechat extends BaseController
 {
     /**
      * @Apidoc\Title("公众号信息")
-     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel\offiInfoParam")
-     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel\qrcode_url")
+     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret,token,encoding_aes_key,encoding_aes_type",
+     *   @Apidoc\Returned("qrcode_url", type="string", desc="二维码链接"),
+     *   @Apidoc\Returned("server_url", type="string", desc="服务器地址"),
+     * )
      */
     public function offiInfo()
     {
@@ -36,20 +37,18 @@ class Wechat extends BaseController
     /**
      * @Apidoc\Title("公众号修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\WechatModel\offiInfoParam")
+     * @Apidoc\Param(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret,token,encoding_aes_key,encoding_aes_type")
      */
     public function offiEdit()
     {
-        $param['name']              = $this->param('name/s', '');
-        $param['origin_id']         = $this->param('origin_id/s', '');
-        $param['qrcode_id']         = $this->param('qrcode_id/d', 0);
-        $param['appid']             = $this->param('appid/s', '');
-        $param['appsecret']         = $this->param('appsecret/s', '');
-        $param['token']             = $this->param('token/s', '');
-        $param['encoding_aes_key']  = $this->param('encoding_aes_key/s', '');
-        $param['encoding_aes_type'] = $this->param('encoding_aes_type/d', 1);
-
-        validate(WechatValidate::class)->scene('offiEdit')->check($param);
+        $param['name']              = $this->request->param('name/s', '');
+        $param['origin_id']         = $this->request->param('origin_id/s', '');
+        $param['qrcode_id']         = $this->request->param('qrcode_id/d', 0);
+        $param['appid']             = $this->request->param('appid/s', '');
+        $param['appsecret']         = $this->request->param('appsecret/s', '');
+        $param['token']             = $this->request->param('token/s', '');
+        $param['encoding_aes_key']  = $this->request->param('encoding_aes_key/s', '');
+        $param['encoding_aes_type'] = $this->request->param('encoding_aes_type/d', 1);
 
         $data = WechatService::offiEdit($param);
 
@@ -58,8 +57,9 @@ class Wechat extends BaseController
 
     /**
      * @Apidoc\Title("小程序信息")
-     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel\miniInfoParam")
-     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel\qrcode_url")
+     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret",
+     *   @Apidoc\Returned("qrcode_url", type="string", desc="小程序码链接"),
+     * )
      */
     public function miniInfo()
     {
@@ -71,17 +71,15 @@ class Wechat extends BaseController
     /**
      * @Apidoc\Title("小程序修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\WechatModel\miniInfoParam")
+     * @Apidoc\Param(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret")
      */
     public function miniEdit()
     {
-        $param['name']      = $this->param('name/s', '');
-        $param['origin_id'] = $this->param('origin_id/s', '');
-        $param['qrcode_id'] = $this->param('qrcode_id/d', 0);
-        $param['appid']     = $this->param('appid/s', '');
-        $param['appsecret'] = $this->param('appsecret/s', '');
-
-        validate(WechatValidate::class)->scene('miniEdit')->check($param);
+        $param['name']      = $this->request->param('name/s', '');
+        $param['origin_id'] = $this->request->param('origin_id/s', '');
+        $param['qrcode_id'] = $this->request->param('qrcode_id/d', 0);
+        $param['appid']     = $this->request->param('appid/s', '');
+        $param['appsecret'] = $this->request->param('appsecret/s', '');
 
         $data = WechatService::miniEdit($param);
 

@@ -59,6 +59,17 @@ class ExceptionHandle extends Handle
     {
         // 添加自定义异常处理机制
 
+        // 接口文档异常
+        if ($e instanceof \hg\apidoc\exception\HttpException) {
+            return json(
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ],
+                $e->getStatusCode()
+            );
+        }
+
         // 参数验证错误
         if ($e instanceof ValidateException) {
             $data['code'] = 400;
@@ -70,7 +81,6 @@ class ExceptionHandle extends Handle
         // 请求异常
         if ($e instanceof HttpException && $request->isAjax()) {
             return response($e->getMessage(), $e->getStatusCode(), [], 'json');
-            // return response($e->getMessage(), 200, [], 'json');
         }
 
         // 其它异常

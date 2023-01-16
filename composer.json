@@ -21,12 +21,13 @@
     ],
     "require": {
         "php": ">=7.2.5",
-        "topthink/framework": "^6.0.0",
+        "topthink/framework": "^6.1",
         "topthink/think-orm": "^2.0",
         "topthink/think-multi-app": "^1.0",
+        "topthink/think-filesystem": "^2.0",
         "firebase/php-jwt": "^6.2",
         "overtrue/pinyin": "~4.0",
-        "hg/apidoc": "~3.1.9",
+        "hg/apidoc": "^4.2",
         "overtrue/wechat": "~4.0",
         "qiniu/php-sdk": "^7.4",
         "aliyuncs/oss-sdk-php": "^2.4",
@@ -36,8 +37,8 @@
         "phpmailer/phpmailer": "^6.5",
         "overtrue/easy-sms": "^2.1",
         "upyun/sdk": "^3.5",
-        "aws/aws-sdk-php": "^3.227",
-        "fastknife/ajcaptcha": "^1.1"
+        "aws/aws-sdk-php": "^3.250",
+        "fastknife/ajcaptcha": "^1.2"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"

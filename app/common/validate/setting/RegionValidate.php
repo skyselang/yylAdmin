@@ -21,45 +21,44 @@ class RegionValidate extends Validate
     protected $rule = [
         'ids'         => ['require', 'array'],
         'region_id'   => ['require'],
-        'region_name' => ['require', 'checkRegionName'],
+        'region_pid'  => ['checkRegionPid'],
+        'region_name' => ['require', 'checkRegionExist'],
     ];
 
     // 错误信息
     protected $message = [
-        'region_name.require' => '请输入名称',
+        'region_name.require' => '请输入地区名称',
     ];
 
     // 验证场景
     protected $scene = [
-        'id'       => ['region_id'],
         'info'     => ['region_id'],
         'add'      => ['region_name'],
-        'edit'     => ['region_id', 'region_name'],
+        'edit'     => ['region_id', 'region_pid', 'region_name'],
         'dele'     => ['ids'],
-        'pid'      => ['ids'],
+        'editpid'  => ['ids', 'region_pid'],
         'citycode' => ['ids'],
         'zipcode'  => ['ids'],
+        'disable'  => ['ids'],
     ];
 
-    // 验证场景定义：删除
+    // 验证场景定义：地区删除
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkRegionChild');
     }
 
-    // 验证场景定义：修改上级
-    protected function scenePid()
+    // 自定义验证规则：地区上级
+    protected function checkRegionPid($value, $rule, $data = [])
     {
-        return $this->only(['ids'])
-            ->append('ids', 'checkRegionPidNeq');
-    }
+        $ids = $data['ids'] ?? [];
+        if ($data['region_id'] ?? 0) {
+            $ids[] = $data['region_id'];
+        }
 
-    // 自定义验证规则：地区上级不能等于本身
-    protected function checkRegionPidNeq($value, $rule, $data = [])
-    {
-        foreach ($data['ids'] as $v) {
-            if ($data['region_pid'] == $v) {
+        foreach ($ids as $id) {
+            if ($data['region_pid'] == $id) {
                 return '地区上级不能等于地区本身';
             }
         }
@@ -67,23 +66,20 @@ class RegionValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：地区名称是否已存在
-    protected function checkRegionName($value, $rule, $data = [])
+    // 自定义验证规则：地区是否已存在
+    protected function checkRegionExist($value, $rule, $data = [])
     {
-        $RegionModel = new RegionModel();
-        $RegionPk = $RegionModel->getPk();
+        $model = new RegionModel();
+        $pk = $model->getPk();
+        $id = $data[$pk] ?? 0;
+        $pid = $data['region_pid'] ?? 0;
 
-        if (isset($data[$RegionPk])) {
-            if ($data['region_pid'] == $data[$RegionPk]) {
-                return '地区上级不能等于地区本身';
-            }
-            $where[] = [$RegionPk, '<>', $data[$RegionPk]];
-        }
-        $where[] = ['region_pid', '=', $data['region_pid']];
+        $where[] = [$pk, '<>', $id];
+        $where[] = ['region_pid', '=', $pid];
         $where[] = ['region_name', '=', $data['region_name']];
-        $where[] = ['is_delete', '=', 0];
-        $region = $RegionModel->field($RegionPk)->where($where)->find();
-        if ($region) {
+        $where = where_delete($where);
+        $info = $model->field($pk)->where($where)->find();
+        if ($info) {
             return '地区名称已存在：' . $data['region_name'];
         }
 
@@ -93,14 +89,9 @@ class RegionValidate extends Validate
     // 自定义验证规则：地区是否存在下级地区
     protected function checkRegionChild($value, $rule, $data = [])
     {
-        $RegionModel = new RegionModel();
-        $RegionPk = $RegionModel->getPk();
-
-        $where[] = ['region_pid', 'in', $data['ids']];
-        $where[] = ['is_delete', '=', 0];
-        $region = $RegionModel->field($RegionPk)->where($where)->find();
-        if ($region) {
-            return '地区存在下级地区，无法删除';
+        $info = RegionModel::field('region_pid')->where(where_delete(['region_pid', 'in', $data['ids']]))->find();
+        if ($info) {
+            return '地区存在下级地区，无法删除：' . $info['region_pid'];
         }
 
         return true;

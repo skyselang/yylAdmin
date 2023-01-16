@@ -9,8 +9,9 @@
 
 namespace app\common\service\file;
 
-require_once '../extend/bce-php-sdk-0.9.16/BaiduBce.phar';
+require_once '../extend/bce-php-sdk-0.9.18/BaiduBce.phar';
 
+use app\common\service\file\SettingService;
 use Qiniu\Auth;
 use Qiniu\Storage\UploadManager;
 use OSS\OssClient;
@@ -36,7 +37,7 @@ class StorageService
      *
      * @return array
      */
-    public static function upload($file_info)
+    public static function upload($file_info, $pk = 'file_id')
     {
         $errmsg = '';
         $file_info['domain'] = '';
@@ -144,14 +145,14 @@ class StorageService
             } catch (\Exception $e) {
                 $errmsg = $e->getMessage() ?: 'USS upload error';
             }
-        } elseif ($storage == 's3') {
+        } elseif ($storage == 'aws') {
             try {
-                $credentials = new Credentials($setting['s3_access_key_id'], $setting['s3_secret_access_key']);
-                //s3客户端
-                $s3 = new S3Client([
+                $credentials = new Credentials($setting['aws_access_key_id'], $setting['aws_secret_access_key']);
+                //aws客户端
+                $aws = new S3Client([
                     'version' => 'latest',
                     //AWS区域和终端节点： http://docs.amazonaws.cn/general/latest/gr/rande.html
-                    'region' => $setting['s3_region'],
+                    'region' => $setting['aws_region'],
                     //加载证书
                     'credentials' => $credentials,
                     //bug调试
@@ -159,11 +160,11 @@ class StorageService
                 ]);
 
                 //存储桶 获取AWS存储桶的名称
-                $bucket = $setting['s3_bucket'];
+                $bucket = $setting['aws_bucket'];
                 //需要上传的文件，文件的本地路径例:D:/www/abc.jpg;
                 $source = $file_path;
                 //多部件上传
-                $uploader = new MultipartUploader($s3, $source, [
+                $uploader = new MultipartUploader($aws, $source, [
                     //存储桶
                     'bucket' => $bucket,
                     //上传后的新地址
@@ -185,7 +186,7 @@ class StorageService
                     },
                 ]);
             } catch (\Exception $e) {
-                $errmsg = $e->getMessage() ?: 's3 upload error';
+                $errmsg = $e->getMessage() ?: 'aws upload error';
             }
 
             try {
@@ -194,17 +195,17 @@ class StorageService
                 urldecode($result['ObjectURL']);
             } catch (S3MultipartUploadException $e) {
                 //上传失败--返回错误信息
-                $uploader =  new MultipartUploader($s3, $source, [
+                $uploader =  new MultipartUploader($aws, $source, [
                     'state' => $e->getState(),
                 ]);
-                $errmsg = $e->getMessage() ?: 's3 upload error';
+                $errmsg = $e->getMessage() ?: 'aws upload error';
             }
         }
 
         $file_info['storage'] = $storage;
 
         if ($errmsg) {
-            if (empty($file_info['file_id'])) {
+            if (empty($file_info[$pk])) {
                 @unlink($file_path);
             }
             exception($errmsg);

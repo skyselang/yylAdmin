@@ -9,14 +9,14 @@
 
 namespace app\api\controller;
 
-use app\common\BaseController;
+use app\common\controller\BaseController;
 use app\api\service\IndexService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
  * @Apidoc\Title("首页")
  * @Apidoc\Group("index")
- * @Apidoc\Sort("110")
+ * @Apidoc\Sort("100")
  */
 class Index extends BaseController
 {

@@ -9,7 +9,6 @@
 
 namespace app\common\service\setting;
 
-use think\facade\Config;
 use app\common\cache\setting\SettingCache;
 use app\common\model\setting\SettingModel;
 
@@ -22,11 +21,70 @@ class SettingService
     private static $id = 1;
 
     /**
+     * 反馈类型：功能异常
+     */
+    const FEEDBACK_TYPE_EXCEPTIONAL = 0;
+    /**
+     * 反馈类型：产品建议
+     */
+    const FEEDBACK_TYPE_ADVISE = 1;
+    /**
+     * 反馈类型：其它
+     */
+    const FEEDBACK_TYPE_OTHER = 2;
+    /**
+     * 反馈类型
+     *
+     * @param string $feedback_type 反馈类型
+     *
+     * @return array|string 反馈类型数组或名称
+     */
+    public static function feedback_types($feedback_type = '')
+    {
+        $feedback_types = [
+            self::FEEDBACK_TYPE_EXCEPTIONAL => '功能异常',
+            self::FEEDBACK_TYPE_ADVISE => '产品建议',
+            self::FEEDBACK_TYPE_OTHER => '其它',
+        ];
+        if ($feedback_type !== '') {
+            return $feedback_types[$feedback_type] ?? '';
+        }
+        return $feedback_types;
+    }
+
+    /**
+     * 通告类型：通知
+     */
+    const NOTICE_TYPE_NOTIFY = 0;
+    /**
+     * 通告类型：公告
+     */
+    const NOTICE_TYPE_NOTICE = 1;
+    /**
+     * 通告类型
+     *
+     * @param string $notice_type 通告类型
+     *
+     * @return array|string 通告类型数组或名称
+     */
+    public static function notice_types($notice_type = '')
+    {
+        $notice_types = [
+            self::NOTICE_TYPE_NOTIFY => '通知',
+            self::NOTICE_TYPE_NOTICE => '公告',
+        ];
+        if ($notice_type !== '') {
+            return $notice_types[$notice_type] ?? '';
+        }
+        return $notice_types;
+    }
+
+    /**
      * 设置信息
      *
      * @return array
      */
-    public static function info()
+    public static function info($param = [])
     {
         $id = self::$id;
 
@@ -35,30 +93,16 @@ class SettingService
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $token_name = Config::get('api.token_name');
-            
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['token_name']  = $token_name;
-                $info['token_key']   = uniqid();
-                $info['diy_config']  = serialize([]);
+                $info['diy_config']  = [];
+                $info['create_uid']  = $param['create_uid'] ?? 0;
                 $info['create_time'] = datetime();
-                $model->insert($info);
+                $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->toArray();
-
-            if ($info['diy_config']) {
-                $info['diy_config'] = unserialize($info['diy_config']);
-            } else {
-                $info['diy_config'] = [];
-            }
-
-            if ($token_name != $info['token_name']) {
-                self::edit(['token_name' => $token_name]);
-                $info['token_name'] = $token_name;
-            }
+            $info = $info->append(['diy_con_obj', 'feedback_type'])->toArray();
 
             SettingCache::set($id, $info);
         }
@@ -76,13 +120,13 @@ class SettingService
     public static function edit($param)
     {
         $model = new SettingModel();
-        $pk = $model->getPk();
-
         $id = self::$id;
 
+        $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
-        $res = $model->where($pk, $id)->update($param);
+        $info = $model->find($id);
+        $res = $info->save($param);
         if (empty($res)) {
             exception();
         }
@@ -90,22 +134,5 @@ class SettingService
         SettingCache::del($id);
 
         return $param;
-    }
-
-    /**
-     * 自定义设置
-     *
-     * @return array
-     */
-    public static function diy()
-    {
-        $setting = self::info();
-
-        $diy = [];
-        foreach ($setting['diy_config'] as $v) {
-            $diy[$v['config_key']] = $v['config_val'];
-        }
-
-        return $diy;
     }
 }

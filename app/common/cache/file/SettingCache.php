@@ -24,7 +24,7 @@ class SettingCache
     /**
      * 缓存键名
      *
-     * @param int $id 文件设置id
+     * @param int $id 设置id
      * 
      * @return string
      */
@@ -36,8 +36,8 @@ class SettingCache
     /**
      * 缓存设置
      *
-     * @param int   $id   文件设置id
-     * @param array $info 文件设置信息
+     * @param int   $id   设置id
+     * @param array $info 设置信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
@@ -50,9 +50,9 @@ class SettingCache
     /**
      * 缓存获取
      *
-     * @param int $id 文件设置id
+     * @param int $id 设置id
      * 
-     * @return array 文件设置信息
+     * @return array 设置信息
      */
     public static function get($id)
     {
@@ -62,7 +62,7 @@ class SettingCache
     /**
      * 缓存删除
      *
-     * @param int $id 文件设置id
+     * @param int $id 设置id
      * 
      * @return bool
      */

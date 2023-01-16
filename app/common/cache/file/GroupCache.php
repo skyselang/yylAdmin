@@ -24,7 +24,7 @@ class GroupCache
     /**
      * 缓存键名
      *
-     * @param int $id 文件分组id
+     * @param int $id 分组id
      * 
      * @return string
      */
@@ -36,8 +36,8 @@ class GroupCache
     /**
      * 缓存设置
      *
-     * @param int   $id   文件分组id
-     * @param array $info 文件分组信息
+     * @param int   $id   分组id
+     * @param array $info 分组信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
@@ -50,7 +50,7 @@ class GroupCache
     /**
      * 缓存获取
      *
-     * @param int $id 文件分组id
+     * @param int $id 分组id
      * 
      * @return array 文件分组信息
      */
@@ -62,7 +62,7 @@ class GroupCache
     /**
      * 缓存删除
      *
-     * @param mixed $id 文件分组id
+     * @param mixed $id 分组id
      * 
      * @return bool
      */
@@ -70,9 +70,9 @@ class GroupCache
     {
         $ids = var_to_array($id);
         foreach ($ids as $v) {
-            $res = Cache::delete(self::key($v));
+            Cache::delete(self::key($v));
         }
-        return $res;
+        return true;
     }
 
     /**

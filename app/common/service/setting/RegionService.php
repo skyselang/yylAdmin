@@ -9,12 +9,13 @@
 
 namespace app\common\service\setting;
 
+use Overtrue\Pinyin\Pinyin;
 use app\common\cache\setting\RegionCache;
 use app\common\model\setting\RegionModel;
-use Overtrue\Pinyin\Pinyin;
+use hg\apidoc\annotation as Apidoc;
 
 /**
- * 地区管理
+ * 地区设置
  */
 class RegionService
 {
@@ -30,42 +31,29 @@ class RegionService
      */
     public static function list($type = 'list', $where = [], $order = [], $field = '')
     {
-        $where[] = ['is_delete', '=', 0];
+        $model = new RegionModel();
+        $pk = $model->getPk();
+
+        if (empty($field)) {
+            $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,sort';
+        }
+        if (empty($order)) {
+            $order = ['sort' => 'desc', $pk => 'asc'];
+        }
+
         if ($type == 'list') {
-            $model = new RegionModel();
-            $pk = $model->getPk();
-
-            if (empty($field)) {
-                $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort';
-            }
-            if (empty($order)) {
-                $order = ['region_sort' => 'desc', $pk => 'asc'];
-            }
-
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
-
             foreach ($data as &$v) {
                 $v['children']    = [];
                 $v['hasChildren'] = true;
             }
+            $data = array_to_tree($data, $pk, 'region_pid');
         } else {
-            if (empty($field)) {
-                $field = 'region_id,region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,region_sort';
-            }
-
-            $key = $type . md5(serialize($where) . $field);
+            $key = $type . md5(serialize($where) . serialize($order) . $field);
             $data = RegionCache::get($key);
             if (empty($data)) {
-                $model = new RegionModel();
-                $pk = $model->getPk();
-
-                if (empty($order)) {
-                    $order = ['region_sort' => 'desc', $pk => 'asc'];
-                }
-
                 $data = $model->field($field)->where($where)->order($order)->select()->toArray();
                 $data = list_to_tree($data, $pk, 'region_pid');
-
                 RegionCache::set($key, $data);
             }
         }
@@ -76,9 +64,10 @@ class RegionService
     /**
      * 地区信息
      *
-     * @param mixed $id   地区id
-     * @param bool  $exce 不存在是否抛出异常
-     * 
+     * @param int  $id   地区id
+     * @param bool $exce 不存在是否抛出异常
+     * @Apidoc\Returned("region_fullname", type="string", desc="地区完整名称")
+     * @Apidoc\Returned("region_fullname_py", type="string", desc="地区完整名称拼音")
      * @return array
      */
     public static function info($id, $exce = true)
@@ -133,15 +122,29 @@ class RegionService
         $model = new RegionModel();
         $pk = $model->getPk();
 
-        $param = self::pinyin($param);
+        $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $errmsg = '';
         // 启动事务
         $model->startTrans();
         try {
+            $param = self::pinyin($param);
+            if (isset($param['region_pid'])) {
+                if (empty($param['region_pid'])) {
+                    $param['region_pid'] = 0;
+                }
+            }
+            if (isset($param['region_level'])) {
+                if (empty($param['region_level'])) {
+                    $param['region_level'] = 1;
+                }
+            }
+
             if ($param['region_pid']) {
                 $region = self::info($param['region_pid']);
+                if ($region['is_delete']) {
+                    $param['is_delete'] = 1;
+                }
                 $param['region_level'] = $region['region_level'] + 1;
                 $region_id = $model->insertGetId($param);
                 $region_path = $region['region_path'] . ',' . $region_id;
@@ -156,12 +159,12 @@ class RegionService
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = '添加失败：' . $e->getMessage();
+            $errmsg = $e->getMessage();
             // 回滚事务
             $model->rollback();
         }
 
-        if ($errmsg) {
+        if (isset($errmsg)) {
             exception($errmsg);
         }
 
@@ -176,54 +179,59 @@ class RegionService
     /**
      * 地区修改
      *
+     * @param int   $id    地区id
      * @param array $param 地区信息
      * 
      * @return array
      */
-    public static function edit($param)
+    public static function edit($id, $param)
     {
         $model = new RegionModel();
         $pk = $model->getPk();
 
-        $param = self::pinyin($param);
-        $region_id = $param[$pk];
         unset($param[$pk]);
 
-        $errmsg = '';
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
+
         // 启动事务
         $model->startTrans();
         try {
+            $param = self::pinyin($param);
+            if (isset($param['region_pid'])) {
+                if (empty($param['region_pid'])) {
+                    $param['region_pid'] = 0;
+                }
+            }
+            if (isset($param['region_level'])) {
+                if (empty($param['region_level'])) {
+                    $param['region_level'] = 1;
+                }
+            }
+
             if ($param['region_pid']) {
                 $region = self::info($param['region_pid']);
 
                 $param['region_level'] = $region['region_level'] + 1;
-                $model->where($pk, $region_id)->update($param);
-
-                $region_path = $region['region_path'] . ',' . $region_id;
-                $update['region_path'] = $region_path;
+                $param['region_path']  = $region['region_path'] . ',' . $id;
             } else {
-                $model->where($pk, $region_id)->update($param);
-
-                $region_path = $region_id;
-                $update['region_path'] = $region_path;
+                $param['region_path'] = $id;
             }
 
-            $update['update_time'] = datetime();
-            $model->where($pk, $region_id)->update($update);
+            $model->where($pk, $id)->update($param);
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = '修改失败：' . $e->getMessage();
+            $errmsg = $e->getMessage();
             // 回滚事务
             $model->rollback();
         }
 
-        if ($errmsg) {
+        if (isset($errmsg)) {
             exception($errmsg);
         }
 
-        $param[$pk]           = $region_id;
-        $param['region_path'] = $region_path;
+        $param[$pk] = $id;
 
         RegionCache::clear();
 
@@ -233,7 +241,7 @@ class RegionService
     /**
      * 地区删除
      *
-     * @param mixed $ids  地区id
+     * @param array $ids  地区id
      * @param bool  $real 是否真实删除
      * 
      * @return array
@@ -246,8 +254,7 @@ class RegionService
         if ($real) {
             $res = $model->where($pk, 'in', $ids)->delete();
         } else {
-            $update['is_delete']   = 1;
-            $update['delete_time'] = datetime();
+            $update = delete_update();
             $res = $model->where($pk, 'in', $ids)->update($update);
         }
 
@@ -270,16 +277,16 @@ class RegionService
      * 
      * @return array
      */
-    public static function pid($ids, $region_pid)
+    public static function editpid($ids, $region_pid)
     {
         $model = new RegionModel();
         $pk = $model->getPk();
 
-        $errmsg = '';
         // 启动事务
         $model->startTrans();
         try {
             $update['region_pid']  = $region_pid;
+            $update['update_uid']  = user_id();
             $update['update_time'] = datetime();
             $region = [];
             if ($region_pid) {
@@ -299,12 +306,12 @@ class RegionService
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
-            $errmsg = '修改失败：' . $e->getMessage();
+            $errmsg = $e->getMessage();
             // 回滚事务
             $model->rollback();
         }
 
-        if ($errmsg) {
+        if (isset($errmsg)) {
             exception($errmsg);
         }
 
@@ -316,32 +323,33 @@ class RegionService
     }
 
     /**
-     * 地区修改
+     * 地区更新
      *
-     * @param array $ids    地区id
-     * @param array $update 地区信息
+     * @param array $ids   地区id
+     * @param array $param 地区信息
      * 
      * @return array
      */
-    public static function update($ids, $update = [])
+    public static function update($ids, $param = [])
     {
         $model = new RegionModel();
         $pk = $model->getPk();
 
-        unset($update[$pk], $update['ids']);
+        unset($param[$pk], $param['ids']);
 
-        $update['update_time'] = datetime();
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $update['ids'] = $ids;
+        $param['ids'] = $ids;
 
         RegionCache::clear();
 
-        return $update;
+        return $param;
     }
 
     /**

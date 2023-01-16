@@ -9,8 +9,8 @@
 
 namespace app\api\service;
 
+use app\common\service\member\SettingService;
 use app\common\service\member\MemberService;
-use app\common\service\setting\SettingService;
 use app\common\service\member\LogService;
 
 /**
@@ -38,7 +38,7 @@ class RegisterService
         $data = MemberService::add($param);
 
         $member_log['member_id'] = $data['member_id'];
-        LogService::add($member_log, 1);
+        LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
 
         return $data;
     }

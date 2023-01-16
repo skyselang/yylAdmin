@@ -9,11 +9,11 @@
 
 // 应用中间件定义文件
 return [
-    // 接口中间件
-    \app\api\middleware\ApiMiddleware::class,
+    // 接口验证中间件
+    \app\api\middleware\ApiVerifyMiddleware::class,
     // 接口Token中间件
     \app\api\middleware\ApiTokenMiddleware::class,
-    // 会员日志中间件
+    // 日志记录中间件
     \app\api\middleware\MemberLogMiddleware::class,
     // 接口速率中间件
     \app\api\middleware\ApiRateMiddleware::class,
