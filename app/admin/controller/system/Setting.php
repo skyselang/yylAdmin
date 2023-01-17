@@ -12,6 +12,7 @@ namespace app\admin\controller\system;
 use app\common\controller\BaseController;
 use app\common\validate\system\SettingValidate;
 use app\common\service\system\SettingService;
+use app\common\service\utils\ServerUtils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -274,5 +275,15 @@ class Setting extends BaseController
         $data = SettingService::emailTest($param);
 
         return success($data, '发送成功');
+    }
+
+    /**
+     * @Apidoc\Title("服务器信息")
+     */
+    public function serverInfo()
+    {
+        $data = ServerUtils::server();
+
+        return success($data);
     }
 }

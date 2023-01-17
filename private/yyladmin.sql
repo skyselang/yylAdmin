@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 16/01/2023 16:41:53
+ Date: 17/01/2023 17:10:58
 */
 
 SET NAMES utf8mb4;
@@ -4560,7 +4560,7 @@ CREATE TABLE `ya_system_menu`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 727 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单管理' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 728 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单管理' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_system_menu
@@ -4837,6 +4837,7 @@ INSERT INTO `ya_system_menu` VALUES (718, 186, 1, '设置管理', 'admin/setting
 INSERT INTO `ya_system_menu` VALUES (719, 718, 2, '设置管理修改', 'admin/setting.Setting/edit', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (725, 132, 2, '会员接口修改排序', 'admin/member.Api/editsort', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (726, 3, 2, '菜单修改排序', 'admin/system.Menu/editsort', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_menu` VALUES (727, 188, 2, '服务器信息', 'admin/system.Setting/serverInfo', '', '', '', '', '', 0, 80, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_system_notice
@@ -5094,7 +5095,7 @@ CREATE TABLE `ya_system_user`  (
 -- ----------------------------
 -- Records of ya_system_user
 -- ----------------------------
-INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-15 11:44:26', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-17 17:03:13', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (2, 0, 'yyladmin', 'yyladmin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-05 11:32:01', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (3, 0, 'admin', 'admin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-15 11:53:13', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (4, 0, '演示', 'demo', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
