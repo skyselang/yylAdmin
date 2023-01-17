@@ -251,7 +251,7 @@ function list_to_tree($list = [], $pk = 'id', $pid = 'pid', $root = 0,  $child =
  *
  * @return array
  */
-function array_to_tree($list = [], $pk = 'id', $pid = 'pid',  $child = 'children')
+function array_to_tree($list = [], $pk = 'id', $pid = 'pid', $child = 'children')
 {
     $parent_ids = [];
     foreach ($list as $val) {
@@ -266,7 +266,7 @@ function array_to_tree($list = [], $pk = 'id', $pid = 'pid',  $child = 'children
             }
         }
     }
-    return list_to_tree($list, $pk, $pid, $child);
+    return list_to_tree($list, $pk, $pid, 0, $child);
 }
 
 /**
