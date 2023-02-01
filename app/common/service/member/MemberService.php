@@ -23,6 +23,26 @@ use hg\apidoc\annotation as Apidoc;
 class MemberService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'member_id/d' => 0,
+        'avatar_id/d' => 0,
+        'nickname/s'  => '',
+        'username/s'  => '',
+        'phone/s'     => '',
+        'email/s'     => '',
+        'name/s'      => '',
+        'gender/d'    => 0,
+        'region_id/d' => 0,
+        'remark/s'    => '',
+        'sort/d'      => 250,
+        'tag_ids/a'   => [],
+        'group_ids/a' => []
+    ];
+
+    /**
      * 会员列表
      *
      * @param array  $where 条件
@@ -80,7 +100,7 @@ class MemberService
      * @param bool $exce  不存在是否抛出异常
      * @param bool $group 是否返回分组信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true, $group = false)
     {
@@ -116,7 +136,7 @@ class MemberService
                 $api_urls = array_column($api_list, 'api_url');
             } else {
                 $api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
-                $api_list = ApiService::list('list', [['api_id', 'in', $api_ids], where_disable(), where_delete()], [], 'api_url');
+                $api_list = ApiService::list('list', where_disdel(['api_id', 'in', $api_ids]), [], 'api_url');
                 $api_urls = array_column($api_list, 'api_url');
             }
 
@@ -163,7 +183,7 @@ class MemberService
      *
      * @param array $param 会员信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
@@ -172,6 +192,7 @@ class MemberService
 
         unset($param[$pk]);
 
+        $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
         // 密码
@@ -188,12 +209,12 @@ class MemberService
         try {
             // 添加
             $model->save($param);
+            // 添加标签
             if (isset($param['tag_ids'])) {
-                // 添加标签
                 $model->tags()->saveAll($param['tag_ids']);
             }
+            // 添加分组
             if (isset($param['group_ids'])) {
-                // 添加分组
                 $model->groups()->saveAll($param['group_ids']);
             }
             // 提交事务
@@ -219,7 +240,7 @@ class MemberService
      * @param int|array $ids   会员id
      * @param array     $param 会员信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -227,9 +248,8 @@ class MemberService
         $pk = $model->getPk();
 
         unset($param[$pk], $param['ids']);
-        if (is_array($ids)) {
-            $param['update_uid'] = user_id();
-        }
+
+        $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
         // 密码
@@ -289,7 +309,7 @@ class MemberService
      * @param int|array $ids  会员id
      * @param bool      $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

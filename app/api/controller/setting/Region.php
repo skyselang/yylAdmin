@@ -10,8 +10,8 @@
 namespace app\api\controller\setting;
 
 use app\common\controller\BaseController;
-use app\common\service\setting\RegionService;
 use app\common\validate\setting\RegionValidate;
+use app\common\service\setting\RegionService;
 use hg\apidoc\annotation as Apidoc;
 
 /**

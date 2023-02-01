@@ -18,6 +18,18 @@ use app\common\model\setting\AccordModel;
 class AccordService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'accord_id/d' => 0,
+        'unique/s'    => '',
+        'name/s'      => '',
+        'content/s'   => '',
+        'sort/d'      => 250
+    ];
+
+    /**
      * 协议列表
      *
      * @param array  $where 条件
@@ -50,24 +62,26 @@ class AccordService
     /**
      * 协议信息
      * 
-     * @param string $id   协议id/标识
-     * @param bool   $exce 不存在是否抛出异常
+     * @param int|string $id   协议id、标识
+     * @param bool       $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
         $info = AccordCache::get($id);
-
         if (empty($info)) {
             $model = new AccordModel();
-            
+            $pk = $model->getPk();
+
             if (is_numeric($id)) {
-                $info = $model->find($id);
+                $where[] = [$pk, '=', $id];
             } else {
-                $info = $model->where('unique', $id)->find();
+                $where[] = ['unique', '=', $id];
+                $where[] = where_delete();
             }
-            
+
+            $info = $model->where($where)->find();
             if (empty($info)) {
                 if ($exce) {
                     exception('协议不存在：' . $id);
@@ -94,10 +108,13 @@ class AccordService
         $model = new AccordModel();
         $pk = $model->getPk();
 
+        unset($param[$pk]);
+
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
+        $model->save($param);
+        $id = $model->$pk;
         if (empty($id)) {
             exception();
         }

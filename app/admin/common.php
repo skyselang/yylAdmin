@@ -8,11 +8,8 @@
 // +----------------------------------------------------------------------
 
 // admin公共函数文件
-use think\facade\Config;
 use think\facade\Request;
 use app\common\service\system\MenuService;
-use app\common\service\system\SettingService;
-use app\common\service\system\UserTokenService;
 
 /**
  * 菜单url获取
@@ -128,118 +125,4 @@ function menu_is_unrate($menu_url = '')
     }
 
     return false;
-}
-
-/**
- * 用户token
- *
- * @return string
- */
-function user_token()
-{
-    $system = SettingService::info();
-    if ($system['token_type'] == 'header') {
-        $user_token = Request::header($system['token_name'], '');
-    } else {
-        $user_token = Request::param($system['token_name'], '');
-    }
-
-    return $user_token;
-}
-
-/**
- * 用户token验证
- *
- * @param string $user_token 用户token
- *
- * @return Exception
- */
-function user_token_verify($user_token = '')
-{
-    if (empty($user_token)) {
-        $user_token = user_token();
-    }
-
-    UserTokenService::verify($user_token);
-}
-
-/**
- * 用户id
- *
- * @return int
- */
-function user_id()
-{
-    return UserTokenService::userId(user_token());
-}
-
-/**
- * 系统超管用户id（所有权限）
- *
- * @return array
- */
-function user_super_ids()
-{
-    return Config::get('admin.super_ids', []);
-}
-
-/**
- * 用户是否系统超管
- *
- * @param int $user_id 用户id
- * 
- * @return bool
- */
-function user_is_super($user_id = 0)
-{
-    if (empty($user_id)) {
-        return false;
-    }
-
-    $user_super_ids = user_super_ids();
-    if (empty($user_super_ids)) {
-        return false;
-    }
-    if (in_array($user_id, $user_super_ids)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
- * 用户日志记录是否开启
- *
- * @return bool
- */
-function user_log_switch()
-{
-    $system = SettingService::info();
-    if ($system['log_switch']) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
- * 系统超管用户记录隐藏条件
- * 
- * @param string $user_id_field 用户id字段
- *
- * @return array
- */
-function user_hide_where($user_id_field = 'user_id')
-{
-    $super_hide = Config::get('admin.super_hide', false);
-    if ($super_hide) {
-        $user_id = user_id();
-        if (!user_is_super($user_id)) {
-            $user_super_ids = user_super_ids();
-            if ($user_super_ids) {
-                $where = [$user_id_field, 'not in', $user_super_ids];
-            }
-        }
-    }
-    return $where ?? [];
 }

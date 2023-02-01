@@ -41,14 +41,7 @@ class Wechat extends BaseController
      */
     public function offiEdit()
     {
-        $param['name']              = $this->request->param('name/s', '');
-        $param['origin_id']         = $this->request->param('origin_id/s', '');
-        $param['qrcode_id']         = $this->request->param('qrcode_id/d', 0);
-        $param['appid']             = $this->request->param('appid/s', '');
-        $param['appsecret']         = $this->request->param('appsecret/s', '');
-        $param['token']             = $this->request->param('token/s', '');
-        $param['encoding_aes_key']  = $this->request->param('encoding_aes_key/s', '');
-        $param['encoding_aes_type'] = $this->request->param('encoding_aes_type/d', 1);
+        $param = $this->params(WechatService::$edit_field);
 
         $data = WechatService::offiEdit($param);
 
@@ -75,11 +68,7 @@ class Wechat extends BaseController
      */
     public function miniEdit()
     {
-        $param['name']      = $this->request->param('name/s', '');
-        $param['origin_id'] = $this->request->param('origin_id/s', '');
-        $param['qrcode_id'] = $this->request->param('qrcode_id/d', 0);
-        $param['appid']     = $this->request->param('appid/s', '');
-        $param['appsecret'] = $this->request->param('appsecret/s', '');
+        $param = $this->params(WechatService::$edit_field);
 
         $data = WechatService::miniEdit($param);
 

@@ -20,6 +20,23 @@ use app\common\model\content\AttributesModel;
 class CategoryService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'category_id/d'     => 0,
+        'category_pid/d'    => 0,
+        'category_name/s'   => '',
+        'category_unique/s' => '',
+        'cover_id/d'        => 0,
+        'title/s'           => '',
+        'keywords/s'        => '',
+        'description/s'     => '',
+        'sort/d'            => 250,
+        'images/a'          => [],
+    ];
+
+    /**
      * 内容分类列表
      * 
      * @param string $type  tree树形，list列表

@@ -17,26 +17,30 @@ use app\common\model\setting\SettingModel;
  */
 class SettingService
 {
-    // 设置id
+    /**
+     * 设置id
+     * @var integer
+     */
     private static $id = 1;
 
     /**
      * 反馈类型：功能异常
+     * @var integer
      */
     const FEEDBACK_TYPE_EXCEPTIONAL = 0;
     /**
      * 反馈类型：产品建议
+     * @var integer
      */
     const FEEDBACK_TYPE_ADVISE = 1;
     /**
      * 反馈类型：其它
+     * @var integer
      */
     const FEEDBACK_TYPE_OTHER = 2;
     /**
      * 反馈类型
-     *
      * @param string $feedback_type 反馈类型
-     *
      * @return array|string 反馈类型数组或名称
      */
     public static function feedback_types($feedback_type = '')
@@ -54,17 +58,17 @@ class SettingService
 
     /**
      * 通告类型：通知
+     * @var integer
      */
     const NOTICE_TYPE_NOTIFY = 0;
     /**
      * 通告类型：公告
+     * @var integer
      */
     const NOTICE_TYPE_NOTICE = 1;
     /**
      * 通告类型
-     *
      * @param string $notice_type 通告类型
-     *
      * @return array|string 通告类型数组或名称
      */
     public static function notice_types($notice_type = '')
@@ -84,7 +88,7 @@ class SettingService
      *
      * @return array
      */
-    public static function info($param = [])
+    public static function info()
     {
         $id = self::$id;
 
@@ -97,7 +101,7 @@ class SettingService
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['diy_config']  = [];
-                $info['create_uid']  = $param['create_uid'] ?? 0;
+                $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
                 $info = $model->find($id);
@@ -115,7 +119,7 @@ class SettingService
      *
      * @param array $param 设置信息
      *
-     * @return array
+     * @return array|Exception
      */
     public static function edit($param)
     {

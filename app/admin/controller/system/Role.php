@@ -74,10 +74,7 @@ class Role extends BaseController
      */
     public function add()
     {
-        $param['role_name'] = $this->request->param('role_name/s', '');
-        $param['role_desc'] = $this->request->param('role_desc/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
-        $param['menu_ids']  = $this->request->param('menu_ids/a', []);
+        $param = $this->params(RoleService::$edit_field);
 
         validate(RoleValidate::class)->scene('add')->check($param);
 
@@ -94,11 +91,7 @@ class Role extends BaseController
      */
     public function edit()
     {
-        $param['role_id']   = $this->request->param('role_id/d', 0);
-        $param['role_name'] = $this->request->param('role_name/s', '');
-        $param['role_desc'] = $this->request->param('role_desc/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
-        $param['menu_ids']  = $this->request->param('menu_ids/a', []);
+        $param = $this->params(RoleService::$edit_field);
 
         validate(RoleValidate::class)->scene('edit')->check($param);
 

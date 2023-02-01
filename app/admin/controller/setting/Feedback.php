@@ -71,14 +71,7 @@ class Feedback extends BaseController
      */
     public function add()
     {
-        $param['type']       = $this->request->param('type/d', 0);
-        $param['title']      = $this->request->param('title/s', '');
-        $param['content']    = $this->request->param('content/s', '');
-        $param['phone']      = $this->request->param('phone/s', '');
-        $param['email']      = $this->request->param('email/s', '');
-        $param['remark']     = $this->request->param('remark/s', '');
-        $param['images']     = $this->request->param('images/a', []);
-        $param['create_uid'] = user_id();
+        $param = $this->params(FeedbackService::$edit_field);
 
         validate(FeedbackValidate::class)->scene('add')->check($param);
 
@@ -95,14 +88,7 @@ class Feedback extends BaseController
      */
     public function edit()
     {
-        $param['feedback_id'] = $this->request->param('feedback_id/d', 0);
-        $param['type']        = $this->request->param('type/d', 0);
-        $param['title']       = $this->request->param('title/s', '');
-        $param['content']     = $this->request->param('content/s', '');
-        $param['phone']       = $this->request->param('phone/s', '');
-        $param['email']       = $this->request->param('email/s', '');
-        $param['remark']      = $this->request->param('remark/s', '');
-        $param['images']      = $this->request->param('images/a', []);
+        $param = $this->params(FeedbackService::$edit_field);
 
         validate(FeedbackValidate::class)->scene('edit')->check($param);
 

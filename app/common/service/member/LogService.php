@@ -62,7 +62,7 @@ class LogService
      * @param int  $id   日志id
      * @param bool $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -141,30 +141,34 @@ class LogService
     /**
      * 会员日志修改
      *
-     * @param array $param 日志信息
+     * @param int|array $ids   日志id
+     * @param array     $param 日志信息
      * 
-     * @return array
+     * @return array|Exception
      */
-    public static function edit($ids, $update = [])
+    public static function edit($ids, $param = [])
     {
         $model = new LogModel();
         $pk = $model->getPk();
 
-        unset($update[$pk], $update['ids']);
+        unset($param[$pk], $param['ids']);
 
-        $update['update_uid']  = user_id();
-        $update['update_time'] = datetime();
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
+        if (isset($param['request_param'])) {
+            $param['request_param'] = serialize($param['request_param']);
+        }
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $update['ids'] = $ids;
+        $param['ids'] = $ids;
 
         LogCache::del($ids);
 
-        return $update;
+        return $param;
     }
 
     /**
@@ -173,7 +177,7 @@ class LogService
      * @param mixed $ids  日志id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {
@@ -210,14 +214,36 @@ class LogService
         $model = new LogModel();
         $pk = $model->getPk();
 
-        if (empty($where)) {
-            $where[] = [$pk, '>', 0];
-        }
+        $where[] = [$pk, '>', 0];
 
         $count = $model->where($where)->delete(true);
 
         $data['count'] = $count;
 
         return $data;
+    }
+
+    /**
+     * 会员日志清除
+     * 
+     * @return void
+     */
+    public static function clearLog()
+    {
+        $setting = SettingService::info();
+        if ($setting['log_save_time']) {
+            $time = date('H');
+            if ($time >= 1 && $time <= 8) {
+                $key = 'clear';
+                $val = LogCache::get($key);
+                if (empty($val)) {
+                    $days = $setting['log_save_time'];
+                    $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
+                    $where = [['create_time', '<', $date]];
+                    LogCache::set($key, $days, 1800);
+                    LogService::clear($where);
+                }
+            }
+        }
     }
 }

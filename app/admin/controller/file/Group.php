@@ -66,9 +66,7 @@ class Group extends BaseController
      */
     public function add()
     {
-        $param['group_name'] = $this->request->param('group_name/s', '');
-        $param['group_desc'] = $this->request->param('group_desc/s', '');
-        $param['sort']       = $this->request->param('sort/d', 250);
+        $param = $this->params(GroupService::$edit_field);
 
         validate(GroupValidate::class)->scene('add')->check($param);
 
@@ -84,10 +82,7 @@ class Group extends BaseController
      */
     public function edit()
     {
-        $param['group_id']   = $this->request->param('group_id/d', 0);
-        $param['group_name'] = $this->request->param('group_name/s', '');
-        $param['group_desc'] = $this->request->param('group_desc/s', '');
-        $param['sort']       = $this->request->param('sort/d', 250);
+        $param = $this->params(GroupService::$edit_field);
 
         validate(GroupValidate::class)->scene('edit')->check($param);
 

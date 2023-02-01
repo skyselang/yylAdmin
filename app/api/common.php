@@ -10,8 +10,6 @@
 // api公共函数文件
 use think\facade\Request;
 use app\common\service\member\ApiService;
-use app\common\service\member\TokenService;
-use app\common\service\member\SettingService;
 
 /**
  * 接口url获取
@@ -127,62 +125,4 @@ function api_is_unrate($api_url = '')
     }
 
     return false;
-}
-
-/**
- * 接口token获取
- *
- * @return string
- */
-function api_token()
-{
-    $setting = SettingService::info();
-
-    $api_token = Request::header($setting['token_name'], '');
-    if (empty($api_token)) {
-        $api_token = Request::param($setting['token_name'], '');
-    }
-
-    return $api_token;
-}
-
-/**
- * 接口token验证
- *
- * @param string $api_token 接口token
- *
- * @return Exception
- */
-function api_token_verify($api_token = '')
-{
-    if (empty($api_token)) {
-        $api_token = api_token();
-    }
-
-    TokenService::verify($api_token);
-}
-
-/**
- * 会员id获取
- *
- * @return int
- */
-function member_id()
-{
-    return TokenService::memberId(api_token());
-}
-
-/**
- * 会员日志是否开启
- *
- * @return bool
- */
-function member_log_switch()
-{
-    $setting = SettingService::info();
-    if ($setting['log_switch']) {
-        return true;
-    } else {
-        return false;
-    }
 }

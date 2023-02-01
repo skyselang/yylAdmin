@@ -29,8 +29,7 @@ class Setting extends BaseController
      */
     public function info()
     {
-        $param['create_uid'] = user_id();
-        $data = SettingService::info($param);
+        $data = SettingService::info();
 
         return success($data);
     }

@@ -20,6 +20,25 @@ use hg\apidoc\annotation as Apidoc;
 class RegionService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'region_id/d'        => 0,
+        'region_pid/d'       => 0,
+        'region_level/d'     => 1,
+        'region_name/s'      => '',
+        'region_pinyin/s'    => '',
+        'region_jianpin/s'   => '',
+        'region_initials/s'  => '',
+        'region_citycode/s'  => '',
+        'region_zipcode/s'   => '',
+        'region_longitude/s' => '',
+        'region_latitude/s'  => '',
+        'sort/d'             => 2250,
+    ];
+
+    /**
      * 地区列表
      * 
      * @param string $type  list列表，tree树形
@@ -68,7 +87,7 @@ class RegionService
      * @param bool $exce 不存在是否抛出异常
      * @Apidoc\Returned("region_fullname", type="string", desc="地区完整名称")
      * @Apidoc\Returned("region_fullname_py", type="string", desc="地区完整名称拼音")
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -115,12 +134,14 @@ class RegionService
      *
      * @param array $param 地区信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new RegionModel();
         $pk = $model->getPk();
+
+        unset($param[$pk]);
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
@@ -146,12 +167,13 @@ class RegionService
                     $param['is_delete'] = 1;
                 }
                 $param['region_level'] = $region['region_level'] + 1;
-                $region_id = $model->insertGetId($param);
+                $model->save($param);
+                $region_id = $model->$pk;
                 $region_path = $region['region_path'] . ',' . $region_id;
             } else {
-                $region_id = $model->insertGetId($param);
+                $model->save($param);
+                $region_id = $model->$pk;
                 $region_path = $region_id;
-                $update['region_path'] = $region_path;
             }
 
             $update['region_path'] = $region_path;
@@ -182,7 +204,7 @@ class RegionService
      * @param int   $id    地区id
      * @param array $param 地区信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($id, $param)
     {
@@ -211,7 +233,6 @@ class RegionService
 
             if ($param['region_pid']) {
                 $region = self::info($param['region_pid']);
-
                 $param['region_level'] = $region['region_level'] + 1;
                 $param['region_path']  = $region['region_path'] . ',' . $id;
             } else {
@@ -244,7 +265,7 @@ class RegionService
      * @param array $ids  地区id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {
@@ -275,7 +296,7 @@ class RegionService
      * @param array $ids        地区id
      * @param int   $region_pid 地区pid
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function editpid($ids, $region_pid)
     {
@@ -328,7 +349,7 @@ class RegionService
      * @param array $ids   地区id
      * @param array $param 地区信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function update($ids, $param = [])
     {

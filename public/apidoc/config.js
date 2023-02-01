@@ -43,8 +43,7 @@ window.apidocFeConfig = {
   LOAD_SCRIPTS:[
     "./utils/md5.js",
   ],
-  // SHOW_VERSION:false,
-  // 调试时事件，处理参数值的方法
+  // （选配）调试时事件，处理参数值的方法
   DEBUG_EVENTS:{
     md5(param){
       console.log('md5事件',param);
@@ -71,11 +70,10 @@ window.apidocFeConfig = {
       })
     },
   },
-  // 自定义mock规则
+  // （选配）自定义mock规则
   MOCK_EXTENDS:{},
   // （选配）自定义方法
   CUSTOM_METHODS:{},
-
   // 多语言
   LANG: [
     {
@@ -123,6 +121,7 @@ window.apidocFeConfig = {
         "host.change.confirm.title": "您确认切换Host为 {hostTitle} 吗？",
         "auth.title": "授权访问",
         "auth.input.placeholder": "请输入访问密码",
+        "apiPage.reload.button": "刷新",
         "apiPage.tabs.table": "文档",
         "apiPage.tabs.json": "Json",
         "apiPage.tabs.ts": "TypeScript",

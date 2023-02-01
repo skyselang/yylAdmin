@@ -66,10 +66,8 @@ class Tag extends BaseController
      */
     public function add()
     {
-        $param['tag_name'] = $this->request->param('tag_name/s', '');
-        $param['tag_desc'] = $this->request->param('tag_desc/s', '');
-        $param['sort']     = $this->request->param('sort/d', 250);
-
+        $param = $this->params(TagService::$edit_field);
+        
         validate(TagValidate::class)->scene('add')->check($param);
 
         $data = TagService::add($param);
@@ -84,10 +82,7 @@ class Tag extends BaseController
      */
     public function edit()
     {
-        $param['tag_id']   = $this->request->param('tag_id/d', 0);
-        $param['tag_name'] = $this->request->param('tag_name/s', '');
-        $param['tag_desc'] = $this->request->param('tag_desc/s', '');
-        $param['sort']     = $this->request->param('sort/d', 250);
+        $param = $this->params(TagService::$edit_field);
 
         validate(TagValidate::class)->scene('edit')->check($param);
 

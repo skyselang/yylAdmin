@@ -35,8 +35,16 @@ class FeedbackModel extends Model
     }
 
     // 关联图片
-    public function images()
+    public function image()
     {
         return $this->belongsToMany(FileModel::class, FeedbackImagesModel::class, 'file_id', 'feedback_id')->append(['file_url'])->where(where_disdel());
+    }
+    // 获取图片
+    public function getImagesAttr()
+    {
+        if ($this['image']) {
+            $images = $this['image']->append(['file_url'])->toArray();
+        }
+        return $images ?? [];
     }
 }

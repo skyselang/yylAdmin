@@ -10,9 +10,9 @@
 namespace app\api\controller\setting;
 
 use app\common\controller\BaseController;
-use app\common\service\member\SettingService as MemberSettingService;
-use app\common\service\content\SettingService as ContentSettingService;
-use app\common\service\file\SettingService as FileSettingService;
+use app\common\service\member\SettingService as MemberSetting;
+use app\common\service\content\SettingService as ContentSetting;
+use app\common\service\file\SettingService as FileSetting;
 use app\common\service\setting\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -33,7 +33,7 @@ class Setting extends BaseController
      */
     public function member()
     {
-        $setting = MemberSettingService::info();
+        $setting = MemberSetting::info();
 
         $data['captcha_register'] = $setting['captcha_register'];
         $data['captcha_login']    = $setting['captcha_login'];
@@ -54,7 +54,7 @@ class Setting extends BaseController
      */
     public function content()
     {
-        $data = ContentSettingService::info();
+        $data = ContentSetting::info();
 
         return success($data);
     }
@@ -66,7 +66,7 @@ class Setting extends BaseController
      */
     public function file()
     {
-        $data = FileSettingService::info([], 'is_upload,storage,accept_ext,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size');
+        $data = FileSetting::info('is_upload,storage,accept_ext,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size');
 
         return success($data);
     }

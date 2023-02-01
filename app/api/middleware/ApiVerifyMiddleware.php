@@ -14,6 +14,7 @@ use think\Request;
 use think\Response;
 use think\facade\Config;
 use app\common\service\member\SettingService;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 接口校验中间件
@@ -41,7 +42,7 @@ class ApiVerifyMiddleware
                 if ($debug) {
                     $msg .= '：' . api_url();
                 }
-                exception($msg, 404);
+                exception($msg, RetCodeUtils::API_URL_ERROR);
             }
 
             // 接口是否已禁用
@@ -50,7 +51,7 @@ class ApiVerifyMiddleware
                 if ($debug) {
                     $msg .= '：' . api_url();
                 }
-                exception($msg, 404);
+                exception($msg, RetCodeUtils::API_URL_ERROR);
             }
         }
 

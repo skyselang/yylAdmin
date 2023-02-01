@@ -10,13 +10,13 @@
 namespace app\api\controller\member;
 
 use app\common\controller\BaseController;
-use app\common\service\utils\SmsUtils;
-use app\common\service\utils\EmailUtils;
 use app\common\validate\member\MemberValidate;
 use app\common\validate\file\FileValidate;
 use app\common\service\member\MemberService;
 use app\common\service\member\LogService;
 use app\common\service\file\FileService;
+use app\common\service\utils\SmsUtils;
+use app\common\service\utils\EmailUtils;
 use app\common\cache\utils\CaptchaSmsCache;
 use app\common\cache\utils\CaptchaEmailCache;
 use hg\apidoc\annotation as Apidoc;

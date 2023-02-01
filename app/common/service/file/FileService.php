@@ -21,6 +21,20 @@ use hg\apidoc\annotation as Apidoc;
 class FileService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'file_id/d'   => 0,
+        'file_name/s' => '',
+        'group_id/d'  => 0,
+        'tag_ids/a'   => [],
+        'file_type/s' => 'image',
+        'domain/s'    => '',
+        'sort/d'      => 250
+    ];
+
+    /**
      * 文件列表
      *
      * @param array  $where 条件
@@ -63,7 +77,7 @@ class FileService
         $ids = array_column($list, $pk);
         $storage = SettingService::storages();
         $filetype = SettingService::fileTypes();
-        $setting = SettingService::info(['create_uid' => user_id()], 'limit_max,accept_ext');
+        $setting = SettingService::info('limit_max,accept_ext');
 
         return compact('count', 'pages', 'page', 'limit', 'list', 'ids', 'storage', 'filetype', 'setting');
     }
@@ -74,7 +88,7 @@ class FileService
      * @param int  $id   文件id
      * @param bool $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -150,6 +164,7 @@ class FileService
             self::edit($id, $param);
         } else {
             unset($param[$pk]);
+            $param['create_uid']  = user_id();
             $param['create_time'] = $datetime;
             $param['update_time'] = $datetime;
             $model->save($param);
@@ -183,6 +198,7 @@ class FileService
 
         unset($param[$pk], $param['ids']);
 
+        $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
         // 启动事务
@@ -276,8 +292,10 @@ class FileService
 
     /**
      * 文件统计
+     * 
      * @Apidoc\Returned("count", type="int", desc="文件总数")
      * @Apidoc\Returned("data", type="array", desc="图表series.data")
+     * 
      * @return array
      */
     public static function statistic()

@@ -64,15 +64,7 @@ class Dept extends BaseController
      */
     public function add()
     {
-        $param['dept_pid']   = $this->request->param('dept_pid/d', 0);
-        $param['dept_name']  = $this->request->param('dept_name/s', '');
-        $param['dept_abbr']  = $this->request->param('dept_abbr/s', '');
-        $param['dept_desc']  = $this->request->param('dept_desc/s', '');
-        $param['dept_tel']   = $this->request->param('dept_tel/s', '');
-        $param['dept_fax']   = $this->request->param('dept_fax/s', '');
-        $param['dept_email'] = $this->request->param('dept_email/s', '');
-        $param['dept_addr']  = $this->request->param('dept_addr/s', '');
-        $param['sort']       = $this->request->param('sort/d', 250);
+        $param = $this->params(DeptService::$edit_field);
 
         validate(DeptValidate::class)->scene('add')->check($param);
 
@@ -89,16 +81,7 @@ class Dept extends BaseController
      */
     public function edit()
     {
-        $param['dept_id']    = $this->request->param('dept_id/d', 0);
-        $param['dept_pid']   = $this->request->param('dept_pid/d', 0);
-        $param['dept_name']  = $this->request->param('dept_name/s', '');
-        $param['dept_abbr']  = $this->request->param('dept_abbr/s', '');
-        $param['dept_desc']  = $this->request->param('dept_desc/s', '');
-        $param['dept_tel']   = $this->request->param('dept_tel/s', '');
-        $param['dept_fax']   = $this->request->param('dept_fax/s', '');
-        $param['dept_email'] = $this->request->param('dept_email/s', '');
-        $param['dept_addr']  = $this->request->param('dept_addr/s', '');
-        $param['sort']       = $this->request->param('sort/d', 250);
+        $param = $this->params(DeptService::$edit_field);
 
         validate(DeptValidate::class)->scene('edit')->check($param);
 

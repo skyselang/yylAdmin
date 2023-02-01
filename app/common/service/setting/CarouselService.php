@@ -19,6 +19,20 @@ use app\common\service\file\SettingService;
 class CarouselService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'carousel_id/d' => 0,
+        'file_id/d'     => 0,
+        'file_type/s'   => 'image',
+        'title/s'       => '',
+        'link/s'        => '',
+        'position/s'    => '',
+        'sort/d'        => 250
+    ];
+
+    /**
      * 轮播列表
      *
      * @param array  $where 条件
@@ -95,10 +109,13 @@ class CarouselService
         $model = new CarouselModel();
         $pk = $model->getPk();
 
+        unset($param[$pk]);
+
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
+        $model->save($param);
+        $id = $model->$pk;
         if (empty($id)) {
             exception();
         }

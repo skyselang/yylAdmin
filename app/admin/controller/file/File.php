@@ -121,13 +121,8 @@ class File extends BaseController
             exception('文件上传未开启，无法上传文件！');
         }
 
-        $param['file']       = $this->request->file('file');
-        $param['file_name']  = $this->request->param('file_name/s', '');
-        $param['group_id']   = $this->request->param('group_id/d', 0);
-        $param['tag_ids']    = $this->request->param('tag_ids/a', []);
-        $param['file_type']  = $this->request->param('file_type/s', 'image');
-        $param['sort']       = $this->request->param('sort/d', 250);
-        $param['create_uid'] = user_id();
+        $param = $this->params(FileService::$edit_field);
+        $param['file'] = $this->request->file('file');
 
         validate(FileValidate::class)->scene('add')->check($param);
 
@@ -144,14 +139,7 @@ class File extends BaseController
      */
     public function edit()
     {
-        $param['file_id']    = $this->request->param('file_id/d', 0);
-        $param['file_name']  = $this->request->param('file_name/s', '');
-        $param['group_id']   = $this->request->param('group_id/d', 0);
-        $param['tag_ids']    = $this->request->param('tag_ids/a', []);
-        $param['file_type']  = $this->request->param('file_type/s', 'image');
-        $param['domain']     = $this->request->param('domain/s', '');
-        $param['sort']       = $this->request->param('sort/d', 250);
-        $param['update_uid'] = user_id();
+        $param = $this->params(FileService::$edit_field);
 
         validate(FileValidate::class)->scene('edit')->check($param);
 
@@ -297,7 +285,7 @@ class File extends BaseController
         if ($is_disable !== '') {
             $where[] = ['is_disable', '=', $is_disable];
         }
-        $where[] = ['is_delete', '=', 1];
+        $where[] = where_delete([], 1);
         $where = $this->where($where);
 
         $data = FileService::list($where, $this->page(), $this->limit(), $this->order());

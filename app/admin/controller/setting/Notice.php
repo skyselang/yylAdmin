@@ -69,15 +69,8 @@ class Notice extends BaseController
      */
     public function add()
     {
-        $param['type']        = $this->request->param('type/d', 0);
-        $param['title']       = $this->request->param('title/s', '');
-        $param['title_color'] = $this->request->param('title_color/s', '#606266');
-        $param['start_time']  = $this->request->param('start_time/s', '');
-        $param['end_time']    = $this->request->param('end_time/s', '');
-        $param['intro']       = $this->request->param('intro/s', '');
-        $param['content']     = $this->request->param('content/s', '');
-        $param['sort']        = $this->request->param('sort/d', 250);
-
+        $param = $this->params(NoticeService::$edit_field);
+        
         validate(NoticeValidate::class)->scene('add')->check($param);
 
         $data = NoticeService::add($param);
@@ -92,15 +85,7 @@ class Notice extends BaseController
      */
     public function edit()
     {
-        $param['notice_id']   = $this->request->param('notice_id/d', 0);
-        $param['type']        = $this->request->param('type/d', 0);
-        $param['title']       = $this->request->param('title/s', '');
-        $param['title_color'] = $this->request->param('title_color/s', '#606266');
-        $param['start_time']  = $this->request->param('start_time/s', '');
-        $param['end_time']    = $this->request->param('end_time/s', '');
-        $param['intro']       = $this->request->param('intro/s', '');
-        $param['content']     = $this->request->param('content/s', '');
-        $param['sort']        = $this->request->param('sort/d', 250);
+        $param = $this->params(NoticeService::$edit_field);
 
         validate(NoticeValidate::class)->scene('edit')->check($param);
 

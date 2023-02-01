@@ -24,26 +24,30 @@ use hg\apidoc\annotation as Apidoc;
  */
 class SettingService
 {
-    // 设置id
+    /**
+     * 设置id
+     * @var integer
+     */
     private static $id = 1;
 
     /**
      * 菜单类型：目录
+     * @var integer
      */
     const MENU_TYPE_CATALOGUE = 0;
     /**
      * 菜单类型：菜单
+     * @var integer
      */
     const MENU_TYPE_MENU = 1;
     /**
      * 菜单类型：按钮
+     * @var integer
      */
     const MENU_TYPE_BUTTON = 2;
     /**
      * 菜单类型
-     *
      * @param string $menu_type 菜单类型
-     *
      * @return array|string 菜单类型数组或名称
      */
     public static function menu_types($menu_type = '')
@@ -61,21 +65,22 @@ class SettingService
 
     /**
      * 日志类型：登录
+     * @var integer
      */
     const LOG_TYPE_LOGIN = 0;
     /**
      * 日志类型：操作
+     * @var integer
      */
     const LOG_TYPE_OPERATION = 1;
     /**
      * 日志类型：退出
+     * @var integer
      */
     const LOG_TYPE_LOGOUT = 2;
     /**
      * 日志类型
-     *
      * @param string $log_type 日志类型
-     *
      * @return array|string 日志类型数组或名称
      */
     public static function log_types($log_type = '')
@@ -102,10 +107,10 @@ class SettingService
      *
      * @return array
      */
-    public static function info($param = [])
+    public static function info()
     {
         $id = self::$id;
-
+        
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
@@ -114,8 +119,8 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['create_uid']  = $param['create_uid'] ?? 0;
                 $info['token_key']   = uniqid();
+                $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
                 $info = $model->find($id);
@@ -189,9 +194,11 @@ class SettingService
         }
 
         foreach ($user_cache as $v) {
-            $user_new = UserService::info($v[$UserPk]);
-            $user_new[$token_anme] = $v[$token_anme];
-            UserCache::set($user_new[$UserPk], $user_new);
+            $user_new = UserService::info($v[$UserPk], false);
+            if ($user_new) {
+                $user_new[$token_anme] = $v[$token_anme];
+                UserCache::set($user_new[$UserPk], $user_new);
+            }
         }
 
         $data['clear'] = $res;

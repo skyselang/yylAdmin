@@ -81,7 +81,7 @@ class ContentModel extends Model
     // 关联文件
     public function files()
     {
-        return $this->belongsToMany(FileModel::class, FilesModel::class, 'file_id', 'content_id')->append(['file_url'])->where(where_disdel());
+        return $this->belongsToMany(FileModel::class, FilesModel::class, 'file_id', 'content_id')->where(where_disdel());
     }
     // 获取图片文件
     public function getImagesAttr()

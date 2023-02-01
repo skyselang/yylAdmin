@@ -20,6 +20,18 @@ use app\common\model\system\UserAttributesModel;
 class RoleService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'role_id/d'   => 0,
+        'role_name/s' => '',
+        'role_desc/s' => '',
+        'sort/d'      => 250,
+        'menu_ids/a'  => [],
+    ];
+
+    /**
      * 角色列表
      *
      * @param array  $where 条件
@@ -68,7 +80,7 @@ class RoleService
      * @param int  $id   角色id
      * @param bool $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -96,7 +108,7 @@ class RoleService
      *
      * @param array $param 角色信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
@@ -138,7 +150,7 @@ class RoleService
      * @param int|array $ids   角色id
      * @param array     $param 角色信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -193,7 +205,7 @@ class RoleService
      * @param array $ids  角色id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

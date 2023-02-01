@@ -10,8 +10,8 @@
 namespace app\common\validate\system;
 
 use think\Validate;
-use app\common\model\system\UserModel;
 use app\common\service\system\UserService;
+use app\common\model\system\UserModel;
 
 /**
  * 个人中心验证器

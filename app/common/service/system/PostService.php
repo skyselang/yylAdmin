@@ -20,6 +20,19 @@ use app\common\model\system\UserAttributesModel;
 class PostService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'post_id/d'   => 0,
+        'post_pid/d'  => 0,
+        'post_name/s' => '',
+        'post_abbr/s' => '',
+        'post_desc/s' => '',
+        'sort/d'      => 250,
+    ];
+
+    /**
      * 职位列表
      *
      * @param string $type  tree树形，list列表
@@ -59,7 +72,8 @@ class PostService
      *
      * @param int  $id   职位id
      * @param bool $exce 不存在是否抛出异常
-     * @return array
+     * 
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -87,17 +101,20 @@ class PostService
      *
      * @param array $param 职位信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new PostModel();
         $pk = $model->getPk();
 
+        unset($param[$pk]);
+
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
+        $model->save($param);
+        $id = $model->$pk;
         if (empty($id)) {
             exception();
         }
@@ -115,7 +132,7 @@ class PostService
      * @param int|array $ids   职位id
      * @param array     $param 职位信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -145,7 +162,7 @@ class PostService
      * @param array $ids  职位id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

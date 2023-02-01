@@ -11,6 +11,7 @@ namespace app\common\validate\content;
 
 use think\Validate;
 use app\common\model\content\ContentModel;
+use app\common\model\content\AttributesModel;
 
 /**
  * 内容管理验证器
@@ -54,6 +55,13 @@ class ContentValidate extends Validate
         'disable'  => ['ids', 'is_disable']
     ];
 
+    // 验证场景定义：后台删除
+    protected function sceneDele()
+    {
+        return $this->only(['ids'])
+            ->append('ids', 'checkCategoryTag');
+    }
+
     // 自定义验证规则：内容是否已存在
     protected function checkExisted($value, $rule, $data = [])
     {
@@ -75,6 +83,22 @@ class ContentValidate extends Validate
                 return '标识已存在：' . $unique;
             }
         }
+
+        return true;
+    }
+
+    // 自定义验证规则：内容是否存在分类或标签
+    protected function checkCategoryTag($value, $rule, $data = [])
+    {
+        // $info = AttributesModel::field('content_id')->where('content_id', 'in', $data['ids'])->where('category_id', '>', 0)->find();
+        // if ($info) {
+        //     return '内容存在分类，请在[分类]或[修改]解除后再删除：' . $info['content_id'];
+        // }
+
+        // $info = AttributesModel::field('content_id')->where('content_id', 'in', $data['ids'])->where('tag_id', '>', 0)->find();
+        // if ($info) {
+        //     return '内容存在标签，请在[标签]或[修改]解除后再删除：' . $info['content_id'];
+        // }
 
         return true;
     }

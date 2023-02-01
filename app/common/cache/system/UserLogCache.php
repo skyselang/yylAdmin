@@ -42,7 +42,7 @@ class UserLogCache
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 18000)
+    public static function set($id, $info, $ttl = 3600)
     {
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }

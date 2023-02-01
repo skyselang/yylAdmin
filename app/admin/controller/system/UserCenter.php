@@ -28,7 +28,7 @@ class UserCenter extends BaseController
     public function info()
     {
         $param['user_id'] = user_id();
-
+        
         validate(UserCenterValidate::class)->scene('info')->check($param);
 
         $data = UserCenterService::info($param['user_id']);

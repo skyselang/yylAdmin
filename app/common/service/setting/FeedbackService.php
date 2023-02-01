@@ -18,6 +18,21 @@ use app\common\model\setting\FeedbackModel;
 class FeedbackService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'feedback_id/d' => 0,
+        'type/d'        => 0,
+        'title/s'       => '',
+        'content/s'     => '',
+        'phone/s'       => '',
+        'email/s'       => '',
+        'remark/s'      => '',
+        'images/a'      => []
+    ];
+
+    /**
      * 反馈列表
      *
      * @param array  $where 条件
@@ -65,14 +80,14 @@ class FeedbackService
         if (empty($info)) {
             $model = new FeedbackModel();
 
-            $info = $model->with(['images'])->append(['type_name'])->find($id);
+            $info = $model->find($id);
             if (empty($info)) {
                 if ($exce) {
                     exception('反馈不存在：' . $id);
                 }
                 return [];
             }
-            $info = $info->toArray();
+            $info = $info->append(['type_name', 'images'])->toArray();
 
             if ($info['is_unread']) {
                 $update['is_unread']  = 0;
@@ -101,6 +116,7 @@ class FeedbackService
 
         unset($param[$pk]);
 
+        $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
         // 启动事务
@@ -109,8 +125,10 @@ class FeedbackService
             // 添加
             $model->save($param);
             // 添加图片
-            $image_ids = file_ids($param['images']);
-            $model->images()->saveAll($image_ids);
+            if (isset($param['images'])) {
+                $image_ids = file_ids($param['images']);
+                $model->image()->saveAll($image_ids);
+            }
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
@@ -158,9 +176,9 @@ class FeedbackService
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 修改图片
-                    $info->images()->detach();
+                    $info->image()->detach();
                     $image_ids = file_ids($param['images']);
-                    $info->images()->saveAll($image_ids);
+                    $info->image()->saveAll($image_ids);
                 }
             }
             // 提交事务
@@ -205,7 +223,7 @@ class FeedbackService
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 删除图片
-                    $info->images()->detach();
+                    $info->image()->detach();
                 }
                 $model->where($pk, 'in', $ids)->delete();
             } else {

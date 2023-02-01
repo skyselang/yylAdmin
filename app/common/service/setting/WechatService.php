@@ -20,10 +20,32 @@ use app\common\model\setting\WechatModel;
  */
 class WechatService
 {
-    // 公众号id
+    /**
+     * 公众号id
+     * @var integer
+     */
     private static $offi_id = 1;
-    // 小程序id
+
+    /**
+     * 小程序id
+     * @var integer
+     */
     private static $mini_id = 2;
+
+    /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'name/s'              => '',
+        'origin_id/s'         => '',
+        'qrcode_id/d'         => 0,
+        'appid/s'             => '',
+        'appsecret/s'         => '',
+        'token/s'             => '',
+        'encoding_aes_key/s'  => '',
+        'encoding_aes_type/d' => 1,
+    ];
 
     /**
      * 公众号信息
@@ -44,13 +66,14 @@ class WechatService
                 $info[$pk]                = $id;
                 $info['token']            = StringUtils::random(32);
                 $info['encoding_aes_key'] = StringUtils::random(43);
+                $info['create_uid']       = user_id();
                 $info['create_time']      = datetime();
                 $model->save($info);
                 $info = $model->find($id);
             }
             $info = $info->append(['qrcode_url'])->toArray();
 
-            $info['server_url'] = server_url() . '/api/Wechat/access';
+            $info['server_url'] = server_url() . '/api/setting.Wechat/access';
 
             WechatCache::set($id, $info);
         }
@@ -101,6 +124,7 @@ class WechatService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
+                $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
                 $info = $model->find($id);
@@ -186,13 +210,13 @@ class WechatService
                     // 测试环境
                     'dev' => [
                         'driver' => 'single',
-                        'path' => runtime_path() . '/easywechat/' . date('Ym') . '/officialAccountDev.log',
+                        'path' => runtime_path() . '/easywechat/' . date('Ym') . '/' . date('Ymd') . 'officialAccountDev.log',
                         'level' => 'debug',
                     ],
                     // 生产环境
                     'prod' => [
                         'driver' => 'daily',
-                        'path' => runtime_path() . '/easywechat/' . date('Ym') . '/officialAccountProd.log',
+                        'path' => runtime_path() . '/easywechat/' . date('Ym') . '/' . date('Ymd') . 'officialAccountProd.log',
                         'level' => 'info',
                         'days' => 30,
                     ],
@@ -243,7 +267,7 @@ class WechatService
              */
             'log' => [
                 'level' => $log_level,
-                'file' => runtime_path() . '/easywechat/' . date('Ym') . '/miniProgram.log',
+                'file' => runtime_path() . '/easywechat/' . date('Ym') . '/' . date('Ymd') . 'miniProgram.log',
             ],
         ];
 

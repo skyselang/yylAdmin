@@ -18,26 +18,30 @@ use app\common\model\member\SettingModel;
  */
 class SettingService
 {
-    // 设置id
+    /**
+     * 设置id
+     * @var integer
+     */
     private static $id = 1;
 
     /**
      * 性别：未知
+     * @var integer
      */
     const GENDER_UNKNOWN = 0;
     /**
      * 性别：男
+     * @var integer
      */
     const GENDER_MAN = 1;
     /**
      * 性别：女
+     * @var integer
      */
     const GENDER_WOMAN = 2;
     /**
      * 性别
-     *
      * @param string $gender 性别
-     *
      * @return array|string 性别数组或名称
      */
     public static function genders($gender = '')
@@ -55,41 +59,47 @@ class SettingService
 
     /**
      * 注册渠道：未知
+     * @var integer
      */
     const REG_CHANNEL_UNKNOWN  = 0;
     /**
      * 注册渠道：后台
+     * @var integer
      */
     const REG_CHANNEL_ADMIN = 1;
     /**
      * 注册渠道：小程序
+     * @var integer
      */
     const REG_CHANNEL_MINI = 2;
     /**
      * 注册渠道：公众号
+     * @var integer
      */
     const REG_CHANNEL_OFFI = 3;
     /**
      * 注册渠道：H5
+     * @var integer
      */
     const REG_CHANNEL_H5 = 4;
     /**
      * 注册渠道：PC
+     * @var integer
      */
     const REG_CHANNEL_PC = 5;
     /**
      * 注册渠道：安卓
+     * @var integer
      */
     const REG_CHANNEL_ANDROID = 6;
     /**
      * 注册渠道：苹果
+     * @var integer
      */
     const REG_CHANNEL_IOS = 7;
     /**
      * 注册渠道
-     *
      * @param string $reg_channel 注册渠道
-     *
      * @return array|string 注册渠道数组或名称
      */
     public static function reg_channels($reg_channel = '')
@@ -112,25 +122,27 @@ class SettingService
 
     /**
      * 注册方式：用户名
+     * @var integer
      */
     const REG_TYPE_USERNAME = 0;
     /**
      * 注册方式：手机
+     * @var integer
      */
     const REG_TYPE_PHONE = 1;
     /**
      * 注册方式：邮箱
+     * @var integer
      */
     const REG_TYPE_EMAIL = 2;
     /**
      * 注册方式：微信
+     * @var integer
      */
     const REG_TYPE_WECHAT = 3;
     /**
      * 注册方式
-     *
      * @param string $reg_type 注册方式
-     *
      * @return array|string 注册方式数组或名称
      */
     public static function reg_types($reg_type = '')
@@ -149,25 +161,27 @@ class SettingService
 
     /**
      * 日志类型：注册
+     * @var integer
      */
     const LOG_TYPE_REGISTER = 0;
     /**
      * 日志类型：登录
+     * @var integer
      */
     const LOG_TYPE_LOGIN = 1;
     /**
      * 日志类型：操作
+     * @var integer
      */
     const LOG_TYPE_OPERATION = 2;
     /**
      * 日志类型：退出
+     * @var integer
      */
     const LOG_TYPE_LOGOUT = 3;
     /**
      * 日志类型
-     *
      * @param string $log_type 日志类型
-     *
      * @return array|string 日志类型数组或名称
      */
     public static function log_types($log_type = '')
@@ -189,7 +203,7 @@ class SettingService
      *
      * @return array
      */
-    public static function info($param = [])
+    public static function info()
     {
         $id = self::$id;
 
@@ -203,7 +217,7 @@ class SettingService
                 $info[$pk]           = $id;
                 $info['token_key']   = uniqid();
                 $info['diy_config']  = [];
-                $info['create_uid']  = $param['create_uid'] ?? 0;
+                $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
                 $info = $model->find($id);
@@ -224,7 +238,7 @@ class SettingService
      *
      * @param array $param 设置信息
      *
-     * @return array
+     * @return array|Exception
      */
     public static function edit($param)
     {

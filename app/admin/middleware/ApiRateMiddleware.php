@@ -14,6 +14,7 @@ use think\Request;
 use think\Response;
 use app\common\cache\system\ApiRateCache;
 use app\common\service\system\SettingService;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 接口速率中间件
@@ -47,7 +48,7 @@ class ApiRateMiddleware
                             } else {
                                 ApiRateCache::inc($user_id, $menu_url);
                             }
-                            exception('你的操作过于频繁', 429);
+                            exception('你的操作过于频繁', RetCodeUtils::FREQUENT_OPERATION);
                         } else {
                             ApiRateCache::inc($user_id, $menu_url);
                         }

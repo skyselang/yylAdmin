@@ -20,6 +20,17 @@ use app\common\model\member\AttributesModel;
 class TagService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'tag_id/d'   => 0,
+        'tag_name/s' => '',
+        'tag_desc/s' => '',
+        'sort/d'     => 250
+    ];
+
+    /**
      * 会员标签列表
      *
      * @param array  $where 条件
@@ -58,7 +69,8 @@ class TagService
      *
      * @param int  $id   标签id
      * @param bool $exce 不存在是否抛出异常
-     * @return array
+     * 
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -86,12 +98,14 @@ class TagService
      *
      * @param array $param 标签信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new TagModel();
         $pk = $model->getPk();
+
+        unset($param[$pk]);
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
@@ -113,7 +127,7 @@ class TagService
      * @param int|array $ids   标签id
      * @param array     $param 标签信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -143,7 +157,7 @@ class TagService
      * @param array $ids  标签id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

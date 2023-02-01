@@ -68,16 +68,8 @@ class Category extends BaseController
      */
     public function add()
     {
-        $param['category_pid']    = $this->request->param('category_pid/d', 0);
-        $param['category_name']   = $this->request->param('category_name/s', '');
-        $param['category_unique'] = $this->request->param('category_unique/s', '');
-        $param['cover_id']        = $this->request->param('cover_id/d', 0);
-        $param['title']           = $this->request->param('title/s', '');
-        $param['keywords']        = $this->request->param('keywords/s', '');
-        $param['description']     = $this->request->param('description/s', '');
-        $param['sort']            = $this->request->param('sort/d', 250);
-        $param['images']          = $this->request->param('images/a', []);
-
+        $param = $this->params(CategoryService::$edit_field);
+ 
         validate(CategoryValidate::class)->scene('add')->check($param);
 
         $data = CategoryService::add($param);
@@ -93,16 +85,7 @@ class Category extends BaseController
      */
     public function edit()
     {
-        $param['category_id']     = $this->request->param('category_id/d', 0);
-        $param['category_pid']    = $this->request->param('category_pid/d', 0);
-        $param['category_name']   = $this->request->param('category_name/s', '');
-        $param['category_unique'] = $this->request->param('category_unique/s', '');
-        $param['cover_id']        = $this->request->param('cover_id/d', 0);
-        $param['title']           = $this->request->param('title/s', '');
-        $param['keywords']        = $this->request->param('keywords/s', '');
-        $param['description']     = $this->request->param('description/s', '');
-        $param['sort']            = $this->request->param('sort/d', 250);
-        $param['images']          = $this->request->param('images/a', []);
+        $param = $this->params(CategoryService::$edit_field);
 
         validate(CategoryValidate::class)->scene('edit')->check($param);
 

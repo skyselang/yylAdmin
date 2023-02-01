@@ -8,8 +8,13 @@
 // +----------------------------------------------------------------------
 
 // 公共函数文件
-use think\facade\Request;
 use think\facade\Config;
+use think\facade\Request;
+use app\common\service\utils\RetCodeUtils;
+use app\common\service\system\SettingService as SystemSetting;
+use app\common\service\system\UserTokenService;
+use app\common\service\member\SettingService as MemberSetting;
+use app\common\service\member\TokenService as MemberTokenService;
 
 /**
  * 成功返回
@@ -20,7 +25,7 @@ use think\facade\Config;
  * 
  * @return json
  */
-function success($data = [], $msg = '操作成功', $code = 200)
+function success($data = [], $msg = RetCodeUtils::SUCCESS_MSG, $code = RetCodeUtils::SUCCESS)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -38,7 +43,7 @@ function success($data = [], $msg = '操作成功', $code = 200)
  * 
  * @return json
  */
-function error($data = [], $msg = '操作失败',  $code = 400)
+function error($data = [], $msg = RetCodeUtils::ERROR_MSG, $code = RetCodeUtils::ERROR)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -56,7 +61,7 @@ function error($data = [], $msg = '操作失败',  $code = 400)
  * 
  * @return json
  */
-function error_e($data = [], $msg = '操作失败',  $code = 400)
+function error_e($data = [], $msg = RetCodeUtils::ERROR_MSG, $code = RetCodeUtils::ERROR)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -75,7 +80,7 @@ function error_e($data = [], $msg = '操作失败',  $code = 400)
  * 
  * @return Exception
  */
-function exception($msg = '操作失败', $code = 400)
+function exception($msg = RetCodeUtils::ERROR_MSG, $code = RetCodeUtils::ERROR)
 {
     throw new \think\Exception($msg, $code);
 }
@@ -317,6 +322,196 @@ function var_to_array($var)
     settype($var, 'array');
 
     return $var;
+}
+
+/**
+ * 用户token
+ *
+ * @return string
+ */
+function user_token()
+{
+    $system = Config::get('admin');
+    if ($system['token_type'] == 'header') {
+        $user_token = Request::header($system['token_name'], '');
+    } else {
+        $user_token = Request::param($system['token_name'], '');
+    }
+
+    if (empty($user_token)) {
+        $user_token = Request::param($system['token_name'], '');
+        if (empty($user_token)) {
+            $user_token = Request::header($system['token_name'], '');
+        }
+    }
+
+    return $user_token;
+}
+
+/**
+ * 用户token验证
+ *
+ * @param string $user_token 用户token
+ *
+ * @return Exception
+ */
+function user_token_verify($user_token = '')
+{
+    if (empty($user_token)) {
+        $user_token = user_token();
+    }
+
+    UserTokenService::verify($user_token);
+}
+
+/**
+ * 用户id
+ *
+ * @return int
+ */
+function user_id()
+{
+    $user_token = user_token();
+
+    return UserTokenService::userId($user_token);
+}
+
+/**
+ * 系统超管用户id（所有权限）
+ *
+ * @return array
+ */
+function user_super_ids()
+{
+    return Config::get('admin.super_ids', []);
+}
+
+/**
+ * 用户是否系统超管
+ *
+ * @param int $user_id 用户id
+ * 
+ * @return bool
+ */
+function user_is_super($user_id = 0)
+{
+    if (empty($user_id)) {
+        return false;
+    }
+
+    $user_super_ids = user_super_ids();
+    if (empty($user_super_ids)) {
+        return false;
+    }
+    if (in_array($user_id, $user_super_ids)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * 用户日志记录是否开启
+ *
+ * @return bool
+ */
+function user_log_switch()
+{
+    $system = SystemSetting::info();
+    if ($system['log_switch']) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * 系统超管用户记录隐藏条件
+ * 
+ * @param string $user_id_field 用户id字段
+ *
+ * @return array
+ */
+function user_hide_where($user_id_field = 'user_id')
+{
+    $super_hide = Config::get('admin.super_hide', false);
+    if ($super_hide) {
+        $user_id = user_id();
+        if (!user_is_super($user_id)) {
+            $user_super_ids = user_super_ids();
+            if ($user_super_ids) {
+                $where = [$user_id_field, 'not in', $user_super_ids];
+            }
+        }
+    }
+    return $where ?? [];
+}
+
+/**
+ * 接口token获取
+ *
+ * @return string
+ */
+function api_token()
+{
+    $setting = Config::get('api');
+    if ($setting['token_type'] == 'header') {
+        $api_token = Request::header($setting['token_name'], '');
+    } else {
+        $api_token = Request::param($setting['token_name'], '');
+    }
+
+    if (empty($api_token)) {
+        $api_token = Request::param($setting['token_name'], '');
+        if (empty($api_token)) {
+            $api_token = Request::header($setting['token_name'], '');
+        }
+    }
+
+    return $api_token;
+}
+
+/**
+ * 接口token验证
+ *
+ * @param string $api_token 接口token
+ *
+ * @return Exception
+ */
+function api_token_verify($api_token = '')
+{
+    if (empty($api_token)) {
+        $api_token = api_token();
+    }
+
+    MemberTokenService::verify($api_token);
+}
+
+/**
+ * 会员id获取
+ *
+ * @return int
+ */
+function member_id()
+{
+    $api_token = api_token();
+
+    return MemberTokenService::memberId($api_token);
+}
+
+/**
+ * 会员日志是否开启
+ *
+ * @return bool
+ */
+function member_log_switch()
+{
+    $setting = MemberSetting::info();
+    if ($setting['log_switch']) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**

@@ -70,10 +70,10 @@ class TagValidate extends Validate
     // 自定义验证规则：标签下是否存在会员
     protected function checkMember($value, $rule, $data = [])
     {
-        $info = AttributesModel::field('tag_id')->where('tag_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '标签下存在会员，请在[会员]中解除后再删除：' . $info['tag_id'];
-        }
+        // $info = AttributesModel::field('tag_id')->where('tag_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '标签下存在会员，请在[会员]中解除后再删除：' . $info['tag_id'];
+        // }
 
         return true;
     }

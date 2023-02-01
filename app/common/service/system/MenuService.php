@@ -23,6 +23,33 @@ use app\common\model\system\RoleMenusModel;
 class MenuService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'menu_id/d'    => 0,
+        'menu_pid/d'   => 0,
+        'menu_type/d'  => SettingService::MENU_TYPE_CATALOGUE,
+        'meta_icon/s'  => '',
+        'menu_name/s'  => '',
+        'menu_url/s'   => '',
+        'path/s'       => '',
+        'component/s'  => '',
+        'name/s'       => '',
+        'meta_query/s' => '',
+        'hidden/d'     => 0,
+        'sort/d'       => 250,
+        'add_info/b'   => false,
+        'add_add/b'    => false,
+        'add_edit/b'   => false,
+        'add_dele/b'   => false,
+        'edit_info/b'  => false,
+        'edit_add/b'   => false,
+        'edit_edit/b'  => false,
+        'edit_dele/b'  => false,
+    ];
+
+    /**
      * 菜单列表
      *
      * @param string $type  tree树形，list列表
@@ -60,10 +87,10 @@ class MenuService
     /**
      * 菜单信息
      *
-     * @param int|string $id   菜单id/url
+     * @param int|string $id   菜单id、url
      * @param bool       $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id = '', $exce = true)
     {
@@ -103,7 +130,7 @@ class MenuService
      *
      * @param array $param 菜单信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
@@ -188,7 +215,7 @@ class MenuService
      * @param int   $id    菜单id
      * @param array $param 菜单信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($id, $param)
     {
@@ -303,7 +330,7 @@ class MenuService
      * @param array $ids  菜单id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {
@@ -333,7 +360,7 @@ class MenuService
      * @param array $ids   菜单id
      * @param array $param 菜单信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function update($ids, $param = [])
     {

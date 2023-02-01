@@ -20,6 +20,17 @@ use app\common\model\content\AttributesModel;
 class TagService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'tag_id/d'   => 0,
+        'tag_name/s' => '',
+        'tag_desc/s' => '',
+        'sort/d'     => 250
+    ];
+
+    /**
      * 内容标签列表
      *
      * @param array  $where 条件
@@ -58,7 +69,8 @@ class TagService
      *
      * @param int  $id   标签id
      * @param bool $exce 不存在是否抛出异常
-     * @return array
+     * 
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -86,17 +98,20 @@ class TagService
      *
      * @param array $param 标签信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new TagModel();
         $pk = $model->getPk();
 
+        unset($param[$pk]);
+
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
+        $model->save($param);
+        $id = $model->$pk;
         if (empty($id)) {
             exception();
         }
@@ -109,31 +124,31 @@ class TagService
     /**
      * 内容标签修改
      *
-     * @param int|array $ids    标签id
-     * @param array     $update 标签信息
+     * @param int|array $ids   标签id
+     * @param array     $param 标签信息
      * 
-     * @return array
+     * @return array|Exception
      */
-    public static function edit($ids, $update = [])
+    public static function edit($ids, $param = [])
     {
         $model = new TagModel();
         $pk = $model->getPk();
 
-        unset($update[$pk], $update['ids']);
+        unset($param[$pk], $param['ids']);
 
-        $update['update_uid']  = user_id();
-        $update['update_time'] = datetime();
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $update['ids'] = $ids;
+        $param['ids'] = $ids;
 
         TagCache::del($ids);
 
-        return $update;
+        return $param;
     }
 
     /**
@@ -142,7 +157,7 @@ class TagService
      * @param array $ids  内容标签id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

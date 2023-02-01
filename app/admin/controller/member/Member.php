@@ -95,22 +95,10 @@ class Member extends BaseController
      */
     public function add()
     {
-        $param['avatar_id']   = $this->request->param('avatar_id/d', 0);
-        $param['nickname']    = $this->request->param('nickname/s', '');
-        $param['username']    = $this->request->param('username/s', '');
-        $param['password']    = $this->request->param('password/s', '');
-        $param['phone']       = $this->request->param('phone/s', '');
-        $param['email']       = $this->request->param('email/s', '');
-        $param['name']        = $this->request->param('name/s', '');
-        $param['gender']      = $this->request->param('gender/d', 0);
-        $param['region_id']   = $this->request->param('region_id/d', 0);
-        $param['remark']      = $this->request->param('remark/s', '');
-        $param['sort']        = $this->request->param('sort/d', 250);
-        $param['tag_ids']     = $this->request->param('tag_ids/a', []);
-        $param['group_ids']   = $this->request->param('group_ids/a', []);
+        $param = $this->params(MemberService::$edit_field);
+        $param['password']    = $this->request->param('password');
         $param['reg_channel'] = SettingService::REG_CHANNEL_ADMIN;
         $param['reg_type']    = SettingService::REG_TYPE_USERNAME;
-        $param['create_uid']  = user_id();
 
         validate(MemberValidate::class)->scene('add')->check($param);
 
@@ -128,20 +116,7 @@ class Member extends BaseController
      */
     public function edit()
     {
-        $param['member_id']  = $this->request->param('member_id/d', 0);
-        $param['avatar_id']  = $this->request->param('avatar_id/d', 0);
-        $param['nickname']   = $this->request->param('nickname/s', '');
-        $param['username']   = $this->request->param('username/s', '');
-        $param['phone']      = $this->request->param('phone/s', '');
-        $param['email']      = $this->request->param('email/s', '');
-        $param['name']       = $this->request->param('name/s', '');
-        $param['gender']     = $this->request->param('gender/d', 0);
-        $param['region_id']  = $this->request->param('region_id/d', 0);
-        $param['remark']     = $this->request->param('remark/s', '');
-        $param['sort']       = $this->request->param('sort/d', 250);
-        $param['tag_ids']    = $this->request->param('tag_ids/a', []);
-        $param['group_ids']  = $this->request->param('group_ids/a', []);
-        $param['update_uid'] = user_id();
+        $param = $this->params(MemberService::$edit_field);
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
@@ -295,9 +270,8 @@ class Member extends BaseController
                     'phone'       => $v['手机'] ?? '',
                     'email'       => $v['邮箱'] ?? '',
                     'password'    => $v['密码'] ?? '',
-                    'reg_channel' => 6,
-                    'reg_type'    => 6,
-                    'create_uid'  => user_id(),
+                    'reg_channel' => SettingService::REG_CHANNEL_ADMIN,
+                    'reg_type'    => SettingService::REG_TYPE_USERNAME,
                 ];
                 validate(MemberValidate::class)->scene('add')->check($add);
                 MemberService::add($add);

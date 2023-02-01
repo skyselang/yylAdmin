@@ -86,16 +86,16 @@ class FileValidate extends Validate
     // 自定义验证规则：文件是否存在标签或分组
     protected function checkTagGroup($value, $rule, $data = [])
     {
-        $info = TagsModel::field('file_id')->where('file_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '文件存在标签，请解除后再删除：' . $info['file_id'];
-        }
+        // $where = where_delete([['file_id', 'in', $data['ids']], ['group_id', '>', 0]]);
+        // $info = FileModel::field('file_id')->where($where)->find();
+        // if ($info) {
+        //     return '文件存在分组，请解除后再删除：' . $info['file_id'];
+        // }
 
-        $where = where_delete([['file_id', 'in', $data['ids']], ['group_id', '>', 0]]);
-        $info = FileModel::field('file_id')->where($where)->find();
-        if ($info) {
-            return '文件存在分组，请解除后再删除：' . $info['file_id'];
-        }
+        // $info = TagsModel::field('file_id')->where('file_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '文件存在标签，请解除后再删除：' . $info['file_id'];
+        // }
 
         return true;
     }

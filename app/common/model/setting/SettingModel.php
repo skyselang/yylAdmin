@@ -36,7 +36,7 @@ class SettingModel extends Model
     // 获取自定义设置对象
     public function getDiyConObjAttr($value, $data)
     {
-        $diy_config = unserialize($data['diy_config']);
+        $diy_config = is_array($data['diy_config']) ? $data['diy_config'] : unserialize($data['diy_config']);
         foreach ($diy_config as $diy) {
             $diy_con_obj[$diy['config_key']] = $diy['config_val'];
         }

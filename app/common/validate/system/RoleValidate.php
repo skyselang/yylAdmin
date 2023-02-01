@@ -73,15 +73,15 @@ class RoleValidate extends Validate
     // 自定义验证规则：角色是否存在菜单或用户
     protected function checkMenuUser($value, $rule, $data = [])
     {
-        $menu = RoleMenusModel::where('role_id', 'in', $data['ids'])->find();
-        if ($menu) {
-            return '角色下存在菜单，请在[菜单]或[修改]中解除后再删除：' . $menu['role_id'];
-        }
+        // $menu = RoleMenusModel::where('role_id', 'in', $data['ids'])->find();
+        // if ($menu) {
+        //     return '角色下存在菜单，请在[菜单]或[修改]中解除后再删除：' . $menu['role_id'];
+        // }
 
-        $user = UserAttributesModel::where('role_id', 'in', $data['ids'])->find();
-        if ($user) {
-            return '角色下存在用户，请在[用户]中解除后再删除：' . $user['role_id'];
-        }
+        // $user = UserAttributesModel::where('role_id', 'in', $data['ids'])->find();
+        // if ($user) {
+        //     return '角色下存在用户，请在[用户]中解除后再删除：' . $user['role_id'];
+        // }
 
         return true;
     }

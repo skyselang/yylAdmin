@@ -70,17 +70,7 @@ class Region extends BaseController
      */
     public function add()
     {
-        $param['region_pid']       = $this->request->param('region_pid/d', 0);
-        $param['region_level']     = $this->request->param('region_level/d', 1);
-        $param['region_name']      = $this->request->param('region_name/s', '');
-        $param['region_pinyin']    = $this->request->param('region_pinyin/s', '');
-        $param['region_jianpin']   = $this->request->param('region_jianpin/s', '');
-        $param['region_initials']  = $this->request->param('region_initials/s', '');
-        $param['region_citycode']  = $this->request->param('region_citycode/s', '');
-        $param['region_zipcode']   = $this->request->param('region_zipcode/s', '');
-        $param['region_longitude'] = $this->request->param('region_longitude/s', '');
-        $param['region_latitude']  = $this->request->param('region_latitude/s', '');
-        $param['sort']             = $this->request->param('sort/d', 2250);
+        $param = $this->params(RegionService::$edit_field);
 
         validate(RegionValidate::class)->scene('add')->check($param);
 
@@ -96,18 +86,7 @@ class Region extends BaseController
      */
     public function edit()
     {
-        $param['region_id']        = $this->request->param('region_id/d', 0);
-        $param['region_pid']       = $this->request->param('region_pid/d', 0);
-        $param['region_level']     = $this->request->param('region_level/d', 1);
-        $param['region_name']      = $this->request->param('region_name/s', '');
-        $param['region_pinyin']    = $this->request->param('region_pinyin/s', '');
-        $param['region_jianpin']   = $this->request->param('region_jianpin/s', '');
-        $param['region_initials']  = $this->request->param('region_initials/s', '');
-        $param['region_citycode']  = $this->request->param('region_citycode/s', '');
-        $param['region_zipcode']   = $this->request->param('region_zipcode/s', '');
-        $param['region_longitude'] = $this->request->param('region_longitude/s', '');
-        $param['region_latitude']  = $this->request->param('region_latitude/s', '');
-        $param['sort']             = $this->request->param('sort/d', 2250);
+        $param = $this->params(RegionService::$edit_field);
 
         validate(RegionValidate::class)->scene('edit')->check($param);
 

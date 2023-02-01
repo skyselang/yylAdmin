@@ -11,8 +11,8 @@ namespace app\admin\controller\member;
 
 use app\common\controller\BaseController;
 use app\common\validate\member\LogValidate;
-use app\common\service\member\ApiService;
 use app\common\service\member\LogService;
+use app\common\service\member\ApiService;
 use hg\apidoc\annotation as Apidoc;
 
 /**

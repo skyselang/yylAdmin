@@ -71,18 +71,18 @@ class GroupValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分组是否存在接口/会员
+    // 自定义验证规则：分组是否存在接口或会员
     protected function checkApiMember($value, $rule, $data = [])
     {
-        $info = GroupApisModel::where('group_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '分组下存在接口，请在[接口]或[修改]中解除后再删除：' . $info['group_id'];
-        }
+        // $info = GroupApisModel::where('group_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '分组下存在接口，请在[接口]或[修改]中解除后再删除：' . $info['group_id'];
+        // }
 
-        $info = AttributesModel::where('group_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '分组下存在会员，请在[会员]中解除后再删除：' . $info['group_id'];
-        }
+        // $info = AttributesModel::where('group_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '分组下存在会员，请在[会员]中解除后再删除：' . $info['group_id'];
+        // }
 
         return true;
     }

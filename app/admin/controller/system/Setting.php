@@ -29,7 +29,7 @@ class Setting extends BaseController
      */
     public function info()
     {
-        return SettingService::info(['create_uid' => user_id()]);
+        return SettingService::info();
     }
 
     /**

@@ -148,4 +148,38 @@ abstract class BaseController
         }
         return $order;
     }
+
+    /**
+     * 参数字段
+     *
+     * @param array $fields 字段，eg：['field1','field2'=>0,'field3/b'=>false]
+     *
+     * @return array
+     */
+    protected function params($fields = [])
+    {
+        $params = [];
+        foreach ($fields as $key => $val) {
+            $name = '';
+            $type = '';
+            $default = null;
+
+            if (is_numeric($key)) {
+                $name = $val;
+            } else {
+                $name = $key;
+                $default = $val;
+            }
+
+            if (strpos($name, '/')) {
+                [$name, $type] = explode('/', $name);
+            }
+
+            if ($name) {
+                $params[$name] = $this->request->param($name . '/' . $type, $default);
+            }
+        }
+
+        return $params;
+    }
 }

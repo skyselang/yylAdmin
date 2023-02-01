@@ -28,7 +28,7 @@ class Setting extends BaseController
      */
     public function info()
     {
-        $data['setting'] = SettingService::info(['create_uid' => user_id()]);
+        $data['setting'] = SettingService::info();
         $data['storage'] = SettingService::storages();
 
         return success($data);

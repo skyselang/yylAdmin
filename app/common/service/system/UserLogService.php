@@ -66,7 +66,7 @@ class UserLogService
      * @param int  $id   日志id
      * @param bool $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -145,7 +145,7 @@ class UserLogService
      * @param array $ids   用户id
      * @param array $param 日志信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -154,9 +154,11 @@ class UserLogService
 
         unset($param[$pk], $param['ids']);
 
-        $param['update_uid']    = user_id();
-        $param['update_time']   = datetime();
-        $param['request_param'] = serialize($param['request_param']);
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
+        if (isset($param['request_param'])) {
+            $param['request_param'] = serialize($param['request_param']);
+        }
 
         $res = $model->where($pk, 'in', $ids)->update($param);
         if (empty($res)) {
@@ -176,7 +178,7 @@ class UserLogService
      * @param array $ids  日志id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {
@@ -220,5 +222,29 @@ class UserLogService
         $data['count'] = $count;
 
         return $data;
+    }
+
+    /**
+     * 用户日志清除
+     * 
+     * @return void
+     */
+    public static function clearLog()
+    {
+        $setting = SettingService::info();
+        if ($setting['log_save_time']) {
+            $time = date('H');
+            if ($time >= 1 && $time <= 8) {
+                $key = 'clear';
+                $val = UserLogCache::get($key);
+                if (empty($val)) {
+                    $days = $setting['log_save_time'];
+                    $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
+                    $where = [['create_time', '<', $date]];
+                    UserLogCache::set($key, $days, 1800);
+                    UserLogService::clear($where);
+                }
+            }
+        }
     }
 }

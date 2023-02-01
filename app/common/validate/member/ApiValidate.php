@@ -118,10 +118,10 @@ class ApiValidate extends Validate
     // 自定义验证规则：接口是否存在分组
     protected function checkGroup($value, $rule, $data = [])
     {
-        $info = GroupApisModel::field('api_id')->where('api_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '接口存在分组，请在[分组]中解除后再删除：' . $info['api_id'];
-        }
+        // $info = GroupApisModel::field('api_id')->where('api_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '接口存在分组，请在[分组]中解除后再删除：' . $info['api_id'];
+        // }
 
         return true;
     }

@@ -25,6 +25,21 @@ use hg\apidoc\annotation as Apidoc;
 class UserService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'user_id/d'   => 0,
+        'avatar_id/d' => 0,
+        'nickname/s'  => '',
+        'username/s'  => '',
+        'phone/s'     => '',
+        'email/s'     => '',
+        'remark/s'    => '',
+        'sort/d'      => 250,
+    ];
+
+    /**
      * 用户列表
      *
      * @param array  $where 条件
@@ -94,7 +109,7 @@ class UserService
      * @param bool $exce 不存在是否抛出异常
      * @param bool $role 是否返回角色信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true, $role = false)
     {
@@ -158,7 +173,7 @@ class UserService
             $user_menu_ids = $info['menu_ids'] ?? [];
             $role_menu_ids = RoleService::menu_ids($info['role_ids'], where_disdel());
 
-            $menu_list = MenuService::list('list', [['is_delete', '=', 0]], [], 'menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth');
+            $menu_list = MenuService::list('list', [where_delete()], [], 'menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth');
             foreach ($menu_list as &$val) {
                 $val['is_check'] = 0;
                 $val['is_role'] = 0;
@@ -184,7 +199,7 @@ class UserService
      *
      * @param array $param 用户信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
@@ -195,7 +210,6 @@ class UserService
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
-
         // 密码
         if (isset($param['password'])) {
             $param['password'] = password_hash($param['password'], PASSWORD_BCRYPT);
@@ -207,9 +221,17 @@ class UserService
             // 添加
             $model->save($param);
             // 添加部门
-            $model->depts()->saveAll($param['dept_ids']);
+            if (isset($param['dept_ids'])) {
+                $model->depts()->saveAll($param['dept_ids']);
+            }
             // 添加职位
-            $model->posts()->saveAll($param['post_ids']);
+            if (isset($param['post_ids'])) {
+                $model->posts()->saveAll($param['post_ids']);
+            }
+            // 添加角色
+            if (isset($param['role_ids'])) {
+                $model->roles()->saveAll($param['role_ids']);
+            }
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
@@ -233,7 +255,7 @@ class UserService
      * @param int|array $ids   用户id
      * @param array     $param 用户信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -308,7 +330,7 @@ class UserService
      * @param int|array $ids  用户id
      * @param bool      $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {
@@ -360,7 +382,7 @@ class UserService
      *
      * @param array $param 登录信息
      * @Apidoc\Returned("AdminToken", type="string", require=true, desc="AdminToken")
-     * @return array
+     * @return array|Exception
      */
     public static function login($param)
     {

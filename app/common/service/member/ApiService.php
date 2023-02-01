@@ -21,6 +21,18 @@ use app\common\model\member\GroupApisModel;
 class ApiService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'api_id/d'   => 0,
+        'api_pid/d'  => 0,
+        'api_name/s' => '',
+        'api_url/s'  => '',
+        'sort/d'     => 250
+    ];
+
+    /**
      * 会员接口列表
      *
      * @param string $type  tree树形，list列表
@@ -58,10 +70,10 @@ class ApiService
     /**
      * 会员接口信息
      *
-     * @param int  $id   接口id
-     * @param bool $exce 不存在是否抛出异常
+     * @param int|string $id   接口id、url
+     * @param bool       $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id = '', $exce = true)
     {
@@ -101,12 +113,14 @@ class ApiService
      *
      * @param array $param 接口信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new ApiModel();
         $pk = $model->getPk();
+
+        unset($param[$pk]);
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
@@ -130,7 +144,7 @@ class ApiService
      * @param int|array $ids   接口id
      * @param array     $param 接口信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -160,7 +174,7 @@ class ApiService
      * @param array $ids  接口id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

@@ -67,7 +67,7 @@ class SmsUtils
             // 可用的网关配置
             'gateways' => [
                 'errorlog' => [
-                    'file' => runtime_path() . '/easysms/' . date('Ymd') . 'easysms.log',
+                    'file' => runtime_path() . '/easysms/' . date('Ym') . '/' . date('Ymd') . 'easysms.log',
                 ],
             ]
         ];

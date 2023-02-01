@@ -229,20 +229,20 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否已存在部门或职位或角色
     protected function checkDeptPostRole($value, $rule, $data = [])
     {
-        $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('role_id', '>', 0)->find();
-        if ($info) {
-            return '用户存在角色，请在[角色]中解除后再删除：' . $info['user_id'];
-        }
+        // $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('role_id', '>', 0)->find();
+        // if ($info) {
+        //     return '用户存在角色，请在[角色]中解除后再删除：' . $info['user_id'];
+        // }
 
-        $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('dept_id', '>', 0)->find();
-        if ($info) {
-            return '用户存在部门，请在[修改]中解除后再删除：' . $info['user_id'];
-        }
+        // $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('dept_id', '>', 0)->find();
+        // if ($info) {
+        //     return '用户存在部门，请在[修改]中解除后再删除：' . $info['user_id'];
+        // }
 
-        $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('post_id', '>', 0)->find();
-        if ($info) {
-            return '用户存在职位，请在[修改]中解除后再删除：' . $info['user_id'];
-        }
+        // $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('post_id', '>', 0)->find();
+        // if ($info) {
+        //     return '用户存在职位，请在[修改]中解除后再删除：' . $info['user_id'];
+        // }
 
         return true;
     }

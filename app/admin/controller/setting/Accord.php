@@ -66,11 +66,8 @@ class Accord extends BaseController
      */
     public function add()
     {
-        $param['unique']  = $this->request->param('unique/s', '');
-        $param['name']    = $this->request->param('name/s', '');
-        $param['content'] = $this->request->param('content/s', '');
-        $param['sort']    = $this->request->param('sort/d', 250);
-
+        $param = $this->params(AccordService::$edit_field);
+        
         validate(AccordValidate::class)->scene('add')->check($param);
 
         $data = AccordService::add($param);
@@ -85,11 +82,7 @@ class Accord extends BaseController
      */
     public function edit()
     {
-        $param['accord_id'] = $this->request->param('accord_id/d', 0);
-        $param['unique']    = $this->request->param('unique/s', '');
-        $param['name']      = $this->request->param('name/s', '');
-        $param['content']   = $this->request->param('content/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
+        $param = $this->params(AccordService::$edit_field);
 
         validate(AccordValidate::class)->scene('edit')->check($param);
 

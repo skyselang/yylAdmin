@@ -120,10 +120,10 @@ class CategoryValidate extends Validate
     // 自定义验证规则：分类下是否存在内容
     protected function checkContent($value, $rule, $data = [])
     {
-        $info = AttributesModel::where('category_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '分类下存在内容，请在[内容]中解除后再删除：' . $info['category_id'];
-        }
+        // $info = AttributesModel::where('category_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '分类下存在内容，请在[内容]中解除后再删除：' . $info['category_id'];
+        // }
 
         return true;
     }

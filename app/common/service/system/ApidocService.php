@@ -24,14 +24,15 @@ class ApidocService
      */
     public static function apidoc()
     {
+        $user_id   = user_id();
         $system    = SettingService::info();
-        $user      = UserService::info(user_id());
-        $token     = $user[$system['token_name']];
+        $user      = UserService::info($user_id, false);
+        $token     = $user[$system['token_name']] ?? '';
         $token_sub = substr($token, 0, 16) . '...';
 
         $data['apidoc_url'] = server_url() . '/apidoc';
         $data['apidoc_pwd'] = config('apidoc.auth.password');
-        $data['user_id']    = $user['user_id'];
+        $data['user_id']    = $user_id;
         $data['token']      = $token;
         $data['token_sub']  = $token_sub;
 

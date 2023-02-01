@@ -21,8 +21,8 @@ class RegionValidate extends Validate
     protected $rule = [
         'ids'         => ['require', 'array'],
         'region_id'   => ['require'],
-        'region_pid'  => ['checkRegionPid'],
-        'region_name' => ['require', 'checkRegionExist'],
+        'region_pid'  => ['checkPid'],
+        'region_name' => ['require', 'checkExisted'],
     ];
 
     // 错误信息
@@ -46,11 +46,11 @@ class RegionValidate extends Validate
     protected function sceneDele()
     {
         return $this->only(['ids'])
-            ->append('ids', 'checkRegionChild');
+            ->append('ids', 'checkChild');
     }
 
     // 自定义验证规则：地区上级
-    protected function checkRegionPid($value, $rule, $data = [])
+    protected function checkPid($value, $rule, $data = [])
     {
         $ids = $data['ids'] ?? [];
         if ($data['region_id'] ?? 0) {
@@ -67,7 +67,7 @@ class RegionValidate extends Validate
     }
 
     // 自定义验证规则：地区是否已存在
-    protected function checkRegionExist($value, $rule, $data = [])
+    protected function checkExisted($value, $rule, $data = [])
     {
         $model = new RegionModel();
         $pk = $model->getPk();
@@ -87,9 +87,10 @@ class RegionValidate extends Validate
     }
 
     // 自定义验证规则：地区是否存在下级地区
-    protected function checkRegionChild($value, $rule, $data = [])
+    protected function checkChild($value, $rule, $data = [])
     {
-        $info = RegionModel::field('region_pid')->where(where_delete(['region_pid', 'in', $data['ids']]))->find();
+        $where = where_delete(['region_pid', 'in', $data['ids']]);
+        $info = RegionModel::field('region_pid')->where($where)->find();
         if ($info) {
             return '地区存在下级地区，无法删除：' . $info['region_pid'];
         }

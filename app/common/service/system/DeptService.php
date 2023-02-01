@@ -20,6 +20,23 @@ use app\common\model\system\UserAttributesModel;
 class DeptService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'dept_id/d'    => 0,
+        'dept_pid/d'   => 0,
+        'dept_name/s'  => '',
+        'dept_abbr/s'  => '',
+        'dept_desc/s'  => '',
+        'dept_tel/s'   => '',
+        'dept_fax/s'   => '',
+        'dept_email/s' => '',
+        'dept_addr/s'  => '',
+        'sort/d'       => 250,
+    ];
+
+    /**
      * 部门列表
      * 
      * @param string $type  tree树形，list列表
@@ -67,9 +84,8 @@ class DeptService
         $info = DeptCache::get($id);
         if (empty($info)) {
             $model = new DeptModel();
-            $pk = $model->getPk();
 
-            $info = $model->where($pk, $id)->find();
+            $info = $model->find($id);
             if (empty($info)) {
                 if ($exce) {
                     exception('部门不存在：' . $id);
@@ -96,10 +112,13 @@ class DeptService
         $model = new DeptModel();
         $pk = $model->getPk();
 
+        unset($param[$pk]);
+
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
+        $model->save($param);
+        $id = $model->$pk;
         if (empty($id)) {
             exception();
         }

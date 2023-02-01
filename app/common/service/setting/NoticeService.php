@@ -18,6 +18,22 @@ use app\common\model\setting\NoticeModel;
 class NoticeService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'notice_id/d'   => 0,
+        'type/d'        => 0,
+        'title/s'       => '',
+        'title_color/s' => '#606266',
+        'start_time/s'  => '',
+        'end_time/s'    => '',
+        'intro/s'       => '',
+        'content/s'     => '',
+        'sort/d'        => 250
+    ];
+
+    /**
      * 通告列表
      *
      * @param array  $where 条件
@@ -57,7 +73,7 @@ class NoticeService
      * @param int  $id   通告id
      * @param bool $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -65,14 +81,14 @@ class NoticeService
         if (empty($info)) {
             $model = new NoticeModel();
 
-            $info = $model->append(['type_name'])->find($id);
+            $info = $model->find($id);
             if (empty($info)) {
                 if ($exce) {
                     exception('通告不存在：' . $id);
                 }
                 return [];
             }
-            $info = $info->toArray();
+            $info = $info->append(['type_name'])->toArray();
 
             NoticeCache::set($id, $info);
         }
@@ -85,17 +101,20 @@ class NoticeService
      *
      * @param array $param 通告信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new NoticeModel();
         $pk = $model->getPk();
 
+        unset($param[$pk]);
+
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
+        $model->save($param);
+        $id = $model->$pk;
         if (empty($id)) {
             exception();
         }
@@ -111,7 +130,7 @@ class NoticeService
      * @param int|array $ids   通告id
      * @param array     $param 通告信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -141,7 +160,7 @@ class NoticeService
      * @param array $ids  通告id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

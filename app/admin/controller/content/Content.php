@@ -84,22 +84,8 @@ class Content extends BaseController
      */
     public function add()
     {
-        $param['category_ids'] = $this->request->param('category_ids/a', []);
-        $param['tag_ids']      = $this->request->param('tag_ids/a', []);
-        $param['cover_id']     = $this->request->param('cover_id/d', 0);
-        $param['name']         = $this->request->param('name/s', '');
-        $param['unique']       = $this->request->param('unique/s', '');
-        $param['title']        = $this->request->param('title/s', '');
-        $param['keywords']     = $this->request->param('keywords/s', '');
-        $param['description']  = $this->request->param('description/s', '');
-        $param['content']      = $this->request->param('content/s', '');
-        $param['author']       = $this->request->param('author/s', '');
-        $param['url']          = $this->request->param('url/s', '');
-        $param['sort']         = $this->request->param('sort/d', 250);
-        $param['images']       = $this->request->param('images/a', []);
-        $param['videos']       = $this->request->param('videos/a', []);
-        $param['annexs']       = $this->request->param('annexs/a', []);
-
+        $param = $this->params(ContentService::$edit_field);
+        
         validate(ContentValidate::class)->scene('add')->check($param);
 
         $data = ContentService::add($param);
@@ -119,22 +105,7 @@ class Content extends BaseController
      */
     public function edit()
     {
-        $param['content_id']   = $this->request->param('content_id/d', 0);
-        $param['category_ids'] = $this->request->param('category_ids/a', []);
-        $param['tag_ids']      = $this->request->param('tag_ids/a', []);
-        $param['cover_id']     = $this->request->param('cover_id/d', 0);
-        $param['name']         = $this->request->param('name/s', '');
-        $param['unique']       = $this->request->param('unique/s', '');
-        $param['title']        = $this->request->param('title/s', '');
-        $param['keywords']     = $this->request->param('keywords/s', '');
-        $param['description']  = $this->request->param('description/s', '');
-        $param['content']      = $this->request->param('content/s', '');
-        $param['author']       = $this->request->param('author/s', '');
-        $param['url']          = $this->request->param('url/s', '');
-        $param['sort']         = $this->request->param('sort/d', 250);
-        $param['images']       = $this->request->param('images/a', []);
-        $param['videos']       = $this->request->param('videos/a', []);
-        $param['annexs']       = $this->request->param('annexs/a', []);
+        $param = $this->params(ContentService::$edit_field);
 
         validate(ContentValidate::class)->scene('edit')->check($param);
 

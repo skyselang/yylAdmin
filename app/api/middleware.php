@@ -13,8 +13,8 @@ return [
     \app\api\middleware\ApiVerifyMiddleware::class,
     // 接口Token中间件
     \app\api\middleware\ApiTokenMiddleware::class,
-    // 日志记录中间件
-    \app\api\middleware\MemberLogMiddleware::class,
     // 接口速率中间件
     \app\api\middleware\ApiRateMiddleware::class,
+    // 日志记录中间件
+    \app\api\middleware\MemberLogMiddleware::class,
 ];

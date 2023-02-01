@@ -107,10 +107,10 @@ class DeptValidate extends Validate
     // 自定义验证规则：部门是否存在用户
     protected function checkUser($value, $rule, $data = [])
     {
-        $info = UserAttributesModel::where('dept_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '部门存在用户，请在[用户]中解除后再删除：' . $info['dept_id'];
-        }
+        // $info = UserAttributesModel::where('dept_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '部门存在用户，请在[用户]中解除后再删除：' . $info['dept_id'];
+        // }
 
         return true;
     }

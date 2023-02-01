@@ -46,7 +46,7 @@ class GroupValidate extends Validate
     protected function sceneDele()
     {
         return $this->only(['ids'])
-            ->append('ids', 'checkGroupFile');
+            ->append('ids', 'checkFile');
     }
 
     // 自定义验证规则：分组是否已存在
@@ -68,13 +68,13 @@ class GroupValidate extends Validate
     }
 
     // 自定义验证规则：分组下是否存在文件
-    protected function checkGroupFile($value, $rule, $data = [])
+    protected function checkFile($value, $rule, $data = [])
     {
-        $where = where_delete(['group_id', 'in', $data['ids']]);
-        $info = FileModel::field('group_id')->where($where)->find();
-        if ($info) {
-            return '分组下存在文件，请在[文件]中解除后再删除：' . $info['group_id'];
-        }
+        // $where = where_delete(['group_id', 'in', $data['ids']]);
+        // $info = FileModel::field('group_id')->where($where)->find();
+        // if ($info) {
+        //     return '分组下存在文件，请在[文件]中解除后再删除：' . $info['group_id'];
+        // }
 
         return true;
     }

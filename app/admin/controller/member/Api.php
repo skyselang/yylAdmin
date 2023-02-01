@@ -64,11 +64,8 @@ class Api extends BaseController
      */
     public function add()
     {
-        $param['api_pid']  = $this->request->param('api_pid/d', 0);
-        $param['api_name'] = $this->request->param('api_name/s', '');
-        $param['api_url']  = $this->request->param('api_url/s', '');
-        $param['sort']     = $this->request->param('sort/d', 250);
-
+        $param = $this->params(ApiService::$edit_field);
+        
         validate(ApiValidate::class)->scene('add')->check($param);
 
         $data = ApiService::add($param);
@@ -83,11 +80,7 @@ class Api extends BaseController
      */
     public function edit()
     {
-        $param['api_id']   = $this->request->param('api_id/d', 0);
-        $param['api_pid']  = $this->request->param('api_pid/d', 0);
-        $param['api_name'] = $this->request->param('api_name/s', '');
-        $param['api_url']  = $this->request->param('api_url/s', '');
-        $param['sort']     = $this->request->param('sort/d', 250);
+        $param = $this->params(ApiService::$edit_field);
 
         validate(ApiValidate::class)->scene('edit')->check($param);
 

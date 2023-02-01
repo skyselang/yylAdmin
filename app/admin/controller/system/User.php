@@ -12,9 +12,9 @@ namespace app\admin\controller\system;
 use app\common\controller\BaseController;
 use app\common\validate\system\UserValidate;
 use app\common\service\system\UserService;
+use app\common\service\system\RoleService;
 use app\common\service\system\DeptService;
 use app\common\service\system\PostService;
-use app\common\service\system\RoleService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -75,14 +75,8 @@ class User extends BaseController
      */
     public function add()
     {
-        $param['avatar_id'] = $this->request->param('avatar_id/d', 0);
-        $param['nickname']  = $this->request->param('nickname/s', '');
-        $param['username']  = $this->request->param('username/s', '');
-        $param['password']  = $this->request->param('password/s', '');
-        $param['phone']     = $this->request->param('phone/s', '');
-        $param['email']     = $this->request->param('email/s', '');
-        $param['remark']    = $this->request->param('remark/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
+        $param = $this->params(UserService::$edit_field);
+        $param['password'] = $this->request->param('password');
 
         validate(UserValidate::class)->scene('add')->check($param);
 
@@ -98,14 +92,7 @@ class User extends BaseController
      */
     public function edit()
     {
-        $param['user_id']   = $this->request->param('user_id/d', 0);
-        $param['avatar_id'] = $this->request->param('avatar_id/d', 0);
-        $param['nickname']  = $this->request->param('nickname/s', '');
-        $param['username']  = $this->request->param('username/s', '');
-        $param['phone']     = $this->request->param('phone/s', '');
-        $param['email']     = $this->request->param('email/s', '');
-        $param['remark']    = $this->request->param('remark/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
+        $param = $this->params(UserService::$edit_field);
 
         validate(UserValidate::class)->scene('edit')->check($param);
 

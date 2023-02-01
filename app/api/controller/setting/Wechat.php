@@ -28,7 +28,7 @@ class Wechat extends BaseController
         $app = WechatService::offi();
 
         $app->server->push(function ($message) {
-            return '您好！欢迎使用 yylAdmin !' . $message;
+            return '您好！欢迎使用 yylAdmin !';
         });
 
         $response = $app->server->serve();

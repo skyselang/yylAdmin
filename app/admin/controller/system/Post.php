@@ -67,11 +67,7 @@ class Post extends BaseController
      */
     public function add()
     {
-        $param['post_pid']  = $this->request->param('post_pid/d', 0);
-        $param['post_name'] = $this->request->param('post_name/s', '');
-        $param['post_abbr'] = $this->request->param('post_abbr/s', '');
-        $param['post_desc'] = $this->request->param('post_desc/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
+        $param = $this->params(PostService::$edit_field);
 
         validate(PostValidate::class)->scene('add')->check($param);
 
@@ -87,12 +83,7 @@ class Post extends BaseController
      */
     public function edit()
     {
-        $param['post_id']   = $this->request->param('post_id/d', 0);
-        $param['post_pid']  = $this->request->param('post_pid/d', 0);
-        $param['post_name'] = $this->request->param('post_name/s', '');
-        $param['post_abbr'] = $this->request->param('post_abbr/s', '');
-        $param['post_desc'] = $this->request->param('post_desc/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
+        $param = $this->params(PostService::$edit_field);
 
         validate(PostValidate::class)->scene('edit')->check($param);
 

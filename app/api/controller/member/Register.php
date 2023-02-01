@@ -10,11 +10,11 @@
 namespace app\api\controller\member;
 
 use app\common\controller\BaseController;
+use app\common\validate\member\MemberValidate;
+use app\common\service\member\SettingService;
 use app\common\service\utils\SmsUtils;
 use app\common\service\utils\EmailUtils;
 use app\common\service\utils\CaptchaUtils;
-use app\common\validate\member\MemberValidate;
-use app\common\service\member\SettingService;
 use app\common\cache\utils\CaptchaSmsCache;
 use app\common\cache\utils\CaptchaEmailCache;
 use app\api\service\RegisterService;

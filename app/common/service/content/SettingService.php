@@ -18,18 +18,23 @@ use hg\apidoc\annotation as Apidoc;
  */
 class SettingService
 {
-    // 设置id
+    /**
+     * 设置id
+     * @var integer
+     */
     protected static $id = 1;
 
     /**
      * 设置信息
+     * 
      * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
      * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
      * @Apidoc\Returned("offi_url", type="string", desc="二维码链接")
      * @Apidoc\Returned("mini_url", type="string", desc="小程序码链接")
+     * 
      * @return array
      */
-    public static function info($param = [])
+    public static function info()
     {
         $id = self::$id;
 
@@ -42,7 +47,7 @@ class SettingService
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['diy_config']  = [];
-                $info['create_uid']  = $param['create_uid'] ?? 0;
+                $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
                 $info = $model->find($id);
@@ -60,7 +65,7 @@ class SettingService
      *
      * @param array $param 设置信息
      *
-     * @return array
+     * @return array|Exception
      */
     public static function edit($param)
     {

@@ -10,8 +10,8 @@
 namespace app\common\validate\member;
 
 use think\Validate;
-use app\common\model\member\MemberModel;
 use app\common\service\member\MemberService;
+use app\common\model\member\MemberModel;
 use app\common\model\member\AttributesModel;
 
 /**
@@ -320,15 +320,15 @@ class MemberValidate extends Validate
     // 自定义验证规则：会员是否存在标签或分组
     protected function checkTagGroup($value, $rule, $data = [])
     {
-        $info = AttributesModel::field('member_id')->where('member_id', 'in', $data['ids'])->where('tag_id', '>', 0)->find();
-        if ($info) {
-            return '会员存在标签，请在[标签]解除后再删除：' . $info['member_id'];
-        }
+        // $info = AttributesModel::field('member_id')->where('member_id', 'in', $data['ids'])->where('tag_id', '>', 0)->find();
+        // if ($info) {
+        //     return '会员存在标签，请在[标签]解除后再删除：' . $info['member_id'];
+        // }
 
-        $info = AttributesModel::field('member_id')->where('member_id', 'in', $data['ids'])->where('group_id', '>', 0)->find();
-        if ($info) {
-            return '会员存在分组，请在[分组]解除后再删除：' . $info['member_id'];
-        }
+        // $info = AttributesModel::field('member_id')->where('member_id', 'in', $data['ids'])->where('group_id', '>', 0)->find();
+        // if ($info) {
+        //     return '会员存在分组，请在[分组]解除后再删除：' . $info['member_id'];
+        // }
 
         return true;
     }

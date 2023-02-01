@@ -21,6 +21,29 @@ use hg\apidoc\annotation as Apidoc;
 class ContentService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'content_id/d'   => 0,
+        'category_ids/a' => [],
+        'tag_ids/a'      => [],
+        'cover_id/d'     => 0,
+        'name/s'         => '',
+        'unique/s'       => '',
+        'title/s'        => '',
+        'keywords/s'     => '',
+        'description/s'  => '',
+        'content/s'      => '',
+        'author/s'       => '',
+        'url/s'          => '',
+        'sort/d'         => 250,
+        'images/a'       => [],
+        'videos/a'       => [],
+        'annexs/a'       => [],
+    ];
+
+    /**
      * 内容列表
      *
      * @param array  $where 条件
@@ -70,8 +93,8 @@ class ContentService
     /**
      * 内容信息
      * 
-     * @param int  $id   内容id
-     * @param bool $exce 不存在是否抛出异常
+     * @param int|string $id   内容id、标识
+     * @param bool       $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
@@ -186,7 +209,6 @@ class ContentService
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
             if (isset($param['category_ids']) || isset($param['tag_ids']) || isset($param['images']) || isset($param['videos']) || isset($param['annexs'])) {
-
                 foreach ($ids as $id) {
                     $info = $model->append(['category_ids', 'tag_ids'])->find($id);
                     // 修改分类

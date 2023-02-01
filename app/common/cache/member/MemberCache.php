@@ -44,8 +44,13 @@ class MemberCache
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 86400)
+    public static function set($id, $info, $ttl = -1)
     {
+        if ($ttl === -1) {
+            $set = SettingService::info();
+            $ttl = $set['token_exp'] * 3600;
+        }
+        
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 

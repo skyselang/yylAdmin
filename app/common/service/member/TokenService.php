@@ -13,6 +13,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use app\common\cache\member\MemberCache;
 use app\common\service\member\SettingService;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 会员Token
@@ -62,12 +63,12 @@ class TokenService
      *
      * @param string $token token
      * 
-     * @return Exception
+     * @return void|Exception
      */
     public static function verify($token)
     {
         if (empty($token)) {
-            exception('请登录', 401);
+            exception('请登录', RetCodeUtils::LOGIN_INVALID);
         }
 
         $config = self::config();
@@ -77,24 +78,24 @@ class TokenService
             $decode = JWT::decode($token, new Key($key, 'HS256'));
             $member_id = $decode->data->member_id;
         } catch (\Exception $e) {
-            exception('账号登录状态已过期', 401);
+            exception('账号登录状态已过期', RetCodeUtils::LOGIN_INVALID);
         }
 
         $member = MemberCache::get($member_id ?? 0);
         if (empty($member)) {
-            exception('账号登录状态已失效', 401);
+            exception('账号登录状态已失效', RetCodeUtils::LOGIN_INVALID);
         } else {
             if (!$config['is_multi_login']) {
                 if ($token != $member[$config['token_name']]) {
-                    exception('账号已在另一处登录', 401);
+                    exception('账号已在另一处登录', RetCodeUtils::LOGIN_INVALID);
                 }
             }
 
             if ($member['is_disable'] == 1) {
-                exception('账号已被禁用', 401);
+                exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
             }
             if ($member['is_delete'] == 1) {
-                exception('账号已被注销', 401);
+                exception('账号已被注销', RetCodeUtils::LOGIN_INVALID);
             }
         }
     }

@@ -70,10 +70,10 @@ class TagValidate extends Validate
     // 自定义验证规则：标签下是否存在内容
     protected function checkContent($value, $rule, $data = [])
     {
-        $info = AttributesModel::where('tag_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '标签下存在内容，请在[内容]中解除后再删除：' . $info['tag_id'];
-        }
+        // $info = AttributesModel::where('tag_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '标签下存在内容，请在[内容]中解除后再删除：' . $info['tag_id'];
+        // }
 
         return true;
     }

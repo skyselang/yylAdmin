@@ -20,6 +20,18 @@ use app\common\model\member\AttributesModel;
 class GroupService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'group_id/d'   => 0,
+        'group_name/s' => '',
+        'group_desc/s' => '',
+        'sort/d'       => 250,
+        'api_ids/a'    => []
+    ];
+
+    /**
      * 会员分组列表
      *
      * @param array  $where 条件
@@ -68,7 +80,7 @@ class GroupService
      * @param int  $id   分组id
      * @param bool $exce 不存在是否抛出异常
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -96,7 +108,7 @@ class GroupService
      *
      * @param array $param 分组信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
@@ -138,7 +150,7 @@ class GroupService
      * @param int|array $ids   分组id
      * @param array     $param 分组信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function edit($ids, $param = [])
     {
@@ -193,7 +205,7 @@ class GroupService
      * @param array $ids  分组id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {

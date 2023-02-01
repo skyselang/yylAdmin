@@ -14,6 +14,7 @@ use think\Request;
 use think\Response;
 use app\common\cache\member\ApiRateCache;
 use app\common\service\member\SettingService;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 接口速率中间件
@@ -48,7 +49,7 @@ class ApiRateMiddleware
                             } else {
                                 ApiRateCache::inc($member_id, $api_url);
                             }
-                            exception('慢点，太快了！', 429);
+                            exception('慢点，太快了！', RetCodeUtils::FREQUENT_OPERATION);
                         } else {
                             ApiRateCache::inc($member_id, $api_url);
                         }

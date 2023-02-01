@@ -48,7 +48,7 @@ class PostValidate extends Validate
     protected function sceneDele()
     {
         return $this->only(['ids'])
-            ->append('ids', 'checkPostUser');
+            ->append('ids', 'checkUser');
     }
 
     // 自定义验证规则：职位上级
@@ -87,12 +87,12 @@ class PostValidate extends Validate
     }
 
     // 自定义验证规则：职位下是否存在用户
-    protected function checkPostUser($value, $rule, $data = [])
+    protected function checkUser($value, $rule, $data = [])
     {
-        $info = UserAttributesModel::where('post_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '职位下存在用户，请在[用户]中解除后再删除：' . $info['post_id'];
-        }
+        // $info = UserAttributesModel::where('post_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '职位下存在用户，请在[用户]中解除后再删除：' . $info['post_id'];
+        // }
 
         return true;
     }

@@ -15,6 +15,7 @@ use think\Response;
 use think\facade\Config;
 use app\common\cache\system\UserCache;
 use app\common\service\system\MenuService;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 接口校验中间件
@@ -39,7 +40,7 @@ class ApiVerifyMiddleware
             if ($debug) {
                 $msg .= '：' . $menu_url;
             }
-            exception($msg, 404);
+            exception($msg, RetCodeUtils::API_URL_ERROR);
         }
 
         // 菜单是否已禁用
@@ -48,7 +49,7 @@ class ApiVerifyMiddleware
             if ($debug) {
                 $msg .= '：' . $menu_url;
             }
-            exception($msg, 404);
+            exception($msg, RetCodeUtils::API_URL_ERROR);
         }
 
         // 菜单是否免权
@@ -57,18 +58,18 @@ class ApiVerifyMiddleware
 
             $user = UserCache::get($user_id);
             if (empty($user)) {
-                exception('登录已失效，请重新登录', 401);
+                exception('登录已失效，请重新登录', RetCodeUtils::LOGIN_INVALID);
             }
 
             // 用户是否超管
             if (!user_is_super($user_id)) {
                 if ($user['is_disable'] == 1) {
-                    exception('账号已禁用，请联系管理员', 401);
+                    exception('账号已禁用，请联系管理员', RetCodeUtils::LOGIN_INVALID);
                 }
 
                 if (!in_array($menu_url, $user['roles'])) {
                     $menu = MenuService::info($menu_url);
-                    exception('你没有权限操作：' . $menu['menu_name'], 403);
+                    exception('你没有权限操作：' . $menu['menu_name'], RetCodeUtils::NO_PERMISSION);
                 }
             }
         }

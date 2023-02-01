@@ -119,10 +119,10 @@ class MenuValidate extends Validate
     // 自定义验证规则：菜单是否存在角色
     protected function checkRole($value, $rule, $data = [])
     {
-        $info = RoleMenusModel::where('menu_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '菜单存在角色，请在[角色]中解除后再删除：' . $info['menu_id'];
-        }
+        // $info = RoleMenusModel::where('menu_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '菜单存在角色，请在[角色]中解除后再删除：' . $info['menu_id'];
+        // }
 
         return true;
     }

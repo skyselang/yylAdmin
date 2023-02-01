@@ -35,7 +35,7 @@ class StorageService
      *
      * @param array $file_info 文件信息
      *
-     * @return array
+     * @return array|Exception
      */
     public static function upload($file_info, $pk = 'file_id')
     {

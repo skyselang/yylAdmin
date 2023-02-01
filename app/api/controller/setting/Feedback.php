@@ -11,9 +11,9 @@ namespace app\api\controller\setting;
 
 use app\common\controller\BaseController;
 use app\common\validate\setting\FeedbackValidate;
-use app\common\cache\setting\FeedbackCache;
 use app\common\service\setting\FeedbackService;
 use app\common\service\setting\SettingService;
+use app\common\cache\setting\FeedbackCache;
 use hg\apidoc\annotation as Apidoc;
 
 /**

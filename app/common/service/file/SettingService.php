@@ -17,15 +17,20 @@ use app\common\model\file\SettingModel;
  */
 class SettingService
 {
-    // 设置id
+    /**
+     * 设置id
+     * @var integer
+     */
     private static $id = 1;
 
     /**
      * 设置信息
+     * 
+     * @param string $field 返回的字段
      *
      * @return array
      */
-    public static function info($param = [], $field = '')
+    public static function info($field = '')
     {
         $id = self::$id;
 
@@ -37,7 +42,7 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['create_uid']  = $param['create_uid'] ?? 0;
+                $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
                 $info = $model->find($id);
@@ -68,7 +73,7 @@ class SettingService
      *
      * @param array $param 设置信息
      *
-     * @return array
+     * @return array|Exception
      */
     public static function edit($param)
     {

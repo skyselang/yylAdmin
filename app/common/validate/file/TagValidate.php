@@ -70,10 +70,10 @@ class TagValidate extends Validate
     // 自定义验证规则：标签下是否存在文件
     protected function checkFile($value, $rule, $data = [])
     {
-        $info = TagsModel::where('tag_id', 'in', $data['ids'])->find();
-        if ($info) {
-            return '标签下存在文件，请在[文件]中解除后再删除：' . $info['tag_id'];
-        }
+        // $info = TagsModel::where('tag_id', 'in', $data['ids'])->find();
+        // if ($info) {
+        //     return '标签下存在文件，请在[文件]中解除后再删除：' . $info['tag_id'];
+        // }
 
         return true;
     }

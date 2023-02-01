@@ -64,22 +64,8 @@ class Menu extends BaseController
      */
     public function add()
     {
-        $param['menu_pid']   = $this->request->param('menu_pid/d', 0);
-        $param['menu_type']  = $this->request->param('menu_type/d', SettingService::MENU_TYPE_CATALOGUE);
-        $param['meta_icon']  = $this->request->param('meta_icon/s', '');
-        $param['menu_name']  = $this->request->param('menu_name/s', '');
-        $param['menu_url']   = $this->request->param('menu_url/s', '');
-        $param['path']       = $this->request->param('path/s', '');
-        $param['component']  = $this->request->param('component/s', '');
-        $param['name']       = $this->request->param('name/s', '');
-        $param['meta_query'] = $this->request->param('meta_query/s', '');
-        $param['hidden']     = $this->request->param('hidden/d', 0);
-        $param['sort']       = $this->request->param('sort/d', 250);
-        $param['add_info']   = $this->request->param('add_info/b', false);
-        $param['add_add']    = $this->request->param('add_add/b', false);
-        $param['add_edit']   = $this->request->param('add_edit/b', false);
-        $param['add_dele']   = $this->request->param('add_dele/b', false);
-
+        $param = $this->params(MenuService::$edit_field);
+        
         validate(MenuValidate::class)->scene('add')->check($param);
 
         $data = MenuService::add($param);
@@ -94,26 +80,7 @@ class Menu extends BaseController
      */
     public function edit()
     {
-        $param['menu_id']    = $this->request->param('menu_id/d', 0);
-        $param['menu_pid']   = $this->request->param('menu_pid/d', 0);
-        $param['menu_type']  = $this->request->param('menu_type/d', SettingService::MENU_TYPE_CATALOGUE);
-        $param['meta_icon']  = $this->request->param('meta_icon/s', '');
-        $param['menu_name']  = $this->request->param('menu_name/s', '');
-        $param['menu_url']   = $this->request->param('menu_url/s', '');
-        $param['path']       = $this->request->param('path/s', '');
-        $param['component']  = $this->request->param('component/s', '');
-        $param['name']       = $this->request->param('name/s', '');
-        $param['meta_query'] = $this->request->param('meta_query/s', '');
-        $param['hidden']     = $this->request->param('hidden/d', 0);
-        $param['sort']       = $this->request->param('sort/d', 250);
-        $param['add_info']   = $this->request->param('add_info/b', false);
-        $param['add_add']    = $this->request->param('add_add/b', false);
-        $param['add_edit']   = $this->request->param('add_edit/b', false);
-        $param['add_dele']   = $this->request->param('add_dele/b', false);
-        $param['edit_info']  = $this->request->param('edit_info/b', false);
-        $param['edit_add']   = $this->request->param('edit_add/b', false);
-        $param['edit_edit']  = $this->request->param('edit_edit/b', false);
-        $param['edit_dele']  = $this->request->param('edit_dele/b', false);
+        $param = $this->params(MenuService::$edit_field);
 
         validate(MenuValidate::class)->scene('edit')->check($param);
 

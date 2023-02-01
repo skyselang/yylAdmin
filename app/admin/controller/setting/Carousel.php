@@ -75,12 +75,7 @@ class Carousel extends BaseController
      */
     public function add()
     {
-        $param['file_id']   = $this->request->param('file_id/d', 0);
-        $param['file_type'] = $this->request->param('file_type/s', 'image');
-        $param['title']     = $this->request->param('title/s', '');
-        $param['link']      = $this->request->param('link/s', '');
-        $param['position']  = $this->request->param('position/s', '');
-        $param['sort']      = $this->request->param('sort/d', 250);
+        $param = $this->params(CarouselService::$edit_field);
 
         validate(CarouselValidate::class)->scene('add')->check($param);
 
@@ -96,13 +91,7 @@ class Carousel extends BaseController
      */
     public function edit()
     {
-        $param['carousel_id'] = $this->request->param('carousel_id/d', 0);
-        $param['file_id']     = $this->request->param('file_id/d', 0);
-        $param['file_type']   = $this->request->param('file_type/s', 'image');
-        $param['title']       = $this->request->param('title/s', '');
-        $param['link']        = $this->request->param('link/s', '');
-        $param['position']    = $this->request->param('position/s', '');
-        $param['sort']        = $this->request->param('sort/d', 250);
+        $param = $this->params(CarouselService::$edit_field);
 
         validate(CarouselValidate::class)->scene('edit')->check($param);
 
