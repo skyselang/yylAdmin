@@ -6,34 +6,26 @@
 // +----------------------------------------------------------------------
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
+declare(strict_types=1);
 
-namespace app\common\middleware;
+namespace app\listener\api;
 
-use Closure;
-use think\Request;
-use think\Response;
-use think\facade\Event;
+use app\common\service\member\LogService;
 
 /**
- * 日志清除中间件
+ * 会员日志事件
  */
-class LogClear
+class MemberLogListener
 {
     /**
-     * 处理请求
+     * 事件监听处理
      * 
-     * @param Request $request
-     * @param Closure $next
-     * @return Response
+     * @param mixed $event
+     * 
+     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($event)
     {
-        // 用户日志清除
-        Event::trigger('UserLog');
-
-        // 会员日志清除
-        Event::trigger('MemberLog');
-
-        return $next($request);
+        LogService::clearLog();
     }
 }

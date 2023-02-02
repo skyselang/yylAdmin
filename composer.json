@@ -38,7 +38,8 @@
         "overtrue/easy-sms": "^2.1",
         "upyun/sdk": "^3.5",
         "aws/aws-sdk-php": "^3.250",
-        "fastknife/ajcaptcha": "^1.2"
+        "fastknife/ajcaptcha": "^1.2",
+        "topthink/think-worker": "^3.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"
