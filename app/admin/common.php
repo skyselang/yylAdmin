@@ -11,8 +11,8 @@
 use think\facade\Config;
 use think\facade\Request;
 use app\common\service\admin\MenuService;
-use app\common\service\admin\SettingService;
 use app\common\service\admin\TokenService;
+use app\common\service\admin\SettingService;
 
 /**
  * 菜单url获取
@@ -137,7 +137,7 @@ function menu_is_unrate($menu_url = '')
  */
 function admin_token()
 {
-    $setting = SettingService::info();
+    $setting = Config::get('admin');
 
     $admin_token = Request::header($setting['token_name'], '');
     if (empty($admin_token)) {

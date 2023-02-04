@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 
 // api公共函数文件
+use think\facade\Config;
 use think\facade\Request;
 use app\common\service\setting\ApiService;
 use app\common\service\setting\TokenService;
@@ -116,7 +117,7 @@ function api_is_unrate($api_url = '')
  */
 function api_token()
 {
-    $setting = SettingService::info();
+    $setting = Config::get('api');
 
     $api_token = Request::header($setting['token_name'], '');
     if (empty($api_token)) {
