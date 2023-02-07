@@ -17,9 +17,9 @@ use think\facade\Cache;
 class CaptchaSmsCache
 {
     // 缓存标签
-    protected static $tag = 'captcha-phone';
+    protected static $tag = 'captcha_phone';
     // 缓存前缀
-    protected static $prefix = 'captcha-phone:';
+    protected static $prefix = 'captcha_phone:';
 
     /**
      * 缓存键名
@@ -70,9 +70,9 @@ class CaptchaSmsCache
     {
         $ids = var_to_array($phone);
         foreach ($ids as $v) {
-            $res = Cache::delete(self::key($v));
+            Cache::delete(self::key($v));
         }
-        return $res;
+        return true;
     }
 
     /**

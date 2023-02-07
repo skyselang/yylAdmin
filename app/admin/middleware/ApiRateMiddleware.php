@@ -12,8 +12,9 @@ namespace app\admin\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use app\common\cache\admin\ApiRateCache;
-use app\common\service\admin\SettingService;
+use app\common\cache\system\ApiRateCache;
+use app\common\service\system\SettingService;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 接口速率中间件
@@ -29,30 +30,30 @@ class ApiRateMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $setting       = SettingService::info();
-        $api_rate_num  = $setting['api_rate_num'];
-        $api_rate_time = $setting['api_rate_time'];
+        $system        = SettingService::info();
+        $api_rate_num  = $system['api_rate_num'];
+        $api_rate_time = $system['api_rate_time'];
 
         if ($api_rate_num > 0 && $api_rate_time > 0) {
-            $admin_user_id = admin_user_id();
-            $menu_url      = menu_url();
+            $user_id  = user_id();
+            $menu_url = menu_url();
 
-            if ($admin_user_id && $menu_url) {
+            if ($user_id && $menu_url) {
                 if (!menu_is_unrate($menu_url)) {
-                    $count = ApiRateCache::get($admin_user_id, $menu_url);
+                    $count = ApiRateCache::get($user_id, $menu_url);
                     if ($count) {
                         if ($count >= $api_rate_num) {
                             if ($count >= $api_rate_num + 5) {
-                                ApiRateCache::del($admin_user_id, $menu_url);
+                                ApiRateCache::del($user_id, $menu_url);
                             } else {
-                                ApiRateCache::inc($admin_user_id, $menu_url);
+                                ApiRateCache::inc($user_id, $menu_url);
                             }
-                            exception('你的操作过于频繁', 429);
+                            exception('你的操作过于频繁', RetCodeUtils::FREQUENT_OPERATION);
                         } else {
-                            ApiRateCache::inc($admin_user_id, $menu_url);
+                            ApiRateCache::inc($user_id, $menu_url);
                         }
                     } else {
-                        ApiRateCache::set($admin_user_id, $menu_url, $api_rate_time);
+                        ApiRateCache::set($user_id, $menu_url, $api_rate_time);
                     }
                 }
             }

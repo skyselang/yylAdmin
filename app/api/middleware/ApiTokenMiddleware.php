@@ -12,6 +12,7 @@ namespace app\api\middleware;
 use Closure;
 use think\Request;
 use think\Response;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 接口Token中间件
@@ -33,7 +34,7 @@ class ApiTokenMiddleware
             // 接口token获取
             $api_token = api_token();
             if (empty($api_token)) {
-                exception('请登录', 401);
+                exception('请登录', RetCodeUtils::LOGIN_INVALID);
             }
 
             // 接口token验证

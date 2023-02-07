@@ -11,5 +11,7 @@
 return [
     // 指令定义
     'commands' => [
+        // 定时任务
+        'timer' => 'app\command\Timer',
     ],
 ];

@@ -15,7 +15,7 @@ use think\Response;
 use app\common\service\member\LogService;
 
 /**
- * 会员日志中间件
+ * 日志记录中间件
  */
 class MemberLogMiddleware
 {

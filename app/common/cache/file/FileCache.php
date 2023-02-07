@@ -70,9 +70,9 @@ class FileCache
     {
         $ids = var_to_array($id);
         foreach ($ids as $v) {
-            $res = Cache::delete(self::key($v));
+            Cache::delete(self::key($v));
         }
-        return $res;
+        return true;
     }
 
     /**

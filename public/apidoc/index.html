@@ -1,1 +1,23 @@
-<!DOCTYPE html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!--[if IE]><link rel="icon" href="favicon.ico"><![endif]--><title>apidoc</title><link rel="stylesheet" href="./icon/iconfont.css?v=2.1.2"><script src="./config.js?v=2.1.2"></script><link href="static/css/app.ebea0823.css" rel="preload" as="style"><link href="static/css/chunk-vendors.53b5e5c3.css" rel="preload" as="style"><link href="static/js/app.2ce9fbc9.js" rel="preload" as="script"><link href="static/js/chunk-vendors.000bcd36.js" rel="preload" as="script"><link href="static/css/chunk-vendors.53b5e5c3.css" rel="stylesheet"><link href="static/css/app.ebea0823.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4DBA87"><meta name="apple-mobile-web-app-capable" content="no"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="apidoc"><link rel="apple-touch-icon" href="img/icons/apple-touch-icon-152x152.png"><link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#4DBA87"><meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png"><meta name="msapplication-TileColor" content="#000000"></head><body><noscript><strong>We're sorry but apidoc doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script src="static/js/chunk-vendors.000bcd36.js"></script><script src="static/js/app.2ce9fbc9.js"></script></body></html>
+<!doctype html><html lang="en" class="theme-light"><head><script>self["MonacoEnvironment"] = (function (paths) {
+          return {
+            globalAPI: false,
+            getWorkerUrl : function (moduleId, label) {
+              var result =  paths[label];
+              if (/^((http:)|(https:)|(file:)|(\/\/))/.test(result)) {
+                var currentUrl = String(window.location);
+                var currentOrigin = currentUrl.substr(0, currentUrl.length - window.location.hash.length - window.location.search.length - window.location.pathname.length);
+                if (result.substring(0, currentOrigin.length) !== currentOrigin) {
+                  var js = '/*' + label + '*/importScripts("' + result + '");';
+                  var blob = new Blob([js], { type: 'application/javascript' });
+                  return URL.createObjectURL(blob);
+                }
+              }
+              return result;
+            }
+          };
+        })({
+  "editorWorkerService": "./monacoeditorwork/editor.worker.bundle.js",
+  "json": "./monacoeditorwork/json.worker.bundle.js",
+  "typescript": "./monacoeditorwork/ts.worker.bundle.js",
+  "javascript": "./monacoeditorwork/ts.worker.bundle.js"
+});</script><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta http-equiv="X-UA-Compatible" content="IE=edge"><link rel="icon" href="./favicon.ico"/><title>Apidoc</title><script type="module" crossorigin src="./assets/index.770d04a4.js"></script><link rel="stylesheet" href="./assets/index.7e0ad06d.css"></head><body><div id="app"></div><script src="./config.js?v=0.1.1"></script></body></html>

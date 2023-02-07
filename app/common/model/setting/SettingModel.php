@@ -10,6 +10,7 @@
 namespace app\common\model\setting;
 
 use think\Model;
+use app\common\service\setting\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -18,57 +19,33 @@ use hg\apidoc\annotation as Apidoc;
 class SettingModel extends Model
 {
     // 表名
-    protected $name = 'setting';
+    protected $name = 'setting_setting';
     // 表主键
     protected $pk = 'setting_id';
 
-    /**
-     * @Apidoc\Field("token_name,token_key,token_exp,is_multi_login")
-     */
-    public function tokenInfoParam()
+    // 修改自定义设置
+    public function setDiyConfigAttr($value)
     {
+        return serialize($value);
+    }
+    // 获取自定义设置
+    public function getDiyConfigAttr($value)
+    {
+        return unserialize($value);
+    }
+    // 获取自定义设置对象
+    public function getDiyConObjAttr($value, $data)
+    {
+        $diy_config = is_array($data['diy_config']) ? $data['diy_config'] : unserialize($data['diy_config']);
+        foreach ($diy_config as $diy) {
+            $diy_con_obj[$diy['config_key']] = $diy['config_val'];
+        }
+        return $diy_con_obj ?? [];
     }
 
-    /**
-     * @Apidoc\Field("captcha_register,captcha_login")
-     */
-    public function captchaInfoParam()
+    // 获取反馈类型
+    public function getFeedbackTypeAttr()
     {
-    }
-
-    /**
-     * @Apidoc\Field("captcha_register")
-     */
-    public function captchaRegisterParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("captcha_login")
-     */
-    public function captchaLoginParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("log_switch")
-     */
-    public function logInfoParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("api_rate_num,api_rate_time")
-     */
-    public function apiInfoParam()
-    {
-    }
-
-    /**
-     * 登录注册设置参数
-     * @Apidoc\Field("is_register,is_login,is_offi_register,is_offi_login,is_mini_register,is_mini_login")
-     */
-    public function logregInfoParam()
-    {
+        return SettingService::feedback_types();
     }
 }

@@ -17,13 +17,16 @@ use app\common\model\file\SettingModel;
  */
 class SettingService
 {
-    // 文件设置id
+    /**
+     * 设置id
+     * @var integer
+     */
     private static $id = 1;
 
     /**
-     * 文件设置信息
+     * 设置信息
      * 
-     * @param string $field 返回字段，默认所有
+     * @param string $field 返回的字段
      *
      * @return array
      */
@@ -39,8 +42,9 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
+                $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
-                $model->insert($info);
+                $model->save($info);
                 $info = $model->find($id);
             }
             $info = $info->toArray();
@@ -65,63 +69,75 @@ class SettingService
     }
 
     /**
-     * 文件设置修改
+     * 设置修改
      *
-     * @param array $update 设置信息
+     * @param array $param 设置信息
      *
-     * @return array
+     * @return array|Exception
      */
-    public static function edit($update)
+    public static function edit($param)
     {
         $model = new SettingModel();
-        $pk = $model->getPk();
-
         $id = self::$id;
 
-        $update['update_time'] = datetime();
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
 
-        $info = $model->where($pk, $id)->update($update);
-        if (empty($info)) {
+        $info = $model->find($id);
+        $res = $info->save($param);
+        if (empty($res)) {
             exception();
         }
 
         SettingCache::del($id);
 
-        return $update;
+        return $param;
     }
 
     /**
-     * 文件类型数组
+     * 文件类型
+     * 
+     * @param string $type 文件类型
      *
-     * @return array
+     * @return array|string 类型数组或描述
      */
-    public static function fileType()
+    public static function fileTypes($type = '')
     {
-        return [
+        $types = [
             'image' => '图片',
             'video' => '视频',
             'audio' => '音频',
             'word'  => '文档',
             'other' => '其它'
         ];
+        if ($type !== '') {
+            return $types[$type] ?? '';
+        }
+        return $types;
     }
 
     /**
      * 文件储存方式
+     * 
+     * @param string $storage 储存方式
      *
-     * @return array
+     * @return array|string 储存方式数组或描述
      */
-    public static function storage()
+    public static function storages($storage = '')
     {
-        return [
+        $storages = [
             'local'   => '本地(服务器)',
             'qiniu'   => '七牛云 Kodo',
             'aliyun'  => '阿里云 OSS',
             'tencent' => '腾讯云 COS',
             'baidu'   => '百度云 BOS',
             'upyun'   => '又拍云 USS',
-            's3'      => 'AWS S3'
+            'aws'     => 'AWS S3'
         ];
+        if ($storage !== '') {
+            return $storages[$storage] ?? '';
+        }
+        return $storages;
     }
 
     /**
@@ -158,7 +174,7 @@ class SettingService
 
         $file_size /= pow(1024, $p);
 
-        return number_format($file_size, 2) . ' ' . $format;
+        return number_format($file_size, 2) . $format;
     }
 
     /**
@@ -168,12 +184,8 @@ class SettingService
      *
      * @return string image图片，video视频，audio音频，word文档，other其它
      */
-    public static function getFileType($file_ext = '')
+    public static function fileType($file_ext = '')
     {
-        if ($file_ext) {
-            $file_ext = strtolower($file_ext);
-        }
-
         $image_ext = [
             'jpg', 'png', 'jpeg', 'gif', 'bmp', 'webp', 'ico', 'svg', 'tif', 'pcx', 'tga', 'exif',
             'psd', 'cdr', 'pcd', 'dxf', 'ufo', 'eps', 'ai', 'raw', 'wmf',  'avif', 'apng', 'xbm', 'fpx'

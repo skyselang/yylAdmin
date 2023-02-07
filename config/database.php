@@ -18,7 +18,7 @@ return [
     // 自动写入时间戳字段
     // true为自动识别类型 false关闭
     // 字符串则明确指定时间字段类型 支持 int timestamp datetime date
-    'auto_timestamp'  => true,
+    'auto_timestamp'  => false,
 
     // 时间字段取出后的默认时间格式
     'datetime_format' => 'Y-m-d H:i:s',
@@ -43,7 +43,7 @@ return [
             // 数据库编码默认采用utf8
             'charset'           => env('database.charset', 'utf8mb4'),
             // 数据库表前缀
-            'prefix'            => env('database.prefix', 'yyl_'),
+            'prefix'            => env('database.prefix', 'ya_'),
 
             // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
             'deploy'            => 0,
@@ -54,7 +54,7 @@ return [
             // 指定从服务器序号
             'slave_no'          => '',
             // 是否严格检查字段是否存在
-            'fields_strict'     => env('app_debug', false),
+            'fields_strict'     => env('database.fields_strict', false),
             // 是否需要断线重连
             'break_reconnect'   => env('database.break_reconnect', false),
             // 监听SQL

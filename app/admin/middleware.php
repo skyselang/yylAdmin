@@ -11,10 +11,10 @@
 return [
     // 日志记录中间件
     \app\admin\middleware\UserLogMiddleware::class,
-    // Token验证中间件
-    \app\admin\middleware\TokenVerifyMiddleware::class,
-    // 权限验证中间件
-    \app\admin\middleware\AuthVerifyMiddleware::class,
+    // 接口Token中间件
+    \app\admin\middleware\ApiTokenMiddleware::class,
+    // 接口校验中间件
+    \app\admin\middleware\ApiVerifyMiddleware::class,
     // 接口速率中间件
     \app\admin\middleware\ApiRateMiddleware::class,
 ];

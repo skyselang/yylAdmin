@@ -18,8 +18,8 @@ class LogValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'ids'           => ['require', 'array'],
-        'member_log_id' => ['require'],
+        'ids'    => ['require', 'array'],
+        'log_id' => ['require'],
     ];
 
     // 错误信息
@@ -27,8 +27,7 @@ class LogValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'id'   => ['member_log_id'],
-        'info' => ['member_log_id'],
+        'info' => ['log_id'],
         'dele' => ['ids'],
     ];
 }

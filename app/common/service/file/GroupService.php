@@ -11,12 +11,25 @@ namespace app\common\service\file;
 
 use app\common\cache\file\GroupCache;
 use app\common\model\file\GroupModel;
+use app\common\cache\file\FileCache;
+use app\common\model\file\FileModel;
 
 /**
  * 文件分组
  */
 class GroupService
 {
+    /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'group_id/d'   => 0,
+        'group_name/s' => '',
+        'group_desc/s' => '',
+        'sort/d'       => 250
+    ];
+
     /**
      * 文件分组列表
      *
@@ -34,13 +47,17 @@ class GroupService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',group_name,group_desc,group_sort,is_disable,create_time,update_time,delete_time';
+            $field = $pk . ',group_name,group_desc,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = ['group_sort' => 'desc', $pk => 'desc'];
+            $order = [$pk => 'desc'];
         }
 
-        $count = $model->where($where)->count($pk);
+        if ($page == 0 || $limit == 0) {
+            return $model->field($field)->where($where)->order($order)->select()->toArray();
+        }
+
+        $count = $model->where($where)->count();
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
 
@@ -50,9 +67,10 @@ class GroupService
     /**
      * 文件分组信息
      *
-     * @param int  $id   文件分组id
+     * @param int  $id   分组id
      * @param bool $exce 不存在是否抛出异常
-     * @return array
+     * 
+     * @return array|Exception
      */
     public static function info($id, $exce = true)
     {
@@ -78,18 +96,22 @@ class GroupService
     /**
      * 文件分组添加
      *
-     * @param array $param 文件分组信息
+     * @param array $param 分组信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new GroupModel();
         $pk = $model->getPk();
 
+        unset($param[$pk]);
+
+        $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
+        $model->save($param);
+        $id = $model->$pk;
         if (empty($id)) {
             exception();
         }
@@ -102,39 +124,40 @@ class GroupService
     /**
      * 文件分组修改
      *
-     * @param mixed $ids    文件分组id
-     * @param array $update 文件分组信息
+     * @param int|array $ids   分组id
+     * @param array     $param 分组信息
      * 
-     * @return array
+     * @return array|Exception
      */
-    public static function edit($ids, $update = [])
+    public static function edit($ids, $param = [])
     {
         $model = new GroupModel();
         $pk = $model->getPk();
 
-        unset($update[$pk], $update['ids']);
+        unset($param[$pk], $param['ids']);
 
-        $update['update_time'] = datetime();
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
+        $res = $model->where($pk, 'in', $ids)->update($param);
         if (empty($res)) {
             exception();
         }
 
-        $update['ids'] = $ids;
+        $param['ids'] = $ids;
 
         GroupCache::del($ids);
 
-        return $update;
+        return $param;
     }
 
     /**
      * 文件分组删除
      *
-     * @param mixed $ids  文件分组id
+     * @param array $ids  分组id
      * @param bool  $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {
@@ -144,8 +167,7 @@ class GroupService
         if ($real) {
             $res = $model->where($pk, 'in', $ids)->delete();
         } else {
-            $update['is_delete']   = 1;
-            $update['delete_time'] = datetime();
+            $update = delete_update();
             $res = $model->where($pk, 'in', $ids)->update($update);
         }
 
@@ -158,5 +180,44 @@ class GroupService
         GroupCache::del($ids);
 
         return $update;
+    }
+
+    /**
+     * 文件分组文件
+     *
+     * @param array  $where 条件
+     * @param int    $page  页数
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
+     * 
+     * @return array 
+     */
+    public static function file($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    {
+        return FileService::list($where, $page, $limit, $order, $field);
+    }
+
+    /**
+     * 文件分组文件解除
+     *
+     * @param array $group_id 分组id
+     * @param array $file_ids 文件id
+     *
+     * @return int
+     */
+    public static function fileRemove($group_id, $file_ids = [])
+    {
+        $where[] = ['group_id', 'in', $group_id];
+        if (empty($file_ids)) {
+            $file_ids = FileModel::where($where)->column('file_id');
+        }
+        $where[] = ['file_id', 'in', $file_ids];
+
+        $res = FileModel::where($where)->update(['group_id' => 0, 'update_uid' => user_id(), 'update_time' => datetime()]);
+
+        FileCache::del($file_ids);
+
+        return $res;
     }
 }

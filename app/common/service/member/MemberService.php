@@ -9,15 +9,13 @@
 
 namespace app\common\service\member;
 
-use app\common\utils\IpInfoUtils;
+use think\facade\Validate;
 use app\common\cache\member\MemberCache;
+use app\common\service\utils\IpInfoUtils;
 use app\common\service\setting\WechatService;
-use app\common\service\setting\TokenService;
-use app\common\service\file\FileService;
-use app\common\service\setting\SettingService;
-use app\common\service\setting\RegionService;
+use app\common\service\member\SettingService;
 use app\common\model\member\MemberModel;
-use app\common\model\member\WechatModel;
+use hg\apidoc\annotation as Apidoc;
 
 /**
  * 会员管理
@@ -25,102 +23,102 @@ use app\common\model\member\WechatModel;
 class MemberService
 {
     /**
+     * 添加、修改字段
+     * @var array
+     */
+    public static $edit_field = [
+        'member_id/d' => 0,
+        'avatar_id/d' => 0,
+        'nickname/s'  => '',
+        'username/s'  => '',
+        'phone/s'     => '',
+        'email/s'     => '',
+        'name/s'      => '',
+        'gender/d'    => 0,
+        'region_id/d' => 0,
+        'remark/s'    => '',
+        'sort/d'      => 250,
+        'tag_ids/a'   => [],
+        'group_ids/a' => []
+    ];
+
+    /**
      * 会员列表
      *
-     * @param array  $where    条件
-     * @param int    $page     页数
-     * @param int    $limit    数量
-     * @param array  $order    排序
-     * @param string $field    字段
-     * @param int    $is_extra 额外数据
+     * @param array  $where 条件
+     * @param int    $page  分页
+     * @param int    $limit 数量
+     * @param array  $order 排序
+     * @param string $field 字段
      * 
      * @return array 
      */
-    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '', $is_extra = 0)
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
     {
         $model = new MemberModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',username,nickname,phone,email,avatar_id,sort,remark,is_disable,create_time,delete_time';
+            $field = 'm.' . $pk . ',headimgurl,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time';
         }
         if (empty($order)) {
-            $order = ['sort' => 'desc', $pk => 'desc'];
+            $order = [$pk => 'desc'];
         }
 
-        $count = $model->where($where)->count($pk);
+        $model = $model->alias('m');
+        foreach ($where as $wk => $wv) {
+            if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
+                $model = $model->join('member_attributes t', 'm.member_id=t.member_id')->where('t.tag_id', 'in', $wv[2]);
+                unset($where[$wk]);
+            }
+            if ($wv[0] == 'group_ids' && is_array($wv[2])) {
+                $model = $model->join('member_attributes g', 'm.member_id=g.member_id')->where('g.group_id', 'in', $wv[2]);
+                unset($where[$wk]);
+            }
+        }
+        $where = array_values($where);
+
+        $count = $model->where($where)->count();
         $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
+        $list = $model->field($field)->where($where)
+            ->with(['avatar', 'tags', 'groups'])
+            ->append(['avatar_url', 'tag_names', 'group_names'])
+            ->hidden(['avatar', 'tags', 'groups'])
+            ->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        $avatar_ids = array_column($list, 'avatar_id');
-        $file = FileService::fileArray($avatar_ids);
-        $file = array_column($file, 'file_url', 'file_id');
+        $genders = SettingService::genders();
+        $reg_types = SettingService::reg_types();
+        $reg_channels = SettingService::reg_channels();
 
-        $member_ids = array_column($list, $pk);
-        $WechatModel = new WechatModel();
-        $member_wechat = $WechatModel->field($pk . ',nickname,headimgurl')->where($pk, 'in', $member_ids)->select()->toArray();
-        $headimgurl = array_column($member_wechat, 'headimgurl', $pk);
-        $nickname = array_column($member_wechat, 'nickname', $pk);
-
-        foreach ($list as &$v) {
-            $v['avatar_url'] = $file[$v['avatar_id']] ?? '';
-            if (empty($v['avatar_url'])) {
-                $v['avatar_url'] = $headimgurl[$v[$pk]] ?? '';
-            }
-            if (empty($v['nickname'])) {
-                $v['nickname'] = $nickname[$v[$pk]] ?? '';
-            }
-        }
-
-        $reg_channels = $reg_types = $region = [];
-        if ($is_extra) {
-            $reg_channels = $model->reg_channel_arr;
-            $reg_types = $model->reg_type_arr;
-            $region = RegionService::list('tree', [], [], 'region_id,region_pid,region_name');
-        }
-
-        return compact('count', 'pages', 'page', 'limit', 'list', 'reg_channels', 'reg_types', 'region');
+        return compact('count', 'pages', 'page', 'limit', 'list', 'genders', 'reg_types', 'reg_channels');
     }
 
     /**
      * 会员信息
      *
-     * @param int  $id   会员id
-     * @param bool $exce 不存在是否抛出异常
+     * @param int  $id    会员id
+     * @param bool $exce  不存在是否抛出异常
+     * @param bool $group 是否返回分组信息
      * 
-     * @return array
+     * @return array|Exception
      */
-    public static function info($id, $exce = true)
+    public static function info($id, $exce = true, $group = false)
     {
         $info = MemberCache::get($id);
         if (empty($info)) {
             $model = new MemberModel();
-            $pk = $model->getPk();
 
-            $info = $model->find($id);
+            $info = $model->with(['avatar', 'tags', 'groups'])->find($id);
             if (empty($info)) {
                 if ($exce) {
                     exception('会员不存在：' . $id);
                 }
                 return [];
             }
-            $info = $info->append(['gender_name', 'reg_channel_name', 'reg_type_name'])->toArray();
-
-            $info['avatar_url'] = FileService::fileUrl($info['avatar_id']);
-
-            $info['wechat'] = [];
-            $WechatModel = new WechatModel();
-            $member_wechat = $WechatModel->where($pk, $id)->find();
-            if ($member_wechat) {
-                if (empty($info['nickname'])) {
-                    $info['nickname'] = $member_wechat['nickname'];
-                }
-                if (empty($info['avatar_url'])) {
-                    $info['avatar_url'] = $member_wechat['headimgurl'];
-                }
-                $member_wechat['privilege'] = unserialize($member_wechat['privilege']);
-                $info['wechat'] = $member_wechat;
-            }
+            $info = $info
+                ->append(['avatar_url', 'tag_ids', 'tag_names', 'group_ids', 'group_names', 'gender_name', 'reg_type_name', 'reg_channel_name'])
+                ->hidden(['avatar', 'tags', 'groups'])
+                ->toArray();
 
             // 0原密码修改密码，1直接设置新密码
             $info['pwd_edit_type'] = 0;
@@ -128,10 +126,53 @@ class MemberService
                 $info['pwd_edit_type'] = 1;
             }
 
-            // token
-            $info['api_token'] = TokenService::create($info);
+            if (member_is_super($id)) {
+                $api_list = ApiService::list('list', [where_delete()], [], 'api_url');
+                $api_ids  = array_column($api_list, 'api_id');
+                $api_urls = array_column($api_list, 'api_url');
+            } elseif ($info['is_super'] == 1) {
+                $api_list = ApiService::list('list', where_disdel(), [], 'api_url');
+                $api_ids  = array_column($api_list, 'api_id');
+                $api_urls = array_column($api_list, 'api_url');
+            } else {
+                $api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
+                $api_list = ApiService::list('list', where_disdel(['api_id', 'in', $api_ids]), [], 'api_url');
+                $api_urls = array_column($api_list, 'api_url');
+            }
+
+            $api_ids  = array_values(array_filter($api_ids));
+            $api_urls = array_values(array_filter($api_urls));
+
+            $setting = SettingService::info();
+            $token_name = $setting['token_name'];
+
+            $info['api_ids']   = $api_ids;
+            $info['api_urls']  = $api_urls;
+            $info[$token_name] = TokenService::create($info);
 
             MemberCache::set($id, $info);
+        }
+
+        if ($group) {
+            $member_api_ids = $info['api_ids'] ?? [];
+            $group_api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
+
+            $api_list = ApiService::list('list', [where_delete()], [], 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth');
+            foreach ($api_list as &$val) {
+                $val['is_check'] = 0;
+                $val['is_group'] = 0;
+                foreach ($member_api_ids as $m_api_id) {
+                    if ($val['api_id'] == $m_api_id) {
+                        $val['is_check'] = 1;
+                    }
+                }
+                foreach ($group_api_ids as $g_api_id) {
+                    if ($val['api_id'] == $g_api_id) {
+                        $val['is_group'] = 1;
+                    }
+                }
+            }
+            $info['api_tree'] = list_to_tree($api_list, 'api_id', 'api_pid');
         }
 
         return $info;
@@ -142,22 +183,53 @@ class MemberService
      *
      * @param array $param 会员信息
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function add($param)
     {
         $model = new MemberModel();
         $pk = $model->getPk();
 
-        $param['password']    = md5($param['password']);
+        unset($param[$pk]);
+
+        $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $id = $model->insertGetId($param);
-        if (empty($id)) {
-            exception();
+        // 密码
+        if (isset($param['password'])) {
+            $param['password'] = password_hash($param['password'], PASSWORD_BCRYPT);
+        }
+        // 默认分组
+        if (empty($param['group_ids'])) {
+            $param['group_ids'] = GroupService::default_ids();
         }
 
-        $param[$pk] = $id;
+        // 启动事务
+        $model->startTrans();
+        try {
+            // 添加
+            $model->save($param);
+            // 添加标签
+            if (isset($param['tag_ids'])) {
+                $model->tags()->saveAll($param['tag_ids']);
+            }
+            // 添加分组
+            if (isset($param['group_ids'])) {
+                $model->groups()->saveAll($param['group_ids']);
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model->rollback();
+        }
+
+        if (isset($errmsg)) {
+            exception($errmsg);
+        }
+
+        $param[$pk] = $model->$pk;
 
         return $param;
     }
@@ -165,58 +237,103 @@ class MemberService
     /**
      * 会员修改
      *
-     * @param mixed $ids    会员id
-     * @param array $update 会员信息
+     * @param int|array $ids   会员id
+     * @param array     $param 会员信息
      * 
-     * @return array
+     * @return array|Exception
      */
-    public static function edit($ids, $update = [])
+    public static function edit($ids, $param = [])
     {
         $model = new MemberModel();
         $pk = $model->getPk();
 
-        unset($update[$pk], $update['ids']);
+        unset($param[$pk], $param['ids']);
 
-        $update['update_time'] = datetime();
+        $param['update_uid']  = user_id();
+        $param['update_time'] = datetime();
 
-        $res = $model->where($pk, 'in', $ids)->update($update);
-        if (empty($res)) {
-            exception();
+        // 密码
+        if (isset($param['password'])) {
+            $param['password'] = password_hash($param['password'], PASSWORD_BCRYPT);
         }
 
-        $update['ids'] = $ids;
+        // 启动事务
+        $model->startTrans();
+        try {
+            if (is_numeric($ids)) {
+                $ids = [$ids];
+            }
+            // 修改
+            $model->where($pk, 'in', $ids)->update($param);
+            if (isset($param['tag_ids']) || isset($param['group_ids'])) {
+                foreach ($ids as $id) {
+                    $info = $model->append(['tag_ids', 'group_ids'])->find($id);
+                    // 修改标签
+                    if (isset($param['tag_ids'])) {
+                        if ($info['tag_ids'] ?? []) {
+                            $info->tags()->detach($info['tag_ids']);
+                        }
+                        $info->tags()->saveAll($param['tag_ids']);
+                    }
+                    // 修改分组
+                    if (isset($param['group_ids'])) {
+                        if ($info['group_ids'] ?? []) {
+                            $info->groups()->detach($info['group_ids']);
+                        }
+                        $info->groups()->saveAll($param['group_ids']);
+                    }
+                }
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model->rollback();
+        }
 
-        MemberCache::del($ids);
+        if (isset($errmsg)) {
+            exception($errmsg);
+        }
 
-        return $update;
+        $param['ids'] = $ids;
+
+        MemberCache::upd($ids);
+
+        return $param;
     }
 
     /**
      * 会员删除
      *
-     * @param mixed $ids  会员id
-     * @param bool  $real 是否真实删除
+     * @param int|array $ids  会员id
+     * @param bool      $real 是否真实删除
      * 
-     * @return array
+     * @return array|Exception
      */
     public static function dele($ids, $real = false)
     {
         $model = new MemberModel();
         $pk = $model->getPk();
 
-        $errmsg = '';
         // 启动事务
         $model::startTrans();
         try {
-            $WechatModel = new WechatModel();
+            if (is_numeric($ids)) {
+                $ids = [$ids];
+            }
             if ($real) {
+                foreach ($ids as $id) {
+                    $info = $model->find($id);
+                    // 删除标签
+                    $info->tags()->detach();
+                    // 删除分组
+                    $info->groups()->detach();
+                }
                 $model->where($pk, 'in', $ids)->delete();
-                $WechatModel->where($pk, 'in', $ids)->delete();
             } else {
-                $update['is_delete']   = 1;
-                $update['delete_time'] = datetime();
+                $update = delete_update();
                 $model->where($pk, 'in', $ids)->update($update);
-                $WechatModel->where($pk, 'in', $ids)->update($update);
             }
             // 提交事务
             $model::commit();
@@ -226,7 +343,7 @@ class MemberService
             $model::rollback();
         }
 
-        if ($errmsg) {
+        if (isset($errmsg)) {
             exception($errmsg);
         }
 
@@ -250,37 +367,52 @@ class MemberService
         $model = new MemberModel();
         $pk = $model->getPk();
 
+        $account  = $param['account'] ?? '';
+        $username = $param['username'] ?? $account;
+        $phone    = $param['phone'] ?? $account;
+        $email    = $param['email'] ?? $account;
+        $password = $param['password'] ?? '';
+
+        $where = [];
         if ($type == 'username') {
-            // 通过用户名登录
-            $where[] = ['username', '=', $param['username']];
-            $where[] = ['password', '=', md5($param['password'])];
+            // 通过会员名登录
+            $where[] = ['username', '=', $username];
         } else if ($type == 'phone') {
             // 通过手机登录
-            $where[] = ['phone', '=', $param['phone']];
-            if (isset($param['password'])) {
-                $where[] = ['password', '=', md5($param['password'])];
-            }
+            $where[] = ['phone', '=', $phone];
         } else if ($type == 'email') {
             // 通过邮箱登录
-            $where[] = ['email', '=', $param['email']];
-            if (isset($param['password'])) {
-                $where[] = ['password', '=', md5($param['password'])];
-            }
+            $where[] = ['email', '=', $email];
         } else {
-            // 通过用户名、手机、邮箱登录
-            $where[] = ['username|phone|email', '=', $param['account']];
-            $where[] = ['password', '=', md5($param['password'])];
+            if (Validate::rule('account', 'mobile')->check(['account' => $account])) {
+                $where[] = ['phone', '=', $account];
+            } else if (Validate::rule('account', 'email')->check(['account' => $account])) {
+                $where[] = ['email', '=', $account];
+            } else {
+                $where[] = ['username', '=', $account];
+            }
         }
-        $where[] = ['is_delete', '=', 0];
+        $where[] = where_delete();
 
-        $field = $pk . ',username,nickname,phone,email,login_num,is_disable';
+        $field = $pk . ',username,nickname,phone,email,password,login_num,is_disable';
         $member = $model->field($field)->where($where)->find();
         if (empty($member)) {
-            exception('账号或密码错误');
+            if (empty($type)) {
+                $member = $model->field($field)->where('username|phone|email', $account)->where([where_delete()])->find();
+            }
+            if (empty($member)) {
+                exception('账号或密码错误.');
+            }
         }
+        if ($password) {
+            if (!password_verify($password, $member['password'])) {
+                exception('账号或密码错误..');
+            }
+        }
+
         $member = $member->toArray();
         if ($member['is_disable'] == 1) {
-            exception('账号已被禁用');
+            exception('账号已被禁用，请联系客服');
         }
 
         $ip_info   = IpInfoUtils::info();
@@ -295,12 +427,12 @@ class MemberService
 
         // 登录日志
         $member_log[$pk] = $member_id;
-        LogService::add($member_log, 2);
+        LogService::add($member_log, SettingService::LOG_TYPE_LOGIN);
 
         // 会员信息
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
-        $data = self::field($member);
+        $data = self::loginField($member);
 
         return $data;
     }
@@ -318,30 +450,21 @@ class MemberService
         $unionid     = $userinfo['unionid'];
         $openid      = $userinfo['openid'];
         $login_ip    = $userinfo['login_ip'];
-        $reg_channel = $userinfo['reg_channel'];
         $reg_type    = $userinfo['reg_type'];
+        $reg_channel = $userinfo['reg_channel'];
         $ip_info     = IpInfoUtils::info($login_ip);
 
-        foreach ($userinfo as $k => $v) {
-            if ($k == 'privilege') {
-                $userinfo[$k] = serialize($v);
-            }
-        }
-        unset($userinfo['login_ip'], $userinfo['reg_channel'], $userinfo['reg_type']);
+        unset($userinfo['login_ip'], $userinfo['reg_type'], $userinfo['reg_channel']);
 
         $MemberModel = new MemberModel();
         $MemberPk = $MemberModel->getPk();
 
-        // 会员微信
+        $field = $MemberPk . ',nickname,login_num,is_disable,is_delete';
         if ($unionid) {
-            $wechat_where[] = ['unionid', '=', $unionid];
+            $member = $MemberModel->field($field)->where(where_delete(['unionid', '=', $unionid]))->find();
         } else {
-            $wechat_where[] = ['openid', '=', $openid];
+            $member = $MemberModel->field($field)->where(where_delete(['openid', '=', $openid]))->find();
         }
-        $wechat_where[] = ['is_delete', '=', 0];
-        $WechatModel = new WechatModel();
-        $MemberWechatPk = $WechatModel->getPk();
-        $member_wechat = $WechatModel->field($MemberWechatPk . ',' . $MemberPk)->where($wechat_where)->find();
 
         $errmsg = '';
         // 启动事务
@@ -349,77 +472,64 @@ class MemberService
         try {
             $setting = SettingService::info();
 
-            if ($member_wechat) {
-                if ($reg_channel == 2 && !$setting['is_offi_login']) {
-                    exception('系统维护，无法登录2！');
-                } elseif ($reg_channel == 3 && !$setting['is_mini_login']) {
-                    exception('系统维护，无法登录3！');
+            if ($member) {
+                if ($reg_channel == SettingService::REG_CHANNEL_OFFI && !$setting['is_offi_login']) {
+                    exception('系统维护，无法登录：offi');
+                } elseif ($reg_channel == SettingService::REG_CHANNEL_MINI && !$setting['is_mini_login']) {
+                    exception('系统维护，无法登录：mini');
                 }
-
-                $member_wechat_id = $member_wechat[$MemberWechatPk];
-                $WechatModel->where($MemberWechatPk, $member_wechat_id)->update($userinfo);
-                $member_id = $member_wechat[$MemberPk];
+                $member_id = $member[$MemberPk];
             } else {
-                if ($reg_channel == 2 && !$setting['is_offi_register']) {
-                    exception('系统维护，无法注册2！');
-                } elseif ($reg_channel == 3 && !$setting['is_mini_register']) {
-                    exception('系统维护，无法注册3！');
+                if ($reg_channel == SettingService::REG_CHANNEL_OFFI && !$setting['is_offi_register']) {
+                    exception('系统维护，无法注册：offi');
+                } elseif ($reg_channel == SettingService::REG_CHANNEL_MINI && !$setting['is_mini_register']) {
+                    exception('系统维护，无法注册：mini');
                 }
-
-                $wechat_insert = $userinfo;
-                $wechat_insert['create_time'] = $datetime;
-                $member_wechat_id = $WechatModel->insertGetId($wechat_insert);
+                $insert = $userinfo;
+                $insert['create_time'] = $datetime;
                 $member_id = 0;
             }
 
-            $member_field = $MemberPk . ',nickname,login_num,is_disable,is_delete';
-            $member_where[] = [$MemberPk, '=', $member_id];
-            $member_where[] = ['is_delete', '=', 0];
-            $member = $MemberModel->field($member_field)->where($member_where)->find();
+            $member = $MemberModel->field($field)->where(where_delete([$MemberPk, '=', $member_id]))->find();
             if ($member) {
                 $member = $member->toArray();
                 if ($member['is_disable']) {
                     exception('账号已被禁用');
                 }
                 if (empty($member['nickname'])) {
-                    $member_update['nickname'] = $userinfo['nickname'];
+                    $update['nickname'] = $userinfo['nickname'];
                 }
-                $member_update['login_num']    = $member['login_num'] + 1;
-                $member_update['login_ip']     = $login_ip;
-                $member_update['login_time']   = $datetime;
-                $member_update['login_region'] = $ip_info['region'];
-                $MemberModel->where($MemberPk, $member_id)->update($member_update);
+                $update['login_num']    = $member['login_num'] + 1;
+                $update['login_ip']     = $login_ip;
+                $update['login_time']   = $datetime;
+                $update['login_region'] = $ip_info['region'];
+                $MemberModel->where($MemberPk, $member_id)->update($update);
                 // 登录日志
                 $member_log[$MemberPk] = $member_id;
-                LogService::add($member_log, 2);
+                LogService::add($member_log, SettingService::LOG_TYPE_LOGIN);
             } else {
-                $wx_username = $member_wechat_id . '-' . uniqid();
-                if ($reg_channel == 2) {
-                    $member_insert['username'] = 'wxoffi' . $wx_username;
-                } elseif ($reg_channel == 3) {
-                    $member_insert['username'] = 'wxmini' . $wx_username;
+                $wx_username = md5(uniqid('wx', true));
+                if ($reg_channel == SettingService::REG_CHANNEL_OFFI) {
+                    $insert['username'] = 'wxoffi' . $wx_username;
+                } elseif ($reg_channel == SettingService::REG_CHANNEL_MINI) {
+                    $insert['username'] = 'wxmini' . $wx_username;
                 } else {
-                    $member_insert['username'] = 'wx' . $wx_username;
+                    $insert['username'] = 'wx' . $wx_username;
                 }
-                $member_insert['login_num']    = 1;
-                $member_insert['login_ip']     = $login_ip;
-                $member_insert['login_time']   = $datetime;
-                $member_insert['login_region'] = $ip_info['region'];
-                $member_insert['create_time']  = $datetime;
-                $member_insert['reg_channel']  = $reg_channel;
-                $member_insert['reg_type']     = $reg_type;
-                $member_insert['nickname']     = $userinfo['nickname'] ?: $member_insert['username'];
-                $member_insert['password']     = '';
-                $member_id = $MemberModel->insertGetId($member_insert);
+                $insert['nickname']     = $userinfo['nickname'] ?: $insert['username'];
+                $insert['login_num']    = 1;
+                $insert['login_ip']     = $login_ip;
+                $insert['login_time']   = $datetime;
+                $insert['login_region'] = $ip_info['region'];
+                $insert['create_time']  = $datetime;
+                $insert['reg_channel']  = $reg_channel;
+                $insert['reg_type']     = $reg_type;
+                $member = MemberService::add($insert);
+                $member_id = $member[$MemberPk];
                 // 注册日志
                 $member_log[$MemberPk] = $member_id;
-                LogService::add($member_log, 1);
+                LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
             }
-
-            $wechat_update = $userinfo;
-            $wechat_update[$MemberPk]     = $member_id;
-            $wechat_update['update_time'] = $datetime;
-            $WechatModel->where($MemberWechatPk, $member_wechat_id)->update($wechat_update);
 
             // 提交事务
             $MemberModel->commit();
@@ -436,7 +546,7 @@ class MemberService
         // 会员信息
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
-        $data = self::field($member);
+        $data = self::loginField($member);
 
         return $data;
     }
@@ -448,12 +558,15 @@ class MemberService
      *
      * @return array
      */
-    public static function field($member)
+    public static function loginField($member)
     {
         $data = [];
-        $field = ['member_id', 'username', 'nickname', 'phone', 'email', 'login_ip', 'login_time', 'login_num', 'avatar_url', 'api_token'];
-        foreach ($field as $v) {
-            $data[$v] = $member[$v];
+        $setting = SettingService::info();
+        $fields = ['avatar_url', 'member_id', 'nickname', 'username', 'phone', 'email', 'login_ip', 'login_time', 'login_num', $setting['token_name']];
+        foreach ($fields as $field) {
+            if ($member[$field] ?? '') {
+                $data[$field] = $member[$field];
+            }
         }
 
         return $data;
@@ -472,6 +585,7 @@ class MemberService
         $pk = $model->getPk();
 
         $update['logout_time'] = datetime();
+
         $model->where($pk, $id)->update($update);
 
         $update[$pk] = $id;
@@ -514,7 +628,7 @@ class MemberService
 
             $phone_where[] = [$pk, '<>', $member_id];
             $phone_where[] = ['phone', '=', $phone];
-            $phone_where[] = ['is_delete', '=', 0];
+            $phone_where[] = where_delete();
             $phone_exist = $model->field('phone')->where($phone_where)->find();
             if ($phone_exist) {
                 exception('手机号已存在：' . $phone);
@@ -534,12 +648,19 @@ class MemberService
      * @param string $type 日期类型：day，month
      * @param array  $date 日期范围：[开始日期，结束日期]
      * @param string $stat 统计类型：count总计，number数量，reg_channel注册渠道，reg_type注册方式
-     * 
+     * @Apidoc\Returned("type", type="string", desc="日期类型"),
+     *   @Apidoc\Returned("date", type="array", desc="日期范围"),
+     *   @Apidoc\Returned("title", type="string", desc="图表title.text"),
+     *   @Apidoc\Returned("legend", type="array", desc="图表legend.data"),
+     *   @Apidoc\Returned("xAxis", type="array", desc="图表xAxis.data"),
+     *   @Apidoc\Returned("series", type="array", desc="图表series")
+     * )
      * @return array
      */
-    public static function stat($type = 'month', $date = [], $stat = 'count')
+    public static function statistic($type = 'month', $date = [], $stat = 'count')
     {
         if (empty($date)) {
+            $date = [];
             if ($type == 'day') {
                 $date[0] = date('Y-m-d', strtotime('-29 days'));
                 $date[1] = date('Y-m-d');
@@ -551,11 +672,10 @@ class MemberService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key = $type . ':' . $stat . $sta_date . '-' . $end_date;
+        $key = $type . $stat . $sta_date . '_' . $end_date;
         $data = MemberCache::get($key);
         if (empty($data)) {
             $dates = [];
-
             if ($type == 'day') {
                 $s_time = strtotime(date('Y-m-d', strtotime($sta_date)));
                 $e_time = strtotime(date('Y-m-d', strtotime($end_date)));
@@ -580,10 +700,10 @@ class MemberService
                 $field = "count(create_time) as num, date_format(create_time,'%Y-%m') as date";
                 $group = "date_format(create_time,'%Y-%m')";
             }
-
-            $where[] = ['is_delete', '=', 0];
+            $where[] = ['member_id', '>', 0];
             $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
+            $where[] = where_delete();
 
             $model = new MemberModel();
             $pk = $model->getPk();
@@ -602,8 +722,7 @@ class MemberService
 
                 foreach ($data as $k => $v) {
                     $where = [];
-                    $where = [['is_delete', '=', 0]];
-
+                    $where[] = ['member_id', '>', 0];
                     if ($v['date'] == 'total') {
                         $where[] = [$pk, '>', 0];
                     } elseif ($v['date'] == 'online') {
@@ -627,11 +746,10 @@ class MemberService
                         } else {
                             $sta_date = $end_date = date('Y-m-d');
                         }
-
                         $where[] = ['create_time', '>=', $sta_date . ' 00:00:00'];
                         $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
                     }
-
+                    $where[] = where_delete();
                     $data[$k]['count'] = $model->where($where)->count();
                 }
 
@@ -642,37 +760,28 @@ class MemberService
                 $data['title'] = '数量';
                 $add = $total = [];
                 // 新增会员
-                $adds = $model
-                    ->field($field)
-                    ->where($where)
-                    ->group($group)
-                    ->select()
-                    ->column('num', 'date');
+                $adds = $model->field($field)->where($where)->group($group)->select()->column('num', 'date');
                 // 会员总数
                 foreach ($dates as $k => $v) {
                     $add[$k] = $adds[$v] ?? 0;
-
                     if ($type == 'month') {
                         $e_t = date('Y-m-d', strtotime('next month -1 day', strtotime(date('Y-m-01', strtotime($v)))));
                     } else {
                         $e_t = $v;
                     }
-                    $total[$k] = $model->where('is_delete', 0)->where('create_time', '<=', $e_t . ' 23:59:59')->count();
+                    $total[$k] = $model->where(where_delete(['create_time', '<=', $e_t . ' 23:59:59']))->count();
                 }
-
                 $series = [
-                    ['name' => '会员总数', 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '新增会员', 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '总数', 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => '新增', 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
                 ];
             } elseif ($stat == 'reg_channel') {
                 $data['title'] = '注册渠道';
-
                 $series = [];
-                $reg_channel_arr = $model->reg_channel_arr;
-                foreach ($reg_channel_arr as $k => $v) {
+                $reg_channels = SettingService::reg_channels();
+                foreach ($reg_channels as $k => $v) {
                     $series[] = ['name' => $v, 'reg_channel' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
                 }
-
                 foreach ($series as $k => $v) {
                     $series_data = $model
                         ->field($field)
@@ -687,13 +796,11 @@ class MemberService
                 }
             } elseif ($stat == 'reg_type') {
                 $data['title'] = '注册方式';
-
                 $series = [];
-                $reg_type_arr = $model->reg_type_arr;
-                foreach ($reg_type_arr as $k => $v) {
+                $reg_types = SettingService::reg_types();
+                foreach ($reg_types as $k => $v) {
                     $series[] = ['name' => $v, 'reg_type' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
                 }
-
                 foreach ($series as $k => $v) {
                     $series_data = $model
                         ->field($field)

@@ -10,15 +10,15 @@
 
 #### admin
 
-请求头部Headers或请求参数Params需带上参数：AdminToken
+请求头部Headers或请求参数Params需带上参数：AdminToken（可在配置文件设置）
 
 #### api
 
-请求头部Headers或请求参数Params需带上参数：ApiToken 
+请求头部Headers或请求参数Params需带上参数：ApiToken（可在配置文件设置）
 
 ### 全局参数
 
-接口调试的时候请在全局参数中设置对应的全局 Headers、Params  
+接口调试的时候请在全局参数中设置对应的全局 Header、Query、Body   
 
 ### 响应参数
 
@@ -46,3 +46,4 @@
 |404| 接口地址错误|
 |429| 你的操作过于频繁|
 |500| 服务器错误|
+|...| ...

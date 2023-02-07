@@ -30,7 +30,7 @@ class AllowCrossDomain
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Headers: *');
         header('Content-type: application/json; charset=UTF-8');
-        header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE, HEAD');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, HEAD, OPTIONS');
 
         if ($request->isOptions()) {
             return Response::create();

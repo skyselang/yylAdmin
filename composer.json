@@ -1,6 +1,6 @@
 {
     "name": "skyselang/yyladmin",
-    "version": "2.5.6",
+    "version": "2.7.0",
     "description": "Minimalist background management system based on ThinkPHP6 and Vue2",
     "type": "project",
     "keywords": [
@@ -27,7 +27,7 @@
         "topthink/think-filesystem": "^2.0",
         "firebase/php-jwt": "^6.2",
         "overtrue/pinyin": "~4.0",
-        "hg/apidoc-thinkphp": "~3.1.9",
+        "hg/apidoc": "^4.2",
         "overtrue/wechat": "~4.0",
         "qiniu/php-sdk": "^7.4",
         "aliyuncs/oss-sdk-php": "^2.4",
@@ -37,8 +37,9 @@
         "phpmailer/phpmailer": "^6.5",
         "overtrue/easy-sms": "^2.1",
         "upyun/sdk": "^3.5",
-        "aws/aws-sdk-php": "^3.227",
-        "fastknife/ajcaptcha": "^1.1"
+        "aws/aws-sdk-php": "^3.250",
+        "fastknife/ajcaptcha": "^1.2",
+        "topthink/think-worker": "^3.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"

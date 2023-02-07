@@ -19,9 +19,7 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 - 内容管理
 - 文件管理
 - 设置管理
-- 权限管理
-- 系统管理
-- 数据库管理
+- 系统管理：权限管理...
 - 代码生成器
 - Excel导出导入
 - 接口文档与调试...
@@ -42,9 +40,9 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 - PHP >= 7.2.5  
   安装 fileinfo、redis 扩展  
   开启 putenv、proc_open 函数
-- MySQL >= 5.5
+- MySQL >= 5.6
 - Redis
-- node >= 12.0.0
+- node >= 14.0.0
 - npm >= 6.9.0
 
 ### 安装后端

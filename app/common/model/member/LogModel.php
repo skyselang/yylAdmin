@@ -18,35 +18,50 @@ use hg\apidoc\annotation as Apidoc;
 class LogModel extends Model
 {
     // 表名
-    protected $name = 'Member_log';
+    protected $name = 'member_log';
     // 表主键
-    protected $pk = 'member_log_id';
+    protected $pk = 'log_id';
 
-    /**
-     * @Apidoc\Field("member_log_id")
-     */
-    public function id()
+    // 修改请求参数
+    public function setRequestParamAttr($value)
     {
+        return serialize($value);
+    }
+    // 获取请求参数
+    public function getRequestParamAttr($value)
+    {
+        return unserialize($value);
     }
 
-    /**
-     * @Apidoc\Field("member_log_id,member_id,username,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time")
-     */
-    public function listReturn()
+    // 关联会员
+    public function member()
     {
+        return $this->hasOne(MemberModel::class, 'member_id', 'member_id');
+    }
+    // 获取会员昵称
+    public function getNicknameAttr($value)
+    {
+        return $this['member']['nickname'] ?? '';
+    }
+    // 获取会员用户名
+    public function getUsernameAttr($value)
+    {
+        return $this['member']['username'] ?? '';
     }
 
-    /**
-     * 
-     */
-    public function infoReturn()
+    // 关联会员接口
+    public function api()
     {
+        return $this->hasOne(ApiModel::class, 'api_id', 'api_id');
     }
-
-    /**
-     * @Apidoc\Field("log_type")
-     */
-    public function log_type()
+    // 获取会员接口链接
+    public function getApiUrlAttr($value)
     {
+        return $this['api']['api_url'] ?? '';
+    }
+    // 获取会员接口名称
+    public function getApiNameAttr($value)
+    {
+        return $this['api']['api_name'] ?? '';
     }
 }

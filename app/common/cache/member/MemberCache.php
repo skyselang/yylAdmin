@@ -11,6 +11,7 @@ namespace app\common\cache\member;
 
 use think\facade\Cache;
 use app\common\service\member\MemberService;
+use app\common\service\member\SettingService;
 
 /**
  * 会员管理缓存
@@ -43,8 +44,13 @@ class MemberCache
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 86400)
+    public static function set($id, $info, $ttl = -1)
     {
+        if ($ttl === -1) {
+            $set = SettingService::info();
+            $ttl = $set['token_exp'] * 3600;
+        }
+        
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
@@ -71,9 +77,9 @@ class MemberCache
     {
         $ids = var_to_array($id);
         foreach ($ids as $v) {
-            $res = Cache::delete(self::key($v));
+            Cache::delete(self::key($v));
         }
-        return $res;
+        return true;
     }
 
     /**
@@ -89,14 +95,24 @@ class MemberCache
     /**
      * 缓存更新
      *
-     * @param int $id 会员id
+     * @param mixed $id 会员id
      * 
-     * @return array 会员信息
+     * @return void
      */
     public static function upd($id)
     {
-        self::del($id);
-
-        return MemberService::info($id);
+        $setting = SettingService::info();
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            $old = self::get($v);
+            if ($old) {
+                self::del($v);
+                $new = MemberService::info($v, false);
+                if ($new) {
+                    $new[$setting['token_name']] = $old[$setting['token_name']];
+                    self::set($v, $new);
+                }
+            }
+        }
     }
 }

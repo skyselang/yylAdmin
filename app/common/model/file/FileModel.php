@@ -10,6 +10,7 @@
 namespace app\common\model\file;
 
 use think\Model;
+use app\common\service\file\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -22,81 +23,68 @@ class FileModel extends Model
     // 表主键
     protected $pk = 'file_id';
 
-    /**
-     * @Apidoc\Field("file_id")
-     */
-    public function id()
+    // 关联文件分组
+    public function group()
     {
+        return $this->hasOne(GroupModel::class, 'group_id', 'group_id')->where([where_delete()]);
+    }
+    /**
+     * 获取文件分组名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("group_name", type="string", desc="分组名称")
+     */
+    public function getGroupNameAttr($value, $data)
+    {
+        return $this['group']['group_name'] ?? '';
+    }
+
+    // 关联标签
+    public function tags()
+    {
+        return $this->belongsToMany(TagModel::class, TagsModel::class, 'tag_id', 'file_id');
+    }
+    // 获取标签id
+    public function getTagIdsAttr()
+    {
+        return relation_fields($this['tags'], 'tag_id');
+    }
+    /**
+     * 获取标签名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("tag_name", type="string", desc="标签名称")
+     */
+    public function getTagNamesAttr()
+    {
+        return relation_fields($this['tags'], 'tag_name', true);
     }
 
     /**
-     * @Apidoc\Field("group_id,storage,file_type,is_front,is_disable")
+     * 获取文件类型名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_type_name", type="string", desc="文件类型名称")
      */
-    public function listParam()
+    public function getFileTypeNameAttr($value, $data)
     {
+        return SettingService::fileTypes($data['file_type']);
     }
 
     /**
-     * @Apidoc\Field("file_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable")
+     * 获取文件大小
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_size", type="string", desc="文件大小")
      */
-    public function listReturn()
+    public function getFileSizeAttr($value, $data)
     {
+        return SettingService::fileSize($data['file_size']);
     }
 
     /**
-     * 
+     * 获取文件链接
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_url", type="string", desc="文件链接")
      */
-    public function infoReturn()
+    public function getFileUrlAttr($value, $data)
     {
-    }
-
-    /**
-     * @Apidoc\Field("group_id,file_type,file_name")
-     */
-    public function addParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("file_id,file_name,group_id,file_type,sort,domain")
-     */
-    public function editParam()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("group_id")
-     */
-    public function group_id()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("domain")
-     */
-    public function domain()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("file_type")
-     */
-    public function file_type()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("is_disable")
-     */
-    public function is_disable()
-    {
-    }
-
-    /**
-     * @Apidoc\Field("file_url")
-     * @Apidoc\AddField("file_url", type="string", require=false, default="", desc="文件链接")
-     */
-    public function file_url()
-    {
+        return SettingService::fileUrl($data);
     }
 }

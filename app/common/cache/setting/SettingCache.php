@@ -17,14 +17,14 @@ use think\facade\Cache;
 class SettingCache
 {
     // 缓存标签
-    protected static $tag = 'setting';
+    protected static $tag = 'setting_setting';
     // 缓存前缀
-    protected static $prefix = 'setting:';
+    protected static $prefix = 'setting_setting:';
 
     /**
      * 缓存键名
      *
-     * @param int $id 设置id
+     * @param mixed $id 设置id
      * 
      * @return string
      */
@@ -36,13 +36,13 @@ class SettingCache
     /**
      * 缓存设置
      *
-     * @param int   $id   设置id
+     * @param mixed $id   设置id
      * @param array $info 设置信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 86400)
+    public static function set($id, $info = [], $ttl = 86400)
     {
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
@@ -50,9 +50,9 @@ class SettingCache
     /**
      * 缓存获取
      *
-     * @param int $id 设置id
+     * @param mixed $id 设置id
      * 
-     * @return array 设置信息
+     * @return array
      */
     public static function get($id)
     {
@@ -62,13 +62,17 @@ class SettingCache
     /**
      * 缓存删除
      *
-     * @param int $id 设置id
+     * @param mixed $id 设置id
      * 
      * @return bool
      */
     public static function del($id)
     {
-        return Cache::delete(self::key($id));
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            Cache::delete(self::key($v));
+        }
+        return true;
     }
 
     /**

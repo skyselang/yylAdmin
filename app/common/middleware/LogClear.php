@@ -12,12 +12,7 @@ namespace app\common\middleware;
 use Closure;
 use think\Request;
 use think\Response;
-use app\common\cache\member\LogCache;
-use app\common\cache\admin\UserLogCache;
-use app\common\service\setting\SettingService;
-use app\common\service\member\LogService;
-use app\common\service\admin\SettingService as AdminSettingService;
-use app\common\service\admin\UserLogService;
+use think\facade\Event;
 
 /**
  * 日志清除中间件
@@ -33,33 +28,11 @@ class LogClear
      */
     public function handle($request, Closure $next)
     {
-        // 会员日志清除
-        $setting = SettingService::info();
-        if ($setting['log_save_time']) {
-            $member_clear_key = 'clear';
-            $member_clear_val = LogCache::get($member_clear_key);
-            if (empty($member_clear_val)) {
-                $member_days = $setting['log_save_time'];
-                $member_date = date('Y-m-d H:i:s', strtotime("-{$member_days} day"));
-                $mmeber_where[] = ['create_time', '<=', $member_date];
-                LogService::clear($mmeber_where);
-                LogCache::set($member_clear_key, $member_days, 86400);
-            }
-        }
-
         // 用户日志清除
-        $admin_setting = AdminSettingService::info();
-        if ($admin_setting['log_save_time']) {
-            $user_clear_key = 'clear';
-            $user_clear_val = UserLogCache::get($user_clear_key);
-            if (empty($user_clear_val)) {
-                $user_days = $admin_setting['log_save_time'];
-                $user_date = date('Y-m-d H:i:s', strtotime("-{$user_days} day"));
-                $user_where[] = ['create_time', '<=', $user_date];
-                UserLogService::clear($user_where);
-                UserLogCache::set($user_clear_key, $user_days, 86400);
-            }
-        }
+        Event::trigger('UserLog');
+
+        // 会员日志清除
+        Event::trigger('MemberLog');
 
         return $next($request);
     }

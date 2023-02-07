@@ -24,7 +24,7 @@ class LogCache
     /**
      * 缓存键名
      *
-     * @param mixed $id 会员日志id、统计时间
+     * @param mixed $id 日志id、统计时间
      * 
      * @return string
      */
@@ -36,8 +36,8 @@ class LogCache
     /**
      * 缓存设置
      *
-     * @param mixed $id   会员日志id、统计时间
-     * @param array $info 会员日志信息
+     * @param mixed $id   日志id、统计时间
+     * @param array $info 日志信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
@@ -50,9 +50,9 @@ class LogCache
     /**
      * 缓存获取
      *
-     * @param mixed $id 会员日志id、统计时间
+     * @param mixed $id 日志id、统计时间
      * 
-     * @return array 会员日志信息
+     * @return array 日志信息
      */
     public static function get($id)
     {
@@ -62,7 +62,7 @@ class LogCache
     /**
      * 缓存删除
      *
-     * @param mixed $id 会员日志id、统计时间
+     * @param mixed $id 日志id、统计时间
      * 
      * @return bool
      */
@@ -70,9 +70,9 @@ class LogCache
     {
         $ids = var_to_array($id);
         foreach ($ids as $v) {
-            $res = Cache::delete(self::key($v));
+            Cache::delete(self::key($v));
         }
-        return $res;
+        return true;
     }
 
     /**
