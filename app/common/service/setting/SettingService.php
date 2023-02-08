@@ -106,7 +106,7 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->append(['diy_con_obj', 'feedback_type'])->toArray();
+            $info = $info->append(['offi_url', 'mini_url', 'favicon_url', 'logo_url', 'diy_con_obj', 'feedback_type'])->toArray();
 
             SettingCache::set($id, $info);
         }
