@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 127.0.0.1-3306
+ Source Server         : 127.0.0.1-mysql5.5
  Source Server Type    : MySQL
  Source Server Version : 50529
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 17/01/2023 17:10:58
+ Date: 10/02/2023 14:59:23
 */
 
 SET NAMES utf8mb4;
@@ -508,7 +508,7 @@ CREATE TABLE `ya_member_log`  (
   `request_area` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
   `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
   `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
-  `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
+  `request_param` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
   `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回码',
   `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
   `user_agent` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户代理',
@@ -5090,14 +5090,14 @@ CREATE TABLE `ya_system_user`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_system_user
 -- ----------------------------
-INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-17 17:03:13', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-02-10 14:56:21', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (2, 0, 'yyladmin', 'yyladmin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-05 11:32:01', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_system_user` VALUES (3, 0, 'admin', 'admin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-15 11:53:13', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (3, 0, 'admin', 'admin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-27 18:09:34', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (4, 0, '演示', 'demo', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (5, 0, '拍簧片', 'php', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-05 11:30:05', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (6, 0, '测试', 'test', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-05 11:31:54', 0, 0, 0, NULL, NULL, NULL);
@@ -5137,7 +5137,7 @@ CREATE TABLE `ya_system_user_log`  (
   `request_area` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求区县',
   `request_region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求地区',
   `request_isp` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '请求ISP',
-  `request_param` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
+  `request_param` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '请求参数',
   `response_code` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回码',
   `response_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '返回描述',
   `user_agent` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户代理',
