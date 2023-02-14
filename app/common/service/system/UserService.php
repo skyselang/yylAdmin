@@ -56,7 +56,7 @@ class UserService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = 'm.' . $pk . ',nickname,username,sort,is_super,is_disable,create_time,update_time';
+            $field = 'm.' . $pk . ',nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
         }
         if (empty($order)) {
             $order = ['m.' . $pk => 'desc'];

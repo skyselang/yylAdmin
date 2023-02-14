@@ -39,7 +39,8 @@
         "upyun/sdk": "^3.5",
         "aws/aws-sdk-php": "^3.250",
         "fastknife/ajcaptcha": "^1.2",
-        "topthink/think-worker": "^3.0"
+        "topthink/think-worker": "^3.0",
+        "chinayin/ip2region": "^2.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"
