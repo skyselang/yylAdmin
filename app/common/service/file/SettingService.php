@@ -11,6 +11,7 @@ namespace app\common\service\file;
 
 use app\common\cache\file\SettingCache;
 use app\common\model\file\SettingModel;
+use hg\apidoc\annotation as Apidoc;
 
 /**
  * 文件设置
@@ -26,7 +27,8 @@ class SettingService
     /**
      * 设置信息
      * 
-     * @param string $field 返回的字段
+     * @param string $field 返回字段
+     * @Apidoc\Returned("accept_ext", type="string", default="", desc="允许上传的文件后缀")
      *
      * @return array
      */

@@ -24,6 +24,7 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("设置信息")
      * @Apidoc\Returned(ref="app\common\model\setting\SettingModel")
+     * @Apidoc\Returned(ref="app\common\service\setting\SettingService\info")
      * @Apidoc\Returned(ref="diyConReturn")
      */
     public function info()

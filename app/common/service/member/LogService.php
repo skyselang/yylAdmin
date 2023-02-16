@@ -233,7 +233,7 @@ class LogService
         $setting = SettingService::info();
         if ($setting['log_save_time']) {
             $time = date('H');
-            if ($time >= 1 && $time <= 8) {
+            if (0 <= $time && $time <= 8) {
                 $key = 'clear';
                 $val = LogCache::get($key);
                 if (empty($val)) {

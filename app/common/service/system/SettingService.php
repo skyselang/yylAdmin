@@ -99,6 +99,7 @@ class SettingService
     /**
      * 设置信息
      * 
+     * @param string $field 指定字段
      * @Apidoc\Returned("logo_url", type="string", require=false, default="", desc="logo链接")
      * @Apidoc\Returned("favicon_url", type="string", require=false, default="", desc="favicon链接")
      * @Apidoc\Returned("login_bg_url", type="string", require=false, default="", desc="登录背景图链接")
@@ -107,16 +108,17 @@ class SettingService
      *
      * @return array
      */
-    public static function info()
+    public static function info($field = '*')
     {
         $id = self::$id;
-        
-        $info = SettingCache::get($id);
+        $key = md5($id . $field);
+
+        $info = SettingCache::get($key);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->find($id);
+            $info = $model->field($field)->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['token_key']   = uniqid();
@@ -125,14 +127,29 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->append(['favicon_url', 'logo_url', 'login_bg_url'])->toArray();
+
+            $append = [];
+            if ($field == '*') {
+                $append = ['favicon_url', 'logo_url', 'login_bg_url'];
+            } else {
+                if (strpos($field, 'favicon_id') !== false) {
+                    $append[] = 'favicon_url';
+                }
+                if (strpos($field, 'logo_id') !== false) {
+                    $append[] = 'logo_url';
+                }
+                if (strpos($field, 'login_bg_id') !== false) {
+                    $append[] = 'login_bg_url';
+                }
+            }
+            $info = $info->append($append)->toArray();
 
             $cache_config = Cache::getConfig();
             $info['cache_type'] = $cache_config['default'];
             $info['token_type'] = Config::get('admin.token_type');
             $info['token_name'] = Config::get('admin.token_name');
 
-            SettingCache::set($id, $info);
+            SettingCache::set($key, $info);
         }
 
         return $info;
@@ -159,7 +176,7 @@ class SettingService
             exception();
         }
 
-        SettingCache::del($id);
+        SettingCache::clear();
 
         return $param;
     }

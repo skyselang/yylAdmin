@@ -11,6 +11,7 @@ namespace app\common\service\setting;
 
 use app\common\cache\setting\SettingCache;
 use app\common\model\setting\SettingModel;
+use hg\apidoc\annotation as Apidoc;
 
 /**
  * 设置管理
@@ -85,19 +86,27 @@ class SettingService
 
     /**
      * 设置信息
+     * 
+     * @param string $field 指定字段
+     * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
+     * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
+     * @Apidoc\Returned("offi_url", type="string", desc="二维码链接")
+     * @Apidoc\Returned("mini_url", type="string", desc="小程序码链接")
+     * @Apidoc\Returned("diy_con_obj", type="object", desc="自定义设置对象")
      *
      * @return array
      */
-    public static function info()
+    public static function info($field = '*')
     {
         $id = self::$id;
+        $key = md5($id . $field);
 
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->find($id);
+            $info = $model->field($field)->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['diy_config']  = [];
@@ -106,9 +115,31 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->append(['offi_url', 'mini_url', 'favicon_url', 'logo_url', 'diy_con_obj', 'feedback_type'])->toArray();
 
-            SettingCache::set($id, $info);
+            $append = [];
+            if ($field == '*') {
+                $append = ['favicon_url', 'logo_url', 'offi_url', 'mini_url', 'diy_con_obj'];
+            } else {
+                if (strpos($field, 'favicon_id') !== false) {
+                    $append[] = 'favicon_url';
+                }
+                if (strpos($field, 'logo_id') !== false) {
+                    $append[] = 'logo_url';
+                }
+                if (strpos($field, 'offi_id') !== false) {
+                    $append[] = 'offi_url';
+                }
+                if (strpos($field, 'mini_id') !== false) {
+                    $append[] = 'mini_url';
+                }
+                if (strpos($field, 'diy_config') !== false) {
+                    $append[] = 'diy_con_obj';
+                }
+            }
+            $append[] = 'feedback_type';
+            $info = $info->append($append)->toArray();
+
+            SettingCache::set($key, $info);
         }
 
         return $info;
@@ -135,7 +166,7 @@ class SettingService
             exception();
         }
 
-        SettingCache::del($id);
+        SettingCache::clear();
 
         return $param;
     }

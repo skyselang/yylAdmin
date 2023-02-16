@@ -231,10 +231,10 @@ class UserLogService
      */
     public static function clearLog()
     {
-        $setting = SettingService::info();
+        $setting = SettingService::info('log_save_time');
         if ($setting['log_save_time']) {
             $time = date('H');
-            if ($time >= 1 && $time <= 8) {
+            if (0 <= $time && $time <= 8) {
                 $key = 'clear';
                 $val = UserLogCache::get($key);
                 if (empty($val)) {

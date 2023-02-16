@@ -27,23 +27,22 @@ class SettingService
     /**
      * 设置信息
      * 
-     * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
-     * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
-     * @Apidoc\Returned("offi_url", type="string", desc="二维码链接")
-     * @Apidoc\Returned("mini_url", type="string", desc="小程序码链接")
+     * @param string $field 指定字段
+     * @Apidoc\Returned("diy_con_obj", type="object", desc="自定义设置对象")
      * 
      * @return array
      */
-    public static function info()
+    public static function info($field = '*')
     {
         $id = self::$id;
+        $key = md5($id . $field);
 
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->find($id);
+            $info = $model->field($field)->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['diy_config']  = [];
@@ -52,9 +51,18 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->append(['favicon_url', 'logo_url', 'offi_url', 'mini_url', 'diy_con_obj'])->toArray();
 
-            SettingCache::set($id, $info);
+            $append = [];
+            if ($field == '*') {
+                $append = ['diy_con_obj'];
+            } else {
+                if (strpos($field, 'diy_config') !== false) {
+                    $append[] = 'diy_con_obj';
+                }
+            }
+            $info = $info->append($append)->toArray();
+
+            SettingCache::set($key, $info);
         }
 
         return $info;
@@ -81,7 +89,7 @@ class SettingService
             exception();
         }
 
-        SettingCache::del($id);
+        SettingCache::clear();
 
         return $param;
     }

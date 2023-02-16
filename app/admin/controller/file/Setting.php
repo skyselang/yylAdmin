@@ -23,7 +23,9 @@ class Setting extends BaseController
 {
     /**
      * @Apidoc\Title("文件设置信息")
-     * @Apidoc\Returned("file", ref="app\common\model\file\SettingModel", type="object", desc="设置信息")
+     * @Apidoc\Returned("setting", ref="app\common\model\file\SettingModel", type="object", desc="设置信息",
+     *   @Apidoc\Returned("accept_ext", type="string", default="", desc="允许上传的文件后缀")
+     * )
      * @Apidoc\Returned("storage", type="object", desc="存储方式")
      */
     public function info()
