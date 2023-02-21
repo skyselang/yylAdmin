@@ -9,6 +9,7 @@
 
 namespace app\common\service\member;
 
+use think\facade\Log;
 use think\facade\Config;
 use think\facade\Request;
 use app\common\cache\member\LogCache;
@@ -241,7 +242,10 @@ class LogService
                     $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
                     $where = [['create_time', '<', $date]];
                     LogCache::set($key, $days, 1800);
-                    LogService::clear($where);
+                    $res = LogService::clear($where);
+                    $res['log'] = 'member-log';
+                    $res['where'] = $where;
+                    Log::write($res, 'timer');
                 }
             }
         }

@@ -9,6 +9,7 @@
 
 namespace app\common\service\system;
 
+use think\facade\Log;
 use think\facade\Config;
 use think\facade\Request;
 use app\common\cache\system\UserLogCache;
@@ -242,7 +243,10 @@ class UserLogService
                     $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
                     $where = [['create_time', '<', $date]];
                     UserLogCache::set($key, $days, 1800);
-                    UserLogService::clear($where);
+                    $res = UserLogService::clear($where);
+                    $res['log'] = 'user-log';
+                    $res['where'] = $where;
+                    Log::write($res, 'timer');
                 }
             }
         }

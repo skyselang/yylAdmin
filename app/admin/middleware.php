@@ -16,5 +16,5 @@ return [
     // 接口校验中间件
     \app\admin\middleware\ApiVerifyMiddleware::class,
     // 接口速率中间件
-    \app\admin\middleware\ApiRateMiddleware::class,
+    \think\middleware\Throttle::class,
 ];
