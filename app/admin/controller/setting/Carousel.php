@@ -29,11 +29,9 @@ class Carousel extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\CarouselModel", type="array", desc="轮播列表", field="carousel_id,file_id,file_type,title,link,position,sort,is_disable,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\getFileUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\getFileTypeNameAttr")
+     * @Apidoc\Returned("list", ref="app\common\model\setting\CarouselModel", type="array", desc="轮播列表", field="carousel_id,unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time",
+     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
      * )
-     * @Apidoc\Returned("filetypes", type="array", desc="文件类型")
      */
     public function list()
     {
@@ -51,10 +49,8 @@ class Carousel extends BaseController
      * @Apidoc\Title("轮播信息")
      * @Apidoc\Query(ref="app\common\model\setting\CarouselModel", field="carousel_id")
      * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel",
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\getFileUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\getFileExtAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\getFileNameAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\getFileTypeNameAttr")
+     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file"),
+     *   @Apidoc\Returned("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表")
      * )
      */
     public function info()
@@ -71,7 +67,8 @@ class Carousel extends BaseController
     /**
      * @Apidoc\Title("轮播添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="file_id,file_type,title,link,position,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="unique,file_id,title,link,position,desc,sort")
+     * @Apidoc\Param("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id")
      */
     public function add()
     {
@@ -87,7 +84,8 @@ class Carousel extends BaseController
     /**
      * @Apidoc\Title("轮播修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="carousel_id,file_id,file_type,title,link,position,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,link,position,desc,sort")
+     * @Apidoc\Param("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id")
      */
     public function edit()
     {

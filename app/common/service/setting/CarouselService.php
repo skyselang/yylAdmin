@@ -11,7 +11,6 @@ namespace app\common\service\setting;
 
 use app\common\cache\setting\CarouselCache;
 use app\common\model\setting\CarouselModel;
-use app\common\service\file\SettingService;
 
 /**
  * 轮播管理
@@ -24,12 +23,13 @@ class CarouselService
      */
     public static $edit_field = [
         'carousel_id/d' => 0,
+        'unique/s'      => '',
         'file_id/d'     => 0,
-        'file_type/s'   => 'image',
         'title/s'       => '',
         'link/s'        => '',
-        'position/s'    => '',
-        'sort/d'        => 250
+        'desc/s'        => '',
+        'sort/d'        => 250,
+        'file_list/a'   => [],
     ];
 
     /**
@@ -49,7 +49,7 @@ class CarouselService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',file_id,file_type,title,link,position,sort,is_disable,create_time,update_time';
+            $field = $pk . ',unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
@@ -59,20 +59,18 @@ class CarouselService
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)
             ->with(['file'])
-            ->append(['file_url', 'file_type_name'])
+            ->append(['file_url', 'file_name', 'file_ext', 'file_type', 'file_type_name'])
             ->hidden(['file'])
             ->page($page)->limit($limit)->order($order)->select()->toArray();
 
-        $filetypes = self::fileTypes();
-
-        return compact('count', 'pages', 'page', 'limit', 'list', 'filetypes');
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
      * 轮播信息
      * 
-     * @param int  $id   轮播id
-     * @param bool $exce 不存在是否抛出异常
+     * @param int|string $id   轮播id
+     * @param bool       $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
@@ -81,15 +79,23 @@ class CarouselService
         $info = CarouselCache::get($id);
         if (empty($info)) {
             $model = new CarouselModel();
+            $pk = $model->getPk();
 
-            $info = $model->find($id);
+            if (is_numeric($id)) {
+                $where[] = [$pk, '=', $id];
+            } else {
+                $where[] = ['unique', '=', $id];
+                $where[] = where_delete();
+            }
+
+            $info = $model->where($where)->find();
             if (empty($info)) {
                 if ($exce) {
                     exception('轮播不存在：' . $id);
                 }
                 return [];
             }
-            $info = $info->append(['file_url', 'file_name', 'file_ext'])->toArray();
+            $info = $info->append(['file_url', 'file_name', 'file_ext', 'file_type', 'file_type_name', 'file_list'])->toArray();
 
             CarouselCache::set($id, $info);
         }
@@ -114,13 +120,30 @@ class CarouselService
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $model->save($param);
-        $id = $model->$pk;
-        if (empty($id)) {
-            exception();
+        // 启动事务
+        $model->startTrans();
+        try {
+            // 添加
+            $model->save($param);
+            // 添加文件列表
+            $file_list = $param['file_list'] ?? [];
+            if ($file_list) {
+                $file_list_ids = file_ids($file_list);
+                $model->files()->saveAll($file_list_ids);
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model->rollback();
         }
 
-        $param[$pk] = $id;
+        if (isset($errmsg)) {
+            exception($errmsg);
+        }
+
+        $param[$pk] = $model->$pk;
 
         return $param;
     }
@@ -143,14 +166,42 @@ class CarouselService
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
-        $res = $model->where($pk, 'in', $ids)->update($param);
-        if (empty($res)) {
-            exception();
+        // 启动事务
+        $model->startTrans();
+        try {
+            if (is_numeric($ids)) {
+                $ids = [$ids];
+            }
+            $unique = $model->where($pk, 'in', $ids)->column('unique');
+            // 修改
+            $model->where($pk, 'in', $ids)->update($param);
+            if (isset($param['file_list'])) {
+                foreach ($ids as $id) {
+                    $info = $model->find($id);
+                    // 修改文件列表
+                    if (isset($param['file_list'])) {
+                        $info->files()->detach();
+                        $file_list_ids = file_ids($param['file_list']);
+                        $info->files()->saveAll($file_list_ids);
+                    }
+                }
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model->rollback();
+        }
+
+        if (isset($errmsg)) {
+            exception($errmsg);
         }
 
         $param['ids'] = $ids;
 
         CarouselCache::del($ids);
+        CarouselCache::del($unique);
 
         return $param;
     }
@@ -168,31 +219,41 @@ class CarouselService
         $model = new CarouselModel();
         $pk = $model->getPk();
 
-        if ($real) {
-            $res = $model->where($pk, 'in', $ids)->delete();
-        } else {
-            $update = delete_update();
-            $res = $model->where($pk, 'in', $ids)->update($update);
+        // 启动事务
+        $model->startTrans();
+        try {
+            if (is_numeric($ids)) {
+                $ids = [$ids];
+            }
+            $unique = $model->where($pk, 'in', $ids)->column('unique');
+            if ($real) {
+                foreach ($ids as $id) {
+                    $info = $model->find($id);
+                    // 删除文件列表
+                    $info->files()->detach();
+                }
+                $model->where($pk, 'in', $ids)->delete();
+            } else {
+                $update = delete_update();
+                $model->where($pk, 'in', $ids)->update($update);
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model->rollback();
         }
 
-        if (empty($res)) {
-            exception();
+        if (isset($errmsg)) {
+            exception($errmsg);
         }
 
         $update['ids'] = $ids;
 
         CarouselCache::del($ids);
+        CarouselCache::del($unique);
 
         return $update;
-    }
-
-    /**
-     * 轮播类型数组
-     *
-     * @return array
-     */
-    public static function fileTypes()
-    {
-        return SettingService::fileTypes();
     }
 }

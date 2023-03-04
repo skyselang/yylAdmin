@@ -10,6 +10,7 @@
 namespace app\common\validate\setting;
 
 use think\Validate;
+use app\common\model\setting\CarouselModel;
 
 /**
  * 轮播管理验证器
@@ -20,23 +21,46 @@ class CarouselValidate extends Validate
     protected $rule = [
         'ids'         => ['require', 'array'],
         'carousel_id' => ['require'],
-        'file_type'   => ['require'],
-        'title'       => ['require'],
+        'title'       => ['require', 'checkExisted'],
     ];
 
     // 错误信息
     protected $message = [
-        'title.require'     => '请输入标题',
-        'file_type.require' => '请选择类型',
+        'title.require' => '请输入标题',
     ];
 
     // 验证场景
     protected $scene = [
         'info'     => ['carousel_id'],
-        'add'      => ['file_type', 'title'],
-        'edit'     => ['carousel_id', 'file_type', 'title'],
+        'add'      => ['title'],
+        'edit'     => ['carousel_id', 'title'],
         'dele'     => ['ids'],
         'position' => ['ids'],
         'disable'  => ['ids'],
     ];
+
+    // 自定义验证规则：轮播是否已存在
+    protected function checkExisted($value, $rule, $data = [])
+    {
+        $model = new CarouselModel();
+        $pk = $model->getPk();
+        $id = $data[$pk] ?? 0;
+
+        $unique = $data['unique'] ?? '';
+        if ($unique) {
+            if (is_numeric($unique)) {
+                return '标识不能为纯数字';
+            }
+
+            $where[] = [$pk, '<>', $id];
+            $where[] = ['unique', '=', $unique];
+            $where = where_delete($where);
+            $info = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return '标识已存在：' . $unique;
+            }
+        }
+
+        return true;
+    }
 }

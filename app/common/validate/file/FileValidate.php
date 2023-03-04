@@ -25,18 +25,22 @@ class FileValidate extends Validate
         'file'      => ['require', 'file', 'checkLimit'],
         'file_id'   => ['require'],
         'file_type' => ['require'],
+        'file_url'  => ['require', 'url'],
     ];
 
     // 错误信息
     protected $message = [
         'file.require'      => '请选择上传文件',
         'file_type.require' => '请选择文件类型',
+        'file_url.require'  => '请输入文件链接',
+        'file_url.url'      => '请输入有效的文件链接',
     ];
 
     // 验证场景
     protected $scene = [
         'info'        => ['file_id'],
         'add'         => ['file'],
+        'addurl'      => ['file_type', 'file_url'],
         'edit'        => ['file_id'],
         'dele'        => ['ids'],
         'disable'     => ['ids'],

@@ -33,6 +33,7 @@ TRUNCATE ya_member_tag;
 
 TRUNCATE ya_setting_accord;
 TRUNCATE ya_setting_carousel;
+TRUNCATE ya_setting_carousel_files;
 TRUNCATE ya_setting_feedback;
 TRUNCATE ya_setting_feedback_images;
 TRUNCATE ya_setting_notice;

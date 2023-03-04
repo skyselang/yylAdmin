@@ -167,7 +167,10 @@ class CaptchaUtils
         $img_data = file_get_contents($tmpfname);
         $img_base64 = 'data:image/png;base64,' . base64_encode($img_data);
         ob_get_clean();
-        @unlink($tmpfname);
+        try {
+            unlink($tmpfname);
+        } catch (\Exception $e) {
+        }
         imagedestroy(self::$im);
 
         $captcha['captcha_switch'] = $switch;
@@ -343,7 +346,10 @@ class CaptchaUtils
         list($width, $height) = @getimagesize($gb);
         // 重采样
         $bgImage = @imagecreatefromjpeg($gb);
-        @imagecopyresampled(self::$im, $bgImage, 0, 0, 0, 0, self::$imageW, self::$imageH, $width, $height);
-        @imagedestroy($bgImage);
+        try {
+            imagecopyresampled(self::$im, $bgImage, 0, 0, 0, 0, self::$imageW, self::$imageH, $width, $height);
+            imagedestroy($bgImage);
+        } catch (\Exception $e) {
+        }
     }
 }

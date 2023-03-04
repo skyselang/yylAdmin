@@ -206,12 +206,18 @@ class StorageService
 
         if ($errmsg) {
             if (empty($file_info[$pk])) {
-                @unlink($file_path);
+                try {
+                    unlink($file_path);
+                } catch (\Exception $e) {
+                }
             }
             exception($errmsg);
         } else {
             if ($storage != 'local') {
-                @unlink($file_path);
+                try {
+                    unlink($file_path);
+                } catch (\Exception $e) {
+                }
             }
         }
 

@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 10/02/2023 14:59:23
+ Date: 04/03/2023 11:07:24
 */
 
 SET NAMES utf8mb4;
@@ -377,7 +377,7 @@ CREATE TABLE `ya_member_api`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`api_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 92 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 93 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_member_api
@@ -429,11 +429,12 @@ INSERT INTO `ya_member_api` VALUES (79, 74, '协议列表', 'api/setting.Accord/
 INSERT INTO `ya_member_api` VALUES (80, 74, '协议信息', 'api/setting.Accord/info', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (81, 74, '轮播列表', 'api/setting.Carousel/list', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (85, 88, '设置管理', 'api/setting.Setting/setting', 450, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_member_api` VALUES (87, 74, '反馈提交', 'api/setting.Feedback/add', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (87, 74, '反馈提交', 'api/setting.Feedback/add', 220, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (88, 74, '设置', '', 900, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (89, 88, '内容设置', 'api/setting.Setting/content', 550, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (90, 88, '文件设置', 'api/setting.Setting/file', 500, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (91, 5, '会员中心', '', 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (92, 74, '轮播信息', 'api/setting.Carousel/info', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_member_attributes
@@ -615,11 +616,12 @@ CREATE TABLE `ya_setting_accord`  (
 DROP TABLE IF EXISTS `ya_setting_carousel`;
 CREATE TABLE `ya_setting_carousel`  (
   `carousel_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '轮播id',
+  `unique` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标识',
   `file_id` int(11) NULL DEFAULT 0 COMMENT '文件id，mock(@natural(1, 10))',
-  `file_type` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'image' COMMENT '类型，image图片，video视频，audio音频，word文档，other其它',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标题，mock(@ctitle(5, 10))',
   `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '链接',
-  `position` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '位置',
+  `desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述',
+  `position` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '位置',
   `sort` int(10) NULL DEFAULT 250 COMMENT '排序',
   `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
   `is_delete` tinyint(1) NULL DEFAULT 0 COMMENT '是否删除，1是0否',
@@ -634,6 +636,21 @@ CREATE TABLE `ya_setting_carousel`  (
 
 -- ----------------------------
 -- Records of ya_setting_carousel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for ya_setting_carousel_files
+-- ----------------------------
+DROP TABLE IF EXISTS `ya_setting_carousel_files`;
+CREATE TABLE `ya_setting_carousel_files`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `carousel_id` int(11) NULL DEFAULT 0 COMMENT '轮播id',
+  `file_id` int(11) NULL DEFAULT 0 COMMENT '文件id',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '轮播文件' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of ya_setting_carousel_files
 -- ----------------------------
 
 -- ----------------------------
@@ -5090,18 +5107,18 @@ CREATE TABLE `ya_system_user`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_system_user
 -- ----------------------------
-INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-02-10 14:56:21', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_system_user` VALUES (2, 0, 'yyladmin', 'yyladmin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-05 11:32:01', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_system_user` VALUES (3, 0, 'admin', 'admin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-27 18:09:34', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-03-04 10:58:04', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (2, 0, 'yyladmin', 'yyladmin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-03-04 10:45:26', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (3, 0, 'admin', 'admin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-03-04 10:24:54', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (4, 0, '演示', 'demo', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (5, 0, '拍簧片', 'php', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-05 11:30:05', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (6, 0, '测试', 'test', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-01-05 11:31:54', 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_system_user` VALUES (7, 0, '运营', 'operate', '$2y$10$cVth16zQ3Y4rEAVd4WrzGO0xai4HMTtZh1he6GKOiGkfr17NP7j/y', '', '', '', 250, 0, 0, 0, 0, '', '', NULL, '2023-01-15 14:47:02', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (7, 0, '运营', 'operate', '$2y$10$cVth16zQ3Y4rEAVd4WrzGO0xai4HMTtZh1he6GKOiGkfr17NP7j/y', '', '', '', 250, 0, 0, 0, 0, '', '', NULL, '2023-02-14 16:55:41', 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_system_user_attributes

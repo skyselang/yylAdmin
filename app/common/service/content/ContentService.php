@@ -206,6 +206,7 @@ class ContentService
             if (is_numeric($ids)) {
                 $ids = [$ids];
             }
+            $unique = $model->where($pk, 'in', $ids)->column('unique');
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
             if (isset($param['category_ids']) || isset($param['tag_ids']) || isset($param['images']) || isset($param['videos']) || isset($param['annexs'])) {
@@ -252,6 +253,7 @@ class ContentService
         $param['ids'] = $ids;
 
         ContentCache::del($ids);
+        ContentCache::del($unique);
 
         return $param;
     }

@@ -109,7 +109,9 @@ class File extends BaseController
      * @Apidoc\Title("文件添加")
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param(ref="fileParam")
+     * @Apidoc\Param("type", type="string", default="upl", desc="url添加，upl上传")
+     * @Apidoc\Param("file_url", type="string", require=true, desc="文件链接, 添加（type=url）时必传")
+     * @Apidoc\Param("file", type="file", require=true, default="", desc="文件, 上传（type=upl）时必传")
      * @Apidoc\Param(ref="app\common\model\file\FileModel", field="group_id,file_name,file_type,sort")
      * @Apidoc\Param("tag_ids", type="array", desc="标签id")
      * @Apidoc\Returned(ref="fileReturn")
@@ -121,14 +123,27 @@ class File extends BaseController
             exception('文件上传未开启，无法上传文件！');
         }
 
-        $param = $this->params(FileService::$edit_field);
-        $param['file'] = $this->request->file('file');
+        $edit_field = FileService::$edit_field;
+        $type = $this->request->param('type/s', 'upl');
+        if ($type == 'url') {
+            $edit_field['file_path/s'] = '';
+            $edit_field['file_url/s'] = '';
+            $edit_field['type/s'] = 'url';
+            $param = $this->params($edit_field);
 
-        validate(FileValidate::class)->scene('add')->check($param);
+            validate(FileValidate::class)->scene('addurl')->check($param);
 
-        $data = FileService::add($param);
+            $data = FileService::add($param);
+            return success($data, '添加成功');
+        } else {
+            $param = $this->params($edit_field);
+            $param['file'] = $this->request->file('file');
 
-        return success($data, '上传成功');
+            validate(FileValidate::class)->scene('add')->check($param);
+
+            $data = FileService::add($param);
+            return success($data, '上传成功');
+        }
     }
 
     /**

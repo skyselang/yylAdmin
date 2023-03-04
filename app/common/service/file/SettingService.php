@@ -151,11 +151,15 @@ class SettingService
      */
     public static function fileSize($file_size = 0)
     {
+        if (empty($file_size)) {
+            return '';
+        }
+
         $p = 0;
         $format = 'B';
         if ($file_size > 0 && $file_size < 1024) {
             $p = 0;
-            return number_format($file_size) . ' ' . $format;
+            return number_format($file_size) . $format;
         }
         if ($file_size >= 1024 && $file_size < pow(1024, 2)) {
             $p = 1;
@@ -230,10 +234,14 @@ class SettingService
     {
         $file_url = '';
         if ($file) {
-            if ($file['storage'] == 'local') {
-                $file_url = file_url($file['file_path']);
+            $domain    = $file['domain'];
+            $file_path = $file['file_path'];
+            if ($file['storage'] == 'local' && empty($domain)) {
+                $file_url = file_url($file_path);
             } else {
-                $file_url = $file['domain'] . '/' . $file['file_path'];
+                $domain    = rtrim($domain, '/');
+                $file_path = ltrim($file_path, '/');
+                $file_url  = $domain . '/' . $file_path;
                 if (strpos($file_url, 'http') !== 0) {
                     $file_url = 'http://' . $file_url;
                 }

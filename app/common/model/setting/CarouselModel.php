@@ -11,7 +11,6 @@ namespace app\common\model\setting;
 
 use think\Model;
 use app\common\model\file\FileModel;
-use app\common\service\setting\CarouselService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -24,15 +23,21 @@ class CarouselModel extends Model
     // 表主键
     protected $pk = 'carousel_id';
 
-    // 关联文件
+    /**
+     * 关联文件
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_url", type="string", desc="文件链接")
+     * @Apidoc\AddField("file_name", type="string", desc="文件名称")
+     * @Apidoc\AddField("file_ext", type="string", desc="文件后缀")
+     * @Apidoc\AddField("file_type", type="string", desc="文件类型")
+     * @Apidoc\AddField("file_type_name", type="string", desc="文件类型名称")
+     */
     public function file()
     {
-        return $this->hasOne(FileModel::class, 'file_id', 'file_id')->append(['file_url'])->where(where_disdel());
+        return $this->hasOne(FileModel::class, 'file_id', 'file_id')->append(['file_url', 'file_type_name'])->where(where_disdel());
     }
     /**
      * 获取文件链接
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("file_url", type="string", desc="文件链接")
      */
     public function getFileUrlAttr()
     {
@@ -40,8 +45,6 @@ class CarouselModel extends Model
     }
     /**
      * 获取文件名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("file_name", type="string", desc="文件名称")
      */
     public function getFileNameAttr()
     {
@@ -49,21 +52,37 @@ class CarouselModel extends Model
     }
     /**
      * 获取文件后缀
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("file_ext", type="string", desc="文件后缀")
      */
     public function getFileExtAttr()
     {
         return $this['file']['file_ext'] ?? '';
     }
     /**
+     * 获取文件类型
+     */
+    public function getFileTypeAttr($value, $data)
+    {
+        return $this['file']['file_type'] ?? '';
+    }
+    /**
      * 获取文件类型名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("file_type_name", type="string", desc="文件类型名称")
      */
     public function getFileTypeNameAttr($value, $data)
     {
-        $filetype = CarouselService::fileTypes();
-        return $filetype[$data['file_type']] ?? '';
+        return $this['file']['file_type_name'] ?? '';
+    }
+
+    // 关联文件列表
+    public function files()
+    {
+        return $this->belongsToMany(FileModel::class, CarouselFilesModel::class, 'file_id', 'carousel_id')->where(where_disdel());
+    }
+    // 获取文件列表
+    public function getFileListAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+        }
+        return $files ?? [];
     }
 }

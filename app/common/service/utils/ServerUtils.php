@@ -30,7 +30,7 @@ class ServerUtils
             try {
                 $MySql = Db::query('select version() as version');
                 $mysql_version = $MySql[0]['version'];
-            } catch (\Throwable $th) {
+            } catch (\Exception $e) {
                 $mysql_version = '';
             }
 

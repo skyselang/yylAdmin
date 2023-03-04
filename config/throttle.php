@@ -69,7 +69,12 @@ return [
     'visit_enable_show_rate_limit' => false,
     // 访问受限时返回的响应
     'visit_fail_response' => function ($throttle, $request, $wait_seconds) {
-        exception('你的操作过于频繁，请在 ' . $wait_seconds . ' 秒后重试', RetCodeUtils::FREQUENT_OPERATION);
+        $app_name = app('http')->getName();
+        if ($app_name == 'admin') {
+            exception('你的操作过于频繁，请在 ' . $wait_seconds . ' 秒后重试', RetCodeUtils::FREQUENT_OPERATION);
+        } elseif ($app_name == 'api') {
+            exception('太快了，请在 ' . $wait_seconds . ' 秒后再试', RetCodeUtils::FREQUENT_OPERATION);
+        }
         return Response::create('Too many requests, try again after ' . $wait_seconds . ' seconds.')->code(429);
     },
 ];

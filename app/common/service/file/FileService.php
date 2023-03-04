@@ -103,7 +103,7 @@ class FileService
                 }
                 return [];
             }
-            $info = $info->append(['group_name', 'tag_names', 'file_url', 'file_size'])->toArray();
+            $info = $info->append(['group_name', 'tag_names', 'file_type_name', 'file_url', 'file_size'])->toArray();
 
             FileCache::set($id, $info);
         }
@@ -120,42 +120,64 @@ class FileService
      */
     public static function add($param)
     {
-        $file = $param['file'];
-        unset($param['file']);
-        $datetime = datetime();
-
-        $file_ext  = strtolower($file->getOriginalExtension());
-        $file_type = SettingService::fileType($file_ext);
-        $file_size = $file->getSize();
-        $file_md5  = $file->hash('md5');
-        $file_hash = $file->hash('sha1');
-        $file_name = Filesystem::disk('public')
-            ->putFile('file', $file, function () use ($file_hash) {
-                return date('Ymd') . '/' . $file_hash;
-            });
-
-        $param['file_md5']   = $file_md5;
-        $param['file_hash']  = $file_hash;
-        $param['file_path']  = 'storage/' . $file_name;
-        $param['file_ext']   = $file_ext;
-        $param['file_size']  = $file_size;
-        $param['file_type']  = $file_type;
-        if (empty($param['file_name'])) {
-            $param['file_name'] = mb_substr($file->getOriginalName(), 0, - (mb_strlen($param['file_ext']) + 1));
-        }
-
         $model = new FileModel();
         $pk = $model->getPk();
-        $file_exist = $model->field($pk)->where('file_hash', $file_hash)->find();
-        if ($file_exist) {
-            $file_exist = $file_exist->toArray();
-            $param[$pk] = $file_exist[$pk];
-        } else {
-            $param[$pk] = '';
-        }
 
-        // 对象存储
-        $param = StorageService::upload($param, $pk);
+        $datetime = datetime();
+        $type = $param['type'] ?? 'upl';
+        if ($type == 'url') {
+            $url    = $param['file_url'];
+            $file   = parse_url($url);
+            $scheme = $file['scheme'] ?? '';
+            $port   = $file['port'] ?? '';
+            $host   = $file['host'] ?? '';
+            $path   = $file['path'] ?? '';
+            $query  = $file['query'] ?? '';
+
+            $param['domain']    = $scheme . '://' . $host . ($port ? ':' . $port : '');
+            $param['file_path'] = $path . ($query ? '?' . $query : '');
+            $param['file_ext']  = substr(strrchr($path, '.'), 1);
+            if (empty($param['file_name'])) {
+                $param['file_name'] = substr(strrchr($path, '/'), 0, - (strlen($param['file_ext']) + 1));
+            }
+            $param['file_name'] = trim($param['file_name'], '/');
+
+            $file_exist = $model->field($pk)->where('domain', $param['domain'])->where('file_path', $param['file_path'])->find();
+        } else {
+            $file = $param['file'];
+            unset($param['file']);
+
+            $file_ext  = strtolower($file->getOriginalExtension());
+            $file_type = SettingService::fileType($file_ext);
+            $file_size = $file->getSize();
+            $file_md5  = $file->hash('md5');
+            $file_hash = $file->hash('sha1');
+            $file_name = Filesystem::disk('public')
+                ->putFile('file', $file, function () use ($file_hash) {
+                    return date('Ymd') . '/' . $file_hash;
+                });
+
+            $param['file_md5']   = $file_md5;
+            $param['file_hash']  = $file_hash;
+            $param['file_path']  = 'storage/' . $file_name;
+            $param['file_ext']   = $file_ext;
+            $param['file_size']  = $file_size;
+            $param['file_type']  = $file_type;
+            if (empty($param['file_name'])) {
+                $param['file_name'] = mb_substr($file->getOriginalName(), 0, - (mb_strlen($param['file_ext']) + 1));
+            }
+
+            $file_exist = $model->field($pk)->where('file_hash', $file_hash)->find();
+            if ($file_exist) {
+                $file_exist = $file_exist->toArray();
+                $param[$pk] = $file_exist[$pk];
+            } else {
+                $param[$pk] = '';
+            }
+
+            // 对象存储
+            $param = StorageService::upload($param, $pk);
+        }
 
         if ($file_exist) {
             $param['is_disable'] = 0;
@@ -264,7 +286,10 @@ class FileService
                     // 删除标签
                     $info->tags()->detach();
                     // 删除文件
-                    @unlink($v['file_path']);
+                    try {
+                        unlink($v['file_path']);
+                    } catch (\Exception $e) {
+                    }
                 }
                 $model->where($pk, 'in', $ids)->delete();
             } else {
