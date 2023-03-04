@@ -303,7 +303,9 @@ class File extends BaseController
         $where[] = where_delete([], 1);
         $where = $this->where($where);
 
-        $data = FileService::list($where, $this->page(), $this->limit(), $this->order());
+        $order = $this->order(['delete_time' => 'desc', 'file_id' => 'desc']);
+
+        $data = FileService::list($where, $this->page(), $this->limit(), $order);
 
         $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name');
         $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name');
