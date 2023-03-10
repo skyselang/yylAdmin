@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 节流设置
+// 节流设置：https://github.com/top-think/think-throttle
 use think\Response;
 use think\middleware\throttle\CounterFixed;
 use app\common\service\utils\RetCodeUtils;

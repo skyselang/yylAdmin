@@ -129,11 +129,20 @@ class File extends BaseController
             $edit_field['file_path/s'] = '';
             $edit_field['file_url/s'] = '';
             $edit_field['type/s'] = 'url';
-            $param = $this->params($edit_field);
+            $params = $this->params($edit_field);
 
-            validate(FileValidate::class)->scene('addurl')->check($param);
-
-            $data = FileService::add($param);
+            $files = $data = [];
+            $file_urls = trim($params['file_url'], ',');
+            $file_urls = explode(',', $file_urls);
+            foreach ($file_urls as $file_url) {
+                $param = $params;
+                $param['file_url'] = trim($file_url);
+                validate(FileValidate::class)->scene('addurl')->check($param);
+                $files[] = $param;
+            }
+            foreach ($files as $file) {
+                $data[] = FileService::add($file);
+            }
             return success($data, '添加成功');
         } else {
             $param = $this->params($edit_field);

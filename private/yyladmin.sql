@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 04/03/2023 11:07:24
+ Date: 10/03/2023 14:33:34
 */
 
 SET NAMES utf8mb4;
@@ -310,6 +310,44 @@ CREATE TABLE `ya_file_tags`  (
 
 -- ----------------------------
 -- Records of ya_file_tags
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for ya_jobs
+-- ----------------------------
+DROP TABLE IF EXISTS `ya_jobs`;
+CREATE TABLE `ya_jobs`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `attempts` tinyint(3) UNSIGNED NOT NULL,
+  `reserve_time` int(11) UNSIGNED NULL DEFAULT NULL,
+  `available_time` int(11) UNSIGNED NOT NULL,
+  `create_time` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `queue`(`queue`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '队列' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of ya_jobs
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for ya_jobs_failed
+-- ----------------------------
+DROP TABLE IF EXISTS `ya_jobs_failed`;
+CREATE TABLE `ya_jobs_failed`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `connection` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `queue` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `exception` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `fail_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '队列（失败）' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of ya_jobs_failed
 -- ----------------------------
 
 -- ----------------------------
@@ -5112,7 +5150,7 @@ CREATE TABLE `ya_system_user`  (
 -- ----------------------------
 -- Records of ya_system_user
 -- ----------------------------
-INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-03-04 10:58:04', 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_user` VALUES (1, 0, 'skyselang', 'skyselang', '$2y$10$gp3HPILlpB7BEaloBYggguvHhfsHCmQMl0NvDyJRAuEfFKykA0mKC', '18812345678', '18812345678@email.com', '超管', 200, 0, 0, 0, 0, '', '', NULL, '2023-03-08 10:07:33', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (2, 0, 'yyladmin', 'yyladmin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-03-04 10:45:26', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (3, 0, 'admin', 'admin', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, '2023-03-04 10:24:54', 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_user` VALUES (4, 0, '演示', 'demo', '$2y$10$ArjnW.AXJjya2OEQIU/BjuFfLNW090zRv8cuI2O6ATKPpn2ml0cHK', '', '', '', 200, 0, 0, 0, 0, '', '', NULL, NULL, 0, 0, 0, NULL, NULL, NULL);

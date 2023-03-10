@@ -21,6 +21,9 @@ TRUNCATE ya_file_setting;
 TRUNCATE ya_file_tag;
 TRUNCATE ya_file_tags;
 
+TRUNCATE ya_jobs;
+TRUNCATE ya_jobs_failed;
+
 TRUNCATE ya_member;
 DELETE FROM ya_member_api WHERE is_delete=1;
 UPDATE ya_member_api SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
