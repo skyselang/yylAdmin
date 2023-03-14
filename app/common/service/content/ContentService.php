@@ -40,7 +40,9 @@ class ContentService
         'sort/d'         => 250,
         'images/a'       => [],
         'videos/a'       => [],
-        'annexs/a'       => [],
+        'audios/a'       => [],
+        'words/a'        => [],
+        'others/a'       => [],
     ];
 
     /**
@@ -119,7 +121,7 @@ class ContentService
                 }
                 return [];
             }
-            $info = $info->append(['cover_url', 'category_ids', 'tag_ids', 'images', 'videos', 'annexs'])
+            $info = $info->append(['cover_url', 'category_ids', 'tag_ids', 'category_names', 'tag_names', 'images', 'videos',  'audios', 'words', 'others'])
                 ->hidden(['cover', 'categorys', 'tags', 'files'])
                 ->toArray();
 
@@ -158,13 +160,17 @@ class ContentService
             $model->categorys()->saveAll($param['category_ids']);
             // 添加标签
             $model->tags()->saveAll($param['tag_ids']);
-            // 添加图片、视频、附件
+            // 添加文件
             $image_ids = file_ids($param['images']);
             $video_ids = file_ids($param['videos']);
-            $annex_ids = file_ids($param['annexs']);
-            $model->files()->saveAll($image_ids, ['type' => 1], true);
-            $model->files()->saveAll($video_ids, ['type' => 2], true);
-            $model->files()->saveAll($annex_ids, ['type' => 3], true);
+            $audio_ids = file_ids($param['audios']);
+            $word_ids  = file_ids($param['words']);
+            $other_ids = file_ids($param['others']);
+            $model->files()->saveAll($image_ids, ['file_type' => 'image'], true);
+            $model->files()->saveAll($video_ids, ['file_type' => 'video'], true);
+            $model->files()->saveAll($audio_ids, ['file_type' => 'audio'], true);
+            $model->files()->saveAll($word_ids, ['file_type' => 'word'], true);
+            $model->files()->saveAll($other_ids, ['file_type' => 'other'], true);
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
@@ -209,7 +215,7 @@ class ContentService
             $unique = $model->where($pk, 'in', $ids)->column('unique');
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['category_ids']) || isset($param['tag_ids']) || isset($param['images']) || isset($param['videos']) || isset($param['annexs'])) {
+            if (isset($param['category_ids']) || isset($param['tag_ids']) || isset($param['images']) || isset($param['videos']) || isset($param['audios']) || isset($param['words']) || isset($param['others'])) {
                 foreach ($ids as $id) {
                     $info = $model->append(['category_ids', 'tag_ids'])->find($id);
                     // 修改分类
@@ -226,15 +232,19 @@ class ContentService
                         }
                         $info->tags()->saveAll($param['tag_ids']);
                     }
-                    // 修改图片、视频、附件
-                    if (isset($param['images']) || isset($param['videos']) || isset($param['annexs'])) {
+                    // 修改文件
+                    if (isset($param['images']) || isset($param['videos']) || isset($param['audios']) || isset($param['words']) || isset($param['others'])) {
                         $info->files()->detach();
                         $image_ids = file_ids($param['images']);
                         $video_ids = file_ids($param['videos']);
-                        $annex_ids = file_ids($param['annexs']);
-                        $info->files()->saveAll($image_ids, ['type' => 1], true);
-                        $info->files()->saveAll($video_ids, ['type' => 2], true);
-                        $info->files()->saveAll($annex_ids, ['type' => 3], true);
+                        $audio_ids = file_ids($param['audios']);
+                        $word_ids  = file_ids($param['words']);
+                        $other_ids = file_ids($param['others']);
+                        $info->files()->saveAll($image_ids, ['file_type' => 'image'], true);
+                        $info->files()->saveAll($video_ids, ['file_type' => 'video'], true);
+                        $info->files()->saveAll($audio_ids, ['file_type' => 'audio'], true);
+                        $info->files()->saveAll($word_ids, ['file_type' => 'word'], true);
+                        $info->files()->saveAll($other_ids, ['file_type' => 'other'], true);
                     }
                 }
             }
@@ -284,7 +294,7 @@ class ContentService
                     $info->categorys()->detach();
                     // 删除标签
                     $info->tags()->detach();
-                    // 删除图片、视频、附件
+                    // 删除文件
                     $info->files()->detach();
                 }
                 $model->where($pk, 'in', $ids)->delete();

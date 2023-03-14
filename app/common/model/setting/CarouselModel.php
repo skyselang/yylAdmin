@@ -75,7 +75,7 @@ class CarouselModel extends Model
     // 关联文件列表
     public function files()
     {
-        return $this->belongsToMany(FileModel::class, CarouselFilesModel::class, 'file_id', 'carousel_id')->where(where_disdel());
+        return $this->belongsToMany(FileModel::class, SettingFilesModel::class, 'file_id', 'carousel_id')->where(where_disdel());
     }
     // 获取文件列表
     public function getFileListAttr()

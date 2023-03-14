@@ -143,6 +143,9 @@ class File extends BaseController
             foreach ($files as $file) {
                 $data[] = FileService::add($file);
             }
+            if (count($data) == 1) {
+                $data = $data[0];
+            }
             return success($data, '添加成功');
         } else {
             $param = $this->params($edit_field);

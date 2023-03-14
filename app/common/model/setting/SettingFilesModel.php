@@ -12,10 +12,10 @@ namespace app\common\model\setting;
 use think\model\Pivot;
 
 /**
- * 反馈图片关联模型
+ * 设置文件关联模型
  */
-class FeedbackImagesModel extends Pivot
+class SettingFilesModel extends Pivot
 {
     // 表名
-    protected $name = 'setting_feedback_images';
+    protected $name = 'setting_files';
 }

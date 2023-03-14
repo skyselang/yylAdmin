@@ -192,8 +192,64 @@ class ApidocDefinitions
     }
 
     /**
-     * annexs请求参数
-     * @Apidoc\Param("annexs", type="array", require=false, default="[]", desc="附件",
+     * audios请求参数
+     * @Apidoc\Param("audios", type="array", require=false, default="[]", desc="音频",
+     *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
+     *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="音频名称"),
+     *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="音频大小"),
+     *   @Apidoc\Param("file_path", type="string", require=false, default="", desc="音频路径"),
+     *   @Apidoc\Param("file_url", type="string", require=false, default="", desc="音频链接"),
+     * )
+     */
+    public function audiosParam()
+    {
+    }
+
+    /**
+     * audios返回参数
+     * @Apidoc\Returned("audios", type="array", require=false, default="[]", desc="音频",
+     *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
+     *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="音频名称"),
+     *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="音频大小"),
+     *   @Apidoc\Returned("file_path", type="string", require=true, default="", desc="音频路径"),
+     *   @Apidoc\Returned("file_url", type="string", require=true, default="", desc="音频链接"),
+     * )
+     */
+    public function audiosReturn()
+    {
+    }
+
+    /**
+     * words请求参数
+     * @Apidoc\Param("words", type="array", require=false, default="[]", desc="文档",
+     *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
+     *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="文档名称"),
+     *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="文档大小"),
+     *   @Apidoc\Param("file_path", type="string", require=false, default="", desc="文档路径"),
+     *   @Apidoc\Param("file_url", type="string", require=false, default="", desc="文档链接"),
+     * )
+     */
+    public function wordsParam()
+    {
+    }
+
+    /**
+     * words返回参数
+     * @Apidoc\Returned("words", type="array", require=false, default="[]", desc="文档",
+     *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
+     *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="文档名称"),
+     *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="文档大小"),
+     *   @Apidoc\Returned("file_path", type="string", require=true, default="", desc="文档路径"),
+     *   @Apidoc\Returned("file_url", type="string", require=true, default="", desc="文档链接"),
+     * )
+     */
+    public function wordsReturn()
+    {
+    }
+
+    /**
+     * others请求参数
+     * @Apidoc\Param("others", type="array", require=false, default="[]", desc="附件",
      *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="附件名称"),
      *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="附件大小"),
@@ -201,13 +257,13 @@ class ApidocDefinitions
      *   @Apidoc\Param("file_url", type="string", require=false, default="", desc="附件链接"),
      * )
      */
-    public function annexsParam()
+    public function othersParam()
     {
     }
 
     /**
-     * annexs返回参数
-     * @Apidoc\Returned("annexs", type="array", require=false, default="[]", desc="附件",
+     * others返回参数
+     * @Apidoc\Returned("others", type="array", require=false, default="[]", desc="附件",
      *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="附件名称"),
      *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="附件大小"),
@@ -215,7 +271,7 @@ class ApidocDefinitions
      *   @Apidoc\Returned("file_url", type="string", require=true, default="", desc="附件链接"),
      * )
      */
-    public function annexsReturn()
+    public function othersReturn()
     {
     }
 

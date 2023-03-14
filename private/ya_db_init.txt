@@ -36,9 +36,8 @@ TRUNCATE ya_member_tag;
 
 TRUNCATE ya_setting_accord;
 TRUNCATE ya_setting_carousel;
-TRUNCATE ya_setting_carousel_files;
 TRUNCATE ya_setting_feedback;
-TRUNCATE ya_setting_feedback_images;
+TRUNCATE ya_setting_files;
 TRUNCATE ya_setting_notice;
 DELETE FROM ya_setting_region WHERE is_delete=1;
 UPDATE ya_setting_region SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
@@ -54,6 +53,6 @@ DELETE FROM ya_system_role WHERE is_delete=1;
 UPDATE ya_system_role SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
 TRUNCATE ya_system_setting;
 DELETE FROM ya_system_user WHERE is_delete=1;
-UPDATE ya_system_user SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null, avatar_id=0, login_num=0, login_ip='', login_region='', login_time=null;
+UPDATE ya_system_user SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null, avatar_id=0, login_num=0, login_ip='', login_region='', login_time=null, logout_time=null, phone='', email='', remark='';
 TRUNCATE ya_system_user_attributes;
 TRUNCATE ya_system_user_log;

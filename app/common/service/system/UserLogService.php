@@ -242,11 +242,14 @@ class UserLogService
                     $days = $setting['log_save_time'];
                     $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
                     $where = [['create_time', '<', $date]];
-                    UserLogCache::set($key, $days, 1800);
                     $res = UserLogService::clear($where);
-                    $res['log'] = 'user-log';
                     $res['where'] = $where;
-                    Log::write($res, 'timer');
+
+                    $log['log'] = 'user-log-clear';
+                    $log['data'] = $res;
+                    Log::write($log, 'timer');
+
+                    UserLogCache::set($key, $days, 1800);
                 }
             }
         }

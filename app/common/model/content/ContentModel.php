@@ -89,7 +89,7 @@ class ContentModel extends Model
         if ($this['files']) {
             $files = $this['files']->append(['file_url'])->toArray();
             foreach ($files as $file) {
-                if ($file['pivot']['type'] == 1) {
+                if ($file['pivot']['file_type'] == 'image') {
                     $images[] = $file;
                 }
             }
@@ -102,24 +102,50 @@ class ContentModel extends Model
         if ($this['files']) {
             $files = $this['files']->append(['file_url'])->toArray();
             foreach ($files as $file) {
-                if ($file['pivot']['type'] == 2) {
+                if ($file['pivot']['file_type'] == 'video') {
                     $videos[] = $file;
                 }
             }
         }
         return $videos ?? [];
     }
-    // 获取附件文件
-    public function getAnnexsAttr()
+    // 获取音频文件
+    public function getAudiosAttr()
     {
         if ($this['files']) {
             $files = $this['files']->append(['file_url'])->toArray();
             foreach ($files as $file) {
-                if ($file['pivot']['type'] == 3) {
-                    $annexs[] = $file;
+                if ($file['pivot']['file_type'] == 'audio') {
+                    $audios[] = $file;
                 }
             }
         }
-        return $annexs ?? [];
+        return $audios ?? [];
+    }
+    // 获取文档文件
+    public function getWordsAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+            foreach ($files as $file) {
+                if ($file['pivot']['file_type'] == 'word') {
+                    $words[] = $file;
+                }
+            }
+        }
+        return $words ?? [];
+    }
+    // 获取其它文件
+    public function getOthersAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+            foreach ($files as $file) {
+                if ($file['pivot']['file_type'] == 'other') {
+                    $others[] = $file;
+                }
+            }
+        }
+        return $others ?? [];
     }
 }

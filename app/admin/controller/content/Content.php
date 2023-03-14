@@ -57,9 +57,14 @@ class Content extends BaseController
      * @Apidoc\Title("内容信息")
      * @Apidoc\Query(ref="app\common\model\content\ContentModel", field="content_id")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel")
+     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr")
+     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr")
+     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr")
      * @Apidoc\Returned(ref="imagesReturn")
      * @Apidoc\Returned(ref="videosReturn")
-     * @Apidoc\Returned(ref="annexsReturn")
+     * @Apidoc\Returned(ref="audiosReturn")
+     * @Apidoc\Returned(ref="wordsReturn")
+     * @Apidoc\Returned(ref="othersReturn")
      */
     public function info()
     {
@@ -80,12 +85,14 @@ class Content extends BaseController
      * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="cover_id,name,unique,title,keywords,description,content,author,url,sort")
      * @Apidoc\Param(ref="imagesParam")
      * @Apidoc\Param(ref="videosParam")
-     * @Apidoc\Param(ref="annexsParam")
+     * @Apidoc\Param(ref="audiosReturn")
+     * @Apidoc\Param(ref="wordsReturn")
+     * @Apidoc\Param(ref="othersReturn")
      */
     public function add()
     {
         $param = $this->params(ContentService::$edit_field);
-        
+
         validate(ContentValidate::class)->scene('add')->check($param);
 
         $data = ContentService::add($param);
@@ -101,7 +108,9 @@ class Content extends BaseController
      * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,title,keywords,description,content,author,url,sort")
      * @Apidoc\Param(ref="imagesParam")
      * @Apidoc\Param(ref="videosParam")
-     * @Apidoc\Param(ref="annexsParam")
+     * @Apidoc\Param(ref="audiosReturn")
+     * @Apidoc\Param(ref="wordsReturn")
+     * @Apidoc\Param(ref="othersReturn")
      */
     public function edit()
     {

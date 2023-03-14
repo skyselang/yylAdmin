@@ -241,11 +241,14 @@ class LogService
                     $days = $setting['log_save_time'];
                     $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
                     $where = [['create_time', '<', $date]];
-                    LogCache::set($key, $days, 1800);
                     $res = LogService::clear($where);
-                    $res['log'] = 'member-log';
                     $res['where'] = $where;
-                    Log::write($res, 'timer');
+
+                    $log['log'] = 'member-log-clear';
+                    $log['data'] = $res;
+                    Log::write($log, 'timer');
+
+                    LogCache::set($key, $days, 1800);
                 }
             }
         }
