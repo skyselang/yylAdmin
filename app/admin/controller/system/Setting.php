@@ -33,6 +33,44 @@ class Setting extends BaseController
     }
 
     /**
+     * @Apidoc\Title("系统设置信息")
+     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="logo_id,favicon_id,login_bg_id,system_name,page_title")
+     * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
+     * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
+     * @Apidoc\Returned("login_bg_url", type="string", desc="登录背景链接")
+     */
+    public function systemInfo()
+    {
+        $setting = $this->info();
+
+        $fields = 'logo_id,logo_url,favicon_id,favicon_url,login_bg_id,login_bg_url,system_name,page_title';
+        $fields = explode(',', $fields);
+        foreach ($fields as $field) {
+            $data[$field] = $setting[$field] ?? '';
+        }
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("系统设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="logo_id,logo_url,favicon_id,favicon_url,login_bg_id,login_bg_url,system_name,page_title")
+     */
+    public function systemEdit()
+    {
+        $param['system_name'] = $this->request->param('system_name/s', '');
+        $param['page_title']  = $this->request->param('page_title/s', '');
+        $param['logo_id']     = $this->request->param('logo_id/d', 0);
+        $param['favicon_id']  = $this->request->param('favicon_id/d', 0);
+        $param['login_bg_id'] = $this->request->param('login_bg_id/d', 0);
+
+        $data = SettingService::edit($param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("缓存设置信息")
      * @Apidoc\Returned("cache_type", type="string", default="", desc="缓存类型")
      */
@@ -178,44 +216,6 @@ class Setting extends BaseController
         $param['api_rate_time'] = $this->request->param('api_rate_time/d', 1);
 
         validate(SettingValidate::class)->scene('api_edit')->check($param);
-
-        $data = SettingService::edit($param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("系统设置信息")
-     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="logo_id,favicon_id,login_bg_id,system_name,page_title")
-     * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
-     * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
-     * @Apidoc\Returned("login_bg_url", type="string", desc="登录背景链接")
-     */
-    public function systemInfo()
-    {
-        $setting = $this->info();
-
-        $fields = 'logo_id,logo_url,favicon_id,favicon_url,login_bg_id,login_bg_url,system_name,page_title';
-        $fields = explode(',', $fields);
-        foreach ($fields as $field) {
-            $data[$field] = $setting[$field] ?? '';
-        }
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("系统设置修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="logo_id,logo_url,favicon_id,favicon_url,login_bg_id,login_bg_url,system_name,page_title")
-     */
-    public function systemEdit()
-    {
-        $param['system_name'] = $this->request->param('system_name/s', '');
-        $param['page_title']  = $this->request->param('page_title/s', '');
-        $param['logo_id']     = $this->request->param('logo_id/d', 0);
-        $param['favicon_id']  = $this->request->param('favicon_id/d', 0);
-        $param['login_bg_id'] = $this->request->param('login_bg_id/d', 0);
 
         $data = SettingService::edit($param);
 
