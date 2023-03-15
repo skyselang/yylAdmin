@@ -49,30 +49,31 @@ class FileService
     {
         $model = new FileModel();
         $pk = $model->getPk();
+        $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = 'm.' . $pk . ',group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time';
+            $field = $group. ',group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time';
         }
         if (empty($order)) {
-            $order = ['update_time' => 'desc', $pk => 'desc'];
+            $order = ['update_time' => 'desc', $group => 'desc'];
         }
 
         $model = $model->alias('m');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
-                $model = $model->join('file_tags t', 'm.file_id=t.file_id', 'left')->where('t.tag_id', 'in', $wv[2]);
+                $model = $model->join('file_tags t', 'm.file_id=t.file_id')->where('t.tag_id', 'in', $wv[2]);
                 unset($where[$wk]);
             }
         }
         $where = array_values($where);
 
-        $count = $model->where($where)->count();
+        $count = $model->where($where)->group($group)->count();
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)
             ->with(['group', 'tags'])
             ->append(['group_name', 'tag_names', 'file_type_name', 'file_url', 'file_size'])
             ->hidden(['group', 'tags'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
 
         $ids = array_column($list, $pk);
         $storage = SettingService::storages();

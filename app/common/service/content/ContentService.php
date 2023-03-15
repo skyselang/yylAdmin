@@ -60,12 +60,13 @@ class ContentService
     {
         $model = new ContentModel();
         $pk = $model->getPk();
+        $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = 'm.' . $pk . ',cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time';
+            $field = $group . ',cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
+            $order = [$group => 'desc'];
         }
 
         $model = $model->alias('m');
@@ -81,13 +82,13 @@ class ContentService
         }
         $where = array_values($where);
 
-        $count = $model->where($where)->count();
+        $count = $model->where($where)->group($group)->count();
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)
             ->with(['cover', 'categorys', 'tags'])
             ->append(['cover_url', 'category_names', 'tag_names'])
             ->hidden(['cover', 'categorys', 'tags'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }

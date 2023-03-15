@@ -57,12 +57,13 @@ class MemberService
     {
         $model = new MemberModel();
         $pk = $model->getPk();
+        $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = 'm.' . $pk . ',headimgurl,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time';
+            $field = $group . ',headimgurl,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
+            $order = [$group => 'desc'];
         }
 
         $model = $model->alias('m');
@@ -78,13 +79,13 @@ class MemberService
         }
         $where = array_values($where);
 
-        $count = $model->where($where)->count();
+        $count = $model->where($where)->group($group)->count();
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)
             ->with(['avatar', 'tags', 'groups'])
             ->append(['avatar_url', 'tag_names', 'group_names'])
             ->hidden(['avatar', 'tags', 'groups'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
 
         $genders = SettingService::genders();
         $reg_types = SettingService::reg_types();

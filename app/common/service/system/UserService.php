@@ -54,12 +54,13 @@ class UserService
     {
         $model = new UserModel();
         $pk = $model->getPk();
+        $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = 'm.' . $pk . ',nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
+            $field = $group . ',nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
         }
         if (empty($order)) {
-            $order = ['m.' . $pk => 'desc'];
+            $order = [$group => 'desc'];
         }
 
         if (user_hide_where()) {
@@ -69,15 +70,15 @@ class UserService
         $model = $model->alias('m');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'dept_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes d', 'm.user_id=d.user_id', 'left')->where('d.dept_id', 'in', $wv[2]);
+                $model = $model->join('system_user_attributes d', 'm.user_id=d.user_id')->where('d.dept_id', 'in', $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'post_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes p', 'm.user_id=p.user_id', 'left')->where('p.post_id', 'in', $wv[2]);
+                $model = $model->join('system_user_attributes p', 'm.user_id=p.user_id')->where('p.post_id', 'in', $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'role_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes r', 'm.user_id=r.user_id', 'left')->where('r.role_id', 'in', $wv[2]);
+                $model = $model->join('system_user_attributes r', 'm.user_id=r.user_id')->where('r.role_id', 'in', $wv[2]);
                 unset($where[$wk]);
             }
         }
@@ -88,16 +89,16 @@ class UserService
                 ->with(['depts', 'posts', 'roles'])
                 ->append(['dept_names', 'post_names', 'role_names'])
                 ->hidden(['depts', 'posts', 'roles'])
-                ->order($order)->group('m.user_id')->select()->toArray();
+                ->order($order)->group($group)->select()->toArray();
         }
 
-        $count = $model->where($where)->count();
+        $count = $model->where($where)->group($group)->count();
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)
             ->with(['depts', 'posts', 'roles'])
             ->append(['dept_names', 'post_names', 'role_names'])
             ->hidden(['depts', 'posts', 'roles'])
-            ->page($page)->limit($limit)->order($order)->group('m.user_id')->select()->toArray();
+            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
