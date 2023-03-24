@@ -90,7 +90,7 @@ class CaptchaUtils
             self::$codeSet = '0123456789';
         }
 
-        self::$assets_path = root_path() . '\\private\\captcha\\assets\\';
+        self::$assets_path = root_path() . '/private/captcha/assets/';
     }
 
     /**
@@ -124,7 +124,7 @@ class CaptchaUtils
         // 验证码字体随机颜色
         self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
         // 验证码使用随机字体
-        $ttfPath = self::$assets_path . (self::$useZh ? 'zhttfs' : 'ttfs') . '\\';
+        $ttfPath = self::$assets_path . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
 
         if (empty(self::$fontttf)) {
             $dir  = dir($ttfPath);
@@ -334,7 +334,7 @@ class CaptchaUtils
      */
     protected static function background(): void
     {
-        $path = self::$assets_path . 'bgs\\';
+        $path = self::$assets_path . 'bgs/';
         $dir  = dir($path);
 
         $bgs = [];
