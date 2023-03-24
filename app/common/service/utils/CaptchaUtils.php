@@ -57,6 +57,8 @@ class CaptchaUtils
     protected static $math = false;
     // 缓存前缀
     protected static $prefix = 'captcha:';
+    // 字体图片资源路径
+    protected static $assets_path = '';
 
     /**
      * 验证码配置
@@ -87,6 +89,8 @@ class CaptchaUtils
         } else {
             self::$codeSet = '0123456789';
         }
+
+        self::$assets_path = root_path() . '\\private\\captcha\\assets\\';
     }
 
     /**
@@ -120,13 +124,13 @@ class CaptchaUtils
         // 验证码字体随机颜色
         self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
         // 验证码使用随机字体
-        $ttfPath = '../private/captcha/assets/' . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
+        $ttfPath = self::$assets_path . (self::$useZh ? 'zhttfs' : 'ttfs') . '\\';
 
         if (empty(self::$fontttf)) {
             $dir  = dir($ttfPath);
             $ttfs = [];
             while (false !== ($file = $dir->read())) {
-                if ('.' != $file[0] && substr($file, -4) == '.ttf') {
+                if (substr($file, -4) == '.ttf') {
                     $ttfs[] = $file;
                 }
             }
@@ -156,7 +160,7 @@ class CaptchaUtils
             $x     = self::$fontSize * ($index + 1) * mt_rand(1, 1) * (self::$math ? 1 : 1.5);
             $y     = self::$fontSize + mt_rand(10, 20);
             $angle = self::$math ? 0 : mt_rand(-40, 40);
-            putenv('GDFONTPATH=' . realpath('.'));
+            
             imagettftext(self::$im, self::$fontSize, $angle, $x, $y, self::$color, $fontttf, $char);
         }
 
@@ -330,7 +334,7 @@ class CaptchaUtils
      */
     protected static function background(): void
     {
-        $path = './static/captcha/assets/bgs/';
+        $path = self::$assets_path . 'bgs\\';
         $dir  = dir($path);
 
         $bgs = [];
@@ -343,10 +347,10 @@ class CaptchaUtils
 
         $gb = $bgs[array_rand($bgs)];
 
-        list($width, $height) = @getimagesize($gb);
-        // 重采样
-        $bgImage = @imagecreatefromjpeg($gb);
         try {
+            list($width, $height) = getimagesize($gb);
+            // 重采样
+            $bgImage = imagecreatefromjpeg($gb);
             imagecopyresampled(self::$im, $bgImage, 0, 0, 0, 0, self::$imageW, self::$imageH, $width, $height);
             imagedestroy($bgImage);
         } catch (\Exception $e) {
