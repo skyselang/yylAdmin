@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 12/04/2023 15:27:52
+ Date: 12/04/2023 15:35:12
 */
 
 SET NAMES utf8mb4;
@@ -415,7 +415,7 @@ CREATE TABLE `ya_member_api`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`api_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 93 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_member_api
@@ -473,6 +473,8 @@ INSERT INTO `ya_member_api` VALUES (89, 88, '内容设置', 'api/setting.Setting
 INSERT INTO `ya_member_api` VALUES (90, 88, '文件设置', 'api/setting.Setting/file', 500, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (91, 5, '会员中心', '', 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (92, 74, '轮播信息', 'api/setting.Carousel/info', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (93, 74, '通告列表', 'api/setting.Notice/list', 250, 1, 0, 0, 0, 0, 1, 1, 0, '2023-04-12 10:55:32', '2023-04-12 10:56:54', NULL);
+INSERT INTO `ya_member_api` VALUES (94, 74, '通告信息', 'api/setting.Notice/info', 250, 1, 0, 0, 0, 0, 1, 1, 0, '2023-04-12 10:56:48', '2023-04-12 10:56:58', NULL);
 
 -- ----------------------------
 -- Table structure for ya_member_attributes
