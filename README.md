@@ -1,10 +1,10 @@
 # yylAdmin
 
-- [Gitee](https://gitee.com/skyselang/yylAdmin) | [Github](https://github.com/skyselang/yylAdmin)
+- [码云](https://gitee.com/skyselang/yylAdmin) | [Github](https://github.com/skyselang/yylAdmin)
 
 ## 文档
 
-- [码云](http://skyselang.gitee.io/yyladmindoc/)  |  [看云](https://www.kancloud.cn/skyselang/yyladmin)
+- [开发文档](http://skyselang.gitee.io/yyladmindoc/)
 
 ## 简介
 
@@ -66,6 +66,8 @@ composer install
 ##### 导入数据库
 ```bash
 数据库文件：private/yyladmin.sql
+数据库字符集：utf8mb4
+数据库排序规则：utf8mb4_general_ci
 ```
 ##### 修改配置
 ```bash
@@ -171,7 +173,7 @@ cnpm run build:stage
 - 项目不定时更新，前后端最新代码保持一致  
 - 拉取代码后请更新前后端依赖（composer update、cnpm install）、同步数据库结构、清除缓存  
 
-## 交流群
+## 交流
 
 - QQ交流群：679883097
 
