@@ -10,6 +10,7 @@
 namespace app\common\model\setting;
 
 use think\Model;
+use app\common\model\file\FileModel;
 use app\common\service\setting\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -22,6 +23,21 @@ class NoticeModel extends Model
     protected $name = 'setting_notice';
     // 表主键
     protected $pk = 'notice_id';
+
+    // 关联图片
+    public function image()
+    {
+        return $this->hasOne(FileModel::class, 'file_id', 'image_id')->append(['file_url'])->where(where_disdel());
+    }
+    /**
+     * 获取图片链接
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("image_url", type="string", desc="图片链接")
+     */
+    public function getImageUrlAttr($value, $data)
+    {
+        return $this['image']['file_url'] ?? '';
+    }
 
     /**
      * 获取类型名称

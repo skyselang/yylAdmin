@@ -126,7 +126,9 @@ class GroupService
             // 添加
             $model->save($param);
             // 添加接口
-            $model->apis()->saveAll($param['api_ids']);
+            if (isset($param['api_ids'])) {
+                $model->apis()->saveAll($param['api_ids']);
+            }
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
@@ -170,13 +172,13 @@ class GroupService
             }
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['api_ids'])) {
+            if (var_isset($param, ['api_ids'])) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 修改接口
                     if (isset($param['api_ids'])) {
-                        $info->apis()->detach();
-                        $info->apis()->saveAll($param['api_ids']);
+                        $info = $info->append(['api_ids']);
+                        relation_update($info, $info['api_ids'], $param['api_ids'], 'apis');
                     }
                 }
             }

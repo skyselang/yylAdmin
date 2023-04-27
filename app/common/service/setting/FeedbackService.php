@@ -172,13 +172,14 @@ class FeedbackService
             }
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['images'])) {
+            if (var_isset($param, ['images'])) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 修改图片
-                    $info->image()->detach();
-                    $image_ids = file_ids($param['images']);
-                    $info->image()->saveAll($image_ids);
+                    if (isset($param['images'])) {
+                        $info = $info->append(['image_ids']);
+                        relation_update($info, $info['image_ids'], file_ids($param['images']), 'image');
+                    }
                 }
             }
             // 提交事务

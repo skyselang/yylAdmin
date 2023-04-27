@@ -30,9 +30,9 @@ class File extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="searchQuery")
      * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Query(ref="app\common\model\file\FileModel", field="group_id,storage,file_type,is_front,is_disable")
      * @Apidoc\Query("tag_ids", type="array", desc="标签id")
+     * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time",
      *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr"),

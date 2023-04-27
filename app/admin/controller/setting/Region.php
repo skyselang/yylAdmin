@@ -26,8 +26,8 @@ class Region extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="searchQuery")
      * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Query(ref="app\common\model\setting\RegionModel", field="region_pid")
+     * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel", type="array", desc="地区列表", field="region_id,region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,sort")
      * @Apidoc\Returned("tree", ref="app\common\model\setting\RegionModel", type="tree", desc="地区树形", field="region_id,region_pid,region_name")
      */

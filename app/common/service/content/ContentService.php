@@ -158,20 +158,29 @@ class ContentService
             // 添加
             $model->save($param);
             // 添加分类
-            $model->categorys()->saveAll($param['category_ids']);
+            if (isset($param['category_ids'])) {
+                $model->categorys()->saveAll($param['category_ids']);
+            }
             // 添加标签
-            $model->tags()->saveAll($param['tag_ids']);
+            if (isset($param['tag_ids'])) {
+                $model->tags()->saveAll($param['tag_ids']);
+            }
             // 添加文件
-            $image_ids = file_ids($param['images']);
-            $video_ids = file_ids($param['videos']);
-            $audio_ids = file_ids($param['audios']);
-            $word_ids  = file_ids($param['words']);
-            $other_ids = file_ids($param['others']);
-            $model->files()->saveAll($image_ids, ['file_type' => 'image'], true);
-            $model->files()->saveAll($video_ids, ['file_type' => 'video'], true);
-            $model->files()->saveAll($audio_ids, ['file_type' => 'audio'], true);
-            $model->files()->saveAll($word_ids, ['file_type' => 'word'], true);
-            $model->files()->saveAll($other_ids, ['file_type' => 'other'], true);
+            if (isset($param['images'])) {
+                $model->files()->saveAll(file_ids($param['images']), ['file_type' => 'image'], true);
+            }
+            if (isset($param['videos'])) {
+                $model->files()->saveAll(file_ids($param['videos']), ['file_type' => 'video'], true);
+            }
+            if (isset($param['audios'])) {
+                $model->files()->saveAll(file_ids($param['audios']), ['file_type' => 'audio'], true);
+            }
+            if (isset($param['words'])) {
+                $model->files()->saveAll(file_ids($param['words']), ['file_type' => 'word'], true);
+            }
+            if (isset($param['others'])) {
+                $model->files()->saveAll(file_ids($param['others']), ['file_type' => 'other'], true);
+            }
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
@@ -207,45 +216,49 @@ class ContentService
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
+        $unique = $model->where($pk, 'in', $ids)->column('unique');
+
         // 启动事务
         $model->startTrans();
         try {
             if (is_numeric($ids)) {
                 $ids = [$ids];
             }
-            $unique = $model->where($pk, 'in', $ids)->column('unique');
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['category_ids']) || isset($param['tag_ids']) || isset($param['images']) || isset($param['videos']) || isset($param['audios']) || isset($param['words']) || isset($param['others'])) {
+            if (var_isset($param, ['category_ids', 'tag_ids', 'images', 'videos', 'audios', 'words', 'others'])) {
                 foreach ($ids as $id) {
-                    $info = $model->append(['category_ids', 'tag_ids'])->find($id);
+                    $info = $model->find($id);
                     // 修改分类
                     if (isset($param['category_ids'])) {
-                        if ($info['category_ids'] ?? []) {
-                            $info->categorys()->detach($info['category_ids']);
-                        }
-                        $info->categorys()->saveAll($param['category_ids']);
+                        $info = $info->append(['category_ids']);
+                        relation_update($info, $info['category_ids'], $param['category_ids'], 'categorys');
                     }
                     // 修改标签
                     if (isset($param['tag_ids'])) {
-                        if ($info['tag_ids'] ?? []) {
-                            $info->tags()->detach($info['tag_ids']);
-                        }
-                        $info->tags()->saveAll($param['tag_ids']);
+                        $info = $info->append(['tag_ids']);
+                        relation_update($info, $info['tag_ids'], $param['tag_ids'], 'tags');
                     }
                     // 修改文件
-                    if (isset($param['images']) || isset($param['videos']) || isset($param['audios']) || isset($param['words']) || isset($param['others'])) {
-                        $info->files()->detach();
-                        $image_ids = file_ids($param['images']);
-                        $video_ids = file_ids($param['videos']);
-                        $audio_ids = file_ids($param['audios']);
-                        $word_ids  = file_ids($param['words']);
-                        $other_ids = file_ids($param['others']);
-                        $info->files()->saveAll($image_ids, ['file_type' => 'image'], true);
-                        $info->files()->saveAll($video_ids, ['file_type' => 'video'], true);
-                        $info->files()->saveAll($audio_ids, ['file_type' => 'audio'], true);
-                        $info->files()->saveAll($word_ids, ['file_type' => 'word'], true);
-                        $info->files()->saveAll($other_ids, ['file_type' => 'other'], true);
+                    if (isset($param['images'])) {
+                        $info = $info->append(['image_ids']);
+                        relation_update($info, $info['image_ids'], file_ids($param['images']), 'files', ['file_type' => 'image']);
+                    }
+                    if (isset($param['videos'])) {
+                        $info = $info->append(['video_ids']);
+                        relation_update($info, $info['video_ids'], file_ids($param['videos']), 'files', ['file_type' => 'video']);
+                    }
+                    if (isset($param['audios'])) {
+                        $info = $info->append(['audio_ids']);
+                        relation_update($info, $info['audio_ids'], file_ids($param['audios']), 'files', ['file_type' => 'audio']);
+                    }
+                    if (isset($param['words'])) {
+                        $info = $info->append(['word_ids']);
+                        relation_update($info, $info['word_ids'], file_ids($param['words']), 'files', ['file_type' => 'word']);
+                    }
+                    if (isset($param['others'])) {
+                        $info = $info->append(['other_ids']);
+                        relation_update($info, $info['other_ids'], file_ids($param['others']), 'files', ['file_type' => 'other']);
                     }
                 }
             }
@@ -281,6 +294,8 @@ class ContentService
     {
         $model = new ContentModel();
         $pk = $model->getPk();
+
+        $unique = $model->where($pk, 'in', $ids)->column('unique');
 
         // 启动事务
         $model->startTrans();
@@ -318,6 +333,7 @@ class ContentService
         $update['ids'] = $ids;
 
         ContentCache::del($ids);
+        ContentCache::del($unique);
 
         return $update;
     }

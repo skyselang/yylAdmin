@@ -52,7 +52,7 @@ class FileService
         $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = $group. ',group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time';
+            $field = $group . ',group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time';
         }
         if (empty($order)) {
             $order = ['update_time' => 'desc', $group => 'desc'];
@@ -191,7 +191,7 @@ class FileService
             $param['create_time'] = $datetime;
             $param['update_time'] = $datetime;
             $model->save($param);
-            // 标签
+            // 添加标签
             if (isset($param['tag_ids'])) {
                 $model->tags()->saveAll($param['tag_ids']);
             }
@@ -232,13 +232,13 @@ class FileService
             }
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['tag_ids'])) {
+            if (var_isset($param, ['tag_ids'])) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 修改标签
                     if (isset($param['tag_ids'])) {
-                        $info->tags()->detach();
-                        $info->tags()->saveAll($param['tag_ids']);
+                        $info = $info->append(['tag_ids']);
+                        relation_update($info, $info['tag_ids'], $param['tag_ids'], 'tags');
                     }
                 }
             }

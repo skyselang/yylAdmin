@@ -12,6 +12,7 @@ namespace app\api\controller\content;
 use app\common\controller\BaseController;
 use app\common\validate\content\ContentValidate;
 use app\common\service\content\CategoryService;
+use app\common\service\content\TagService;
 use app\common\service\content\ContentService;
 use app\common\service\content\SettingService;
 use hg\apidoc\annotation as Apidoc;
@@ -57,10 +58,44 @@ class Content extends BaseController
     }
 
     /**
+     * @Apidoc\Title("标签列表")
+     * @Apidoc\Query(ref="pagingQuery")
+     * @Apidoc\Query(ref="sortQuery")
+     * @Apidoc\Query(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", ref="app\common\model\content\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_unique")
+     */
+    public function tag()
+    {
+        $tag_id     = $this->request->param('tag_id/s', '');
+        $tag_name   = $this->request->param('tag_name/s', '');
+        $tag_unique = $this->request->param('tag_unique/s', '');
+
+        if ($tag_id) {
+            $where[] = ['tag_id', 'in', $tag_id];
+        }
+        if ($tag_name) {
+            $where[] = ['tag_name', 'like', '%' . $tag_name . '%'];
+        }
+        if ($tag_unique) {
+            $where[] = ['tag_unique', 'in', $tag_unique];
+        }
+        $where[] = where_disable();
+        $where[] = where_delete();
+
+        $order = ['sort' => 'desc', 'tag_id' => 'desc'];
+        $field = 'tag_id,tag_name,tag_unique';
+
+        $data = TagService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("内容列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="category_id,name")
+     * @Apidoc\Query(ref="app\common\model\content\ContentModel", field="category_id,name")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\content\ContentModel", type="array", desc="内容列表", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time",
      *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_name")

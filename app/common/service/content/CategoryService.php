@@ -11,6 +11,7 @@ namespace app\common\service\content;
 
 use app\common\cache\content\CategoryCache;
 use app\common\cache\content\ContentCache;
+use app\common\model\content\ContentModel;
 use app\common\model\content\CategoryModel;
 use app\common\model\content\AttributesModel;
 
@@ -137,8 +138,10 @@ class CategoryService
             // 添加
             $model->save($param);
             // 添加图片
-            $file_ids = file_ids($param['images']);
-            $model->images()->saveAll($file_ids);
+            if (isset($param['images'])) {
+                $file_ids = file_ids($param['images']);
+                $model->images()->saveAll($file_ids);
+            }
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
@@ -184,14 +187,13 @@ class CategoryService
             }
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['images'])) {
+            if (var_isset($param, ['images'])) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 修改图片
                     if (isset($param['images'])) {
-                        $file_ids = file_ids($param['images']);
-                        $info->images()->detach();
-                        $info->images()->saveAll($file_ids);
+                        $info = $info->append(['image_ids']);
+                        relation_update($info, $info['image_ids'], file_ids($param['images']), 'images');
                     }
                 }
             }
@@ -297,7 +299,12 @@ class CategoryService
 
         $res = AttributesModel::where($where)->delete();
 
+        $model = new ContentModel();
+        $pk = $model->getPk();
+        $unique = $model->where($pk, 'in', $content_ids)->column('unique');
+
         ContentCache::del($content_ids);
+        ContentCache::del($unique);
 
         return $res;
     }

@@ -30,6 +30,7 @@ class Notice extends BaseController
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\setting\NoticeModel", type="array", desc="通告列表", field="notice_id,type,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time",
+     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr"),
      *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr")
      * )
      * @Apidoc\Returned("types", type="array", desc="通告类型")
@@ -50,6 +51,8 @@ class Notice extends BaseController
      * @Apidoc\Title("通告信息")
      * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="notice_id")
      * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel")
+     * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr")
+     * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr")
      */
     public function info()
     {
@@ -65,7 +68,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("通告添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="image_id,type,title,title_color,start_time,end_time,intro,content,sort")
      */
     public function add()
     {
@@ -81,7 +84,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("通告修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="notice_id,type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="notice_id,image_id,type,title,title_color,start_time,end_time,intro,content,sort")
      */
     public function edit()
     {

@@ -126,9 +126,8 @@ class CarouselService
             // 添加
             $model->save($param);
             // 添加文件列表
-            $file_list = $param['file_list'] ?? [];
-            if ($file_list) {
-                $file_list_ids = file_ids($file_list);
+            if (isset($param['file_list'])) {
+                $file_list_ids = file_ids($param['file_list']);
                 $model->files()->saveAll($file_list_ids);
             }
             // 提交事务
@@ -166,23 +165,23 @@ class CarouselService
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
+        $unique = $model->where($pk, 'in', $ids)->column('unique');
+
         // 启动事务
         $model->startTrans();
         try {
             if (is_numeric($ids)) {
                 $ids = [$ids];
             }
-            $unique = $model->where($pk, 'in', $ids)->column('unique');
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['file_list'])) {
+            if (var_isset($param, ['file_list'])) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 修改文件列表
                     if (isset($param['file_list'])) {
-                        $info->files()->detach();
-                        $file_list_ids = file_ids($param['file_list']);
-                        $info->files()->saveAll($file_list_ids);
+                        $info = $info->append(['file_list_ids']);
+                        relation_update($info, $info['file_list_ids'], file_ids($param['file_list']), 'files');
                     }
                 }
             }

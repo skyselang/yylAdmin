@@ -126,7 +126,9 @@ class RoleService
             // 添加
             $model->save($param);
             // 添加菜单
-            $model->menus()->saveAll($param['menu_ids']);
+            if (isset($param['menu_ids'])) {
+                $model->menus()->saveAll($param['menu_ids']);
+            }
             // 提交事务
             $model->commit();
         } catch (\Exception $e) {
@@ -170,13 +172,13 @@ class RoleService
             }
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['menu_ids'])) {
+            if (var_isset($param, ['menu_ids'])) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 修改菜单
                     if (isset($param['menu_ids'])) {
-                        $info->menus()->detach();
-                        $info->menus()->saveAll($param['menu_ids']);
+                        $info = $info->append(['menu_ids']);
+                        relation_update($info, $info['menu_ids'], $param['menu_ids'], 'menus');
                     }
                 }
             }

@@ -23,6 +23,7 @@ class NoticeService
      */
     public static $edit_field = [
         'notice_id/d'   => 0,
+        'image_id/d'    => 0,
         'type/d'        => 0,
         'title/s'       => '',
         'title_color/s' => '#606266',
@@ -50,7 +51,7 @@ class NoticeService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',type,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time';
+            $field = $pk . ',image_id,type,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time';
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
@@ -59,7 +60,8 @@ class NoticeService
         $count = $model->where($where)->count();
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)
-            ->append(['type_name'])
+            ->append(['image_url', 'type_name'])
+            ->hidden(['image'])
             ->page($page)->limit($limit)->order($order)->select()->toArray();
 
         $types = SettingService::notice_types();
@@ -88,7 +90,7 @@ class NoticeService
                 }
                 return [];
             }
-            $info = $info->append(['type_name'])->toArray();
+            $info = $info->append(['image_url', 'type_name'])->toArray();
 
             NoticeCache::set($id, $info);
         }

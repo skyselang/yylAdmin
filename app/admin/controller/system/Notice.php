@@ -29,7 +29,9 @@ class Notice extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\NoticeModel", type="array", desc="公告列表", field="notice_id,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time")
+     * @Apidoc\Returned("list", ref="app\common\model\system\NoticeModel", type="array", desc="公告列表", field="notice_id,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time",
+     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel\getImageUrlAttr")
+     * )
      */
     public function list()
     {
@@ -45,8 +47,9 @@ class Notice extends BaseController
 
     /**
      * @Apidoc\Title("公告信息")
-     * @Apidoc\Query(ref="app\common\model\setting\NoticeModel", field="notice_id")
-     * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel")
+     * @Apidoc\Query(ref="app\common\model\system\NoticeModel", field="notice_id")
+     * @Apidoc\Returned(ref="app\common\model\system\NoticeModel")
+     * @Apidoc\Returned(ref="app\common\model\system\NoticeModel\getImageUrlAttr")
      */
     public function info()
     {
@@ -62,7 +65,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("公告添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="image_id,type,title,title_color,start_time,end_time,intro,content,sort")
      */
     public function add()
     {
@@ -78,7 +81,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("公告修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="notice_id,type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="notice_id,image_id,type,title,title_color,start_time,end_time,intro,content,sort")
      */
     public function edit()
     {
@@ -111,7 +114,7 @@ class Notice extends BaseController
      * @Apidoc\Title("公告是否禁用")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="is_disable")
+     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="is_disable")
      */
     public function disable()
     {
@@ -129,7 +132,7 @@ class Notice extends BaseController
      * @Apidoc\Title("公告时间范围")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="start_time,end_time")
+     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="start_time,end_time")
      */
     public function datetime()
     {

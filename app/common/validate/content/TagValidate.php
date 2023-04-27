@@ -64,6 +64,20 @@ class TagValidate extends Validate
             return '名称已存在：' . $data['tag_name'];
         }
 
+        $unique = $data['tag_unique'] ?? '';
+        if ($unique) {
+            if (is_numeric($unique)) {
+                return '标识不能为纯数字';
+            }
+            $where_unique[] = [$pk, '<>', $id];
+            $where_unique[] = ['tag_unique', '=', $unique];
+            $where_unique = where_delete($where_unique);
+            $info = $model->field($pk)->where($where_unique)->find();
+            if ($info) {
+                return '标识已存在：' . $unique;
+            }
+        }
+
         return true;
     }
 

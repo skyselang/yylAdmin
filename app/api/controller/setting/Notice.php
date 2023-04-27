@@ -25,7 +25,8 @@ class Notice extends BaseController
      * @Apidoc\Title("通告列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\NoticeModel", type="array", desc="通告列表", field="notice_id,type,title,title_color,intro,start_time,end_time,sort,create_time",
+     * @Apidoc\Returned("list", ref="app\common\model\setting\NoticeModel", type="array", desc="通告列表", field="notice_id,type,title,title_color,intro,start_time,end_time,sort",
+     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr"),
      *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr")
      * )
      * @Apidoc\Returned("types", type="array", desc="通告类型")
@@ -34,13 +35,13 @@ class Notice extends BaseController
     {
         $where[] = ['start_time', '<=', datetime()];
         $where[] = ['end_time', '>=', datetime()];
-        $where[] = ['is_disable', '=', 0];
+        $where[] = where_disable();
         $where[] = where_delete();
         $where = $this->where($where);
 
         $order = ['sort' => 'desc', 'start_time' => 'desc', 'notice_id' => 'desc'];
 
-        $field = 'notice_id,type,title,title_color,intro,start_time,end_time,sort,create_time';
+        $field = 'notice_id,image_id,type,title,title_color,intro,start_time,end_time,sort';
 
         $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
@@ -51,6 +52,7 @@ class Notice extends BaseController
      * @Apidoc\Title("通告信息")
      * @Apidoc\Query(ref="app\common\model\setting\NoticeModel", field="notice_id")
      * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel",
+     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr"),
      *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr")
      * )
      */

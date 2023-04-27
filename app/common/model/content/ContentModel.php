@@ -81,7 +81,7 @@ class ContentModel extends Model
     // 关联文件
     public function files()
     {
-        return $this->belongsToMany(FileModel::class, FilesModel::class, 'file_id', 'content_id')->where(where_disdel());
+        return $this->belongsToMany(FileModel::class, AttributesModel::class, 'file_id', 'content_id')->where(where_disdel());
     }
     // 获取图片文件
     public function getImagesAttr()
@@ -96,6 +96,19 @@ class ContentModel extends Model
         }
         return $images ?? [];
     }
+    // 获取图片id
+    public function getImageIdsAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+            foreach ($files as $file) {
+                if ($file['pivot']['file_type'] == 'image') {
+                    $image_ids[] = $file['file_id'];
+                }
+            }
+        }
+        return $image_ids ?? [];
+    }
     // 获取视频文件
     public function getVideosAttr()
     {
@@ -108,6 +121,19 @@ class ContentModel extends Model
             }
         }
         return $videos ?? [];
+    }
+    // 获取视频id
+    public function getVideoIdsAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+            foreach ($files as $file) {
+                if ($file['pivot']['file_type'] == 'video') {
+                    $video_ids[] = $file['file_id'];
+                }
+            }
+        }
+        return $video_ids ?? [];
     }
     // 获取音频文件
     public function getAudiosAttr()
@@ -122,6 +148,19 @@ class ContentModel extends Model
         }
         return $audios ?? [];
     }
+    // 获取音频id
+    public function getAudioIdsAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+            foreach ($files as $file) {
+                if ($file['pivot']['file_type'] == 'audio') {
+                    $audio_ids[] = $file['file_id'];
+                }
+            }
+        }
+        return $audio_ids ?? [];
+    }
     // 获取文档文件
     public function getWordsAttr()
     {
@@ -135,6 +174,19 @@ class ContentModel extends Model
         }
         return $words ?? [];
     }
+    // 获取文档id
+    public function getWordIdsAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+            foreach ($files as $file) {
+                if ($file['pivot']['file_type'] == 'word') {
+                    $word_ids[] = $file['file_id'];
+                }
+            }
+        }
+        return $word_ids ?? [];
+    }
     // 获取其它文件
     public function getOthersAttr()
     {
@@ -147,5 +199,18 @@ class ContentModel extends Model
             }
         }
         return $others ?? [];
+    }
+    // 获取其它id
+    public function getOtherIdsAttr()
+    {
+        if ($this['files']) {
+            $files = $this['files']->append(['file_url'])->toArray();
+            foreach ($files as $file) {
+                if ($file['pivot']['file_type'] == 'other') {
+                    $other_ids[] = $file['file_id'];
+                }
+            }
+        }
+        return $other_ids ?? [];
     }
 }

@@ -131,7 +131,7 @@ return [
         ]
     ],
     // （选配）默认作者
-    'default_author' => '',
+    'default_author' => 'yyladmin',
     // （选配）默认请求类型
     'default_method' => 'GET',
     // （选配）允许跨域访问

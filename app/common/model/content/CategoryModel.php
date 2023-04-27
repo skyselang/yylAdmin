@@ -41,6 +41,17 @@ class CategoryModel extends Model
     // 关联图片
     public function images()
     {
-        return $this->belongsToMany(FileModel::class, FilesModel::class, 'file_id', 'category_id')->append(['file_url'])->where(where_disdel());
+        return $this->belongsToMany(FileModel::class, AttributesModel::class, 'file_id', 'category_id')->append(['file_url'])->where(where_disdel());
+    }
+    // 获取图片id
+    public function getImageIdsAttr()
+    {
+        if ($this['images']) {
+            $images = $this['images']->toArray();
+            foreach ($images as $image) {
+                $image_ids[] = $image['file_id'];
+            }
+        }
+        return $image_ids ?? [];
     }
 }

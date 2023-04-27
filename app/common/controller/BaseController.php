@@ -88,6 +88,9 @@ abstract class BaseController
         $date_field   = $this->request->param('date_field/s', '');
         $date_value   = $this->request->param('date_value/a', []);
 
+        if (is_array($search_value) && empty($search_value)) {
+            $search_value = '';
+        }
         if ($search_field && $search_exp && $search_value !== '') {
             $where_exp = where_exps();
             $where_exp = array_column($where_exp, 'exp');

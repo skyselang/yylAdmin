@@ -325,6 +325,27 @@ function var_to_array($var)
 }
 
 /**
+ * 变量是否存在（||）
+ *
+ * @param  array $alls 所有的参数变量
+ * @param  array $vars 需要检查的变量
+ *
+ * @return bool
+ */
+function var_isset($alls, $vars = [])
+{
+    if (is_string($vars)) {
+        $vars = explode(',', $vars);
+    }
+    foreach ($vars as $var) {
+        if (isset($alls[$var])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * 用户token
  *
  * @return string
@@ -622,6 +643,31 @@ function relation_fields($relation, $field, $string = false, $delete = true)
         return implode(',', $names);
     }
     return $names;
+}
+
+/**
+ * 模型关联修改
+ * 
+ * @param Model  $info     模型find查询
+ * @param array  $old_ids  旧的关联id
+ * @param array  $new_ids  新的关联id
+ * @param string $relation 关联方法名
+ * @param array  $pivot    额外属性
+ * 
+ * @return void
+ */
+function relation_update($info, $old_ids, $new_ids, $relation, $pivot = [])
+{
+    if ($new_ids) {
+        $new_diff = array_diff_assoc($old_ids, $new_ids);
+        $old_diff = array_diff_assoc($new_ids, $old_ids);
+        if ($new_diff || $old_diff) {
+            $info->$relation()->detach($old_ids);
+            $info->$relation()->attach($new_ids, $pivot);
+        }
+    } else {
+        $info->$relation()->detach($old_ids);
+    }
 }
 
 /**

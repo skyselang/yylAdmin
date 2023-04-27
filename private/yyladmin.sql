@@ -1,5 +1,5 @@
 /*
- Navicat Premium Data Transfer
+ yylAdmin Data Transfer
 
  Source Server         : 127.0.0.1-mysql5.5
  Source Server Type    : MySQL
@@ -11,7 +11,7 @@
  Target Server Version : 50529
  File Encoding         : 65001
 
- Date: 12/04/2023 15:35:12
+ Date: 27/04/2023 16:54:59
 */
 
 SET NAMES utf8mb4;
@@ -61,6 +61,8 @@ CREATE TABLE `ya_content_attributes`  (
   `content_id` int(11) NULL DEFAULT 0 COMMENT '内容id',
   `category_id` int(11) NULL DEFAULT 0 COMMENT '分类id',
   `tag_id` int(11) NULL DEFAULT 0 COMMENT '标签id',
+  `file_id` int(11) NULL DEFAULT 0 COMMENT '文件id',
+  `file_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '文件类型',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容属性关联' ROW_FORMAT = Compact;
 
@@ -98,23 +100,6 @@ CREATE TABLE `ya_content_category`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for ya_content_files
--- ----------------------------
-DROP TABLE IF EXISTS `ya_content_files`;
-CREATE TABLE `ya_content_files`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `file_id` int(11) NULL DEFAULT 0 COMMENT '文件id',
-  `file_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'image' COMMENT '文件类型：image图片，video视频，audio音频，word文档，other其它',
-  `category_id` int(11) NULL DEFAULT 0 COMMENT '分类id',
-  `content_id` int(11) NULL DEFAULT 0 COMMENT '内容id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容文件关联' ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of ya_content_files
--- ----------------------------
-
--- ----------------------------
 -- Table structure for ya_content_setting
 -- ----------------------------
 DROP TABLE IF EXISTS `ya_content_setting`;
@@ -140,6 +125,7 @@ DROP TABLE IF EXISTS `ya_content_tag`;
 CREATE TABLE `ya_content_tag`  (
   `tag_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '标签id',
   `tag_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标签名称，mock(@ctitle(2, 5))',
+  `tag_unique` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标签标识，mock(@word(2, 5))',
   `tag_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '标签描述，mock(@ctitle(5, 10))',
   `sort` int(10) NULL DEFAULT 250 COMMENT '排序',
   `is_disable` tinyint(1) NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
@@ -415,7 +401,7 @@ CREATE TABLE `ya_member_api`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`api_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 96 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_member_api
@@ -473,8 +459,9 @@ INSERT INTO `ya_member_api` VALUES (89, 88, '内容设置', 'api/setting.Setting
 INSERT INTO `ya_member_api` VALUES (90, 88, '文件设置', 'api/setting.Setting/file', 500, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (91, 5, '会员中心', '', 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (92, 74, '轮播信息', 'api/setting.Carousel/info', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_member_api` VALUES (93, 74, '通告列表', 'api/setting.Notice/list', 250, 1, 0, 0, 0, 0, 1, 1, 0, '2023-04-12 10:55:32', '2023-04-12 10:56:54', NULL);
-INSERT INTO `ya_member_api` VALUES (94, 74, '通告信息', 'api/setting.Notice/info', 250, 1, 0, 0, 0, 0, 1, 1, 0, '2023-04-12 10:56:48', '2023-04-12 10:56:58', NULL);
+INSERT INTO `ya_member_api` VALUES (93, 74, '通告列表', 'api/setting.Notice/list', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (94, 74, '通告信息', 'api/setting.Notice/info', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (95, 30, '标签列表', 'api/content.Content/tag', 875, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_member_attributes
@@ -712,9 +699,9 @@ CREATE TABLE `ya_setting_feedback`  (
 DROP TABLE IF EXISTS `ya_setting_files`;
 CREATE TABLE `ya_setting_files`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `file_id` int(11) NULL DEFAULT 0 COMMENT '文件id',
   `carousel_id` int(11) NULL DEFAULT 0 COMMENT '轮播id',
   `feedback_id` int(11) NULL DEFAULT 0 COMMENT '反馈id',
+  `file_id` int(11) NULL DEFAULT 0 COMMENT '文件id',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设置文件关联' ROW_FORMAT = Compact;
 
@@ -728,6 +715,7 @@ CREATE TABLE `ya_setting_files`  (
 DROP TABLE IF EXISTS `ya_setting_notice`;
 CREATE TABLE `ya_setting_notice`  (
   `notice_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '通告id',
+  `image_id` int(11) NULL DEFAULT 0 COMMENT '图片id',
   `type` tinyint(1) NULL DEFAULT 1 COMMENT '类型：0通知，1公告，mock(@natural(0, 1))',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题，mock(@ctitle(5, 10))',
   `title_color` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '#606266' COMMENT '标题颜色',
@@ -4888,6 +4876,7 @@ INSERT INTO `ya_system_menu` VALUES (727, 188, 2, '服务器信息', 'admin/syst
 DROP TABLE IF EXISTS `ya_system_notice`;
 CREATE TABLE `ya_system_notice`  (
   `notice_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '公告id',
+  `image_id` int(11) NULL DEFAULT 0 COMMENT '图片id',
   `type` tinyint(1) NULL DEFAULT 1 COMMENT '类型',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题，mock(@ctitle(5, 10))',
   `title_color` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '#606266' COMMENT '标题颜色',

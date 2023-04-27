@@ -266,22 +266,18 @@ class MemberService
             }
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['tag_ids']) || isset($param['group_ids'])) {
+            if (var_isset($param, ['tag_ids', 'group_ids'])) {
                 foreach ($ids as $id) {
-                    $info = $model->append(['tag_ids', 'group_ids'])->find($id);
+                    $info = $model->find($id);
                     // 修改标签
                     if (isset($param['tag_ids'])) {
-                        if ($info['tag_ids'] ?? []) {
-                            $info->tags()->detach($info['tag_ids']);
-                        }
-                        $info->tags()->saveAll($param['tag_ids']);
+                        $info = $info->append(['tag_ids']);
+                        relation_update($info, $info['tag_ids'], $param['tag_ids'], 'tags');
                     }
                     // 修改分组
                     if (isset($param['group_ids'])) {
-                        if ($info['group_ids'] ?? []) {
-                            $info->groups()->detach($info['group_ids']);
-                        }
-                        $info->groups()->saveAll($param['group_ids']);
+                        $info = $info->append(['group_ids']);
+                        relation_update($info, $info['group_ids'], $param['group_ids'], 'groups');
                     }
                 }
             }

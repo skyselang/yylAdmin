@@ -29,7 +29,7 @@ class Tag extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_desc,sort,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", ref="app\common\model\content\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_unique,tag_desc,sort,is_disable,create_time,update_time")
      */
     public function list()
     {
@@ -62,7 +62,7 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("内容标签添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_name,tag_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_name,tag_unique,tag_desc,sort")
      */
     public function add()
     {
@@ -78,7 +78,7 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("内容标签修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique,tag_desc,sort")
      */
     public function edit()
     {

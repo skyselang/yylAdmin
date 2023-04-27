@@ -12,8 +12,10 @@ namespace app\common\service\utils;
 use think\facade\Config;
 use Overtrue\EasySms\EasySms;
 use Overtrue\EasySms\PhoneNumber;
+use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 use app\common\cache\utils\CaptchaSmsCache;
 use app\common\service\system\SettingService;
+
 
 /**
  * 短信 https://gitee.com/skyselang/easy-sms
@@ -91,8 +93,8 @@ class SmsUtils
                     'data' => $data,
                 ]);
             }
-        } catch (\Exception $e) {
-            exception('短信发送失败：' . $e->getMessage());
+        } catch (NoGatewayAvailableException $e) {
+            exception('短信发送失败：' . $e->getLastException());
         }
     }
 }

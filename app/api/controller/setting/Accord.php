@@ -26,16 +26,21 @@ class Accord extends BaseController
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query("name", type="string", default="", desc="名称")
+     * @Apidoc\Query("unique", type="string", default="", desc="标识，多个逗号隔开")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\setting\AccordModel", type="array", desc="协议列表", field="accord_id,unique,name,sort,is_disable,create_time,update_time")
      */
     public function list()
     {
         $name = $this->request->param('name/s', '');
+        $unique = $this->request->param('unique/s', '');
 
         $where[] = ['accord_id', '>', 0];
         if ($name) {
             $where[] = ['name', 'like', '%' . $name . '%'];
+        }
+        if ($unique) {
+            $where[] = ['unique', 'in', $unique];
         }
         $where[] = where_disable();
         $where[] = where_delete();

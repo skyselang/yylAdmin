@@ -280,29 +280,23 @@ class UserService
             }
             // 修改
             $model->where($pk, 'in', $ids)->update($param);
-            if (isset($param['dept_ids']) || isset($param['post_ids']) || isset($param['role_ids'])) {
+            if (var_isset($param, ['dept_ids', 'post_ids', 'role_ids'])) {
                 foreach ($ids as $id) {
-                    $info = $model->append(['dept_ids', 'post_ids', 'role_ids'])->find($id);
+                    $info = $model->find($id);
                     // 修改部门
                     if (isset($param['dept_ids'])) {
-                        if ($info['dept_ids'] ?? []) {
-                            $info->depts()->detach($info['dept_ids']);
-                        }
-                        $info->depts()->saveAll($param['dept_ids']);
+                        $info = $info->append(['dept_ids']);
+                        relation_update($info, $info['dept_ids'], $param['dept_ids'], 'depts');
                     }
                     // 修改职位
                     if (isset($param['post_ids'])) {
-                        if ($info['post_ids'] ?? []) {
-                            $info->posts()->detach($info['post_ids']);
-                        }
-                        $info->posts()->saveAll($param['post_ids']);
+                        $info = $info->append(['post_ids']);
+                        relation_update($info, $info['post_ids'], $param['post_ids'], 'posts');
                     }
                     // 修改角色
                     if (isset($param['role_ids'])) {
-                        if ($info['role_ids'] ?? []) {
-                            $info->roles()->detach($info['role_ids']);
-                        }
-                        $info->roles()->saveAll($param['role_ids']);
+                        $info = $info->append(['role_ids']);
+                        relation_update($info, $info['role_ids'], $param['role_ids'], 'roles');
                     }
                 }
             }

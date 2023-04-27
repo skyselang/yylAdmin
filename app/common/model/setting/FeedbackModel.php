@@ -47,4 +47,12 @@ class FeedbackModel extends Model
         }
         return $images ?? [];
     }
+    // 获取图片id
+    public function getImageIdsAttr()
+    {
+        if ($this['image']) {
+            $image_ids = array_column($this['image']->append(['file_url'])->toArray(), 'file_id');
+        }
+        return $image_ids ?? [];
+    }
 }
