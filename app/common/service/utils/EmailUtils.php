@@ -9,6 +9,8 @@
 
 namespace app\common\service\utils;
 
+use think\facade\Log;
+use think\facade\Config;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -90,7 +92,14 @@ class EmailUtils
 
             $mail->send();
         } catch (Exception $e) {
-            exception('邮件发送失败: ' . $mail->ErrorInfo);
+            $error = $mail->ErrorInfo;
+            Log::write($error, 'phpmailer');
+            $debug = Config::get('app.app_debug');
+            if ($debug) {
+                exception($error);
+            } else {
+                exception('邮件发送失败');
+            }
         }
     }
 }
