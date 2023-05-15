@@ -29,9 +29,10 @@ class Carousel extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\CarouselModel", type="array", desc="轮播列表", field="carousel_id,unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time",
+     * @Apidoc\Returned("list", type="array", desc="轮播列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time"),
      *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
-     * )
+     * })
      */
     public function list()
     {
@@ -48,14 +49,13 @@ class Carousel extends BaseController
     /**
      * @Apidoc\Title("轮播信息")
      * @Apidoc\Query(ref="app\common\model\setting\CarouselModel", field="carousel_id")
-     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel",
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file"),
-     *   @Apidoc\Returned("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel")
+     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
+     * @Apidoc\Returned("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表")
      */
     public function info()
     {
-        $param['carousel_id'] = $this->request->param('carousel_id/d', 0);
+        $param = $this->params(['carousel_id/d' => 0]);
 
         validate(CarouselValidate::class)->scene('info')->check($param);
 
@@ -105,7 +105,7 @@ class Carousel extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(CarouselValidate::class)->scene('dele')->check($param);
 
@@ -122,8 +122,7 @@ class Carousel extends BaseController
      */
     public function position()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['position'] = $this->request->param('position/s', '');
+        $param = $this->params(['ids/a' => [], 'position/s' => '']);
 
         validate(CarouselValidate::class)->scene('position')->check($param);
 
@@ -140,8 +139,7 @@ class Carousel extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(CarouselValidate::class)->scene('disable')->check($param);
 

@@ -31,11 +31,12 @@ class Content extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\ContentModel", type="array", desc="内容列表", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr"),
-     * )
+     * @Apidoc\Returned("list", type="array", desc="内容列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr", field="cover_url"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
+     * })
      * @Apidoc\Returned("category", ref="app\common\model\content\CategoryModel", type="tree", desc="分类树形", field="category_id,category_pid,category_name")
      * @Apidoc\Returned("tag", ref="app\common\model\content\TagModel", type="array", desc="标签列表", field="tag_id,tag_name")
      */
@@ -68,7 +69,7 @@ class Content extends BaseController
      */
     public function info()
     {
-        $param['content_id'] = $this->request->param('content_id/d', 0);
+        $param = $this->params(['content_id/d' => 0]);
 
         validate(ContentValidate::class)->scene('info')->check($param);
 
@@ -130,7 +131,7 @@ class Content extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(ContentValidate::class)->scene('dele')->check($param);
 
@@ -147,8 +148,7 @@ class Content extends BaseController
      */
     public function editcate()
     {
-        $param['ids']          = $this->request->param('ids/a', []);
-        $param['category_ids'] = $this->request->param('category_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'category_ids/a' => []]);
 
         validate(ContentValidate::class)->scene('editcate')->check($param);
 
@@ -165,8 +165,7 @@ class Content extends BaseController
      */
     public function edittag()
     {
-        $param['ids']     = $this->request->param('ids/a', []);
-        $param['tag_ids'] = $this->request->param('tag_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'tag_ids/a' => []]);
 
         validate(ContentValidate::class)->scene('edittag')->check($param);
 
@@ -183,8 +182,7 @@ class Content extends BaseController
      */
     public function istop()
     {
-        $param['ids']    = $this->request->param('ids/a', []);
-        $param['is_top'] = $this->request->param('is_top/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_top/d' => 0]);
 
         validate(ContentValidate::class)->scene('istop')->check($param);
 
@@ -201,8 +199,7 @@ class Content extends BaseController
      */
     public function ishot()
     {
-        $param['ids']    = $this->request->param('ids/a', []);
-        $param['is_hot'] = $this->request->param('is_hot/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_hot/d' => 0]);
 
         validate(ContentValidate::class)->scene('ishot')->check($param);
 
@@ -219,8 +216,7 @@ class Content extends BaseController
      */
     public function isrec()
     {
-        $param['ids']    = $this->request->param('ids/a', []);
-        $param['is_rec'] = $this->request->param('is_rec/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_rec/d' => 0]);
 
         validate(ContentValidate::class)->scene('isrec')->check($param);
 
@@ -237,8 +233,7 @@ class Content extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(ContentValidate::class)->scene('disable')->check($param);
 

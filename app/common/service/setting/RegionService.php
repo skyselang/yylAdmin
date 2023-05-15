@@ -68,7 +68,7 @@ class RegionService
             }
             $data = array_to_tree($data, $pk, 'region_pid');
         } else {
-            $key = $type . md5(serialize($where) . serialize($order) . $field);
+            $key = where_cache_key($type, $where, $order, $field);
             $data = RegionCache::get($key);
             if (empty($data)) {
                 $data = $model->field($field)->where($where)->order($order)->select()->toArray();

@@ -17,7 +17,7 @@ use think\facade\Cache;
 class ContentCache
 {
     // 缓存标签
-    protected static $tag = 'content';
+    public static $tag = 'content';
     // 缓存前缀
     protected static $prefix = 'content:';
 
@@ -42,7 +42,7 @@ class ContentCache
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 86400)
+    public static function set($id, $info, $ttl = 43200)
     {
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }

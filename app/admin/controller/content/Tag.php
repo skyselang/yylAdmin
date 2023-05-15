@@ -50,7 +50,7 @@ class Tag extends BaseController
      */
     public function info()
     {
-        $param['tag_id'] = $this->request->param('tag_id/d', 0);
+        $param = $this->params(['tag_id/d' => 0]);
 
         validate(TagValidate::class)->scene('info')->check($param);
 
@@ -98,7 +98,7 @@ class Tag extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(TagValidate::class)->scene('dele')->check($param);
 
@@ -115,8 +115,7 @@ class Tag extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(TagValidate::class)->scene('disable')->check($param);
 
@@ -131,15 +130,16 @@ class Tag extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\content\TagModel", field="tag_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\ContentModel", type="array", desc="内容列表", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr"),
-     * )
+     * @Apidoc\Returned("list", type="array", desc="内容列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr", field="cover_url"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
+     * })
      */
     public function content()
     {
-        $param['tag_id'] = $this->request->param('tag_id/d', 0);
+        $param = $this->params(['tag_id/d' => 0]);
 
         validate(TagValidate::class)->scene('content')->check($param);
 
@@ -153,13 +153,12 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("内容标签内容解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_id")
+     * @Apidoc\Param("tag_id", type="array", require=true, desc="标签id")
      * @Apidoc\Param("content_ids", type="array", require=false, desc="内容id，为空则解除所有内容")
      */
     public function contentRemove()
     {
-        $param['tag_id']      = $this->request->param('tag_id/a', []);
-        $param['content_ids'] = $this->request->param('content_ids/a', []);
+        $param = $this->params(['tag_id/a' => [], 'content_ids/a' => []]);
 
         validate(TagValidate::class)->scene('contentRemove')->check($param);
 

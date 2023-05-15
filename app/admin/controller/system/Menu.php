@@ -48,7 +48,7 @@ class Menu extends BaseController
      */
     public function info()
     {
-        $param['menu_id'] = $this->request->param('menu_id/d', 0);
+        $param = $this->params(['menu_id/d' => 0]);
 
         validate(MenuValidate::class)->scene('info')->check($param);
 
@@ -65,7 +65,7 @@ class Menu extends BaseController
     public function add()
     {
         $param = $this->params(MenuService::$edit_field);
-        
+
         validate(MenuValidate::class)->scene('add')->check($param);
 
         $data = MenuService::add($param);
@@ -96,7 +96,7 @@ class Menu extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(MenuValidate::class)->scene('dele')->check($param);
 
@@ -113,9 +113,7 @@ class Menu extends BaseController
      */
     public function editsort()
     {
-        $param['ids']         = $this->request->param('ids/a', []);
-        $param['sort']        = $this->request->param('sort/d', 250);
-        $param['sort_incdec'] = $this->request->param('sort_incdec/d', 0);
+        $param = $this->params(['ids/a' => [], 'sort/d' => 250, 'sort_incdec/d' => 0]);
 
         validate(MenuValidate::class)->scene('editsort')->check($param);
 
@@ -138,8 +136,7 @@ class Menu extends BaseController
      */
     public function editpid()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['menu_pid'] = $this->request->param('menu_pid/d', 0);
+        $param = $this->params(['ids/a' => [], 'menu_pid/d' => 0]);
 
         validate(MenuValidate::class)->scene('editpid')->check($param);
 
@@ -156,8 +153,7 @@ class Menu extends BaseController
      */
     public function unlogin()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_unlogin'] = $this->request->param('is_unlogin/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_unlogin/d' => 0]);
 
         validate(MenuValidate::class)->scene('unlogin')->check($param);
 
@@ -174,8 +170,7 @@ class Menu extends BaseController
      */
     public function unauth()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['is_unauth'] = $this->request->param('is_unauth/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_unauth/d' => 0]);
 
         validate(MenuValidate::class)->scene('unauth')->check($param);
 
@@ -192,8 +187,7 @@ class Menu extends BaseController
      */
     public function unrate()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['is_unrate'] = $this->request->param('is_unrate/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_unrate/d' => 0]);
 
         validate(MenuValidate::class)->scene('unrate')->check($param);
 
@@ -210,8 +204,7 @@ class Menu extends BaseController
      */
     public function hidden()
     {
-        $param['ids']    = $this->request->param('ids/a', []);
-        $param['hidden'] = $this->request->param('hidden/d', 0);
+        $param = $this->params(['ids/a' => [], 'hidden/d' => 0]);
 
         validate(MenuValidate::class)->scene('hidden')->check($param);
 
@@ -228,8 +221,7 @@ class Menu extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(MenuValidate::class)->scene('disable')->check($param);
 
@@ -248,7 +240,7 @@ class Menu extends BaseController
      */
     public function role()
     {
-        $param['menu_id'] = $this->request->param('menu_id/d', 0);
+        $param = $this->params(['menu_id/d' => 0]);
 
         validate(MenuValidate::class)->scene('role')->check($param);
 
@@ -262,13 +254,12 @@ class Menu extends BaseController
     /**
      * @Apidoc\Title("菜单角色解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="menu_id")
+     * @Apidoc\Param("menu_id", type="array", require=true, desc="菜单id")
      * @Apidoc\Param("role_ids", type="array", require=false, desc="角色id，为空则解除所有菜单")
      */
     public function roleRemove()
     {
-        $param['menu_id']  = $this->request->param('menu_id/a', []);
-        $param['role_ids'] = $this->request->param('role_ids/a', []);
+        $param = $this->params(['menu_id/a' => [], 'role_ids/a' => []]);
 
         validate(MenuValidate::class)->scene('roleRemove')->check($param);
 

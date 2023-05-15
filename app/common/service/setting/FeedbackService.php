@@ -23,13 +23,17 @@ class FeedbackService
      */
     public static $edit_field = [
         'feedback_id/d' => 0,
+        'member_id'     => 0,
+        'receipt_no'    => '',
         'type/d'        => 0,
         'title/s'       => '',
         'content/s'     => '',
         'phone/s'       => '',
         'email/s'       => '',
+        'images/a'      => [],
+        'reply'         => '',
+        'status'        => 0,
         'remark/s'      => '',
-        'images/a'      => []
     ];
 
     /**
@@ -49,7 +53,7 @@ class FeedbackService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',type,title,phone,email,remark,is_unread,create_time,update_time';
+            $field = $pk . ',member_id,receipt_no,type,title,phone,email,remark,status,is_disable,create_time,update_time';
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
@@ -58,19 +62,22 @@ class FeedbackService
         $count = $model->where($where)->count();
         $pages = ceil($count / $limit);
         $list  = $model->field($field)->where($where)
-            ->append(['type_name'])
+            ->with(['member'])
+            ->append(['member_username', 'type_name', 'status_name'])
+            ->hidden(['member'])
             ->page($page)->limit($limit)->order($order)->select()->toArray();
 
         $types = SettingService::feedback_types();
+        $statuss = SettingService::feedback_statuss();
 
-        return compact('count', 'pages', 'page', 'limit', 'list', 'types');
+        return compact('count', 'pages', 'page', 'limit', 'list', 'types', 'statuss');
     }
 
     /**
      * 反馈信息
      * 
-     * @param int  $id   反馈id
-     * @param bool $exce 不存在是否抛出异常
+     * @param string $id   反馈id、回执编号
+     * @param bool   $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
@@ -79,22 +86,26 @@ class FeedbackService
         $info = FeedbackCache::get($id);
         if (empty($info)) {
             $model = new FeedbackModel();
+            $pk = $model->getPk();
 
-            $info = $model->find($id);
+            if (is_numeric($id)) {
+                $where[] = [$pk, '=', $id];
+            } else {
+                $where[] = ['receipt_no', '=', $id];
+                $where[] = where_delete();
+            }
+
+            $info = $model->where($where)->find();
             if (empty($info)) {
                 if ($exce) {
                     exception('反馈不存在：' . $id);
                 }
                 return [];
             }
-            $info = $info->append(['type_name', 'images'])->toArray();
-
-            if ($info['is_unread']) {
-                $update['is_unread']  = 0;
-                $update['update_uid'] = user_id();
-                $update['read_time']  = $info['read_time'] = datetime();
-                self::edit($id, $update);
-            }
+            $info = $info
+                ->append(['member_username', 'type_name', 'status_name', 'images'])
+                ->hidden(['member', 'image'])
+                ->toArray();
 
             FeedbackCache::set($id, $info);
         }
@@ -116,6 +127,9 @@ class FeedbackService
 
         unset($param[$pk]);
 
+        if (empty($param['receipt_no'] ?? '')) {
+            $param['receipt_no'] = uniqid() . mt_rand(100, 999);
+        }
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
@@ -164,6 +178,8 @@ class FeedbackService
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
+        $receipt_no = $model->where($pk, 'in', $ids)->column('receipt_no');
+
         // 启动事务
         $model->startTrans();
         try {
@@ -197,6 +213,7 @@ class FeedbackService
         $param['ids'] = $ids;
 
         FeedbackCache::del($ids);
+        FeedbackCache::del($receipt_no);
 
         return $param;
     }

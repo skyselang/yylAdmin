@@ -36,7 +36,25 @@ function success($data = [], $msg = RetCodeUtils::SUCCESS_MSG, $code = RetCodeUt
 
 /**
  * 错误返回
- *
+ * 
+ * @param string $msg  提示
+ * @param array  $data 数据
+ * @param int    $code 返回码
+ * 
+ * @return json
+ */
+function fail($msg = RetCodeUtils::ERROR_MSG, $data = [], $code = RetCodeUtils::ERROR)
+{
+    $res['code'] = $code;
+    $res['msg']  = $msg;
+    $res['data'] = $data;
+
+    return json($res);
+}
+
+/**
+ * 错误返回
+ * 
  * @param array  $data 数据
  * @param string $msg  提示
  * @param int    $code 返回码
@@ -327,8 +345,8 @@ function var_to_array($var)
 /**
  * 变量是否存在（||）
  *
- * @param  array $alls 所有的参数变量
- * @param  array $vars 需要检查的变量
+ * @param array $alls 所有的参数变量
+ * @param array $vars 需要检查的变量
  *
  * @return bool
  */
@@ -387,14 +405,16 @@ function user_token_verify($user_token = '')
 
 /**
  * 用户id
+ * 
+ * @param bool $exce 未登录是否抛出异常
  *
  * @return int
  */
-function user_id()
+function user_id($exce = false)
 {
     $user_token = user_token();
 
-    return UserTokenService::userId($user_token);
+    return UserTokenService::userId($user_token, $exce);
 }
 
 /**
@@ -510,18 +530,20 @@ function api_token_verify($api_token = '')
 
 /**
  * 会员id获取
+ * 
+ * @param bool $exce 未登录是否抛出异常
  *
  * @return int
  */
-function member_id()
+function member_id($exce = false)
 {
     $api_token = api_token();
 
-    return MemberTokenService::memberId($api_token);
+    return MemberTokenService::memberId($api_token, $exce);
 }
 
 /**
- * 会员日志是否开启
+ * 会员日志记录是否开启
  *
  * @return bool
  */
@@ -790,6 +812,34 @@ function where_exps($exp = '')
     }
 
     return $exps;
+}
+
+/**
+ * 查询条件字段缓存键名
+ *
+ * @param  string $type  类型
+ * @param  array  $where 条件
+ * @param  array  $order 排序
+ * @param  string $field 字段
+ * @param  string $sort  asc升序，desc降序
+ *
+ * @return string
+ */
+function where_cache_key($type, $where, $order, $field, $sort = 'asc')
+{
+    $field = explode(',', $field);
+
+    if ($sort == 'asc') {
+        sort($where);
+        sort($order);
+        sort($field);
+    } else {
+        rsort($where);
+        rsort($order);
+        rsort($field);
+    }
+
+    return $type . md5(serialize($where) . serialize($order) . serialize($field));
 }
 
 /**

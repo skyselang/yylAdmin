@@ -26,7 +26,7 @@ class AccordService
         'unique/s'    => '',
         'name/s'      => '',
         'content/s'   => '',
-        'sort/d'      => 250
+        'sort/d'      => 250,
     ];
 
     /**

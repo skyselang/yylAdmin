@@ -33,7 +33,7 @@ return [
                 // （选配）当前应用全局的请求Body
                 'body' => [['name' => env('admin.token_name', 'AdminToken'), 'type' => 'string', 'require' => true, 'desc' => 'admin token']],
             ],
-            // （选配）该用于的控制器分组
+            // （选配）当前应用控制器分组
             'groups' => [
                 ['title' => '登录', 'name' => 'logout'],
                 ['title' => '控制台', 'name' => 'console'],
@@ -56,8 +56,8 @@ return [
             'groups' => [
                 ['title' => '首页', 'name' => 'index'],
                 ['title' => '设置', 'name' => 'setting'],
+                ['title' => '内容', 'name' => 'content'],
                 ['title' => '会员', 'name' => 'member'],
-                ['title' => '内容', 'name' => 'content']
             ],
         ]
     ],
@@ -140,7 +140,7 @@ return [
      * （选配）解析时忽略带@注解的关键词，当注解中存在带@字符并且非Apidoc注解，如 @key test，此时Apidoc页面报类似以下错误时:
      * [Semantical Error] The annotation "@key" in method xxx() was never imported. Did you maybe forget to add a "use" statement for this annotation?
      */
-    'ignored_annitation' => [],
+    'ignored_annitation' => ['key'],
     // （选配）数据库配置
     'database' => [],
     // （选配）Markdown文档

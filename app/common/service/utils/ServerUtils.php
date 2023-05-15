@@ -10,7 +10,7 @@
 namespace app\common\service\utils;
 
 use think\facade\Db;
-use think\facade\Cache;
+use app\common\cache\Cache;
 
 /**
  * 服务器
@@ -19,13 +19,22 @@ class ServerUtils
 {
     /**
      * 服务器信息
+     * 
+     * @param bool $force 是否强制刷新
      *
      * @return array
      */
-    public static function server()
+    public static function server($force = false)
     {
         $server_key = 'utils:server';
-        $server     = Cache::get($server_key);
+        $cache_key  = "utils:cache";
+
+        if ($force) {
+            Cache::del($server_key);
+            Cache::del($cache_key);
+        }
+
+        $server = Cache::get($server_key);
         if (empty($server)) {
             try {
                 $MySql = Db::query('select version() as version');
@@ -47,12 +56,11 @@ class ServerUtils
             $server['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
             $server['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
 
-            $server_ttl = 12 * 60 * 60;
-            Cache::set($server_key, $server, $server_ttl);
+            Cache::set($server_key, $server, 86400);
         }
 
-        $cache_key = "utils:cache";
-        $cache     = Cache::get($cache_key);
+
+        $cache = Cache::get($cache_key);
         if (empty($cache)) {
             $config = Cache::getConfig();
             if ($config['default'] == 'redis') {
@@ -80,8 +88,7 @@ class ServerUtils
 
             $cache['type'] = $config['default'];
 
-            $cache_ttl = 12 * 60 * 60;
-            Cache::set($cache_key, $cache, $cache_ttl);
+            Cache::set($cache_key, $cache, 86400);
         }
 
         $data = array_merge($server, $cache);

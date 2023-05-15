@@ -30,20 +30,21 @@ class Member extends BaseController
 {
     /**
      * @Apidoc\Title("我的信息")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel", withoutField="password,remark,sort,is_disable,is_delete,delete_time")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\avatar")
+     * @Apidoc\Returned("api_urls", type="array", desc="接口url数组")
      */
     public function info()
     {
-        $param['member_id'] = member_id();
+        $param['member_id'] = member_id(true);
 
         validate(MemberValidate::class)->scene('info')->check($param);
 
         $data = MemberService::info($param['member_id']);
         if ($data['is_disable'] == 1) {
-            exception('会员已被禁用');
+            return error([], '会员已被禁用');
         } else if ($data['is_delete'] == 1) {
-            exception('会员已被注销');
+            return error([], '会员已被注销');
         }
 
         unset($data['password'], $data['remark'], $data['sort'], $data['is_disable'], $data['is_delete'], $data['delete_time']);
@@ -54,16 +55,19 @@ class Member extends BaseController
     /**
      * @Apidoc\Title("修改信息")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="avatar_id,nickname,username,gender,region_id")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="headimgurl,nickname,username,name,gender,region_id")
      */
     public function edit()
     {
-        $param['member_id'] = member_id();
-        $param['avatar_id'] = $this->request->param('avatar_id/d', 0);
-        $param['nickname']  = $this->request->param('nickname/s', '');
-        $param['username']  = $this->request->param('username/s', '');
-        $param['gender']    = $this->request->param('gender/d', 0);
-        $param['region_id'] = $this->request->param('region_id/d', 0);
+        $param = $this->params([
+            'headimgurl/s' => '',
+            'nickname/s'   => '',
+            'username/s'   => '',
+            'name/s'       => '',
+            'gender/d'     => 0,
+            'region_id/d'  => 0,
+        ]);
+        $param['member_id'] = member_id(true);
 
         validate(MemberValidate::class)->scene('edit')->check($param);
 
@@ -81,18 +85,20 @@ class Member extends BaseController
      */
     public function avatar()
     {
-        $member_id          = member_id();
+        $param = $this->params([
+            'group_id/d'  => 0,
+            'file_type/s' => 'image',
+            'file_name/s' => '',
+        ]);
+        $param['member_id'] = member_id(true);
         $param['file']      = $this->request->file('file');
-        $param['group_id']  = $this->request->param('group_id/d', 0);
-        $param['file_type'] = $this->request->param('file_type/s', 'image');
-        $param['file_name'] = $this->request->param('file_name/s', '');
         $param['is_front']  = 1;
 
-        validate(MemberValidate::class)->scene('info')->check(['member_id' => $member_id]);
+        validate(MemberValidate::class)->scene('info')->check($param);
         validate(FileValidate::class)->scene('add')->check($param);
 
         $data = FileService::add($param);
-        MemberService::edit($member_id, ['avatar_id' => $data['file_id']]);
+        MemberService::edit($param['member_id'], ['avatar_id' => $data['file_id'], 'headimgurl' => '']);
 
         return success($data, '更换成功');
     }
@@ -105,9 +111,11 @@ class Member extends BaseController
      */
     public function pwd()
     {
-        $param['member_id']    = member_id();
-        $param['password_old'] = $this->request->param('password_old/s', '');
-        $param['password_new'] = $this->request->param('password_new/s', '');
+        $param = $this->params([
+            'password_old/s' => '',
+            'password_new/s' => '',
+        ]);
+        $param['member_id'] = member_id(true);
 
         $member = MemberService::info($param['member_id']);
         if ($member['pwd_edit_type']) {
@@ -125,23 +133,31 @@ class Member extends BaseController
      * @Apidoc\Title("日志记录")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Query("log_type", type="int", default="", desc="日志类型")
-     * @Apidoc\Query("create_time", type="array", default="", desc="请求时间")
+     * @Apidoc\Query(ref="app\common\model\member\LogModel", field="log_type,create_time")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel", type="array", desc="日志列表", field="log_id,request_ip,request_region,request_isp,response_code,response_msg,create_time")
+     * @Apidoc\Returned("list", type="array", desc="日志列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\member\LogModel", field="log_id,request_ip,request_region,request_isp,response_code,response_msg,create_time"),
+     *   @Apidoc\Returned(ref="app\common\model\member\ApiModel", field="api_url,api_name"),
+     * })
      */
     public function log()
     {
-        $log_type    = $this->request->param('log_type/d', '');
-        $create_time = $this->request->param('create_time/a', []);
+        $log_type    = $this->param('log_type/s', '');
+        $create_time = $this->param('create_time/a', []);
 
-        $where[] = ['member_id', '=', member_id()];
+        $where[] = ['member_id', '=', member_id(true)];
         if ($log_type !== '') {
             $where[] = ['log_type', '=', $log_type];
         }
         if ($create_time) {
-            $where[] = ['create_time', '>=', $create_time[0] . ' 00:00:00'];
-            $where[] = ['create_time', '<=', $create_time[1] . ' 23:59:59'];
+            $start_date = $create_time[0] ?? '';
+            $end_date   = $create_time[1] ?? '';
+            if ($start_date) {
+                $where[] = ['create_time', '>=', $start_date . ' 00:00:00'];
+            }
+            if ($end_date) {
+                $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
+            }
         }
         $where[] = where_delete();
 
@@ -156,7 +172,7 @@ class Member extends BaseController
      */
     public function phoneCaptcha()
     {
-        $param['phone'] = $this->request->param('phone/s', '');
+        $param = $this->params(['phone/s' => '']);
 
         validate(MemberValidate::class)->scene('phoneBindCaptcha')->check($param);
 
@@ -173,14 +189,16 @@ class Member extends BaseController
      */
     public function phoneBind()
     {
-        $param['member_id']    = member_id();
-        $param['phone']        = $this->request->param('phone/s', '');
-        $param['captcha_code'] = $this->request->param('captcha_code/s', '');
+        $param = $this->params([
+            'phone/s'        => '',
+            'captcha_code/s' => '',
+        ]);
+        $param['member_id'] = member_id(true);
 
         validate(MemberValidate::class)->scene('phoneBind')->check($param);
         $captcha = CaptchaSmsCache::get($param['phone']);
         if ($captcha != $param['captcha_code']) {
-            exception('验证码错误');
+            return error([], '验证码错误');
         }
 
         $data = MemberService::edit($param['member_id'], ['phone' => $param['phone']]);
@@ -192,19 +210,17 @@ class Member extends BaseController
     /**
      * @Apidoc\Title("手机绑定（小程序）")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("code", type="string", require=true, desc="button 组件 open-type 的值为 getPhoneNumber，bindgetphonenumber 事件回调获取到的动态令牌code")
+     * @Apidoc\Param("phone_code", type="string", require=true, desc="getPhoneNumber 返回的 code")
      */
     public function bindPhoneMini()
     {
-        $param['code'] = $this->request->param('code/s', '');
+        $param = $this->params(['phone_code/s' => '']);
 
-        foreach ($param as $k => $v) {
-            if (empty($v)) {
-                exception($k . ' must');
-            }
-        }
+        $param['member_id'] = member_id(true);
 
-        $data = MemberService::bindPhoneMini($param['code']);
+        validate(MemberValidate::class)->scene('phoneBindMini')->check($param);
+
+        $data = MemberService::bindPhoneMini($param['phone_code'], $param['member_id']);
 
         return success($data);
     }
@@ -215,7 +231,7 @@ class Member extends BaseController
      */
     public function emailCaptcha()
     {
-        $param['email'] = $this->request->param('email/s', '');
+        $param = $this->params(['email/s' => '']);
 
         validate(MemberValidate::class)->scene('emailBindCaptcha')->check($param);
 
@@ -232,14 +248,16 @@ class Member extends BaseController
      */
     public function emailBind()
     {
-        $param['member_id']    = member_id();
-        $param['email']        = $this->request->param('email/s', '');
-        $param['captcha_code'] = $this->request->param('captcha_code/s', '');
+        $param = $this->params([
+            'email/s'        => '',
+            'captcha_code/s' => '',
+        ]);
+        $param['member_id'] = member_id(true);
 
         validate(MemberValidate::class)->scene('emailBind')->check($param);
         $captcha = CaptchaEmailCache::get($param['email']);
         if ($captcha != $param['captcha_code']) {
-            exception('验证码错误');
+            return error([], '验证码错误');
         }
 
         $data = MemberService::edit($param['member_id'], ['email' => $param['email']]);

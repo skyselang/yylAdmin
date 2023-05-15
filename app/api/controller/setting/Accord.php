@@ -32,8 +32,8 @@ class Accord extends BaseController
      */
     public function list()
     {
-        $name = $this->request->param('name/s', '');
-        $unique = $this->request->param('unique/s', '');
+        $name   = $this->param('name/s', '');
+        $unique = $this->param('unique/s', '');
 
         $where[] = ['accord_id', '>', 0];
         if ($name) {
@@ -59,13 +59,13 @@ class Accord extends BaseController
      */
     public function info()
     {
-        $param['accord_id'] = $this->request->param('accord_id/s', '');
+        $param = $this->params(['accord_id/s' => '']);
 
         validate(AccordValidate::class)->scene('info')->check($param);
 
         $data = AccordService::info($param['accord_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return success([], '协议不存在或已禁用或已删除');
+            return error([], '协议不存在');
         }
 
         return success($data);

@@ -33,11 +33,12 @@ class SmsUtils
     {
         $captcha = CaptchaSmsCache::get($phone);
         if (empty($captcha)) {
-            $setting = SettingService::info();
-            $captcha = mt_rand(100000, 999999);
-            $content = $setting['system_name'] . ', 您的验证码为：<b>' . $captcha . '</b>。';
-            $template = ''; //模板
-            $data = ['code' => $captcha];
+            $setting  = SettingService::info();
+            $captcha  = mt_rand(100000, 999999);
+            $content  = $setting['system_name'] . ', 您的验证码为：<b>' . $captcha . '</b>。';
+            $template = '';                                                             //模板
+            $data     = ['code' => $captcha];
+
             self::send($phone, $content, $template, $data);
             CaptchaSmsCache::set($phone, $captcha);
         }
@@ -75,22 +76,22 @@ class SmsUtils
         ];
 
         try {
-            $config = Config::get('easysms', $default);
+            $config  = Config::get('easysms', $default);
             $easySms = new EasySms($config);
             if ($intcode) {
                 // 国际短信
                 $number = new PhoneNumber($phone, $intcode);
                 $easySms->send($number, [
-                    'content' => $content,
+                    'content'  => $content,
                     'template' => $template,
-                    'data' => $data,
+                    'data'     => $data,
                 ]);
             } else {
                 // 国内短信
                 $easySms->send($phone, [
-                    'content' => $content,
+                    'content'  => $content,
                     'template' => $template,
-                    'data' => $data,
+                    'data'     => $data,
                 ]);
             }
         } catch (NoGatewayAvailableException $e) {

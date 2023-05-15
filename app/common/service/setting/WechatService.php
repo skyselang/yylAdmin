@@ -71,7 +71,7 @@ class WechatService
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->append(['qrcode_url'])->toArray();
+            $info = $info->append(['qrcode_url'])->hidden(['qrcode'])->toArray();
 
             $info['server_url'] = server_url() . '/api/setting.Wechat/access';
 
@@ -129,7 +129,7 @@ class WechatService
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->append(['qrcode_url'])->toArray();
+            $info = $info->append(['qrcode_url'])->hidden(['qrcode'])->toArray();
 
             WechatCache::set($id, $info);
         }
@@ -168,7 +168,7 @@ class WechatService
      * 
      * @param array $config 配置
      * 
-     * @return Factory
+     * @return \EasyWeChat\OfficialAccount\Application
      */
     public static function offi($config = [])
     {
@@ -236,7 +236,7 @@ class WechatService
      * 
      * @param array $config 配置
      * 
-     * @return Factory
+     * @return \EasyWeChat\MiniProgram\Application
      */
     public static function mini($config = [])
     {

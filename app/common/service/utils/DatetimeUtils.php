@@ -375,9 +375,11 @@ class DatetimeUtils
     {
         $months = [];
         $symbol = '-';
+
         if ($future) {
             $symbol = '+';
         }
+        
         for ($i = $number; $i >= 0; $i--) {
             $months[] = date('Y-m', strtotime($symbol . $i . ' month'));
         }
@@ -399,8 +401,9 @@ class DatetimeUtils
         }
 
         $sta = $month . '-01';
-        $t = date('t', strtotime($sta));
+        $t   = date('t', strtotime($sta));
         $end = $month . '-' . $t;
+
         $date[] = $sta;
         $date[] = $end;
 
@@ -417,11 +420,12 @@ class DatetimeUtils
      */
     public static function dateMonths($start_date, $end_date)
     {
-        $i = 0;
+        $i      = 0;
         $months = [];
-        $itime = strtotime($start_date);
-        $stime = strtotime($start_date);
-        $etime = strtotime($end_date);
+        $itime  = strtotime($start_date);
+        $stime  = strtotime($start_date);
+        $etime  = strtotime($end_date);
+
         while ($itime < $etime) {
             $month = date('Y-m', strtotime($i . ' month', $stime));
             $itime = strtotime($month);

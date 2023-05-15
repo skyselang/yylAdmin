@@ -27,7 +27,7 @@
         "topthink/think-filesystem": "^2.0",
         "firebase/php-jwt": "^6.2",
         "overtrue/pinyin": "~4.0",
-        "hg/apidoc": "^4.2",
+        "hg/apidoc": "^5.0",
         "overtrue/wechat": "~4.0",
         "qiniu/php-sdk": "^7.4",
         "aliyuncs/oss-sdk-php": "^2.4",

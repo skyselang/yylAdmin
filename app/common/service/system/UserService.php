@@ -57,7 +57,7 @@ class UserService
         $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = $group . ',nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
+            $field = $group . ',avatar_id,nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
         }
         if (empty($order)) {
             $order = [$group => 'desc'];
@@ -86,18 +86,18 @@ class UserService
 
         if ($page == 0 || $limit == 0) {
             return $model->field($field)->where($where)
-                ->with(['depts', 'posts', 'roles'])
-                ->append(['dept_names', 'post_names', 'role_names'])
-                ->hidden(['depts', 'posts', 'roles'])
+                ->with(['avatar', 'depts', 'posts', 'roles'])
+                ->append(['avatar_url', 'dept_names', 'post_names', 'role_names'])
+                ->hidden(['avatar', 'depts', 'posts', 'roles'])
                 ->order($order)->group($group)->select()->toArray();
         }
 
         $count = $model->where($where)->group($group)->count();
         $pages = ceil($count / $limit);
         $list = $model->field($field)->where($where)
-            ->with(['depts', 'posts', 'roles'])
-            ->append(['dept_names', 'post_names', 'role_names'])
-            ->hidden(['depts', 'posts', 'roles'])
+            ->with(['avatar', 'depts', 'posts', 'roles'])
+            ->append(['avatar_url', 'dept_names', 'post_names', 'role_names'])
+            ->hidden(['avatar', 'depts', 'posts', 'roles'])
             ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
@@ -125,7 +125,10 @@ class UserService
                 }
                 return [];
             }
-            $info = $info->append(['avatar_url', 'dept_ids', 'post_ids', 'role_ids'])->toArray();
+            $info = $info
+                ->append(['avatar_url', 'dept_ids', 'post_ids', 'role_ids'])
+                ->hidden(['avatar', 'depts', 'posts', 'roles'])
+                ->toArray();
 
             $MenuModel = new MenuModel();
             $MenuPk = $MenuModel->getPk();
@@ -159,13 +162,9 @@ class UserService
             $unlogin_unauth  = array_merge($menu_is_unlogin, $menu_is_unauth);
             $menu_urls       = array_unique(array_merge($menu_urls, $unlogin_unauth));
 
-            $system = SettingService::info();
-            $token_name = $system['token_name'];
-
-            $info['roles']     = $menu_urls;
-            $info['menus']     = MenuService::menus($menu_ids);
-            $info['menu_ids']  = $menu_ids;
-            $info[$token_name] = UserTokenService::create($info);
+            $info['roles']    = array_values($menu_urls);
+            $info['menus']    = MenuService::menus($menu_ids);
+            $info['menu_ids'] = $menu_ids;
 
             UserCache::set($id, $info);
         }
@@ -314,7 +313,7 @@ class UserService
 
         $param['ids'] = $ids;
 
-        UserCache::upd($ids);
+        UserCache::del($ids);
 
         return $param;
     }
@@ -368,6 +367,7 @@ class UserService
         $update['ids'] = $ids;
 
         UserCache::del($ids);
+        UserCache::delToken($ids);
 
         return $update;
     }
@@ -428,10 +428,48 @@ class UserService
 
         UserCache::del($user_id);
         $user = self::info($user_id);
-        $system = SettingService::info();
-        $token_name = $system['token_name'];
+        $data = self::loginField($user);
 
-        return [$pk => $user[$pk], $token_name => $user[$token_name]];
+        return $data;
+    }
+
+    /**
+     * 用户登录返回字段
+     *
+     * @param array $user 用户信息
+     *
+     * @return array
+     */
+    public static function loginField($user)
+    {
+        $data = [];
+        $setting = SettingService::info();
+        $token_name = $setting['token_name'];
+        $user[$token_name] = self::token($user);
+        $fields = ['user_id', 'nickname', 'username', $token_name];
+        foreach ($fields as $field) {
+            if (isset($user[$field])) {
+                $data[$field] = $user[$field];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * 用户token
+     *
+     * @param  array $user 用户信息
+     *
+     * @return string
+     */
+    public static function token($user)
+    {
+        $token = UserTokenService::create($user);
+        $setting = SettingService::info();
+        $ttl = $setting['token_exp'] * 3600;
+        UserCache::setToken($user['user_id'], $token, $ttl);
+        return $token;
     }
 
     /**
@@ -450,9 +488,10 @@ class UserService
 
         $model->where($pk, $id)->update($update);
 
-        UserCache::del($id);
-
         $update[$pk] = $id;
+
+        UserCache::del($id);
+        UserCache::delToken($id);
 
         return $update;
     }

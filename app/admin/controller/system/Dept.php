@@ -48,7 +48,7 @@ class Dept extends BaseController
      */
     public function info()
     {
-        $param['dept_id'] = $this->request->param('dept_id/d', 0);
+        $param = $this->params(['dept_id/d' => 0]);
 
         validate(DeptValidate::class)->scene('info')->check($param);
 
@@ -97,7 +97,7 @@ class Dept extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(DeptValidate::class)->scene('dele')->check($param);
 
@@ -114,8 +114,7 @@ class Dept extends BaseController
      */
     public function editpid()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['dept_pid'] = $this->request->param('dept_pid/d', 0);
+        $param = $this->params(['ids/a' => [], 'dept_pid/d' => 0]);
 
         validate(DeptValidate::class)->scene('editpid')->check($param);
 
@@ -132,8 +131,7 @@ class Dept extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(DeptValidate::class)->scene('disable')->check($param);
 
@@ -148,11 +146,17 @@ class Dept extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\system\DeptModel", field="dept_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\UserModel", type="array", desc="用户列表", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", type="array", desc="用户列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", desc="头像链接", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", desc="部门名称", field="dept_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", desc="职位名称", field="post_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", desc="角色名称", field="role_names"),
+     * })
      */
     public function user()
     {
-        $param['dept_id'] = $this->request->param('dept_id/d', 0);
+        $param = $this->params(['dept_id/d' => 0]);
 
         validate(DeptValidate::class)->scene('user')->check($param);
 
@@ -166,13 +170,12 @@ class Dept extends BaseController
     /**
      * @Apidoc\Title("部门用户解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\DeptModel", field="dept_id")
+     * @Apidoc\Param("dept_id", type="array", require=true, desc="部门id")
      * @Apidoc\Param("user_ids", type="array", require=false, desc="用户id，为空则解除所有用户")
      */
     public function userRemove()
     {
-        $param['dept_id']  = $this->request->param('dept_id/a', []);
-        $param['user_ids'] = $this->request->param('user_ids/a', []);
+        $param = $this->params(['dept_id/a' => [], 'user_ids/a' => []]);
 
         validate(DeptValidate::class)->scene('userRemove')->check($param);
 

@@ -11,9 +11,7 @@
 use think\Response;
 use think\middleware\throttle\CounterFixed;
 use app\common\service\utils\RetCodeUtils;
-use app\common\cache\system\ApiRateCache as SystemApiRateCache;
 use app\common\service\system\SettingService as SystemSettingService;
-use app\common\cache\member\ApiRateCache as MemberApiRateCache;
 use app\common\service\member\SettingService as MemberSettingService;
 
 return [
@@ -23,30 +21,30 @@ return [
     'key' => function ($throttle, $request) {
         $app_name = app('http')->getName();
         if ($app_name == 'admin') {
-            $system = SystemSettingService::info();
-            $rate_num = $system['api_rate_num'];
-            $rate_time = $system['api_rate_time'];
+            $admin = SystemSettingService::info();
+            $rate_num = $admin['api_rate_num'];
+            $rate_time = $admin['api_rate_time'];
             if ($rate_num > 0 && $rate_time > 0) {
                 $user_id = user_id();
                 $menu_url = menu_url();
                 if ($user_id && $menu_url) {
                     if (!menu_is_unrate($menu_url)) {
                         $throttle->setRate($rate_num . '/' . $rate_time);
-                        return SystemApiRateCache::key($user_id, $menu_url);
+                        return 'system_throttle:' . $user_id . ':' . $menu_url;
                     }
                 }
             }
         } elseif ($app_name == 'api') {
-            $member = MemberSettingService::info();
-            $rate_num = $member['api_rate_num'];
-            $rate_time = $member['api_rate_time'];
+            $api = MemberSettingService::info();
+            $rate_num = $api['api_rate_num'];
+            $rate_time = $api['api_rate_time'];
             if ($rate_num > 0 && $rate_time > 0) {
                 $member_id = member_id();
                 $api_url = api_url();
                 if ($member_id && $api_url) {
                     if (!api_is_unrate($api_url)) {
                         $throttle->setRate($rate_num . '/' . $rate_time);
-                        return MemberApiRateCache::key($member_id, $api_url);
+                        return 'member_throttle:' . $member_id . ':' . $api_url;
                     }
                 }
             }

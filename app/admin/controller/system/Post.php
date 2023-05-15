@@ -51,7 +51,7 @@ class Post extends BaseController
      */
     public function info()
     {
-        $param['post_id'] = $this->request->param('post_id/d', 0);
+        $param = $this->params(['post_id/d' => 0]);
 
         validate(PostValidate::class)->scene('info')->check($param);
 
@@ -99,7 +99,7 @@ class Post extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(PostValidate::class)->scene('dele')->check($param);
 
@@ -116,8 +116,7 @@ class Post extends BaseController
      */
     public function editpid()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['post_pid'] = $this->request->param('post_pid/d', 0);
+        $param = $this->params(['ids/a' => [], 'post_pid/d' => 0]);
 
         validate(PostValidate::class)->scene('editpid')->check($param);
 
@@ -134,8 +133,7 @@ class Post extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(PostValidate::class)->scene('disable')->check($param);
 
@@ -150,11 +148,17 @@ class Post extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\system\PostModel", field="post_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\UserModel", type="array", desc="用户列表", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", type="array", desc="用户列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", desc="头像链接", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", desc="部门名称", field="dept_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", desc="职位名称", field="post_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", desc="角色名称", field="role_names"),
+     * })
      */
     public function user()
     {
-        $param['post_id'] = $this->request->param('post_id/d', 0);
+        $param = $this->params(['post_id/d' => 0]);
 
         validate(PostValidate::class)->scene('user')->check($param);
 
@@ -168,13 +172,12 @@ class Post extends BaseController
     /**
      * @Apidoc\Title("职位用户解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_id")
+     * @Apidoc\Param("post_id", type="array", require=true, desc="职位id")
      * @Apidoc\Param("user_ids", type="array", require=false, desc="用户id，为空则解除所有用户")
      */
     public function userRemove()
     {
-        $param['post_id']  = $this->request->param('post_id/a', []);
-        $param['user_ids'] = $this->request->param('user_ids/a', []);
+        $param = $this->params(['post_id/a' => [], 'user_ids/a' => []]);
 
         validate(PostValidate::class)->scene('userRemove')->check($param);
 

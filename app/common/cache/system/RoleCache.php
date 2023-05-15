@@ -17,7 +17,7 @@ use think\facade\Cache;
 class RoleCache
 {
     // 缓存标签
-    protected static $tag = 'system_role';
+    public static $tag = 'system_role';
     // 缓存前缀
     protected static $prefix = 'system_role:';
 
@@ -42,7 +42,7 @@ class RoleCache
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 86400)
+    public static function set($id, $info, $ttl = 43200)
     {
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }

@@ -27,7 +27,7 @@ class TagService
         'tag_id/d'   => 0,
         'tag_name/s' => '',
         'tag_desc/s' => '',
-        'sort/d'     => 250
+        'sort/d'     => 250,
     ];
 
     /**

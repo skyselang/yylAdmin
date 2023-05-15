@@ -29,10 +29,14 @@ class Feedback extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\FeedbackModel", type="array", desc="反馈列表", field="feedback_id,type,title,phone,email,remark,is_unread,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getTypeNameAttr")
-     * )
+     * @Apidoc\Returned("list", type="array", desc="反馈列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel", field="feedback_id,member_id,type,title,phone,email,remark,status,is_disable,create_time,update_time"), 
+     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getTypeNameAttr"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getStatusNameAttr"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getMemberUsernameAttr")
+     * })
      * @Apidoc\Returned("types", type="array", desc="反馈类型")
+     * @Apidoc\Returned("statuss", type="array", desc="反馈状态")
      */
     public function list()
     {
@@ -50,11 +54,14 @@ class Feedback extends BaseController
      * @Apidoc\Title("反馈信息")
      * @Apidoc\Query(ref="app\common\model\setting\FeedbackModel", field="feedback_id")
      * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel")
+     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getTypeNameAttr")
+     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getStatusNameAttr")
+     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getMemberUsernameAttr")
      * @Apidoc\Returned(ref="imagesReturn")
      */
     public function info()
     {
-        $param['feedback_id'] = $this->request->param('feedback_id/d', 0);
+        $param = $this->params(['feedback_id/d' => 0]);
 
         validate(FeedbackValidate::class)->scene('info')->check($param);
 
@@ -66,7 +73,7 @@ class Feedback extends BaseController
     /**
      * @Apidoc\Title("反馈添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="type,title,content,phone,email,remark")
+     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="member_id,receipt_no,type,title,phone,email,content,reply,remark")
      * @Apidoc\Param(ref="imagesParam")
      */
     public function add()
@@ -83,7 +90,7 @@ class Feedback extends BaseController
     /**
      * @Apidoc\Title("反馈修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="feedback_id,type,title,content,phone,email,remark")
+     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="member_id,receipt_no,feedback_id,type,title,phone,email,content,replay,remark")
      * @Apidoc\Param(ref="imagesParam")
      */
     public function edit()
@@ -104,7 +111,7 @@ class Feedback extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(FeedbackValidate::class)->scene('dele')->check($param);
 
@@ -114,17 +121,33 @@ class Feedback extends BaseController
     }
 
     /**
-     * @Apidoc\Title("反馈是否未读")
+     * @Apidoc\Title("反馈状态")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="is_unread")
+     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="status")
      */
-    public function unread()
+    public function status()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['is_unread'] = $this->request->param('is_unread/d', 0);
+        $param = $this->params(['ids/a' => [], 'status/d' => 0]);
 
-        validate(FeedbackValidate::class)->scene('readed')->check($param);
+        validate(FeedbackValidate::class)->scene('status')->check($param);
+
+        $data = FeedbackService::edit($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("反馈是否禁用")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="is_disable")
+     */
+    public function disable()
+    {
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
+
+        validate(FeedbackValidate::class)->scene('disable')->check($param);
 
         $data = FeedbackService::edit($param['ids'], $param);
 

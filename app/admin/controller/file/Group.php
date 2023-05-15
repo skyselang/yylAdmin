@@ -50,7 +50,7 @@ class Group extends BaseController
      */
     public function info()
     {
-        $param['group_id'] = $this->request->param('group_id/d', 0);
+        $param = $this->params(['group_id/d' => 0]);
 
         validate(GroupValidate::class)->scene('info')->check($param);
 
@@ -98,7 +98,7 @@ class Group extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(GroupValidate::class)->scene('dele')->check($param);
 
@@ -115,8 +115,7 @@ class Group extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(GroupValidate::class)->scene('disable')->check($param);
 
@@ -131,20 +130,21 @@ class Group extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\file\GroupModel", field="group_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time",
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileTypeNameAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr"),
-     * )
+     * @Apidoc\Returned("list", type="array", desc="文件列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr", field="group_name"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr", field="tag_names"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileTypeNameAttr", field="file_type_name"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr", field="file_url"),
+     * })
      */
     public function file()
     {
-        $group_id = $this->request->param('group_id/s', '');
+        $param = $this->params(['group_id/d' => 0]);
 
-        validate(GroupValidate::class)->scene('file')->check(['group_id' => $group_id]);
+        validate(GroupValidate::class)->scene('file')->check($param);
 
-        $where = $this->where(where_delete(['group_id', '=', $group_id]));
+        $where = $this->where(where_delete(['group_id', '=', $param['group_id']]));
 
         $data = GroupService::file($where, $this->page(), $this->limit(), $this->order());
 
@@ -154,13 +154,12 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("文件分组文件解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_id")
+     * @Apidoc\Param("group_id", type="array", require=true, desc="分组id")
      * @Apidoc\Param("file_ids", type="array", require=false, desc="文件id，为空则解除所有文件")
      */
     public function fileRemove()
     {
-        $param['group_id'] = $this->request->param('group_id/a', []);
-        $param['file_ids'] = $this->request->param('file_ids/a', []);
+        $param = $this->params(['group_id/a' => [], 'file_ids/a' => []]);
 
         validate(GroupValidate::class)->scene('fileRemove')->check($param);
 

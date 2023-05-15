@@ -35,7 +35,8 @@ class EmailUtils
         if (empty($captcha)) {
             $captcha = mt_rand(100000, 999999);
             $subject = '邮箱验证码';
-            $body = '您的验证码为：<b>' . $captcha . '</b>。';
+            $body    = '您的验证码为：<b>' . $captcha . '</b>。';
+
             self::send($address, $subject, $body);
             CaptchaEmailCache::set($address, $captcha);
         }
@@ -53,7 +54,7 @@ class EmailUtils
     public static function send($address, $subject = '', $body = '')
     {
         $setting = SettingService::info();
-        $mail = new PHPMailer(true); // 传递`true`会启用异常
+        $mail    = new PHPMailer(true); // 传递`true`会启用异常
         try {
             $address = explode(',', $address);
             $email_setfrom = $setting['email_setfrom'] ?: ($setting['system_name'] ?: $setting['email_username']);

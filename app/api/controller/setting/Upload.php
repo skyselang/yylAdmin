@@ -33,14 +33,16 @@ class Upload extends BaseController
     {
         $setting = SettingService::info();
         if (!$setting['is_upload_api']) {
-            exception('文件上传未开启，无法上传文件！');
+            return error([], '文件上传未开启，无法上传文件！');
         }
 
-        $param['file']      = $this->request->file('file');
-        $param['group_id']  = $this->request->param('group_id/d', 0);
-        $param['file_type'] = $this->request->param('file_type/s', 'image');
-        $param['file_name'] = $this->request->param('file_name/s', '');
-        $param['is_front']  = 1;
+        $param = $this->params([
+            'group_id/d'  => 0,
+            'file_type/s' => 'image',
+            'file_name/s' => '',
+        ]);
+        $param['file']     = $this->request->file('file');
+        $param['is_front'] = 1;
 
         validate(FileValidate::class)->scene('add')->check($param);
 

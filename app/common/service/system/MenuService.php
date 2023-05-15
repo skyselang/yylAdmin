@@ -71,7 +71,7 @@ class MenuService
             $order = ['sort' => 'desc', $pk => 'asc'];
         }
 
-        $key = $type . md5(serialize($where) . serialize($order) . $field);
+        $key = where_cache_key($type, $where, $order, $field);
         $data = MenuCache::get($key);
         if (empty($data)) {
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
@@ -417,10 +417,10 @@ class MenuService
         $where[] = ['role_id', 'in', $role_ids];
 
         $res = RoleMenusModel::where($where)->delete();
+        $user_ids = UserModel::select()->column('user_id');
 
         RoleCache::del($role_ids);
-
-        UserCache::upd(UserModel::select()->column('user_id'));
+        UserCache::del($user_ids);
 
         return $res;
     }
@@ -446,6 +446,7 @@ class MenuService
 
             $list = $model->where([where_delete()])->column($column);
             $list = array_filter($list);
+            $list = array_values($list);
             sort($list);
 
             MenuCache::set($key, $list);
@@ -480,6 +481,7 @@ class MenuService
             $list = $model->where(where_delete(['is_unlogin', '=', 1]))->column($column);
             $list = array_merge($list, $menu_is_unlogin);
             $list = array_unique(array_filter($list));
+            $list = array_values($list);
             sort($list);
 
             MenuCache::set($key, $list);
@@ -515,6 +517,7 @@ class MenuService
             $list = $model->where(where_delete(['is_unauth', '=', 1]))->column($column);
             $list = array_merge($list, $menu_is_unlogin, $menu_is_unauth);
             $list = array_unique(array_filter($list));
+            $list = array_values($list);
             sort($list);
 
             MenuCache::set($key, $list);
@@ -549,6 +552,7 @@ class MenuService
             $list = $model->where(where_delete(['is_unrate', '=', 1]))->column($column);
             $list = array_merge($list, $menu_is_unrate);
             $list = array_unique(array_filter($list));
+            $list = array_values($list);
             sort($list);
 
             MenuCache::set($key, $list);
@@ -568,11 +572,11 @@ class MenuService
     {
         $where = where_delete(['menu_id', 'in', $ids]);
         $field = 'menu_id,menu_pid,menu_name,menu_type,path,name,component,meta_icon,meta_query,hidden,is_disable';
-        $menu = self::list('list', $where, [], $field);
+        $menu  = self::list('list', $where, [], $field);
 
         $tree = $list = [];
         foreach ($menu as $v) {
-            if ($v['is_disable'] == 0 && $v['menu_type'] != SettingService::MENU_TYPE_BUTTON) {
+            if ($v['menu_type'] != SettingService::MENU_TYPE_BUTTON) {
                 $tmp = [];
                 $tmp['menu_id']  = $v['menu_id'];
                 $tmp['menu_pid'] = $v['menu_pid'];

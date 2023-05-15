@@ -27,7 +27,7 @@ class GroupService
         'group_id/d'   => 0,
         'group_name/s' => '',
         'group_desc/s' => '',
-        'sort/d'       => 250
+        'sort/d'       => 250,
     ];
 
     /**

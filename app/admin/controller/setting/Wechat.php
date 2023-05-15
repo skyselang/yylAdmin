@@ -22,10 +22,9 @@ class Wechat extends BaseController
 {
     /**
      * @Apidoc\Title("公众号信息")
-     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret,token,encoding_aes_key,encoding_aes_type",
-     *   @Apidoc\Returned("qrcode_url", type="string", desc="二维码链接"),
-     *   @Apidoc\Returned("server_url", type="string", desc="服务器地址"),
-     * )
+     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret,token,encoding_aes_key,encoding_aes_type")
+     * @Apidoc\Returned("qrcode_url", type="string", desc="二维码链接")
+     * @Apidoc\Returned("server_url", type="string", desc="服务器地址")
      */
     public function offiInfo()
     {
@@ -50,9 +49,8 @@ class Wechat extends BaseController
 
     /**
      * @Apidoc\Title("小程序信息")
-     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret",
-     *   @Apidoc\Returned("qrcode_url", type="string", desc="小程序码链接"),
-     * )
+     * @Apidoc\Returned(ref="app\common\model\setting\WechatModel", field="name,origin_id,qrcode_id,appid,appsecret")
+     * @Apidoc\Returned("qrcode_url", type="string", desc="小程序码链接")
      */
     public function miniInfo()
     {

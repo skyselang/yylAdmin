@@ -31,7 +31,7 @@ class NoticeService
         'end_time/s'    => '',
         'intro/s'       => '',
         'content/s'     => '',
-        'sort/d'        => 250
+        'sort/d'        => 250,
     ];
 
     /**
@@ -90,7 +90,7 @@ class NoticeService
                 }
                 return [];
             }
-            $info = $info->append(['image_url', 'type_name'])->toArray();
+            $info = $info->append(['image_url', 'type_name'])->hidden(['image'])->toArray();
 
             NoticeCache::set($id, $info);
         }

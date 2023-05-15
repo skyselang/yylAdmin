@@ -9,8 +9,8 @@
 
 namespace app\common\service\utils;
 
-use think\facade\Cache;
 use think\facade\Request;
+use app\common\cache\Cache;
 use ip2region\Ip2Region;
 
 /**
@@ -64,8 +64,7 @@ class IpInfoUtils
             $ip_info['region']   = $region;
             $ip_info['isp']      = $isp;
 
-            $ip_ttl = 7 * 24 * 60 * 60;
-            Cache::set($ip_key, $ip_info, $ip_ttl);
+            Cache::set($ip_key, $ip_info, 86400);
         }
 
         return $ip_info;

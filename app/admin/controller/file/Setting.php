@@ -23,15 +23,13 @@ class Setting extends BaseController
 {
     /**
      * @Apidoc\Title("文件设置信息")
-     * @Apidoc\Returned("setting", ref="app\common\model\file\SettingModel", type="object", desc="设置信息",
-     *   @Apidoc\Returned("accept_ext", type="string", default="", desc="允许上传的文件后缀")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\file\SettingModel")
+     * @Apidoc\Returned(ref="app\common\service\file\SettingService", field="accept_ext,storages")
      * @Apidoc\Returned("storage", type="object", desc="存储方式")
      */
     public function info()
     {
-        $data['setting'] = SettingService::info();
-        $data['storage'] = SettingService::storages();
+        $data = SettingService::info();
 
         return success($data);
     }
@@ -39,52 +37,54 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("文件设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\SettingModel")
+     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", withoutField="setting_id")
      */
     public function edit()
     {
-        $param['is_upload_admin']          = $this->request->param('is_upload_admin/d', 1);
-        $param['is_upload_api']            = $this->request->param('is_upload_api/d', 1);
-        $param['storage']                  = $this->request->param('storage/s', 'local');
-        $param['qiniu_access_key']         = $this->request->param('qiniu_access_key/s', '');
-        $param['qiniu_secret_key']         = $this->request->param('qiniu_secret_key/s', '');
-        $param['qiniu_bucket']             = $this->request->param('qiniu_bucket/s', '');
-        $param['qiniu_domain']             = $this->request->param('qiniu_domain/s', '');
-        $param['aliyun_access_key_id']     = $this->request->param('aliyun_access_key_id/s', '');
-        $param['aliyun_access_key_secret'] = $this->request->param('aliyun_access_key_secret/s', '');
-        $param['aliyun_bucket']            = $this->request->param('aliyun_bucket/s', '');
-        $param['aliyun_bucket_domain']     = $this->request->param('aliyun_bucket_domain/s', '');
-        $param['aliyun_endpoint']          = $this->request->param('aliyun_endpoint/s', '');
-        $param['tencent_secret_id']        = $this->request->param('tencent_secret_id/s', '');
-        $param['tencent_secret_key']       = $this->request->param('tencent_secret_key/s', '');
-        $param['tencent_bucket']           = $this->request->param('tencent_bucket/s', '');
-        $param['tencent_region']           = $this->request->param('tencent_region/s', '');
-        $param['tencent_domain']           = $this->request->param('tencent_domain/s', '');
-        $param['baidu_access_key']         = $this->request->param('baidu_access_key/s', '');
-        $param['baidu_secret_key']         = $this->request->param('baidu_secret_key/s', '');
-        $param['baidu_bucket']             = $this->request->param('baidu_bucket/s', '');
-        $param['baidu_endpoint']           = $this->request->param('baidu_endpoint/s', '');
-        $param['baidu_domain']             = $this->request->param('baidu_domain/s', '');
-        $param['upyun_service_name']       = $this->request->param('upyun_service_name/s', '');
-        $param['upyun_operator_name']      = $this->request->param('upyun_operator_name/s', '');
-        $param['upyun_operator_pwd']       = $this->request->param('upyun_operator_pwd/s', '');
-        $param['upyun_domain']             = $this->request->param('upyun_domain/s', '');
-        $param['aws_access_key_id']        = $this->request->param('aws_access_key_id/s', '');
-        $param['aws_secret_access_key']    = $this->request->param('aws_secret_access_key/s', '');
-        $param['aws_bucket']               = $this->request->param('aws_bucket/s', '');
-        $param['aws_region']               = $this->request->param('aws_region/s', '');
-        $param['aws_domain']               = $this->request->param('aws_domain/s', '');
-        $param['image_ext']                = $this->request->param('image_ext/s', '');
-        $param['image_size']               = $this->request->param('image_size/f', 0);
-        $param['video_ext']                = $this->request->param('video_ext/s', '');
-        $param['video_size']               = $this->request->param('video_size/f', 0);
-        $param['audio_ext']                = $this->request->param('audio_ext/s', '');
-        $param['audio_size']               = $this->request->param('audio_size/f', 0);
-        $param['word_ext']                 = $this->request->param('word_ext/s', '');
-        $param['word_size']                = $this->request->param('word_size/f', 0);
-        $param['other_ext']                = $this->request->param('other_ext/s', '');
-        $param['other_size']               = $this->request->param('other_size/f', 0);
-        $param['limit_max']                = $this->request->param('limit_max/d', 9);
+        $param = $this->params([
+            'is_upload_admin/d'          => 1,
+            'is_upload_api/d'            => 1,
+            'storage/s'                  => 'local',
+            'qiniu_access_key/s'         => '',
+            'qiniu_secret_key/s'         => '',
+            'qiniu_bucket/s'             => '',
+            'qiniu_domain/s'             => '',
+            'aliyun_access_key_id/s'     => '',
+            'aliyun_access_key_secret/s' => '',
+            'aliyun_bucket/s'            => '',
+            'aliyun_bucket_domain/s'     => '',
+            'aliyun_endpoint/s'          => '',
+            'tencent_secret_id/s'        => '',
+            'tencent_secret_key/s'       => '',
+            'tencent_bucket/s'           => '',
+            'tencent_region/s'           => '',
+            'tencent_domain/s'           => '',
+            'baidu_access_key/s'         => '',
+            'baidu_secret_key/s'         => '',
+            'baidu_bucket/s'             => '',
+            'baidu_endpoint/s'           => '',
+            'baidu_domain/s'             => '',
+            'upyun_service_name/s'       => '',
+            'upyun_operator_name/s'      => '',
+            'upyun_operator_pwd/s'       => '',
+            'upyun_domain/s'             => '',
+            'aws_access_key_id/s'        => '',
+            'aws_secret_access_key/s'    => '',
+            'aws_bucket/s'               => '',
+            'aws_region/s'               => '',
+            'aws_domain/s'               => '',
+            'image_ext/s'                => '',
+            'image_size/f'               => 0,
+            'video_ext/s'                => '',
+            'video_size/f'               => 0,
+            'audio_ext/s'                => '',
+            'audio_size/f'               => 0,
+            'word_ext/s'                 => '',
+            'word_size/f'                => 0,
+            'other_ext/s'                => '',
+            'other_size/f'               => 0,
+            'limit_max/d'                => 9,
+        ]);
 
         validate(SettingValidate::class)->scene($param['storage'])->check($param);
 

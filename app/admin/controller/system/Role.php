@@ -57,7 +57,7 @@ class Role extends BaseController
      */
     public function info()
     {
-        $param['role_id'] = $this->request->param('role_id/d', 0);
+        $param = $this->params(['role_id/d' => 0]);
 
         validate(RoleValidate::class)->scene('info')->check($param);
 
@@ -107,7 +107,7 @@ class Role extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(RoleValidate::class)->scene('dele')->check($param);
 
@@ -124,8 +124,7 @@ class Role extends BaseController
      */
     public function editmenu()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['menu_ids'] = $this->request->param('menu_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'menu_ids/a' => []]);
 
         validate(RoleValidate::class)->scene('editmenu')->check($param);
 
@@ -142,8 +141,7 @@ class Role extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(RoleValidate::class)->scene('disable')->check($param);
 
@@ -158,11 +156,17 @@ class Role extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\system\RoleModel", field="role_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\UserModel", type="array", desc="用户列表", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", type="array", desc="用户列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", desc="头像链接", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", desc="部门名称", field="dept_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", desc="职位名称", field="post_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", desc="角色名称", field="role_names"),
+     * })
      */
     public function user()
     {
-        $param['role_id'] = $this->request->param('role_id/s', '');
+        $param = $this->params(['role_id/d' => 0]);
 
         validate(RoleValidate::class)->scene('user')->check($param);
 
@@ -176,13 +180,12 @@ class Role extends BaseController
     /**
      * @Apidoc\Title("角色用户解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel\id")
+     * @Apidoc\Param("role_id", type="array", require=true, desc="角色id")
      * @Apidoc\Param("user_ids", type="array", require=false, desc="用户id，为空则解除所有用户")
      */
     public function userRemove()
     {
-        $param['role_id']  = $this->request->param('role_id/a', []);
-        $param['user_ids'] = $this->request->param('user_ids/a', []);
+        $param = $this->params(['role_id/a' => [], 'user_ids/a' => []]);
 
         validate(RoleValidate::class)->scene('userRemove')->check($param);
 

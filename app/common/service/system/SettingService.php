@@ -9,13 +9,10 @@
 
 namespace app\common\service\system;
 
-use think\facade\Cache;
 use think\facade\Config;
-use app\common\cache\system\UserCache;
+use app\common\cache\Cache;
 use app\common\cache\system\SettingCache;
-use app\common\model\system\UserModel;
 use app\common\model\system\SettingModel;
-use app\common\service\system\UserService;
 use app\common\service\utils\EmailUtils;
 use hg\apidoc\annotation as Apidoc;
 
@@ -99,26 +96,25 @@ class SettingService
     /**
      * 设置信息
      * 
-     * @param string $field 指定字段
+     * @param string $fields 返回字段，逗号隔开，默认所有
      * @Apidoc\Returned("logo_url", type="string", require=false, default="", desc="logo链接")
      * @Apidoc\Returned("favicon_url", type="string", require=false, default="", desc="favicon链接")
      * @Apidoc\Returned("login_bg_url", type="string", require=false, default="", desc="登录背景图链接")
+     * @Apidoc\Returned("cache_type", type="string", require=false, default="", desc="缓存类型")
      * @Apidoc\Returned("token_type", type="string", require=false, default="", desc="token方式")
      * @Apidoc\Returned("token_name", type="string", require=false, default="", desc="token名称")
-     *
      * @return array
      */
-    public static function info($field = '*')
+    public static function info($fields = '')
     {
         $id = self::$id;
-        $key = md5($id . $field);
 
-        $info = SettingCache::get($key);
+        $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->field($field)->find($id);
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['token_key']   = uniqid();
@@ -127,29 +123,28 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
-
-            $append = [];
-            if ($field == '*') {
-                $append = ['favicon_url', 'logo_url', 'login_bg_url'];
-            } else {
-                if (strpos($field, 'favicon_id') !== false) {
-                    $append[] = 'favicon_url';
-                }
-                if (strpos($field, 'logo_id') !== false) {
-                    $append[] = 'logo_url';
-                }
-                if (strpos($field, 'login_bg_id') !== false) {
-                    $append[] = 'login_bg_url';
-                }
-            }
-            $info = $info->append($append)->toArray();
+            $info = $info
+                ->append(['favicon_url', 'logo_url', 'login_bg_url'])
+                ->hidden(['favicon', 'logo', 'loginbg'])
+                ->toArray();
 
             $cache_config = Cache::getConfig();
             $info['cache_type'] = $cache_config['default'];
             $info['token_type'] = Config::get('admin.token_type');
             $info['token_name'] = Config::get('admin.token_name');
 
-            SettingCache::set($key, $info);
+            SettingCache::set($id, $info);
+        }
+
+        if ($fields) {
+            $data = [];
+            $fields = explode(',', $fields);
+            foreach ($fields as $field) {
+                if (isset($info[$field])) {
+                    $data[$field] = $info[$field];
+                }
+            }
+            return $data;
         }
 
         return $info;
@@ -176,51 +171,35 @@ class SettingService
             exception();
         }
 
-        SettingCache::clear();
+        SettingCache::del($id);
 
         return $param;
     }
 
     /**
      * 缓存清除
+     * 清除所有缓存标签（用户token、会员token除外）数据
      *
      * @return array
      */
     public static function cacheClear()
     {
-        $UserModel = new UserModel();
-        $UserPk = $UserModel->getPk();
-
-        $system = self::info();
-        $token_anme = $system['token_name'];
-        $user_cache = [];
-        $user = $UserModel->field($UserPk)->where([where_delete()])->select()->toArray();
-        foreach ($user as $v) {
-            $user_old = UserCache::get($v[$UserPk]);
-            if ($user_old) {
-                $user_cache[] = [
-                    $UserPk => $user_old[$UserPk],
-                    $token_anme => $user_old[$token_anme],
-                ];
+        $tags = [];
+        $base = '../app/common/cache/';
+        $paths = [$base . '*.php', $base . '*/*.php', $base . '*/*/*.php'];
+        foreach ($paths as $path) {
+            $caches = glob($path);
+            foreach ($caches as $cache) {
+                $cache = str_replace(['..', '/', '.php'], ['', '\\', ''], $cache);
+                $Cache = new $cache;
+                $tags[] = $Cache::$tag;
             }
         }
 
-        $res = Cache::clear();
-        if (empty($res)) {
-            exception();
-        }
+        sort($tags);
+        $clear = Cache::tag($tags)->clear();
 
-        foreach ($user_cache as $v) {
-            $user_new = UserService::info($v[$UserPk], false);
-            if ($user_new) {
-                $user_new[$token_anme] = $v[$token_anme];
-                UserCache::set($user_new[$UserPk], $user_new);
-            }
-        }
-
-        $data['clear'] = $res;
-
-        return $data;
+        return ['clear' => $clear, 'tags' => $tags];
     }
 
     /**

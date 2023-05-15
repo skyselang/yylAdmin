@@ -39,12 +39,16 @@ window.apidocFeConfig = {
   },
   // 接口详情页的tab顺序
   API_DETAIL_TABS: ['table', 'json', 'ts', 'debug'],
+  // 接口详情表格属性
+  API_TABLE_PROPS: {
+    // 是否默认展开所有行
+    defaultExpandAllRows: true,
+  },
   // 加载外部js文件
   LOAD_SCRIPTS: ['./utils/md5.js'],
   // （选配）调试时事件，处理参数值的方法
   DEBUG_EVENTS: {
     md5(param) {
-      console.log('md5事件', param)
       return new Promise((resolve, reject) => {
         const { config, event } = param
         if (event.key) {
@@ -71,20 +75,7 @@ window.apidocFeConfig = {
   // （选配）自定义mock规则
   MOCK_EXTENDS: {},
   // （选配）自定义方法
-  CUSTOM_METHODS: {
-    HANDEL_API_MD(md) {
-      if (md && typeof md == 'string') {
-        return md.replace(/\\n/g, '\n\r')
-      }
-      return md
-    },
-    HANDEL_API_DESC(desc) {
-      if (desc && typeof desc == 'string') {
-        return desc.replace(/\\n/g, '</br>')
-      }
-      return desc
-    },
-  },
+  CUSTOM_METHODS: {},
   // 多语言
   LANG: [
     {
@@ -167,6 +158,7 @@ window.apidocFeConfig = {
         'apiPage.common.desc': '描述',
         'apiPage.common.defaultValue': '默认值',
         'apiPage.common.action': '操作',
+        'apiPage.common.type': '类型',
         'apiPage.json.formatError': 'json 参数格式化错误',
 
         'cache.manage': '缓存管理',

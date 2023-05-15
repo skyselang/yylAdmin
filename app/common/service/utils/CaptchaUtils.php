@@ -9,8 +9,8 @@
 
 namespace app\common\service\utils;
 
-use think\facade\Cache;
 use think\facade\Config;
+use app\common\cache\Cache;
 
 /**
  * 验证码

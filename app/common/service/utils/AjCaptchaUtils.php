@@ -46,10 +46,10 @@ class AjCaptchaUtils
         $data = $service->get();
 
         return [
-            'error' => false,
+            'error'   => false,
             'repCode' => '0000',
             'repData' => $data,
-            'repMsg' => null,
+            'repMsg'  => null,
             'success' => true,
         ];
     }
@@ -64,9 +64,10 @@ class AjCaptchaUtils
      */
     public function check($captchaType, $captchaData)
     {
-        $msg = null;
-        $error = false;
+        $msg     = null;
+        $error   = false;
         $repCode = '0000';
+
         try {
             if ($captchaType == 1 || $captchaType == 'blockPuzzle') {
                 $service = new BlockPuzzleCaptchaService($this->config);
@@ -81,10 +82,10 @@ class AjCaptchaUtils
         }
 
         return [
-            'error' => $error,
+            'error'   => $error,
             'repCode' => $repCode,
             'repData' => null,
-            'repMsg' => $msg,
+            'repMsg'  => $msg,
             'success' => !$error,
         ];
     }
@@ -99,9 +100,10 @@ class AjCaptchaUtils
      */
     public function checkTwo($captchaType, $encryptCode)
     {
-        $msg = null;
-        $error = false;
+        $msg     = null;
+        $error   = false;
         $repCode = '0000';
+
         try {
             if ($captchaType == 1 || $captchaType == 'blockPuzzle') {
                 $service = new BlockPuzzleCaptchaService($this->config);
@@ -116,10 +118,10 @@ class AjCaptchaUtils
         }
 
         return [
-            'error' => $error,
+            'error'   => $error,
             'repCode' => $repCode,
             'repData' => null,
-            'repMsg' => $msg,
+            'repMsg'  => $msg,
             'success' => !$error,
         ];
     }

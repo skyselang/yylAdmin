@@ -10,7 +10,7 @@
 namespace app\common\service\system;
 
 use think\facade\Db;
-use think\facade\Cache;
+use app\common\cache\Cache;
 use app\common\service\system\UserService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -36,10 +36,10 @@ class IndexService
 
     /**
      * 总数统计
-     * @Apidoc\Returned("count", type="array",
+     * @Apidoc\Returned("count", type="array", children={
      *   @Apidoc\Returned("name", type="string", desc="名称"),
      *   @Apidoc\Returned("count", type="int", desc="总数")
-     * )
+     * })
      * @return array
      */
     public static function count()

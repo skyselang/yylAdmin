@@ -27,12 +27,13 @@ class SettingService
     /**
      * 设置信息
      * 
-     * @param string $field 返回字段
+     * @param string $fields 返回字段，逗号隔开，默认所有
+     * @Apidoc\Returned("file_types", type="object", desc="文件类型")
+     * @Apidoc\Returned("storages", type="object", desc="存储方式")
      * @Apidoc\Returned("accept_ext", type="string", default="", desc="允许上传的文件后缀")
-     *
      * @return array
      */
-    public static function info($field = '')
+    public static function info($fields = '')
     {
         $id = self::$id;
 
@@ -50,21 +51,22 @@ class SettingService
                 $info = $model->find($id);
             }
             $info = $info->toArray();
-
+            $info['file_types'] = self::fileTypes();
+            $info['storages']   = self::storages();
             $info['accept_ext'] = self::fileAccept($info);
 
             SettingCache::set($id, $info);
         }
 
-        if ($field) {
-            $res = [];
-            $fields = explode(',', $field);
-            foreach ($fields as $v) {
-                if ($info[$v] ?? '') {
-                    $res[$v] = $info[$v];
+        if ($fields) {
+            $data = [];
+            $fields = explode(',', $fields);
+            foreach ($fields as $field) {
+                if (isset($info[$field])) {
+                    $data[$field] = $info[$field];
                 }
             }
-            return $res;
+            return $data;
         }
 
         return $info;

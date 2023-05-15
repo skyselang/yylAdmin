@@ -11,7 +11,6 @@ namespace app\common\service\content;
 
 use app\common\cache\content\SettingCache;
 use app\common\model\content\SettingModel;
-use hg\apidoc\annotation as Apidoc;
 
 /**
  * 内容设置
@@ -27,22 +26,19 @@ class SettingService
     /**
      * 设置信息
      * 
-     * @param string $field 指定字段
-     * @Apidoc\Returned("diy_con_obj", type="object", desc="自定义设置对象")
-     * 
+     * @param string $fields 返回字段，逗号隔开，默认所有
      * @return array
      */
-    public static function info($field = '*')
+    public static function info($fields = '')
     {
         $id = self::$id;
-        $key = md5($id . $field);
 
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->field($field)->find($id);
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['diy_config']  = [];
@@ -51,18 +47,20 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
+            $info = $info->append(['diy_con_obj'])->toArray();
 
-            $append = [];
-            if ($field == '*') {
-                $append = ['diy_con_obj'];
-            } else {
-                if (strpos($field, 'diy_config') !== false) {
-                    $append[] = 'diy_con_obj';
+            SettingCache::set($id, $info);
+        }
+
+        if ($fields) {
+            $data = [];
+            $fields = explode(',', $fields);
+            foreach ($fields as $field) {
+                if (isset($info[$field])) {
+                    $data[$field] = $info[$field];
                 }
             }
-            $info = $info->append($append)->toArray();
-
-            SettingCache::set($key, $info);
+            return $data;
         }
 
         return $info;
@@ -89,7 +87,7 @@ class SettingService
             exception();
         }
 
-        SettingCache::clear();
+        SettingCache::del($id);
 
         return $param;
     }

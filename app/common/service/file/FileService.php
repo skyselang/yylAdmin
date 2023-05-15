@@ -31,7 +31,7 @@ class FileService
         'tag_ids/a'   => [],
         'file_type/s' => 'image',
         'domain/s'    => '',
-        'sort/d'      => 250
+        'sort/d'      => 250,
     ];
 
     /**
@@ -76,11 +76,11 @@ class FileService
             ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
 
         $ids = array_column($list, $pk);
-        $storage = SettingService::storages();
-        $filetype = SettingService::fileTypes();
-        $setting = SettingService::info('limit_max,accept_ext');
+        $storages = SettingService::storages();
+        $filetypes = SettingService::fileTypes();
+        $setting = SettingService::info('file_types,storages,limit_max,accept_ext');
 
-        return compact('count', 'pages', 'page', 'limit', 'list', 'ids', 'storage', 'filetype', 'setting');
+        return compact('count', 'pages', 'page', 'limit', 'list', 'ids', 'setting');
     }
 
     /**
@@ -104,7 +104,10 @@ class FileService
                 }
                 return [];
             }
-            $info = $info->append(['group_name', 'tag_names', 'file_type_name', 'file_url', 'file_size'])->toArray();
+            $info = $info
+                ->append(['group_name', 'tag_names', 'tag_ids', 'file_type_name', 'file_url', 'file_size'])
+                ->hidden(['group', 'tags'])
+                ->toArray();
 
             FileCache::set($id, $info);
         }

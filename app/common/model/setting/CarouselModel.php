@@ -85,7 +85,7 @@ class CarouselModel extends Model
         }
         return $files ?? [];
     }
-    // 获取文件id
+    // 获取文件列表id
     public function getFileListIdsAttr()
     {
         if ($this['files']) {

@@ -11,6 +11,7 @@ namespace app\common\model\setting;
 
 use think\Model;
 use app\common\model\file\FileModel;
+use app\common\model\member\MemberModel;
 use app\common\service\setting\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -32,6 +33,31 @@ class FeedbackModel extends Model
     public function getTypeNameAttr($value, $data)
     {
         return SettingService::feedback_types($data['type']);
+    }
+
+    /**
+     * 获取状态名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("status_name", type="string", desc="状态名称")
+     */
+    public function getStatusNameAttr($value, $data)
+    {
+        return SettingService::feedback_statuss($data['status']);
+    }
+
+    // 关联会员
+    public function member()
+    {
+        return $this->hasOne(MemberModel::class, 'member_id', 'member_id');
+    }
+    /**
+     * 获取会员用户名
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("member_username", type="string", desc="会员用户名")
+     */
+    public function getMemberUsernameAttr()
+    {
+        return $this['member']['username'] ?? '';
     }
 
     // 关联图片

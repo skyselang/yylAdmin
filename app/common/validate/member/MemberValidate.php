@@ -32,6 +32,7 @@ class MemberValidate extends Validate
         'email'        => ['email'],
         'import'       => ['require', 'array'],
         'captcha_code' => ['require'],
+        'phone_code'   => ['require'],
     ];
 
     // 错误信息
@@ -71,6 +72,7 @@ class MemberValidate extends Validate
         'phoneLogin'           => ['mobile'],
         'phoneBindCaptcha'     => ['mobile'],
         'phoneBind'            => ['mobile', 'member_id', 'captcha_code'],
+        'phoneBindMini'        => ['phone_code', 'member_id'],
         'emailRegisterCaptcha' => ['email'],
         'emailRegister'        => ['nickname', 'email', 'password'],
         'emailLoginCaptcha'    => ['email'],

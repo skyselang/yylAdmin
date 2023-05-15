@@ -37,7 +37,7 @@ class Register extends BaseController
 
         $data['captcha_switch'] = $setting['captcha_register'];
 
-        if ($setting['captcha_register']) {
+        if ($data['captcha_switch']) {
             $captcha = CaptchaUtils::create();
             $data    = array_merge($data, $captcha);
         }
@@ -53,25 +53,27 @@ class Register extends BaseController
      */
     public function register()
     {
-        $param['nickname']     = $this->request->param('nickname/s', '');
-        $param['username']     = $this->request->param('username/s', '');
-        $param['password']     = $this->request->param('password/s', '');
-        $param['captcha_id']   = $this->request->param('captcha_id/s', '');
-        $param['captcha_code'] = $this->request->param('captcha_code/s', '');
-        $param['reg_channel']  = $this->request->param('reg_channel/s', SettingService::REG_CHANNEL_UNKNOWN);;
-        $param['reg_type']     = SettingService::REG_TYPE_USERNAME;
+        $param = $this->params([
+            'nickname/s'     => '',
+            'username/s'     => '',
+            'password/s'     => '',
+            'captcha_id/s'   => '',
+            'captcha_code/s' => '',
+            'reg_channel/s'  => SettingService::REG_CHANNEL_UNKNOWN,
+        ]);
+        $param['reg_type'] = SettingService::REG_TYPE_USERNAME;
 
         $setting = SettingService::info();
         if ($setting['captcha_register']) {
             if (empty($param['captcha_code'])) {
-                exception('请输入验证码');
+                return error([], '请输入验证码');
             }
             $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
             if (empty($captcha_check)) {
-                exception('验证码错误');
+                return error([], '验证码错误');
             }
         }
-        
+
         validate(MemberValidate::class)->scene('usernameRegister')->check($param);
 
         unset($param['captcha_id'], $param['captcha_code']);
@@ -87,13 +89,13 @@ class Register extends BaseController
      */
     public function phoneCaptcha()
     {
-        $param['phone'] = $this->request->param('phone/s', '');
+        $param = $this->params(['phone/s' => '']);
 
         validate(MemberValidate::class)->scene('phoneRegisterCaptcha')->check($param);
 
         SmsUtils::captcha($param['phone']);
 
-        return success([], '发送成功');
+        return success($param, '发送成功');
     }
 
     /**
@@ -105,23 +107,26 @@ class Register extends BaseController
      */
     public function phoneRegister()
     {
-        $param['phone']        = $this->request->param('phone/s', '');
-        $param['nickname']     = $this->request->param('nickname/s', '');
-        $param['password']     = $this->request->param('password/s', '');
-        $param['captcha_code'] = $this->request->param('captcha_code/s', '');
-        $param['reg_channel']  = $this->request->param('reg_channel/s', SettingService::REG_CHANNEL_UNKNOWN);;
-        $param['reg_type']     =  SettingService::REG_TYPE_PHONE;
+        $param = $this->params([
+            'phone/s'        => '',
+            'nickname/s'     => '',
+            'password/s'     => '',
+            'captcha_id/s'   => '',
+            'captcha_code/s' => '',
+            'reg_channel/s'  => SettingService::REG_CHANNEL_UNKNOWN,
+        ]);
+        $param['reg_type'] = SettingService::REG_TYPE_PHONE;
 
         validate(MemberValidate::class)->scene('phoneRegister')->check($param);
         if (empty($param['captcha_code'])) {
-            exception('请输入验证码');
+            return error([], '请输入验证码');
         }
         $captcha = CaptchaSmsCache::get($param['phone']);
         if ($captcha != $param['captcha_code']) {
-            exception('验证码错误');
+            return error([], '验证码错误');
         }
 
-        unset($param['captcha_code']);
+        unset($param['captcha_id'], $param['captcha_code']);
 
         $data = RegisterService::register($param);
         CaptchaSmsCache::del($param['phone']);
@@ -135,13 +140,13 @@ class Register extends BaseController
      */
     public function emailCaptcha()
     {
-        $param['email'] = $this->request->param('email/s', '');
+        $param = $this->params(['email/s' => '']);
 
         validate(MemberValidate::class)->scene('emailRegisterCaptcha')->check($param);
 
         EmailUtils::captcha($param['email']);
 
-        return success([], '发送成功');
+        return success($param, '发送成功');
     }
 
     /**
@@ -153,23 +158,26 @@ class Register extends BaseController
      */
     public function emailRegister()
     {
-        $param['email']        = $this->request->param('email/s', '');
-        $param['nickname']     = $this->request->param('nickname/s', '');
-        $param['password']     = $this->request->param('password/s', '');
-        $param['captcha_code'] = $this->request->param('captcha_code/s', '');
-        $param['reg_channel']  = $this->request->param('reg_channel/s', SettingService::REG_CHANNEL_UNKNOWN);;
-        $param['reg_type']     =  SettingService::REG_TYPE_EMAIL;
+        $param = $this->params([
+            'email/s'        => '',
+            'nickname/s'     => '',
+            'password/s'     => '',
+            'captcha_id/s'   => '',
+            'captcha_code/s' => '',
+            'reg_channel/s'  => SettingService::REG_CHANNEL_UNKNOWN,
+        ]);
+        $param['reg_type'] = SettingService::REG_TYPE_EMAIL;
 
         validate(MemberValidate::class)->scene('emailRegister')->check($param);
         if (empty($param['captcha_code'])) {
-            exception('请输入验证码');
+            return error([], '请输入验证码');
         }
         $captcha = CaptchaEmailCache::get($param['email']);
         if ($captcha != $param['captcha_code']) {
-            exception('验证码错误');
+            return error([], '验证码错误');
         }
 
-        unset($param['captcha_code']);
+        unset($param['captcha_id'], $param['captcha_code']);
 
         $data = RegisterService::register($param);
         CaptchaEmailCache::del($param['email']);

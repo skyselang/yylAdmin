@@ -31,13 +31,14 @@ class UserLog extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\UserLogModel", type="array", desc="日志列表",
+     * @Apidoc\Returned("list", type="array", desc="日志列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\UserLogModel", field="log_id,user_id,menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time"),
      *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="nickname,username"),
      *   @Apidoc\Returned(ref="app\common\model\system\MenuModel", field="menu_name,menu_url"),
-     * )
+     * })
      * @Apidoc\Returned("user", ref="app\common\model\system\UserModel", type="array", desc="用户列表", field="user_id,nickname,username")
      * @Apidoc\Returned("menu", ref="app\common\model\system\MenuModel", type="tree", desc="菜单树形", field="menu_id,menu_pid,menu_name")
-     * @Apidoc\Returned("log_types", ref="app\common\model\system\UserLogModel", field="log_type")
+     * @Apidoc\Returned("log_types", type="array", desc="日志类型")
      */
     public function list()
     {
@@ -62,7 +63,7 @@ class UserLog extends BaseController
      */
     public function info()
     {
-        $param['log_id'] = $this->request->param('log_id/d', 0);
+        $param = $this->params(['log_id/d' => 0]);
 
         validate(UserLogValidate::class)->scene('info')->check($param);
 
@@ -78,7 +79,7 @@ class UserLog extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(UserLogValidate::class)->scene('dele')->check($param);
 
@@ -92,7 +93,6 @@ class UserLog extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Query(ref="searchQuery")
      * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
      */
     public function clear()
     {

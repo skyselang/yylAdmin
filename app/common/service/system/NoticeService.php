@@ -88,7 +88,7 @@ class NoticeService
                 }
                 return [];
             }
-            $info = $info->append(['image_url'])->toArray();
+            $info = $info->append(['image_url'])->hidden(['image'])->toArray();
 
             NoticeCache::set($id, $info);
         }

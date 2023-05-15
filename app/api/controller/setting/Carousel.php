@@ -28,14 +28,15 @@ class Carousel extends BaseController
      * @Apidoc\Query("title", type="string", default="", desc="标题")
      * @Apidoc\Query("position", type="string", default="", desc="位置")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\CarouselModel", type="array", desc="轮播列表", field="carousel_id,unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time",
-     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
-     * )
+     * @Apidoc\Returned("list", type="array", desc="轮播列表", children={
+     *   @Apidoc\Returned("list", ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
+     * })
      */
     public function list()
     {
-        $title    = $this->request->param('title/s', '');
-        $position = $this->request->param('position/s', '');
+        $title    = $this->param('title/s', '');
+        $position = $this->param('position/s', '');
 
         $where[] = ['carousel_id', '>', 0];
         if ($title) {
@@ -57,20 +58,19 @@ class Carousel extends BaseController
     /**
      * @Apidoc\Title("轮播信息")
      * @Apidoc\Query("carousel_id", type="string", require=true, default="", desc="轮播id、标识")
-     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel",
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file"),
-     *   @Apidoc\Returned("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表")
-     * )
+     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel"),
+     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
+     * @Apidoc\Returned("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表")
      */
     public function info()
     {
-        $param['carousel_id'] = $this->request->param('carousel_id/s', '');
+        $param = $this->params(['carousel_id/s' => '']);
 
         validate(CarouselValidate::class)->scene('info')->check($param);
 
         $data = CarouselService::info($param['carousel_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return success([], '轮播不存在或已禁用或已删除');
+            return error([], '轮播不存在');
         }
 
         return success($data);

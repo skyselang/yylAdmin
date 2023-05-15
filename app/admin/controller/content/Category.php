@@ -26,9 +26,10 @@ class Category extends BaseController
      * @Apidoc\Query(ref="searchQuery")
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\CategoryModel", type="tree", desc="分类树形", field="category_id,category_pid,category_name,category_unique,cover_id,sort,is_disable,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getCoverUrlAttr"),
-     * )
+     * @Apidoc\Returned("list", type="tree", desc="分类树形", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique,cover_id,sort,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getCoverUrlAttr", field=""),
+     * })
      * @Apidoc\Returned("tree", ref="app\common\model\content\CategoryModel", type="tree", desc="分类树形", field="category_id,category_pid,category_name")
      */
     public function list()
@@ -47,11 +48,12 @@ class Category extends BaseController
      * @Apidoc\Title("内容分类信息")
      * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id")
      * @Apidoc\Returned(ref="app\common\model\content\CategoryModel")
+     * @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getCoverUrlAttr", field="")
      * @Apidoc\Returned(ref="imagesReturn")
      */
     public function info()
     {
-        $param['category_id'] = $this->request->param('category_id/d', 0);
+        $param = $this->params(['category_id/d' => 0]);
 
         validate(CategoryValidate::class)->scene('info')->check($param);
 
@@ -69,7 +71,7 @@ class Category extends BaseController
     public function add()
     {
         $param = $this->params(CategoryService::$edit_field);
- 
+
         validate(CategoryValidate::class)->scene('add')->check($param);
 
         $data = CategoryService::add($param);
@@ -101,7 +103,7 @@ class Category extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(CategoryValidate::class)->scene('dele')->check($param);
 
@@ -118,8 +120,7 @@ class Category extends BaseController
      */
     public function editpid()
     {
-        $param['ids']          = $this->request->param('ids/a', []);
-        $param['category_pid'] = $this->request->param('category_pid/d', 0);
+        $param = $this->params(['ids/a' => [], 'category_pid' => 0]);
 
         validate(CategoryValidate::class)->scene('editpid')->check($param);
 
@@ -136,8 +137,7 @@ class Category extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(CategoryValidate::class)->scene('disable')->check($param);
 
@@ -152,15 +152,16 @@ class Category extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\ContentModel", type="array", desc="内容列表", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr"),
-     * )
+     * @Apidoc\Returned("list", type="array", desc="内容列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr", field="cover_url"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
+     * })
      */
     public function content()
     {
-        $param['category_id'] = $this->request->param('category_id/d', 0);
+        $param = $this->params(['category_id/d' => 0]);
 
         validate(CategoryValidate::class)->scene('content')->check($param);
 
@@ -174,13 +175,12 @@ class Category extends BaseController
     /**
      * @Apidoc\Title("内容分类内容解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_id")
+     * @Apidoc\Param("category_id", type="array", require=true, desc="分类id")
      * @Apidoc\Param("content_ids", type="array", require=false, desc="内容id，为空则解除所有内容")
      */
     public function contentRemove()
     {
-        $param['category_id'] = $this->request->param('category_id/a', []);
-        $param['content_ids'] = $this->request->param('content_ids/a', []);
+        $param = $this->params(['category_id/a' => [], 'content_ids/a' => []]);
 
         validate(CategoryValidate::class)->scene('contentRemove')->check($param);
 

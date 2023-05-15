@@ -42,15 +42,16 @@ class Content extends BaseController
 
     /**
      * @Apidoc\Title("分类列表")
-     * @Apidoc\Returned("list", ref="app\common\model\content\CategoryModel", type="tree", desc="分类树形", field="category_id,category_pid,category_name",
-     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\cover")
-     * )
+     * @Apidoc\Returned("list", type="tree", desc="分类树形", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique"), 
+     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getCoverUrlAttr", field="cover_url"),
+     * })
      */
     public function category()
     {
         $where = where_disdel();
         $order = $this->order(['sort' => 'desc', 'category_id' => 'desc']);
-        $field = 'category_id,category_pid,category_name,cover_id';
+        $field = 'category_id,category_pid,category_name,category_unique,cover_id';
 
         $data = CategoryService::list('tree', $where, $order, $field);
 
@@ -67,9 +68,9 @@ class Content extends BaseController
      */
     public function tag()
     {
-        $tag_id     = $this->request->param('tag_id/s', '');
-        $tag_name   = $this->request->param('tag_name/s', '');
-        $tag_unique = $this->request->param('tag_unique/s', '');
+        $tag_id     = $this->param('tag_id/s', '');
+        $tag_name   = $this->param('tag_name/s', '');
+        $tag_unique = $this->param('tag_unique/s', '');
 
         if ($tag_id) {
             $where[] = ['tag_id', 'in', $tag_id];
@@ -95,23 +96,49 @@ class Content extends BaseController
      * @Apidoc\Title("内容列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\content\ContentModel", field="category_id,name")
+     * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id,category_unique")
+     * @Apidoc\Query(ref="app\common\model\content\TagModel", field="tag_id,tag_unique")
+     * @Apidoc\Query(ref="app\common\model\content\ContentModel", field="keywords")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\ContentModel", type="array", desc="内容列表", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_name")
-     * )
+     * @Apidoc\Returned("list", type="array", desc="内容列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr", field="cover_url"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names")
+     * })
      */
     public function list()
     {
-        $category_id = $this->request->param('category_id/s', '');
-        $name        = $this->request->param('name/s', '');
+        $category_id     = $this->param('category_id/s', '');
+        $category_unique = $this->param('category_unique/s', '');
+        $tag_id          = $this->param('tag_id/s', '');
+        $tag_unique      = $this->param('tag_unique/s', '');
+        $keywords        = $this->param('keywords/s', '');
 
-        $where[] = ['content_id', '>', 0];
         if ($category_id !== '') {
-            $where[] = ['category_id', '=', $category_id];
+            $category_ids = explode(',', $category_id);
         }
-        if ($name) {
-            $where[] = ['name', 'like', '%' . $name . '%'];
+        if ($category_unique !== '') {
+            $category = CategoryService::info($category_unique, false);
+            $category_ids[] = $category['category_id'] ?? '-1';
+        }
+        if ($category_id !== '' || $category_unique !== '') {
+            $where[] = ['category_ids', 'in', $category_ids];
+        }
+
+        if ($tag_id !== '') {
+            $tag_ids = explode(',', $tag_id);
+        }
+        if ($tag_unique !== '') {
+            $tag = TagService::info($tag_unique, false);
+            $tag_ids[] = $tag['tag_id'] ?? '-1';
+        }
+        if ($tag_id !== '' || $tag_unique !== '') {
+            $where[] = ['tag_ids', 'in', $tag_ids];
+        }
+
+        if ($keywords) {
+            $where[] = ['name|title|keywords', 'like', '%' . $keywords . '%'];
         }
         $where[] = where_disable();
         $where[] = where_delete();
@@ -136,23 +163,22 @@ class Content extends BaseController
      * @Apidoc\Returned(ref="audiosReturn")
      * @Apidoc\Returned(ref="wordsReturn")
      * @Apidoc\Returned(ref="othersReturn")
-     * @Apidoc\Returned("prev_info", type="object", desc="上一条",
+     * @Apidoc\Returned("prev_info", type="object", desc="上一条", children={
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,name")
-     * )
-     * @Apidoc\Returned("next_info", type="object", desc="下一条",
+     * })
+     * @Apidoc\Returned("next_info", type="object", desc="下一条", children={
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,name")
-     * )
+     * })
      */
     public function info()
     {
-        $param['content_id'] = $this->request->param('content_id/s', '');
-        $param['is_cate']    = $this->request->param('is_cate/d', 0);
+        $param = $this->params(['content_id/s' => '', 'is_cate/d' => 0]);
 
         validate(ContentValidate::class)->scene('info')->check($param);
 
         $data = ContentService::info($param['content_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return success([], '内容不存在或已禁用或已删除');
+            return error([], '内容不存在');
         }
 
         $data['prev_info'] = ContentService::prev($data['content_id'], $param['is_cate']);

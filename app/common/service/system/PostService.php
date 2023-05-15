@@ -54,7 +54,7 @@ class PostService
             $order = ['sort' => 'desc', $pk => 'asc'];
         }
 
-        $key = $type . md5(serialize($where) . serialize($order) . $field);
+        $key = where_cache_key($type, $where, $order, $field);
         $data = PostCache::get($key);
         if (empty($data)) {
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
@@ -221,7 +221,7 @@ class PostService
 
         $res = UserAttributesModel::where($where)->delete();
 
-        UserCache::upd($user_ids);
+        UserCache::del($user_ids);
 
         return $res;
     }

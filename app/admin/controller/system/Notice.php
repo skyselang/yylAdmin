@@ -29,9 +29,10 @@ class Notice extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\NoticeModel", type="array", desc="公告列表", field="notice_id,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel\getImageUrlAttr")
-     * )
+     * @Apidoc\Returned("list", type="array", desc="公告列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel", field="notice_id,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel\getImageUrlAttr", field="image_url")
+     * })
      */
     public function list()
     {
@@ -53,7 +54,7 @@ class Notice extends BaseController
      */
     public function info()
     {
-        $param['notice_id'] = $this->request->param('notice_id/d', 0);
+        $param = $this->params(['notice_id/d' => 0]);
 
         validate(NoticeValidate::class)->scene('info')->check($param);
 
@@ -101,7 +102,7 @@ class Notice extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(NoticeValidate::class)->scene('dele')->check($param);
 
@@ -118,8 +119,7 @@ class Notice extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(NoticeValidate::class)->scene('disable')->check($param);
 
@@ -136,9 +136,7 @@ class Notice extends BaseController
      */
     public function datetime()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['start_time'] = $this->request->param('start_time/s', '');
-        $param['end_time']   = $this->request->param('end_time/s', '');
+        $param = $this->params(['ids/a' => [], 'start_time/s' => '', 'end_time/s' => '']);
 
         validate(NoticeValidate::class)->scene('datetime')->check($param);
 

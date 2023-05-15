@@ -27,8 +27,8 @@ class TagService
     public static $edit_field = [
         'tag_id/d'     => 0,
         'tag_name/s'   => '',
-        'tag_desc/s'   => '',
         'tag_unique/s' => '',
+        'tag_desc/s'   => '',
         'sort/d'       => 250,
     ];
 

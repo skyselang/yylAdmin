@@ -23,31 +23,13 @@ use hg\apidoc\annotation as Apidoc;
 class Setting extends BaseController
 {
     /**
-     * 设置信息
-     *
-     * @return array
-     */
-    public function info()
-    {
-        return SettingService::info();
-    }
-
-    /**
      * @Apidoc\Title("系统设置信息")
-     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="logo_id,favicon_id,login_bg_id,system_name,page_title")
-     * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
-     * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
-     * @Apidoc\Returned("login_bg_url", type="string", desc="登录背景链接")
+     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="system_name,page_title,logo_id,favicon_id,login_bg_id")
+     * @Apidoc\Returned(ref="app\common\service\system\SettingService\info", field="logo_url,favicon_url,login_bg_url")
      */
     public function systemInfo()
     {
-        $setting = $this->info();
-
-        $fields = 'logo_id,logo_url,favicon_id,favicon_url,login_bg_id,login_bg_url,system_name,page_title';
-        $fields = explode(',', $fields);
-        foreach ($fields as $field) {
-            $data[$field] = $setting[$field] ?? '';
-        }
+        $data = SettingService::info('system_name,page_title,logo_id,favicon_id,login_bg_id,logo_url,favicon_url,login_bg_url');
 
         return success($data);
     }
@@ -55,15 +37,17 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("系统设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="logo_id,logo_url,favicon_id,favicon_url,login_bg_id,login_bg_url,system_name,page_title")
+     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="system_name,page_title,logo_id,favicon_id,login_bg_id")
      */
     public function systemEdit()
     {
-        $param['system_name'] = $this->request->param('system_name/s', '');
-        $param['page_title']  = $this->request->param('page_title/s', '');
-        $param['logo_id']     = $this->request->param('logo_id/d', 0);
-        $param['favicon_id']  = $this->request->param('favicon_id/d', 0);
-        $param['login_bg_id'] = $this->request->param('login_bg_id/d', 0);
+        $param = $this->params([
+            'system_name/s' => '',
+            'page_title/s'  => '',
+            'logo_id/d'     => 0,
+            'favicon_id/d'  => 0,
+            'login_bg_id/d' => 0,
+        ]);
 
         $data = SettingService::edit($param);
 
@@ -72,13 +56,11 @@ class Setting extends BaseController
 
     /**
      * @Apidoc\Title("缓存设置信息")
-     * @Apidoc\Returned("cache_type", type="string", default="", desc="缓存类型")
+     * @Apidoc\Returned(ref="app\common\service\system\SettingService\info", field="cache_type")
      */
     public function cacheInfo()
     {
-        $setting = $this->info();
-
-        $data['cache_type'] = $setting['cache_type'];
+        $data = SettingService::info('cache_type');
 
         return success($data);
     }
@@ -91,7 +73,7 @@ class Setting extends BaseController
     {
         $data = SettingService::cacheClear();
 
-        return success($data, '缓存已清除');
+        return success($data, '清除缓存成功');
     }
 
     /**
@@ -100,11 +82,7 @@ class Setting extends BaseController
      */
     public function tokenInfo()
     {
-        $setting = $this->info();
-
-        $data['token_key']      = $setting['token_key'];
-        $data['token_exp']      = $setting['token_exp'];
-        $data['is_multi_login'] = $setting['is_multi_login'];
+        $data = SettingService::info('token_key,token_exp,is_multi_login');
 
         return success($data);
     }
@@ -116,9 +94,7 @@ class Setting extends BaseController
      */
     public function tokenEdit()
     {
-        $param['token_key']      = $this->request->param('token_key/s', '');
-        $param['token_exp']      = $this->request->param('token_exp/d', 12);
-        $param['is_multi_login'] = $this->request->param('is_multi_login/d', 0);
+        $param = $this->params(['token_key/s' => '', 'token_exp/d' => 12, 'is_multi_login/d' => 0]);
 
         validate(SettingValidate::class)->scene('token_edit')->check($param);
 
@@ -133,11 +109,7 @@ class Setting extends BaseController
      */
     public function captchaInfo()
     {
-        $setting = $this->info();
-
-        $data['captcha_switch'] = $setting['captcha_switch'];
-        $data['captcha_mode']   = $setting['captcha_mode'];
-        $data['captcha_type']   = $setting['captcha_type'];
+        $data = SettingService::info('captcha_switch,captcha_mode,captcha_type');
 
         return success($data);
     }
@@ -149,9 +121,7 @@ class Setting extends BaseController
      */
     public function captchaEdit()
     {
-        $param['captcha_switch'] = $this->request->param('captcha_switch/d', 0);
-        $param['captcha_mode']   = $this->request->param('captcha_mode/d', 1);
-        $param['captcha_type']   = $this->request->param('captcha_type/d', 1);
+        $param = $this->params(['captcha_switch/d' => 0, 'captcha_mode/d' => 1, 'captcha_type/d' => 1]);
 
         validate(SettingValidate::class)->scene('captcha_edit')->check($param);
 
@@ -166,10 +136,7 @@ class Setting extends BaseController
      */
     public function logInfo()
     {
-        $setting = $this->info();
-
-        $data['log_switch']    = $setting['log_switch'];
-        $data['log_save_time'] = $setting['log_save_time'];
+        $data = SettingService::info('log_switch,log_save_time');
 
         return success($data);
     }
@@ -181,8 +148,7 @@ class Setting extends BaseController
      */
     public function logEdit()
     {
-        $param['log_switch']    = $this->request->param('log_switch/d', 0);
-        $param['log_save_time'] = $this->request->param('log_save_time/d', 0);
+        $param = $this->params(['log_switch/d' => 0, 'log_save_time/d' => 0]);
 
         validate(SettingValidate::class)->scene('log_edit')->check($param);
 
@@ -197,10 +163,7 @@ class Setting extends BaseController
      */
     public function apiInfo()
     {
-        $setting = $this->info();
-
-        $data['api_rate_num']  = $setting['api_rate_num'];
-        $data['api_rate_time'] = $setting['api_rate_time'];
+        $data = SettingService::info('api_rate_num,api_rate_time');
 
         return success($data);
     }
@@ -212,8 +175,7 @@ class Setting extends BaseController
      */
     public function apiEdit()
     {
-        $param['api_rate_num']  = $this->request->param('api_rate_num/d', 3);
-        $param['api_rate_time'] = $this->request->param('api_rate_time/d', 1);
+        $param = $this->params(['api_rate_num/d' => 3, 'api_rate_time/d' => 1]);
 
         validate(SettingValidate::class)->scene('api_edit')->check($param);
 
@@ -228,13 +190,7 @@ class Setting extends BaseController
      */
     public function emailInfo()
     {
-        $setting = $this->info();
-
-        $fields = 'email_host,email_port,email_secure,email_username,email_password,email_setfrom,email_test';
-        $fields = explode(',', $fields);
-        foreach ($fields as $field) {
-            $data[$field] = $setting[$field] ?? '';
-        }
+        $data = SettingService::info('email_host,email_port,email_secure,email_username,email_password,email_setfrom,email_test');
 
         return success($data);
     }
@@ -246,13 +202,15 @@ class Setting extends BaseController
      */
     public function emailEdit()
     {
-        $param['email_host']     = $this->request->param('email_host/s', '');
-        $param['email_port']     = $this->request->param('email_port/s', '');
-        $param['email_secure']   = $this->request->param('email_secure/s', 'ssl');
-        $param['email_username'] = $this->request->param('email_username/s', '');
-        $param['email_password'] = $this->request->param('email_password/s', '');
-        $param['email_setfrom']  = $this->request->param('email_setfrom/s', '');
-        $param['email_test']     = $this->request->param('email_test/s', '');
+        $param = $this->params([
+            'email_host/s'     => '',
+            'email_port/s'     => '',
+            'email_secure/s'   => 'ssl',
+            'email_username/s' => '',
+            'email_password/s' => '',
+            'email_setfrom/s'  => '',
+            'email_test/s'     => '',
+        ]);
 
         validate(SettingValidate::class)->scene('email_edit')->check($param);
 
@@ -268,7 +226,7 @@ class Setting extends BaseController
      */
     public function emailTest()
     {
-        $param['email_test'] = $this->request->param('email_test/s', '');
+        $param = $this->params(['email_test/s' => '']);
 
         validate(SettingValidate::class)->scene('email_test')->check($param);
 
@@ -279,10 +237,13 @@ class Setting extends BaseController
 
     /**
      * @Apidoc\Title("服务器信息")
+     * @Apidoc\Param("force", type="int", default=0, desc="是否强制刷新")
      */
     public function serverInfo()
     {
-        $data = ServerUtils::server();
+        $force = $this->param('force/d', 0);
+
+        $data = ServerUtils::server($force);
 
         return success($data);
     }

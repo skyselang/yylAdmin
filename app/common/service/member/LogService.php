@@ -78,7 +78,10 @@ class LogService
                 }
                 return [];
             }
-            $info = $info->append(['nickname', 'username', 'api_url', 'api_name'])->toArray();
+            $info = $info
+                ->append(['nickname', 'username', 'api_url', 'api_name'])
+                ->hidden(['member', 'api'])
+                ->toArray();
 
             LogCache::set($id, $info);
         }

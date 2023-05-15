@@ -116,8 +116,14 @@ abstract class BaseController
         }
 
         if ($date_field && $date_value) {
-            $where[] = [$date_field, '>=', $date_value[0] . ' 00:00:00'];
-            $where[] = [$date_field, '<=', $date_value[1] . ' 23:59:59'];
+            $start_date = $date_value[0] ?? '';
+            $end_date   = $date_value[1] ?? '';
+            if ($start_date) {
+                $where[] = [$date_field, '>=',  $start_date . ' 00:00:00'];
+            }
+            if ($end_date) {
+                $where[] = [$date_field, '<=',  $end_date . ' 23:59:59'];
+            }
         }
 
         if ($other) {
@@ -153,13 +159,12 @@ abstract class BaseController
     }
 
     /**
-     * 参数字段
-     *
-     * @param array $fields 字段，eg：['field1','field2'=>0,'field3/b'=>false]
-     *
+     * 获取当前请求的部分参数
+     * @param array        $fields 字段，eg：['field1','field2'=>0,'field3/b'=>false]
+     * @param string|array $filter 过滤方法
      * @return array
      */
-    protected function params($fields = [])
+    protected function params($fields = [], $filter = '')
     {
         $params = [];
         foreach ($fields as $key => $val) {
@@ -179,10 +184,23 @@ abstract class BaseController
             }
 
             if ($name) {
-                $params[$name] = $this->request->param($name . '/' . $type, $default);
+                $params[$name] = $this->request->param($name . '/' . $type, $default, $filter);
             }
         }
 
         return $params;
+    }
+
+    /**
+     * 获取当前请求的参数
+     * @access public
+     * @param  string|array $name    变量名
+     * @param  mixed        $default 默认值
+     * @param  string|array $filter  过滤方法
+     * @return mixed
+     */
+    public function param($name = '', $default = null, $filter = '')
+    {
+        return $this->request->param($name, $default, $filter);
     }
 }

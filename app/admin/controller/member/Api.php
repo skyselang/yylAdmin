@@ -48,7 +48,7 @@ class Api extends BaseController
      */
     public function info()
     {
-        $param['api_id'] = $this->request->param('api_id/d', 0);
+        $param = $this->params(['api_id/d' => 0]);
 
         validate(ApiValidate::class)->scene('info')->check($param);
 
@@ -65,7 +65,7 @@ class Api extends BaseController
     public function add()
     {
         $param = $this->params(ApiService::$edit_field);
-        
+
         validate(ApiValidate::class)->scene('add')->check($param);
 
         $data = ApiService::add($param);
@@ -96,7 +96,7 @@ class Api extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(ApiValidate::class)->scene('dele')->check($param);
 
@@ -110,12 +110,11 @@ class Api extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\member\ApiModel", field="sort")
+     * @Apidoc\Param("sort_incdec", type="int", require=false, desc="递增或递减排序")
      */
     public function editsort()
     {
-        $param['ids']         = $this->request->param('ids/a', []);
-        $param['sort']        = $this->request->param('sort/d', 250);
-        $param['sort_incdec'] = $this->request->param('sort_incdec/d', 0);
+        $param = $this->params(['ids/a' => [], 'sort/d' => 250, 'sort_incdec/d' => 0]);
 
         validate(ApiValidate::class)->scene('editsort')->check($param);
 
@@ -138,8 +137,7 @@ class Api extends BaseController
      */
     public function editpid()
     {
-        $param['ids']     = $this->request->param('ids/a', []);
-        $param['api_pid'] = $this->request->param('api_pid/d', 0);
+        $param = $this->params(['ids/a' => [], 'api_pid/d' => 0]);
 
         validate(ApiValidate::class)->scene('editpid')->check($param);
 
@@ -156,8 +154,7 @@ class Api extends BaseController
      */
     public function unlogin()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_unlogin'] = $this->request->param('is_unlogin/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_unlogin/d' => 0]);
 
         validate(ApiValidate::class)->scene('unlogin')->check($param);
 
@@ -174,8 +171,7 @@ class Api extends BaseController
      */
     public function unauth()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['is_unauth'] = $this->request->param('is_unauth/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_unauth/d' => 0]);
 
         validate(ApiValidate::class)->scene('unauth')->check($param);
 
@@ -192,8 +188,7 @@ class Api extends BaseController
      */
     public function unrate()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['is_unrate'] = $this->request->param('is_unrate/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_unrate/d' => 0]);
 
         validate(ApiValidate::class)->scene('unrate')->check($param);
 
@@ -210,8 +205,7 @@ class Api extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(ApiValidate::class)->scene('disable')->check($param);
 
@@ -230,7 +224,7 @@ class Api extends BaseController
      */
     public function group()
     {
-        $param['api_id'] = $this->request->param('api_id/d', 0);
+        $param = $this->params(['api_id/d' => 0]);
 
         validate(ApiValidate::class)->scene('group')->check($param);
 
@@ -244,13 +238,12 @@ class Api extends BaseController
     /**
      * @Apidoc\Title("会员接口分组解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\ApiModel", field="api_id")
+     * @Apidoc\Param("api_id", type="array", require=true, desc="接口id")
      * @Apidoc\Param("group_ids", type="array", require=false, desc="分组id，为空则解除所有接口")
      */
     public function groupRemove()
     {
-        $param['api_id']    = $this->request->param('api_id/a', []);
-        $param['group_ids'] = $this->request->param('group_ids/a', []);
+        $param = $this->params(['api_id/a' => [], 'group_ids/a' => []]);
 
         validate(ApiValidate::class)->scene('groupRemove')->check($param);
 

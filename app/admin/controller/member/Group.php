@@ -53,10 +53,11 @@ class Group extends BaseController
      * @Apidoc\Title("会员分组信息")
      * @Apidoc\Query(ref="app\common\model\member\GroupModel", field="group_id")
      * @Apidoc\Returned(ref="app\common\model\member\GroupModel")
+     * @Apidoc\Returned("api_ids", type="array", desc="接口id")
      */
     public function info()
     {
-        $param['group_id'] = $this->request->param('group_id/d', 0);
+        $param = $this->params(['group_id/d' => 0]);
 
         validate(GroupValidate::class)->scene('info')->check($param);
 
@@ -74,7 +75,7 @@ class Group extends BaseController
     public function add()
     {
         $param = $this->params(GroupService::$edit_field);
-        
+
         validate(GroupValidate::class)->scene('add')->check($param);
 
         $data = GroupService::add($param);
@@ -106,7 +107,7 @@ class Group extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(GroupValidate::class)->scene('dele')->check($param);
 
@@ -123,8 +124,7 @@ class Group extends BaseController
      */
     public function editapi()
     {
-        $param['ids']     = $this->request->param('ids/a', []);
-        $param['api_ids'] = $this->request->param('api_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'api_ids/a' => []]);
 
         validate(GroupValidate::class)->scene('editapi')->check($param);
 
@@ -141,8 +141,7 @@ class Group extends BaseController
      */
     public function defaults()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_default'] = $this->request->param('is_default/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_default/d' => 0]);
 
         validate(GroupValidate::class)->scene('default')->check($param);
 
@@ -159,8 +158,7 @@ class Group extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(GroupValidate::class)->scene('disable')->check($param);
 
@@ -175,18 +173,19 @@ class Group extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\member\GroupModel", field="group_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel", type="array", desc="会员列表", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time",
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr"),
-     * )
+     * @Apidoc\Returned("list", type="array", desc="会员列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr", field="tag_names"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
+     * })
      */
     public function member()
     {
-        $group_id = $this->request->param('group_id/d', 0);
+        $param = $this->params(['group_id/d' => 0]);
 
-        validate(GroupValidate::class)->scene('member')->check(['group_id' => $group_id]);
+        validate(GroupValidate::class)->scene('member')->check($param);
 
-        $where = $this->where(where_delete(['group_ids', 'in', [$group_id]]));
+        $where = $this->where(where_delete(['group_ids', 'in', [$param['group_id']]]));
 
         $data = GroupService::member($where, $this->page(), $this->limit(), $this->order());
 
@@ -196,13 +195,12 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("会员分组会员解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="group_id")
+     * @Apidoc\Param("group_id", type="array", require=true, desc="分组id")
      * @Apidoc\Param("member_ids", type="array", require=false, desc="会员id，为空则解除所有会员")
      */
     public function memberRemove()
     {
-        $param['group_id']   = $this->request->param('group_id/a', []);
-        $param['member_ids'] = $this->request->param('member_ids/a', []);
+        $param = $this->params(['group_id/a' => [], 'member_ids/a' => []]);
 
         validate(GroupValidate::class)->scene('memberRemove')->check($param);
 

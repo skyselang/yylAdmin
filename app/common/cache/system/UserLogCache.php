@@ -17,14 +17,14 @@ use think\facade\Cache;
 class UserLogCache
 {
     // 缓存标签
-    protected static $tag = 'system_user_log';
+    public static $tag = 'system_user_log';
     // 缓存前缀
     protected static $prefix = 'system_user_log:';
 
     /**
      * 缓存键名
      *
-     * @param mixed $id 日志id、统计时间
+     * @param mixed $id 日志id、key
      * 
      * @return string
      */
@@ -36,13 +36,13 @@ class UserLogCache
     /**
      * 缓存设置
      *
-     * @param mixed $id   日志id、统计时间
+     * @param mixed $id   日志id、key
      * @param array $info 日志信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 3600)
+    public static function set($id, $info, $ttl = 43200)
     {
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
@@ -50,7 +50,7 @@ class UserLogCache
     /**
      * 缓存获取
      *
-     * @param mixed $id 日志id、统计时间
+     * @param mixed $id 日志id、key
      * 
      * @return array 日志信息
      */
@@ -62,7 +62,7 @@ class UserLogCache
     /**
      * 缓存删除
      *
-     * @param mixed $id 日志id、统计时间
+     * @param mixed $id 日志id、key
      * 
      * @return bool
      */

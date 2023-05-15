@@ -28,7 +28,7 @@ class GroupService
         'group_name/s' => '',
         'group_desc/s' => '',
         'sort/d'       => 250,
-        'api_ids/a'    => []
+        'api_ids/a'    => [],
     ];
 
     /**
@@ -95,7 +95,7 @@ class GroupService
                 }
                 return [];
             }
-            $info = $info->append(['api_ids'])->toArray();
+            $info = $info->append(['api_ids'])->hidden(['apis'])->toArray();
 
             GroupCache::set($id, $info);
         }
@@ -284,7 +284,7 @@ class GroupService
 
         $res = AttributesModel::where($where)->delete();
 
-        MemberCache::upd($member_ids);
+        MemberCache::del($member_ids);
 
         return $res;
     }

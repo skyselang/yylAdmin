@@ -12,6 +12,7 @@ namespace app\common\service\member;
 use think\facade\Config;
 use app\common\cache\member\SettingCache;
 use app\common\model\member\SettingModel;
+use hg\apidoc\annotation as Apidoc;
 
 /**
  * 会员设置
@@ -200,10 +201,13 @@ class SettingService
 
     /**
      * 设置信息
-     *
+     * @param string $fields 返回字段，逗号隔开，默认所有
+     * @Apidoc\Returned("token_type", type="string", require=false, default="", desc="token方式")
+     * @Apidoc\Returned("token_name", type="string", require=false, default="", desc="token名称")
+     * @Apidoc\Returned("diy_con_obj", type="object", desc="自定义设置对象")
      * @return array
      */
-    public static function info()
+    public static function info($fields = '')
     {
         $id = self::$id;
 
@@ -228,6 +232,17 @@ class SettingService
             $info['token_name'] = Config::get('api.token_name');
 
             SettingCache::set($id, $info);
+        }
+
+        if ($fields) {
+            $data = [];
+            $fields = explode(',', $fields);
+            foreach ($fields as $field) {
+                if (isset($info[$field])) {
+                    $data[$field] = $info[$field];
+                }
+            }
+            return $data;
         }
 
         return $info;

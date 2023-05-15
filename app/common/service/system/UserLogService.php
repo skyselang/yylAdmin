@@ -82,7 +82,10 @@ class UserLogService
                 }
                 return [];
             }
-            $info = $info->append(['nickname', 'username', 'menu_name', 'menu_url'])->toArray();
+            $info = $info
+                ->append(['nickname', 'username', 'menu_name', 'menu_url'])
+                ->hidden(['user', 'menu'])
+                ->toArray();
 
             UserLogCache::set($id, $info);
         }

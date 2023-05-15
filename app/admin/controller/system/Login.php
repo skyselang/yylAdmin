@@ -33,14 +33,7 @@ class Login extends BaseController
      */
     public function setting()
     {
-        $setting = SettingService::info();
-
-        $data = [];
-        $field = 'system_name,page_title,logo_url,favicon_url,login_bg_url,captcha_switch,captcha_mode,captcha_type,token_type,token_name';
-        $field = explode(',', $field);
-        foreach ($field as $v) {
-            $data[$v] = $setting[$v] ?? '';
-        }
+        $data = SettingService::info('system_name,page_title,logo_url,favicon_url,login_bg_url,captcha_switch,captcha_mode,captcha_type,token_type,token_name');
 
         if ($data['captcha_switch']) {
             if ($data['captcha_mode'] == 1) {
@@ -66,15 +59,9 @@ class Login extends BaseController
      */
     public function captcha()
     {
-        $setting = SettingService::info();
+        $data = SettingService::info('captcha_switch,captcha_mode,captcha_type');
 
-        $data = [];
         if ($this->request->isGet()) {
-            $field = ['captcha_switch', 'captcha_mode', 'captcha_type'];
-            foreach ($field as $v) {
-                $data[$v] = $setting[$v] ?? '';
-            }
-
             if ($data['captcha_switch']) {
                 if ($data['captcha_mode'] == 2) {
                     $AjCaptchaUtils = new AjCaptchaUtils();
@@ -86,9 +73,9 @@ class Login extends BaseController
                 }
             }
         } else {
-            $captchaData = $this->request->param('');
+            $captchaData = $this->param('');
             $AjCaptchaUtils = new AjCaptchaUtils();
-            $data = $AjCaptchaUtils->check($setting['captcha_type'], $captchaData);
+            $data = $AjCaptchaUtils->check($data['captcha_type'], $captchaData);
         }
 
         return success($data);
@@ -99,18 +86,21 @@ class Login extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\system\UserModel", field="username,password")
      * @Apidoc\Param(ref="captchaParam")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id")
-     * @Apidoc\Returned(ref="app\common\service\system\UserService\login")
-     * @Apidoc\After(event="setGlobalParam", key="AdminToken", value="res.data.data.AdminToken", desc="AdminToken")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username")
+     * @Apidoc\Returned("AdminToken", type="string", desc="token")
+     * @Apidoc\After(event="setGlobalBody", key="AdminToken", value="res.data.data.AdminToken", desc="AdminToken")
+     * @Apidoc\After(event="setGlobalQuery", key="AdminToken", value="res.data.data.AdminToken", desc="AdminToken")
      * @Apidoc\After(event="setGlobalHeader", key="AdminToken", value="res.data.data.AdminToken", desc="AdminToken")
      */
     public function login()
     {
-        $param['username']     = $this->request->param('username/s', '');
-        $param['password']     = $this->request->param('password/s', '');
-        $param['captcha_id']   = $this->request->param('captcha_id/s', '');
-        $param['captcha_code'] = $this->request->param('captcha_code/s', '');
-        $param['ajcaptcha']    = $this->request->param('ajcaptcha');
+        $param = $this->params([
+            'username/s'     => '',
+            'password/s'     => '',
+            'captcha_id/s'   => '',
+            'captcha_code/s' => '',
+            'ajcaptcha',
+        ]);
 
         validate(UserValidate::class)->scene('login')->check($param);
 
@@ -141,7 +131,9 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("退出")
      * @Apidoc\Method("POST")
-     * @Apidoc\Before(event="clearGlobalHeader",key="AdminToken")
+     * @Apidoc\Before(event="clearGlobalHeader", key="AdminToken")
+     * @Apidoc\Before(event="clearGlobalQuery", key="AdminToken")
+     * @Apidoc\Before(event="clearGlobalBody", key="AdminToken")
      */
     public function logout()
     {

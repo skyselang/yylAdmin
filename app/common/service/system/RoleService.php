@@ -95,7 +95,7 @@ class RoleService
                 }
                 return [];
             }
-            $info = $info->append(['menu_ids'])->toArray();
+            $info = $info->append(['menu_ids'])->hidden(['menus'])->toArray();
 
             RoleCache::set($id, $info);
         }
@@ -284,7 +284,7 @@ class RoleService
 
         $res = UserAttributesModel::where($where)->delete();
 
-        UserCache::upd($user_ids);
+        UserCache::del($user_ids);
 
         return $res;
     }

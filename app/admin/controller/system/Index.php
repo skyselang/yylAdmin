@@ -39,7 +39,10 @@ class Index extends BaseController
      * @Apidoc\Title("公告")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\NoticeModel", type="array", desc="公告列表", field="notice_id,title,title_color,intro,start_time")
+     * @Apidoc\Returned("list", type="array", desc="公告列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel", field="notice_id,image_id,title,title_color,intro,start_time"),
+     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel\getImageUrlAttr", field="image_url")
+     * })
      */
     public function notice()
     {
@@ -73,14 +76,14 @@ class Index extends BaseController
      * @Apidoc\Title("会员统计")
      * @Apidoc\Query("type", type="string", default="month", desc="日期类型：day、month")
      * @Apidoc\Query("date", type="array", default="", desc="日期范围，默认30天、12个月")
-     * @Apidoc\Returned("number", type="array", desc="图表数据",
+     * @Apidoc\Returned("number", type="array", desc="图表数据", children={
      *   @Apidoc\Returned(ref="app\common\service\member\MemberService\statistic")
-     * )
+     * })
      */
     public function member()
     {
-        $type = $this->request->param('type/s', '');
-        $date = $this->request->param('date/a', []);
+        $type = $this->param('type/s', '');
+        $date = $this->param('date/a', []);
 
         $data['number'] = MemberService::statistic($type, $date, 'number');
 

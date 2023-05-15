@@ -11,7 +11,6 @@ namespace app\common\cache\member;
 
 use think\facade\Cache;
 use app\common\service\member\MemberService;
-use app\common\service\member\SettingService;
 
 /**
  * 会员管理缓存
@@ -19,14 +18,18 @@ use app\common\service\member\SettingService;
 class MemberCache
 {
     // 缓存标签
-    protected static $tag = 'member';
+    public static $tag = 'member';
     // 缓存前缀
     protected static $prefix = 'member:';
+    // token标签
+    protected static $tag_token = 'member_token';
+    // token前缀
+    protected static $prefix_token = 'member_token:';
 
     /**
      * 缓存键名
      *
-     * @param mixed $id 会员id、统计时间
+     * @param mixed $id 会员id、key
      * 
      * @return string
      */
@@ -38,26 +41,21 @@ class MemberCache
     /**
      * 缓存设置
      *
-     * @param mixed $id   会员id、统计时间
+     * @param mixed $id   会员id、key
      * @param array $info 会员信息
      * @param int   $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = -1)
+    public static function set($id, $info, $ttl = 43200)
     {
-        if ($ttl === -1) {
-            $set = SettingService::info();
-            $ttl = $set['token_exp'] * 3600;
-        }
-        
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }
 
     /**
      * 缓存获取
      *
-     * @param mixed $id 会员id、统计时间
+     * @param mixed $id 会员id、key
      * 
      * @return array 会员信息
      */
@@ -69,7 +67,7 @@ class MemberCache
     /**
      * 缓存删除
      *
-     * @param mixed $id 会员id、统计时间
+     * @param mixed $id 会员id、key
      * 
      * @return bool
      */
@@ -101,7 +99,6 @@ class MemberCache
      */
     public static function upd($id)
     {
-        $setting = SettingService::info();
         $ids = var_to_array($id);
         foreach ($ids as $v) {
             $old = self::get($v);
@@ -109,10 +106,73 @@ class MemberCache
                 self::del($v);
                 $new = MemberService::info($v, false);
                 if ($new) {
-                    $new[$setting['token_name']] = $old[$setting['token_name']];
                     self::set($v, $new);
                 }
             }
         }
+    }
+
+    /**
+     * token键名
+     *
+     * @param mixed $id 会员id
+     * 
+     * @return string
+     */
+    public static function keyToken($id)
+    {
+        return self::$prefix_token . $id;
+    }
+
+    /**
+     * Token设置
+     *
+     * @param int   $id   会员id
+     * @param array $info 会员token
+     * @param int   $ttl  有效时间（秒，0永久）
+     * 
+     * @return bool
+     */
+    public static function setToken($id, $info, $ttl = 43200)
+    {
+        return Cache::tag(self::$tag_token)->set(self::keyToken($id), $info, $ttl);
+    }
+
+    /**
+     * Token获取
+     *
+     * @param int $id 会员id
+     * 
+     * @return array 会员token
+     */
+    public static function getToken($id)
+    {
+        return Cache::get(self::keyToken($id));
+    }
+
+    /**
+     * token删除
+     *
+     * @param mixed $id 会员id
+     * 
+     * @return bool
+     */
+    public static function delToken($id)
+    {
+        $ids = var_to_array($id);
+        foreach ($ids as $v) {
+            Cache::delete(self::keyToken($v));
+        }
+        return true;
+    }
+
+    /**
+     * token清除
+     * 
+     * @return bool
+     */
+    public static function clearToken()
+    {
+        return Cache::tag(self::$tag_token)->clear();
     }
 }

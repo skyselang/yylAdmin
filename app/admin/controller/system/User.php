@@ -32,7 +32,13 @@ class User extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\UserModel", type="array", desc="用户列表", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", type="array", desc="用户列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", desc="头像链接", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", desc="部门名称", field="dept_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", desc="职位名称", field="post_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", desc="角色名称", field="role_names"),
+     * })
      * @Apidoc\Returned("dept", ref="app\common\model\system\DeptModel", type="tree", desc="部门树形", field="dept_id,dept_pid,dept_name")
      * @Apidoc\Returned("post", ref="app\common\model\system\PostModel", type="tree", desc="职位树形", field="post_id,post_pid,post_name")
      * @Apidoc\Returned("role", ref="app\common\model\system\RoleModel", type="array", desc="角色列表", field="role_id,role_name")
@@ -59,7 +65,7 @@ class User extends BaseController
      */
     public function info()
     {
-        $param['user_id'] = $this->request->param('user_id/d', 0);
+        $param = $this->params(['user_id/d' => 0]);
 
         validate(UserValidate::class)->scene('info')->check($param);
 
@@ -76,7 +82,7 @@ class User extends BaseController
     public function add()
     {
         $param = $this->params(UserService::$edit_field);
-        $param['password'] = $this->request->param('password');
+        $param['password'] = $this->param('password');
 
         validate(UserValidate::class)->scene('add')->check($param);
 
@@ -108,7 +114,7 @@ class User extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(UserValidate::class)->scene('dele')->check($param);
 
@@ -125,8 +131,7 @@ class User extends BaseController
      */
     public function editdept()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['dept_ids'] = $this->request->param('dept_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'dept_ids/a' => []]);
 
         validate(UserValidate::class)->scene('editdept')->check($param);
 
@@ -143,8 +148,7 @@ class User extends BaseController
      */
     public function editpost()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['post_ids'] = $this->request->param('post_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'post_ids/a' => []]);
 
         validate(UserValidate::class)->scene('editpost')->check($param);
 
@@ -161,8 +165,7 @@ class User extends BaseController
      */
     public function editrole()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['role_ids'] = $this->request->param('role_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'role_ids/a' => []]);
 
         validate(UserValidate::class)->scene('editrole')->check($param);
 
@@ -179,8 +182,7 @@ class User extends BaseController
      */
     public function repwd()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['password'] = $this->request->param('password/s', '');
+        $param = $this->params(['ids/a' => [], 'password/s' => '']);
 
         validate(UserValidate::class)->scene('repwd')->check($param);
 
@@ -197,8 +199,7 @@ class User extends BaseController
      */
     public function super()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['is_super'] = $this->request->param('is_super/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_super/d' => 0]);
 
         validate(UserValidate::class)->scene('super')->check($param);
 
@@ -215,8 +216,7 @@ class User extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(UserValidate::class)->scene('disable')->check($param);
 

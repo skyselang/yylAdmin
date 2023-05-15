@@ -17,7 +17,7 @@ use think\facade\Cache;
 class CategoryCache
 {
     // 缓存标签
-    protected static $tag = 'content_category';
+    public static $tag = 'content_category';
     // 缓存前缀
     protected static $prefix = 'content_category:';
 
@@ -42,7 +42,7 @@ class CategoryCache
      * 
      * @return bool
      */
-    public static function set($id, $info, $ttl = 86400)
+    public static function set($id, $info, $ttl = 43200)
     {
         return Cache::tag(self::$tag)->set(self::key($id), $info, $ttl);
     }

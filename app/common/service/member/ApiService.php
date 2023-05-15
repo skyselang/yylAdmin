@@ -29,7 +29,7 @@ class ApiService
         'api_pid/d'  => 0,
         'api_name/s' => '',
         'api_url/s'  => '',
-        'sort/d'     => 250
+        'sort/d'     => 250,
     ];
 
     /**
@@ -54,7 +54,7 @@ class ApiService
             $order = ['sort' => 'desc', $pk => 'asc'];
         }
 
-        $key = $type . md5(serialize($where) . serialize($order) . $field);
+        $key = where_cache_key($type, $where, $order, $field);
         $data = ApiCache::get($key);
         if (empty($data)) {
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
@@ -258,7 +258,8 @@ class ApiService
             }
 
             $list = $model->where([where_delete()])->column($column);
-            $list = array_filter($list);
+            $list = array_values(array_filter($list));
+            sort($list);
 
             ApiCache::set($key, $list);
         }
@@ -292,6 +293,7 @@ class ApiService
             $list = $model->where(where_delete(['is_unlogin', '=', 1]))->column($column);
             $list = array_merge($list, $api_is_unlogin);
             $list = array_unique(array_filter($list));
+            $list = array_values($list);
             sort($list);
 
             ApiCache::set($key, $list);
@@ -327,6 +329,7 @@ class ApiService
             $list = $model->where(where_delete(['is_unauth', '=', 1]))->column($column);
             $list = array_merge($list, $api_is_unlogin, $api_is_unauth);
             $list = array_unique(array_filter($list));
+            $list = array_values($list);
             sort($list);
 
             ApiCache::set($key, $list);
@@ -361,6 +364,7 @@ class ApiService
             $list = $model->where(where_delete(['is_unrate', '=', 1]))->column($column);
             $list = array_merge($list, $api_is_unrate);
             $list = array_unique(array_filter($list));
+            $list = array_values($list);
             sort($list);
 
             ApiCache::set($key, $list);

@@ -30,9 +30,13 @@ class Log extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\LogModel", type="array", desc="日志列表", field="log_id,member_id,request_ip,request_region,request_isp,response_code,response_msg,create_time")
+     * @Apidoc\Returned("list", type="array", desc="日志列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\member\LogModel", field="log_id,member_id,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="nickname,username"),
+     *   @Apidoc\Returned(ref="app\common\model\member\ApiModel", field="api_url,api_name"),
+     * })
      * @Apidoc\Returned("api", ref="app\common\model\member\ApiModel", type="tree", desc="接口树形", field="api_id,api_pid,api_name")
-     * @Apidoc\Returned("log_types", ref="app\common\model\member\LogModel", field="log_type")
+     * @Apidoc\Returned("log_types", type="array", desc="日志类型")
      */
     public function list()
     {
@@ -51,10 +55,12 @@ class Log extends BaseController
      * @Apidoc\Title("会员日志信息")
      * @Apidoc\Query(ref="app\common\model\member\LogModel", field="log_id")
      * @Apidoc\Returned(ref="app\common\model\member\LogModel")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="nickname,username")
+     * @Apidoc\Returned(ref="app\common\model\member\ApiModel", field="api_url,api_name")
      */
     public function info()
     {
-        $param['log_id'] = $this->request->param('log_id/d', 0);
+        $param = $this->params(['log_id/d' => 0]);
 
         validate(LogValidate::class)->scene('info')->check($param);
 
@@ -70,7 +76,7 @@ class Log extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(LogValidate::class)->scene('dele')->check($param);
 

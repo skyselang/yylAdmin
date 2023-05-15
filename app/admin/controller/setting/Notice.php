@@ -29,11 +29,12 @@ class Notice extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\NoticeModel", type="array", desc="通告列表", field="notice_id,type,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time",
-     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr")
-     * )
-     * @Apidoc\Returned("types", type="array", desc="通告类型")
+     * @Apidoc\Returned("list", type="array", desc="通告列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel", field="notice_id,type,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr", field="image_url"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr", field="type_name"),
+     * })
+     * @Apidoc\Returned("types", type="array", desc="类型")
      */
     public function list()
     {
@@ -56,7 +57,7 @@ class Notice extends BaseController
      */
     public function info()
     {
-        $param['notice_id'] = $this->request->param('notice_id/d', 0);
+        $param = $this->params(['notice_id/d' => 0]);
 
         validate(NoticeValidate::class)->scene('info')->check($param);
 
@@ -73,7 +74,7 @@ class Notice extends BaseController
     public function add()
     {
         $param = $this->params(NoticeService::$edit_field);
-        
+
         validate(NoticeValidate::class)->scene('add')->check($param);
 
         $data = NoticeService::add($param);
@@ -104,7 +105,7 @@ class Notice extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(NoticeValidate::class)->scene('dele')->check($param);
 
@@ -121,8 +122,7 @@ class Notice extends BaseController
      */
     public function edittype()
     {
-        $param['ids']  = $this->request->param('ids/a', []);
-        $param['type'] = $this->request->param('type/d', 0);
+        $param = $this->params(['ids/a' => [], 'type/d' => 0]);
 
         validate(NoticeValidate::class)->scene('edittype')->check($param);
 
@@ -139,9 +139,7 @@ class Notice extends BaseController
      */
     public function datetime()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['start_time'] = $this->request->param('start_time/s', '');
-        $param['end_time']   = $this->request->param('end_time/s', '');
+        $param = $this->params(['ids/a' => [], 'start_time/s' => '', 'end_time/s' => '']);
 
         validate(NoticeValidate::class)->scene('datetime')->check($param);
 
@@ -158,8 +156,7 @@ class Notice extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(NoticeValidate::class)->scene('disable')->check($param);
 

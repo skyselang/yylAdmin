@@ -59,7 +59,7 @@ class CategoryService
             $order = ['sort' => 'desc', $pk => 'asc'];
         }
 
-        $key = $type . md5(serialize($where) . serialize($order) . $field);
+        $key = where_cache_key($type, $where, $order, $field);
         $data = CategoryCache::get($key);
         if (empty($data)) {
             $model = $model->field($field)->where($where);
@@ -107,7 +107,7 @@ class CategoryService
                 }
                 return [];
             }
-            $info = $info->append(['cover_url', 'images'])->toArray();
+            $info = $info->append(['cover_url', 'images'])->hidden(['cover'])->toArray();
 
             CategoryCache::set($id, $info);
         }

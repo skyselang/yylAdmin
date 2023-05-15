@@ -33,14 +33,15 @@ class Member extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel", type="array", desc="会员列表", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time",
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr"),
-     * )
+     * @Apidoc\Returned("list", type="array", desc="会员列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr", field="tag_names"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
+     * })
      * @Apidoc\Returned("genders", type="array", desc="性别")
-     * @Apidoc\Returned("reg_channels", type="array", desc="注册渠道", field="reg_channel")
-     * @Apidoc\Returned("reg_types", type="array", desc="注册方式", field="reg_type")
+     * @Apidoc\Returned("reg_channels", type="array", desc="注册渠道")
+     * @Apidoc\Returned("reg_types", type="array", desc="注册方式")
      * @Apidoc\Returned("tag", ref="app\common\model\member\TagModel", type="array", desc="标签列表", field="tag_id,tag_name")
      * @Apidoc\Returned("group", ref="app\common\model\member\GroupModel", type="array", desc="分组列表", field="group_id,group_name")
      * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel", type="tree", desc="地区树形", field="region_id,region_pid,region_name")
@@ -75,7 +76,7 @@ class Member extends BaseController
      */
     public function info()
     {
-        $param['member_id'] = $this->request->param('member_id/d', 0);
+        $param = $this->params(['member_id/d' => 0]);
 
         validate(MemberValidate::class)->scene('info')->check($param);
 
@@ -96,7 +97,7 @@ class Member extends BaseController
     public function add()
     {
         $param = $this->params(MemberService::$edit_field);
-        $param['password']    = $this->request->param('password');
+        $param['password']    = $this->param('password');
         $param['reg_channel'] = SettingService::REG_CHANNEL_ADMIN;
         $param['reg_type']    = SettingService::REG_TYPE_USERNAME;
 
@@ -132,7 +133,7 @@ class Member extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(MemberValidate::class)->scene('dele')->check($param);
 
@@ -149,8 +150,7 @@ class Member extends BaseController
      */
     public function region()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['region_id'] = $this->request->param('region_id/d', 0);
+        $param = $this->params(['ids/a' => [], 'region_id/d' => 0]);
 
         validate(MemberValidate::class)->scene('region')->check($param);
 
@@ -167,8 +167,7 @@ class Member extends BaseController
      */
     public function edittag()
     {
-        $param['ids']     = $this->request->param('ids/a', []);
-        $param['tag_ids'] = $this->request->param('tag_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'tag_ids/a' => []]);
 
         validate(MemberValidate::class)->scene('edittag')->check($param);
 
@@ -185,8 +184,7 @@ class Member extends BaseController
      */
     public function editgroup()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['group_ids'] = $this->request->param('group_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'group_ids/a' => []]);
 
         validate(MemberValidate::class)->scene('editgroup')->check($param);
 
@@ -203,8 +201,7 @@ class Member extends BaseController
      */
     public function repwd()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['password'] = $this->request->param('password/s', '');
+        $param = $this->params(['ids/a' => [], 'password/s' => '']);
 
         validate(MemberValidate::class)->scene('repwd')->check($param);
 
@@ -221,8 +218,7 @@ class Member extends BaseController
      */
     public function super()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['is_super'] = $this->request->param('is_super/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_super/d' => 0]);
 
         validate(MemberValidate::class)->scene('super')->check($param);
 
@@ -239,8 +235,7 @@ class Member extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(MemberValidate::class)->scene('disable')->check($param);
 
@@ -256,7 +251,7 @@ class Member extends BaseController
      */
     public function import()
     {
-        $param['import'] = $this->request->param('import/a', []);
+        $param = $this->params(['import/a' => []]);
 
         validate(MemberValidate::class)->scene('import')->check($param);
 
@@ -301,20 +296,20 @@ class Member extends BaseController
      * @Apidoc\Method("GET")
      * @Apidoc\Query("type", type="string", default="month", desc="日期类型：day、month")
      * @Apidoc\Query("date", type="array", default="", desc="日期范围，默认30天、12个月")
-     * @Apidoc\Returned("count", type="object", desc="数量统计",
+     * @Apidoc\Returned("count", type="object", desc="数量统计", children={
      *   @Apidoc\Returned("name", type="string", desc="名称"),
      *   @Apidoc\Returned("date", type="string", desc="时间"),
      *   @Apidoc\Returned("count", type="string", desc="数量"),
      *   @Apidoc\Returned("title", type="string", desc="标题")
-     * )
-     * @Apidoc\Returned("echart", type="array", desc="图表数据",
+     * })
+     * @Apidoc\Returned("echart", type="array", desc="图表数据", children={
      *   @Apidoc\Returned(ref="app\common\service\member\MemberService\statistic")
-     * )
+     * })
      */
     public function statistic()
     {
-        $type = $this->request->param('type/s', '');
-        $date = $this->request->param('date/a', []);
+        $type = $this->param('type/s', '');
+        $date = $this->param('date/a', []);
 
         $data['count'] = MemberService::statistic($type, $date, 'count');
 

@@ -39,7 +39,7 @@ class MemberService
         'remark/s'    => '',
         'sort/d'      => 250,
         'tag_ids/a'   => [],
-        'group_ids/a' => []
+        'group_ids/a' => [],
     ];
 
     /**
@@ -144,12 +144,11 @@ class MemberService
             $api_ids  = array_values(array_filter($api_ids));
             $api_urls = array_values(array_filter($api_urls));
 
-            $setting = SettingService::info();
-            $token_name = $setting['token_name'];
+            sort($api_ids);
+            sort($api_urls);
 
             $info['api_ids']   = $api_ids;
             $info['api_urls']  = $api_urls;
-            $info[$token_name] = TokenService::create($info);
 
             MemberCache::set($id, $info);
         }
@@ -295,7 +294,7 @@ class MemberService
 
         $param['ids'] = $ids;
 
-        MemberCache::upd($ids);
+        MemberCache::del($ids);
 
         return $param;
     }
@@ -347,6 +346,7 @@ class MemberService
         $update['ids'] = $ids;
 
         MemberCache::del($ids);
+        MemberCache::delToken($ids);
 
         return $update;
     }
@@ -429,6 +429,7 @@ class MemberService
         // 会员信息
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
+        // 返回字段
         $data = self::loginField($member);
 
         return $data;
@@ -496,6 +497,9 @@ class MemberService
                 if (empty($member['nickname'])) {
                     $update['nickname'] = $userinfo['nickname'];
                 }
+                if ($userinfo['headimgurl'] ?? '') {
+                    $update['headimgurl'] = $userinfo['headimgurl'];
+                }
                 $update['login_num']    = $member['login_num'] + 1;
                 $update['login_ip']     = $login_ip;
                 $update['login_time']   = $datetime;
@@ -542,14 +546,14 @@ class MemberService
 
         // 会员信息
         MemberCache::del($member_id);
-        $member = MemberService::info($member_id);
+        $member = self::info($member_id);
         $data = self::loginField($member);
 
         return $data;
     }
 
     /**
-     * 登录返回字段
+     * 会员登录返回字段
      *
      * @param array $member 会员信息
      *
@@ -559,14 +563,32 @@ class MemberService
     {
         $data = [];
         $setting = SettingService::info();
-        $fields = ['avatar_url', 'member_id', 'nickname', 'username', 'phone', 'email', 'login_ip', 'login_time', 'login_num', $setting['token_name']];
+        $token_name = $setting['token_name'];
+        $member[$token_name] = self::token($member);
+        $fields = ['avatar_url', 'member_id', 'nickname', 'username', 'phone', 'email', 'login_ip', 'login_time', 'login_num', $token_name];
         foreach ($fields as $field) {
-            if ($member[$field] ?? '') {
+            if (isset($member[$field])) {
                 $data[$field] = $member[$field];
             }
         }
 
         return $data;
+    }
+
+    /**
+     * 会员token
+     *
+     * @param  array $member 会员信息
+     *
+     * @return string
+     */
+    public static function token($member)
+    {
+        $token = TokenService::create($member);
+        $setting = SettingService::info();
+        $ttl = $setting['token_exp'] * 3600;
+        MemberCache::setToken($member['member_id'], $token, $ttl);
+        return $token;
     }
 
     /**
@@ -588,6 +610,7 @@ class MemberService
         $update[$pk] = $id;
 
         MemberCache::del($id);
+        MemberCache::delToken($id);
 
         return $update;
     }
@@ -600,12 +623,8 @@ class MemberService
      *
      * @return array
      */
-    public static function bindPhoneMini($code, $member_id = 0)
+    public static function bindPhoneMini($code, $member_id)
     {
-        if (empty($member_id)) {
-            $member_id = member_id();
-        }
-
         $app = WechatService::mini();
 
         // 获取 access token 实例
@@ -645,13 +664,12 @@ class MemberService
      * @param string $type 日期类型：day，month
      * @param array  $date 日期范围：[开始日期，结束日期]
      * @param string $stat 统计类型：count总计，number数量，reg_channel注册渠道，reg_type注册方式
-     * @Apidoc\Returned("type", type="string", desc="日期类型"),
-     *   @Apidoc\Returned("date", type="array", desc="日期范围"),
-     *   @Apidoc\Returned("title", type="string", desc="图表title.text"),
-     *   @Apidoc\Returned("legend", type="array", desc="图表legend.data"),
-     *   @Apidoc\Returned("xAxis", type="array", desc="图表xAxis.data"),
-     *   @Apidoc\Returned("series", type="array", desc="图表series")
-     * )
+     * @Apidoc\Returned("type", type="string", desc="日期类型")
+     * @Apidoc\Returned("date", type="array", desc="日期范围")
+     * @Apidoc\Returned("title", type="string", desc="图表title.text")
+     * @Apidoc\Returned("legend", type="array", desc="图表legend.data")
+     * @Apidoc\Returned("xAxis", type="array", desc="图表xAxis.data")
+     * @Apidoc\Returned("series", type="array", desc="图表series")
      * @return array
      */
     public static function statistic($type = 'month', $date = [], $stat = 'count')

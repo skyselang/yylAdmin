@@ -36,9 +36,10 @@ return [
             'host'       => Env::get('cache.host', '127.0.0.1'),
             'port'       => Env::get('cache.port', 6379),
             'password'   => Env::get('cache.password', ''),
-            'select'     => 0,
+            'select'     => 1,
             'timeout'    => 0,
             'persistent' => false,
+            'expire'     => 0,
         ],
     ],
     'failed'      => [

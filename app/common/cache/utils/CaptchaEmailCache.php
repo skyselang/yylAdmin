@@ -17,7 +17,7 @@ use think\facade\Cache;
 class CaptchaEmailCache
 {
     // 缓存标签
-    protected static $tag = 'captcha_email';
+    public static $tag = 'captcha_email';
     // 缓存前缀
     protected static $prefix = 'captcha_email:';
 

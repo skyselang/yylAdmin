@@ -26,31 +26,21 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("会员设置")
      * @Apidoc\Returned(ref="app\common\model\member\SettingModel", field="captcha_register,captcha_login")
-     * @Apidoc\Returned("token_type", type="string", desc="token方式：header、param")
-     * @Apidoc\Returned("token_name", type="string", desc="token名称，前后端必须一致")
+     * @Apidoc\Returned(ref="app\common\service\member\SettingService\info", field="token_type,token_name,diy_con_obj")
      * @Apidoc\Returned(ref="diyConReturn")
-     * @Apidoc\Returned(ref="diyConObjReturn")
      */
     public function member()
     {
-        $setting = MemberSetting::info();
-
-        $data['captcha_register'] = $setting['captcha_register'];
-        $data['captcha_login']    = $setting['captcha_login'];
-        $data['token_type']       = $setting['token_type'];
-        $data['token_name']       = $setting['token_name'];
-        $data['diy_config']       = $setting['diy_config'];
-        $data['diy_con_obj']      = $setting['diy_con_obj'];
+        $data = MemberSetting::info('captcha_register,captcha_login,token_type,token_name,diy_config,diy_con_obj');
 
         return success($data);
     }
 
     /**
      * @Apidoc\Title("内容设置")
-     * @Apidoc\Returned(ref="app\common\model\content\SettingModel", withoutField="diy_config,create_uid,update_uid,create_time,update_time")
+     * @Apidoc\Returned(ref="app\common\model\content\SettingModel", withoutField="create_uid,update_uid,create_time,update_time")
      * @Apidoc\Returned(ref="app\common\service\content\SettingService\info")
      * @Apidoc\Returned(ref="diyConReturn")
-     * @Apidoc\Returned(ref="diyConObjReturn")
      */
     public function content()
     {
@@ -61,22 +51,21 @@ class Setting extends BaseController
 
     /**
      * @Apidoc\Title("文件设置")
-     * @Apidoc\Returned(ref="app\common\model\file\SettingModel", field="is_upload,storage,accept_ext,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size")
-     * @Apidoc\Returned("accept_ext", type="string", desc="允许上传文件后缀")
+     * @Apidoc\Returned(ref="app\common\model\file\SettingModel", field="is_upload_api,storage,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size")
+     * @Apidoc\Returned(ref="app\common\service\file\SettingService\info", field="accept_ext")
      */
     public function file()
     {
-        $data = FileSetting::info('is_upload,storage,accept_ext,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size');
+        $data = FileSetting::info('is_upload_api,storage,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size,accept_ext');
 
         return success($data);
     }
 
     /**
      * @Apidoc\Title("设置管理")
-     * @Apidoc\Returned(ref="app\common\model\setting\SettingModel", withoutField="diy_config")
-     * @Apidoc\Returned("feedback_type", type="array", desc="反馈类型")
+     * @Apidoc\Returned(ref="app\common\model\setting\SettingModel")
+     * @Apidoc\Returned(ref="app\common\service\setting\SettingService\info")
      * @Apidoc\Returned(ref="diyConReturn")
-     * @Apidoc\Returned(ref="diyConObjReturn")
      */
     public function setting()
     {

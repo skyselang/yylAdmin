@@ -24,7 +24,7 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("内容设置信息")
      * @Apidoc\Returned(ref="app\common\model\content\SettingModel")
-     * @Apidoc\Returned(ref="app\common\service\content\SettingService\info")
+     * @Apidoc\Returned(ref="diyConObjReturn")
      * @Apidoc\Returned(ref="diyConReturn")
      */
     public function info()
@@ -42,8 +42,7 @@ class Setting extends BaseController
      */
     public function edit()
     {
-        $param['is_content'] = $this->request->param('is_content/d', 1);
-        $param['diy_config'] = $this->request->param('diy_config/a', []);
+        $param = $this->params(['is_content/d' => 1, 'diy_config/a' => []]);
 
         validate(SettingValidate::class)->scene('edit')->check($param);
 

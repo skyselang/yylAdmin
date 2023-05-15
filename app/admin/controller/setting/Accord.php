@@ -50,7 +50,7 @@ class Accord extends BaseController
      */
     public function info()
     {
-        $param['accord_id'] = $this->request->param('accord_id/s', '');
+        $param = $this->params(['accord_id/d' => 0]);
 
         validate(AccordValidate::class)->scene('info')->check($param);
 
@@ -67,7 +67,7 @@ class Accord extends BaseController
     public function add()
     {
         $param = $this->params(AccordService::$edit_field);
-        
+
         validate(AccordValidate::class)->scene('add')->check($param);
 
         $data = AccordService::add($param);
@@ -98,7 +98,7 @@ class Accord extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(AccordValidate::class)->scene('dele')->check($param);
 
@@ -115,8 +115,7 @@ class Accord extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(AccordValidate::class)->scene('disable')->check($param);
 

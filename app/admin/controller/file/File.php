@@ -34,28 +34,25 @@ class File extends BaseController
      * @Apidoc\Query("tag_ids", type="array", desc="标签id")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time",
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileTypeNameAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr"),
-     * )
-     * @Apidoc\Returned("storage", type="object", desc="存储方式")
-     * @Apidoc\Returned("filetype", type="object", desc="文件类型")
-     * @Apidoc\Returned("setting", ref="app\common\model\file\SettingModel", type="object", desc="文件设置", field="limit_max",
-     *   @Apidoc\Returned("accept_ext", type="string", desc="允许上传文件后缀")
-     * )
+     * @Apidoc\Returned("list", type="array", desc="文件列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr", field="group_name"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr", field="tag_names"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileTypeNameAttr", field="file_type_name"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr", field="file_url"),
+     * })
+     * @Apidoc\Returned("setting", ref="app\common\service\file\SettingService\info", type="object", desc="文件设置")
      * @Apidoc\Returned("group", ref="app\common\model\file\GroupModel", type="array", desc="分组列表", field="group_id,group_name")
      * @Apidoc\Returned("tag", ref="app\common\model\file\TagModel", type="array", desc="标签列表", field="tag_id,tag_name")
      */
     public function list()
     {
-        $group_id   = $this->request->param('group_id/s', '');
-        $tag_ids    = $this->request->param('tag_ids/a', []);
-        $storage    = $this->request->param('storage/s', '');
-        $file_type  = $this->request->param('file_type/s', '');
-        $is_front   = $this->request->param('is_front/s', 0);
-        $is_disable = $this->request->param('is_disable/s', '');
+        $group_id   = $this->param('group_id/s', '');
+        $tag_ids    = $this->param('tag_ids/a', []);
+        $storage    = $this->param('storage/s', '');
+        $file_type  = $this->param('file_type/s', '');
+        $is_front   = $this->param('is_front/s', 0);
+        $is_disable = $this->param('is_disable/s', '');
 
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
@@ -96,7 +93,7 @@ class File extends BaseController
      */
     public function info()
     {
-        $param['file_id'] = $this->request->param('file_id/d', 0);
+        $param = $this->params(['file_id/d' => 0]);
 
         validate(FileValidate::class)->scene('info')->check($param);
 
@@ -124,7 +121,7 @@ class File extends BaseController
         }
 
         $edit_field = FileService::$edit_field;
-        $type = $this->request->param('type/s', 'upl');
+        $type = $this->param('type/s', 'upl');
         if ($type == 'url') {
             $edit_field['file_path/s'] = '';
             $edit_field['file_url/s'] = '';
@@ -182,7 +179,7 @@ class File extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(FileValidate::class)->scene('dele')->check($param);
 
@@ -199,8 +196,7 @@ class File extends BaseController
      */
     public function editgroup()
     {
-        $param['ids']      = $this->request->param('ids/a', []);
-        $param['group_id'] = $this->request->param('group_id/d', 0);
+        $param = $this->params(['ids/a' => [], 'group_id/d' => 0]);
 
         validate(FileValidate::class)->scene('editgroup')->check($param);
 
@@ -217,8 +213,7 @@ class File extends BaseController
      */
     public function edittag()
     {
-        $param['ids']     = $this->request->param('ids/a', []);
-        $param['tag_ids'] = $this->request->param('tag_ids/a', []);
+        $param = $this->params(['ids/a' => [], 'tag_ids/a' => []]);
 
         validate(FileValidate::class)->scene('edittag')->check($param);
 
@@ -235,8 +230,7 @@ class File extends BaseController
      */
     public function edittype()
     {
-        $param['ids']       = $this->request->param('ids/a', []);
-        $param['file_type'] = $this->request->param('file_type/s', 'image');
+        $param = $this->params(['ids/a' => [], 'file_type/s' => 'image']);
 
         validate(FileValidate::class)->scene('edittype')->check($param);
 
@@ -253,8 +247,7 @@ class File extends BaseController
      */
     public function editdomain()
     {
-        $param['ids']    = $this->request->param('ids/a', []);
-        $param['domain'] = $this->request->param('domain/s', '');
+        $param = $this->params(['ids/a' => [], 'domain/s' => '']);
 
         validate(FileValidate::class)->scene('editdomain')->check($param);
 
@@ -271,8 +264,7 @@ class File extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(FileValidate::class)->scene('disable')->check($param);
 
@@ -287,12 +279,12 @@ class File extends BaseController
      */
     public function recycle()
     {
-        $group_id   = $this->request->param('group_id/s', '');
-        $tag_ids    = $this->request->param('tag_ids/a', []);
-        $storage    = $this->request->param('storage/s', '');
-        $file_type  = $this->request->param('file_type/s', '');
-        $is_front   = $this->request->param('is_front/s', '');
-        $is_disable = $this->request->param('is_disable/s', '');
+        $group_id   = $this->param('group_id/s', '');
+        $tag_ids    = $this->param('tag_ids/a', []);
+        $storage    = $this->param('storage/s', '');
+        $file_type  = $this->param('file_type/s', '');
+        $is_front   = $this->param('is_front/s', '');
+        $is_disable = $this->param('is_disable/s', '');
 
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
@@ -334,7 +326,7 @@ class File extends BaseController
      */
     public function recycleReco()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(FileValidate::class)->scene('recycleReco')->check($param);
 
@@ -350,7 +342,7 @@ class File extends BaseController
      */
     public function recycleDele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(FileValidate::class)->scene('recycleDele')->check($param);
 

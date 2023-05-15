@@ -1,17 +1,17 @@
 /*
- yylAdmin Data Transfer
+ Navicat Premium Data Transfer
 
  Source Server         : 127.0.0.1-mysql5.5
  Source Server Type    : MySQL
- Source Server Version : 50529
+ Source Server Version : 50529 (5.5.29-log)
  Source Host           : localhost:3306
  Source Schema         : yyladmin
 
  Target Server Type    : MySQL
- Target Server Version : 50529
+ Target Server Version : 50529 (5.5.29-log)
  File Encoding         : 65001
 
- Date: 27/04/2023 16:54:59
+ Date: 15/05/2023 18:05:06
 */
 
 SET NAMES utf8mb4;
@@ -330,7 +330,7 @@ CREATE TABLE `ya_jobs_failed`  (
   `exception` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `fail_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '队列（失败）' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '失败队列' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of ya_jobs_failed
@@ -401,7 +401,7 @@ CREATE TABLE `ya_member_api`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`api_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 96 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 98 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会员接口' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_member_api
@@ -429,7 +429,7 @@ INSERT INTO `ya_member_api` VALUES (25, 24, '首页', 'api/Index/index', 250, 1,
 INSERT INTO `ya_member_api` VALUES (26, 1, '公众号登录回调', 'api/member.Login/officallback', 133, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (27, 24, 'index', 'api/', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (29, 74, '微信公众号接入', 'api/setting.Wechat/access', 200, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_member_api` VALUES (30, 0, '内容', '', 750, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (30, 0, '内容', '', 825, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (41, 30, '分类列表', 'api/content.Content/category', 900, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (42, 30, '内容列表', 'api/content.Content/list', 850, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (43, 30, '内容信息', 'api/content.Content/info', 800, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -462,6 +462,8 @@ INSERT INTO `ya_member_api` VALUES (92, 74, '轮播信息', 'api/setting.Carouse
 INSERT INTO `ya_member_api` VALUES (93, 74, '通告列表', 'api/setting.Notice/list', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (94, 74, '通告信息', 'api/setting.Notice/info', 250, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_member_api` VALUES (95, 30, '标签列表', 'api/content.Content/tag', 875, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (96, 74, '反馈列表', 'api/setting.Feedback/list', 225, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_member_api` VALUES (97, 74, '反馈信息', 'api/setting.Feedback/info', 222, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_member_attributes
@@ -671,15 +673,18 @@ CREATE TABLE `ya_setting_carousel`  (
 DROP TABLE IF EXISTS `ya_setting_feedback`;
 CREATE TABLE `ya_setting_feedback`  (
   `feedback_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '反馈id',
+  `member_id` int(11) NULL DEFAULT 0 COMMENT '会员id',
   `type` tinyint(1) NULL DEFAULT 0 COMMENT '类型：0功能异常，1产品建议，2其它，mock(@natural(0, 2))',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题，mock(@ctitle(5, 10))',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容，mock(@cparagraph(15, 50))',
   `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机，mock(@phone)',
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '邮箱，mock(@email)',
+  `reply` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '回复',
+  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态：0未回复，1已回复',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
-  `is_unread` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否未读，1是0否',
+  `receipt_no` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '回执编号',
+  `is_disable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否禁用，1是0否',
   `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除，1是0否',
-  `read_time` datetime NULL DEFAULT NULL COMMENT '已读时间',
   `create_uid` int(11) NULL DEFAULT 0 COMMENT '添加用户id',
   `update_uid` int(11) NULL DEFAULT 0 COMMENT '修改用户id',
   `delete_uid` int(11) NULL DEFAULT 0 COMMENT '删除用户id',
@@ -4591,7 +4596,7 @@ CREATE TABLE `ya_system_menu`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 728 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单管理' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 729 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单管理' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_system_menu
@@ -4715,7 +4720,7 @@ INSERT INTO `ya_system_menu` VALUES (383, 381, 2, '反馈信息', 'admin/setting
 INSERT INTO `ya_system_menu` VALUES (384, 381, 2, '反馈添加', 'admin/setting.Feedback/add', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (385, 381, 2, '反馈修改', 'admin/setting.Feedback/edit', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (386, 381, 2, '反馈删除', 'admin/setting.Feedback/dele', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `ya_system_menu` VALUES (387, 381, 2, '反馈是否未读', 'admin/setting.Feedback/unread', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_menu` VALUES (387, 381, 2, '反馈状态', 'admin/setting.Feedback/status', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (391, 186, 1, '内容设置', 'admin/content.Setting/info', 'contentsetting', 'ContentSetting', 'content/setting', 'el-icon-reading', '', 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (393, 391, 2, '内容设置修改', 'admin/content.Setting/edit', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (396, 1, 2, '内容统计', 'admin/system.Index/content', '', '', '', '', '', 0, 700, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
@@ -4869,6 +4874,7 @@ INSERT INTO `ya_system_menu` VALUES (719, 718, 2, '设置管理修改', 'admin/s
 INSERT INTO `ya_system_menu` VALUES (725, 132, 2, '会员接口修改排序', 'admin/member.Api/editsort', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (726, 3, 2, '菜单修改排序', 'admin/system.Menu/editsort', '', '', '', '', '', 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 INSERT INTO `ya_system_menu` VALUES (727, 188, 2, '服务器信息', 'admin/system.Setting/serverInfo', '', '', '', '', '', 0, 80, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
+INSERT INTO `ya_system_menu` VALUES (728, 381, 2, '反馈是否禁用', 'admin/setting.Feedback/disable', '', '', '', '', '', 0, 245, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for ya_system_notice
@@ -5122,7 +5128,7 @@ CREATE TABLE `ya_system_user`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ya_system_user

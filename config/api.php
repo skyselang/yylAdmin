@@ -20,16 +20,17 @@ return [
     'api_is_unlogin' => [
         'api/',
         'api/Index/index',
-        'api/Register/captcha',
-        'api/Register/register',
-        'api/Login/captcha',
-        'api/Login/login'
+        'api/setting.Setting/member',
+        'api/member.Register/captcha',
+        'api/member.Register/register',
+        'api/member.Login/captcha',
+        'api/member.Login/login'
     ],
 
     // 接口免权url（无需权限）
     'api_is_unauth' => [
-        'api/Member/info',
-        'api/Login/logout',
+        'api/member.Member/info',
+        'api/member.Logout/logout',
     ],
 
     // 接口免限url（不限速率）

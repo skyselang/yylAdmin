@@ -24,7 +24,9 @@ class Logout extends BaseController
     /**
      * @Apidoc\Title("退出")
      * @Apidoc\Method("POST")
-     * @Apidoc\Before(event="clearGlobalHeader",key="ApiToken")
+     * @Apidoc\Before(event="clearGlobalHeader", key="ApiToken")
+     * @Apidoc\Before(event="clearGlobalQuery", key="ApiToken")
+     * @Apidoc\Before(event="clearGlobalBody", key="ApiToken")
      */
     public function logout()
     {

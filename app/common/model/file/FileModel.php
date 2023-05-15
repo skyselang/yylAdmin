@@ -51,7 +51,7 @@ class FileModel extends Model
     /**
      * 获取标签名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("tag_name", type="string", desc="标签名称")
+     * @Apidoc\AddField("tag_names", type="string", desc="标签名称")
      */
     public function getTagNamesAttr()
     {

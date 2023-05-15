@@ -95,7 +95,10 @@ class CarouselService
                 }
                 return [];
             }
-            $info = $info->append(['file_url', 'file_name', 'file_ext', 'file_type', 'file_type_name', 'file_list'])->toArray();
+            $info = $info
+                ->append(['file_url', 'file_name', 'file_ext', 'file_type', 'file_type_name', 'file_list'])
+                ->hidden(['file', 'files'])
+                ->toArray();
 
             CarouselCache::set($id, $info);
         }

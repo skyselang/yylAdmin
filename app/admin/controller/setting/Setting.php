@@ -37,29 +37,31 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\SettingModel")
+     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", withoutField="setting_id")
      */
     public function edit()
     {
-        $param['favicon_id']  = $this->request->param('favicon_id/d', 0);
-        $param['logo_id']     = $this->request->param('logo_id/d', 0);
-        $param['name']        = $this->request->param('name/s', '');
-        $param['title']       = $this->request->param('title/s', '');
-        $param['keywords']    = $this->request->param('keywords/s', '');
-        $param['description'] = $this->request->param('description/s', '');
-        $param['icp']         = $this->request->param('icp/s', '');
-        $param['copyright']   = $this->request->param('copyright/s', '');
-        $param['offi_id']     = $this->request->param('offi_id/d', 0);
-        $param['mini_id']     = $this->request->param('mini_id/d', 0);
-        $param['address']     = $this->request->param('address/s', '');
-        $param['tel']         = $this->request->param('tel/s', '');
-        $param['fax']         = $this->request->param('fax/s', '');
-        $param['mobile']      = $this->request->param('mobile/s', '');
-        $param['email']       = $this->request->param('email/s', '');
-        $param['qq']          = $this->request->param('qq/s', '');
-        $param['wechat']      = $this->request->param('wechat/s', '');
-        $param['is_feedback'] = $this->request->param('is_feedback/d', 1);
-        $param['diy_config']  = $this->request->param('diy_config/a', []);
+        $param = $this->params([
+            'favicon_id/d'  => 0,
+            'logo_id/d'     => 0,
+            'name/s'        => '',
+            'title/s'       => '',
+            'keywords/s'    => '',
+            'description/s' => '',
+            'icp/s'         => '',
+            'copyright/s'   => '',
+            'offi_id/d'     => 0,
+            'mini_id/d'     => 0,
+            'address/s'     => '',
+            'tel/s'         => '',
+            'fax/s'         => '',
+            'mobile/s'      => '',
+            'email/s'       => '',
+            'qq/s'          => '',
+            'wechat/s'      => '',
+            'is_feedback/d' => 1,
+            'diy_config/a'  => [],
+        ]);
 
         validate(SettingValidate::class)->scene('edit')->check($param);
 

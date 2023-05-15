@@ -122,7 +122,8 @@ class ContentService
                 }
                 return [];
             }
-            $info = $info->append(['cover_url', 'category_ids', 'tag_ids', 'category_names', 'tag_names', 'images', 'videos',  'audios', 'words', 'others'])
+            $info = $info
+                ->append(['cover_url', 'category_ids', 'tag_ids', 'category_names', 'tag_names', 'images', 'videos', 'audios', 'words', 'others'])
                 ->hidden(['cover', 'categorys', 'tags', 'files'])
                 ->toArray();
 

@@ -45,6 +45,8 @@ return [
             'port'       => Env::get('cache.port', 6379),
             // 密码
             'password'   => Env::get('cache.password', ''),
+            // 缓存标签前缀
+            'tag_prefix' => 'tag:',
         ],
         'memcache' => [
             // 驱动方式
@@ -61,6 +63,8 @@ return [
             'port'       => Env::get('cache.port', 11211),
             // 密码
             'password'   => Env::get('cache.password', ''),
+            // 缓存标签前缀
+            'tag_prefix' => 'tag:',
         ],
         'wincache' => [
             // 驱动方式

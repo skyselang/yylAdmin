@@ -46,13 +46,13 @@ class SettingModel extends Model
     }
 
     // 关联登录背景文件
-    public function loginBg()
+    public function loginbg()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'login_bg_id')->append(['file_url'])->where(where_disdel());
     }
     // 获取登录背景链接
     public function getLoginBgUrlAttr()
     {
-        return $this['loginBg']['file_url'] ?? '';
+        return $this['loginbg']['file_url'] ?? '';
     }
 }

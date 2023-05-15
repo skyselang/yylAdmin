@@ -50,7 +50,7 @@ class Tag extends BaseController
      */
     public function info()
     {
-        $param['tag_id'] = $this->request->param('tag_id/d', 0);
+        $param = $this->params(['tag_id/d' => 0]);
 
         validate(TagValidate::class)->scene('info')->check($param);
 
@@ -98,7 +98,7 @@ class Tag extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(TagValidate::class)->scene('dele')->check($param);
 
@@ -115,8 +115,7 @@ class Tag extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(TagValidate::class)->scene('disable')->check($param);
 
@@ -131,14 +130,15 @@ class Tag extends BaseController
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\member\TagModel", field="tag_id")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\MemberModel", type="array", desc="会员列表", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time",
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr"),
-     * )
+     * @Apidoc\Returned("list", type="array", desc="会员列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr", field="tag_names"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
+     * })
      */
     public function member()
     {
-        $param['tag_id'] = $this->request->param('tag_id/d', 0);
+        $param = $this->params(['tag_id/d' => 0]);
 
         validate(TagValidate::class)->scene('member')->check($param);
 
@@ -152,13 +152,12 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("会员标签会员解除")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\TagModel", field="tag_id")
+     * @Apidoc\Param("tag_id", type="array", require=true, desc="标签id")
      * @Apidoc\Param("member_ids", type="array", require=false, desc="会员id，为空则解除所有会员")
      */
     public function memberRemove()
     {
-        $param['tag_id']     = $this->request->param('tag_id/a', []);
-        $param['member_ids'] = $this->request->param('member_ids/a', []);
+        $param = $this->params(['tag_id/a' => [], 'member_ids/a' => []]);
 
         validate(TagValidate::class)->scene('memberRemove')->check($param);
 

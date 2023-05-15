@@ -58,7 +58,7 @@ class DeptService
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
-        $key = $type . md5(serialize($where) . serialize($order) . $field);
+        $key = where_cache_key($type, $where, $order, $field);
         $data = DeptCache::get($key);
         if (empty($data)) {
             $data = $model->field($field)->where($where)->order($order)->select()->toArray();
@@ -225,7 +225,7 @@ class DeptService
 
         $res = UserAttributesModel::where($where)->delete();
 
-        UserCache::upd($user_ids);
+        UserCache::del($user_ids);
 
         return $res;
     }

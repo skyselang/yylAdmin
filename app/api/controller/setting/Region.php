@@ -28,7 +28,7 @@ class Region extends BaseController
      */
     public function list()
     {
-        $region_pid = $this->request->param('region_id/d', 0);
+        $region_pid = $this->param('region_id/d', 0);
 
         $where = [['region_pid', '=', $region_pid], where_disable(), where_delete()];
 
@@ -58,13 +58,13 @@ class Region extends BaseController
      */
     public function info()
     {
-        $param['region_id'] = $this->request->param('region_id/s', '');
+        $param = $this->params(['region_id/d' => 0]);
 
         validate(RegionValidate::class)->scene('info')->check($param);
 
         $data = RegionService::info($param['region_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return success([], '地区不存在或已禁用或已删除');
+            return error([], '地区不存在');
         }
 
         return success($data);

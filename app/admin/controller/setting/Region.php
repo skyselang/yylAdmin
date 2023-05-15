@@ -35,7 +35,7 @@ class Region extends BaseController
     {
         $where = $this->where(where_delete());
         if (count($where) == 1) {
-            $where[] = ['region_pid', '=', $this->request->param('region_pid/d', 0)];
+            $where[] = ['region_pid', '=', $this->param('region_pid/d', 0)];
         }
 
         $data['list']  = RegionService::list('list', $where, $this->order());
@@ -54,7 +54,7 @@ class Region extends BaseController
      */
     public function info()
     {
-        $param['region_id'] = $this->request->param('region_id/d', 0);
+        $param = $this->params(['region_id/d' => 0]);
 
         validate(RegionValidate::class)->scene('info')->check($param);
 
@@ -102,7 +102,7 @@ class Region extends BaseController
      */
     public function dele()
     {
-        $param['ids'] = $this->request->param('ids/a', []);
+        $param = $this->params(['ids/a' => []]);
 
         validate(RegionValidate::class)->scene('dele')->check($param);
 
@@ -119,8 +119,7 @@ class Region extends BaseController
      */
     public function editpid()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['region_pid'] = $this->request->param('region_pid/d', 0);
+        $param = $this->params(['ids/a' => [], 'region_pid/d' => 0]);
 
         validate(RegionValidate::class)->scene('editpid')->check($param);
 
@@ -137,8 +136,7 @@ class Region extends BaseController
      */
     public function citycode()
     {
-        $param['ids']             = $this->request->param('ids/a', []);
-        $param['region_citycode'] = $this->request->param('region_citycode/s', '');
+        $param = $this->params(['ids/a' => [], 'region_citycode/s' => '']);
 
         validate(RegionValidate::class)->scene('citycode')->check($param);
 
@@ -155,8 +153,7 @@ class Region extends BaseController
      */
     public function zipcode()
     {
-        $param['ids']            = $this->request->param('ids/a', []);
-        $param['region_zipcode'] = $this->request->param('region_zipcode/s', '');
+        $param = $this->params(['ids/a' => [], 'region_zipcode/s' => '']);
 
         validate(RegionValidate::class)->scene('zipcode')->check($param);
 
@@ -173,8 +170,7 @@ class Region extends BaseController
      */
     public function disable()
     {
-        $param['ids']        = $this->request->param('ids/a', []);
-        $param['is_disable'] = $this->request->param('is_disable/d', 0);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(RegionValidate::class)->scene('disable')->check($param);
 

@@ -58,6 +58,33 @@ class SettingService
     }
 
     /**
+     * 反馈状态：未回复
+     * @var integer
+     */
+    const FEEDBACK_STATUS_NOREPLY = 0;
+    /**
+     * 反馈状态：已回复
+     * @var integer
+     */
+    const FEEDBACK_STATUS_REPLIED = 1;
+    /**
+     * 反馈状态
+     * @param string $feedback_status 反馈状态
+     * @return array|string 反馈状态数组或名称
+     */
+    public static function feedback_statuss($feedback_status = '')
+    {
+        $feedback_statuss = [
+            self::FEEDBACK_STATUS_NOREPLY => '未回复',
+            self::FEEDBACK_STATUS_REPLIED => '已回复',
+        ];
+        if ($feedback_status !== '') {
+            return $feedback_statuss[$feedback_status] ?? '';
+        }
+        return $feedback_statuss;
+    }
+
+    /**
      * 通告类型：通知
      * @var integer
      */
@@ -87,26 +114,25 @@ class SettingService
     /**
      * 设置信息
      * 
-     * @param string $field 指定字段
+     * @param string $fields 返回字段，逗号隔开，默认所有
      * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
      * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
      * @Apidoc\Returned("offi_url", type="string", desc="二维码链接")
      * @Apidoc\Returned("mini_url", type="string", desc="小程序码链接")
      * @Apidoc\Returned("diy_con_obj", type="object", desc="自定义设置对象")
-     *
+     * @Apidoc\Returned("feedback_type", type="array", desc="反馈类型")
      * @return array
      */
-    public static function info($field = '*')
+    public static function info($fields = '')
     {
         $id = self::$id;
-        $key = md5($id . $field);
 
         $info = SettingCache::get($id);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
 
-            $info = $model->field($field)->find($id);
+            $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
                 $info['diy_config']  = [];
@@ -115,31 +141,23 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
+            $info = $info
+                ->append(['favicon_url', 'logo_url', 'offi_url', 'mini_url', 'diy_con_obj', 'feedback_type'])
+                ->hidden(['favicon', 'logo', 'offi', 'mini'])
+                ->toArray();
 
-            $append = [];
-            if ($field == '*') {
-                $append = ['favicon_url', 'logo_url', 'offi_url', 'mini_url', 'diy_con_obj'];
-            } else {
-                if (strpos($field, 'favicon_id') !== false) {
-                    $append[] = 'favicon_url';
-                }
-                if (strpos($field, 'logo_id') !== false) {
-                    $append[] = 'logo_url';
-                }
-                if (strpos($field, 'offi_id') !== false) {
-                    $append[] = 'offi_url';
-                }
-                if (strpos($field, 'mini_id') !== false) {
-                    $append[] = 'mini_url';
-                }
-                if (strpos($field, 'diy_config') !== false) {
-                    $append[] = 'diy_con_obj';
+            SettingCache::set($id, $info);
+        }
+
+        if ($fields) {
+            $data = [];
+            $fields = explode(',', $fields);
+            foreach ($fields as $field) {
+                if (isset($info[$field])) {
+                    $data[$field] = $info[$field];
                 }
             }
-            $append[] = 'feedback_type';
-            $info = $info->append($append)->toArray();
-
-            SettingCache::set($key, $info);
+            return $data;
         }
 
         return $info;
@@ -166,7 +184,7 @@ class SettingService
             exception();
         }
 
-        SettingCache::clear();
+        SettingCache::del($id);
 
         return $param;
     }

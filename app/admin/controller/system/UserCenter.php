@@ -27,8 +27,8 @@ class UserCenter extends BaseController
      */
     public function info()
     {
-        $param['user_id'] = user_id();
-        
+        $param['user_id'] = user_id(true);
+
         validate(UserCenterValidate::class)->scene('info')->check($param);
 
         $data = UserCenterService::info($param['user_id']);
@@ -46,12 +46,14 @@ class UserCenter extends BaseController
      */
     public function edit()
     {
-        $param['user_id']   = user_id();
-        $param['avatar_id'] = $this->request->param('avatar_id/d', 0);
-        $param['nickname']  = $this->request->param('nickname/s', '');
-        $param['username']  = $this->request->param('username/s', '');
-        $param['phone']     = $this->request->param('phone/s', '');
-        $param['email']     = $this->request->param('email/s', '');
+        $param = $this->params([
+            'avatar_id/d' => 0,
+            'nickname/s'  => '',
+            'username/s'  => '',
+            'phone/s'     => '',
+            'email/s'     => '',
+        ]);
+        $param['user_id'] = user_id(true);
 
         validate(UserCenterValidate::class)->scene('edit')->check($param);
 
@@ -68,9 +70,11 @@ class UserCenter extends BaseController
      */
     public function pwd()
     {
-        $param['user_id']      = user_id();
-        $param['password_old'] = $this->request->param('password_old/s', '');
-        $param['password_new'] = $this->request->param('password_new/s', '');
+        $param = $this->params([
+            'password_old/s' => '',
+            'password_new/s' => '',
+        ]);
+        $param['user_id'] = user_id(true);
 
         validate(UserCenterValidate::class)->scene('pwd')->check($param);
 
@@ -86,13 +90,14 @@ class UserCenter extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\UserLogModel", type="array", desc="日志列表",
+     * @Apidoc\Returned("list", type="array", desc="日志列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\system\UserLogModel"),
      *   @Apidoc\Returned(ref="app\common\model\system\MenuModel", field="menu_name,menu_url")
-     * )
+     * })
      */
     public function log()
     {
-        $param['user_id'] = user_id();
+        $param['user_id'] = user_id(true);
 
         validate(UserCenterValidate::class)->scene('log')->check($param);
 

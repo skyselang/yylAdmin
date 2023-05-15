@@ -17,7 +17,7 @@ use think\facade\Cache;
 class CaptchaSmsCache
 {
     // 缓存标签
-    protected static $tag = 'captcha_phone';
+    public static $tag = 'captcha_phone';
     // 缓存前缀
     protected static $prefix = 'captcha_phone:';
 

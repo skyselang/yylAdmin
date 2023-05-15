@@ -46,9 +46,7 @@ class TokenService
             'nbf'  => time(),                               //生效时间
             'exp'  => time() + $config['token_exp'] * 3600, //过期时间
             'data' => [
-                'member_id'  => $member['member_id'],
-                'login_ip'   => $member['login_ip'],
-                'login_time' => $member['login_time'],
+                'member_id' => $member['member_id'],
             ],
         ];
 
@@ -78,19 +76,20 @@ class TokenService
             $decode = JWT::decode($token, new Key($key, 'HS256'));
             $member_id = $decode->data->member_id;
         } catch (\Exception $e) {
-            exception('账号登录状态已过期', RetCodeUtils::LOGIN_INVALID);
+            exception('登录状态已失效', RetCodeUtils::LOGIN_INVALID);
         }
 
-        $member = MemberCache::get($member_id ?? 0);
-        if (empty($member)) {
-            exception('账号登录状态已失效', RetCodeUtils::LOGIN_INVALID);
+        $cache_token = MemberCache::getToken($member_id);
+        if (empty($cache_token)) {
+            exception('登录状态已过期', RetCodeUtils::LOGIN_INVALID);
         } else {
             if (!$config['is_multi_login']) {
-                if ($token != $member[$config['token_name']]) {
+                if ($token != $cache_token) {
                     exception('账号已在另一处登录', RetCodeUtils::LOGIN_INVALID);
                 }
             }
 
+            $member = MemberService::info($member_id);
             if ($member['is_disable'] == 1) {
                 exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
             }
@@ -104,22 +103,27 @@ class TokenService
      * Token会员id
      *
      * @param string $token token
+     * @param bool   $exce  未登录是否抛出异常
      * 
      * @return int member_id
      */
-    public static function memberId($token)
+    public static function memberId($token, $exce = false)
     {
-        if (empty($token)) {
-            return 0;
+        $member_id = 0;
+
+        if ($token) {
+            try {
+                $config = self::config();
+                $key = $config['token_key'];
+                $decode = JWT::decode($token, new Key($key, 'HS256'));
+                $member_id = $decode->data->member_id;
+            } catch (\Exception $e) {
+                $member_id = 0;
+            }
         }
 
-        try {
-            $config = self::config();
-            $key = $config['token_key'];
-            $decode = JWT::decode($token, new Key($key, 'HS256'));
-            $member_id = $decode->data->member_id;
-        } catch (\Exception $e) {
-            $member_id = 0;
+        if (empty($member_id) && $exce) {
+            exception('请登录', RetCodeUtils::LOGIN_INVALID);
         }
 
         return $member_id;
