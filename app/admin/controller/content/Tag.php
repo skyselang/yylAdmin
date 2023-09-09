@@ -29,7 +29,10 @@ class Tag extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_unique,tag_desc,sort,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", type="array", desc="标签列表", children={
+     *   @Apidoc\Returned("list", ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique,remark,image_id,sort,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url")
+     * })
      */
     public function list()
     {
@@ -47,10 +50,12 @@ class Tag extends BaseController
      * @Apidoc\Title("内容标签信息")
      * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_id")
      * @Apidoc\Returned(ref="app\common\model\content\TagModel")
+     * @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url")
+     * @Apidoc\Returned(ref="imagesReturn")
      */
     public function info()
     {
-        $param = $this->params(['tag_id/d' => 0]);
+        $param = $this->params(['tag_id/d' => '']);
 
         validate(TagValidate::class)->scene('info')->check($param);
 
@@ -62,12 +67,13 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("内容标签添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_name,tag_unique,tag_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_name,tag_unique,image_id,title,keywords,description,sort,remark")
+     * @Apidoc\Param(ref="imagesParam")
      */
     public function add()
     {
         $param = $this->params(TagService::$edit_field);
-        
+
         validate(TagValidate::class)->scene('add')->check($param);
 
         $data = TagService::add($param);
@@ -78,7 +84,8 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("内容标签修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique,tag_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique,image_id,title,keywords,description,sort,remark")
+     * @Apidoc\Param(ref="imagesParam")
      */
     public function edit()
     {
@@ -131,15 +138,15 @@ class Tag extends BaseController
      * @Apidoc\Query(ref="app\common\model\content\TagModel", field="tag_id")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr", field="cover_url"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,image_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr", field="image_url"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
      * })
      */
     public function content()
     {
-        $param = $this->params(['tag_id/d' => 0]);
+        $param = $this->params(['tag_id/d' => '']);
 
         validate(TagValidate::class)->scene('content')->check($param);
 

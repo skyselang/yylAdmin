@@ -17,7 +17,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("退出")
  * @Apidoc\Group("member")
- * @Apidoc\Sort("400")
+ * @Apidoc\Sort("210")
  */
 class Logout extends BaseController
 {

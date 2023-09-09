@@ -16,7 +16,7 @@ use app\common\model\system\MenuModel;
 use app\common\model\system\UserModel;
 use app\common\service\system\SettingService;
 use app\common\service\system\UserTokenService;
-use app\common\service\utils\IpInfoUtils;
+use app\common\service\utils\Utils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -25,12 +25,13 @@ use hg\apidoc\annotation as Apidoc;
 class UserService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'user_id/d'   => 0,
+        'user_id/d'   => '',
         'avatar_id/d' => 0,
+        'number/s'    => '',
         'nickname/s'  => '',
         'username/s'  => '',
         'phone/s'     => '',
@@ -57,10 +58,10 @@ class UserService
         $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = $group . ',avatar_id,nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
+            $field = $group . ',avatar_id,number,nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
         }
         if (empty($order)) {
-            $order = [$group => 'desc'];
+            $order = ['sort' => 'desc', $group => 'desc'];
         }
 
         if (user_hide_where()) {
@@ -70,35 +71,48 @@ class UserService
         $model = $model->alias('m');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'dept_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes d', 'm.user_id=d.user_id')->where('d.dept_id', 'in', $wv[2]);
+                $model = $model->join('system_user_attributes d', 'm.user_id=d.user_id')->where('d.dept_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'post_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes p', 'm.user_id=p.user_id')->where('p.post_id', 'in', $wv[2]);
+                $model = $model->join('system_user_attributes p', 'm.user_id=p.user_id')->where('p.post_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'role_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes r', 'm.user_id=r.user_id')->where('r.role_id', 'in', $wv[2]);
+                $model = $model->join('system_user_attributes r', 'm.user_id=r.user_id')->where('r.role_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
         $where = array_values($where);
 
-        if ($page == 0 || $limit == 0) {
-            return $model->field($field)->where($where)
-                ->with(['avatar', 'depts', 'posts', 'roles'])
-                ->append(['avatar_url', 'dept_names', 'post_names', 'role_names'])
-                ->hidden(['avatar', 'depts', 'posts', 'roles'])
-                ->order($order)->group($group)->select()->toArray();
+        $with     = ['depts', 'posts', 'roles'];
+        $append   = ['dept_names', 'post_names', 'role_names'];
+        $hidden   = ['depts', 'posts', 'roles'];
+        $field_no = [];
+        if (strpos($field, 'avatar_id') !== false) {
+            $with[]   = $hidden[] = 'avatar';
+            $append[] = 'avatar_url';
         }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
 
         $count = $model->where($where)->group($group)->count();
-        $pages = ceil($count / $limit);
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
         $list = $model->field($field)->where($where)
-            ->with(['avatar', 'depts', 'posts', 'roles'])
-            ->append(['avatar_url', 'dept_names', 'post_names', 'role_names'])
-            ->hidden(['avatar', 'depts', 'posts', 'roles'])
-            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->group($group)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -134,19 +148,19 @@ class UserService
             $MenuPk = $MenuModel->getPk();
 
             if (user_is_super($id)) {
-                $menu = $MenuModel->field($MenuPk . ',menu_url')->where([where_delete()])->select()->toArray();
-                $menu_ids = array_column($menu, 'menu_id');
+                $menu      = $MenuModel->field($MenuPk . ',menu_url')->where([where_delete()])->select()->toArray();
+                $menu_ids  = array_column($menu, 'menu_id');
                 $menu_urls = array_filter(array_column($menu, 'menu_url'));
             } elseif ($info['is_super'] == 1) {
-                $menu = $MenuModel->field($MenuPk . ',menu_url')->where(where_disdel())->select()->toArray();
-                $menu_ids = array_column($menu, 'menu_id');
+                $menu      = $MenuModel->field($MenuPk . ',menu_url')->where(where_disdel())->select()->toArray();
+                $menu_ids  = array_column($menu, 'menu_id');
                 $menu_urls = array_filter(array_column($menu, 'menu_url'));
             } else {
-                $role_menu_ids = RoleService::menu_ids($info['role_ids'], where_disdel());
+                $role_menu_ids   = RoleService::menu_ids($info['role_ids'], where_disdel());
                 $unauth_menu_ids = MenuService::unauthList('id');
-                $menu_ids = array_merge($role_menu_ids, $unauth_menu_ids);
-                $menu_urls = $MenuModel->where('menu_id', 'in', $menu_ids)->where(where_disdel())->column('menu_url');
-                $menu_urls = array_filter($menu_urls);
+                $menu_ids        = array_merge($role_menu_ids, $unauth_menu_ids);
+                $menu_urls       = $MenuModel->where('menu_id', 'in', $menu_ids)->where(where_disdel())->column('menu_url');
+                $menu_urls       = array_filter($menu_urls);
             }
 
             if (empty($menu_ids)) {
@@ -413,7 +427,7 @@ class UserService
         }
 
         $user_id = $user[$pk];
-        $ip_info = IpInfoUtils::info();
+        $ip_info = Utils::ipInfo();
 
         $update['login_ip']     = $ip_info['ip'];
         $update['login_region'] = $ip_info['region'];

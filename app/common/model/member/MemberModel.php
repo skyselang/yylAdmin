@@ -35,23 +35,23 @@ class MemberModel extends Model
     }
 
     /**
-     * 获取注册渠道名称
+     * 获取平台名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("reg_channel_name", type="string", desc="注册渠道名称")
+     * @Apidoc\AddField("platform_name", type="string", desc="平台名称")
      */
-    public function getRegChannelNameAttr($value, $data)
+    public function getPlatformNameAttr($value, $data)
     {
-        return SettingService::reg_channels($data['reg_channel']);
+        return SettingService::platforms($data['platform']);
     }
 
     /**
-     * 获取注册方式名称
+     * 获取应用名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("reg_type_name", type="string", desc="注册方式名称")
+     * @Apidoc\AddField("application_name", type="string", desc="应用名称")
      */
-    public function getRegTypeNameAttr($value, $data)
+    public function getApplicationNameAttr($value, $data)
     {
-        return SettingService::reg_types($data['reg_type']);
+        return SettingService::applications($data['application']);
     }
 
     // 关联头像
@@ -66,10 +66,17 @@ class MemberModel extends Model
      */
     public function getAvatarUrlAttr($value, $data)
     {
-        if (empty($data['headimgurl'])) {
+        // 上传头像
+        if ($data['avatar_id'] ?? '') {
             return $this['avatar']['file_url'] ?? '';
         }
-        return $data['headimgurl'];
+        // 第三方头像
+        if ($data['headimgurl'] ?? '') {
+            return $data['headimgurl'];
+        }
+        // 默认头像
+        $setting = SettingService::info();
+        return $setting['default_avatar_url'] ?? '';
     }
 
     // 关联标签
@@ -118,5 +125,29 @@ class MemberModel extends Model
     public function getGroupNamesAttr()
     {
         return relation_fields($this['groups'], 'group_name', true);
+    }
+
+    // 关联第三方账号
+    public function thirds()
+    {
+        return $this->hasMany(ThirdModel::class, 'third_id', 'member_id');
+    }
+    /**
+     * 获取第三方账号id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("third_ids", type="array", desc="第三方账号id")
+     */
+    public function getThirdIdsAttr()
+    {
+        return relation_fields($this['thirds'], 'third_id');
+    }
+    /**
+     * 获取第三方账号昵称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("nicknames", type="string", desc="第三方账号昵称")
+     */
+    public function getThirdNicknamesAttr()
+    {
+        return relation_fields($this['thirds'], 'nickname', true);
     }
 }

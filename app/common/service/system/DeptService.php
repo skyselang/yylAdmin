@@ -20,11 +20,11 @@ use app\common\model\system\UserAttributesModel;
 class DeptService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'dept_id/d'    => 0,
+        'dept_id/d'    => '',
         'dept_pid/d'   => 0,
         'dept_name/s'  => '',
         'dept_abbr/s'  => '',
@@ -33,6 +33,7 @@ class DeptService
         'dept_fax/s'   => '',
         'dept_email/s' => '',
         'dept_addr/s'  => '',
+        'remark/s'     => '',
         'sort/d'       => 250,
     ];
 

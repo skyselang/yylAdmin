@@ -43,7 +43,11 @@ class FileModel extends Model
     {
         return $this->belongsToMany(TagModel::class, TagsModel::class, 'tag_id', 'file_id');
     }
-    // 获取标签id
+    /**
+     * 获取标签id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("tag_ids", type="array", desc="标签id")
+     */
     public function getTagIdsAttr()
     {
         return relation_fields($this['tags'], 'tag_id');

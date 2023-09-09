@@ -22,9 +22,9 @@ class UserCache
     // 缓存前缀
     protected static $prefix = 'system_user:';
     // token标签
-    protected static $tag_token = 'system_user_token';
+    public static $tag_token = 'system_user_token';
     // token前缀
-    protected static $prefix_token = 'system_user_token:';
+    protected static $prefixToken = 'system_user_token:';
 
     /**
      * 缓存键名
@@ -121,7 +121,7 @@ class UserCache
      */
     public static function keyToken($id)
     {
-        return self::$prefix_token . $id;
+        return self::$prefixToken . $id;
     }
 
     /**

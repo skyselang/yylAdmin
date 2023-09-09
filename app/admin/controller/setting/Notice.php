@@ -57,7 +57,7 @@ class Notice extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['notice_id/d' => 0]);
+        $param = $this->params(['notice_id/d' => '']);
 
         validate(NoticeValidate::class)->scene('info')->check($param);
 
@@ -69,7 +69,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("通告添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="image_id,type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="image_id,type,title,title_color,start_time,end_time,desc,content,remark,sort")
      */
     public function add()
     {
@@ -85,7 +85,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("通告修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="notice_id,image_id,type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\NoticeModel", field="notice_id,image_id,type,title,title_color,start_time,end_time,desc,content,remark,sort")
      */
     public function edit()
     {

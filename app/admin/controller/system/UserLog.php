@@ -46,7 +46,7 @@ class UserLog extends BaseController
 
         $data = UserLogService::list($where, $this->page(), $this->limit(), $this->order());
 
-        $data['user']  = UserService::list([where_delete()], 0, 0, [], 'user_id,nickname,username');
+        $data['user']  = UserService::list([where_delete()], 0, 0, [], 'user_id,nickname,username')['list'] ?? [];
         $data['menu']  = MenuService::list('tree', [where_delete()], [], 'menu_id,menu_pid,menu_name');
         $data['exps']  = where_exps();
         $data['where'] = $where;
@@ -63,7 +63,7 @@ class UserLog extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['log_id/d' => 0]);
+        $param = $this->params(['log_id/d' => '']);
 
         validate(UserLogValidate::class)->scene('info')->check($param);
 

@@ -72,7 +72,7 @@ class ApiVerifyMiddleware
                         $api = ApiService::info($api_url);
                         $msg = 'No permission：' . $api['api_name'];
                         if ($debug) {
-                            $msg .= '：' . $api_url;
+                            $msg .= '(' . $api_url . ')';
                         }
                         exception($msg, RetCodeUtils::NO_PERMISSION);
                     }

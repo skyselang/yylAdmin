@@ -33,10 +33,27 @@ class Api extends BaseController
     {
         $where = $this->where(where_delete());
 
-        $data['list']  = ApiService::list('tree', $where, $this->order());
+        $data['list']  = ApiService::list('tree', $where);
         $data['tree']  = ApiService::list('tree', [where_delete()], [], 'api_id,api_pid,api_name');
         $data['exps']  = where_exps();
         $data['where'] = $where;
+
+        if (count($where) > 1) {
+            $list = tree_to_list($data['list']);
+            $all  = tree_to_list($data['tree']);
+            $pk   = 'api_id';
+            $pid  = 'api_pid';
+            $ids  = [];
+            foreach ($list as $val) {
+                $pids = children_parent_ids($all, $val[$pk], $pk, $pid);
+                $cids = parent_children_ids($all, $val[$pk], $pk, $pid);
+                $ids  = array_merge($ids, $pids, $cids);
+            }
+            $data['list'] = ApiService::list('tree', [[$pk, 'in', $ids], where_delete()]);
+        }
+
+        $api = ApiService::list('list', $where, [], 'api_id');
+        $data['count'] = count($api);
 
         return success($data);
     }
@@ -48,7 +65,7 @@ class Api extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['api_id/d' => 0]);
+        $param = $this->params(['api_id/d' => '']);
 
         validate(ApiValidate::class)->scene('info')->check($param);
 
@@ -224,7 +241,7 @@ class Api extends BaseController
      */
     public function group()
     {
-        $param = $this->params(['api_id/d' => 0]);
+        $param = $this->params(['api_id/d' => '']);
 
         validate(ApiValidate::class)->scene('group')->check($param);
 

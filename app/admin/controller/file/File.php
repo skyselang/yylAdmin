@@ -77,8 +77,8 @@ class File extends BaseController
 
         $data = FileService::list($where, $this->page(), $this->limit(), $this->order());
 
-        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name');
-        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name');
+        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
+        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
         $data['exps']  = where_exps();
         $data['where'] = $where;
 
@@ -89,11 +89,16 @@ class File extends BaseController
      * @Apidoc\Title("文件信息")
      * @Apidoc\Query(ref="app\common\model\file\FileModel", field="file_id")
      * @Apidoc\Returned(ref="app\common\model\file\FileModel")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr", field="group_name")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagIdsAttr", field="tag_ids")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr", field="tag_names")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileTypeNameAttr", field="file_type_name")
+     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr", field="file_url")
      * @Apidoc\Returned("tag_ids", type="array", desc="标签id")
      */
     public function info()
     {
-        $param = $this->params(['file_id/d' => 0]);
+        $param = $this->params(['file_id/d' => '']);
 
         validate(FileValidate::class)->scene('info')->check($param);
 
@@ -109,7 +114,7 @@ class File extends BaseController
      * @Apidoc\Param("type", type="string", default="upl", desc="url添加，upl上传")
      * @Apidoc\Param("file_url", type="string", require=true, desc="文件链接, 添加（type=url）时必传")
      * @Apidoc\Param("file", type="file", require=true, default="", desc="文件, 上传（type=upl）时必传")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="group_id,file_name,file_type,sort")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="group_id,file_name,file_type,remark,sort")
      * @Apidoc\Param("tag_ids", type="array", desc="标签id")
      * @Apidoc\Returned(ref="fileReturn")
      */
@@ -158,8 +163,8 @@ class File extends BaseController
     /**
      * @Apidoc\Title("文件修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="file_id,file_name,group_id,file_type,domain,sort")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="file_id,file_name,group_id,file_type,domain,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\getTagIdsAttr", field="tag_ids")
      */
     public function edit()
     {
@@ -209,7 +214,7 @@ class File extends BaseController
      * @Apidoc\Title("文件修改标签")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel\getTagIdsAttr", field="tag_ids")
      */
     public function edittag()
     {
@@ -311,8 +316,8 @@ class File extends BaseController
 
         $data = FileService::list($where, $this->page(), $this->limit(), $order);
 
-        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name');
-        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name');
+        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
+        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
         $data['exps']  = where_exps();
         $data['where'] = $where;
 

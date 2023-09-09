@@ -27,7 +27,11 @@ class GroupModel extends Model
     {
         return $this->belongsToMany(ApiModel::class, GroupApisModel::class, 'api_id', 'group_id');
     }
-    // 获取接口id
+    /**
+     * 获取接口id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("api_ids", type="array", desc="接口id")
+     */
     public function getApiIdsAttr()
     {
         return relation_fields($this['apis'], 'api_id');

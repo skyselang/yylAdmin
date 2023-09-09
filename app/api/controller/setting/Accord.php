@@ -65,7 +65,7 @@ class Accord extends BaseController
 
         $data = AccordService::info($param['accord_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error([], '协议不存在');
+            return error('协议不存在');
         }
 
         return success($data);

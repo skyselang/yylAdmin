@@ -54,7 +54,7 @@ class Notice extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['notice_id/d' => 0]);
+        $param = $this->params(['notice_id/d' => '']);
 
         validate(NoticeValidate::class)->scene('info')->check($param);
 

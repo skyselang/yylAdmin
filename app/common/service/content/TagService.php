@@ -21,15 +21,20 @@ use app\common\model\content\AttributesModel;
 class TagService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'tag_id/d'     => 0,
-        'tag_name/s'   => '',
-        'tag_unique/s' => '',
-        'tag_desc/s'   => '',
-        'sort/d'       => 250,
+        'tag_id/d'      => '',
+        'tag_name/s'    => '',
+        'tag_unique/s'  => '',
+        'image_id/d'    => 0,
+        'title/s'       => '',
+        'keywords/s'    => '',
+        'description/s' => '',
+        'sort/d'        => 250,
+        'remark/s'     => '',
+        'images/a'      => [],
     ];
 
     /**
@@ -49,19 +54,44 @@ class TagService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',tag_name,tag_desc,tag_unique,sort,is_disable,create_time,update_time';
+            $field = $pk . ',tag_name,tag_unique,image_id,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
+            $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
-        if ($page == 0 || $limit == 0) {
-            return $model->field($field)->where($where)->order($order)->select()->toArray();
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'image_id') !== false) {
+            $with[]   = $hidden[] = 'image';
+            $append[] = 'image_url';
         }
+        if (strpos($field, 'images') !== false) {
+            $with[]   = $hidden[]   = 'files';
+            $append[] = $field_no[] = 'images';
+        } elseif (strpos($field, 'image_urls') !== false) {
+            $with[]   = $hidden[]   = 'files';
+            $append[] = $field_no[] = 'image_urls';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
 
         $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -95,7 +125,7 @@ class TagService
                 }
                 return [];
             }
-            $info = $info->toArray();
+            $info = $info->append(['image_url', 'image_urls', 'images'])->hidden(['image', 'files'])->toArray();
 
             TagCache::set($id, $info);
         }
@@ -120,13 +150,29 @@ class TagService
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
-        $model->save($param);
-        $id = $model->$pk;
-        if (empty($id)) {
-            exception();
+        // 启动事务
+        $model->startTrans();
+        try {
+            // 添加
+            $model->save($param);
+            // 添加图片
+            if (isset($param['images'])) {
+                $file_ids = file_ids($param['images']);
+                $model->files()->saveAll($file_ids);
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model->rollback();
         }
 
-        $param[$pk] = $id;
+        if (isset($errmsg)) {
+            exception($errmsg);
+        }
+
+        $param[$pk] = $model->$pk;
 
         return $param;
     }
@@ -151,9 +197,34 @@ class TagService
 
         $unique = $model->where($pk, 'in', $ids)->column('tag_unique');
 
-        $res = $model->where($pk, 'in', $ids)->update($param);
-        if (empty($res)) {
-            exception();
+        // 启动事务
+        $model->startTrans();
+        try {
+            if (is_numeric($ids)) {
+                $ids = [$ids];
+            }
+            // 修改
+            $model->where($pk, 'in', $ids)->update($param);
+            if (var_isset($param, ['images'])) {
+                foreach ($ids as $id) {
+                    $info = $model->find($id);
+                    // 修改图片
+                    if (isset($param['images'])) {
+                        $info = $info->append(['image_ids']);
+                        relation_update($info, $info['image_ids'], file_ids($param['images']), 'files');
+                    }
+                }
+            }
+            // 提交事务
+            $model->commit();
+        } catch (\Exception $e) {
+            $errmsg = $e->getMessage();
+            // 回滚事务
+            $model->rollback();
+        }
+
+        if (isset($errmsg)) {
+            exception($errmsg);
         }
 
         $param['ids'] = $ids;

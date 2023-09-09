@@ -12,7 +12,6 @@ namespace app\admin\controller\system;
 use app\common\controller\BaseController;
 use app\common\validate\system\SettingValidate;
 use app\common\service\system\SettingService;
-use app\common\service\utils\ServerUtils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -243,7 +242,7 @@ class Setting extends BaseController
     {
         $force = $this->param('force/d', 0);
 
-        $data = ServerUtils::server($force);
+        $data = SettingService::serverInfo($force);
 
         return success($data);
     }

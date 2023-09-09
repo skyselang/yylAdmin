@@ -10,6 +10,7 @@
 // 应用异常处理类
 namespace app;
 
+use app\common\service\utils\RetCodeUtils;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 use think\exception\Handle;
@@ -17,6 +18,7 @@ use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\exception\ValidateException;
 use think\facade\Config;
+use think\facade\Log;
 use think\Response;
 use Throwable;
 
@@ -72,7 +74,7 @@ class ExceptionHandle extends Handle
 
         // 参数验证错误
         if ($e instanceof ValidateException) {
-            $data['code'] = 400;
+            $data['code'] = RetCodeUtils::ERROR;
             $data['msg']  = $e->getError();
             $data['data'] = [];
             return response($data, 200, [], 'json');
@@ -87,14 +89,21 @@ class ExceptionHandle extends Handle
         $data['code'] = $e->getCode();
         $data['msg']  = $e->getMessage();
         $data['data'] = [];
+        // 记录日志
+        $error = [
+            'code'    => $e->getCode(),
+            'line'    => $e->getLine(),
+            'file'    => $e->getFile(),
+            'message' => $e->getMessage(),
+            'trace0'  => $e->getTrace()[0] ?? [],
+        ];
+        Log::write($error, 'error');
+        // 调试模式返回错误信息
         $debug = Config::get('app.app_debug');
         if ($debug) {
-            $data['data'] = [
-                'file'  => $e->getFile(),
-                'line'  => $e->getLine(),
-                'msg'   => $e->getMessage(),
-                'trace' => $e->getTrace()
-            ];
+            unset($error['trace0']);
+            $error['trace'] = $e->getTrace();
+            $data['data']   = $error;
         }
 
         return response($data, 200, [], 'json');

@@ -25,7 +25,6 @@ class Setting extends BaseController
      * @Apidoc\Title("设置信息")
      * @Apidoc\Returned(ref="app\common\model\setting\SettingModel")
      * @Apidoc\Returned(ref="app\common\service\setting\SettingService\info")
-     * @Apidoc\Returned(ref="diyConReturn")
      */
     public function info()
     {
@@ -37,7 +36,7 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", withoutField="setting_id")
+     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
      */
     public function edit()
     {
@@ -59,8 +58,6 @@ class Setting extends BaseController
             'email/s'       => '',
             'qq/s'          => '',
             'wechat/s'      => '',
-            'is_feedback/d' => 1,
-            'diy_config/a'  => [],
         ]);
 
         validate(SettingValidate::class)->scene('edit')->check($param);

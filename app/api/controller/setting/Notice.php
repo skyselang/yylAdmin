@@ -28,7 +28,7 @@ class Notice extends BaseController
      * @Apidoc\Query("title", type="string", default="", desc="标题")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="通告列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel", field="notice_id,type,title,title_color,intro,start_time,end_time,sort"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel", field="notice_id,type,title,title_color,desc,start_time,end_time,sort"),
      *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr", field="image_url"),
      *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr", field="type_name")
      * })
@@ -52,7 +52,7 @@ class Notice extends BaseController
 
         $order = ['sort' => 'desc', 'start_time' => 'desc', 'notice_id' => 'desc'];
 
-        $field = 'notice_id,image_id,type,title,title_color,intro,start_time,end_time,sort';
+        $field = 'notice_id,image_id,type,title,title_color,desc,start_time,end_time,sort';
 
         $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
@@ -68,13 +68,13 @@ class Notice extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['notice_id/d' => 0]);
+        $param = $this->params(['notice_id/d' => '']);
 
         validate(NoticeValidate::class)->scene('info')->check($param);
 
         $data = NoticeService::info($param['notice_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error([], '通告不存在');
+            return error('通告不存在');
         }
 
         return success($data);

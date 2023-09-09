@@ -62,6 +62,7 @@ class SettingService
             $data = [];
             $fields = explode(',', $fields);
             foreach ($fields as $field) {
+                $field = trim($field);
                 if (isset($info[$field])) {
                     $data[$field] = $info[$field];
                 }
@@ -99,11 +100,11 @@ class SettingService
     }
 
     /**
-     * 文件类型
+     * 文件类型数组或描述
      * 
      * @param string $type 文件类型
      *
-     * @return array|string 类型数组或描述
+     * @return array|string 
      */
     public static function fileTypes($type = '')
     {
@@ -121,11 +122,11 @@ class SettingService
     }
 
     /**
-     * 文件储存方式
+     * 文件储存方式数组或描述
      * 
      * @param string $storage 储存方式
      *
-     * @return array|string 储存方式数组或描述
+     * @return array|string
      */
     public static function storages($storage = '')
     {
@@ -147,42 +148,26 @@ class SettingService
     /**
      * 文件大小格式化
      *
-     * @param int $file_size 文件大小（byte(B)字节）
+     * @param int  $file_size 文件大小字节数
+     * @param int  $precision 保留小数位数
+     * @param bool $is_space  是否使用空格分隔符
      *
      * @return string
      */
-    public static function fileSize($file_size = 0)
+    public static function fileSize($file_size, $precision = 2, $is_space = false)
     {
-        if (empty($file_size)) {
-            return '';
+        $units      = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'BB');
+        $file_size  = max($file_size, 0);
+        $pow        = floor(log($file_size) / log(1024));
+        $pow        = max($pow, 0);
+        $file_size /= pow(1024, $pow);
+
+        $separator = '';
+        if ($is_space) {
+            $separator = ' ';
         }
 
-        $p = 0;
-        $format = 'B';
-        if ($file_size > 0 && $file_size < 1024) {
-            $p = 0;
-            return number_format($file_size) . $format;
-        }
-        if ($file_size >= 1024 && $file_size < pow(1024, 2)) {
-            $p = 1;
-            $format = 'KB';
-        }
-        if ($file_size >= pow(1024, 2) && $file_size < pow(1024, 3)) {
-            $p = 2;
-            $format = 'MB';
-        }
-        if ($file_size >= pow(1024, 3) && $file_size < pow(1024, 4)) {
-            $p = 3;
-            $format = 'GB';
-        }
-        if ($file_size >= pow(1024, 4) && $file_size < pow(1024, 5)) {
-            $p = 3;
-            $format = 'TB';
-        }
-
-        $file_size /= pow(1024, $p);
-
-        return number_format($file_size, 2) . $format;
+        return round($file_size, $precision) . $separator . $units[$pow];
     }
 
     /**

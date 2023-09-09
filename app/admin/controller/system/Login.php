@@ -30,6 +30,9 @@ class Login extends BaseController
      * @Apidoc\Method("GET")
      * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="system_name,page_title,captcha_switch,captcha_mode,captcha_type")
      * @Apidoc\Returned(ref="app\common\service\system\SettingService\info")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function setting()
     {
@@ -38,7 +41,7 @@ class Login extends BaseController
         if ($data['captcha_switch']) {
             if ($data['captcha_mode'] == 1) {
                 $captcha = CaptchaUtils::create($data['captcha_type']);
-                $data = array_merge($data, $captcha);
+                $data    = array_merge($data, $captcha);
             }
         }
 
@@ -56,6 +59,9 @@ class Login extends BaseController
      * @Apidoc\Param("pointJson", type="string", default="", desc="行为，pointJson")
      * @Apidoc\Param("token", type="string", default="", desc="行为，token")
      * @Apidoc\Returned(ref="captchaReturn")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function captcha()
     {
@@ -91,6 +97,9 @@ class Login extends BaseController
      * @Apidoc\After(event="setGlobalBody", key="AdminToken", value="res.data.data.AdminToken", desc="AdminToken")
      * @Apidoc\After(event="setGlobalQuery", key="AdminToken", value="res.data.data.AdminToken", desc="AdminToken")
      * @Apidoc\After(event="setGlobalHeader", key="AdminToken", value="res.data.data.AdminToken", desc="AdminToken")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function login()
     {
@@ -110,15 +119,15 @@ class Login extends BaseController
                 $AjCaptchaUtils = new AjCaptchaUtils();
                 $captcha_check = $AjCaptchaUtils->checkTwo($setting['captcha_type'], $param['ajcaptcha']);
                 if ($captcha_check['error']) {
-                    exception('验证码错误');
+                    return error('验证码错误');
                 }
             } else {
                 if (empty($param['captcha_code'])) {
-                    exception('请输入验证码');
+                    return error('请输入验证码');
                 }
                 $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
                 if (empty($captcha_check)) {
-                    exception('验证码错误');
+                    return error('验证码错误');
                 }
             }
         }

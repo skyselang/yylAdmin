@@ -27,8 +27,8 @@ class Category extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned("list", type="tree", desc="分类树形", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique,cover_id,sort,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getCoverUrlAttr", field=""),
+     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique,image_id,sort,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url"),
      * })
      * @Apidoc\Returned("tree", ref="app\common\model\content\CategoryModel", type="tree", desc="分类树形", field="category_id,category_pid,category_name")
      */
@@ -36,10 +36,27 @@ class Category extends BaseController
     {
         $where = $this->where(where_delete());
 
-        $data['list']  = CategoryService::list('tree', $where, $this->order());
+        $data['list']  = CategoryService::list('tree', $where);
         $data['tree']  = CategoryService::list('tree', [where_delete()], [], 'category_id,category_pid,category_name');
         $data['exps']  = where_exps();
         $data['where'] = $where;
+
+        if (count($where) > 1) {
+            $list = tree_to_list($data['list']);
+            $all  = tree_to_list($data['tree']);
+            $pk   = 'category_id';
+            $pid  = 'category_pid';
+            $ids  = [];
+            foreach ($list as $val) {
+                $pids = children_parent_ids($all, $val[$pk], $pk, $pid);
+                $cids = parent_children_ids($all, $val[$pk], $pk, $pid);
+                $ids  = array_merge($ids, $pids, $cids);
+            }
+            $data['list'] = CategoryService::list('tree', [[$pk, 'in', $ids], where_delete()]);
+        }
+
+        $category = CategoryService::list('list', $where, [], 'category_id');
+        $data['count'] = count($category);
 
         return success($data);
     }
@@ -48,12 +65,12 @@ class Category extends BaseController
      * @Apidoc\Title("内容分类信息")
      * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id")
      * @Apidoc\Returned(ref="app\common\model\content\CategoryModel")
-     * @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getCoverUrlAttr", field="")
+     * @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url")
      * @Apidoc\Returned(ref="imagesReturn")
      */
     public function info()
     {
-        $param = $this->params(['category_id/d' => 0]);
+        $param = $this->params(['category_id/d' => '']);
 
         validate(CategoryValidate::class)->scene('info')->check($param);
 
@@ -65,7 +82,7 @@ class Category extends BaseController
     /**
      * @Apidoc\Title("内容分类添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_pid,category_name,category_unique,cover_id,title,keywords,description,sort")
+     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_pid,category_name,category_unique,image_id,title,keywords,description,sort,remark")
      * @Apidoc\Param(ref="imagesParam")
      */
     public function add()
@@ -82,7 +99,7 @@ class Category extends BaseController
     /**
      * @Apidoc\Title("内容分类修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique,cover_id,title,keywords,description,sort")
+     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique,image_id,title,keywords,description,sort,remark")
      * @Apidoc\Param(ref="imagesParam")
      */
     public function edit()
@@ -153,15 +170,15 @@ class Category extends BaseController
      * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr", field="cover_url"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,image_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr", field="image_url"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
      * })
      */
     public function content()
     {
-        $param = $this->params(['category_id/d' => 0]);
+        $param = $this->params(['category_id/d' => '']);
 
         validate(CategoryValidate::class)->scene('content')->check($param);
 

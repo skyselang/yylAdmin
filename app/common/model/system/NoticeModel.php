@@ -46,6 +46,6 @@ class NoticeModel extends Model
      */
     public function getTypeNameAttr($value, $data)
     {
-        return SettingService::notice_types($data['type']);
+        return SettingService::noticeTypes($data['type']);
     }
 }

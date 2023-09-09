@@ -24,6 +24,12 @@ class UserCenter extends BaseController
     /**
      * @Apidoc\Title("我的信息")
      * @Apidoc\Returned(ref="app\common\model\system\UserModel", withoutField="password")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptIdsAttr", field="dept_ids")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostIdsAttr", field="post_ids")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleIdsAttr", field="role_ids")
+     * @Apidoc\Returned("menus", type="array", desc="菜单路由")
+     * @Apidoc\Returned("roles", type="array", desc="菜单链接（权限标识）")
      */
     public function info()
     {

@@ -26,6 +26,7 @@ class FileValidate extends Validate
         'file_id'   => ['require'],
         'file_type' => ['require'],
         'file_url'  => ['require', 'url'],
+        'unique'    => ['checkUnique'],
     ];
 
     // 错误信息
@@ -41,7 +42,7 @@ class FileValidate extends Validate
         'info'        => ['file_id'],
         'add'         => ['file'],
         'addurl'      => ['file_type', 'file_url'],
-        'edit'        => ['file_id'],
+        'edit'        => ['file_id', 'unique'],
         'dele'        => ['ids'],
         'disable'     => ['ids'],
         'editgroup'   => ['ids'],
@@ -82,6 +83,31 @@ class FileValidate extends Validate
         $set_size_b = $set_size_m * 1048576;
         if ($file_size > $set_size_b) {
             return '上传的文件大小不允许，允许大小：' . $set_size_m . ' MB';
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：标识是否已存在
+    protected function checkUnique($value, $rule, $data = [])
+    {
+        $unique = $data['unique'] ?? '';
+        if ($unique) {
+            if (is_numeric($unique)) {
+                return '标识不能为纯数字';
+            }
+
+            $model = new FileModel();
+            $pk = $model->getPk();
+            $id = $data[$pk] ?? 0;
+
+            $where[] = [$pk, '<>', $id];
+            $where[] = ['unique', '=', $unique];
+            $where = where_delete($where);
+            $info = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return '标识已存在：' . $unique;
+            }
         }
 
         return true;

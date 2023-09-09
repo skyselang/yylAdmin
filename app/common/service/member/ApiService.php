@@ -21,11 +21,11 @@ use app\common\model\member\GroupApisModel;
 class ApiService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'api_id/d'   => 0,
+        'api_id/d'   => '',
         'api_pid/d'  => 0,
         'api_name/s' => '',
         'api_url/s'  => '',

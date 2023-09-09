@@ -20,11 +20,16 @@ return [
     'api_is_unlogin' => [
         'api/',
         'api/Index/index',
-        'api/setting.Setting/member',
+        'api/setting.Setting/info',
         'api/member.Register/captcha',
         'api/member.Register/register',
         'api/member.Login/captcha',
-        'api/member.Login/login'
+        'api/member.Login/login',
+        'api/member.Login/miniapp',
+        'api/member.Login/offiacc',
+        'api/member.Login/website',
+        'api/member.Login/redirectUri',
+        'api/member.Login/mobile',
     ],
 
     // 接口免权url（无需权限）

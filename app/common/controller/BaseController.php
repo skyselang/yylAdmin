@@ -70,7 +70,11 @@ abstract class BaseController
      */
     protected function limit($default = 10)
     {
-        return $this->request->param('limit/d', $default);
+        $limit = $this->request->param('limit/d', $default);
+        if ($limit >= 500) {
+            ini_set('memory_limit', '-1');
+        }
+        return $limit;
     }
 
     /**
@@ -105,11 +109,15 @@ abstract class BaseController
             if ($search_exp == 'like' || $search_exp == 'not like') {
                 $search_value = '%' . $search_value . '%';
             } elseif ($search_exp == 'between' || $search_exp == 'not between') {
-                $search_value = str_replace('，', ',', $search_value);
-                $search_value = explode(',', $search_value);
-                $search_value = [$search_value[0] ?? '', $search_value[1] ?? ''];
+                if (!is_array($search_value)) {
+                    $search_value = str_replace('，', ',', $search_value);
+                    $search_value = explode(',', $search_value);
+                }
+                $search_value = [$search_value[0] ?? '', $search_value[count($search_value) - 1] ?? ''];
             } elseif ($search_exp == 'in' || $search_exp == 'not in') {
-                $search_value = str_replace('，', ',', $search_value);
+                if (!is_array($search_value)) {
+                    $search_value = str_replace('，', ',', $search_value);
+                }
             }
 
             $where[] = [$search_field, $search_exp, $search_value];
@@ -119,10 +127,18 @@ abstract class BaseController
             $start_date = $date_value[0] ?? '';
             $end_date   = $date_value[1] ?? '';
             if ($start_date) {
-                $where[] = [$date_field, '>=',  $start_date . ' 00:00:00'];
+                if (strlen($start_date) > 10) {
+                    $where[] = [$date_field, '>=',  $start_date];
+                } else {
+                    $where[] = [$date_field, '>=',  $start_date . ' 00:00:00'];
+                }
             }
             if ($end_date) {
-                $where[] = [$date_field, '<=',  $end_date . ' 23:59:59'];
+                if (strlen($end_date) > 10) {
+                    $where[] = [$date_field, '<=',  $end_date];
+                } else {
+                    $where[] = [$date_field, '<=',  $end_date . ' 23:59:59'];
+                }
             }
         }
 

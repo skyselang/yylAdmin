@@ -9,8 +9,10 @@
 
 namespace app\common\service\content;
 
+use think\facade\Request;
 use app\common\cache\content\SettingCache;
 use app\common\model\content\SettingModel;
+use hg\apidoc\annotation as Apidoc;
 
 /**
  * 内容设置
@@ -27,13 +29,19 @@ class SettingService
      * 设置信息
      * 
      * @param string $fields 返回字段，逗号隔开，默认所有
+     * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
+     * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
+     * @Apidoc\Returned("offi_url", type="string", desc="公众号二维码链接")
+     * @Apidoc\Returned("mini_url", type="string", desc="小程序码链接")
      * @return array
      */
     public static function info($fields = '')
     {
-        $id = self::$id;
+        $id   = self::$id;
+        $type = Request::isCli() ? 'cli' : 'cgi';
+        $key  = $id . $type;
 
-        $info = SettingCache::get($id);
+        $info = SettingCache::get($key);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
@@ -41,21 +49,29 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['diy_config']  = [];
                 $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info->append(['diy_con_obj'])->toArray();
 
-            SettingCache::set($id, $info);
+            // 命令行无法获取域名
+            $append = [];
+            $hidden = [];
+            if ($type == 'cgi') {
+                $append = array_merge($append, ['favicon_url', 'logo_url', 'offi_url', 'mini_url']);
+                $hidden = array_merge($hidden, ['favicon', 'logo', 'offi', 'mini']);
+            }
+            $info = $info->append($append)->hidden($hidden)->toArray();
+
+            SettingCache::set($key, $info);
         }
 
         if ($fields) {
             $data = [];
             $fields = explode(',', $fields);
             foreach ($fields as $field) {
+                $field = trim($field);
                 if (isset($info[$field])) {
                     $data[$field] = $info[$field];
                 }
@@ -87,7 +103,7 @@ class SettingService
             exception();
         }
 
-        SettingCache::del($id);
+        SettingCache::clear();
 
         return $param;
     }

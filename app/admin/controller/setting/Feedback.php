@@ -61,7 +61,7 @@ class Feedback extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['feedback_id/d' => 0]);
+        $param = $this->params(['feedback_id/d' => '']);
 
         validate(FeedbackValidate::class)->scene('info')->check($param);
 

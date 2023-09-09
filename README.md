@@ -37,13 +37,13 @@ yylAdmin是一个基于ThinkPHP6和Vue2极简后台管理系统，只有登录�
 
 ### 环境要求
 
-- PHP >= 7.2.5  
+- PHP >= 7.3.0  
   安装 fileinfo、redis 扩展  
   开启 putenv、proc_open 函数
-- MySQL >= 5.6
-- Redis
-- node >= 14.0.0
-- npm >= 6.9.0
+- MySQL >= 5.5
+- Redis >= 3.0
+- node = 12、14、16
+- npm >= 6.2.0
 
 ### 安装后端
 
@@ -71,7 +71,7 @@ composer install
 ```
 ##### 修改配置
 ```bash
-重命名.env.example成.env环境变量文件修改里面配置
+复制.env.example后重命名成.env环境变量文件修改里面配置
 ```
 ##### 环境配置（phpStudy）
 ```bash
@@ -91,6 +91,8 @@ location / {
 }
 ```
 ###### Apache
+- httpd.conf 配置文件中加载 mod_rewrite.so 模块
+- AllowOverride None 将 None 改为 All
 ```bash
 <IfModule mod_rewrite.c>
   Options +FollowSymlinks -Multiviews
@@ -98,7 +100,7 @@ location / {
 
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+  RewriteRule ^(.*)$ index.php?/$1 [QSA,PT,L]
 </IfModule>
 ```
 > 不设置伪静态接口文档无法访问  
@@ -113,30 +115,26 @@ git clone https://gitee.com/skyselang/yylAdminWeb.git
 ```bash
 cd yylAdminWeb
 ```
-#### 使用 cnpm
-```bash
-npm install -g cnpm@6.2.0 --registry=https://registry.npmmirror.com
-```
 #### 安装依赖
 ```bash
-cnpm install
+npm install
 ```
+> 也可以使用 cnpm、pnpm、yarn
 #### 修改配置
 ```bash
-在.env.xxx环境变量文件里面修改接口baseURL
-VUE_APP_BASE_URL = 'http://localhost:9526'
+复制.env.xxx后重命名成.env.xxx.local环境变量文件修改里面配置
 ```
 #### 本地开发 启动项目
 ```bash
-cnpm run dev
+npm run dev
 ```
 #### 开发完打包正式环境
 ```bash
-cnpm run build:prod
+npm run build:prod
 ```
 #### 开发完打包测试环境
 ```bash
-cnpm run build:stage
+npm run build:stage
 ```
 
 ### 访问后台

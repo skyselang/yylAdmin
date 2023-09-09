@@ -11,10 +11,11 @@ namespace app\common\service\member;
 
 use think\facade\Validate;
 use app\common\cache\member\MemberCache;
-use app\common\service\utils\IpInfoUtils;
-use app\common\service\setting\WechatService;
 use app\common\service\member\SettingService;
+use app\common\service\member\ThirdService;
+use app\common\service\utils\Utils;
 use app\common\model\member\MemberModel;
+use app\common\model\member\ThirdModel;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -23,11 +24,11 @@ use hg\apidoc\annotation as Apidoc;
 class MemberService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'member_id/d' => 0,
+        'member_id/d' => '',
         'avatar_id/d' => 0,
         'nickname/s'  => '',
         'username/s'  => '',
@@ -60,7 +61,7 @@ class MemberService
         $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = $group . ',headimgurl,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time';
+            $field = $group . ',avatar_id,headimgurl,nickname,username,phone,email,sort,is_super,is_disable,create_time';
         }
         if (empty($order)) {
             $order = [$group => 'desc'];
@@ -69,29 +70,50 @@ class MemberService
         $model = $model->alias('m');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
-                $model = $model->join('member_attributes t', 'm.member_id=t.member_id')->where('t.tag_id', 'in', $wv[2]);
+                $model = $model->join('member_attributes t', 'm.member_id=t.member_id')->where('t.tag_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'group_ids' && is_array($wv[2])) {
-                $model = $model->join('member_attributes g', 'm.member_id=g.member_id')->where('g.group_id', 'in', $wv[2]);
+                $model = $model->join('member_attributes g', 'm.member_id=g.member_id')->where('g.group_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
         $where = array_values($where);
 
+        $with     = ['tags', 'groups'];
+        $append   = ['tag_names', 'group_names'];
+        $hidden   = ['tags', 'groups'];
+        $field_no = [];
+        if (strpos($field, 'avatar_id') !== false) {
+            $with[]   = $hidden[] = 'avatar';
+            $append[] = 'avatar_url';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
+
         $count = $model->where($where)->group($group)->count();
-        $pages = ceil($count / $limit);
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
         $list = $model->field($field)->where($where)
-            ->with(['avatar', 'tags', 'groups'])
-            ->append(['avatar_url', 'tag_names', 'group_names'])
-            ->hidden(['avatar', 'tags', 'groups'])
-            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->group($group)->select()->toArray();
 
-        $genders = SettingService::genders();
-        $reg_types = SettingService::reg_types();
-        $reg_channels = SettingService::reg_channels();
+        $genders      = SettingService::genders();
+        $platforms    = SettingService::platforms();
+        $applications = SettingService::applications();
 
-        return compact('count', 'pages', 'page', 'limit', 'list', 'genders', 'reg_types', 'reg_channels');
+        return compact('count', 'pages', 'page', 'limit', 'list', 'genders', 'platforms', 'applications');
     }
 
     /**
@@ -100,10 +122,11 @@ class MemberService
      * @param int  $id    会员id
      * @param bool $exce  不存在是否抛出异常
      * @param bool $group 是否返回分组信息
+     * @param bool $third 是否返回第三方账号信息
      * 
      * @return array|Exception
      */
-    public static function info($id, $exce = true, $group = false)
+    public static function info($id, $exce = true, $group = false, $third = false)
     {
         $info = MemberCache::get($id);
         if (empty($info)) {
@@ -117,7 +140,7 @@ class MemberService
                 return [];
             }
             $info = $info
-                ->append(['avatar_url', 'tag_ids', 'tag_names', 'group_ids', 'group_names', 'gender_name', 'reg_type_name', 'reg_channel_name'])
+                ->append(['avatar_url', 'tag_ids', 'tag_names', 'group_ids', 'group_names', 'gender_name', 'platform_name', 'application_name'])
                 ->hidden(['avatar', 'tags', 'groups'])
                 ->toArray();
 
@@ -140,25 +163,23 @@ class MemberService
                 $api_list = ApiService::list('list', where_disdel(['api_id', 'in', $api_ids]), [], 'api_url');
                 $api_urls = array_column($api_list, 'api_url');
             }
-
             $api_ids  = array_values(array_filter($api_ids));
             $api_urls = array_values(array_filter($api_urls));
-
             sort($api_ids);
             sort($api_urls);
-
-            $info['api_ids']   = $api_ids;
-            $info['api_urls']  = $api_urls;
+            $info['api_ids']  = $api_ids;
+            $info['api_urls'] = $api_urls;
 
             MemberCache::set($id, $info);
         }
 
+        // 分组（接口权限）
         if ($group) {
             $member_api_ids = $info['api_ids'] ?? [];
             $group_api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
-
-            $api_list = ApiService::list('list', [where_delete()], [], 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth');
-            foreach ($api_list as &$val) {
+            $api_field      = 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth';
+            $api_lists      = ApiService::list('list', [where_delete()], [], $api_field);
+            foreach ($api_lists as &$val) {
                 $val['is_check'] = 0;
                 $val['is_group'] = 0;
                 foreach ($member_api_ids as $m_api_id) {
@@ -172,7 +193,26 @@ class MemberService
                     }
                 }
             }
-            $info['api_tree'] = list_to_tree($api_list, 'api_id', 'api_pid');
+            $info['api_tree'] = list_to_tree($api_lists, 'api_id', 'api_pid');
+
+            $unlogin_api_ids = ApiService::unloginList('id');
+            $unauth_api_ids  = ApiService::unauthList('id');
+            $auth_api_ids    = array_merge($member_api_ids, $group_api_ids, $unlogin_api_ids, $unauth_api_ids);
+            $auth_api_where  = [['api_id', 'in', $auth_api_ids], where_disdel(), where_delete()];
+            $auth_api_list   = ApiService::list('list', $auth_api_where, [], $api_field);
+            $info['auth_api_list'] = $auth_api_list;
+            $info['auth_api_urls'] = array_values(array_filter(array_column($auth_api_list, 'api_url')));
+            sort($info['auth_api_urls']);
+        }
+
+        // 第三方账号
+        if ($third) {
+            $MemberModel = new MemberModel();
+            $MemberPk = $MemberModel->getPk();
+            $third_where[] = [$MemberPk, '=', $info[$MemberPk]];
+            $third_where[] = where_delete();
+            $third_field = 'third_id,member_id,platform,application,headimgurl,nickname,is_disable,login_time,create_time';
+            $info['thirds'] = ThirdService::list($third_where, 0, 0, [], $third_field)['list'] ?? [];
         }
 
         return $info;
@@ -312,6 +352,8 @@ class MemberService
         $model = new MemberModel();
         $pk = $model->getPk();
 
+        $Third = new ThirdModel();
+
         // 启动事务
         $model::startTrans();
         try {
@@ -327,9 +369,12 @@ class MemberService
                     $info->groups()->detach();
                 }
                 $model->where($pk, 'in', $ids)->delete();
+                // 删除三方账号
+                $Third->where($pk, 'in', $ids)->delete();
             } else {
                 $update = delete_update();
                 $model->where($pk, 'in', $ids)->update($update);
+                $Third->where($pk, 'in', $ids)->update($update);
             }
             // 提交事务
             $model::commit();
@@ -372,7 +417,7 @@ class MemberService
 
         $where = [];
         if ($type == 'username') {
-            // 通过会员名登录
+            // 通过用户名登录
             $where[] = ['username', '=', $username];
         } else if ($type == 'phone') {
             // 通过手机登录
@@ -412,7 +457,7 @@ class MemberService
             exception('账号已被禁用，请联系客服');
         }
 
-        $ip_info   = IpInfoUtils::info();
+        $ip_info   = Utils::ipInfo();
         $member_id = $member[$pk];
 
         // 登录信息
@@ -436,123 +481,6 @@ class MemberService
     }
 
     /**
-     * 会员微信登录注册
-     *
-     * @param array $userinfo 会员微信信息
-     *
-     * @return array
-     */
-    public static function wechat($userinfo)
-    {
-        $datetime    = datetime();
-        $unionid     = $userinfo['unionid'];
-        $openid      = $userinfo['openid'];
-        $login_ip    = $userinfo['login_ip'];
-        $reg_type    = $userinfo['reg_type'];
-        $reg_channel = $userinfo['reg_channel'];
-        $ip_info     = IpInfoUtils::info($login_ip);
-
-        unset($userinfo['login_ip'], $userinfo['reg_type'], $userinfo['reg_channel']);
-
-        $MemberModel = new MemberModel();
-        $MemberPk = $MemberModel->getPk();
-
-        $field = $MemberPk . ',nickname,login_num,is_disable,is_delete';
-        if ($unionid) {
-            $member = $MemberModel->field($field)->where(where_delete(['unionid', '=', $unionid]))->find();
-        } else {
-            $member = $MemberModel->field($field)->where(where_delete(['openid', '=', $openid]))->find();
-        }
-
-        $errmsg = '';
-        // 启动事务
-        $MemberModel->startTrans();
-        try {
-            $setting = SettingService::info();
-
-            if ($member) {
-                if ($reg_channel == SettingService::REG_CHANNEL_OFFI && !$setting['is_offi_login']) {
-                    exception('系统维护，无法登录：offi');
-                } elseif ($reg_channel == SettingService::REG_CHANNEL_MINI && !$setting['is_mini_login']) {
-                    exception('系统维护，无法登录：mini');
-                }
-                $member_id = $member[$MemberPk];
-            } else {
-                if ($reg_channel == SettingService::REG_CHANNEL_OFFI && !$setting['is_offi_register']) {
-                    exception('系统维护，无法注册：offi');
-                } elseif ($reg_channel == SettingService::REG_CHANNEL_MINI && !$setting['is_mini_register']) {
-                    exception('系统维护，无法注册：mini');
-                }
-                $insert = $userinfo;
-                $insert['create_time'] = $datetime;
-                $member_id = 0;
-            }
-
-            $member = $MemberModel->field($field)->where(where_delete([$MemberPk, '=', $member_id]))->find();
-            if ($member) {
-                $member = $member->toArray();
-                if ($member['is_disable']) {
-                    exception('账号已被禁用');
-                }
-                if (empty($member['nickname'])) {
-                    $update['nickname'] = $userinfo['nickname'];
-                }
-                if ($userinfo['headimgurl'] ?? '') {
-                    $update['headimgurl'] = $userinfo['headimgurl'];
-                }
-                $update['login_num']    = $member['login_num'] + 1;
-                $update['login_ip']     = $login_ip;
-                $update['login_time']   = $datetime;
-                $update['login_region'] = $ip_info['region'];
-                $MemberModel->where($MemberPk, $member_id)->update($update);
-                // 登录日志
-                $member_log[$MemberPk] = $member_id;
-                LogService::add($member_log, SettingService::LOG_TYPE_LOGIN);
-            } else {
-                $wx_username = md5(uniqid('wx', true));
-                if ($reg_channel == SettingService::REG_CHANNEL_OFFI) {
-                    $insert['username'] = 'wxoffi' . $wx_username;
-                } elseif ($reg_channel == SettingService::REG_CHANNEL_MINI) {
-                    $insert['username'] = 'wxmini' . $wx_username;
-                } else {
-                    $insert['username'] = 'wx' . $wx_username;
-                }
-                $insert['nickname']     = $userinfo['nickname'] ?: $insert['username'];
-                $insert['login_num']    = 1;
-                $insert['login_ip']     = $login_ip;
-                $insert['login_time']   = $datetime;
-                $insert['login_region'] = $ip_info['region'];
-                $insert['create_time']  = $datetime;
-                $insert['reg_channel']  = $reg_channel;
-                $insert['reg_type']     = $reg_type;
-                $member = MemberService::add($insert);
-                $member_id = $member[$MemberPk];
-                // 注册日志
-                $member_log[$MemberPk] = $member_id;
-                LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
-            }
-
-            // 提交事务
-            $MemberModel->commit();
-        } catch (\Exception $e) {
-            $errmsg = '微信登录失败：' . $e->getMessage();
-            // 回滚事务
-            $MemberModel->rollback();
-        }
-
-        if ($errmsg) {
-            exception($errmsg);
-        }
-
-        // 会员信息
-        MemberCache::del($member_id);
-        $member = self::info($member_id);
-        $data = self::loginField($member);
-
-        return $data;
-    }
-
-    /**
      * 会员登录返回字段
      *
      * @param array $member 会员信息
@@ -565,7 +493,7 @@ class MemberService
         $setting = SettingService::info();
         $token_name = $setting['token_name'];
         $member[$token_name] = self::token($member);
-        $fields = ['avatar_url', 'member_id', 'nickname', 'username', 'phone', 'email', 'login_ip', 'login_time', 'login_num', $token_name];
+        $fields = ['avatar_url', 'member_id', 'nickname', 'username', 'login_ip', 'login_time', 'login_num', $token_name];
         foreach ($fields as $field) {
             if (isset($member[$field])) {
                 $data[$field] = $member[$field];
@@ -573,6 +501,403 @@ class MemberService
         }
 
         return $data;
+    }
+
+    /**
+     * 会员第三方账号登录
+     *
+     * @param array $third_info 第三方账号信息
+     * openid、platform、application、headimgurl、nickname、unionid
+     * 
+     * @return array
+     */
+    public static function thirdLogin($third_info)
+    {
+        $unionid     = $third_info['unionid'] ?? '';
+        $openid      = $third_info['openid'] ?? '';
+        $platform    = $third_info['platform'];
+        $application = $third_info['application'];
+        $setting     = SettingService::info();
+        $ip_info     = Utils::ipInfo();
+        $login_ip    = $ip_info['ip'];
+        $datetime    = datetime();
+
+        if (empty($openid)) {
+            exception('登录失败：get openid fail');
+        }
+
+        $applications = [
+            SettingService::APP_WX_MINIAPP,
+            SettingService::APP_WX_OFFIACC,
+            SettingService::APP_WX_WEBSITE,
+            SettingService::APP_WX_MOBILE,
+            SettingService::APP_QQ_MINIAPP,
+            SettingService::APP_QQ_WEBSITE,
+            SettingService::APP_QQ_MOBILE,
+            SettingService::APP_WB_WEBSITE,
+        ];
+        if (!in_array($application, $applications)) {
+            exception('登录错误：application absent ' . $application);
+        }
+
+        $ThirdModel = new ThirdModel();
+        $ThirdPk    = $ThirdModel->getPk();
+
+        $MemberModel = new MemberModel();
+        $MemberPk    = $MemberModel->getPk();
+
+        $third_field = $ThirdPk . ',member_id,platform,application,openid,unionid,login_num,is_disable';
+        if ($unionid) {
+            $third_u_where = [['platform', '=', $platform], ['unionid', '=', $unionid], where_delete()];
+            $third_unionid = $ThirdModel->field($third_field)->where($third_u_where)->find();
+        }
+        $third_o_where = [['application', '=', $application], ['openid', '=', $openid], where_delete()];
+        $third_openid  = $ThirdModel->field($third_field)->where($third_o_where)->find();
+
+        $errmsg_login = '系统维护，无法登录';
+        $errmsg_register = '系统维护，无法注册';
+        if ($third_unionid ?? [] || $third_openid) {
+            if ($application == SettingService::APP_WX_MINIAPP && !$setting['wx_miniapp_login']) {
+                exception($errmsg_login . '：wx miniapp');
+            } elseif ($application == SettingService::APP_WX_OFFIACC && !$setting['wx_offiacc_login']) {
+                exception($errmsg_login . '：wx offiacc');
+            } elseif ($application == SettingService::APP_WX_WEBSITE && !$setting['wx_website_login']) {
+                exception($errmsg_login . '：wx website');
+            } elseif ($application == SettingService::APP_WX_MOBILE && !$setting['wx_mobile_login']) {
+                exception($errmsg_login . '：wx mobile');
+            } elseif ($application == SettingService::APP_QQ_MINIAPP && !$setting['qq_miniapp_login']) {
+                exception($errmsg_login . '：qq miniapp');
+            } elseif ($application == SettingService::APP_QQ_WEBSITE && !$setting['qq_website_login']) {
+                exception($errmsg_login . '：qq website');
+            } elseif ($application == SettingService::APP_QQ_MOBILE && !$setting['qq_mobile_login']) {
+                exception($errmsg_login . '：qq mobile');
+            } elseif ($application == SettingService::APP_WB_WEBSITE && !$setting['wb_website_login']) {
+                exception($errmsg_login . '：wb website');
+            }
+            $third_u_id = $third_unionid[$ThirdPk] ?? 0;
+            $third_o_id = $third_openid[$ThirdPk] ?? 0;
+            $member_id  = $third_unionid[$MemberPk] ?? $third_openid[$MemberPk] ?? 0;
+            if ($third_unionid['is_disable'] ?? 0 || $third_openid['is_disable'] ?? 0) {
+                exception($errmsg_login . '：第三方账号已禁用');
+            }
+        } else {
+            if ($application == SettingService::APP_WX_MINIAPP && !$setting['wx_miniapp_register']) {
+                exception($errmsg_register . '：wx miniapp');
+            } elseif ($application == SettingService::APP_WX_OFFIACC && !$setting['wx_offiacc_register']) {
+                exception($errmsg_register . '：wx offiacc');
+            } elseif ($application == SettingService::APP_WX_WEBSITE && !$setting['wx_website_register']) {
+                exception($errmsg_register . '：wx website');
+            } elseif ($application == SettingService::APP_WX_MOBILE && !$setting['wx_mobile_register']) {
+                exception($errmsg_register . '：wx mobile');
+            } elseif ($application == SettingService::APP_QQ_MINIAPP && !$setting['qq_miniapp_register']) {
+                exception($errmsg_register . '：qq miniapp');
+            } elseif ($application == SettingService::APP_QQ_WEBSITE && !$setting['qq_website_register']) {
+                exception($errmsg_register . '：qq website');
+            } elseif ($application == SettingService::APP_QQ_MOBILE && !$setting['qq_mobile_register']) {
+                exception($errmsg_register . '：qq mobile');
+            } elseif ($application == SettingService::APP_WB_WEBSITE && !$setting['wb_website_register']) {
+                exception($errmsg_register . '：wb website');
+            }
+            $third_u_id = 0;
+            $third_o_id = 0;
+            $member_id  = 0;
+        }
+
+        // 启动事务
+        $ThirdModel->startTrans();
+        try {
+            $member_field = $MemberPk . ',headimgurl,nickname,login_num';
+            $member_where = where_delete([$MemberPk, '=', $member_id]);
+            $member = $MemberModel->field($member_field)->where($member_where)->find();
+            if ($member) {
+                if (isset($third_info['headimgurl'])) {
+                    $member_update['headimgurl'] = $third_info['headimgurl'];
+                }
+                if (empty($member['nickname']) && isset($third_info['nickname'])) {
+                    $member_update['nickname'] = $third_info['nickname'];
+                }
+                $member_update['login_num']    = $member['login_num'] + 1;
+                $member_update['login_ip']     = $login_ip;
+                $member_update['login_time']   = $datetime;
+                $member_update['login_region'] = $ip_info['region'];
+                $MemberModel->where($MemberPk, $member_id)->update($member_update);
+                // 登录日志
+                $member_log[$MemberPk] = $member_id;
+                LogService::add($member_log, SettingService::LOG_TYPE_LOGIN);
+            } else {
+                $third_username = md5(uniqid('third', true));
+                if ($application == SettingService::APP_WX_MINIAPP) {
+                    $member_insert['username'] = 'wxminiapp' . $third_username;
+                } elseif ($application == SettingService::APP_WX_OFFIACC) {
+                    $member_insert['username'] = 'wxoffiacc' . $third_username;
+                } elseif ($application == SettingService::APP_WX_WEBSITE) {
+                    $member_insert['username'] = 'wxwebsite' . $third_username;
+                } elseif ($application == SettingService::APP_WX_MOBILE) {
+                    $member_insert['username'] = 'wxmobile' . $third_username;
+                } elseif ($application == SettingService::APP_QQ_MINIAPP) {
+                    $member_insert['username'] = 'qqminiapp' . $third_username;
+                } elseif ($application == SettingService::APP_QQ_WEBSITE) {
+                    $member_insert['username'] = 'qqwebsite' . $third_username;
+                } elseif ($application == SettingService::APP_QQ_MOBILE) {
+                    $member_insert['username'] = 'qqmobile' . $third_username;
+                } elseif ($application == SettingService::APP_WB_WEBSITE) {
+                    $member_insert['username'] = 'wbwebsite' . $third_username;
+                }
+                if (isset($third_info['headimgurl'])) {
+                    $member_insert['headimgurl'] = $third_info['headimgurl'];
+                }
+                if (isset($third_info['nickname'])) {
+                    $member_insert['nickname'] = $third_info['nickname'];
+                } else {
+                    $member_insert['nickname'] = $member_insert['username'] ?? $third_username;
+                }
+                $member_insert['platform']     = $platform;
+                $member_insert['application']  = $application;
+                $member_insert['login_num']    = 1;
+                $member_insert['login_ip']     = $login_ip;
+                $member_insert['login_time']   = $datetime;
+                $member_insert['login_region'] = $ip_info['region'];
+                $member_add = MemberService::add($member_insert);
+                $member_id  = $member_add[$MemberPk];
+                // 注册日志
+                $member_log[$MemberPk] = $member_id;
+                LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
+            }
+
+            $third_save['member_id']    = $member_id;
+            $third_save['openid']       = $openid;
+            $third_save['login_ip']     = $login_ip;
+            $third_save['login_time']   = $datetime;
+            $third_save['login_region'] = $ip_info['region'];
+            if ($unionid) {
+                $third_save['unionid'] = $unionid;
+            }
+            if (isset($third_info['headimgurl'])) {
+                $third_save['headimgurl'] = $third_info['headimgurl'];
+            }
+            if (isset($third_info['nickname'])) {
+                $third_save['nickname'] = $third_info['nickname'];
+            }
+
+            if ($third_u_id && $third_u_id != $third_o_id) {
+                $ThirdModel->where($ThirdPk, $third_u_id)->update(['update_time' => $datetime]);
+            }
+            if ($third_o_id) {
+                $third_o_update = $third_save;
+                $third_o_update['login_num'] = $third_openid['login_num'] + 1;
+                $ThirdModel->where($ThirdPk, $third_o_id)->update($third_o_update);
+            } else {
+                $third_o_insert = $third_save;
+                $third_o_insert['login_num']    = 1;
+                $third_o_insert['platform']     = $platform;
+                $third_o_insert['application']  = $application;
+                $third_o_insert['create_time']  = $datetime;
+                $ThirdModel->save($third_o_insert);
+                $third_o_id = $ThirdModel->$ThirdPk;
+            }
+
+            // 提交事务
+            $ThirdModel->commit();
+        } catch (\Exception $e) {
+            $errmsg = '登录失败：' . $e->getMessage();
+            // 回滚事务
+            $ThirdModel->rollback();
+        }
+
+        if ($errmsg ?? '') {
+            exception($errmsg);
+        }
+
+        // 会员信息
+        MemberCache::del($member_id);
+        $member = self::info($member_id);
+        $data = self::loginField($member);
+        $data['member_id'] = $member_id;
+        $data['third_id'] = $third_o_id;
+
+        return $data;
+    }
+
+    /**
+     * 会员第三方账号绑定
+     *
+     * @param array $third_info 第三方账号信息
+     * member_id、openid、platform、application、headimgurl、nickname、unionid
+     * 
+     * @return array
+     */
+    public static function thirdBind($third_info)
+    {
+        $member_id   = $third_info['member_id'];
+        $unionid     = $third_info['unionid'] ?? '';
+        $openid      = $third_info['openid'] ?? '';
+        $platform    = $third_info['platform'];
+        $application = $third_info['application'];
+        $setting     = SettingService::info();
+        $datetime    = datetime();
+
+        if (empty($member_id)) {
+            exception('绑定失败：member_id is null');
+        }
+        if (empty($openid)) {
+            exception('绑定失败：get openid fail');
+        }
+
+        $applications = [
+            SettingService::APP_WX_MINIAPP,
+            SettingService::APP_WX_OFFIACC,
+            SettingService::APP_WX_WEBSITE,
+            SettingService::APP_WX_MOBILE,
+            SettingService::APP_QQ_MINIAPP,
+            SettingService::APP_QQ_WEBSITE,
+            SettingService::APP_QQ_MOBILE,
+            SettingService::APP_WB_WEBSITE,
+        ];
+        if (!in_array($application, $applications)) {
+            exception('绑定错误：application absent ' . $application);
+        }
+
+        $ThirdModel = new ThirdModel();
+        $ThirdPk    = $ThirdModel->getPk();
+
+        $MemberModel = new MemberModel();
+        $MemberPk    = $MemberModel->getPk();
+
+        $third_field = $ThirdPk . ',member_id,platform,application,openid,unionid,login_num';
+        if ($unionid) {
+            $third_u_where = [['unionid', '=', $unionid], ['platform', '=', $platform], where_delete()];
+            $third_unionid = $ThirdModel->field($third_field)->where($third_u_where)->find();
+        }
+        $third_o_where = [['openid', '=', $openid], ['application', '=', $application], where_delete()];
+        $third_openid  = $ThirdModel->field($third_field)->where($third_o_where)->find();
+
+        $errmsg_bind = '功能维护，无法绑定';
+        if ($application == SettingService::APP_WX_MINIAPP && !$setting['wx_miniapp_bind']) {
+            exception($errmsg_bind . '：wx miniapp');
+        } elseif ($application == SettingService::APP_WX_OFFIACC && !$setting['wx_offiacc_bind']) {
+            exception($errmsg_bind . '：wx offiacc');
+        } elseif ($application == SettingService::APP_WX_WEBSITE && !$setting['wx_website_bind']) {
+            exception($errmsg_bind . '：wx website');
+        } elseif ($application == SettingService::APP_WX_MOBILE && !$setting['wx_mobile_bind']) {
+            exception($errmsg_bind . '：wx mobile');
+        } elseif ($application == SettingService::APP_QQ_MINIAPP && !$setting['qq_miniapp_bind']) {
+            exception($errmsg_bind . '：qq miniapp');
+        } elseif ($application == SettingService::APP_QQ_WEBSITE && !$setting['qq_website_bind']) {
+            exception($errmsg_bind . '：qq website');
+        } elseif ($application == SettingService::APP_QQ_MOBILE && !$setting['qq_mobile_bind']) {
+            exception($errmsg_bind . '：qq mobile');
+        } elseif ($application == SettingService::APP_WB_WEBSITE && !$setting['wb_website_bind']) {
+            exception($errmsg_bind . '：wb website');
+        }
+        $third_u_id = $third_unionid[$ThirdPk] ?? 0;
+        $third_o_id = $third_openid[$ThirdPk] ?? 0;
+        $third_m_id = $third_unionid[$MemberPk] ?? $third_openid[$MemberPk] ?? 0;
+        if ($third_m_id && $third_m_id != $member_id) {
+            exception('绑定失败：已被其它会员绑定');
+        }
+
+        // 启动事务
+        $ThirdModel->startTrans();
+        try {
+            $member_field = $MemberPk . ',headimgurl,nickname,login_num';
+            $member_where = where_delete([$MemberPk, '=', $member_id]);
+            $member = $MemberModel->field($member_field)->where($member_where)->find();
+            if (isset($third_info['headimgurl'])) {
+                $member_update['headimgurl'] = $third_info['headimgurl'];
+            }
+            if (empty($member['nickname']) && isset($third_info['nickname'])) {
+                $member_update['nickname'] = $third_info['nickname'];
+            }
+            if ($member_update ?? []) {
+                $MemberModel->where($MemberPk, $member_id)->update($member_update);
+            }
+
+            $third_save['member_id'] = $member_id;
+            $third_save['openid']    = $openid;
+            if ($unionid) {
+                $third_save['unionid'] = $unionid;
+            }
+            if (isset($third_info['headimgurl'])) {
+                $third_save['headimgurl'] = $third_info['headimgurl'];
+            }
+            if (isset($third_info['nickname'])) {
+                $third_save['nickname'] = $third_info['nickname'];
+            }
+
+            if ($third_u_id && $third_u_id != $third_o_id) {
+                $ThirdModel->where($ThirdPk, $third_u_id)->update(['update_time' => $datetime]);
+            }
+            if ($third_o_id) {
+                $third_o_update = $third_save;
+                $ThirdModel->where($ThirdPk, $third_o_id)->update($third_o_update);
+            } else {
+                $third_o_insert = $third_save;
+                $third_o_insert['platform']    = $platform;
+                $third_o_insert['application'] = $application;
+                $third_o_insert['create_time'] = $datetime;
+                $ThirdModel->save($third_o_insert);
+                $third_o_id = $ThirdModel->$ThirdPk;
+            }
+
+            // 提交事务
+            $ThirdModel->commit();
+        } catch (\Exception $e) {
+            $errmsg = '绑定失败：' . $e->getMessage();
+            // 回滚事务
+            $ThirdModel->rollback();
+        }
+
+        if ($errmsg ?? '') {
+            exception($errmsg);
+        }
+
+        // 会员信息
+        $token_name = $setting['token_name'];
+        $data[$token_name] = MemberCache::getToken($member_id);
+        $data['member_id'] = $member_id;
+        $data['third_id']  = $third_o_id;
+
+        return $data;
+    }
+
+    /**
+     * 会员第三方账号解绑
+     *
+     * @param  int $third_id  第三方账号id
+     * @param  int $member_id 会员id
+     *
+     * @return bool|Exception
+     */
+    public static function thirdUnbind($third_id, $member_id = 0)
+    {
+        $ThirdModel = new ThirdModel();
+        $ThirdPk = $ThirdModel->getPk();
+
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+
+        $third = $ThirdModel->find($third_id);
+        if (empty($third) || $third['is_delete']) {
+            exception('第三方账号不存在：' . $third_id);
+        }
+        if ($member_id && $third[$MemberPk] != $member_id) {
+            exception('解绑失败：非本会员绑定 ' . $third_id);
+        }
+        if ($third['is_delete']) {
+            exception('第三方账号已解绑：' . $third_id);
+        }
+        if (empty($member_id)) {
+            $member_id = $third[$MemberPk];
+        }
+
+        $member = $MemberModel->find($member_id);
+        $third_where = [where_delete(), [$MemberPk, '=', $third[$MemberPk]]];
+        $third_count = $ThirdModel->where($third_where)->count();
+        if (empty($member['password']) && $third_count == 1) {
+            exception('无法解绑：会员密码未设置且仅绑定了一个第三方账号');
+        }
+
+        return $ThirdModel->where($ThirdPk, $third_id)->update(delete_update());
     }
 
     /**
@@ -616,54 +941,11 @@ class MemberService
     }
 
     /**
-     * 绑定手机（小程序）
-     *
-     * @param string $code
-     * @param int    $member_id
-     *
-     * @return array
-     */
-    public static function bindPhoneMini($code, $member_id)
-    {
-        $app = WechatService::mini();
-
-        // 获取 access token 实例
-        $accessToken = $app->access_token;
-        $token = $accessToken->getToken(); // token 数组 token['access_token'] 字符串
-        // 获取手机号（新版本接口）
-        $res = http_post('https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=' . $token['access_token'], ['code' => $code]);
-        $errcode = $res['errcode'] ?? 0;
-        if ($errcode) {
-            exception('绑定失败:' . $errcode . ',' . $res['errmsg'] ?? '');
-        }
-
-        $phone = $res['phone_info']['phoneNumber'] ?? 0;
-        if ($phone) {
-            $model = new MemberModel();
-            $pk = $model->getPk();
-
-            $phone_where[] = [$pk, '<>', $member_id];
-            $phone_where[] = ['phone', '=', $phone];
-            $phone_where[] = where_delete();
-            $phone_exist = $model->field('phone')->where($phone_where)->find();
-            if ($phone_exist) {
-                exception('手机号已存在：' . $phone);
-            }
-
-            $model->where($pk, $member_id)->update(['phone' => $phone, 'update_time' => datetime()]);
-
-            return $res;
-        } else {
-            exception('绑定失败');
-        }
-    }
-
-    /**
      * 会员统计
      *
      * @param string $type 日期类型：day，month
      * @param array  $date 日期范围：[开始日期，结束日期]
-     * @param string $stat 统计类型：count总计，number数量，reg_channel注册渠道，reg_type注册方式
+     * @param string $stat 统计类型：count总计，number数量，platform平台，application应用
      * @Apidoc\Returned("type", type="string", desc="日期类型")
      * @Apidoc\Returned("date", type="array", desc="日期范围")
      * @Apidoc\Returned("title", type="string", desc="图表title.text")
@@ -790,18 +1072,18 @@ class MemberService
                     ['name' => '总数', 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
                     ['name' => '新增', 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
                 ];
-            } elseif ($stat == 'reg_channel') {
-                $data['title'] = '注册渠道';
+            } elseif ($stat == 'application') {
+                $data['title'] = '应用';
                 $series = [];
-                $reg_channels = SettingService::reg_channels();
-                foreach ($reg_channels as $k => $v) {
-                    $series[] = ['name' => $v, 'reg_channel' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
+                $applications = SettingService::applications();
+                foreach ($applications as $k => $v) {
+                    $series[] = ['name' => $v, 'application' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
                 }
                 foreach ($series as $k => $v) {
                     $series_data = $model
                         ->field($field)
                         ->where($where)
-                        ->where('reg_channel', $v['reg_channel'])
+                        ->where('application', $v['application'])
                         ->group($group)
                         ->select()
                         ->column('num', 'date');
@@ -809,18 +1091,18 @@ class MemberService
                         $series[$k]['data'][$kx] = $series_data[$vx] ?? 0;
                     }
                 }
-            } elseif ($stat == 'reg_type') {
-                $data['title'] = '注册方式';
+            } elseif ($stat == 'platform') {
+                $data['title'] = '平台';
                 $series = [];
-                $reg_types = SettingService::reg_types();
-                foreach ($reg_types as $k => $v) {
-                    $series[] = ['name' => $v, 'reg_type' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
+                $platforms = SettingService::platforms();
+                foreach ($platforms as $k => $v) {
+                    $series[] = ['name' => $v, 'platform' => $k, 'type' => 'line', 'data' => [], 'label' => ['show' => true, 'position' => 'top']];
                 }
                 foreach ($series as $k => $v) {
                     $series_data = $model
                         ->field($field)
                         ->where($where)
-                        ->where('reg_type', $v['reg_type'])
+                        ->where('platform', $v['platform'])
                         ->group($group)
                         ->select()
                         ->column('num', 'date');

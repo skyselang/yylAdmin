@@ -36,7 +36,7 @@ class SmsUtils
             $setting  = SettingService::info();
             $captcha  = mt_rand(100000, 999999);
             $content  = $setting['system_name'] . ', 您的验证码为：<b>' . $captcha . '</b>。';
-            $template = '';                                                             //模板
+            $template = ''; //模板
             $data     = ['code' => $captcha];
 
             self::send($phone, $content, $template, $data);

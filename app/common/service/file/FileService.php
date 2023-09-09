@@ -21,16 +21,18 @@ use hg\apidoc\annotation as Apidoc;
 class FileService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'file_id/d'   => 0,
+        'file_id/d'   => '',
+        'unique/s'    => '',
         'file_name/s' => '',
         'group_id/d'  => 0,
         'tag_ids/a'   => [],
         'file_type/s' => 'image',
         'domain/s'    => '',
+        'remark/s'    => '',
         'sort/d'      => 250,
     ];
 
@@ -52,7 +54,7 @@ class FileService
         $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = $group . ',group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time';
+            $field = $group . ',unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext,file_size,sort,is_disable,create_time,update_time,delete_time';
         }
         if (empty($order)) {
             $order = ['update_time' => 'desc', $group => 'desc'];
@@ -61,24 +63,51 @@ class FileService
         $model = $model->alias('m');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
-                $model = $model->join('file_tags t', 'm.file_id=t.file_id')->where('t.tag_id', 'in', $wv[2]);
+                $model = $model->join('file_tags t', 'm.file_id=t.file_id')->where('t.tag_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
         $where = array_values($where);
 
-        $count = $model->where($where)->group($group)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)
-            ->with(['group', 'tags'])
-            ->append(['group_name', 'tag_names', 'file_type_name', 'file_url', 'file_size'])
-            ->hidden(['group', 'tags'])
-            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
+        $with     = ['tags'];
+        $append   = ['tag_names', 'file_url'];
+        $hidden   = ['tags'];
+        $field_no = [];
+        if (strpos($field, 'group_id') !== false) {
+            $with[]   = $hidden[] = 'group';
+            $append[] = 'group_name';
+        }
+        if (strpos($field, 'file_type') !== false) {
+            $append[] = $field_no[] = 'file_type_name';
+        }
+        if (strpos($field, 'file_size') !== false) {
+            $append[] = 'file_size';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
 
-        $ids = array_column($list, $pk);
-        $storages = SettingService::storages();
+        $count = $model->where($where)->group($group)->count();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->group($group)->select()->toArray();
+
+        $ids       = array_column($list, $pk);
+        $storages  = SettingService::storages();
         $filetypes = SettingService::fileTypes();
-        $setting = SettingService::info('file_types,storages,limit_max,accept_ext');
+        $setting   = SettingService::info('file_types,storages,limit_max,accept_ext');
 
         return compact('count', 'pages', 'page', 'limit', 'list', 'ids', 'setting');
     }
@@ -86,8 +115,8 @@ class FileService
     /**
      * 文件信息
      *
-     * @param int  $id   文件id
-     * @param bool $exce 不存在是否抛出异常
+     * @param string $id   文件id、标识
+     * @param bool   $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
@@ -96,8 +125,16 @@ class FileService
         $info = FileCache::get($id);
         if (empty($info)) {
             $model = new FileModel();
+            $pk = $model->getPk();
 
-            $info = $model->find($id);
+            if (is_numeric($id)) {
+                $where[] = [$pk, '=', $id];
+            } else {
+                $where[] = ['unique', '=', $id];
+                $where[] = where_delete();
+            }
+
+            $info = $model->where($where)->find();
             if (empty($info)) {
                 if ($exce) {
                     exception('文件不存在：' . $id);
@@ -227,6 +264,8 @@ class FileService
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
+        $unique = $model->where($pk, 'in', $ids)->column('unique');
+
         // 启动事务
         $model->startTrans();
         try {
@@ -260,6 +299,7 @@ class FileService
         $param['ids'] = $ids;
 
         FileCache::del($ids);
+        FileCache::del($unique);
 
         return $param;
     }
@@ -276,6 +316,8 @@ class FileService
     {
         $model = new FileModel();
         $pk = $model->getPk();
+
+        $unique = $model->where($pk, 'in', $ids)->column('unique');
 
         // 启动事务
         $model->startTrans();
@@ -315,6 +357,7 @@ class FileService
         $update['ids'] = $ids;
 
         FileCache::del($ids);
+        FileCache::del($unique);
 
         return $update;
     }

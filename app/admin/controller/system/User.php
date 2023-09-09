@@ -34,10 +34,10 @@ class User extends BaseController
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="用户列表", children={
      *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", desc="头像链接", field="avatar_url"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", desc="部门名称", field="dept_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", desc="职位名称", field="post_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", desc="角色名称", field="role_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", field="dept_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", field="post_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
      * })
      * @Apidoc\Returned("dept", ref="app\common\model\system\DeptModel", type="tree", desc="部门树形", field="dept_id,dept_pid,dept_name")
      * @Apidoc\Returned("post", ref="app\common\model\system\PostModel", type="tree", desc="职位树形", field="post_id,post_pid,post_name")
@@ -51,7 +51,7 @@ class User extends BaseController
 
         $data['dept']  = DeptService::list('tree', [where_delete()], [], 'dept_id,dept_pid,dept_name');
         $data['post']  = PostService::list('tree', [where_delete()], [], 'post_id,post_pid,post_name');
-        $data['role']  = RoleService::list([where_delete()], 0, 0, [], 'role_id,role_name');
+        $data['role']  = RoleService::list([where_delete()], 0, 0, [], 'role_id,role_name')['list'] ?? [];
         $data['exps']  = where_exps();
         $data['where'] = $where;
 
@@ -62,10 +62,14 @@ class User extends BaseController
      * @Apidoc\Title("用户信息")
      * @Apidoc\Query(ref="app\common\model\system\UserModel", field="user_id")
      * @Apidoc\Returned(ref="app\common\model\system\UserModel")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptIdsAttr", field="dept_ids")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostIdsAttr", field="post_ids")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleIdsAttr", field="role_ids")
      */
     public function info()
     {
-        $param = $this->params(['user_id/d' => 0]);
+        $param = $this->params(['user_id/d' => '']);
 
         validate(UserValidate::class)->scene('info')->check($param);
 
@@ -127,7 +131,7 @@ class User extends BaseController
      * @Apidoc\Title("用户修改部门")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("dept_ids", type="array", desc="部门id")
+     * @Apidoc\Param(ref="app\common\model\system\UserModel\getDeptIdsAttr", field="dept_ids")
      */
     public function editdept()
     {
@@ -144,7 +148,7 @@ class User extends BaseController
      * @Apidoc\Title("用户修改职位")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("post_ids", type="array", desc="职位id")
+     * @Apidoc\Param(ref="app\common\model\system\UserModel\getPostIdsAttr", field="post_ids")
      */
     public function editpost()
     {
@@ -161,7 +165,7 @@ class User extends BaseController
      * @Apidoc\Title("用户修改角色")
      * @Apidoc\Method("GET,POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("role_ids", type="array", desc="角色id")
+     * @Apidoc\Param(ref="app\common\model\system\UserModel\getRoleIdsAttr", field="role_ids")
      */
     public function editrole()
     {

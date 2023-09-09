@@ -9,14 +9,17 @@
 
 namespace app\api\controller\member;
 
+use think\facade\Validate;
 use app\api\service\LoginService;
 use app\common\controller\BaseController;
 use app\common\validate\member\MemberValidate;
+use app\common\service\member\MemberService;
 use app\common\service\member\SettingService;
-use app\common\service\setting\WechatService;
+use app\common\service\member\TokenService;
 use app\common\service\utils\SmsUtils;
 use app\common\service\utils\EmailUtils;
 use app\common\service\utils\CaptchaUtils;
+use app\common\service\utils\AjCaptchaUtils;
 use app\common\cache\Cache;
 use app\common\cache\utils\CaptchaSmsCache;
 use app\common\cache\utils\CaptchaEmailCache;
@@ -31,17 +34,39 @@ class Login extends BaseController
 {
     /**
      * @Apidoc\Title("登录验证码")
+     * @Apidoc\Desc("get获取验证码，post验证行为验证码")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Query("captchaType", type="string", require=true, desc="行为，验证码方式：blockPuzzle、clickWord")
+     * @Apidoc\Query("clientUid", type="string", default="", desc="行为，唯一标识UUID")
+     * @Apidoc\Query("ts", type="int", default="", desc="行为，时间戳/毫秒")
+     * @Apidoc\Param("captchaType", type="string", require=true, desc="行为，验证码方式：blockPuzzle、clickWord")
+     * @Apidoc\Param("pointJson", type="string", default="", desc="行为，pointJson")
+     * @Apidoc\Param("token", type="string", default="", desc="行为，token")
      * @Apidoc\Returned(ref="captchaReturn")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function captcha()
     {
-        $setting = SettingService::info();
+        $data = SettingService::info('is_captcha_login,captcha_mode,captcha_type');
 
-        $data['captcha_switch'] = $setting['captcha_login'];
-
-        if ($data['captcha_switch']) {
-            $captcha = CaptchaUtils::create();
-            $data    = array_merge($data, $captcha);
+        $data['captcha_switch'] = $data['is_captcha_login'];
+        if ($this->request->isGet()) {
+            if ($data['captcha_switch']) {
+                if ($data['captcha_mode'] == 2) {
+                    $AjCaptchaUtils = new AjCaptchaUtils();
+                    $captcha = $AjCaptchaUtils->get($data['captcha_type']);
+                    $data = array_merge($data, $captcha);
+                } else {
+                    $captcha = CaptchaUtils::create($data['captcha_type']);
+                    $data = array_merge($data, $captcha);
+                }
+            }
+        } else {
+            $captchaData = $this->param('');
+            $AjCaptchaUtils = new AjCaptchaUtils();
+            $data = $AjCaptchaUtils->check($data['captcha_type'], $captchaData);
         }
 
         return success($data);
@@ -50,42 +75,77 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("登录")
      * @Apidoc\Method("POST")
+     * @Apidoc\Param("application", type="int", require=false, desc="应用")
      * @Apidoc\Param("acc_type", type="string", require=false, desc="账号类型：username用户名、phone手机、email邮箱")
      * @Apidoc\Param("account", type="string", require=true, desc="账号：用户名、手机、邮箱")
      * @Apidoc\Param("password", type="string", require=true, default="123456", desc="密码")
      * @Apidoc\Param(ref="captchaParam")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,phone,email,login_ip,login_time,login_num")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function login()
     {
+        $setting = SettingService::info();
+        if (!$setting['is_login']) {
+            return error('系统维护，无法登录');
+        }
+
         $param = $this->params([
+            'application/s'  => SettingService::APP_UNKNOWN,
             'acc_type/s'     => '',
             'account/s'      => '',
             'password/s'     => '',
             'captcha_id/s'   => '',
             'captcha_code/s' => '',
+            'ajcaptcha',
         ]);
-
         if (empty($param['account'])) {
-            return error([], '请输入账号');
+            return error('请输入账号');
         }
         if (empty($param['password'])) {
-            return error([], '请输入密码');
+            return error('请输入密码');
         }
 
         $setting = SettingService::info();
-        if ($setting['captcha_login']) {
+        if ($setting['is_captcha_login']) {
+            if (empty($param['captcha_id'])) {
+                return error('captcha_id must');
+            }
             if (empty($param['captcha_code'])) {
-                return error([], '请输入验证码');
+                return error('请输入验证码');
             }
             $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
             if (empty($captcha_check)) {
-                return error([], '验证码错误');
+                return error('验证码错误');
+            }
+        }
+
+        $setting = SettingService::info();
+        if ($setting['is_captcha_login']) {
+            if ($setting['captcha_mode'] == 2) {
+                $AjCaptchaUtils = new AjCaptchaUtils();
+                $captcha_check = $AjCaptchaUtils->checkTwo($setting['captcha_type'], $param['ajcaptcha']);
+                if ($captcha_check['error']) {
+                    exception('验证码错误');
+                }
+            } else {
+                if (empty($param['captcha_id'])) {
+                    return error('captcha_id must');
+                }
+                if (empty($param['captcha_code'])) {
+                    return error('请输入验证码');
+                }
+                $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
+                if (empty($captcha_check)) {
+                    return error('验证码错误');
+                }
             }
         }
 
@@ -97,9 +157,17 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("手机登录验证码")
      * @Apidoc\Query("phone", type="string", require=true, desc="手机")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function phoneCaptcha()
     {
+        $setting = SettingService::info();
+        if (!$setting['is_phone_login']) {
+            return error('系统维护，无法登录');
+        }
+
         $param = $this->params(['phone/s' => '']);
 
         validate(MemberValidate::class)->scene('phoneLoginCaptcha')->check($param);
@@ -115,23 +183,31 @@ class Login extends BaseController
      * @Apidoc\Param("phone", type="string", require=true, desc="手机")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,phone,email,login_ip,login_time,login_num")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function phoneLogin()
     {
+        $setting = SettingService::info();
+        if (!$setting['is_phone_login']) {
+            return error('系统维护，无法登录');
+        }
+
         $param = $this->params(['phone/s' => '', 'captcha_code/s' => '']);
 
         validate(MemberValidate::class)->scene('phoneLogin')->check($param);
         if (empty($param['captcha_code'])) {
-            return error([], '请输入验证码');
+            return error('请输入验证码');
         }
         $captcha = CaptchaSmsCache::get($param['phone']);
         if ($captcha != $param['captcha_code']) {
-            return error([], '验证码错误');
+            return error('验证码错误');
         }
 
         $data = LoginService::login($param, 'phone');
@@ -143,9 +219,17 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("邮箱登录验证码")
      * @Apidoc\Query("email", type="string", require=true, desc="邮箱")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function emailCaptcha()
     {
+        $setting = SettingService::info();
+        if (!$setting['is_email_login']) {
+            return error('系统维护，无法登录');
+        }
+
         $param = $this->params(['email/s' => '']);
 
         validate(MemberValidate::class)->scene('emailLoginCaptcha')->check($param);
@@ -161,23 +245,31 @@ class Login extends BaseController
      * @Apidoc\Param("email", type="string", require=true, desc="邮箱")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,phone,email,login_ip,login_time,login_num")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function emailLogin()
     {
+        $setting = SettingService::info();
+        if (!$setting['is_email_login']) {
+            return error('系统维护，无法登录');
+        }
+
         $param = $this->params(['email/s' => '', 'captcha_code/s' => '']);
 
         validate(MemberValidate::class)->scene('emailLogin')->check($param);
         if (empty($param['captcha_code'])) {
-            return error([], '请输入验证码');
+            return error('请输入验证码');
         }
         $captcha = CaptchaEmailCache::get($param['email']);
         if ($captcha != $param['captcha_code']) {
-            return error([], '验证码错误');
+            return error('验证码错误');
         }
 
         $data = LoginService::login($param, 'email');
@@ -187,141 +279,285 @@ class Login extends BaseController
     }
 
     /**
-     * @Apidoc\Title("公众号登录")
-     * @Apidoc\Query("offiurl", type="string", require=true, desc="登录成功后跳转地址，会携带 token 参数")
-     */
-    public function offi()
-    {
-        $setting = SettingService::info();
-        $ApiToken = $this->param($setting['token_name'] . '/s', '');
-        if ($ApiToken) {
-            die('登录成功，请保存 ' . $setting['token_name']);
-        }
-
-        $offiurl = $this->param('offiurl/s', '');
-        if (empty($offiurl)) {
-            $offiurl = (string) url('', [], false, true);
-            // exception('offiurl must');
-        }
-
-        Cache::set('offiurl', $offiurl, 30);
-
-        $officallback = (string) url('officallback', [], false, true);
-
-        $config = [
-            'oauth' => [
-                'scopes'   => ['snsapi_userinfo'],
-                'callback' => $officallback,
-            ],
-        ];
-
-        $app = WechatService::offi($config);
-
-        $oauth = $app->oauth;
-
-        $oauth->redirect()->send();
-    }
-    // 公众号登录回调
-    public function officallback()
-    {
-        $app  = WechatService::offi();
-        $user = $app->oauth->user()->getOriginal();
-        if (empty($user) || !isset($user['openid'])) {
-            exception('微信登录失败:' . $user['errmsg']);
-        }
-
-        $userinfo = [
-            'unionid'    => '',
-            'openid'     => '',
-            'nickname'   => '',
-            'sex'        => '',
-            'city'       => '',
-            'province'   => '',
-            'country'    => '',
-            'headimgurl' => '',
-            'language'   => '',
-            'privilege'  => ''
-        ];
-        foreach ($userinfo as $k => $v) {
-            if (isset($user[$k])) {
-                $userinfo[$k] = $user[$k];
-            }
-        }
-        $userinfo['login_ip']    = $this->request->ip();
-        $userinfo['reg_channel'] = SettingService::REG_CHANNEL_OFFI;
-        $userinfo['reg_type']    = SettingService::REG_TYPE_WECHAT;
-
-        $data = LoginService::wechat($userinfo);
-
-        $setting = SettingService::info();
-        $offiurl = Cache::get('offiurl');
-        $offiurl = $offiurl . '?' . $setting['token_name'] . '=' . $data[$setting['token_name']];
-
-        Header('Location:' . $offiurl);
-    }
-
-    /**
      * @Apidoc\Title("小程序登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("code", type="string", require=true, desc="wx.login，用户登录凭证")
-     * @Apidoc\Param("user_info", type="object", require=false, desc="wx.getUserProfile，微信用户信息")
-     * @Apidoc\Param("iv", type="string", require=false, desc="加密算法的初始向量")
-     * @Apidoc\Param("encrypted_data", type="string", require=false, desc="包括敏感数据在内的完整用户信息的加密数据")
+     * @Apidoc\Param("app", type="string", default="wx", desc="应用：wx 微信小程序，qq QQ小程序")
+     * @Apidoc\Param("code", type="string", require=true, desc="code 用户登录凭证")
+     * @Apidoc\Param("userinfo", type="object", require=false, desc="用户信息：headimgurl 头像 ，nickname 昵称")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,phone,email,login_ip,login_time,login_num")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
-    public function mini()
+    public function miniapp()
     {
-        $code           = $this->param('code/s', '');
-        $user_info      = $this->param('user_info/a', []);
-        $iv             = $this->param('iv/s', '');
-        $encrypted_data = $this->param('encrypted_data/s', '');
-        if (empty($code)) {
-            return error([], 'code 必须');
+        $param    = $this->params(['app/s' => 'wx', 'code/s' => '', 'userinfo/a' => []]);
+        $validate = Validate::rule(['app' => 'require', 'code' => 'require', 'userinfo' => 'array']);
+        if (!$validate->check($param)) {
+            return error($validate->getError());
         }
 
-        $app  = WechatService::mini();
-        $user = $app->auth->session($code);
-
-        if (empty($user) || !isset($user['openid'])) {
-            return error([], '微信登录失败:' . $user['errmsg']);
+        $setting = SettingService::info();
+        if ($param['app'] == 'wx') {
+            $platform    = SettingService::PLATFORM_WX;
+            $application = SettingService::APP_WX_MINIAPP;
+            $miniapp     = new \thirdsdk\WxMiniapp($setting['wx_miniapp_appid'], $setting['wx_miniapp_appsecret']);
+        } elseif ($param['app'] == 'qq') {
+            $platform    = SettingService::PLATFORM_QQ;
+            $application = SettingService::APP_QQ_MINIAPP;
+            $miniapp     = new \thirdsdk\QqMiniapp($setting['qq_miniapp_appid'], $setting['qq_miniapp_appsecret']);
+        } else {
+            return error('app value error');
         }
 
-        $userinfo = [
-            'unionid'    => '',
-            'openid'     => '',
-            'nickname'   => '',
-            'gender'     => '',
-            'city'       => '',
-            'province'   => '',
-            'country'    => '',
-            'headimgurl' => '',
-            'language'   => '',
-            'privilege'  => '',
-        ];
-
-        if ($iv && $encrypted_data) {
-            $decrypted_data = $app->encryptor->decryptData($user['session_key'], $iv, $encrypted_data);
-            $user = array_merge($user, $user_info, $decrypted_data);
+        $user_info                = $miniapp->login($param['code']);
+        $user_info['platform']    = $platform;
+        $user_info['application'] = $application;
+        if (isset($param['userinfo']['headimgurl'])) {
+            $user_info['headimgurl'] = $param['userinfo']['headimgurl'];
+        }
+        if (isset($param['userinfo']['nickname'])) {
+            $user_info['nickname'] = $param['userinfo']['nickname'];
         }
 
-        $user['nickname']   = isset($user['nickName']) ? $user['nickName'] : '';
-        $user['gender']     = isset($user['gender']) ? $user['gender'] : 0;
-        $user['headimgurl'] = isset($user['avatarUrl']) ? $user['avatarUrl'] : '';
-        foreach ($userinfo as $k => $v) {
-            if (isset($user[$k])) {
-                $userinfo[$k] = $user[$k];
+        $data = LoginService::thirdLogin($user_info);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("公众号登录")
+     * @Apidoc\Desc("拼接参数后打开链接")
+     * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信公众号")
+     * @Apidoc\Query("jump_url", type="string", require=true, desc="登录成功后跳转地址，会携带 token 参数")
+     * @Apidoc\Query("redirect_uri", type="string", require=false, desc="redirect_uri，调试使用")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
+     */
+    public function offiacc()
+    {
+        $param    = $this->params(['app/s' => 'wx', 'jump_url/s' => '', 'redirect_uri/s' => '']);
+        $validate = Validate::rule(['app' => 'require', 'jump_url' => 'require|url', 'redirect_uri' => 'url']);
+        if (!$validate->check($param)) {
+            echo $validate->getError();
+            return;
+        }
+
+        $setting = SettingService::info();
+        $app['app']  = $param['app'];
+        if ($app['app'] == 'wx') {
+            $app['platform']    = SettingService::PLATFORM_WX;
+            $app['application'] = SettingService::APP_WX_OFFIACC;
+            $offiacc            = new \thirdsdk\WxOffiacc($setting['wx_offiacc_appid'], $setting['wx_offiacc_appsecret']);
+        } else {
+            echo 'app value error';
+            return;
+        }
+
+        $redirect_uri = $param['redirect_uri'] ?: (string) url('redirectUri', [], false, true);
+        $state        = md5(uniqid('offiacc', true));
+
+        $cache['type']         = 'offiacc';
+        $cache['app']          = $app;
+        $cache['jump_url']     = $param['jump_url'];
+        $cache['redirect_uri'] = $redirect_uri;
+        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
+
+        $offiacc->login($redirect_uri, $state);
+    }
+
+    /**
+     * @Apidoc\Title("网站应用登录")
+     * @Apidoc\Desc("拼接参数后打开链接")
+     * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信网站应用，qq QQ网站应用，wb 微博网站应用")
+     * @Apidoc\Query("jump_url", type="string", require=true, desc="登录成功后跳转地址，会携带 token 参数")
+     * @Apidoc\Query("redirect_uri", type="string", require=false, desc="redirect_uri，调试使用")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
+     */
+    public function website()
+    {
+        $param    = $this->params(['app/s' => 'wx', 'jump_url/s' => '', 'redirect_uri/s' => '']);
+        $validate = Validate::rule(['app' => 'require', 'jump_url' => 'require|url', 'redirect_uri' => 'url']);
+        if (!$validate->check($param)) {
+            echo $validate->getError();
+            return;
+        }
+
+        $setting = SettingService::info();
+        $app['app'] = $param['app'];
+        if ($app['app'] == 'wx') {
+            $app['platform']    = SettingService::PLATFORM_WX;
+            $app['application'] = SettingService::APP_WX_WEBSITE;
+            $website            = new \thirdsdk\WxWebsite($setting['wx_website_appid'], $setting['wx_website_appsecret']);
+        } elseif ($app['app'] == 'qq') {
+            $app['platform']    = SettingService::PLATFORM_QQ;
+            $app['application'] = SettingService::APP_QQ_WEBSITE;
+            $website            = new \thirdsdk\QqWebsite($setting['qq_website_appid'], $setting['qq_website_appsecret']);
+        } elseif ($app['app'] == 'wb') {
+            $app['platform']    = SettingService::PLATFORM_WB;
+            $app['application'] = SettingService::APP_WB_WEBSITE;
+            $website            = new \thirdsdk\WbWebsite($setting['wb_website_appid'], $setting['wb_website_appsecret']);
+        } else {
+            echo 'app value error';
+            return;
+        }
+
+        $redirect_uri = $param['redirect_uri'] ?: (string) url('redirectUri', [], false, true);
+        $state        = md5(uniqid('website', true));
+
+        $cache['type']         = 'website';
+        $cache['app']          = $app;
+        $cache['jump_url']     = $param['jump_url'];
+        $cache['redirect_uri'] = $redirect_uri;
+        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
+
+        $website->login($redirect_uri, $state);
+    }
+
+    /**
+     * @Apidoc\Title("公众号/网站登录/绑定回调")
+     * @Apidoc\Desc("调试使用")
+     * @Apidoc\Query("code", type="string", require=true, desc="code")
+     * @Apidoc\Query("state", type="string", require=true, desc="state")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
+     */
+    public function redirectUri()
+    {
+        $param    = $this->params(['code/s' => '', 'state/s' => '']);
+        $validate = Validate::rule(['code' => 'require', 'state' => 'require']);
+        if (!$validate->check($param)) {
+            echo $validate->getError();
+            return;
+        }
+        $cache        = Cache::get(SettingService::OFFIACC_WEBSITE_KEY . $param['state']);
+        $type         = $cache['type'];
+        $app          = $cache['app'];
+        $jump_url     = $cache['jump_url'];
+        $token        = $cache['token'] ?? '';
+        $redirect_uri = $cache['redirect_uri'] ?? '';
+        if (empty($app) || empty($jump_url)) {
+            if ($token) {
+                echo '绑定失败，请重试！';
+            } else {
+                echo '登录失败，请重试！';
             }
+            return;
         }
-        $userinfo['login_ip']    = $this->request->ip();
-        $userinfo['reg_channel'] = SettingService::REG_CHANNEL_MINI;
-        $userinfo['reg_type']    = SettingService::REG_TYPE_WECHAT;
 
-        $data = LoginService::wechat($userinfo);
+        $setting = SettingService::info();
+        if ($type == 'offiacc') {
+            if ($app['app'] == 'wx') {
+                $offiacc   = new \thirdsdk\WxOffiacc($setting['wx_offiacc_appid'], $setting['wx_offiacc_appsecret']);
+                $user_info = $offiacc->getUserinfo($param['code']);
+            } else {
+                echo 'app value error';
+                return;
+            }
+        } elseif ($type == 'website') {
+            if ($app['app'] == 'wx') {
+                $website   = new \thirdsdk\WxWebsite($setting['wx_website_appid'], $setting['wx_website_appsecret']);
+                $user_info = $website->getUserinfo($param['code']);
+            } elseif ($app['app'] == 'qq') {
+                $website   = new \thirdsdk\QqWebsite($setting['qq_website_appid'], $setting['qq_website_appsecret']);
+                $user_info = $website->getUserinfo($redirect_uri, $param['code']);
+            } elseif ($app['app'] == 'wb') {
+                $website   = new \thirdsdk\WbWebsite($setting['wb_website_appid'], $setting['wb_website_appsecret']);
+                $user_info = $website->getUserinfo($redirect_uri, $param['code']);
+            } else {
+                echo 'app value error';
+                return;
+            }
+        } else {
+            echo 'type value error';
+            return;
+        }
+
+        $user_info['platform']    = $app['platform'];
+        $user_info['application'] = $app['application'];
+        if ($token) {
+            $member_id = TokenService::memberId($token, true);
+            $user_info = array_merge($user_info, ['member_id' => $member_id]);
+            $member    = MemberService::thirdBind($user_info);
+        } else {
+            $member = LoginService::thirdLogin($user_info);
+        }
+
+        Cache::del(SettingService::OFFIACC_WEBSITE_KEY . $param['state']);
+        $location_url = $jump_url . '?' . $setting['token_name'] . '=' . $member[$setting['token_name']];
+        header('Location:' . $location_url);
+    }
+
+    /**
+     * @Apidoc\Title("移动应用登录")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param("app", type="string", default="wx", desc="应用：wx 微信移动应用，qq QQ移动应用")
+     * @Apidoc\Param("code", type="string", require=true, desc="wx，code")
+     * @Apidoc\Param("access_token", type="string", require=true, desc="qq，access_token")
+     * @Apidoc\Param("openid", type="string", require=true, desc="qq，openid")
+     * @Apidoc\Param("userinfo", type="object", require=false, desc="用户信息：headimgurl头像，nickname昵称")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
+     * @Apidoc\Returned("ApiToken", type="string", desc="token")
+     * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
+     * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
+     * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
+     */
+    public function mobile()
+    {
+        $param = $this->params(['app/s' => 'wx', 'code/s' => '', 'access_token/s' => '', 'openid/s' => '', 'userinfo/a' => []]);
+        $rule  = ['app' => 'require', 'userinfo' => 'array'];
+        if ($param['app'] == 'wx') {
+            $rule['code'] = 'require';
+        } elseif ($param['app'] == 'qq') {
+            $rule['access_token'] = 'require';
+            $rule['openid']       = 'require';
+        } else {
+            return error('app value error');
+        }
+
+        $validate = Validate::rule($rule);
+        if (!$validate->check($param)) {
+            return error($validate->getError());
+        }
+
+        $setting = SettingService::info();
+        if ($param['app'] == 'wx') {
+            $platform    = SettingService::PLATFORM_WX;
+            $application = SettingService::APP_WX_MOBILE;
+            $mobile      = new \thirdsdk\WxMobile($setting['wx_mobile_appid'], $setting['wx_mobile_appsecret']);
+            $user_info   = $mobile->login($param['code']);
+        } elseif ($param['app'] == 'qq') {
+            $platform    = SettingService::PLATFORM_QQ;
+            $application = SettingService::APP_QQ_MOBILE;
+            $mobile      = new \thirdsdk\QqMobile($setting['qq_mobile_appid'], $setting['qq_mobile_appsecret']);
+            $user_info   = $mobile->login($param['access_token'], $param['openid']);
+        } else {
+            return error('app value error');
+        }
+
+        $user_info['platform']    = $platform;
+        $user_info['application'] = $application;
+        if (isset($param['userinfo']['headimgurl'])) {
+            $user_info['headimgurl'] = $param['userinfo']['headimgurl'];
+        }
+        if (isset($param['userinfo']['nickname'])) {
+            $user_info['nickname'] = $param['userinfo']['nickname'];
+        }
+
+        $data = LoginService::thirdLogin($user_info);
 
         return success($data);
     }

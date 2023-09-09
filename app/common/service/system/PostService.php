@@ -20,15 +20,16 @@ use app\common\model\system\UserAttributesModel;
 class PostService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'post_id/d'   => 0,
+        'post_id/d'   => '',
         'post_pid/d'  => 0,
         'post_name/s' => '',
         'post_abbr/s' => '',
         'post_desc/s' => '',
+        'remark/s'    => '',
         'sort/d'      => 250,
     ];
 

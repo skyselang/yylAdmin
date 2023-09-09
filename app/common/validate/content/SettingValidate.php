@@ -17,34 +17,13 @@ use think\Validate;
 class SettingValidate extends Validate
 {
     // 验证规则
-    protected $rule = [
-        'diy_config' => ['array', 'checkDiyConfig'],
-    ];
+    protected $rule = [];
 
     // 错误信息
     protected $message = [];
 
     // 验证场景
     protected $scene = [
-        'edit' => ['diy_config'],
+        'edit' => [],
     ];
-
-    // 自定义验证规则：自定义设置验证
-    protected function checkDiyConfig($value, $rule, $data = [])
-    {
-        foreach ($data['diy_config'] as $v) {
-            if (empty($v['config_key'])) {
-                return '自定义信息：请输入键名';
-            }
-        }
-
-        $key_array  = array_column($data['diy_config'], 'config_key');
-        $key_unique = array_unique($key_array);
-        $key_repeat = array_diff_assoc($key_array, $key_unique);
-        if ($key_repeat) {
-            return  '自定义信息：存在重复键名：' . implode(',', $key_repeat);
-        }
-
-        return true;
-    }
 }

@@ -46,51 +46,31 @@ class SettingModel extends Model
         return $this['logo']['file_url'] ?? '';
     }
 
-    // 关联公众号文件
+    // 关联公众号二维码文件
     public function offi()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'offi_id')->append(['file_url'])->where(where_disdel());
     }
-    // 获取公众号链接
+    // 获取公众号二维码链接
     public function getOffiUrlAttr()
     {
         return $this['offi']['file_url'] ?? '';
     }
 
-    // 关联小程序文件
+    // 关联小程序码文件
     public function mini()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'mini_id')->append(['file_url'])->where(where_disdel());
     }
-    // 获取小程序链接
+    // 获取小程序码链接
     public function getMiniUrlAttr()
     {
         return $this['mini']['file_url'] ?? '';
     }
 
-    // 修改自定义设置
-    public function setDiyConfigAttr($value)
-    {
-        return serialize($value);
-    }
-    // 获取自定义设置
-    public function getDiyConfigAttr($value)
-    {
-        return unserialize($value);
-    }
-    // 获取自定义设置对象
-    public function getDiyConObjAttr($value, $data)
-    {
-        $diy_config = is_array($data['diy_config']) ? $data['diy_config'] : unserialize($data['diy_config']);
-        foreach ($diy_config as $diy) {
-            $diy_con_obj[$diy['config_key']] = $diy['config_val'];
-        }
-        return $diy_con_obj ?? [];
-    }
-
     // 获取反馈类型
     public function getFeedbackTypeAttr()
     {
-        return SettingService::feedback_types();
+        return SettingService::feedbackTypes();
     }
 }

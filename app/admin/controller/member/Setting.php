@@ -17,17 +17,43 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("会员设置")
  * @Apidoc\Group("member")
- * @Apidoc\Sort("600")
+ * @Apidoc\Sort("700")
  */
 class Setting extends BaseController
 {
     /**
+     * @Apidoc\Title("会员设置信息")
+     * @Apidoc\Returned(ref="app\common\model\member\SettingModel", field="default_avatar_id")
+     * @Apidoc\Returned(ref="app\common\service\member\SettingService\info", field="default_avatar_url")
+     */
+    public function memberInfo()
+    {
+        $data = SettingService::info('default_avatar_id,default_avatar_url');
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\member\SettingModel", field="default_avatar_id")
+     */
+    public function memberEdit()
+    {
+        $param = $this->params(['default_avatar_id/d' => 0]);
+
+        $data = SettingService::edit($param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("验证码设置信息")
-     * @Apidoc\Returned(ref="app\common\model\member\SettingModel", field="captcha_register,captcha_login")
+     * @Apidoc\Returned(ref="app\common\model\member\SettingModel", field="captcha_mode,captcha_type")
      */
     public function captchaInfo()
     {
-        $data = SettingService::info('captcha_register,captcha_login');
+        $data = SettingService::info('captcha_mode,captcha_type');
 
         return success($data);
     }
@@ -35,13 +61,11 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("验证码设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\SettingModel", field="captcha_register,captcha_login")
+     * @Apidoc\Param(ref="app\common\model\member\SettingModel", field="captcha_mode,captcha_type")
      */
     public function captchaEdit()
     {
-        $param = $this->params(['captcha_register/d' => 0, 'captcha_login/d' => 0]);
-
-        validate(SettingValidate::class)->scene('captcha_edit')->check($param);
+        $param = $this->params(['captcha_mode/d' => 1, 'captcha_type/d' => 1]);
 
         $data = SettingService::edit($param);
 
@@ -131,11 +155,11 @@ class Setting extends BaseController
 
     /**
      * @Apidoc\Title("登录注册设置信息")
-     * @Apidoc\Returned(ref="app\common\model\member\SettingModel", field="is_register,is_login,is_offi_register,is_offi_login,is_mini_register,is_mini_login")
+     * @Apidoc\Returned(ref="app\common\model\member\SettingModel", field="is_captcha_register,is_captcha_login,is_register,is_login,is_captcha_register,is_captcha_login,is_phone_register,is_phone_login,is_email_register,is_email_login")
      */
     public function logregInfo()
     {
-        $data = SettingService::info('is_register,is_login,is_offi_register,is_offi_login,is_mini_register,is_mini_login');
+        $data = SettingService::info('is_captcha_register,is_captcha_login,is_register,is_login,is_captcha_register,is_captcha_login,is_phone_register,is_phone_login,is_email_register,is_email_login');
 
         return success($data);
     }
@@ -143,20 +167,22 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("登录注册设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\SettingModel", field="is_register,is_login,is_offi_register,is_offi_login,is_mini_register,is_mini_login")
+     * @Apidoc\Param(ref="app\common\model\member\SettingModel", field="is_captcha_register,is_captcha_login,is_register,is_login,is_phone_register,is_phone_login,is_email_register,is_email_login")
      */
     public function logregEdit()
     {
         $param = $this->params([
-            'is_register/d'      => 1,
-            'is_login/d'         => 1,
-            'is_offi_register/d' => 1,
-            'is_offi_login/d'    => 1,
-            'is_mini_register/d' => 1,
-            'is_mini_login/d'    => 1
+            'is_captcha_register/d' => 0,
+            'is_captcha_login/d'    => 0,
+            'is_register/d'         => 1,
+            'is_login/d'            => 1,
+            'is_captcha_register/d' => 1,
+            'is_captcha_login/d'    => 1,
+            'is_phone_register/d'   => 1,
+            'is_phone_login/d'      => 1,
+            'is_email_register/d'   => 1,
+            'is_email_login/d'      => 1,
         ]);
-
-        validate(SettingValidate::class)->scene('logreg_edit')->check($param);
 
         $data = SettingService::edit($param);
 
@@ -164,26 +190,52 @@ class Setting extends BaseController
     }
 
     /**
-     * @Apidoc\Title("自定义设置信息")
-     * @Apidoc\Returned(ref="diyConReturn")
+     * @Apidoc\Title("第三方账号设置信息")
+     * @Apidoc\Returned(ref="app\common\model\member\SettingModel", field="ya_miniapp_register,ya_miniapp_login,ya_offiacc_register,ya_offiacc_login,ya_website_register,ya_website_login,ya_mobile_register,ya_mobile_login,wx_miniapp_register,wx_miniapp_login,wx_offiacc_register,wx_offiacc_login,wx_website_register,wx_website_login,wx_mobile_register,wx_mobile_login,qq_miniapp_register,qq_miniapp_login,qq_website_register,qq_website_login,qq_mobile_register,qq_mobile_login,wx_miniapp_appid,wx_miniapp_appsecret,wx_offiacc_appid,wx_offiacc_appsecret,wx_website_appid,wx_website_appsecret,wx_mobile_appid,wx_mobile_appsecret,qq_miniapp_appid,qq_miniapp_appsecret,qq_website_appid,qq_website_appsecret,qq_mobile_appid,qq_mobile_appsecret,wb_website_appid,wb_website_appsecret,wb_website_register,wb_website_login,wb_website_bind")
+     * @Apidoc\Returned("platform_desc", type="string", desc="平台说明")
      */
-    public function diyInfo()
+    public function thirdInfo()
     {
-        $data = SettingService::info('diy_config');
+        $data = SettingService::info('
+        ya_miniapp_register,ya_miniapp_login,
+        ya_offiacc_register,ya_offiacc_login,
+        ya_website_register,ya_website_login,
+        ya_mobile_register,ya_mobile_login,
+        wx_miniapp_appid,wx_miniapp_appsecret,wx_miniapp_register,wx_miniapp_login,wx_miniapp_bind,
+        wx_offiacc_appid,wx_offiacc_appsecret,wx_offiacc_register,wx_offiacc_login,wx_offiacc_bind,
+        wx_website_appid,wx_website_appsecret,wx_website_register,wx_website_login,wx_website_bind,
+        wx_mobile_appid,wx_mobile_appsecret,wx_mobile_register,wx_mobile_login,wx_mobile_bind,
+        qq_miniapp_appid,qq_miniapp_appsecret,qq_miniapp_register,qq_miniapp_login,qq_miniapp_bind,
+        qq_website_appid,qq_website_appsecret,qq_website_register,qq_website_login,qq_website_bind,
+        qq_mobile_appid,qq_mobile_appsecret,qq_mobile_register,qq_mobile_login,qq_mobile_bind,
+        wb_website_appid,wb_website_appsecret,wb_website_register,wb_website_login,wb_website_bind
+       ');
+        $data['platform_desc'] = SettingService::PLATFORM_DESC;
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("自定义设置修改")
+     * @Apidoc\Title("第三方账号设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="diyConParam")
+     * @Apidoc\Param(ref="app\common\model\member\SettingModel", field="ya_miniapp_register,ya_miniapp_login,ya_offiacc_register,ya_offiacc_login,ya_website_register,ya_website_login,ya_mobile_register,ya_mobile_login,wx_miniapp_register,wx_miniapp_login,wx_offiacc_register,wx_offiacc_login,wx_website_register,wx_website_login,wx_mobile_register,wx_mobile_login,qq_miniapp_register,qq_miniapp_login,qq_website_register,qq_website_login,qq_mobile_register,qq_mobile_login,wx_miniapp_appid,wx_miniapp_appsecret,wx_offiacc_appid,wx_offiacc_appsecret,wx_website_appid,wx_website_appsecret,wx_mobile_appid,wx_mobile_appsecret,qq_miniapp_appid,qq_miniapp_appsecret,qq_website_appid,qq_website_appsecret,qq_mobile_appid,qq_mobile_appsecret,wb_website_appid,wb_website_appsecret,wb_website_register,wb_website_login,wb_website_bind")
      */
-    public function diyEdit()
+    public function thirdEdit()
     {
-        $param = $this->params(['diy_config/a' => []]);
-
-        validate(SettingValidate::class)->scene('diy_edit')->check($param);
+        $param = $this->params([
+            'ya_miniapp_register/d' => 1, 'ya_miniapp_login/d'      => 1,
+            'ya_offiacc_register/d' => 1, 'ya_offiacc_login/d'      => 1,
+            'ya_website_register/d' => 1, 'ya_website_login/d'      => 1,
+            'ya_mobile_register/d'  => 1, 'ya_mobile_login/d'       => 1,
+            'wx_miniapp_appid/s'    => '', 'wx_miniapp_appsecret/s' => '', 'wx_miniapp_register/d' => 1, 'wx_miniapp_login/d' => 1, 'wx_miniapp_bind/d' => 1,
+            'wx_offiacc_appid/s'    => '', 'wx_offiacc_appsecret/s' => '', 'wx_offiacc_register/d' => 1, 'wx_offiacc_login/d' => 1, 'wx_offiacc_bind/d' => 1,
+            'wx_website_appid/s'    => '', 'wx_website_appsecret/s' => '', 'wx_website_register/d' => 1, 'wx_website_login/d' => 1, 'wx_website_bind/d' => 1,
+            'wx_mobile_appid/s'     => '', 'wx_mobile_appsecret/s'  => '', 'wx_mobile_register/d'  => 1, 'wx_mobile_login/d'  => 1, 'wx_mobile_bind/d'  => 1,
+            'qq_miniapp_appid/s'    => '', 'qq_miniapp_appsecret/s' => '', 'qq_miniapp_register/d' => 1, 'qq_miniapp_login/d' => 1, 'qq_miniapp_bind/d' => 1,
+            'qq_website_appid/s'    => '', 'qq_website_appsecret/s' => '', 'qq_website_register/d' => 1, 'qq_website_login/d' => 1, 'qq_website_bind/d' => 1,
+            'qq_mobile_appid/s'     => '', 'qq_mobile_appsecre/s'   => '', 'qq_mobile_register/d'  => 1, 'qq_mobile_login/d'  => 1, 'qq_mobile_bind/d'  => 1,
+            'wb_website_appid/s'    => '', 'wb_website_appsecret/s' => '', 'wb_website_register/d' => 1, 'wb_website_login/d' => 1, 'wb_website_bind/d' => 1,
+        ]);
 
         $data = SettingService::edit($param);
 

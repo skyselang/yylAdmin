@@ -137,7 +137,7 @@ class ApidocDefinitions
 
     /**
      * images请求参数
-     * @Apidoc\Param("images", type="array", require=false, default="[]", desc="图片", children={
+     * @Apidoc\Param("images", type="array", require=false, default="[]", desc="图片列表", children={
      *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="图片名称"),
      *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="图片大小"),
@@ -151,7 +151,7 @@ class ApidocDefinitions
 
     /**
      * images返回参数
-     * @Apidoc\Returned("images", type="array", require=false, default="[]", desc="图片", children={
+     * @Apidoc\Returned("images", type="array", require=false, default="[]", desc="图片列表", children={
      *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="图片名称"),
      *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="图片大小"),
@@ -165,7 +165,7 @@ class ApidocDefinitions
 
     /**
      * videos请求参数
-     * @Apidoc\Param("videos", type="array", require=false, default="[]", desc="视频", children={
+     * @Apidoc\Param("videos", type="array", require=false, default="[]", desc="视频列表", children={
      *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="视频名称"),
      *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="视频大小"),
@@ -179,7 +179,7 @@ class ApidocDefinitions
 
     /**
      * videos返回参数
-     * @Apidoc\Returned("videos", type="array", require=false, default="[]", desc="视频", children={
+     * @Apidoc\Returned("videos", type="array", require=false, default="[]", desc="视频列表", children={
      *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="视频名称"),
      *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="视频大小"),
@@ -193,7 +193,7 @@ class ApidocDefinitions
 
     /**
      * audios请求参数
-     * @Apidoc\Param("audios", type="array", require=false, default="[]", desc="音频", children={
+     * @Apidoc\Param("audios", type="array", require=false, default="[]", desc="音频列表", children={
      *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="音频名称"),
      *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="音频大小"),
@@ -207,7 +207,7 @@ class ApidocDefinitions
 
     /**
      * audios返回参数
-     * @Apidoc\Returned("audios", type="array", require=false, default="[]", desc="音频", children={
+     * @Apidoc\Returned("audios", type="array", require=false, default="[]", desc="音频列表", children={
      *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="音频名称"),
      *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="音频大小"),
@@ -221,7 +221,7 @@ class ApidocDefinitions
 
     /**
      * words请求参数
-     * @Apidoc\Param("words", type="array", require=false, default="[]", desc="文档", children={
+     * @Apidoc\Param("words", type="array", require=false, default="[]", desc="文档列表", children={
      *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="文档名称"),
      *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="文档大小"),
@@ -235,7 +235,7 @@ class ApidocDefinitions
 
     /**
      * words返回参数
-     * @Apidoc\Returned("words", type="array", require=false, default="[]", desc="文档", children={
+     * @Apidoc\Returned("words", type="array", require=false, default="[]", desc="文档列表", children={
      *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="文档名称"),
      *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="文档大小"),
@@ -249,7 +249,7 @@ class ApidocDefinitions
 
     /**
      * others请求参数
-     * @Apidoc\Param("others", type="array", require=false, default="[]", desc="附件", children={
+     * @Apidoc\Param("others", type="array", require=false, default="[]", desc="附件列表", children={
      *   @Apidoc\Param("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Param("file_name", type="string", require=false, default="", desc="附件名称"),
      *   @Apidoc\Param("file_size", type="string", require=false, default="", desc="附件大小"),
@@ -263,7 +263,7 @@ class ApidocDefinitions
 
     /**
      * others返回参数
-     * @Apidoc\Returned("others", type="array", require=false, default="[]", desc="附件", children={
+     * @Apidoc\Returned("others", type="array", require=false, default="[]", desc="附件列表", children={
      *   @Apidoc\Returned("file_id", type="int", require=true, default="", desc="文件ID"),
      *   @Apidoc\Returned("file_name", type="string", require=true, default="", desc="附件名称"),
      *   @Apidoc\Returned("file_size", type="string", require=true, default="", desc="附件大小"),
@@ -272,38 +272,6 @@ class ApidocDefinitions
      * })
      */
     public function othersReturn()
-    {
-    }
-
-    /**
-     * 自定义设置请求参数
-     * @Apidoc\Param("diy_config", type="array", default="", desc="自定义设置", children={
-     *   @Apidoc\Param("config_key", type="string", require=true, default="", desc="键名"),
-     *   @Apidoc\Param("config_val", type="string", require=false, default="", desc="键值"),
-     *   @Apidoc\Param("config_desc", type="string", require=false, default="", desc="说明")
-     * })
-     */
-    public function diyConParam()
-    {
-    }
-
-    /**
-     * 自定义设置返回参数
-     * @Apidoc\Returned("diy_config", type="array", default="", desc="自定义设置", children={
-     *   @Apidoc\Returned("config_key", type="string", require=true, default="", desc="键名"),
-     *   @Apidoc\Returned("config_val", type="string", require=false, default="", desc="键值"),
-     *   @Apidoc\Returned("config_desc", type="string", require=false, default="", desc="说明")
-     * })
-     */
-    public function diyConReturn()
-    {
-    }
-
-    /**
-     * 自定义设置对象返回参数
-     * @Apidoc\Returned("diy_con_obj", type="object", desc="自定义设置对象")
-     */
-    public function diyConObjReturn()
     {
     }
 }

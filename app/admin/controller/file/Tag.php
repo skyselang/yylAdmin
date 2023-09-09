@@ -29,7 +29,7 @@ class Tag extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_desc,sort,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", ref="app\common\model\file\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_desc,remark,sort,is_disable,create_time,update_time")
      */
     public function list()
     {
@@ -50,7 +50,7 @@ class Tag extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['tag_id/d' => 0]);
+        $param = $this->params(['tag_id/d' => '']);
 
         validate(TagValidate::class)->scene('info')->check($param);
 
@@ -62,7 +62,7 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("文件标签添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_name,tag_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_name,tag_desc,remark,sort")
      */
     public function add()
     {
@@ -78,7 +78,7 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("文件标签修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_id,tag_name,tag_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_id,tag_name,tag_desc,remark,sort")
      */
     public function edit()
     {

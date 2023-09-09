@@ -20,11 +20,11 @@ use hg\apidoc\annotation as Apidoc;
 class RegionService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'region_id/d'        => 0,
+        'region_id/d'        => '',
         'region_pid/d'       => 0,
         'region_level/d'     => 1,
         'region_name/s'      => '',
@@ -45,10 +45,11 @@ class RegionService
      * @param array  $where 条件
      * @param array  $order 排序
      * @param string $field 字段
+     * @param int    $level 级别：1省2市3区4县街道乡镇
      *
      * @return array 
      */
-    public static function list($type = 'list', $where = [], $order = [], $field = '')
+    public static function list($type = 'list', $where = [], $order = [], $field = '', $level = 3)
     {
         $model = new RegionModel();
         $pk = $model->getPk();
@@ -60,23 +61,23 @@ class RegionService
             $order = ['sort' => 'desc', $pk => 'asc'];
         }
 
-        if ($type == 'list') {
-            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
-            foreach ($data as &$v) {
-                $v['children']    = [];
-                $v['hasChildren'] = true;
-            }
-            $data = array_to_tree($data, $pk, 'region_pid');
-        } else {
-            $key = where_cache_key($type, $where, $order, $field);
-            $data = RegionCache::get($key);
-            if (empty($data)) {
-                $data = $model->field($field)->where($where)->order($order)->select()->toArray();
-                $data = list_to_tree($data, $pk, 'region_pid');
-                RegionCache::set($key, $data);
-            }
-        }
+        $where[] = ['region_level', '<=', $level];
 
+        $key = where_cache_key($type, $where, $order, $field);
+        $data = RegionCache::get($key);
+        if (empty($data)) {
+            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            if ($type == 'list') {
+                foreach ($data as &$v) {
+                    $v['children']    = [];
+                    $v['hasChildren'] = true;
+                }
+                $data = array_to_tree($data, $pk, 'region_pid');
+            } else {
+                $data = list_to_tree($data, $pk, 'region_pid');
+            }
+            RegionCache::set($key, $data);
+        }
         return $data;
     }
 

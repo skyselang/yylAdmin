@@ -21,23 +21,26 @@ use hg\apidoc\annotation as Apidoc;
 class ContentService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'content_id/d'   => 0,
+        'content_id/d'   => '',
+        'unique/s'       => '',
         'category_ids/a' => [],
         'tag_ids/a'      => [],
-        'cover_id/d'     => 0,
+        'image_id/d'     => 0,
         'name/s'         => '',
-        'unique/s'       => '',
         'title/s'        => '',
         'keywords/s'     => '',
         'description/s'  => '',
         'content/s'      => '',
+        'source/s'       => '',
         'author/s'       => '',
         'url/s'          => '',
+        'remark/s'       => '',
         'sort/d'         => 250,
+        'hits_initial/d' => 0,
         'images/a'       => [],
         'videos/a'       => [],
         'audios/a'       => [],
@@ -63,32 +66,63 @@ class ContentService
         $group = 'm.' . $pk;
 
         if (empty($field)) {
-            $field = $group . ',cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time';
+            $field = $group . ',unique,image_id,name,release_time,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$group => 'desc'];
+            $order = ['sort' => 'desc', $group => 'desc'];
         }
 
         $model = $model->alias('m');
         foreach ($where as $wk => $wv) {
-            if ($wv[0] == 'category_ids' && is_array($wv[2])) {
-                $model = $model->join('content_attributes c', 'm.content_id=c.content_id')->where('c.category_id', 'in', $wv[2]);
+            if ($wv[0] == 'category_ids') {
+                $model = $model->join('content_attributes c', 'm.content_id=c.content_id')->where('c.category_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
-            if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
-                $model = $model->join('content_attributes t', 'm.content_id=t.content_id')->where('t.tag_id', 'in', $wv[2]);
+            if ($wv[0] == 'tag_ids') {
+                $model = $model->join('content_attributes t', 'm.content_id=t.content_id')->where('t.tag_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
         $where = array_values($where);
 
+        $with     = ['categorys', 'tags'];
+        $append   = ['category_names', 'tag_names'];
+        $hidden   = ['categorys', 'tags'];
+        $field_no = [];
+        if (strpos($field, 'image_id') !== false) {
+            $with[]   = $hidden[]   = 'image';
+            $append[] = 'image_url';
+        }
+        if (strpos($field, 'images') !== false) {
+            $with[]   = $hidden[]   = 'files';
+            $append[] = $field_no[] = 'images';
+        } elseif (strpos($field, 'image_urls') !== false) {
+            $with[]   = $hidden[]   = 'files';
+            $append[] = $field_no[] = 'image_urls';
+        }
+        if (strpos($field, 'hits') !== false) {
+            $append[] = 'hits_show';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
+
         $count = $model->where($where)->group($group)->count();
-        $pages = ceil($count / $limit);
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
         $list = $model->field($field)->where($where)
-            ->with(['cover', 'categorys', 'tags'])
-            ->append(['cover_url', 'category_names', 'tag_names'])
-            ->hidden(['cover', 'categorys', 'tags'])
-            ->page($page)->limit($limit)->order($order)->group($group)->select()->toArray();
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->group($group)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -123,8 +157,8 @@ class ContentService
                 return [];
             }
             $info = $info
-                ->append(['cover_url', 'category_ids', 'tag_ids', 'category_names', 'tag_names', 'images', 'videos', 'audios', 'words', 'others'])
-                ->hidden(['cover', 'categorys', 'tags', 'files'])
+                ->append(['image_url', 'category_ids', 'tag_ids', 'category_names', 'tag_names', 'images', 'videos', 'audios', 'words', 'others', 'hits_show'])
+                ->hidden(['image', 'categorys', 'tags', 'files'])
                 ->toArray();
 
             ContentCache::set($id, $info);
@@ -340,61 +374,42 @@ class ContentService
     }
 
     /**
-     * 内容上一条
+     * 内容上/下一条
      *
-     * @param int $id   内容id
-     * @param int $cate 是否当前分类
+     * @param int    $id           内容id
+     * @param string $type         prev上一条，next下一条
+     * @param string $category_ids 分类id
      * 
-     * @return array 上一条内容
+     * @return array 内容
      */
-    public static function prev($id, $cate = 0)
+    public static function prevNext($id, $type = '', $category_ids = '')
     {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $where[] = [$pk, '<', $id];
-        $where[] = where_delete();
-        if ($cate) {
-            $content = self::info($id);
-            $where[] = ['category_id', '=', $content['category_id']];
+        if ($type == 'prev') {
+            $where[] = ['m.content_id', '<', $id];
+            $order = ['m.content_id' => 'desc'];
+        } elseif ($type == 'next') {
+            $where[] = ['m.content_id', '>', $id];
+            $order = ['m.content_id' => 'asc'];
+        } else {
+            $where[] = ['m.content_id', '<>', $id];
+            $order = ['sort' => 'desc'];
         }
 
-        $info = $model->field($pk . ',name')->where($where)->order($pk, 'desc')->find();
-        if (empty($info)) {
+        if ($category_ids !== '') {
+            $where[] = ['category_ids', 'in', $category_ids];
+        }
+        $where[] = ['release_time', '<=', datetime()];
+        $where[] = where_disable();
+        $where[] = where_delete();
+
+        $field = 'm.content_id,unique,image_id,name';
+
+        $info = self::list($where, 0, 1, $order, $field)['list'];
+        if (empty($info[0] ?? [])) {
             return [];
         }
-        $info = $info->toArray();
 
-        return $info;
-    }
-
-    /**
-     * 内容下一条
-     *
-     * @param int $id   内容id
-     * @param int $cate 是否当前分类
-     * 
-     * @return array 下一条内容
-     */
-    public static function next($id, $cate = 0)
-    {
-        $model = new ContentModel();
-        $pk = $model->getPk();
-
-        $where[] = [$pk, '>', $id];
-        $where[] = where_delete();
-        if ($cate) {
-            $content = self::info($id);
-            $where[] = ['category_id', '=', $content['category_id']];
-        }
-
-        $info = $model->field($pk . ',name')->where($where)->order($pk, 'asc')->find();
-        if (empty($info)) {
-            return [];
-        }
-        $info = $info->toArray();
-
-        return $info;
+        return $info[0];
     }
 
     /**

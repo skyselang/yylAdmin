@@ -18,11 +18,11 @@ use app\common\model\setting\FeedbackModel;
 class FeedbackService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'feedback_id/d' => 0,
+        'feedback_id/d' => '',
         'member_id'     => 0,
         'receipt_no'    => '',
         'type/d'        => 0,
@@ -59,16 +59,40 @@ class FeedbackService
             $order = [$pk => 'desc'];
         }
 
-        $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list  = $model->field($field)->where($where)
-            ->with(['member'])
-            ->append(['member_username', 'type_name', 'status_name'])
-            ->hidden(['member'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'member_id') !== false) {
+            $with[]   = $hidden[] = 'member';
+            $append[] = 'member_username';
+        }
+        if (strpos($field, 'type') !== false) {
+            $append[] = 'type_name';
+        }
+        if (strpos($field, 'status') !== false) {
+            $append[] = 'status_name';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
 
-        $types = SettingService::feedback_types();
-        $statuss = SettingService::feedback_statuss();
+        $count = $model->where($where)->count();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list  = $model->field($field)->where($where)
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
+
+        $types   = SettingService::feedbackTypes();
+        $statuss = SettingService::feedbackStatuss();
 
         return compact('count', 'pages', 'page', 'limit', 'list', 'types', 'statuss');
     }
@@ -231,6 +255,8 @@ class FeedbackService
         $model = new FeedbackModel();
         $pk = $model->getPk();
 
+        $receipt_no = $model->where($pk, 'in', $ids)->column('receipt_no');
+
         // 启动事务
         $model->startTrans();
         try {
@@ -263,6 +289,7 @@ class FeedbackService
         $update['ids'] = $ids;
 
         FeedbackCache::del($ids);
+        FeedbackCache::del($receipt_no);
 
         return $update;
     }

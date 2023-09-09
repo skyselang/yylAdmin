@@ -10,9 +10,11 @@
 namespace app\common\service\system;
 
 use think\facade\Config;
+use think\facade\Request;
 use app\common\cache\Cache;
 use app\common\cache\system\SettingCache;
 use app\common\model\system\SettingModel;
+use app\common\service\utils\Utils;
 use app\common\service\utils\EmailUtils;
 use hg\apidoc\annotation as Apidoc;
 
@@ -36,23 +38,23 @@ class SettingService
      * 菜单类型：菜单
      * @var integer
      */
-    const MENU_TYPE_MENU = 1;
+    const MENU_TYPE_MENU      = 1;
     /**
      * 菜单类型：按钮
      * @var integer
      */
-    const MENU_TYPE_BUTTON = 2;
+    const MENU_TYPE_BUTTON    = 2;
     /**
-     * 菜单类型
+     * 菜单类型数组或名称
      * @param string $menu_type 菜单类型
-     * @return array|string 菜单类型数组或名称
+     * @return array|string 
      */
-    public static function menu_types($menu_type = '')
+    public static function menuTypes($menu_type = '')
     {
         $menu_types = [
             self::MENU_TYPE_CATALOGUE => '目录',
-            self::MENU_TYPE_MENU => '菜单',
-            self::MENU_TYPE_BUTTON => '按钮',
+            self::MENU_TYPE_MENU      => '菜单',
+            self::MENU_TYPE_BUTTON    => '按钮',
         ];
         if ($menu_type !== '') {
             return $menu_types[$menu_type] ?? '';
@@ -64,7 +66,7 @@ class SettingService
      * 日志类型：登录
      * @var integer
      */
-    const LOG_TYPE_LOGIN = 0;
+    const LOG_TYPE_LOGIN     = 0;
     /**
      * 日志类型：操作
      * @var integer
@@ -74,18 +76,18 @@ class SettingService
      * 日志类型：退出
      * @var integer
      */
-    const LOG_TYPE_LOGOUT = 2;
+    const LOG_TYPE_LOGOUT    = 2;
     /**
-     * 日志类型
+     * 日志类型数组或名称
      * @param string $log_type 日志类型
-     * @return array|string 日志类型数组或名称
+     * @return array|string
      */
-    public static function log_types($log_type = '')
+    public static function logTypes($log_type = '')
     {
         $log_types = [
-            self::LOG_TYPE_LOGIN => '登录',
+            self::LOG_TYPE_LOGIN     => '登录',
             self::LOG_TYPE_OPERATION => '操作',
-            self::LOG_TYPE_LOGOUT => '退出',
+            self::LOG_TYPE_LOGOUT    => '退出',
         ];
         if ($log_type !== '') {
             return $log_types[$log_type] ?? '';
@@ -108,8 +110,10 @@ class SettingService
     public static function info($fields = '')
     {
         $id = self::$id;
+        $type = Request::isCli() ? 'cli' : 'cgi';
+        $key = $id . $type;
 
-        $info = SettingCache::get($id);
+        $info = SettingCache::get($key);
         if (empty($info)) {
             $model = new SettingModel();
             $pk = $model->getPk();
@@ -123,23 +127,28 @@ class SettingService
                 $model->save($info);
                 $info = $model->find($id);
             }
-            $info = $info
-                ->append(['favicon_url', 'logo_url', 'login_bg_url'])
-                ->hidden(['favicon', 'logo', 'loginbg'])
-                ->toArray();
+
+            // 命令行无法获取域名
+            if ($type == 'cgi') {
+                $append = ['favicon_url', 'logo_url', 'login_bg_url'];
+                $hidden = ['favicon', 'logo', 'loginbg'];
+                $info = $info->append($append)->hidden($hidden);
+            }
+            $info = $info->toArray();
 
             $cache_config = Cache::getConfig();
             $info['cache_type'] = $cache_config['default'];
             $info['token_type'] = Config::get('admin.token_type');
             $info['token_name'] = Config::get('admin.token_name');
 
-            SettingCache::set($id, $info);
+            SettingCache::set($key, $info);
         }
 
         if ($fields) {
             $data = [];
             $fields = explode(',', $fields);
             foreach ($fields as $field) {
+                $field = trim($field);
                 if (isset($info[$field])) {
                     $data[$field] = $info[$field];
                 }
@@ -171,14 +180,14 @@ class SettingService
             exception();
         }
 
-        SettingCache::del($id);
+        SettingCache::clear();
 
         return $param;
     }
 
     /**
      * 缓存清除
-     * 清除所有缓存标签（用户token、会员token除外）数据
+     * 清除所有缓存标签（用户、会员token除外）数据
      *
      * @return array
      */
@@ -216,5 +225,29 @@ class SettingService
         $body    = '这是一封测试邮件，收到此邮件说明邮件设置和发送正常。';
 
         EmailUtils::send($address, $subject, $body);
+    }
+
+    /**
+     * 服务器信息
+     * 
+     * @param bool $force 是否强制刷新
+     *
+     * @return array
+     */
+    public static function serverInfo($force = false)
+    {
+        $cache_key = 'utils:serverInfo';
+
+        if ($force) {
+            Cache::del($cache_key);
+        }
+
+        $data = Cache::get($cache_key);
+        if (empty($data)) {
+            $data = Utils::serverInfo();
+            Cache::set($cache_key, $data, 86400);
+        }
+
+        return $data;
     }
 }

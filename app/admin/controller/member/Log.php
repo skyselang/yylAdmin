@@ -60,7 +60,7 @@ class Log extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['log_id/d' => 0]);
+        $param = $this->params(['log_id/d' => '']);
 
         validate(LogValidate::class)->scene('info')->check($param);
 

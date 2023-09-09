@@ -55,7 +55,7 @@ class Carousel extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['carousel_id/d' => 0]);
+        $param = $this->params(['carousel_id/d' => '']);
 
         validate(CarouselValidate::class)->scene('info')->check($param);
 

@@ -14,7 +14,7 @@ use think\facade\Config;
 use think\facade\Request;
 use app\common\cache\system\UserLogCache;
 use app\common\model\system\UserLogModel;
-use app\common\service\utils\IpInfoUtils;
+use app\common\service\utils\Utils;
 
 /**
  * 用户日志
@@ -48,15 +48,39 @@ class UserLogService
             $where[] = user_hide_where();
         }
 
-        $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)
-            ->with(['user', 'menu'])
-            ->append(['nickname', 'username', 'menu_name', 'menu_url'])
-            ->hidden(['user', 'menu'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'user_id') !== false) {
+            $with[]   = $hidden[] = 'user';
+            $append[] = 'nickname';
+            $append[] = 'username';
+        }
+        if (strpos($field, 'menu_id') !== false) {
+            $with[]   = $hidden[] = 'menu';
+            $append[] = 'menu_name';
+            $append[] = 'menu_url';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
 
-        $log_types = SettingService::log_types();
+        $count = $model->where($where)->count();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
+
+        $log_types = SettingService::logTypes();
 
         return compact('count', 'pages', 'page', 'limit', 'list', 'log_types');
     }
@@ -121,11 +145,14 @@ class UserLogService
                 unset($request_param[$v]);
             }
 
-            $menu    = MenuService::info('', false);
-            $ip_info = IpInfoUtils::info();
+            $menu       = MenuService::info('', false);
+            $ip_info    = Utils::ipInfo();
+            $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? Request::header('user-agent') ?? '';
 
             $param['menu_id']          = $menu['menu_id'] ?? 0;
             $param['log_type']         = $log_type;
+            $param['request_method']   = Request::method();
+            $param['request_url']      = $menu['menu_url'] ?? Request::baseUrl();
             $param['request_ip']       = $ip_info['ip'];
             $param['request_country']  = $ip_info['country'];
             $param['request_province'] = $ip_info['province'];
@@ -134,8 +161,7 @@ class UserLogService
             $param['request_region']   = $ip_info['region'];
             $param['request_isp']      = $ip_info['isp'];
             $param['request_param']    = $request_param;
-            $param['request_method']   = Request::method();
-            $param['user_agent']       = $_SERVER['HTTP_USER_AGENT'] ?? Request::header('user-agent') ?? '';
+            $param['user_agent']       = substr($user_agent, 0, 1024);
             $param['create_time']      = datetime();
 
             $model = new UserLogModel();

@@ -23,19 +23,19 @@ class ContentModel extends Model
     // 表主键
     protected $pk = 'content_id';
 
-    // 关联封面
-    public function cover()
+    // 关联图片
+    public function image()
     {
-        return $this->hasOne(FileModel::class, 'file_id', 'cover_id')->append(['file_url'])->where(where_disdel());
+        return $this->hasOne(FileModel::class, 'file_id', 'image_id')->append(['file_url'])->where(where_disdel());
     }
     /**
-     * 获取封面链接
+     * 获取图片链接
      * @Apidoc\Field("")
-     * @Apidoc\AddField("cover_url", type="string", desc="封面链接")
+     * @Apidoc\AddField("image_url", type="string", desc="图片链接")
      */
-    public function getCoverUrlAttr($value, $data)
+    public function getImageUrlAttr($value, $data)
     {
-        return $this['cover']['file_url'] ?? '';
+        return $this['image']['file_url'] ?? '';
     }
 
     // 关联分类
@@ -43,7 +43,11 @@ class ContentModel extends Model
     {
         return $this->belongsToMany(CategoryModel::class, AttributesModel::class, 'category_id', 'content_id');
     }
-    // 获取分类id
+    /**
+     * 获取分类id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("category_ids", type="array", desc="分类id")
+     */
     public function getCategoryIdsAttr()
     {
         return relation_fields($this['categorys'], 'category_id');
@@ -63,7 +67,11 @@ class ContentModel extends Model
     {
         return $this->belongsToMany(TagModel::class, AttributesModel::class, 'tag_id', 'content_id');
     }
-    // 获取标签id
+    /**
+     * 获取标签id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("tag_ids", type="array", desc="标签id")
+     */
     public function getTagIdsAttr()
     {
         return relation_fields($this['tags'], 'tag_id');
@@ -212,5 +220,12 @@ class ContentModel extends Model
             }
         }
         return $other_ids ?? [];
+    }
+
+    // 获取展示点击量
+    public function getHitsShowAttr($value, $data)
+    {
+        // 初始点击量+真实点击量
+        return ($data['hits_initial'] ?? 0) + ($data['hits'] ?? 0);
     }
 }

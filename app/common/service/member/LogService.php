@@ -14,7 +14,7 @@ use think\facade\Config;
 use think\facade\Request;
 use app\common\cache\member\LogCache;
 use app\common\model\member\LogModel;
-use app\common\service\utils\IpInfoUtils;
+use app\common\service\utils\Utils;
 
 /**
  * 会员日志
@@ -38,21 +38,45 @@ class LogService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',member_id,api_id,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',member_id,api_id,request_ip,request_region,request_isp,request_url,response_code,response_msg,create_time';
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
 
-        $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)
-            ->with(['member', 'api'])
-            ->append(['nickname', 'username', 'api_url', 'api_name'])
-            ->hidden(['member', 'api'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'member_id') !== false) {
+            $with[]   = $hidden[] = 'member';
+            $append[] = 'nickname';
+            $append[] = 'username';
+        }
+        if (strpos($field, 'api_id') !== false) {
+            $with[]   = $hidden[] = 'api';
+            $append[] = 'api_name';
+            $append[] = 'api_url';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
 
-        $log_types = SettingService::log_types();
+        $count = $model->where($where)->count();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
+
+        $log_types = SettingService::logTypes();
 
         return compact('count', 'pages', 'page', 'limit', 'list', 'log_types');
     }
@@ -120,11 +144,14 @@ class LogService
                 unset($request_param[$v]);
             }
 
-            $api     = ApiService::info('', false);
-            $ip_info = IpInfoUtils::info();
+            $api        = ApiService::info('', false);
+            $ip_info    = Utils::ipInfo();
+            $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? Request::header('user-agent') ?? '';
 
             $param['api_id']           = $api['api_id'] ?? 0;
             $param['log_type']         = $log_type;
+            $param['request_url']      = $api['api_url'] ?? Request::baseUrl();
+            $param['request_method']   = Request::method();
             $param['request_ip']       = $ip_info['ip'];
             $param['request_country']  = $ip_info['country'];
             $param['request_province'] = $ip_info['province'];
@@ -133,9 +160,8 @@ class LogService
             $param['request_region']   = $ip_info['region'];
             $param['request_isp']      = $ip_info['isp'];
             $param['request_param']    = $request_param;
-            $param['request_method']   = Request::method();
             $param['create_time']      = datetime();
-            $param['user_agent']       = $_SERVER['HTTP_USER_AGENT'] ?? Request::header('user-agent') ?? '';
+            $param['user_agent']       = substr($user_agent, 0, 1024);
 
             $model = new LogModel();
             $model->save($param);
@@ -234,7 +260,7 @@ class LogService
      */
     public static function clearLog()
     {
-        $setting = SettingService::info();
+        $setting = SettingService::info('log_save_time');
         if ($setting['log_save_time']) {
             $time = date('H');
             if (0 <= $time && $time <= 8) {

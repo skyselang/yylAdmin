@@ -30,9 +30,9 @@ class Role extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\RoleModel", type="array", desc="角色列表", field="role_id,role_name,role_desc,sort,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", ref="app\common\model\system\RoleModel", type="array", desc="角色列表", field="role_id,role_name,role_desc,remark,sort,is_disable,create_time,update_time")
      * @Apidoc\Returned("menu", ref="app\common\model\system\MenuModel", type="tree", desc="菜单树形", field="menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth,is_unrate")
-     * @Apidoc\Returned("menu_ids", type="array", desc="菜单id")
+     * @Apidoc\Returned(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
      */
     public function list()
     {
@@ -53,11 +53,11 @@ class Role extends BaseController
      * @Apidoc\Title("角色信息")
      * @Apidoc\Query(ref="app\common\model\system\RoleModel", field="role_id")
      * @Apidoc\Returned(ref="app\common\model\system\RoleModel")
-     * @Apidoc\Returned("menu_ids", type="array", desc="菜单id")
+     * @Apidoc\Returned(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
      */
     public function info()
     {
-        $param = $this->params(['role_id/d' => 0]);
+        $param = $this->params(['role_id/d' => '']);
 
         validate(RoleValidate::class)->scene('info')->check($param);
 
@@ -69,8 +69,8 @@ class Role extends BaseController
     /**
      * @Apidoc\Title("角色添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel", field="role_name,role_desc,sort")
-     * @Apidoc\Param("menu_ids", type="array", desc="菜单id")
+     * @Apidoc\Param(ref="app\common\model\system\RoleModel", field="role_name,role_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
      */
     public function add()
     {
@@ -86,8 +86,8 @@ class Role extends BaseController
     /**
      * @Apidoc\Title("角色修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel", field="role_id,role_name,role_desc,sort")
-     * @Apidoc\Param("menu_ids", type="array", desc="菜单id")
+     * @Apidoc\Param(ref="app\common\model\system\RoleModel", field="role_id,role_name,role_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
      */
     public function edit()
     {
@@ -120,7 +120,7 @@ class Role extends BaseController
      * @Apidoc\Title("角色修改菜单")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("menu_ids", type="array", desc="菜单id")
+     * @Apidoc\Param(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
      */
     public function editmenu()
     {
@@ -158,15 +158,15 @@ class Role extends BaseController
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="用户列表", children={
      *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", desc="头像链接", field="avatar_url"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", desc="部门名称", field="dept_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", desc="职位名称", field="post_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", desc="角色名称", field="role_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", field="dept_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", field="post_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
      * })
      */
     public function user()
     {
-        $param = $this->params(['role_id/d' => 0]);
+        $param = $this->params(['role_id/d' => '']);
 
         validate(RoleValidate::class)->scene('user')->check($param);
 

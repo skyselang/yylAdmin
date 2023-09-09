@@ -18,19 +18,20 @@ use app\common\model\system\NoticeModel;
 class NoticeService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'notice_id/d'   => 0,
+        'notice_id/d'   => '',
         'image_id/d'    => 0,
         'type/d'        => 1,
         'title/s'       => '',
         'title_color/s' => '',
         'start_time/s'  => '',
         'end_time/s'    => '',
-        'intro/s'       => '',
+        'desc/s'        => '',
         'content/s'     => '',
+        'remark/s'      => '',
         'sort/d'        => 250,
     ];
 
@@ -57,12 +58,34 @@ class NoticeService
             $order = [$pk => 'desc'];
         }
 
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'image_id') !== false) {
+            $with[]   = $hidden[] = 'image';
+            $append[] = 'image_url';
+        }
+        if (strpos($field, 'type') !== false) {
+            $append[] = 'type_name';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
+
         $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
         $list = $model->field($field)->where($where)
-            ->append(['image_url'])
-            ->hidden(['image'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }

@@ -43,6 +43,8 @@ class Region extends BaseController
         $data['exps']  = where_exps();
         $data['where'] = $where;
 
+        $data['count'] = count(tree_to_list($data['list']));
+
         return success($data);
     }
 
@@ -54,7 +56,7 @@ class Region extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['region_id/d' => 0]);
+        $param = $this->params(['region_id/d' => '']);
 
         validate(RegionValidate::class)->scene('info')->check($param);
 

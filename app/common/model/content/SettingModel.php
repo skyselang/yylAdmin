@@ -23,26 +23,6 @@ class SettingModel extends Model
     // 表主键
     protected $pk = 'setting_id';
 
-    // 修改自定义设置
-    public function setDiyConfigAttr($value)
-    {
-        return serialize($value);
-    }
-    // 获取自定义设置
-    public function getDiyConfigAttr($value)
-    {
-        return unserialize($value);
-    }
-    // 获取自定义设置对象
-    public function getDiyConObjAttr($value, $data)
-    {
-        $diy_config = is_array($data['diy_config']) ? $data['diy_config'] : unserialize($data['diy_config']);
-        foreach ($diy_config as $diy) {
-            $diy_con_obj[$diy['config_key']] = $diy['config_val'];
-        }
-        return $diy_con_obj ?? [];
-    }
-
     // 关联favicon文件
     public function favicon()
     {
@@ -54,7 +34,7 @@ class SettingModel extends Model
         return $this['favicon']['file_url'] ?? '';
     }
 
-    // 关联logo
+    // 关联logo文件
     public function logo()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'logo_id')->append(['file_url'])->where(where_disdel());
@@ -65,7 +45,7 @@ class SettingModel extends Model
         return $this['logo']['file_url'] ?? '';
     }
 
-    // 关联公众号二维码
+    // 关联公众号二维码文件
     public function offi()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'offi_id')->append(['file_url'])->where(where_disdel());
@@ -76,12 +56,12 @@ class SettingModel extends Model
         return $this['offi']['file_url'] ?? '';
     }
 
-    // 关联小程序二维码
+    // 关联小程序码文件
     public function mini()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'mini_id')->append(['file_url'])->where(where_disdel());
     }
-    // 获取小程序二维码链接
+    // 获取小程序码链接
     public function getMiniUrlAttr($value, $data)
     {
         return $this['mini']['file_url'] ?? '';

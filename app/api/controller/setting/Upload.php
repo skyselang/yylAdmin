@@ -33,7 +33,7 @@ class Upload extends BaseController
     {
         $setting = SettingService::info();
         if (!$setting['is_upload_api']) {
-            return error([], '文件上传未开启，无法上传文件！');
+            return error('文件上传未开启，无法上传文件！');
         }
 
         $param = $this->params([

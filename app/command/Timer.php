@@ -21,6 +21,8 @@ use app\common\service\system\UserLogService;
 
 /**
  * 定时任务
+ * 调试模式开启：php think timer
+ * 守护进程开启：php think timer --mode d
  */
 class Timer extends Command
 {
@@ -30,7 +32,8 @@ class Timer extends Command
     protected $timer;
 
     /**
-     * 多长时间执行一次
+     * 多长时间执行一次（秒）
+     * 
      * @var integer
      */
     protected $interval = 5;

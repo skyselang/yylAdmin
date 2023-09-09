@@ -22,8 +22,9 @@ class UserValidate extends Validate
     protected $rule = [
         'ids'      => ['require', 'array'],
         'user_id'  => ['require'],
-        'nickname' => ['require', 'checkNickname', 'length' => '1,32'],
-        'username' => ['require', 'checkUsername', 'length' => '2,32'],
+        'number'   => ['length' => '1,63', 'checkNumber'],
+        'nickname' => ['require', 'checkNickname', 'length' => '1,63'],
+        'username' => ['require', 'checkUsername', 'length' => '2,63'],
         'password' => ['require', 'length' => '6,18'],
         'phone'    => ['mobile', 'checkPhone'],
         'email'    => ['email', 'checkEmail'],
@@ -34,10 +35,11 @@ class UserValidate extends Validate
 
     // 错误信息
     protected $message = [
+        'number.length'    => '编号长度为1至63个字符',
         'nickname.require' => '请输入昵称',
-        'nickname.length'  => '昵称长度为1至32个字符',
+        'nickname.length'  => '昵称长度为1至63个字符',
         'username.require' => '请输入账号/手机/邮箱',
-        'username.length'  => '账号长度为2至32个字符',
+        'username.length'  => '账号长度为2至63个字符',
         'password.require' => '请输入密码',
         'password.length'  => '密码长度为6至18个字符',
         'phone.mobile'     => '请输入正确的手机号码',
@@ -47,8 +49,8 @@ class UserValidate extends Validate
     // 验证场景
     protected $scene = [
         'info'     => ['user_id'],
-        'add'      => ['nickname', 'username', 'password', 'phone', 'email'],
-        'edit'     => ['user_id', 'nickname', 'username', 'phone', 'email'],
+        'add'      => ['number', 'nickname', 'username', 'password', 'phone', 'email'],
+        'edit'     => ['user_id', 'number', 'nickname', 'username', 'phone', 'email'],
         'dele'     => ['ids'],
         'editdept' => ['ids', 'dept_ids'],
         'editpost' => ['ids', 'post_ids'],
@@ -62,7 +64,7 @@ class UserValidate extends Validate
     // 验证场景定义：修改
     protected function sceneEdit()
     {
-        return $this->only(['user_id', 'nickname', 'username', 'email', 'phone'])
+        return $this->only(['user_id', 'number', 'nickname', 'username', 'phone', 'email'])
             ->append('user_id', ['checkIsSuper']);
     }
 
@@ -107,6 +109,27 @@ class UserValidate extends Validate
         return $this->only(['username', 'password'])
             ->remove('username', ['length', 'checkUsername'])
             ->remove('password', ['length']);
+    }
+
+    // 自定义验证规则：编号是否已存在
+    protected function checkNumber($value, $rule, $data = [])
+    {
+        $number = $data['number'] ?? '';
+        if ($number) {
+            $model = new UserModel();
+            $pk = $model->getPk();
+            $id = $data[$pk] ?? 0;
+
+            $where[] = [$pk, '<>', $id];
+            $where[] = ['number', '=', $number];
+            $where = where_delete($where);
+            $info = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return '编号已存在：' . $number;
+            }
+        }
+
+        return true;
     }
 
     // 自定义验证规则：昵称是否已存在

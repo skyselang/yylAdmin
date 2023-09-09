@@ -28,11 +28,10 @@ class MemberValidate extends Validate
         'password'     => ['require', 'length' => '6,18'],
         'password_old' => ['require', 'checkPwdOld'],
         'password_new' => ['require', 'length' => '6,18'],
-        'phone'        => ['mobile'],
-        'email'        => ['email'],
-        'import'       => ['require', 'array'],
+        'phone'        => ['require', 'mobile'],
+        'email'        => ['require', 'email'],
         'captcha_code' => ['require'],
-        'phone_code'   => ['require'],
+        'import'       => ['require', 'array'],
     ];
 
     // 错误信息
@@ -66,19 +65,18 @@ class MemberValidate extends Validate
         'disable'              => ['ids'],
         'import'               => ['import'],
         'usernameRegister'     => ['nickname', 'username', 'password'],
-        'phoneRegisterCaptcha' => ['mobile'],
-        'phoneRegister'        => ['nickname', 'mobile', 'password'],
-        'phoneLoginCaptcha'    => ['mobile'],
-        'phoneLogin'           => ['mobile'],
-        'phoneBindCaptcha'     => ['mobile'],
-        'phoneBind'            => ['mobile', 'member_id', 'captcha_code'],
-        'phoneBindMini'        => ['phone_code', 'member_id'],
+        'phoneRegisterCaptcha' => ['phone'],
+        'phoneRegister'        => ['nickname', 'phone', 'password'],
+        'phoneLoginCaptcha'    => ['phone'],
+        'phoneLogin'           => ['phone'],
+        'phoneBindCaptcha'     => ['member_id', 'phone'],
+        'phoneBind'            => ['member_id', 'phone', 'captcha_code'],
         'emailRegisterCaptcha' => ['email'],
         'emailRegister'        => ['nickname', 'email', 'password'],
         'emailLoginCaptcha'    => ['email'],
         'emailLogin'           => ['email'],
-        'emailBindCaptcha'     => ['email'],
-        'emailBind'            => ['email', 'member_id', 'captcha_code'],
+        'emailBindCaptcha'     => ['member_id', 'email'],
+        'emailBind'            => ['member_id', 'email', 'captcha_code'],
         'editpwd0'             => ['member_id', 'password_old', 'password_new'],
         'editpwd1'             => ['member_id', 'password_new'],
         'logout'               => ['member_id'],
@@ -90,16 +88,20 @@ class MemberValidate extends Validate
         return $this->only(['nickname', 'username', 'password', 'phone', 'email'])
             ->append('username', ['checkUsernameExisted'])
             ->append('phone', ['checkPhoneExisted'])
-            ->append('email', ['checkEmailExisted']);
+            ->append('email', ['checkEmailExisted'])
+            ->remove('phone', ['require'])
+            ->remove('email', ['require']);
     }
 
     // 验证场景定义：后台修改
     protected function sceneEdit()
     {
-        return $this->only(['nickname', 'username', 'phone', 'email'])
+        return $this->only(['member_id', 'nickname', 'username', 'phone', 'email'])
             ->append('username', ['checkUsernameExisted'])
             ->append('phone', ['checkPhoneExisted'])
-            ->append('email', ['checkEmailExisted']);
+            ->append('email', ['checkEmailExisted'])
+            ->remove('phone', ['require'])
+            ->remove('email', ['require']);
     }
 
     // 验证场景定义：后台删除
@@ -147,14 +149,14 @@ class MemberValidate extends Validate
     // 验证场景定义：手机绑定验证码
     protected function scenePhoneBindCaptcha()
     {
-        return $this->only(['phone'])
+        return $this->only(['member_id', 'phone'])
             ->append('phone', ['require', 'checkPhoneExisted']);
     }
 
     // 验证场景定义：手机绑定
     protected function scenePhoneBind()
     {
-        return $this->only(['phone', 'member_id', 'captcha_code'])
+        return $this->only(['member_id', 'phone', 'captcha_code'])
             ->append('phone', ['require', 'checkPhoneExisted']);
     }
 
@@ -189,14 +191,14 @@ class MemberValidate extends Validate
     // 验证场景定义：邮箱绑定验证码
     protected function sceneEmailBindCaptcha()
     {
-        return $this->only(['email'])
+        return $this->only(['member_id', 'email'])
             ->append('email', ['require', 'checkEmailExisted']);
     }
 
     // 验证场景定义：邮箱绑定
     protected function sceneEmailBind()
     {
-        return $this->only(['email', 'member_id', 'captcha_code'])
+        return $this->only(['member_id', 'email', 'captcha_code'])
             ->append('email', ['require', 'checkEmailExisted']);
     }
 

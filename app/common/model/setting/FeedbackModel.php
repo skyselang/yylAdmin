@@ -32,7 +32,7 @@ class FeedbackModel extends Model
      */
     public function getTypeNameAttr($value, $data)
     {
-        return SettingService::feedback_types($data['type']);
+        return SettingService::feedbackTypes($data['type']);
     }
 
     /**
@@ -42,7 +42,7 @@ class FeedbackModel extends Model
      */
     public function getStatusNameAttr($value, $data)
     {
-        return SettingService::feedback_statuss($data['status']);
+        return SettingService::feedbackStatuss($data['status']);
     }
 
     // 关联会员

@@ -38,6 +38,23 @@ class Dept extends BaseController
         $data['exps']  = where_exps();
         $data['where'] = $where;
 
+        if (count($where) > 1) {
+            $list = tree_to_list($data['list']);
+            $all  = tree_to_list($data['tree']);
+            $pk   = 'dept_id';
+            $pid  = 'dept_pid';
+            $ids  = [];
+            foreach ($list as $val) {
+                $pids = children_parent_ids($all, $val[$pk], $pk, $pid);
+                $cids = parent_children_ids($all, $val[$pk], $pk, $pid);
+                $ids  = array_merge($ids, $pids, $cids);
+            }
+            $data['list'] = DeptService::list('tree', [[$pk, 'in', $ids], where_delete()]);
+        }
+
+        $dept = DeptService::list('list', $where, [], 'dept_id');
+        $data['count'] = count($dept);
+
         return success($data);
     }
 
@@ -48,7 +65,7 @@ class Dept extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['dept_id/d' => 0]);
+        $param = $this->params(['dept_id/d' => '']);
 
         validate(DeptValidate::class)->scene('info')->check($param);
 
@@ -148,15 +165,15 @@ class Dept extends BaseController
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="用户列表", children={
      *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", desc="头像链接", field="avatar_url"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", desc="部门名称", field="dept_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", desc="职位名称", field="post_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", desc="角色名称", field="role_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", field="dept_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", field="post_names"),
+     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
      * })
      */
     public function user()
     {
-        $param = $this->params(['dept_id/d' => 0]);
+        $param = $this->params(['dept_id/d' => '']);
 
         validate(DeptValidate::class)->scene('user')->check($param);
 

@@ -20,13 +20,14 @@ use app\common\model\member\AttributesModel;
 class TagService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'tag_id/d'   => 0,
+        'tag_id/d'   => '',
         'tag_name/s' => '',
         'tag_desc/s' => '',
+        'remark/s'   => '',
         'sort/d'     => 250,
     ];
 
@@ -47,19 +48,22 @@ class TagService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',tag_name,tag_desc,sort,is_disable,create_time,update_time';
+            $field = $pk . ',tag_name,tag_desc,remark,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
-        }
-
-        if ($page == 0 || $limit == 0) {
-            return $model->field($field)->where($where)->order($order)->select()->toArray();
+            $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }

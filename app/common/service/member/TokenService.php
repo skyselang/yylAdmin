@@ -50,7 +50,7 @@ class TokenService
             ],
         ];
 
-        $key = $config['token_key']; //密钥
+        $key   = $config['token_key']; //密钥
         $token = JWT::encode($payload, $key, 'HS256');
 
         return $token;
@@ -72,8 +72,8 @@ class TokenService
         $config = self::config();
 
         try {
-            $key = $config['token_key'];
-            $decode = JWT::decode($token, new Key($key, 'HS256'));
+            $key       = $config['token_key'];
+            $decode    = JWT::decode($token, new Key($key, 'HS256'));
             $member_id = $decode->data->member_id;
         } catch (\Exception $e) {
             exception('登录状态已失效', RetCodeUtils::LOGIN_INVALID);
@@ -113,9 +113,9 @@ class TokenService
 
         if ($token) {
             try {
-                $config = self::config();
-                $key = $config['token_key'];
-                $decode = JWT::decode($token, new Key($key, 'HS256'));
+                $config    = self::config();
+                $key       = $config['token_key'];
+                $decode    = JWT::decode($token, new Key($key, 'HS256'));
                 $member_id = $decode->data->member_id;
             } catch (\Exception $e) {
                 $member_id = 0;

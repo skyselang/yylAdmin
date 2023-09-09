@@ -55,9 +55,9 @@ class LogModel extends Model
         return $this->hasOne(ApiModel::class, 'api_id', 'api_id');
     }
     // 获取会员接口链接
-    public function getApiUrlAttr($value)
+    public function getApiUrlAttr($value, $data)
     {
-        return $this['api']['api_url'] ?? '';
+        return $this['api']['api_url'] ?? $data['request_url'] ?? '';
     }
     // 获取会员接口名称
     public function getApiNameAttr($value)

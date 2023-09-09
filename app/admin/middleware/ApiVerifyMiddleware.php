@@ -67,7 +67,7 @@ class ApiVerifyMiddleware
                     $menu = MenuService::info($menu_url);
                     $msg = '你没有权限操作：' . $menu['menu_name'];
                     if ($debug) {
-                        $msg .= '：' . $menu_url;
+                        $msg .= '(' . $menu_url . ')';
                     }
                     exception($msg, RetCodeUtils::NO_PERMISSION);
                 }

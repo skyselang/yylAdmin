@@ -10,6 +10,8 @@ window.apidocFeConfig = {
   HTTP: {
     // 接口请求地址
     HOSTS: [],
+    // 请求前缀地址
+    // API_PREFIX:"/apidoc",
     // 接口响应超时时间
     TIMEOUT: 30000,
     // 跨域请求时是否使用凭证
@@ -103,6 +105,8 @@ window.apidocFeConfig = {
         'common.view': '查看',
         'common.copy': '复制',
         'common.copySuccess': '复制成功',
+        'common.copyUrl': '复制链接',
+        'common.actionSuccess': '操作成功',
         'common.page.404': '404-未知页面',
         'common.notdata': '暂无数据',
         'common.group': '分组',
@@ -119,11 +123,14 @@ window.apidocFeConfig = {
         'common.api': '接口',
         'common.author': '作者',
         'common.tag': '标签',
+        'common.delete.confirm.title': '标签',
+
         'side.search.placeholder': '名称 URL',
         'lang.change.confirm.title': '您确认切换语言为 {langTitle} 吗？',
         'lang.change.confirm.content': '确认后将刷新页面，并回到首页',
         'host.change.confirm.title': '您确认切换Host为 {hostTitle} 吗？',
         'auth.title': '授权访问',
+        'auth.password.label': '访问密码',
         'auth.input.placeholder': '请输入访问密码',
 
         'apiPage.reload.button': '刷新',
@@ -230,6 +237,19 @@ window.apidocFeConfig = {
         'tools.title': '工具',
         'codeTemplate.title': '代码模板',
         'codeTemplate.reload': '重新生成',
+
+        'apiShare.title': '接口分享',
+        'apiShare.edit': '编辑接口分享',
+        'apiShare.add': '新增接口分享',
+        'apiShare.type.all': '全部',
+        'apiShare.type.app': '应用',
+        'apiShare.type.api': '接口',
+        'apiShare.button.create': '创建分享',
+        'apiShare.button.edit': '编辑',
+        'apiShare.button.delete': '删除',
+        'apiShare.type.label': '分享接口',
+        'apiShare.time.label': '分享时间',
+        'apiShare.all.text': '每次都解析或取缓存中所有接口数据',
       },
     },
   ],

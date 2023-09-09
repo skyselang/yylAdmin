@@ -29,7 +29,7 @@ class Carousel extends BaseController
      * @Apidoc\Query("position", type="string", default="", desc="位置")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="轮播列表", children={
-     *   @Apidoc\Returned("list", ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,url,position,desc,sort,is_disable,create_time,update_time"),
      *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
      * })
      */
@@ -70,7 +70,7 @@ class Carousel extends BaseController
 
         $data = CarouselService::info($param['carousel_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error([], '轮播不存在');
+            return error('轮播不存在');
         }
 
         return success($data);

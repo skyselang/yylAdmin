@@ -20,13 +20,14 @@ use app\common\model\file\FileModel;
 class GroupService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'group_id/d'   => 0,
+        'group_id/d'   => '',
         'group_name/s' => '',
         'group_desc/s' => '',
+        'remark/s'     => '',
         'sort/d'       => 250,
     ];
 
@@ -47,19 +48,22 @@ class GroupService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',group_name,group_desc,sort,is_disable,create_time,update_time';
+            $field = $pk . ',group_name,group_desc,remark,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
-        }
-
-        if ($page == 0 || $limit == 0) {
-            return $model->field($field)->where($where)->order($order)->select()->toArray();
+            $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }

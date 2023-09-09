@@ -37,13 +37,13 @@ function success($data = [], $msg = RetCodeUtils::SUCCESS_MSG, $code = RetCodeUt
 /**
  * 错误返回
  * 
- * @param string $msg  提示
  * @param array  $data 数据
+ * @param string $msg  提示
  * @param int    $code 返回码
  * 
  * @return json
  */
-function fail($msg = RetCodeUtils::ERROR_MSG, $data = [], $code = RetCodeUtils::ERROR)
+function error($msg = RetCodeUtils::ERROR_MSG, $data = [], $code = RetCodeUtils::ERROR)
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
@@ -53,25 +53,7 @@ function fail($msg = RetCodeUtils::ERROR_MSG, $data = [], $code = RetCodeUtils::
 }
 
 /**
- * 错误返回
- * 
- * @param array  $data 数据
- * @param string $msg  提示
- * @param int    $code 返回码
- * 
- * @return json
- */
-function error($data = [], $msg = RetCodeUtils::ERROR_MSG, $code = RetCodeUtils::ERROR)
-{
-    $res['code'] = $code;
-    $res['msg']  = $msg;
-    $res['data'] = $data;
-
-    return json($res);
-}
-
-/**
- * 错误返回（调试时用）
+ * 错误返回（调试使用）
  *
  * @param array  $data 数据
  * @param string $msg  提示
@@ -83,6 +65,7 @@ function error_e($data = [], $msg = RetCodeUtils::ERROR_MSG, $code = RetCodeUtil
 {
     $res['code'] = $code;
     $res['msg']  = $msg;
+    $res['time'] = time();
     $res['data'] = $data;
 
     print_r(json_encode($res, JSON_UNESCAPED_UNICODE));
@@ -278,7 +261,7 @@ function array_to_tree($list = [], $pk = 'id', $pid = 'pid', $child = 'children'
 {
     $parent_ids = [];
     foreach ($list as $val) {
-        $pids = children_parentid($list, $val[$pk], $pk, $pid);
+        $pids = children_parent_ids($list, $val[$pk], $pk, $pid);
         $parent_ids[] = end($pids);
     }
     $parent_ids = array_unique($parent_ids);
@@ -601,13 +584,13 @@ function member_is_super($member_id = 0)
  *
  * @return array id数组
  */
-function parent_children($list, $id, $pk = 'id', $pid = 'pid')
+function parent_children_ids($list, $id, $pk = 'id', $pid = 'pid')
 {
     $children = [];
     foreach ($list as $v) {
         if ($v[$pid] == $id) {
             $children[] = $v[$pk];
-            $children = array_merge($children, parent_children($list, $v[$pk], $pk, $pid));
+            $children = array_merge($children, parent_children_ids($list, $v[$pk], $pk, $pid));
         }
     }
     return $children;
@@ -623,13 +606,13 @@ function parent_children($list, $id, $pk = 'id', $pid = 'pid')
  *
  * @return array id数组
  */
-function children_parentid($list, $id, $pk = 'id', $pid = 'pid')
+function children_parent_ids($list, $id, $pk = 'id', $pid = 'pid')
 {
     $parentid = [];
     foreach ($list as $v) {
         if ($v[$pk] == $id) {
             $parentid[] = $v[$pk];
-            $parentid = array_merge($parentid, children_parentid($list, $v[$pid], $pk, $pid));
+            $parentid = array_merge($parentid, children_parent_ids($list, $v[$pid], $pk, $pid));
         }
     }
     return $parentid;
@@ -642,25 +625,29 @@ function children_parentid($list, $id, $pk = 'id', $pid = 'pid')
  * @param string   $field    需要获取的字段
  * @param bool     $string   是否返回字符串
  * @param bool     $delete   是否筛选已删除
+ * @param bool     $disable  是否筛选已禁用
  *
  * @return string|array
  */
-function relation_fields($relation, $field, $string = false, $delete = true)
+function relation_fields($relation, $field, $string = false, $delete = true, $disable = true)
 {
     $names = [];
     $array = $relation ?? [];
     if ($array) {
-        $array = $array->toArray();
-        if ($delete) {
-            foreach ($array as $val) {
-                if (!$val['is_delete']) {
-                    $names[] = $val[$field];
-                }
+        $array = is_array($array) ? $array : $array->toArray();
+        foreach ($array as $key => $val) {
+            if ($delete && $val['is_delete']) {
+                unset($array[$key]);
             }
-        } else {
-            $names = array_column($array, $field);
+            if ($disable && $val['is_disable']) {
+                unset($array[$key]);
+            }
         }
     }
+    if (empty($field)) {
+        return $array;
+    }
+    $names = array_column($array, $field);
     if ($string) {
         return implode(',', $names);
     }
@@ -864,4 +851,17 @@ function delete_update($data = [], $field = '')
     }
 
     return $data;
+}
+
+/**
+ * 生成state
+ *
+ * @param  string $prefix       前缀
+ * @param  bool   $more_entropy 是否增加额外的熵
+ *
+ * @return string
+ */
+function create_state($prefix = '', $more_entropy = true)
+{
+    return md5(uniqid($prefix, $more_entropy));
 }

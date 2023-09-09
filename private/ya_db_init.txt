@@ -32,16 +32,17 @@ TRUNCATE ya_member_group_apis;
 TRUNCATE ya_member_log;
 TRUNCATE ya_member_setting;
 TRUNCATE ya_member_tag;
+TRUNCATE ya_member_third;
 
 TRUNCATE ya_setting_accord;
 TRUNCATE ya_setting_carousel;
 TRUNCATE ya_setting_feedback;
 TRUNCATE ya_setting_files;
+TRUNCATE ya_setting_link;
 TRUNCATE ya_setting_notice;
 DELETE FROM ya_setting_region WHERE is_delete=1;
 UPDATE ya_setting_region SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
 TRUNCATE ya_setting_setting;
-TRUNCATE ya_setting_wechat;
 
 TRUNCATE ya_system_dept;
 DELETE FROM ya_system_menu WHERE is_delete=1;

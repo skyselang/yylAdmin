@@ -14,6 +14,7 @@ use app\common\validate\member\MemberValidate;
 use app\common\service\member\MemberService;
 use app\common\service\member\TagService;
 use app\common\service\member\GroupService;
+use app\common\service\member\ThirdService;
 use app\common\service\member\SettingService;
 use app\common\service\setting\RegionService;
 use hg\apidoc\annotation as Apidoc;
@@ -40,8 +41,8 @@ class Member extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
      * })
      * @Apidoc\Returned("genders", type="array", desc="性别")
-     * @Apidoc\Returned("reg_channels", type="array", desc="注册渠道")
-     * @Apidoc\Returned("reg_types", type="array", desc="注册方式")
+     * @Apidoc\Returned("platforms", type="object", desc="平台")
+     * @Apidoc\Returned("applications", type="object", desc="应用")
      * @Apidoc\Returned("tag", ref="app\common\model\member\TagModel", type="array", desc="标签列表", field="tag_id,tag_name")
      * @Apidoc\Returned("group", ref="app\common\model\member\GroupModel", type="array", desc="分组列表", field="group_id,group_name")
      * @Apidoc\Returned("region", ref="app\common\model\setting\RegionModel", type="tree", desc="地区树形", field="region_id,region_pid,region_name")
@@ -52,8 +53,8 @@ class Member extends BaseController
 
         $data = MemberService::list($where, $this->page(), $this->limit(), $this->order());
 
-        $data['tag']    = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name');
-        $data['group']  = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name');
+        $data['tag']    = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
+        $data['group']  = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
         $data['region'] = RegionService::list('tree', [where_delete()], [], 'region_id,region_pid,region_name');
         $data['exps']   = where_exps();
         $data['where']  = $where;
@@ -66,8 +67,8 @@ class Member extends BaseController
      * @Apidoc\Query(ref="app\common\model\member\MemberModel", field="member_id")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getRegChannelNameAttr")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getRegTypeNameAttr")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getApplicationNameAttr")
+     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getPlatformNameAttr")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagIdsAttr")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupIdsAttr")
@@ -76,11 +77,11 @@ class Member extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['member_id/d' => 0]);
+        $param = $this->params(['member_id/d' => '']);
 
         validate(MemberValidate::class)->scene('info')->check($param);
 
-        $data = MemberService::info($param['member_id'], true, true);
+        $data = MemberService::info($param['member_id'], true, true, true);
 
         unset($data['password']);
 
@@ -91,15 +92,15 @@ class Member extends BaseController
      * @Apidoc\Title("会员添加")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="avatar_id,nickname,username,password,phone,email,name,gender,region_id,remark,sort")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id", mock="@natural(1,3)")
-     * @Apidoc\Param("group_ids", type="array", desc="分组id", mock="@natural(1,3)")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\getTagIdsAttr", field="tag_ids")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\getGroupIdsAttr", field="group_ids")
      */
     public function add()
     {
         $param = $this->params(MemberService::$edit_field);
         $param['password']    = $this->param('password');
-        $param['reg_channel'] = SettingService::REG_CHANNEL_ADMIN;
-        $param['reg_type']    = SettingService::REG_TYPE_USERNAME;
+        $param['platform']    = SettingService::PLATFORM_YA;
+        $param['application'] = SettingService::APP_YA_ADMIN;
 
         validate(MemberValidate::class)->scene('add')->check($param);
 
@@ -112,8 +113,8 @@ class Member extends BaseController
      * @Apidoc\Title("会员修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="member_id,avatar_id,nickname,username,phone,email,name,gender,region_id,remark,sort")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
-     * @Apidoc\Param("group_ids", type="array", desc="分组id")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\getTagIdsAttr", field="tag_ids")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\getGroupIdsAttr", field="group_ids")
      */
     public function edit()
     {
@@ -129,15 +130,21 @@ class Member extends BaseController
     /**
      * @Apidoc\Title("会员删除")
      * @Apidoc\Method("POST")
+     * @Apidoc\Param("type", type="string", default="member", desc="member删除会员，third删除会员第三方账号")
      * @Apidoc\Param(ref="idsParam")
      */
     public function dele()
     {
-        $param = $this->params(['ids/a' => []]);
+        $param = $this->params(['ids/a' => [], 'type/s' => 'member']);
 
         validate(MemberValidate::class)->scene('dele')->check($param);
 
-        $data = MemberService::dele($param['ids']);
+        $type = $param['type'];
+        if ($type == 'third') {
+            $data = MemberService::thirdUnbind($param['ids'][0]);
+        } else {
+            $data = MemberService::dele($param['ids']);
+        }
 
         return success($data);
     }
@@ -163,7 +170,7 @@ class Member extends BaseController
      * @Apidoc\Title("会员修改标签")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\getTagIdsAttr", field="tag_ids")
      */
     public function edittag()
     {
@@ -180,7 +187,7 @@ class Member extends BaseController
      * @Apidoc\Title("会员修改分组")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("group_ids", type="array", desc="分组id")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel\getGroupIdsAttr", field="group_ids")
      */
     public function editgroup()
     {
@@ -232,14 +239,21 @@ class Member extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="is_disable")
+     * @Apidoc\Param("type", type="string", default="member", desc="member删除会员，third删除会员第三方账号")
      */
     public function disable()
     {
-        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0, 'type/s' => 'member']);
 
         validate(MemberValidate::class)->scene('disable')->check($param);
 
-        $data = MemberService::edit($param['ids'], $param);
+        $type = $param['type'];
+        unset($param['type']);
+        if ($type == 'third') {
+            $data = ThirdService::edit($param['ids'], $param);
+        } else {
+            $data = MemberService::edit($param['ids'], $param);
+        }
 
         return success($data);
     }
@@ -265,8 +279,8 @@ class Member extends BaseController
                     'phone'       => $v['手机'] ?? '',
                     'email'       => $v['邮箱'] ?? '',
                     'password'    => $v['密码'] ?? '',
-                    'reg_channel' => SettingService::REG_CHANNEL_ADMIN,
-                    'reg_type'    => SettingService::REG_TYPE_USERNAME,
+                    'platform'    => SettingService::PLATFORM_YA,
+                    'application' => SettingService::APP_YA_ADMIN,
                 ];
                 validate(MemberValidate::class)->scene('add')->check($add);
                 MemberService::add($add);
@@ -313,7 +327,7 @@ class Member extends BaseController
 
         $data['count'] = MemberService::statistic($type, $date, 'count');
 
-        $field = ['number', 'reg_channel', 'reg_type'];
+        $field = ['number', 'application', 'platform'];
         foreach ($field as $v) {
             $echart[] = MemberService::statistic($type, $date, $v);
         }

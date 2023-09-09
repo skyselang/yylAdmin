@@ -29,7 +29,7 @@ class Accord extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\AccordModel", type="array", desc="协议列表", field="accord_id,unique,name,sort,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", ref="app\common\model\setting\AccordModel", type="array", desc="协议列表", field="accord_id,unique,name,desc,remark,sort,is_disable,create_time,update_time")
      */
     public function list()
     {
@@ -50,7 +50,7 @@ class Accord extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['accord_id/d' => 0]);
+        $param = $this->params(['accord_id/d' => '']);
 
         validate(AccordValidate::class)->scene('info')->check($param);
 
@@ -62,7 +62,7 @@ class Accord extends BaseController
     /**
      * @Apidoc\Title("协议添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\AccordModel", field="unique,name,content,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\AccordModel", field="unique,name,desc,content,remark,sort")
      */
     public function add()
     {
@@ -78,7 +78,7 @@ class Accord extends BaseController
     /**
      * @Apidoc\Title("协议修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\AccordModel", field="accord_id,unique,name,content,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\AccordModel", field="accord_id,unique,name,desc,content,remark,sort")
      */
     public function edit()
     {

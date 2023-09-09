@@ -27,24 +27,20 @@ class LoginService
      */
     public static function login($param, $type = '')
     {
-        $setting = SettingService::info();
-        if (!$setting['is_login']) {
-            exception('系统维护，无法登录！');
-        }
-
         return MemberService::login($param, $type);
     }
 
     /**
-     * 微信登录
+     * 第三方登录
      *
-     * @param array $userinfo 微信用户信息
+     * @param array $user_info 第三方用户信息
+     * openid、application、headimgurl、nickname、unionid
      *
      * @return array
      */
-    public static function wechat($userinfo)
+    public static function thirdLogin($user_info)
     {
-        return MemberService::wechat($userinfo);
+        return MemberService::thirdLogin($user_info);
     }
 
     /**

@@ -23,35 +23,39 @@ class CategoryModel extends Model
     // 表主键
     protected $pk = 'category_id';
 
-    // 关联封面
-    public function cover()
+    // 关联图片
+    public function image()
     {
-        return $this->hasOne(FileModel::class, 'file_id', 'cover_id')->append(['file_url'])->where(where_disdel());
+        return $this->hasOne(FileModel::class, 'file_id', 'image_id')->append(['file_url'])->where(where_disdel());
     }
     /**
-     * 获取封面链接
+     * 获取图片链接
      * @Apidoc\field("")
-     * @Apidoc\AddField("cover_url", type="string", desc="封面链接")
+     * @Apidoc\AddField("image_url", type="string", desc="图片链接")
      */
-    public function getCoverUrlAttr()
+    public function getImageUrlAttr()
     {
-        return $this['cover']['file_url'] ?? '';
+        return $this['image']['file_url'] ?? '';
     }
 
-    // 关联图片
-    public function images()
+    // 关联文件列表
+    public function files()
     {
-        return $this->belongsToMany(FileModel::class, AttributesModel::class, 'file_id', 'category_id')->append(['file_url'])->where(where_disdel());
+        return $this->belongsToMany(FileModel::class, AttributesModel::class, 'file_id', 'category_id');
     }
-    // 获取图片id
+    // 获取图片列表
+    public function getImagesAttr()
+    {
+        return relation_fields($this['files']->append(['file_url']), '');
+    }
+    // 获取图片id数组
     public function getImageIdsAttr()
     {
-        if ($this['images']) {
-            $images = $this['images']->toArray();
-            foreach ($images as $image) {
-                $image_ids[] = $image['file_id'];
-            }
-        }
-        return $image_ids ?? [];
+        return relation_fields($this['files']->append(['file_url']), 'file_id');
+    }
+    // 获取图片url数组
+    public function getImageUrlsAttr()
+    {
+        return relation_fields($this['files']->append(['file_url']), 'file_url');
     }
 }

@@ -34,9 +34,26 @@ class Menu extends BaseController
 
         $data['list']  = MenuService::list('tree', $where);
         $data['tree']  = MenuService::list('tree', [where_delete()], [], 'menu_id,menu_pid,menu_name');
-        $data['types'] = SettingService::menu_types();
+        $data['types'] = SettingService::menuTypes();
         $data['exps']  = where_exps();
         $data['where'] = $where;
+
+        if (count($where) > 1) {
+            $list = tree_to_list($data['list']);
+            $all  = tree_to_list($data['tree']);
+            $pk   = 'menu_id';
+            $pid  = 'menu_pid';
+            $ids  = [];
+            foreach ($list as $val) {
+                $pids = children_parent_ids($all, $val[$pk], $pk, $pid);
+                $cids = parent_children_ids($all, $val[$pk], $pk, $pid);
+                $ids  = array_merge($ids, $pids, $cids);
+            }
+            $data['list'] = MenuService::list('tree', [[$pk, 'in', $ids], where_delete()]);
+        }
+
+        $menu = MenuService::list('list', $where, [], 'menu_id');
+        $data['count'] = count($menu);
 
         return success($data);
     }
@@ -48,7 +65,7 @@ class Menu extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['menu_id/d' => 0]);
+        $param = $this->params(['menu_id/d' => '']);
 
         validate(MenuValidate::class)->scene('info')->check($param);
 
@@ -240,7 +257,7 @@ class Menu extends BaseController
      */
     public function role()
     {
-        $param = $this->params(['menu_id/d' => 0]);
+        $param = $this->params(['menu_id/d' => '']);
 
         validate(MenuValidate::class)->scene('role')->check($param);
 

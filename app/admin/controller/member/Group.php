@@ -30,9 +30,9 @@ class Group extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\GroupModel", type="array", desc="分组列表", field="group_id,group_name,group_desc,sort,is_default,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", ref="app\common\model\member\GroupModel", type="array", desc="分组列表", field="group_id,group_name,group_desc,remark,sort,is_default,is_disable,create_time,update_time")
      * @Apidoc\Returned("api", ref="app\common\model\member\ApiModel", type="tree", desc="接口树形", field="api_id,api_pid,api_name,api_url,is_unlogin,is_unauth")
-     * @Apidoc\Returned("api_ids", type="array", desc="接口id")
+     * @Apidoc\Returned(ref="app\common\model\member\GroupModel\getApiIdsAttr")
      */
     public function list()
     {
@@ -53,11 +53,11 @@ class Group extends BaseController
      * @Apidoc\Title("会员分组信息")
      * @Apidoc\Query(ref="app\common\model\member\GroupModel", field="group_id")
      * @Apidoc\Returned(ref="app\common\model\member\GroupModel")
-     * @Apidoc\Returned("api_ids", type="array", desc="接口id")
+     * @Apidoc\Returned(ref="app\common\model\member\GroupModel\getApiIdsAttr")
      */
     public function info()
     {
-        $param = $this->params(['group_id/d' => 0]);
+        $param = $this->params(['group_id/d' => '']);
 
         validate(GroupValidate::class)->scene('info')->check($param);
 
@@ -69,8 +69,8 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("会员分组添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="group_name,group_desc,sort")
-     * @Apidoc\Param("api_ids", type="array", desc="接口id")
+     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="group_name,group_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\member\GroupModel\getApiIdsAttr", field="api_ids")
      */
     public function add()
     {
@@ -86,8 +86,8 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("会员分组修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="group_id,group_name,group_desc,sort")
-     * @Apidoc\Param("api_ids", type="array", desc="接口id")
+     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="group_id,group_name,group_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\member\GroupModel\getApiIdsAttr", field="api_ids")
      */
     public function edit()
     {
@@ -120,7 +120,7 @@ class Group extends BaseController
      * @Apidoc\Title("会员分组修改接口")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("api_ids", type="array", desc="接口id")
+     * @Apidoc\Param(ref="app\common\model\member\GroupModel\getApiIdsAttr", field="api_ids")
      */
     public function editapi()
     {
@@ -181,7 +181,7 @@ class Group extends BaseController
      */
     public function member()
     {
-        $param = $this->params(['group_id/d' => 0]);
+        $param = $this->params(['group_id/d' => '']);
 
         validate(GroupValidate::class)->scene('member')->check($param);
 

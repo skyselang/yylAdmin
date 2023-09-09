@@ -21,15 +21,15 @@ class MemberCache
     public static $tag = 'member';
     // 缓存前缀
     protected static $prefix = 'member:';
-    // token标签
-    protected static $tag_token = 'member_token';
-    // token前缀
-    protected static $prefix_token = 'member_token:';
+    // token缓存标签
+    public static $tag_token = 'member_token';
+    // token缓存前缀
+    protected static $prefixToken = 'member_token:';
 
     /**
      * 缓存键名
      *
-     * @param mixed $id 会员id、key
+     * @param int|string $id 会员id、key
      * 
      * @return string
      */
@@ -41,9 +41,9 @@ class MemberCache
     /**
      * 缓存设置
      *
-     * @param mixed $id   会员id、key
-     * @param array $info 会员信息
-     * @param int   $ttl  有效时间（秒，0永久）
+     * @param int|string $id   会员id、key
+     * @param array      $info 会员信息
+     * @param int        $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
@@ -55,7 +55,7 @@ class MemberCache
     /**
      * 缓存获取
      *
-     * @param mixed $id 会员id、key
+     * @param int|string $id 会员id、key
      * 
      * @return array 会员信息
      */
@@ -115,13 +115,13 @@ class MemberCache
     /**
      * token键名
      *
-     * @param mixed $id 会员id
+     * @param int $id 会员id
      * 
      * @return string
      */
     public static function keyToken($id)
     {
-        return self::$prefix_token . $id;
+        return self::$prefixToken . $id;
     }
 
     /**

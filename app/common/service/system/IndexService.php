@@ -65,6 +65,7 @@ class IndexService
                 ['table' => 'setting_accord', 'name' => '协议', 'menu_url' => 'admin/setting.Accord/list'],
                 ['table' => 'setting_feedback', 'name' => '反馈', 'menu_url' => 'admin/setting.Feedback/list'],
                 ['table' => 'setting_region', 'name' => '地区', 'menu_url' => 'admin/setting.Region/list'],
+                // ['table' => 'setting_link', 'name' => '友链', 'menu_url' => 'admin/setting.Link/list'],
                 // ['table' => 'system_menu', 'name' => '菜单', 'menu_url' => 'admin/system.Menu/list'],
                 // ['table' => 'system_role', 'name' => '角色', 'menu_url' => 'admin/system.Role/list'],
                 // ['table' => 'system_user', 'name' => '用户', 'menu_url' => 'admin/system.User/list'],

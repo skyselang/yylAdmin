@@ -18,14 +18,16 @@ use app\common\model\setting\AccordModel;
 class AccordService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'accord_id/d' => 0,
+        'accord_id/d' => '',
         'unique/s'    => '',
         'name/s'      => '',
+        'desc/s'      => '',
         'content/s'   => '',
+        'remark/s'    => '',
         'sort/d'      => 250,
     ];
 
@@ -46,15 +48,22 @@ class AccordService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',unique,name,sort,is_disable,create_time';
+            $field = $pk . ',unique,name,desc,remark,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
+            $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)->page($page)->limit($limit)->order($order)->select()->toArray();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }

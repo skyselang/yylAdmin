@@ -29,7 +29,7 @@ class Group extends BaseController
      * @Apidoc\Query(ref="dateQuery")
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\file\GroupModel", type="array", desc="分组列表", field="group_id,group_name,group_desc,sort,is_disable,create_time,update_time")
+     * @Apidoc\Returned("list", ref="app\common\model\file\GroupModel", type="array", desc="分组列表", field="group_id,group_name,group_desc,remark,sort,is_disable,create_time,update_time")
      */
     public function list()
     {
@@ -50,7 +50,7 @@ class Group extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['group_id/d' => 0]);
+        $param = $this->params(['group_id/d' => '']);
 
         validate(GroupValidate::class)->scene('info')->check($param);
 
@@ -62,7 +62,7 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("文件分组添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_name,group_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_name,group_desc,remark,sort")
      */
     public function add()
     {
@@ -78,7 +78,7 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("文件分组修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_id,group_name,group_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_id,group_name,group_desc,remark,sort")
      */
     public function edit()
     {
@@ -140,7 +140,7 @@ class Group extends BaseController
      */
     public function file()
     {
-        $param = $this->params(['group_id/d' => 0]);
+        $param = $this->params(['group_id/d' => '']);
 
         validate(GroupValidate::class)->scene('file')->check($param);
 

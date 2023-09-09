@@ -58,13 +58,13 @@ class Region extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['region_id/d' => 0]);
+        $param = $this->params(['region_id/d' => '']);
 
         validate(RegionValidate::class)->scene('info')->check($param);
 
         $data = RegionService::info($param['region_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error([], '地区不存在');
+            return error('地区不存在');
         }
 
         return success($data);

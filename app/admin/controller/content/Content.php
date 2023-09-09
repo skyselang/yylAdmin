@@ -32,8 +32,8 @@ class Content extends BaseController
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr", field="cover_url"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,image_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr", field="image_url"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
      * })
@@ -47,7 +47,7 @@ class Content extends BaseController
         $data = ContentService::list($where, $this->page(), $this->limit(), $this->order());
 
         $data['category'] = CategoryService::list('tree', [where_delete()], [], 'category_id,category_pid,category_name');
-        $data['tag']      = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name');
+        $data['tag']      = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
         $data['exps']     = where_exps();
         $data['where']    = $where;
 
@@ -58,8 +58,10 @@ class Content extends BaseController
      * @Apidoc\Title("内容信息")
      * @Apidoc\Query(ref="app\common\model\content\ContentModel", field="content_id")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel")
-     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCoverUrlAttr")
+     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr")
+     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryIdsAttr")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr")
+     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagIdsAttr")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr")
      * @Apidoc\Returned(ref="imagesReturn")
      * @Apidoc\Returned(ref="videosReturn")
@@ -69,7 +71,7 @@ class Content extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['content_id/d' => 0]);
+        $param = $this->params(['content_id/d' => '']);
 
         validate(ContentValidate::class)->scene('info')->check($param);
 
@@ -81,14 +83,14 @@ class Content extends BaseController
     /**
      * @Apidoc\Title("内容添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("category_ids", type="array", desc="分类id", mock="@natural(1,3)")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id", mock="@natural(1,3)")
-     * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="cover_id,name,unique,title,keywords,description,content,author,url,sort")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel\getCategoryIdsAttr", field="category_ids")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel\getTagIdsAttr", field="tag_ids")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="unique,image_id,name,title,keywords,description,content,source,author,url,remark,sort,hits_initial")
      * @Apidoc\Param(ref="imagesParam")
      * @Apidoc\Param(ref="videosParam")
-     * @Apidoc\Param(ref="audiosReturn")
-     * @Apidoc\Param(ref="wordsReturn")
-     * @Apidoc\Param(ref="othersReturn")
+     * @Apidoc\Param(ref="audiosParam")
+     * @Apidoc\Param(ref="wordsParam")
+     * @Apidoc\Param(ref="othersParam")
      */
     public function add()
     {
@@ -104,14 +106,14 @@ class Content extends BaseController
     /**
      * @Apidoc\Title("内容修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("category_ids", type="array", desc="分类id")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
-     * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="content_id,cover_id,name,unique,title,keywords,description,content,author,url,sort")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel\getCategoryIdsAttr", field="category_ids")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel\getTagIdsAttr", field="tag_ids")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="content_id,unique,image_id,name,title,keywords,description,content,source,author,url,remark,sort,hits_initial")
      * @Apidoc\Param(ref="imagesParam")
      * @Apidoc\Param(ref="videosParam")
-     * @Apidoc\Param(ref="audiosReturn")
-     * @Apidoc\Param(ref="wordsReturn")
-     * @Apidoc\Param(ref="othersReturn")
+     * @Apidoc\Param(ref="audiosParam")
+     * @Apidoc\Param(ref="wordsParam")
+     * @Apidoc\Param(ref="othersParam")
      */
     public function edit()
     {
@@ -144,7 +146,7 @@ class Content extends BaseController
      * @Apidoc\Title("内容修改分类")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("category_ids", type="array", desc="分类id")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel\getCategoryIdsAttr", field="category_ids")
      */
     public function editcate()
     {
@@ -161,7 +163,7 @@ class Content extends BaseController
      * @Apidoc\Title("内容修改标签")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param("tag_ids", type="array", desc="标签id")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel\getTagIdsAttr", field="tag_ids")
      */
     public function edittag()
     {
@@ -236,6 +238,23 @@ class Content extends BaseController
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
         validate(ContentValidate::class)->scene('disable')->check($param);
+
+        $data = ContentService::edit($param['ids'], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("内容发布时间")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref="app\common\model\content\ContentModel", field="release_time")
+     */
+    public function release()
+    {
+        $param = $this->params(['ids/a' => [], 'release_time/s' => null]);
+
+        validate(ContentValidate::class)->scene('release')->check($param);
 
         $data = ContentService::edit($param['ids'], $param);
 

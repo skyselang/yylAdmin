@@ -27,11 +27,6 @@ class RegisterService
      */
     public static function register($param)
     {
-        $setting = SettingService::info();
-        if (!$setting['is_register']) {
-            exception('系统维护，无法注册！');
-        }
-
         if (empty($param['username'])) {
             $param['username'] = md5(uniqid(mt_rand(), true));
         }

@@ -40,7 +40,7 @@ class Index extends BaseController
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="公告列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel", field="notice_id,image_id,title,title_color,intro,start_time"),
+     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel", field="notice_id,image_id,title,title_color,desc,start_time"),
      *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel\getImageUrlAttr", field="image_url")
      * })
      */
@@ -54,7 +54,7 @@ class Index extends BaseController
 
         $order = ['sort' => 'desc', 'start_time' => 'desc', 'notice_id' => 'desc'];
 
-        $field = 'notice_id,image_id,title,title_color,intro,start_time';
+        $field = 'notice_id,image_id,title,title_color,desc,start_time';
 
         $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 

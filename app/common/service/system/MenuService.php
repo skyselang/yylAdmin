@@ -23,30 +23,32 @@ use app\common\model\system\RoleMenusModel;
 class MenuService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'menu_id/d'    => 0,
-        'menu_pid/d'   => 0,
-        'menu_type/d'  => SettingService::MENU_TYPE_CATALOGUE,
-        'meta_icon/s'  => '',
-        'menu_name/s'  => '',
-        'menu_url/s'   => '',
-        'path/s'       => '',
-        'component/s'  => '',
-        'name/s'       => '',
-        'meta_query/s' => '',
-        'hidden/d'     => 0,
-        'sort/d'       => 250,
-        'add_info/b'   => false,
-        'add_add/b'    => false,
-        'add_edit/b'   => false,
-        'add_dele/b'   => false,
-        'edit_info/b'  => false,
-        'edit_add/b'   => false,
-        'edit_edit/b'  => false,
-        'edit_dele/b'  => false,
+        'menu_id/d'      => '',
+        'menu_pid/d'     => 0,
+        'menu_type/d'    => SettingService::MENU_TYPE_CATALOGUE,
+        'meta_icon/s'    => '',
+        'menu_name/s'    => '',
+        'menu_url/s'     => '',
+        'path/s'         => '',
+        'component/s'    => '',
+        'name/s'         => '',
+        'meta_query/s'   => '',
+        'hidden/d'       => 0,
+        'sort/d'         => 250,
+        'add_info/b'     => false,
+        'add_add/b'      => false,
+        'add_edit/b'     => false,
+        'add_dele/b'     => false,
+        'add_disable/b'  => false,
+        'edit_info/b'    => false,
+        'edit_add/b'     => false,
+        'edit_edit/b'    => false,
+        'edit_dele/b'    => false,
+        'edit_disable/b' => false,
     ];
 
     /**
@@ -143,7 +145,7 @@ class MenuService
         $param['create_time'] = datetime();
 
         $add = false;
-        $add_arr = ['info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
+        $add_arr = ['info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除', 'disable' => '是否禁用'];
         foreach ($add_arr as $k => $v) {
             $add_key = '';
             $add_key = 'add_' . $k;
@@ -228,7 +230,7 @@ class MenuService
         $param['update_time'] = datetime();
 
         $add = $edit = false;
-        $add_arr = $edit_arr = ['info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除'];
+        $add_arr = $edit_arr = ['info' => '信息', 'add' => '添加', 'edit' => '修改', 'dele' => '删除', 'disable' => '是否禁用'];
         foreach ($add_arr as $k => $v) {
             $add_key = '';
             $add_key = 'add_' . $k;

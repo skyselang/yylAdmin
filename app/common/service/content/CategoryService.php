@@ -21,19 +21,20 @@ use app\common\model\content\AttributesModel;
 class CategoryService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'category_id/d'     => 0,
+        'category_id/d'     => '',
         'category_pid/d'    => 0,
         'category_name/s'   => '',
         'category_unique/s' => '',
-        'cover_id/d'        => 0,
+        'image_id/d'        => 0,
         'title/s'           => '',
         'keywords/s'        => '',
         'description/s'     => '',
         'sort/d'            => 250,
+        'remark/s'          => '',
         'images/a'          => [],
     ];
 
@@ -53,7 +54,7 @@ class CategoryService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',category_pid,category_name,category_unique,cover_id,sort,is_disable,create_time,update_time';
+            $field = $pk . ',category_pid,category_name,category_unique,image_id,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'asc'];
@@ -62,11 +63,29 @@ class CategoryService
         $key = where_cache_key($type, $where, $order, $field);
         $data = CategoryCache::get($key);
         if (empty($data)) {
-            $model = $model->field($field)->where($where);
-            if (strpos($field, 'cover_id')) {
-                $model = $model->with(['cover'])->append(['cover_url'])->hidden(['cover']);
+            $with = $append = $hidden = $field_no = [];
+            if (strpos($field, 'image_id') !== false) {
+                $with[]   = $hidden[] = 'image';
+                $append[] = 'image_url';
             }
-            $data = $model->order($order)->select()->toArray();
+            if (strpos($field, 'images') !== false) {
+                $with[]   = $hidden[]   = 'files';
+                $append[] = $field_no[] = 'images';
+            } elseif (strpos($field, 'image_urls') !== false) {
+                $with[]   = $hidden[]   = 'files';
+                $append[] = $field_no[] = 'image_urls';
+            }
+            $fields = explode(',', $field);
+            foreach ($fields as $k => $v) {
+                if (in_array($v, $field_no)) {
+                    unset($fields[$k]);
+                }
+            }
+            $field = implode(',', $fields);
+
+            $data = $model->field($field)->where($where)
+                ->with($with)->append($append)->hidden($hidden)
+                ->order($order)->select()->toArray();
 
             if ($type == 'tree') {
                 $data = array_to_tree($data, $pk, 'category_pid');
@@ -107,7 +126,7 @@ class CategoryService
                 }
                 return [];
             }
-            $info = $info->append(['cover_url', 'images'])->hidden(['cover'])->toArray();
+            $info = $info->append(['image_url', 'images', 'image_urls'])->hidden(['image', 'files'])->toArray();
 
             CategoryCache::set($id, $info);
         }
@@ -140,7 +159,7 @@ class CategoryService
             // 添加图片
             if (isset($param['images'])) {
                 $file_ids = file_ids($param['images']);
-                $model->images()->saveAll($file_ids);
+                $model->files()->saveAll($file_ids);
             }
             // 提交事务
             $model->commit();
@@ -193,7 +212,7 @@ class CategoryService
                     // 修改图片
                     if (isset($param['images'])) {
                         $info = $info->append(['image_ids']);
-                        relation_update($info, $info['image_ids'], file_ids($param['images']), 'images');
+                        relation_update($info, $info['image_ids'], file_ids($param['images']), 'files');
                     }
                 }
             }
@@ -209,11 +228,11 @@ class CategoryService
             exception($errmsg);
         }
 
-        $update['ids'] = $ids;
+        $param['ids'] = $ids;
 
         CategoryCache::clear();
 
-        return $update;
+        return $param;
     }
 
     /**
@@ -239,7 +258,7 @@ class CategoryService
                 foreach ($ids as $id) {
                     $info = $model->find($id);
                     // 删除图片
-                    $info->images()->detach();
+                    $info->files()->detach();
                 }
                 $model->where($pk, 'in', $ids)->delete();
             } else {

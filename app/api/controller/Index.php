@@ -10,6 +10,9 @@
 namespace app\api\controller;
 
 use app\common\controller\BaseController;
+use app\common\service\content\CategoryService;
+use app\common\service\content\ContentService;
+use app\common\service\setting\CarouselService;
 use app\api\service\IndexService;
 use hg\apidoc\annotation as Apidoc;
 
@@ -22,6 +25,9 @@ class Index extends BaseController
 {
     /**
      * @Apidoc\Title("首页")
+     * @Apidoc\NotHeaders()
+     * @Apidoc\NotQuerys()
+     * @Apidoc\NotParams()
      */
     public function index()
     {

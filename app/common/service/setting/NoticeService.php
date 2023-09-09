@@ -18,19 +18,20 @@ use app\common\model\setting\NoticeModel;
 class NoticeService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'notice_id/d'   => 0,
+        'notice_id/d'   => '',
         'image_id/d'    => 0,
         'type/d'        => 0,
         'title/s'       => '',
         'title_color/s' => '#606266',
         'start_time/s'  => '',
         'end_time/s'    => '',
-        'intro/s'       => '',
+        'desc/s'        => '',
         'content/s'     => '',
+        'remark/s'      => '',
         'sort/d'        => 250,
     ];
 
@@ -51,20 +52,42 @@ class NoticeService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',image_id,type,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time';
+            $field = $pk . ',image_id,type,title,title_color,start_time,end_time,is_disable,remark,sort,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
+            $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
-        $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
-        $list = $model->field($field)->where($where)
-            ->append(['image_url', 'type_name'])
-            ->hidden(['image'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'image_id') !== false) {
+            $with[]   = $hidden[] = 'image';
+            $append[] = 'image_url';
+        }
+        if (strpos($field, 'type') !== false) {
+            $append[] = 'type_name';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
 
-        $types = SettingService::notice_types();
+        $count = $model->where($where)->count();
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
+        $list = $model->field($field)->where($where)
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
+
+        $types = SettingService::noticeTypes();
 
         return compact('count', 'pages', 'page', 'limit', 'list', 'types');
     }

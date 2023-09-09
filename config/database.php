@@ -54,11 +54,11 @@ return [
             // 指定从服务器序号
             'slave_no'          => '',
             // 是否严格检查字段是否存在
-            'fields_strict'     => env('database.fields_strict', false),
+            'fields_strict'     => false,
             // 是否需要断线重连
             'break_reconnect'   => env('database.break_reconnect', false),
             // 监听SQL
-            'trigger_sql'       => env('app_debug', false),
+            'trigger_sql'       => env('database.trigger_sql', false),
             // 开启字段缓存
             'fields_cache'      => env('database.fields_cache', true),
             // 字段缓存路径

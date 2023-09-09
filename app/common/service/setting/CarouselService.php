@@ -18,16 +18,17 @@ use app\common\model\setting\CarouselModel;
 class CarouselService
 {
     /**
-     * 添加、修改字段
+     * 添加修改字段
      * @var array
      */
     public static $edit_field = [
-        'carousel_id/d' => 0,
+        'carousel_id/d' => '',
         'unique/s'      => '',
         'file_id/d'     => 0,
         'title/s'       => '',
-        'link/s'        => '',
         'desc/s'        => '',
+        'url/s'         => '',
+        'remark/s'      => '',
         'sort/d'        => 250,
         'file_list/a'   => [],
     ];
@@ -49,19 +50,41 @@ class CarouselService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time';
+            $field = $pk . ',unique,file_id,title,position,desc,remark,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
-            $order = [$pk => 'desc'];
+            $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'file_id') !== false) {
+            $with[]   = $hidden[] = 'file';
+            $append[] = 'file_url';
+            $append[] = 'file_name';
+            $append[] = 'file_ext';
+            $append[] = 'file_type';
+            $append[] = 'file_type_name';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
+
         $count = $model->where($where)->count();
-        $pages = ceil($count / $limit);
+        $pages = 0;
+        if ($page > 0) {
+            $model = $model->page($page);
+        }
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+            $pages = ceil($count / $limit);
+        }
         $list = $model->field($field)->where($where)
-            ->with(['file'])
-            ->append(['file_url', 'file_name', 'file_ext', 'file_type', 'file_type_name'])
-            ->hidden(['file'])
-            ->page($page)->limit($limit)->order($order)->select()->toArray();
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -69,7 +92,7 @@ class CarouselService
     /**
      * 轮播信息
      * 
-     * @param int|string $id   轮播id
+     * @param int|string $id   轮播id、标识
      * @param bool       $exce 不存在是否抛出异常
      * 
      * @return array|Exception
@@ -221,13 +244,14 @@ class CarouselService
         $model = new CarouselModel();
         $pk = $model->getPk();
 
+        $unique = $model->where($pk, 'in', $ids)->column('unique');
+
         // 启动事务
         $model->startTrans();
         try {
             if (is_numeric($ids)) {
                 $ids = [$ids];
             }
-            $unique = $model->where($pk, 'in', $ids)->column('unique');
             if ($real) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);

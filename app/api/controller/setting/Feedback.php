@@ -12,7 +12,6 @@ namespace app\api\controller\setting;
 use app\common\controller\BaseController;
 use app\common\validate\setting\FeedbackValidate;
 use app\common\service\setting\FeedbackService;
-use app\common\service\setting\SettingService;
 use app\common\cache\setting\FeedbackCache;
 use hg\apidoc\annotation as Apidoc;
 
@@ -27,7 +26,7 @@ class Feedback extends BaseController
      * @Apidoc\Title("反馈列表")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="反馈列表", children={
-     *    @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel", field="feedback_id,member_id,type,title,phone,email,remark,status,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel", field="feedback_id,member_id,type,title,phone,email,remark,status,create_time,update_time"),
      *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getTypeNameAttr", field="type_name"),
      *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getStatusNameAttr", field="status_name"),
      *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getMemberUsernameAttr", field="member_username")
@@ -62,11 +61,11 @@ class Feedback extends BaseController
 
         if (is_numeric($param['feedback_id'])) {
             if (($data['member_id'] ?? '') != member_id()) {
-                return error([], '反馈不存在');
+                return error('反馈不存在');
             }
         }
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error([], '反馈不存在');
+            return error('反馈不存在');
         }
 
         return success($data);
@@ -81,11 +80,6 @@ class Feedback extends BaseController
      */
     public function add()
     {
-        $setting = SettingService::info();
-        if (!$setting['is_feedback']) {
-            return error([], '系统模块（反馈）维护中...');
-        }
-
         $param = $this->params([
             'type/d'    => 0,
             'title/s'   => '',
@@ -101,7 +95,7 @@ class Feedback extends BaseController
         $feedback_key = 'repeat' . $param['type'] . $param['phone'] . md5($param['title']);
         $feedback_val = FeedbackCache::get($feedback_key);
         if ($feedback_val) {
-            return error([], '请勿重复提交！');
+            return error('请勿重复提交！');
         } else {
             FeedbackCache::set($feedback_key, $param['title'], 60);
         }
