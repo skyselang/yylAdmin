@@ -77,7 +77,7 @@ class Dept extends BaseController
     /**
      * @Apidoc\Title("部门添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\DeptModel", field="dept_pid,dept_name,dept_abbr,dept_desc,dept_tel,dept_fax,dept_email,dept_addr,sort")
+     * @Apidoc\Param(ref="app\common\model\system\DeptModel", field="dept_pid,dept_name,dept_abbr,dept_desc,dept_tel,dept_fax,dept_email,dept_addr,remark,sort")
      */
     public function add()
     {
@@ -93,7 +93,7 @@ class Dept extends BaseController
     /**
      * @Apidoc\Title("部门修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\DeptModel", field="dept_id,dept_pid,dept_name,dept_abbr,dept_desc,dept_tel,dept_fax,dept_email,dept_addr,sort")
+     * @Apidoc\Param(ref="app\common\model\system\DeptModel", field="dept_id,dept_pid,dept_name,dept_abbr,dept_desc,dept_tel,dept_fax,dept_email,dept_addr,remark,sort")
      * @Apidoc\Param(ref="imagesParam")
      */
     public function edit()

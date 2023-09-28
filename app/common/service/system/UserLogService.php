@@ -38,7 +38,7 @@ class UserLogService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',user_id,menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+            $field = $pk . ',user_id,menu_id,request_url,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
@@ -205,21 +205,26 @@ class UserLogService
     /**
      * 用户日志删除
      *
-     * @param array $ids  日志id
-     * @param bool  $real 是否真实删除
+     * @param array  $ids     日志id
+     * @param bool   $real    是否真实删除
+     * @param string $user_id 用户ID
      * 
      * @return array|Exception
      */
-    public static function dele($ids, $real = false)
+    public static function dele($ids, $real = false, $user_id = '')
     {
         $model = new UserLogModel();
         $pk = $model->getPk();
 
+        $where = [[$pk, 'in', $ids]];
+        if ($user_id !== '') {
+            $where[] = ['user_id', 'in', $user_id];
+        }
         if ($real) {
-            $res = $model->where($pk, 'in', $ids)->delete();
+            $res = $model->where($where)->delete();
         } else {
             $update = delete_update();
-            $res = $model->where($pk, 'in', $ids)->update($update);
+            $res = $model->where($where)->update($update);
         }
 
         if (empty($res)) {

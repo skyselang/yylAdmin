@@ -38,7 +38,7 @@ class LogService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',member_id,api_id,request_ip,request_region,request_isp,request_url,response_code,response_msg,create_time';
+            $field = $pk . ',member_id,api_id,request_ip,request_region,request_isp,request_url,response_code,response_msg,application,create_time';
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
@@ -54,6 +54,12 @@ class LogService
             $with[]   = $hidden[] = 'api';
             $append[] = 'api_name';
             $append[] = 'api_url';
+        }
+        if (strpos($field, 'platform') !== false) {
+            $append[] = 'platform_name';
+        }
+        if (strpos($field, 'application') !== false) {
+            $append[] = 'application_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -76,9 +82,11 @@ class LogService
             ->with($with)->append($append)->hidden($hidden)
             ->order($order)->select()->toArray();
 
-        $log_types = SettingService::logTypes();
+        $log_types    = SettingService::logTypes();
+        $platforms    = SettingService::platforms();
+        $applications = SettingService::applications();
 
-        return compact('count', 'pages', 'page', 'limit', 'list', 'log_types');
+        return compact('count', 'pages', 'page', 'limit', 'list', 'log_types', 'platforms', 'applications');
     }
 
     /**
@@ -103,7 +111,7 @@ class LogService
                 return [];
             }
             $info = $info
-                ->append(['nickname', 'username', 'api_url', 'api_name'])
+                ->append(['nickname', 'username', 'api_url', 'api_name', 'platform_name', 'application_name'])
                 ->hidden(['member', 'api'])
                 ->toArray();
 

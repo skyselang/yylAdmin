@@ -22,17 +22,18 @@ class LinkService
      * @var array
      */
     public static $edit_field = [
-        'link_id/d'         => '',
-        'unique/s'          => '',
-        'image_id/d'        => 0,
-        'name/s'            => '',
-        'name_color/s'      => '#606266',
-        'url/s'             => '',
-        'desc/s'            => '',
-        'expiration_date/s' => '',
-        'underline/s'       => '',
-        'remark/s'          => '',
-        'sort/d'            => 250,
+        'link_id/d'    => '',
+        'unique/s'     => '',
+        'image_id/d'   => 0,
+        'name/s'       => '',
+        'name_color/s' => '#606266',
+        'url/s'        => '',
+        'desc/s'       => '',
+        'start_time/s' => '',
+        'end_time/s'   => '',
+        'underline/s'  => '',
+        'remark/s'     => '',
+        'sort/d'       => 250,
     ];
 
     /**
@@ -52,7 +53,7 @@ class LinkService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',unique,image_id,name,name_color,url,desc,expiration_date,sort,is_disable,create_time,update_time';
+            $field = $pk . ',unique,image_id,name,name_color,url,desc,start_time,end_time,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];

@@ -526,6 +526,34 @@ function member_id($exce = false)
 }
 
 /**
+ * 会员平台获取
+ * 
+ * @param bool $exce 未登录是否抛出异常
+ *
+ * @return int
+ */
+function member_platform($exce = false)
+{
+    $api_token = api_token();
+
+    return MemberTokenService::memberPlatform($api_token, $exce);
+}
+
+/**
+ * 会员应用获取
+ * 
+ * @param bool $exce 未登录是否抛出异常
+ *
+ * @return int
+ */
+function member_application($exce = false)
+{
+    $api_token = api_token();
+
+    return MemberTokenService::memberApplication($api_token, $exce);
+}
+
+/**
  * 会员日志记录是否开启
  *
  * @return bool

@@ -11,6 +11,7 @@ namespace app\common\model\content;
 
 use think\Model;
 use app\common\model\file\FileModel;
+use app\common\service\content\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -35,7 +36,14 @@ class CategoryModel extends Model
      */
     public function getImageUrlAttr()
     {
-        return $this['image']['file_url'] ?? '';
+        $file_url = $this['image']['file_url'] ?? '';
+        if (empty($file_url)) {
+            $setting = SettingService::info();
+            if ($setting['category_default_img_open']) {
+                $file_url = $setting['category_default_img_url'] ?? '';
+            }
+        }
+        return $file_url;
     }
 
     // 关联文件列表

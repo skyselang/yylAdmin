@@ -11,7 +11,9 @@ namespace app\admin\controller\system;
 
 use app\common\controller\BaseController;
 use app\common\validate\system\UserCenterValidate;
+use app\common\validate\system\UserLogValidate;
 use app\common\service\system\UserCenterService;
+use app\common\service\system\UserLogService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -113,6 +115,45 @@ class UserCenter extends BaseController
 
         $data['exps']  = where_exps();
         $data['where'] = $where;
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("我的日志信息")
+     * @Apidoc\Query(ref="app\common\model\system\UserLogModel", field="log_id")
+     * @Apidoc\Returned(ref="app\common\model\system\UserLogModel")
+     * @Apidoc\Returned(ref="app\common\model\system\UserModel", field="nickname,username")
+     * @Apidoc\Returned(ref="app\common\model\system\MenuModel", field="menu_name,menu_url")
+     */
+    public function logInfo()
+    {
+        $param   = $this->params(['log_id/d' => '']);
+        $user_id = user_id(true);
+
+        validate(UserLogValidate::class)->scene('info')->check($param);
+
+        $data = UserLogService::info($param['log_id']);
+        if ($data['user_id'] != $user_id) {
+            $data = [];
+        }
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("我的日志删除")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="idsParam")
+     */
+    public function logDele()
+    {
+        $param   = $this->params(['ids/a' => []]);
+        $user_id = user_id(true);
+
+        validate(UserLogValidate::class)->scene('dele')->check($param);
+
+        $data = UserLogService::dele($param['ids'], false, $user_id);
 
         return success($data);
     }

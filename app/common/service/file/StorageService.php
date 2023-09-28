@@ -185,6 +185,7 @@ class StorageService
                         $command['RequestPayer'] = 'requester';
                     },
                 ]);
+                $file_info['domain'] = $setting['aws_domain'];
             } catch (\Exception $e) {
                 $errmsg = $e->getMessage() ?: 'aws upload error';
             }

@@ -55,4 +55,7 @@ return [
         'annexs',
         'others',
     ],
+
+    // 地区级别：1省2市3区4县街道乡镇
+    'region_level' => 3,
 ];

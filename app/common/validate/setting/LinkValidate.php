@@ -19,26 +19,28 @@ class LinkValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'ids'             => ['require', 'array'],
-        'link_id'         => ['require'],
-        'name'            => ['require', 'checkExisted'],
-        'expiration_date' => ['dateFormat:Y-m-d H:i:s'],
+        'ids'        => ['require', 'array'],
+        'link_id'    => ['require'],
+        'name'       => ['require', 'checkExisted'],
+        'start_time' => ['dateFormat:Y-m-d H:i:s'],
+        'end_time'   => ['dateFormat:Y-m-d H:i:s'],
     ];
 
     // 错误信息
     protected $message = [
-        'name.require'               => '请输入名称',
-        'expiration_date.dateFormat' => '有效期日期格式：YYYY-MM-DD hh:mm:ss',
+        'name.require'          => '请输入名称',
+        'start_time.dateFormat' => '开始时间日期格式：YYYY-MM-DD hh:mm:ss',
+        'start_time.dateFormat' => '结束时间日期格式：YYYY-MM-DD hh:mm:ss',
     ];
 
     // 验证场景
     protected $scene = [
-        'info'       => ['link_id'],
-        'add'        => ['name', 'expiration_date'],
-        'edit'       => ['link_id', 'name', 'expiration_date'],
-        'dele'       => ['ids'],
-        'disable'    => ['ids'],
-        'expiration' => ['ids', 'expiration_date'],
+        'info'     => ['link_id'],
+        'add'      => ['name', 'start_time', 'end_time'],
+        'edit'     => ['link_id', 'name', 'start_time', 'end_time'],
+        'dele'     => ['ids'],
+        'disable'  => ['ids'],
+        'datetime' => ['ids', 'start_time', 'end_time'],
     ];
 
     // 自定义验证规则：友链是否已存在

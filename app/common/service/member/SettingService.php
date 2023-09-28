@@ -97,6 +97,7 @@ class SettingService
      * @param string $platform 平台
      * @param bool   $val_lab  是否返回带value、label的数组
      * @return array|string 
+     * @Apidoc\Param("platform", type="string", default="10", desc="平台：10系统，20微信，30 QQ，40微博")
      */
     public static function platforms($platform = '', $val_lab = false)
     {
@@ -123,7 +124,7 @@ class SettingService
      * 应用：未知
      * @var integer
      */
-    const APP_UNKNOWN = 0;
+    const APP_UNKNOWN    = 0;
     /**
      * 应用：系统后台
      * @var integer
@@ -198,6 +199,7 @@ class SettingService
      * @param string $application 应用
      * @param bool   $val_lab     是否返回带value、label的数组
      * @return array|string 
+     * @Apidoc\Param("application", type="string", default="0", desc="应用：0未知，10系统后台，11系统小程序，12系统公众号，13系统网站应用，14系统移动应用；21微信小程序，22微信公众号，23微信网页应用，24微信移动应用；31QQ小程序，33QQ网站应用，34QQ移动应用；43微博网站应用")
      */
     public static function applications($application = '', $val_lab = false)
     {

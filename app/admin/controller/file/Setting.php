@@ -37,7 +37,7 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("文件设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
+     * @Apidoc\Param(ref="app\common\model\file\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
      */
     public function edit()
     {

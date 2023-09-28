@@ -33,6 +33,9 @@ class SettingService
      * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
      * @Apidoc\Returned("offi_url", type="string", desc="公众号二维码链接")
      * @Apidoc\Returned("mini_url", type="string", desc="小程序码链接")
+     * @Apidoc\Returned("content_default_img_url", type="string", desc="内容默认图片链接")
+     * @Apidoc\Returned("category_default_img_url", type="string", desc="分类默认图片链接")
+     * @Apidoc\Returned("tag_default_img_url", type="string", desc="标签默认图片链接")
      * @return array
      */
     public static function info($fields = '')
@@ -59,8 +62,8 @@ class SettingService
             $append = [];
             $hidden = [];
             if ($type == 'cgi') {
-                $append = array_merge($append, ['favicon_url', 'logo_url', 'offi_url', 'mini_url']);
-                $hidden = array_merge($hidden, ['favicon', 'logo', 'offi', 'mini']);
+                $append = array_merge($append, ['favicon_url', 'logo_url', 'offi_url', 'mini_url', 'content_default_img_url', 'category_default_img_url', 'tag_default_img_url']);
+                $hidden = array_merge($hidden, ['favicon', 'logo', 'offi', 'mini', 'contentDefaultImg', 'categoryDefaultImg', 'tagDefaultImg']);
             }
             $info = $info->append($append)->hidden($hidden)->toArray();
 

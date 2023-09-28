@@ -60,8 +60,8 @@ class UserLogModel extends Model
         return $this['menu']['menu_name'] ?? '';
     }
     // 获取菜单链接
-    public function getMenuUrlAttr()
+    public function getMenuUrlAttr($value, $data)
     {
-        return $this['menu']['menu_url'] ?? '';
+        return $this['menu']['menu_url'] ?? $data['request_url'] ?? '';
     }
 }

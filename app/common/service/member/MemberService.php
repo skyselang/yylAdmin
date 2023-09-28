@@ -468,13 +468,17 @@ class MemberService
         $model->where($pk, $member_id)->update($update);
 
         // 登录日志
-        $member_log[$pk] = $member_id;
+        $member_log[$pk]           = $member_id;
+        $member_log['platform']    = $param['platform'] ?? SettingService::PLATFORM_YA;
+        $member_log['application'] = $param['application'] ?? SettingService::APP_UNKNOWN;
         LogService::add($member_log, SettingService::LOG_TYPE_LOGIN);
 
         // 会员信息
         MemberCache::del($member_id);
         $member = MemberService::info($member_id);
         // 返回字段
+        $member['platform']    = $member_log['platform'];
+        $member['application'] = $member_log['application'];
         $data = self::loginField($member);
 
         return $data;
@@ -909,10 +913,10 @@ class MemberService
      */
     public static function token($member)
     {
-        $token = TokenService::create($member);
-        $setting = SettingService::info();
-        $ttl = $setting['token_exp'] * 3600;
-        MemberCache::setToken($member['member_id'], $token, $ttl);
+        $token     = TokenService::create($member);
+        $setting   = SettingService::info();
+        $token_exp = $setting['token_exp'] * 3600;
+        MemberCache::setToken($member['member_id'], $token, $token_exp);
         return $token;
     }
 

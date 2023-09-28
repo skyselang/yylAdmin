@@ -49,7 +49,7 @@ class RegionService
      *
      * @return array 
      */
-    public static function list($type = 'list', $where = [], $order = [], $field = '', $level = 3)
+    public static function list($type = 'list', $where = [], $order = [], $field = '', $level = '')
     {
         $model = new RegionModel();
         $pk = $model->getPk();
@@ -61,6 +61,9 @@ class RegionService
             $order = ['sort' => 'desc', $pk => 'asc'];
         }
 
+        if ($level === '') {
+            $level = config('admin.region_level', 3);
+        }
         $where[] = ['region_level', '<=', $level];
 
         $key = where_cache_key($type, $where, $order, $field);

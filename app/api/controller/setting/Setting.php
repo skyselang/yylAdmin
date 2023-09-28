@@ -60,7 +60,7 @@ class Setting extends BaseController
 
         // 友链
         $link_field = 'link_id,image_id,name,name_color,url,desc';
-        $link_where = [where_disable(), where_delete(), ['expiration_date', '>=', datetime()]];
+        $link_where = [where_disable(), where_delete(), ['start_time', '<=', datetime()], ['end_time', '>=', datetime()]];
         $link_order = ['sort' => 'asc', 'link_id' => 'desc'];
         $data['link'] = LinkService::list($link_where, 0, 0, $link_order, $link_field)['list'] ?? [];
 

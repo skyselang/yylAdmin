@@ -66,7 +66,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("公告添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="image_id,type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="image_id,type,title,title_color,start_time,end_time,desc,content,sort")
      */
     public function add()
     {
@@ -82,7 +82,7 @@ class Notice extends BaseController
     /**
      * @Apidoc\Title("公告修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="notice_id,image_id,type,title,title_color,start_time,end_time,intro,content,sort")
+     * @Apidoc\Param(ref="app\common\model\system\NoticeModel", field="notice_id,image_id,type,title,title_color,start_time,end_time,desc,content,sort")
      */
     public function edit()
     {

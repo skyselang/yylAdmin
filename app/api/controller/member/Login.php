@@ -75,10 +75,11 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("登录")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("application", type="int", require=false, desc="应用")
      * @Apidoc\Param("acc_type", type="string", require=false, desc="账号类型：username用户名、phone手机、email邮箱")
      * @Apidoc\Param("account", type="string", require=true, desc="账号：用户名、手机、邮箱")
      * @Apidoc\Param("password", type="string", require=true, default="123456", desc="密码")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\platforms")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\applications")
      * @Apidoc\Param(ref="captchaParam")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
@@ -98,7 +99,6 @@ class Login extends BaseController
         }
 
         $param = $this->params([
-            'application/s'  => SettingService::APP_UNKNOWN,
             'acc_type/s'     => '',
             'account/s'      => '',
             'password/s'     => '',
@@ -182,6 +182,8 @@ class Login extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param("phone", type="string", require=true, desc="手机")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\platforms")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\applications")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
@@ -244,6 +246,8 @@ class Login extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param("email", type="string", require=true, desc="邮箱")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\platforms")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\applications")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")

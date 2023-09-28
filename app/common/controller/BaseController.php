@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace app\common\controller;
 
 use think\App;
+use app\common\service\utils\RetCodeUtils;
 
 /**
  * 基础控制器
@@ -42,6 +43,19 @@ abstract class BaseController
 
         // 控制器初始化
         $this->initialize();
+    }
+
+    /**
+     * call方法
+     *
+     * @param  string $name
+     * @param  array  $args
+     *
+     * @return void
+     */
+    public function __call($name, $args)
+    {
+        exception('method does not exist：' . $name, RetCodeUtils::API_URL_ERROR);
     }
 
     // 初始化

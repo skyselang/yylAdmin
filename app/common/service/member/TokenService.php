@@ -46,7 +46,9 @@ class TokenService
             'nbf'  => time(),                               //生效时间
             'exp'  => time() + $config['token_exp'] * 3600, //过期时间
             'data' => [
-                'member_id' => $member['member_id'],
+                'member_id'   => $member['member_id'],
+                'platform'    => $member['platform'] ?? 0,
+                'application' => $member['application'] ?? 0,
             ],
         ];
 
@@ -54,6 +56,25 @@ class TokenService
         $token = JWT::encode($payload, $key, 'HS256');
 
         return $token;
+    }
+
+    /**
+     * Token decode
+     *
+     * @param  string $token
+     * @return object
+     */
+    public static function decode($token)
+    {
+        try {
+            $config = self::config();
+            $key    = $config['token_key'];
+            $decode = JWT::decode($token, new Key($key, 'HS256'));
+        } catch (\Exception $e) {
+            exception('登录状态已失效', RetCodeUtils::LOGIN_INVALID);
+        }
+
+        return $decode;
     }
 
     /**
@@ -65,36 +86,24 @@ class TokenService
      */
     public static function verify($token)
     {
-        if (empty($token)) {
-            exception('请登录', RetCodeUtils::LOGIN_INVALID);
-        }
-
-        $config = self::config();
-
-        try {
-            $key       = $config['token_key'];
-            $decode    = JWT::decode($token, new Key($key, 'HS256'));
-            $member_id = $decode->data->member_id;
-        } catch (\Exception $e) {
-            exception('登录状态已失效', RetCodeUtils::LOGIN_INVALID);
-        }
-
-        $cache_token = MemberCache::getToken($member_id);
-        if (empty($cache_token)) {
+        $member_id   = self::memberId($token, true);
+        $token_cache = MemberCache::getToken($member_id);
+        if (empty($token_cache)) {
             exception('登录状态已过期', RetCodeUtils::LOGIN_INVALID);
         } else {
+            $config = self::config();
             if (!$config['is_multi_login']) {
-                if ($token != $cache_token) {
+                if ($token != $token_cache) {
                     exception('账号已在另一处登录', RetCodeUtils::LOGIN_INVALID);
                 }
             }
 
             $member = MemberService::info($member_id);
-            if ($member['is_disable'] == 1) {
-                exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
-            }
             if ($member['is_delete'] == 1) {
                 exception('账号已被注销', RetCodeUtils::LOGIN_INVALID);
+            }
+            if ($member['is_disable'] == 1) {
+                exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
             }
         }
     }
@@ -113,9 +122,7 @@ class TokenService
 
         if ($token) {
             try {
-                $config    = self::config();
-                $key       = $config['token_key'];
-                $decode    = JWT::decode($token, new Key($key, 'HS256'));
+                $decode    = self::decode($token);
                 $member_id = $decode->data->member_id;
             } catch (\Exception $e) {
                 $member_id = 0;
@@ -127,5 +134,45 @@ class TokenService
         }
 
         return $member_id;
+    }
+
+    /**
+     * Token平台
+     *
+     * @param  string $token
+     * @return int
+     */
+    public static function memberPlatform($token)
+    {
+        $platform = 0;
+        if ($token) {
+            try {
+                $decode   = self::decode($token);
+                $platform = $decode->data->platform;
+            } catch (\Exception $e) {
+                $platform = 0;
+            }
+        }
+        return $platform;
+    }
+
+    /**
+     * Token应用
+     *
+     * @param  string $token
+     * @return int
+     */
+    public static function memberApplication($token)
+    {
+        $application = 0;
+        if ($token) {
+            try {
+                $decode      = self::decode($token);
+                $application = $decode->data->application;
+            } catch (\Exception $e) {
+                $application = 0;
+            }
+        }
+        return $application;
     }
 }

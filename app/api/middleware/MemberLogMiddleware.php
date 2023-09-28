@@ -43,7 +43,9 @@ class MemberLogMiddleware
                     $member_log['response_msg'] = $response_data['message'];
                 }
             }
-            $member_log['member_id'] = $member_id;
+            $member_log['member_id']   = $member_id;
+            $member_log['platform']    = member_platform();
+            $member_log['application'] = member_application();
             LogService::add($member_log);
         }
 

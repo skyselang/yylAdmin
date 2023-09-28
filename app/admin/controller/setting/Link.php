@@ -30,7 +30,7 @@ class Link extends BaseController
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="友链列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\LinkModel", field="link_id,unique,image_id,name,name_color,url,desc,sort,is_disable,expiration_date,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\LinkModel", field="link_id,unique,image_id,name,name_color,url,desc,sort,is_disable,start_time,end_time,create_time,update_time"),
      *   @Apidoc\Returned(ref="app\common\model\setting\LinkModel\getImageUrlAttr", field="image_url")
      * })
      */
@@ -65,7 +65,7 @@ class Link extends BaseController
     /**
      * @Apidoc\Title("友链添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="unique,image_id,name,name_color,url,desc,expiration_date,underline,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="unique,image_id,name,name_color,url,desc,start_time,end_time,underline,remark,sort")
      */
     public function add()
     {
@@ -81,7 +81,7 @@ class Link extends BaseController
     /**
      * @Apidoc\Title("友链修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="link_id,unique,image_id,name,name_color,url,desc,expiration_date,underline,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="link_id,unique,image_id,name,name_color,url,desc,start_time,end_time,underline,remark,sort")
      */
     public function edit()
     {
@@ -128,16 +128,16 @@ class Link extends BaseController
     }
 
     /**
-     * @Apidoc\Title("友链修改有效期")
+     * @Apidoc\Title("友链修改时间")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="expiration_date")
+     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="start_time,end_time")
      */
-    public function expiration()
+    public function datetime()
     {
-        $param = $this->params(['ids/a' => [], 'expiration_date/s' => '']);
+        $param = $this->params(['ids/a' => [], 'start_time/s' => '', 'end_time/s' => '']);
 
-        validate(LinkValidate::class)->scene('expiration')->check($param);
+        validate(LinkValidate::class)->scene('datetime')->check($param);
 
         $data = LinkService::edit($param['ids'], $param);
 

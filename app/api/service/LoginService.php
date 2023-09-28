@@ -9,6 +9,7 @@
 
 namespace app\api\service;
 
+use think\facade\Request;
 use app\common\service\member\MemberService;
 use app\common\service\member\SettingService;
 
@@ -27,6 +28,12 @@ class LoginService
      */
     public static function login($param, $type = '')
     {
+        if (!isset($param['platform'])) {
+            $param['platform'] = Request::param('platform') ?? SettingService::PLATFORM_YA;
+        }
+        if (!isset($param['application'])) {
+            $param['application'] = Request::param('application') ?? SettingService::APP_UNKNOWN;
+        }
         return MemberService::login($param, $type);
     }
 

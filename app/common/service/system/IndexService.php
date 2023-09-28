@@ -77,9 +77,15 @@ class IndexService
             $user = UserService::info($uid, false);
             foreach ($table as $v) {
                 if (in_array($v['menu_url'], $user['roles'] ?? [])) {
+                    $where = [];
+                    $where = [where_delete()];
+                    if ($v['table'] == 'setting_region') {
+                        $where[] = ['region_level', '<=', config('admin.region_level', 3)];
+                    }
+
                     $temp = [];
                     $temp['name']  = $v['name'];
-                    $temp['count'] = Db::name($v['table'])->where([where_delete()])->count();
+                    $temp['count'] = Db::name($v['table'])->where($where)->count();
                     $count[] = $temp;
                 }
             }

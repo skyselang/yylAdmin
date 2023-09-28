@@ -66,4 +66,37 @@ class SettingModel extends Model
     {
         return $this['mini']['file_url'] ?? '';
     }
+
+    // 关联内容默认图片文件
+    public function contentDefaultImg()
+    {
+        return $this->hasOne(FileModel::class, 'file_id', 'content_default_img_id')->append(['file_url'])->where(where_disdel());
+    }
+    // 获取内容默认图片链接
+    public function getContentDefaultImgUrlAttr($value, $data)
+    {
+        return $this['contentDefaultImg']['file_url'] ?? '';
+    }
+
+    // 关联分类默认图片文件
+    public function categoryDefaultImg()
+    {
+        return $this->hasOne(FileModel::class, 'file_id', 'category_default_img_id')->append(['file_url'])->where(where_disdel());
+    }
+    // 获取分类默认图片链接
+    public function getCategoryDefaultImgUrlAttr($value, $data)
+    {
+        return $this['categoryDefaultImg']['file_url'] ?? '';
+    }
+
+    // 关联标签默认图片文件
+    public function tagDefaultImg()
+    {
+        return $this->hasOne(FileModel::class, 'file_id', 'tag_default_img_id')->append(['file_url'])->where(where_disdel());
+    }
+    // 获取标签默认图片链接
+    public function getTagDefaultImgUrlAttr($value, $data)
+    {
+        return $this['tagDefaultImg']['file_url'] ?? '';
+    }
 }

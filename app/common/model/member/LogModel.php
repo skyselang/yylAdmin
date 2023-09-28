@@ -10,6 +10,7 @@
 namespace app\common\model\member;
 
 use think\Model;
+use app\common\service\member\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -63,5 +64,25 @@ class LogModel extends Model
     public function getApiNameAttr($value)
     {
         return $this['api']['api_name'] ?? '';
+    }
+
+    /**
+     * 获取平台名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("platform_name", type="string", desc="平台名称")
+     */
+    public function getPlatformNameAttr($value, $data)
+    {
+        return SettingService::platforms($data['platform']);
+    }
+
+    /**
+     * 获取应用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("application_name", type="string", desc="应用名称")
+     */
+    public function getApplicationNameAttr($value, $data)
+    {
+        return SettingService::applications($data['application']);
     }
 }

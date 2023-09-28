@@ -55,6 +55,8 @@ class CaptchaUtils
     protected static $bg = [243, 251, 254];
     // 算术验证码
     protected static $math = false;
+    // 算术类型：1加，2减，3乘，4除
+    protected static $math_type = [1, 2, 3, 4];
     // 缓存前缀
     protected static $prefix = 'captcha:';
     // 字体图片资源路径
@@ -160,7 +162,7 @@ class CaptchaUtils
             $x     = self::$fontSize * ($index + 1) * mt_rand(1, 1) * (self::$math ? 1 : 1.5);
             $y     = self::$fontSize + mt_rand(10, 20);
             $angle = self::$math ? 0 : mt_rand(-40, 40);
-            
+
             imagettftext(self::$im, self::$fontSize, $angle, $x, $y, self::$color, $fontttf, $char);
         }
 
@@ -200,12 +202,36 @@ class CaptchaUtils
             self::$useZh  = false;
             self::$length = 5;
 
-            $x   = random_int(1, 30);
-            $y   = random_int(1, 9);
-            $bag = "{$x} + {$y} = ";
-            $and = $x + $y;
-
-            Cache::set($key, $and, self::$expire);
+            $math_types = self::$math_type;
+            if (empty($math_types)) {
+                $math_types = [1];
+            }
+            $math_key  = mt_rand(0, count($math_types) - 1);
+            $math_type = $math_types[$math_key] ?? 1;
+            if ($math_type == 2) {
+                $x   = mt_rand(11, 39);
+                $y   = mt_rand(0, 10);
+                $bag = "{$x} - {$y} = ";
+                $val = $x - $y;
+            } elseif ($math_type == 3) {
+                $r   = mt_rand(0, 1);
+                $x   = $r ? mt_rand(1, 11) :  mt_rand(1000, 9999);
+                $y   = $r ? mt_rand(1, 10) : 1;
+                $bag = "{$x} x {$y} = ";
+                $val = $x * $y;
+            } elseif ($math_type == 4) {
+                $r   = mt_rand(0, 1);
+                $x   = $r ? mt_rand(1, 11) : mt_rand(1000, 9999);
+                $y   = $r ? mt_rand(1, 9) : 1;
+                $j   = $x * $y;
+                $bag = "{$j} / {$y} = ";
+                $val = $j / $y;
+            } else {
+                $x   = mt_rand(1, 39);
+                $y   = mt_rand(0, 9);
+                $bag = mt_rand(0, 1) ? "{$x} + {$y} = " : "{$y} + {$x} = ";
+                $val = $x + $y;
+            }
         } else {
             if (self::$useZh) {
                 $characters = preg_split('/(?<!^)(?!$)/u', self::$zhSet);
@@ -218,9 +244,8 @@ class CaptchaUtils
             }
 
             $val = mb_strtolower($bag, 'UTF-8');
-
-            Cache::set($key, $val, self::$expire);
         }
+        Cache::set($key, $val, self::$expire);
 
         return ['key' => $id, 'val' => $bag];
     }

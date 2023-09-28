@@ -80,7 +80,7 @@ class Post extends BaseController
     /**
      * @Apidoc\Title("职位添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_pid,post_name,post_abbr,post_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_pid,post_name,post_abbr,post_desc,remark,sort")
      */
     public function add()
     {
@@ -96,7 +96,7 @@ class Post extends BaseController
     /**
      * @Apidoc\Title("职位修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_id,post_pid,post_name,post_abbr,post_desc,sort")
+     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_id,post_pid,post_name,post_abbr,post_desc,remark,sort")
      */
     public function edit()
     {

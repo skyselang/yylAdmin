@@ -71,7 +71,9 @@ class Register extends BaseController
     /**
      * @Apidoc\Title("用户名注册")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="nickname,username,password,application")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="nickname,username,password")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\platforms")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\applications")
      * @Apidoc\Param(ref="captchaParam")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()
@@ -85,7 +87,6 @@ class Register extends BaseController
         }
 
         $param = $this->params([
-            'application/s'  => SettingService::APP_UNKNOWN,
             'nickname/s'     => '',
             'username/s'     => '',
             'password/s'     => '',
@@ -153,8 +154,10 @@ class Register extends BaseController
      * @Apidoc\Title("手机注册")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("phone", type="string", require=true, desc="手机", mock="@phone")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="nickname,password,application")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="nickname,password")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\platforms")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\applications")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()
      * @Apidoc\NotParams()
@@ -172,7 +175,6 @@ class Register extends BaseController
             'password/s'     => '',
             'captcha_id/s'   => '',
             'captcha_code/s' => '',
-            'application/s'  => SettingService::APP_UNKNOWN,
         ]);
 
         if (empty($param['captcha_code'])) {
@@ -220,8 +222,10 @@ class Register extends BaseController
      * @Apidoc\Title("邮箱注册")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("email", type="string", require=true, desc="邮箱", mock="@email")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="nickname,password,application")
+     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="nickname,password")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\platforms")
+     * @Apidoc\Param(ref="app\common\service\member\SettingService\applications")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()
      * @Apidoc\NotParams()
@@ -239,7 +243,6 @@ class Register extends BaseController
             'password/s'     => '',
             'captcha_id/s'   => '',
             'captcha_code/s' => '',
-            'application/s'  => SettingService::APP_UNKNOWN,
         ]);
 
         if (empty($param['captcha_code'])) {

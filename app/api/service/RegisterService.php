@@ -9,6 +9,7 @@
 
 namespace app\api\service;
 
+use think\facade\Request;
 use app\common\service\member\SettingService;
 use app\common\service\member\MemberService;
 use app\common\service\member\LogService;
@@ -27,12 +28,20 @@ class RegisterService
      */
     public static function register($param)
     {
+        if (!isset($param['platform'])) {
+            $param['platform'] = Request::param('platform') ?? SettingService::PLATFORM_YA;
+        }
+        if (!isset($param['application'])) {
+            $param['application'] = Request::param('application') ?? SettingService::APP_UNKNOWN;
+        }
         if (empty($param['username'])) {
             $param['username'] = md5(uniqid(mt_rand(), true));
         }
         $data = MemberService::add($param);
 
-        $member_log['member_id'] = $data['member_id'];
+        $member_log['member_id']   = $data['member_id'];
+        $member_log['platform']    = $param['platform'] ?? SettingService::PLATFORM_YA;
+        $member_log['application'] = $param['application'] ?? SettingService::APP_UNKNOWN;
         LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
 
         return $data;
