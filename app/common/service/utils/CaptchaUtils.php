@@ -158,6 +158,14 @@ class CaptchaUtils
 
         // 绘验证码
         $text = self::$useZh ? preg_split('/(?<!^)(?!$)/u', $generator['val']) : str_split($generator['val']); // 验证码
+        if (count($text) > 10) {
+            foreach ($text as $k => $v) {
+                if (trim($v) === '') {
+                    unset($text[$k]);
+                }
+            }
+        }
+        $text = array_values($text);
         foreach ($text as $index => $char) {
             $x     = self::$fontSize * ($index + 1) * mt_rand(1, 1) * (self::$math ? 1 : 1.5);
             $y     = self::$fontSize + mt_rand(10, 20);
@@ -165,10 +173,9 @@ class CaptchaUtils
 
             imagettftext(self::$im, self::$fontSize, $angle, $x, $y, self::$color, $fontttf, $char);
         }
-
         ob_start();
         // 输出图像
-        $tmpfname = tempnam(sys_get_temp_dir(), 'yyl');
+        $tmpfname = tempnam(sys_get_temp_dir(), 'ya');
         imagepng(self::$im, $tmpfname);
         $img_data = file_get_contents($tmpfname);
         $img_base64 = 'data:image/png;base64,' . base64_encode($img_data);

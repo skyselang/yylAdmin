@@ -58,6 +58,7 @@ class Login extends BaseController
      * @Apidoc\Param("captchaType", type="string", require=true, desc="行为，验证码方式：blockPuzzle、clickWord")
      * @Apidoc\Param("pointJson", type="string", default="", desc="行为，pointJson")
      * @Apidoc\Param("token", type="string", default="", desc="行为，token")
+     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="captcha_switch,captcha_mode,captcha_type")
      * @Apidoc\Returned(ref="captchaReturn")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()

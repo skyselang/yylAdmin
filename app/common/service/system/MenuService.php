@@ -76,7 +76,11 @@ class MenuService
         $key = where_cache_key($type, $where, $order, $field);
         $data = MenuCache::get($key);
         if (empty($data)) {
-            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            $append = [];
+            if (strpos($field, 'menu_type') !== false) {
+                $append[] = 'menu_type_name';
+            }
+            $data = $model->field($field)->append($append)->where($where)->order($order)->select()->toArray();
             if ($type == 'tree') {
                 $data = array_to_tree($data, $pk, 'menu_pid');
             }

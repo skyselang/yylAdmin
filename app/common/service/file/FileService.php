@@ -161,6 +161,14 @@ class FileService
      */
     public static function add($param)
     {
+        if (isset($param['tag_ids']) && is_string($param['tag_ids'])) {
+            if ($param['tag_ids']) {
+                $param['tag_ids'] = explode(',', $param['tag_ids']);
+            } else {
+                $param['tag_ids'] = [];
+            }
+        }
+      
         $model = new FileModel();
         $pk = $model->getPk();
 
@@ -232,7 +240,7 @@ class FileService
             $param['update_time'] = $datetime;
             $model->save($param);
             // 添加标签
-            if (isset($param['tag_ids'])) {
+            if (isset($param['tag_ids']) && $param['tag_ids']) {
                 $model->tags()->saveAll($param['tag_ids']);
             }
             $id = $model->$pk;

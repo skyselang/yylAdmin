@@ -10,6 +10,7 @@
 namespace app\common\model\system;
 
 use think\Model;
+use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -21,4 +22,9 @@ class MenuModel extends Model
     protected $name = 'system_menu';
     // 表主键
     protected $pk = 'menu_id';
+
+    public function getMenuTypeNameAttr($value, $data)
+    {
+        return SettingService::menuTypes($data['menu_type'] ?? 0);
+    }
 }

@@ -126,6 +126,9 @@ class File extends BaseController
         }
 
         $edit_field = FileService::$edit_field;
+        unset($edit_field['tag_ids/a']);
+        $edit_field['tag_ids'] = '';
+        
         $type = $this->param('type/s', 'upl');
         if ($type == 'url') {
             $edit_field['file_path/s'] = '';
