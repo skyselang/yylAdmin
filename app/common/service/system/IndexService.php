@@ -27,7 +27,7 @@ class IndexService
     public static function index()
     {
         $data['name']   = 'yylAdmin';
-        $data['desc']   = '基于ThinkPHP6和Vue2的极简后台管理系统';
+        $data['desc']   = '基于ThinkPHP8和Vue3的极简后台管理系统';
         $data['gitee']  = 'https://gitee.com/skyselang/yylAdmin';
         $data['github'] = 'https://github.com/skyselang/yylAdmin';
 
