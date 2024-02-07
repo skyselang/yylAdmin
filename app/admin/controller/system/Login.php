@@ -28,7 +28,7 @@ class Login extends BaseController
      * @Apidoc\Title("设置信息")
      * @Apidoc\Desc("系统信息")
      * @Apidoc\Method("GET")
-     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="system_name,page_title,captcha_switch,captcha_mode,captcha_type")
+     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="system_name,page_title,captcha_switch,captcha_mode,captcha_type,login_bg_color,page_limit")
      * @Apidoc\Returned(ref="app\common\service\system\SettingService\info")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()
@@ -36,7 +36,7 @@ class Login extends BaseController
      */
     public function setting()
     {
-        $data = SettingService::info('system_name,page_title,logo_url,favicon_url,login_bg_url,captcha_switch,captcha_mode,captcha_type,token_type,token_name');
+        $data = SettingService::info('system_name,page_title,logo_url,favicon_url,login_bg_url,captcha_switch,captcha_mode,captcha_type,token_type,token_name,login_bg_color,page_limit');
 
         if ($data['captcha_switch']) {
             if ($data['captcha_mode'] == 1) {

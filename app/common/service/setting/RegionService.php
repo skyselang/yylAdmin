@@ -55,7 +55,7 @@ class RegionService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,sort';
+            $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,is_disable,sort';
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'asc'];

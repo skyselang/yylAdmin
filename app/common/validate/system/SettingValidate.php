@@ -18,6 +18,7 @@ class SettingValidate extends Validate
 {
     // 验证规则
     protected $rule = [
+        'page_limit'     => ['require', 'between' => '1,1000'],
         'token_key'      => ['require', 'alphaNum', 'length' => '6,32'],
         'token_exp'      => ['require', 'between' => '1,8760'],
         'captcha_switch' => ['require', 'in' => '0,1'],
@@ -31,6 +32,7 @@ class SettingValidate extends Validate
 
     // 错误信息
     protected $message = [
+        'page_limit.between'     => '分页每页数量范围：1-1000',
         'token_key.require'      => '请输入Token密钥',
         'token_key.alphaNum'     => 'Token密钥组成：字母和数字',
         'token_key.length'       => 'Token密钥长度：6-32',
@@ -51,6 +53,7 @@ class SettingValidate extends Validate
 
     // 验证场景
     protected $scene = [
+        'system_edit'  => ['page_limit'],
         'token_edit'   => ['token_key', 'token_exp'],
         'captcha_edit' => ['captcha_switch'],
         'log_edit'     => ['log_switch', 'log_save_time'],

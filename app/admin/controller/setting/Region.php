@@ -17,7 +17,7 @@ use hg\apidoc\annotation as Apidoc;
 /**
  * @Apidoc\Title("地区管理")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("500")
+ * @Apidoc\Sort("600")
  */
 class Region extends BaseController
 {

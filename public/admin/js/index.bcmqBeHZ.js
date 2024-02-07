@@ -1,0 +1,1 @@
+function t(t){return/^(https?:|http?:|mailto:|tel:)/.test(t)}function r(t=12){var r="";const n="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";for(let o=0;o<t;o++)r+=n[Math.floor(62*Math.random())];return r}function n(t,r){var n=[];const o=t.length;for(let a=0;a<o;a++)n.push(t[a][r]);return n}export{n as a,t as i,r};

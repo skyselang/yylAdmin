@@ -577,7 +577,7 @@ class MenuService
     public static function menus($ids = [])
     {
         $where = where_delete(['menu_id', 'in', $ids]);
-        $field = 'menu_id,menu_pid,menu_name,menu_type,path,name,component,meta_icon,meta_query,hidden,is_disable';
+        $field = 'menu_id,menu_pid,menu_name,menu_type,path,name,component,meta_icon,meta_query,hidden,keep_alive,is_disable';
         $menu  = self::list('list', $where, [], $field);
 
         $tree = $list = [];
@@ -590,6 +590,8 @@ class MenuService
                 $tmp['name'] = $v['name'];
                 $tmp['meta']['title'] = $v['menu_name'];
                 $tmp['meta']['icon']  = $v['meta_icon'];
+                $tmp['meta']['hidden'] = $v['hidden'] ? true : false;
+                $tmp['meta']['keepAlive'] = $v['keep_alive'] ? true : false;
                 if ($v['menu_type'] == SettingService::MENU_TYPE_CATALOGUE) {
                     $tmp['redirect']   = 'noRedirect';
                     $tmp['component']  = 'Layout';
@@ -606,7 +608,6 @@ class MenuService
                         unset($tmp['name']);
                     }
                 }
-                $tmp['hidden'] = $v['hidden'] ? true : false;
                 $list[] = $tmp;
             }
         }

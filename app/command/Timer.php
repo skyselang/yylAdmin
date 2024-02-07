@@ -91,7 +91,7 @@ class Timer extends Command
     public function start()
     {
         $this->timer = \Workerman\Lib\Timer::add($this->interval, function () {
-            echo 'timer start ' . date('Y-m-d H:i:s') . PHP_EOL;
+            echo 'timer runing ' . date('Y-m-d H:i:s') . PHP_EOL;
             try {
                 // 会员日志清除
                 LogService::clearLog();
