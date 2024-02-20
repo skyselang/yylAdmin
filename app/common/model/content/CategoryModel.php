@@ -31,7 +31,7 @@ class CategoryModel extends Model
     }
     /**
      * 获取图片链接
-     * @Apidoc\field("")
+     * @Apidoc\Field("")
      * @Apidoc\AddField("image_url", type="string", desc="图片链接")
      */
     public function getImageUrlAttr()

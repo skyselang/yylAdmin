@@ -73,6 +73,7 @@ class Member extends BaseController
     public function edit()
     {
         $param = $this->params([
+            'avatar_id/d' => 0,
             'nickname/s'  => '',
             'username/s'  => '',
             'name/s'      => '',

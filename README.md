@@ -30,8 +30,8 @@ yylAdmin是一个基于ThinkPHP8和Vue3极简后台管理系统，只有登录�
 
 | 版本 | 分支 | 简介 | 环境 |
 |------|-----------------------------------------------------|-----------------------------|---------------|
-| v4   | [master](https://gitee.com/skyselang/yylAdmin)      | thinkphp6 vue2 element-ui   | php7.3 node12 |
-| v3   | [v3](https://gitee.com/skyselang/yylAdmin/tree/v3/) | thinkphp8 vue3 element-plus | php8.0 node18 |  
+| v4   | [master](https://gitee.com/skyselang/yylAdmin)      | thinkphp8 vue3 element-plus | php8.0 node18 |
+| v3   | [v3](https://gitee.com/skyselang/yylAdmin/tree/v3/) | thinkphp6 vue2 element-ui   | php7.3 node12 |  
 
 ## 演示
 
@@ -49,8 +49,8 @@ yylAdmin是一个基于ThinkPHP8和Vue3极简后台管理系统，只有登录�
   开启 putenv、proc_open 函数
 - MySQL >= 5.5
 - Redis >= 5.0
-- node >= 18.12
-- npm >= 8.19
+- Node >= 18.12
+- Npm >= 8.19
 
 ### 安装后端
 
@@ -180,7 +180,7 @@ npm run build:stage
 ## 提示
 
 - 项目不定时更新，前后端最新代码保持一致  
-- 拉取代码后请更新前后端依赖（composer update、cnpm install）、同步数据库结构、清除缓存  
+- 拉取代码后请更新前后端依赖（composer update、npm install）、同步数据库表结构、清除缓存  
 
 ## 交流
 
