@@ -9,7 +9,7 @@
 
 namespace app\common\service\file;
 
-require_once '../extend/bce-php-sdk-0.9.18/BaiduBce.phar';
+require_once '../extend/bce-php-sdk-0.9.21/BaiduBce.phar';
 
 use app\common\service\file\SettingService;
 use Qiniu\Auth;
@@ -79,10 +79,10 @@ class StorageService
             try {
                 $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
                 $ossClient->uploadFile($bucket, $object, $filePath);
+                $file_info['domain'] = $setting['aliyun_bucket_domain'];
             } catch (OssException $e) {
                 $errmsg = $e->getMessage() ?: 'OSS upload error';
             }
-            $file_info['domain'] = $setting['aliyun_bucket_domain'];
         } elseif ($storage == 'tencent') {
             // SECRETID和SECRETKEY请登录访问管理控制台进行查看和管理
             $secretId = $setting['tencent_secret_id']; //"云 API 密钥 SecretId";
@@ -111,10 +111,10 @@ class StorageService
                         'Body' => $file
                     ]);
                 }
+                $file_info['domain'] = $setting['tencent_domain'];
             } catch (\Exception $e) {
                 $errmsg = $e->getMessage() ?: 'COS upload error';
             }
-            $file_info['domain'] = $setting['tencent_domain'];
         } elseif ($storage == 'baidu') {
             try {
                 // 设置BosClient的Access Key ID、Secret Access Key和ENDPOINT

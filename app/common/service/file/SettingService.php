@@ -55,6 +55,8 @@ class SettingService
             $info['storages']   = self::storages();
             $info['accept_ext'] = self::fileAccept($info);
 
+            $info = array_merge($info, self::fileType('', true));
+
             SettingCache::set($id, $info);
         }
 
@@ -174,10 +176,11 @@ class SettingService
      * 文件类型获取
      *
      * @param string $file_ext 文件后缀
+     * @param bool   $get_exts 获取支持后缀
      *
      * @return string image图片，video视频，audio音频，word文档，other其它
      */
-    public static function fileType($file_ext = '')
+    public static function fileType($file_ext = '', $get_exts = false)
     {
         $image_ext = [
             'jpg', 'png', 'jpeg', 'gif', 'bmp', 'webp', 'ico', 'svg', 'tif', 'pcx', 'tga', 'exif',
@@ -196,6 +199,16 @@ class SettingService
             'xls', 'xlsx', 'xlsm', 'xltx', 'xltm', 'xlsb', 'xlam', 'csv',
             'ppt', 'pptx', 'potx', 'potm', 'ppam', 'ppsx', 'ppsm', 'sldx', 'sldm', 'thmx'
         ];
+
+        if ($get_exts) {
+            return [
+                'image_exts' => '支持图片格式：'. implode('，', $image_ext),
+                'video_exts' => '支持视频格式：'. implode('，', $video_ext),
+                'audio_exts' => '支持音频格式：'. implode('，', $audio_ext),
+                'word_exts'  => '支持文档格式：'. implode('，', $word_ext),
+                'other_exts' => '除图片、视频、音频、文档的其他格式',
+            ];
+        }
 
         if (in_array($file_ext, $image_ext)) {
             return 'image';
