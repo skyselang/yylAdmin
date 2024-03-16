@@ -30,7 +30,7 @@ class SettingService
      * @param string $fields 返回字段，逗号隔开，默认所有
      * @Apidoc\Returned("file_types", type="object", desc="文件类型")
      * @Apidoc\Returned("storages", type="object", desc="存储方式")
-     * @Apidoc\Returned("accept_ext", type="string", default="", desc="允许上传的文件后缀")
+     * @Apidoc\Returned("accept_ext", type="string", desc="允许上传的文件后缀")
      * @return array
      */
     public static function info($fields = '')

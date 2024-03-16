@@ -14,6 +14,7 @@ use app\common\cache\member\MemberCache;
 use app\common\service\member\SettingService;
 use app\common\service\member\ThirdService;
 use app\common\service\utils\Utils;
+use app\common\service\utils\RetCodeUtils;
 use app\common\model\member\MemberModel;
 use app\common\model\member\ThirdModel;
 use hg\apidoc\annotation as Apidoc;
@@ -517,6 +518,7 @@ class MemberService
      */
     public static function thirdLogin($third_info)
     {
+        $register    = $third_info['register'];
         $unionid     = $third_info['unionid'] ?? '';
         $openid      = $third_info['openid'] ?? '';
         $platform    = $third_info['platform'];
@@ -525,6 +527,7 @@ class MemberService
         $ip_info     = Utils::ipInfo();
         $login_ip    = $ip_info['ip'];
         $datetime    = datetime();
+
 
         if (empty($openid)) {
             exception('登录失败：get openid fail');
@@ -558,7 +561,7 @@ class MemberService
         $third_o_where = [['application', '=', $application], ['openid', '=', $openid], where_delete()];
         $third_openid  = $ThirdModel->field($third_field)->where($third_o_where)->find();
 
-        $errmsg_login = '系统维护，无法登录';
+        $errmsg_login    = '系统维护，无法登录';
         $errmsg_register = '系统维护，无法注册';
         if ($third_unionid ?? [] || $third_openid) {
             if ($application == SettingService::APP_WX_MINIAPP && !$setting['wx_miniapp_login']) {
@@ -605,6 +608,10 @@ class MemberService
             $third_u_id = 0;
             $third_o_id = 0;
             $member_id  = 0;
+
+            if ($register == 0) {
+                exception('未注册', RetCodeUtils::THIRD_UNREGISTERED);
+            }
         }
 
         // 启动事务
@@ -715,9 +722,9 @@ class MemberService
         // 会员信息
         MemberCache::del($member_id);
         $member = self::info($member_id);
-        $data = self::loginField($member);
-        $data['member_id'] = $member_id;
-        $data['third_id'] = $third_o_id;
+        $data   = self::loginField($member);
+        $data['member_id']   = $member_id;
+        $data['third_id']    = $third_o_id;
 
         return $data;
     }

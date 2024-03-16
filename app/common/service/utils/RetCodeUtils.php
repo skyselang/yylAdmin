@@ -33,6 +33,11 @@ class RetCodeUtils
      */
     const LOGIN_INVALID      = 401;
     /**
+     * 第三方账号未注册
+     * @var integer
+     */
+    const THIRD_UNREGISTERED = 402;
+    /**
      * 你没有权限操作
      * @var integer
      */
@@ -65,6 +70,7 @@ class RetCodeUtils
             self::SUCCESS            => '操作成功',
             self::ERROR              => '操作失败',
             self::LOGIN_INVALID      => '登录已失效，请重新登录',
+            self::THIRD_UNREGISTERED => '第三方账号未注册',
             self::NO_PERMISSION      => '你没有权限操作',
             self::API_URL_ERROR      => '接口地址错误',
             self::FREQUENT_OPERATION => '你的操作过于频繁',

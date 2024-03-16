@@ -12,6 +12,7 @@ namespace app\api\controller\setting;
 use app\common\controller\BaseController;
 use app\common\validate\setting\FeedbackValidate;
 use app\common\service\setting\FeedbackService;
+use app\common\service\setting\SettingService;
 use app\common\cache\setting\FeedbackCache;
 use hg\apidoc\annotation as Apidoc;
 
@@ -24,9 +25,11 @@ class Feedback extends BaseController
 {
     /**
      * @Apidoc\Title("反馈列表")
-     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Query(ref="pagingQuery")
+     * @Apidoc\Query(ref="dateQuery")
+     * @Apidoc\Query(ref="app\common\model\member\LogModel", field="title,create_time")
      * @Apidoc\Returned("list", type="array", desc="反馈列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel", field="feedback_id,member_id,type,title,phone,email,remark,status,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel", field="feedback_id,member_id,type,title,phone,email,remark,status,receipt_no,create_time,update_time"),
      *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getTypeNameAttr", field="type_name"),
      *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getStatusNameAttr", field="status_name"),
      *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getMemberUsernameAttr", field="member_username")
@@ -35,7 +38,25 @@ class Feedback extends BaseController
      */
     public function list()
     {
-        $where = [['member_id', '=', member_id(true)], where_disable(), where_delete()];
+        $title       = $this->param('title/s', '');
+        $create_time = $this->param('create_time/a', []);
+
+        $where[] = ['member_id', '=', member_id(true)];
+        if ($title !== '') {
+            $where[] = ['title|receipt_no', 'like', '%' . $title . '%'];
+        }
+        if ($create_time) {
+            $start_date = $create_time[0] ?? '';
+            $end_date   = $create_time[1] ?? '';
+            if ($start_date) {
+                $where[] = ['create_time', '>=', $start_date . ' 00:00:00'];
+            }
+            if ($end_date) {
+                $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
+            }
+        }
+        $where[] = where_disable();
+        $where[] = where_delete();
 
         $data = FeedbackService::list($where, $this->page(), $this->limit(), $this->order());
 
@@ -80,6 +101,11 @@ class Feedback extends BaseController
      */
     public function add()
     {
+        if ($this->request->isGet()) {
+            $data['types'] = SettingService::feedbackTypes();
+            return success($data);
+        }
+
         $param = $this->params([
             'type/d'    => 0,
             'title/s'   => '',

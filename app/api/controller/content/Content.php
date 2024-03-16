@@ -10,6 +10,7 @@
 namespace app\api\controller\content;
 
 use app\common\controller\BaseController;
+use app\api\middleware\ContentSettingMiddleware;
 use app\common\validate\content\ContentValidate;
 use app\common\service\content\CategoryService;
 use app\common\service\content\TagService;
@@ -24,7 +25,14 @@ use hg\apidoc\annotation as Apidoc;
 class Content extends BaseController
 {
     /**
-     * @Apidoc\Title("分类列表")
+     * 控制器中间件
+     * 
+     * @var array
+     */
+    protected $middleware = [ContentSettingMiddleware::class];
+
+    /**
+     * @Apidoc\Title("内容分类列表")
      * @Apidoc\Returned("list", type="tree", desc="分类树形", children={
      *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique"), 
      *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url"),
@@ -36,20 +44,21 @@ class Content extends BaseController
         $order = $this->order(['sort' => 'desc', 'category_id' => 'desc']);
         $field = 'category_id,category_pid,category_name,category_unique,image_id';
 
-        $data = CategoryService::list('tree', $where, $order, $field);
+        $data['list'] = CategoryService::list('tree', $where, $order, $field);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("标签列表")
+     * @Apidoc\Title("内容标签列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query("tag_id", type="string", desc="标签ID")
-     * @Apidoc\Query("tag_name", type="string", desc="标签名称")
-     * @Apidoc\Query("tag_unique", type="string", desc="标签标识")
+     * @Apidoc\Query(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\content\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_unique")
+     * @Apidoc\Returned("list", type="array", desc="标签列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique"),
+     *   @Apidoc\Returned(ref="app\common\model\content\TagModel\getImageUrlAttr", field="image_url"),
+     * })
      */
     public function tag()
     {
@@ -71,8 +80,7 @@ class Content extends BaseController
 
         $order = ['sort' => 'desc', 'tag_id' => 'desc'];
         $field = 'tag_id,tag_name,tag_unique,image_id';
-
-        $data = TagService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
+        $data  = TagService::list($where, $this->page(0), $this->limit(0), $this->order($order), $field);
 
         return success($data);
     }
@@ -81,31 +89,50 @@ class Content extends BaseController
      * @Apidoc\Title("内容列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query("category_id", type="string", desc="分类ID")
-     * @Apidoc\Query("category_unique", type="string", desc="分类标识")
-     * @Apidoc\Query("tag_id", type="string", desc="标签ID")
-     * @Apidoc\Query("tag_unique", type="string", desc="标签标识")
-     * @Apidoc\Query(ref="app\common\model\content\ContentModel", field="keywords")
+     * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id,category_unique")
+     * @Apidoc\Query(ref="app\common\model\content\TagModel", field="tag_id,tag_unique")
+     * @Apidoc\Query(ref="app\common\model\content\ContentModel", field="keywords,is_top,is_hot,is_rec")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,image_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,unique,image_id,name,description,sort,hits,is_top,is_hot,is_rec,source,author,release_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getHitsShowAttr", field="hits_show"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr", field="image_url"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names")
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
      * })
+     * @Apidoc\Returned("tops", type="array", desc="内容列表（置顶），字段同内容列表")
+     * @Apidoc\Returned("hots", type="array", desc="内容列表（热门），字段同内容列表")
+     * @Apidoc\Returned("recs", type="array", desc="内容列表（推荐），字段同内容列表")
      * @Apidoc\Returned("category", type="tree", desc="分类树形", children={
      *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique"), 
      *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url"),
      * })
-     * @Apidoc\Returned("tag", ref="app\common\model\content\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,tag_unique")
+     * @Apidoc\Returned("tag", type="array", desc="标签列表", children={
+     *   @Apidoc\Returned(ref="app\common\model\content\TagModel", field="tag_id,tag_name,tag_unique"),
+     *   @Apidoc\Returned(ref="app\common\model\content\TagModel\getImageUrlAttr", field="image_url"),
+     * })
      */
     public function list()
     {
+        $is_top          = $this->param('is_top/s', '');
+        $is_hot          = $this->param('is_hot/s', '');
+        $is_rec          = $this->param('is_rec/s', '');
         $category_id     = $this->param('category_id/s', '');
         $category_unique = $this->param('category_unique/s', '');
         $tag_id          = $this->param('tag_id/s', '');
         $tag_unique      = $this->param('tag_unique/s', '');
         $keywords        = $this->param('keywords/s', '');
+
+        $where = [];
+        if ($is_top !== '') {
+            $where[] = ['is_top', '=', $is_top];
+        }
+        if ($is_hot !== '') {
+            $where[] = ['is_hot', '=', $is_hot];
+        }
+        if ($is_rec !== '') {
+            $where[] = ['is_rec', '=', $is_rec];
+        }
 
         if ($category_id !== '') {
             $category_ids = explode(',', $category_id);
@@ -132,18 +159,28 @@ class Content extends BaseController
         if ($keywords) {
             $where[] = ['name|title|keywords', 'like', '%' . $keywords . '%'];
         }
-        $where[] = ['release_time', '<=', datetime()];
-        $where[] = where_disable();
-        $where[] = where_delete();
+
+        $where_base = [['release_time', '<=', datetime()], where_disable(), where_delete()];
+        $where = array_merge($where, $where_base);
+
+        $where_top = $where_base;
+        $where_top[] = ['is_top', '=', 1];
+
+        $where_hot = $where_base;
+        $where_hot[] = ['is_hot', '=', 1];
+
+        $where_rec = $where_base;
+        $where_rec[] = ['is_rec', '=', 1];
 
         $order = ['sort' => 'desc', 'content_id' => 'desc'];
+        $field = 'm.content_id,unique,image_id,name,description,sort,hits,is_top,is_hot,is_rec,source,author,release_time';
+        $data  = ContentService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
-        $field = 'm.content_id,unique,image_id,name,description,sort,hits,is_top,is_hot,is_rec,source,author,create_time';
-
-        $data = ContentService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
-
-        $data['category'] = CategoryService::list('tree', where_disdel(), [], 'category_id,category_unique,image_id,category_pid,category_name');
-        $data['tag']      = TagService::list(where_disdel(), 0, 0, [], 'tag_id,tag_unique,image_id,tag_name')['list'] ?? [];
+        $data['tops']     = ContentService::list($where_top, 0, 7, [], $field)['list'] ?? [];
+        $data['hots']     = ContentService::list($where_hot, 0, 7, [], $field)['list'] ?? [];
+        $data['recs']     = ContentService::list($where_rec, 0, 7, [], $field)['list'] ?? [];
+        $data['category'] = CategoryService::list('tree', where_disdel(), [], 'category_id,category_pid,category_name,category_unique,image_id');
+        $data['tag']      = TagService::list(where_disdel(), 0, 0, [], 'tag_id,tag_unique,tag_name,image_id')['list'] ?? [];
 
         return success($data);
     }
@@ -151,8 +188,8 @@ class Content extends BaseController
     /**
      * @Apidoc\Title("内容信息")
      * @Apidoc\Query("content_id", type="string", require=true, default="", desc="内容id、标识")
-     * @Apidoc\Query("category_ids", type="string", require=false, default="", desc="内容上/下条分类id")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel")
+     * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getHitsShowAttr", field="hits_show")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr")
      * @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr")
@@ -170,7 +207,7 @@ class Content extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['content_id/s' => '', 'category_ids/s' => '']);
+        $param = $this->params(['content_id/s' => '']);
 
         validate(ContentValidate::class)->scene('info')->check($param);
 
@@ -179,8 +216,8 @@ class Content extends BaseController
             return error('内容不存在');
         }
 
-        $prev_info = ContentService::prevNext($data['content_id'], 'prev', $param['category_ids']);
-        $next_info = ContentService::prevNext($data['content_id'], 'next', $param['category_ids']);
+        $prev_info = ContentService::prevNext($data['content_id'], 'prev');
+        $next_info = ContentService::prevNext($data['content_id'], 'next');
 
         $content_ids = [];
         if ($data['content_id'] ?? '') {
@@ -202,9 +239,10 @@ class Content extends BaseController
         $where[] = ['release_time', '<=', datetime()];
         $where[] = where_disable();
         $where[] = where_delete();
+
         $order = ['sort' => 'desc', 'content_id' => 'desc'];
         $field = 'm.content_id,unique,image_id,name,create_time';
-        $list = ContentService::list($where, 0, 10, $order, $field)['list'] ?? [];
+        $list  = ContentService::list($where, 0, 10, $order, $field)['list'] ?? [];
 
         $data['prev_info'] = $prev_info;
         $data['next_info'] = $next_info;

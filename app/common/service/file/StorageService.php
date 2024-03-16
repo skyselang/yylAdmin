@@ -60,9 +60,9 @@ class StorageService
             // 初始化 UploadManager 对象并进行文件的上传。
             $uploadMgr = new UploadManager();
             // 调用 UploadManager 的 putFile 方法进行文件的上传。
-            list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
+            list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath, null, 'application/octet-stream', false, null, 'v2');
             if ($err !== null) {
-                $errmsg = isset($err['error']) ? $err['error'] : 'Kodo upload error';
+                $errmsg = $err->message();
             }
             $file_info['domain'] = $setting['qiniu_domain'];
         } elseif ($storage == 'aliyun') {

@@ -168,7 +168,7 @@ class FileService
                 $param['tag_ids'] = [];
             }
         }
-      
+
         $model = new FileModel();
         $pk = $model->getPk();
 
@@ -368,6 +368,37 @@ class FileService
         FileCache::del($unique);
 
         return $update;
+    }
+
+    /**
+     * 文件上/下一个
+     *
+     * @param int    $id    文件id
+     * @param string $type  prev上一个，next下一个
+     * @param array  $where 文件条件
+     * 
+     * @return array 文件
+     */
+    public static function prevNext($id, $type = 'prev', $where = [])
+    {
+        if ($type == 'next') {
+            $where[] = ['m.file_id', '>', $id];
+            $order = ['m.file_id' => 'asc'];
+        } else {
+            $where[] = ['m.file_id', '<', $id];
+            $order = ['m.file_id' => 'desc'];
+        }
+        $where[] = where_disable();
+        $where[] = where_delete();
+
+        $field = 'm.file_id,unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext';
+
+        $info = self::list($where, 0, 1, $order, $field)['list'];
+        if (empty($info[0] ?? [])) {
+            return [];
+        }
+
+        return $info[0];
     }
 
     /**

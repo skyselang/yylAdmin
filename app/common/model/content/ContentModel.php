@@ -94,12 +94,23 @@ class ContentModel extends Model
         return relation_fields($this['tags'], 'tag_name', true);
     }
 
+    /**
+     * 获取展示点击量
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("hits_show", type="int", desc="展示点击量")
+     */
+    public function getHitsShowAttr($value, $data)
+    {
+        // 初始点击量+真实点击量
+        return ($data['hits_initial'] ?? 0) + ($data['hits'] ?? 0);
+    }
+
     // 关联文件
     public function files()
     {
         return $this->belongsToMany(FileModel::class, AttributesModel::class, 'file_id', 'content_id')->where(where_disdel());
     }
-    // 获取图片文件
+    // 获取图片文件列表
     public function getImagesAttr()
     {
         if ($this['files']) {
@@ -112,7 +123,7 @@ class ContentModel extends Model
         }
         return $images ?? [];
     }
-    // 获取图片id
+    // 获取图片文件id
     public function getImageIdsAttr()
     {
         if ($this['files']) {
@@ -125,7 +136,7 @@ class ContentModel extends Model
         }
         return $image_ids ?? [];
     }
-    // 获取视频文件
+    // 获取视频文件列表
     public function getVideosAttr()
     {
         if ($this['files']) {
@@ -138,7 +149,7 @@ class ContentModel extends Model
         }
         return $videos ?? [];
     }
-    // 获取视频id
+    // 获取视频文件id
     public function getVideoIdsAttr()
     {
         if ($this['files']) {
@@ -151,7 +162,7 @@ class ContentModel extends Model
         }
         return $video_ids ?? [];
     }
-    // 获取音频文件
+    // 获取音频文件列表
     public function getAudiosAttr()
     {
         if ($this['files']) {
@@ -164,7 +175,7 @@ class ContentModel extends Model
         }
         return $audios ?? [];
     }
-    // 获取音频id
+    // 获取音频文件id
     public function getAudioIdsAttr()
     {
         if ($this['files']) {
@@ -177,7 +188,7 @@ class ContentModel extends Model
         }
         return $audio_ids ?? [];
     }
-    // 获取文档文件
+    // 获取文档文件列表
     public function getWordsAttr()
     {
         if ($this['files']) {
@@ -190,7 +201,7 @@ class ContentModel extends Model
         }
         return $words ?? [];
     }
-    // 获取文档id
+    // 获取文档文件id
     public function getWordIdsAttr()
     {
         if ($this['files']) {
@@ -203,7 +214,7 @@ class ContentModel extends Model
         }
         return $word_ids ?? [];
     }
-    // 获取其它文件
+    // 获取其它文件列表
     public function getOthersAttr()
     {
         if ($this['files']) {
@@ -216,7 +227,7 @@ class ContentModel extends Model
         }
         return $others ?? [];
     }
-    // 获取其它id
+    // 获取其它文件id
     public function getOtherIdsAttr()
     {
         if ($this['files']) {
@@ -228,12 +239,5 @@ class ContentModel extends Model
             }
         }
         return $other_ids ?? [];
-    }
-
-    // 获取展示点击量
-    public function getHitsShowAttr($value, $data)
-    {
-        // 初始点击量+真实点击量
-        return ($data['hits_initial'] ?? 0) + ($data['hits'] ?? 0);
     }
 }

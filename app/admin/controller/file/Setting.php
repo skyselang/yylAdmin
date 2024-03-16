@@ -12,6 +12,8 @@ namespace app\admin\controller\file;
 use app\common\controller\BaseController;
 use app\common\validate\file\SettingValidate;
 use app\common\service\file\SettingService;
+use app\common\service\file\GroupService;
+use app\common\service\file\TagService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -23,13 +25,19 @@ class Setting extends BaseController
 {
     /**
      * @Apidoc\Title("文件设置信息")
-     * @Apidoc\Returned(ref="app\common\model\file\SettingModel")
-     * @Apidoc\Returned(ref="app\common\service\file\SettingService", field="accept_ext,storages")
-     * @Apidoc\Returned("storage", type="object", desc="存储方式")
+     * @Apidoc\Returned("setting", type="object", children={
+     *   @Apidoc\Returned(ref="app\common\model\file\SettingModel"),
+     *   @Apidoc\Returned(ref="app\common\service\file\SettingService\info"),
+     * })
+     * @Apidoc\Returned("group", type="array", ref="app\common\model\file\GroupModel", field="group_id,group_name", desc="分组列表")
+     * @Apidoc\Returned("tag", type="array", ref="app\common\model\file\TagModel", field="tag_id,tag_name", desc="标签列表")
      */
     public function info()
     {
         $data = SettingService::info();
+
+        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
+        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
 
         return success($data);
     }
@@ -84,6 +92,10 @@ class Setting extends BaseController
             'other_ext/s'                => '',
             'other_size/f'               => 0,
             'limit_max/d'                => 9,
+            'is_api_file/d'              => 0,
+            'api_file_types/a'           => [],
+            'api_file_group_ids/a'       => [],
+            'api_file_tag_ids/a'         => [],
         ]);
 
         validate(SettingValidate::class)->scene($param['storage'])->check($param);

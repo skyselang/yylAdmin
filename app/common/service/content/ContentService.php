@@ -31,6 +31,7 @@ class ContentService
         'tag_ids/a'      => [],
         'image_id/d'     => 0,
         'name/s'         => '',
+        'release_time/s' => '',
         'title/s'        => '',
         'keywords/s'     => '',
         'description/s'  => '',
@@ -376,28 +377,22 @@ class ContentService
     /**
      * 内容上/下一条
      *
-     * @param int    $id           内容id
-     * @param string $type         prev上一条，next下一条
-     * @param string $category_ids 分类id
+     * @param int    $id    内容id
+     * @param string $type  prev上一条，next下一条
+     * @param array  $where 内容条件
      * 
      * @return array 内容
      */
-    public static function prevNext($id, $type = '', $category_ids = '')
+    public static function prevNext($id, $type = 'prev', $where = [])
     {
-        if ($type == 'prev') {
-            $where[] = ['m.content_id', '<', $id];
-            $order = ['m.content_id' => 'desc'];
-        } elseif ($type == 'next') {
+        if ($type == 'next') {
             $where[] = ['m.content_id', '>', $id];
             $order = ['m.content_id' => 'asc'];
         } else {
-            $where[] = ['m.content_id', '<>', $id];
-            $order = ['sort' => 'desc'];
+            $where[] = ['m.content_id', '<', $id];
+            $order = ['m.content_id' => 'desc'];
         }
 
-        if ($category_ids !== '') {
-            $where[] = ['category_ids', 'in', $category_ids];
-        }
         $where[] = ['release_time', '<=', datetime()];
         $where[] = where_disable();
         $where[] = where_delete();

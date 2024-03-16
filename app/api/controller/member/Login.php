@@ -287,7 +287,8 @@ class Login extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param("app", type="string", default="wx", desc="应用：wx 微信小程序，qq QQ小程序")
      * @Apidoc\Param("code", type="string", require=true, desc="code 用户登录凭证")
-     * @Apidoc\Param("userinfo", type="object", require=false, desc="用户信息：headimgurl 头像 ，nickname 昵称")
+     * @Apidoc\Param("register", type="int", default="0", desc="是否注册1是0否。登录时如果未注册（返回码code=402）则拉起授权，获取用户信息，传register=1进行注册")
+     * @Apidoc\Param("userinfo", type="object", require=false, desc="用户信息：headimgurl 头像，nickname 昵称")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
@@ -300,7 +301,7 @@ class Login extends BaseController
      */
     public function miniapp()
     {
-        $param    = $this->params(['app/s' => 'wx', 'code/s' => '', 'userinfo/a' => []]);
+        $param    = $this->params(['app/s' => 'wx', 'code/s' => '', 'register/d' => 0, 'userinfo/a' => []]);
         $validate = Validate::rule(['app' => 'require', 'code' => 'require', 'userinfo' => 'array']);
         if (!$validate->check($param)) {
             return error($validate->getError());
@@ -320,6 +321,7 @@ class Login extends BaseController
         }
 
         $user_info                = $miniapp->login($param['code']);
+        $user_info['register']    = $param['register'];
         $user_info['platform']    = $platform;
         $user_info['application'] = $application;
         if (isset($param['userinfo']['headimgurl'])) {

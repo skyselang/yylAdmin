@@ -35,7 +35,7 @@ class Setting extends BaseController
      *   @Apidoc\Returned(ref="app\common\service\content\SettingService\info")
      * })
      * @Apidoc\Returned("file", type="object", desc="文件设置", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\SettingModel", field="is_upload_api,storage,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size"),
+     *   @Apidoc\Returned(ref="app\common\model\file\SettingModel", field="is_upload_api,storage,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size,is_api_file,api_file_types,api_file_group_ids,api_file_tag_ids"),
      *   @Apidoc\Returned(ref="app\common\service\file\SettingService\info", field="accept_ext")
      * })
      * @Apidoc\Returned("setting", type="object", desc="设置管理", children={
@@ -52,13 +52,15 @@ class Setting extends BaseController
      */
     public function setting()
     {
-        // 设置
+        // 会员设置
         $data['member']  = MemberSetting::info('is_captcha_register,is_captcha_login,is_register,is_login,is_captcha_register,is_captcha_login,is_phone_register,is_phone_login,is_email_register,is_email_login,default_avatar_url,token_type,token_name');
+        // 内容设置
         $data['content'] = ContentSetting::info();
-        $data['file']    = FileSetting::info('is_upload_api,storage,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size,accept_ext');
+        // 文件设置
+        $data['file']    = FileSetting::info('is_upload_api,storage,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size,accept_ext,is_api_file,api_file_types,api_file_group_ids,api_file_tag_ids');
+        // 设置管理
         $data['setting'] = SettingService::info();
-
-        // 友链
+        // 友链列表
         $link_field = 'link_id,image_id,name,name_color,url,desc';
         $link_where = [where_disable(), where_delete(), ['start_time', '<=', datetime()], ['end_time', '>=', datetime()]];
         $link_order = ['sort' => 'asc', 'link_id' => 'desc'];

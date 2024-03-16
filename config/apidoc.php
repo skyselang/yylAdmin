@@ -250,6 +250,7 @@ return [
             'groups' => [
                 ['title' => '首页', 'name' => 'index'],
                 ['title' => '设置', 'name' => 'setting'],
+                ['title' => '文件', 'name' => 'file'],
                 ['title' => '内容', 'name' => 'content'],
                 ['title' => '会员', 'name' => 'member'],
             ],
