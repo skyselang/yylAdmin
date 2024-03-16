@@ -233,9 +233,6 @@ class Content extends BaseController
         if ($content_ids) {
             $where[] = ['m.content_id', 'not in', $content_ids];
         }
-        if ($param['category_ids'] !== '') {
-            $where[] = ['category_ids', 'in', $data['category_ids']];
-        }
         $where[] = ['release_time', '<=', datetime()];
         $where[] = where_disable();
         $where[] = where_delete();
