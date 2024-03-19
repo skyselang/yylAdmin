@@ -163,7 +163,7 @@ class File extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,file_name")
      * })
      * @Apidoc\Returned("next_info", type="object", desc="下一条", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,file_0p8ikname")
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,file_name")
      * })
      */
     public function info()
