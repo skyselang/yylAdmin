@@ -488,6 +488,7 @@ class Login extends BaseController
             return;
         }
 
+        $user_info['register']    = 1;
         $user_info['platform']    = $app['platform'];
         $user_info['application'] = $app['application'];
         if ($token) {
