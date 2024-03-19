@@ -518,7 +518,7 @@ class MemberService
      */
     public static function thirdLogin($third_info)
     {
-        $register    = $third_info['register'];
+        $register    = $third_info['register'] ?? 0;
         $unionid     = $third_info['unionid'] ?? '';
         $openid      = $third_info['openid'] ?? '';
         $platform    = $third_info['platform'];
