@@ -43,8 +43,8 @@ class Timer extends Command
         // 指令配置
         $this->setName('timer')
             ->addArgument('action', Argument::OPTIONAL, "start|stop|restart|reload|status|connections", 'start')
-            ->addOption('mode', 'm', Option::VALUE_OPTIONAL, 'daemon（守护进程）方式启动')
-            ->addOption('interval', 'i', Option::VALUE_OPTIONAL, '多长时间执行一次')
+            ->addOption('mode', 'm', Option::VALUE_OPTIONAL, '守护进程方式启动')
+            ->addOption('interval', 'i', Option::VALUE_OPTIONAL, '多长时间执行一次（秒）')
             ->setDescription('the timer command');
     }
 
