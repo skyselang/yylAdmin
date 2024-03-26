@@ -22,7 +22,7 @@ use app\common\service\system\UserLogService;
 /**
  * 定时任务
  * 调试模式开启：php think timer
- * 守护进程开启：php think timer --mode d
+ * 守护进程开启：php think timer -m d
  */
 class Timer extends Command
 {
@@ -43,7 +43,7 @@ class Timer extends Command
         // 指令配置
         $this->setName('timer')
             ->addArgument('action', Argument::OPTIONAL, "start|stop|restart|reload|status|connections", 'start')
-            ->addOption('mode', 'm', Option::VALUE_OPTIONAL, '守护进程方式启动')
+            ->addOption('mode', 'm', Option::VALUE_OPTIONAL, '守护进程方式启动（-m d）')
             ->addOption('interval', 'i', Option::VALUE_OPTIONAL, '多长时间执行一次（秒）')
             ->setDescription('the timer command');
     }
