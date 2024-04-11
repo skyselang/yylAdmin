@@ -140,9 +140,17 @@ class UserService
                 return [];
             }
             $info = $info
-                ->append(['avatar_url', 'dept_ids', 'post_ids', 'role_ids'])
+                ->append(['avatar_url', 'dept_ids', 'depts', 'post_ids', 'role_ids'])
                 ->hidden(['avatar', 'depts', 'posts', 'roles'])
                 ->toArray();
+            
+            //部门列表处理
+            if($info['depts']){
+                foreach($info['depts'] as $dept){
+                    $info['dept_lists'][] = ['dept_id'=> $dept['dept_id'],'dept_name' => $dept['dept_name']];
+                }
+                unset($info['depts']);
+            }
 
             $MenuModel = new MenuModel();
             $MenuPk = $MenuModel->getPk();
