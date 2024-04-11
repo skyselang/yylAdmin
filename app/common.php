@@ -683,6 +683,73 @@ function relation_fields($relation, $field, $string = false, $delete = true, $di
 }
 
 /**
+ * 获取模型关联多列字段
+ *
+ * @param Relation $relation 模型关联结果
+ * @param string   $field    需要获取的字段逗号分隔
+ * @param bool     $string   是否返回字符串
+ * @param bool     $delete   是否筛选已删除
+ * @param bool     $disable  是否筛选已禁用
+ *
+ * @return string|array
+ */
+function relation_dual_fields($relation, $field, $string = false, $delete = true, $disable = true)
+{
+    $names = [];
+    $array = $relation ?? [];
+    if ($array) {
+        $array = is_array($array) ? $array : $array->toArray();
+        foreach ($array as $key => $val) {
+            if ($delete && $val['is_delete']) {
+                unset($array[$key]);
+            }
+            if ($disable && $val['is_disable']) {
+                unset($array[$key]);
+            }
+        }
+    }
+    if (empty($field)) {
+        return $array;
+    }
+    $names = array_columns($array, $field);
+    if ($string) {
+        return implode(',', $names);
+    }
+    return $names;
+}
+/**
+ * 返回数组中指定多列
+ *
+ * @param  Array  $input       需要取出数组列的多维数组
+ * @param  String $column_keys 要取出的列名，逗号分隔，如不传则返回所有列
+ * @param  String $index_key   作为返回数组的索引的列
+ * @return Array
+ */
+function array_columns($input, $column_keys=null, $index_key=null){
+    $result = array();
+    $keys =isset($column_keys)? explode(',', $column_keys) : array();
+    if($input){
+        foreach($input as $k=>$v){
+            // 指定返回列
+            if($keys){
+                $tmp = array();
+                foreach($keys as $key){
+                    $tmp[$key] = $v[$key];
+                }
+            }else{
+                $tmp = $v;
+            }
+            // 指定索引列
+            if(isset($index_key)){
+                $result[$v[$index_key]] = $tmp;
+            }else{
+                $result[] = $tmp;
+            }
+        }
+    }
+    return $result;
+}
+/**
  * 模型关联修改
  * 
  * @param Model  $info     模型find查询

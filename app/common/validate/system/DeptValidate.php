@@ -26,6 +26,7 @@ class DeptValidate extends Validate
         'dept_name'  => ['require', 'checkExisted'],
         'is_disable' => ['require', 'in' => '0,1'],
         'user_ids'   => ['array'],
+        'user_id'    => ['require'],
     ];
 
     // 错误信息
@@ -44,6 +45,7 @@ class DeptValidate extends Validate
         'disable'     => ['ids', 'is_disable'],
         'user'        => ['dept_id'],
         'userRemove'  => ['dept_id', 'user_ids'],
+        'userDefault' => ['dept_id', 'user_id'],
         'recycleReco' => ['ids'],
         'recycleDele' => ['ids'],
     ];
