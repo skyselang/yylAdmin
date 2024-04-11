@@ -200,4 +200,19 @@ class Dept extends BaseController
 
         return success($data);
     }
+    /**
+     * @Apidoc\Title("用户默认部门")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param("dept_id", type="int", require=true, desc="部门id")
+     * @Apidoc\Param("user_id", type="int", require=true, desc="用户id")
+     */
+    public function userDefault()
+    {
+        $param = $this->params(['dept_id/d', 'user_id/d']);
+
+        validate(DeptValidate::class)->scene('userDefault')->check($param);
+        $data = DeptService::userDefault($param['dept_id'], $param['user_id']);
+
+        return success($data);
+    }
 }

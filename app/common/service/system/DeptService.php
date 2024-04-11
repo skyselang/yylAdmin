@@ -230,4 +230,34 @@ class DeptService
 
         return $res;
     }
+
+    /**
+     * 用户默认部门配置
+     *
+     * @param array $dept_id  部门id
+     * @param array $user_id 用户id
+     *
+     * @return int
+     */
+    public static function userDefault($dept_id, $user_id)
+    {
+        
+        $where[] = ['user_id', '=', $user_id];
+        $where[] = ['dept_id', '>', 0];
+        $update = [
+            'dept_default' => 0
+        ];
+        //清空默认选项
+        UserAttributesModel::where($where)->update($update);
+        $where = [];
+        $where[] = ['user_id', '=', $user_id];
+        $where[] = ['dept_id', '=', $dept_id];
+        $update = [
+            'dept_default' => 1
+        ];
+        //保持只有一个选中默认
+        $row = UserAttributesModel::where($where)->update($update);
+        UserCache::del($user_id);
+        return $row;
+    }
 }

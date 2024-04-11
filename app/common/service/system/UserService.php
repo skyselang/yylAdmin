@@ -86,7 +86,7 @@ class UserService
         $where = array_values($where);
 
         $with     = ['depts', 'posts', 'roles'];
-        $append   = ['dept_names', 'post_names', 'role_names'];
+        $append   = ['dept_names', 'default_dept_id', 'post_names', 'role_names'];
         $hidden   = ['depts', 'posts', 'roles'];
         $field_no = [];
         if (strpos($field, 'avatar_id') !== false) {
@@ -140,17 +140,9 @@ class UserService
                 return [];
             }
             $info = $info
-                ->append(['avatar_url', 'dept_ids', 'depts', 'post_ids', 'role_ids'])
-                ->hidden(['avatar', 'depts', 'posts', 'roles'])
+                ->append(['avatar_url', 'dept_ids', 'default_dept_id', 'dept_lists', 'post_ids', 'role_ids'])
+                ->hidden(['avatar', 'depts', 'default_dept', 'posts', 'roles'])
                 ->toArray();
-            
-            //部门列表处理
-            if($info['depts']){
-                foreach($info['depts'] as $dept){
-                    $info['dept_lists'][] = ['dept_id'=> $dept['dept_id'],'dept_name' => $dept['dept_name']];
-                }
-                unset($info['depts']);
-            }
 
             $MenuModel = new MenuModel();
             $MenuPk = $MenuModel->getPk();

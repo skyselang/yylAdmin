@@ -38,10 +38,49 @@ class UserModel extends Model
         return $this['avatar']['file_url'] ?? '';
     }
 
+    
+    // 关联默认部门
+    public function defaultDept()
+    {
+        return  $this->hasOne(UserAttributesModel::class, 'user_id', 'user_id')->field(['dept_id'])->where(['dept_default' => 1]);
+        // print_r($dept_id);
+        // if($dept_id){
+        //     return $dept_id['dept_id'];
+        // }
+        // return 0;
+    }
+    /**
+     * 获取默认部门id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("dept_lists", type="array", desc="部门id")
+     */
+    public function getDefaultDeptIdAttr()
+    {
+        return $this['default_dept']->dept_id ?? 0;
+    }
+    /**
+     * 获取默认部门名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("dept_names", type="string", desc="部门名称")
+     */
+    public function getDefaultDeptNameAttr()
+    {
+        return $this['default_dept']->dept_name ?? '';
+    }
+
     // 关联部门
     public function depts()
     {
         return $this->belongsToMany(DeptModel::class, UserAttributesModel::class, 'dept_id', 'user_id');
+    }
+    /**
+     * 获取部门id和name
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("dept_lists", type="array", desc="部门id和名称")
+     */
+    public function getDeptListsAttr()
+    {
+        return relation_dual_fields($this['depts'],'dept_id,dept_name');
     }
     /**
      * 获取部门id
