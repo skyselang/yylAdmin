@@ -34,7 +34,7 @@
     "phpmailer/phpmailer": "^6.9",
     "fastknife/ajcaptcha": "^1.2",
     "chinayin/ip2region": "^2.0",
-    "hg/apidoc": "5.2.1",
+    "hg/apidoc": "5.2.3",
     "qiniu/php-sdk": "^7.11",
     "aliyuncs/oss-sdk-php": "^2.6",
     "qcloud/cos-sdk-v5": "^2.6",

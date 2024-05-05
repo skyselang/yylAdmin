@@ -38,6 +38,8 @@ class MenuService
         'name/s'         => '',
         'meta_query/s'   => '',
         'hidden/d'       => 0,
+        'keep_alive/d'   => 1,
+        'always_show/d'  => 0,
         'sort/d'         => 250,
         'add_info/b'     => false,
         'add_add/b'      => false,
@@ -577,10 +579,9 @@ class MenuService
     public static function menus($ids = [])
     {
         $where = where_delete(['menu_id', 'in', $ids]);
-        $field = 'menu_id,menu_pid,menu_name,menu_type,path,name,component,meta_icon,meta_query,hidden,keep_alive,is_disable';
+        $field = 'menu_id,menu_pid,menu_name,menu_type,path,name,component,meta_icon,meta_query,hidden,keep_alive,always_show,is_disable';
         $menu  = self::list('list', $where, [], $field);
-
-        $tree = $list = [];
+        $list  = [];
         foreach ($menu as $v) {
             if ($v['menu_type'] != SettingService::MENU_TYPE_BUTTON) {
                 $tmp = [];
@@ -592,10 +593,10 @@ class MenuService
                 $tmp['meta']['icon']  = $v['meta_icon'];
                 $tmp['meta']['hidden'] = $v['hidden'] ? true : false;
                 $tmp['meta']['keepAlive'] = $v['keep_alive'] ? true : false;
+                $tmp['meta']['alwaysShow'] = $v['always_show'] ? true : false;
                 if ($v['menu_type'] == SettingService::MENU_TYPE_CATALOGUE) {
-                    $tmp['redirect']   = 'noRedirect';
-                    $tmp['component']  = 'Layout';
-                    $tmp['alwaysShow'] = true;
+                    $tmp['redirect']  = 'noRedirect';
+                    $tmp['component'] = 'Layout';
                     if ($v['menu_pid'] > 0) {
                         $tmp['redirect']  = $v['component'];
                         $tmp['component'] = $v['component'];
@@ -612,8 +613,6 @@ class MenuService
             }
         }
 
-        $tree = list_to_tree($list, 'menu_id', 'menu_pid');
-
-        return $tree;
+        return list_to_tree($list, 'menu_id', 'menu_pid');
     }
 }

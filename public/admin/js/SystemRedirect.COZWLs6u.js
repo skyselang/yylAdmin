@@ -1,1 +1,0 @@
-import{c as e,a4 as a,a as s,a3 as t}from"./index.DjA_re4j.js";const r=Object.assign({name:"SystemRedirect"},{__name:"SystemRedirect",setup(r){const c=t(),m=a(),{params:n,query:p}=c,{path:i}=n;return m.replace({path:"/"+i,query:p}),(a,t)=>(s(),e("div"))}});export{r as default};
