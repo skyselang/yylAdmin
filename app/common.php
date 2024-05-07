@@ -435,6 +435,19 @@ function user_is_super($user_id = 0)
 }
 
 /**
+ * 系统超管用户上传文件大小是否不受限制
+ *
+ * @return bool
+ */
+function super_upload_size()
+{
+    if (user_is_super(user_id())) {
+        return Config::get('admin.super_upload_size', false);
+    }
+    return false;
+}
+
+/**
  * 用户日志记录是否开启
  *
  * @return bool

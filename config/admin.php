@@ -16,9 +16,10 @@ return [
 
     // 系统超管用户ID（所有权限）
     'super_ids' => env('admin.super_ids', [1]),
-
     // 系统超管用户是否隐藏
     'super_hide' => env('admin.super_hide', true),
+    // 系统超管用户上传文件大小是否不受限制
+    'super_upload_size' => env('admin.super_upload_size', false),
 
     // 菜单免登url（无需登录）
     'menu_is_unlogin' => [
@@ -57,6 +58,6 @@ return [
         'others',
     ],
 
-    // 地区级别：1省2市3区4县街道乡镇
+    // 地区级别：1省2市3区县4街道乡镇
     'region_level' => 3,
 ];

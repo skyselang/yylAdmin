@@ -78,11 +78,13 @@ class FileValidate extends Validate
             return '上传的文件格式不允许，允许格式：' . $set_ext_str;
         }
 
-        $file_size  = $file->getSize();
-        $set_size_m = $setting[$file_type . '_size'];
-        $set_size_b = $set_size_m * 1048576;
-        if ($file_size > $set_size_b) {
-            return '上传的文件大小不允许，允许大小：' . $set_size_m . ' MB';
+        if (!super_upload_size()) {
+            $file_size  = $file->getSize();
+            $set_size_m = $setting[$file_type . '_size'];
+            $set_size_b = $set_size_m * 1048576;
+            if ($file_size > $set_size_b) {
+                return '上传的文件大小不允许，允许大小：' . $set_size_m . ' MB';
+            }
         }
 
         return true;
