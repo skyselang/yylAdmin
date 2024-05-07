@@ -4,7 +4,7 @@
 
 ## 文档
 
-- [开发文档](http://doc.yyladmin.top/)
+- [开发文档](https://www.yyladmin.top/)
 
 ## 简介
 
