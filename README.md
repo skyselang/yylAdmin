@@ -4,7 +4,7 @@
 
 ## 文档
 
-- [开发文档](http://skyselang.gitee.io/yyladmindoc/)
+- [开发文档](http://doc.yyladmin.top/)
 
 ## 简介
 
