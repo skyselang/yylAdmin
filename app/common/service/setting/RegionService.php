@@ -45,7 +45,7 @@ class RegionService
      * @param array  $where 条件
      * @param array  $order 排序
      * @param string $field 字段
-     * @param int    $level 级别：1省2市3区4县街道乡镇
+     * @param int    $level 级别：1省2市3区县4街道乡镇
      *
      * @return array 
      */
@@ -386,8 +386,7 @@ class RegionService
      */
     public static function pinyin($param)
     {
-        $Pinyin          = new Pinyin();
-        $region_py       = $Pinyin->convert($param['region_name']);
+        $region_py       = Pinyin::sentence($param['region_name'], 'none')->toArray();
         $region_pinyin   = '';
         $region_jianpin  = '';
         $region_initials = '';
