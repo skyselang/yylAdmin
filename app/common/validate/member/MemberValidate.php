@@ -37,7 +37,7 @@ class MemberValidate extends Validate
     // 错误信息
     protected $message = [
         'username.require'     => '请输入用户名',
-        'username.length'      => '用户名长度为2至64个字符',
+        // 'username.length'      => '用户名长度为2至64个字符',
         'nickname.length'      => '昵称长度为1至64个字符',
         'password.require'     => '请输入密码',
         'password.length'      => '密码长度为6至18个字符',

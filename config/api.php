@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// api配置 http://skyselang.gitee.io/yyladmindoc/
+// api配置
 return [
     // token方式：header、param；token名称；前后端必须一致
     'token_type' => env('api.token_type', 'header'),

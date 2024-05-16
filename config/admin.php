@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// admin配置 http://skyselang.gitee.io/yyladmindoc/
+// admin配置
 return [
     // token方式：header、param
     'token_type' => env('admin.token_type', 'header'),

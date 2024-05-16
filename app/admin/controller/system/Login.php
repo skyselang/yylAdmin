@@ -71,6 +71,7 @@ class Login extends BaseController
         if ($this->request->isGet()) {
             if ($data['captcha_switch']) {
                 if ($data['captcha_mode'] == 2) {
+                    ini_set('memory_limit', '256M');
                     $AjCaptchaUtils = new AjCaptchaUtils();
                     $captcha = $AjCaptchaUtils->get($data['captcha_type']);
                     $data = array_merge($data, $captcha);
@@ -120,15 +121,15 @@ class Login extends BaseController
                 $AjCaptchaUtils = new AjCaptchaUtils();
                 $captcha_check = $AjCaptchaUtils->checkTwo($setting['captcha_type'], $param['ajcaptcha']);
                 if ($captcha_check['error']) {
-                    return error('验证码错误');
+                    return error(lang('system.Verification code error'));
                 }
             } else {
                 if (empty($param['captcha_code'])) {
-                    return error('请输入验证码');
+                    return error(lang('system.Please enter the verification code'));
                 }
                 $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
                 if (empty($captcha_check)) {
-                    return error('验证码错误');
+                    return error(lang('system.Verification code error'));
                 }
             }
         }

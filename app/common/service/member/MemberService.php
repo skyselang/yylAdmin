@@ -980,7 +980,7 @@ class MemberService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key = $type . $stat . $sta_date . '_' . $end_date;
+        $key  = $type . $stat . $sta_date . '_' . $end_date . lang_get();
         $data = MemberCache::get($key);
         if (empty($data)) {
             $dates = [];
@@ -1018,14 +1018,14 @@ class MemberService
 
             if ($stat == 'count') {
                 $data = [
-                    ['date' => 'total', 'name' => '会员', 'title' => '总数', 'count' => 0],
-                    ['date' => 'online', 'name' => '在线', 'title' => '数量', 'count' => 0],
-                    ['date' => 'today', 'name' => '今天', 'title' => '新增', 'count' => 0],
-                    ['date' => 'yesterday', 'name' => '昨天', 'title' => '新增', 'count' => 0],
-                    ['date' => 'thisweek', 'name' => '本周', 'title' => '新增', 'count' => 0],
-                    ['date' => 'lastweek', 'name' => '上周', 'title' => '新增', 'count' => 0],
-                    ['date' => 'thismonth', 'name' => '本月', 'title' => '新增', 'count' => 0],
-                    ['date' => 'lastmonth', 'name' => '上月', 'title' => '新增', 'count' => 0],
+                    ['date' => 'total', 'name' => lang('member.total'), 'title' => lang('member.total'), 'count' => 0],
+                    ['date' => 'online', 'name' => lang('member.online'), 'title' => lang('member.number'), 'count' => 0],
+                    ['date' => 'today', 'name' => lang('member.today'), 'title' => lang('member.added'), 'count' => 0],
+                    ['date' => 'yesterday', 'name' => lang('member.yesterday'), 'title' => lang('member.added'), 'count' => 0],
+                    ['date' => 'thisweek', 'name' => lang('member.this week'), 'title' => lang('member.added'), 'count' => 0],
+                    ['date' => 'lastweek', 'name' => lang('member.last week'), 'title' => lang('member.added'), 'count' => 0],
+                    ['date' => 'thismonth', 'name' => lang('member.this month'), 'title' => lang('member.added'), 'count' => 0],
+                    ['date' => 'lastmonth', 'name' => lang('member.last month'), 'title' => lang('member.added'), 'count' => 0],
                 ];
 
                 foreach ($data as $k => $v) {
@@ -1065,7 +1065,8 @@ class MemberService
 
                 return $data;
             } elseif ($stat == 'number') {
-                $data['title'] = '数量';
+                $data['title'] = lang('member.number');
+                $data['selected'] = [lang('member.total') => false];
                 $add = $total = [];
                 // 新增会员
                 $adds = $model->field($field)->where($where)->group($group)->select()->column('num', 'date');
@@ -1080,11 +1081,12 @@ class MemberService
                     $total[$k] = $model->where(where_delete(['create_time', '<=', $e_t . ' 23:59:59']))->count();
                 }
                 $series = [
-                    ['name' => '总数', 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => '新增', 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => lang('member.total'), 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => lang('member.added'), 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
                 ];
             } elseif ($stat == 'application') {
-                $data['title'] = '应用';
+                $data['title'] = lang('member.application');
+                $data['selected'] = [];
                 $series = [];
                 $applications = SettingService::applications();
                 foreach ($applications as $k => $v) {
@@ -1103,7 +1105,8 @@ class MemberService
                     }
                 }
             } elseif ($stat == 'platform') {
-                $data['title'] = '平台';
+                $data['title'] = lang('member.platform');
+                $data['selected'] = [];
                 $series = [];
                 $platforms = SettingService::platforms();
                 foreach ($platforms as $k => $v) {

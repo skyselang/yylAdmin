@@ -44,27 +44,27 @@ class IndexService
      */
     public static function count()
     {
-        $uid = user_id();
-        $key = 'statistic:count' . $uid;
+        $uid  = user_id();
+        $key  = 'statistic:count' . $uid . lang_get();
         $data = Cache::get($key);
         if (empty($data)) {
             $count = [];
             $table = [
-                ['table' => 'member', 'name' => '会员', 'menu_url' => 'admin/member.Member/list'],
+                ['table' => 'member', 'name' => lang('member.member'), 'menu_url' => 'admin/member.Member/list'],
                 // ['table' => 'member_tag', 'name' => '会员标签', 'menu_url' => 'admin/member.Tag/list'],
                 // ['table' => 'member_group', 'name' => '会员分组', 'menu_url' => 'admin/member.Group/list'],
                 // ['table' => 'member_api', 'name' => '会员接口', 'menu_url' => 'admin/member.Api/list'],
-                ['table' => 'content', 'name' => '内容', 'menu_url' => 'admin/content.Content/list'],
+                ['table' => 'content', 'name' => lang('content.content'), 'menu_url' => 'admin/content.Content/list'],
                 // ['table' => 'content_category', 'name' => '内容分类', 'menu_url' => 'admin/content.Category/list'],
                 // ['table' => 'content_tag', 'name' => '内容标签', 'menu_url' => 'admin/content.Tag/list'],
-                ['table' => 'file', 'name' => '文件', 'menu_url' => 'admin/file.File/list'],
+                ['table' => 'file', 'name' => lang('file.file'), 'menu_url' => 'admin/file.File/list'],
                 // ['table' => 'file_group', 'name' => '文件分组', 'menu_url' => 'admin/file.Group/list'],
                 // ['table' => 'file_tag', 'name' => '文件标签', 'menu_url' => 'admin/file.Tag/list'],
-                ['table' => 'setting_carousel', 'name' => '轮播', 'menu_url' => 'admin/setting.Carousel/list'],
-                ['table' => 'setting_notice', 'name' => '通告', 'menu_url' => 'admin/setting.Notice/list'],
-                ['table' => 'setting_accord', 'name' => '协议', 'menu_url' => 'admin/setting.Accord/list'],
-                ['table' => 'setting_feedback', 'name' => '反馈', 'menu_url' => 'admin/setting.Feedback/list'],
-                ['table' => 'setting_region', 'name' => '地区', 'menu_url' => 'admin/setting.Region/list'],
+                ['table' => 'setting_carousel', 'name' => lang('setting.carousel'), 'menu_url' => 'admin/setting.Carousel/list'],
+                ['table' => 'setting_notice', 'name' => lang('setting.notice'), 'menu_url' => 'admin/setting.Notice/list'],
+                ['table' => 'setting_accord', 'name' => lang('setting.accord'), 'menu_url' => 'admin/setting.Accord/list'],
+                ['table' => 'setting_feedback', 'name' => lang('setting.feedback'), 'menu_url' => 'admin/setting.Feedback/list'],
+                ['table' => 'setting_region', 'name' => lang('setting.region'), 'menu_url' => 'admin/setting.Region/list'],
                 // ['table' => 'setting_link', 'name' => '友链', 'menu_url' => 'admin/setting.Link/list'],
                 // ['table' => 'system_menu', 'name' => '菜单', 'menu_url' => 'admin/system.Menu/list'],
                 // ['table' => 'system_role', 'name' => '角色', 'menu_url' => 'admin/system.Role/list'],

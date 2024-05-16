@@ -414,16 +414,16 @@ class UserService
             $user = $model->field($field)->where(where_delete(['username|phone|email', '=', $param['username']]))->find();
         }
         if (empty($user)) {
-            exception('账号或密码错误');
+            exception(lang('system.Account or password error'));
         }
 
         $user = $user->toArray();
         $password_verify = password_verify($param['password'], $user['password']);
         if (!$password_verify) {
-            exception('账号或密码错误');
+            exception(lang('system.Account or password error'));
         }
         if ($user['is_disable'] == 1) {
-            exception('账号已被禁用，请联系管理员');
+            exception(lang('system.The account has been disabled. Please contact the administrator'));
         }
 
         $user_id = $user[$pk];

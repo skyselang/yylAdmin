@@ -906,3 +906,23 @@ function create_state($prefix = '', $more_entropy = true)
 {
     return md5(uniqid($prefix, $more_entropy));
 }
+
+/**
+ * 获取当前语言
+ *
+ * @return string
+ */
+function lang_get()
+{
+    $lang_config = Config::get('lang');
+    $lang_set = '';
+    if (Request::get($lang_config['detect_var'])) {
+        // url中设置了语言变量
+        $lang_set = Request::get($lang_config['detect_var']);
+    } elseif (Request::header($lang_config['header_var'])) {
+        // Header中设置了语言变量
+        $lang_set = Request::header($lang_config['header_var']);
+    }
+
+    return $lang_set;
+}

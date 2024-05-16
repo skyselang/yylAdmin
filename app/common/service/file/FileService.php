@@ -411,7 +411,7 @@ class FileService
      */
     public static function statistic()
     {
-        $key = 'statistic';
+        $key  = 'statistic' . lang_get();
         $data = FileCache::get($key);
         if (empty($data)) {
             $model = new FileModel();
@@ -421,7 +421,7 @@ class FileService
             $file_count = $model->field($file_field)->where([where_delete()])->group('file_type')->select()->toArray();
             foreach ($file_types as $k => $v) {
                 $temp = [];
-                $temp['name']  = $v;
+                $temp['name']  = lang('file.' . $k);
                 $temp['value'] = 0;
                 foreach ($file_count as $vfc) {
                     if ($k == $vfc['file_type']) {
