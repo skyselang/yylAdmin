@@ -8,8 +8,10 @@
 // +----------------------------------------------------------------------
 
 // api公共函数文件
+use think\facade\Config;
 use think\facade\Request;
 use app\common\service\member\ApiService;
+use app\common\service\member\SettingService;
 
 /**
  * 接口url获取
@@ -125,4 +127,55 @@ function api_is_unrate($api_url = '')
     }
 
     return false;
+}
+
+/**
+ * 会员平台
+ *
+ * @return int 请求参数或头部携带的平台代码
+ */
+function member_platform()
+{
+    $field = 'platform';
+    $admin = Config::get('admin');
+    if ($admin['token_type'] == 'header') {
+        $platform = Request::header($field, '');
+    } else {
+        $platform = Request::param($field, '');
+    }
+    if (empty($platform)) {
+        $platform = Request::param($field, '');
+    }
+    if (empty($platform)) {
+        $platform = Request::header($field, '');
+    }
+    if (empty($platform)) {
+        $platform = SettingService::platform(member_application());
+    }
+
+    return $platform;
+}
+
+/**
+ * 会员应用
+ *
+ * @return int 请求参数或头部携带的应用代码
+ */
+function member_application()
+{
+    $field = 'application';
+    $admin = Config::get('admin');
+    if ($admin['token_type'] == 'header') {
+        $application = Request::header($field, '');
+    } else {
+        $application = Request::param($field, '');
+    }
+    if (empty($application)) {
+        $application = Request::param($field, SettingService::APP_UNKNOWN);
+        if (empty($application)) {
+            $application = Request::header($field, SettingService::APP_UNKNOWN);
+        }
+    }
+
+    return $application;
 }

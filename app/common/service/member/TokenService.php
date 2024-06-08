@@ -46,9 +46,7 @@ class TokenService
             'nbf'  => time(),                               //生效时间
             'exp'  => time() + $config['token_exp'] * 3600, //过期时间
             'data' => [
-                'member_id'   => $member['member_id'],
-                'platform'    => $member['platform'] ?? 0,
-                'application' => $member['application'] ?? 0,
+                'member_id' => $member['member_id'],
             ],
         ];
 
@@ -134,45 +132,5 @@ class TokenService
         }
 
         return $member_id;
-    }
-
-    /**
-     * Token平台
-     *
-     * @param  string $token
-     * @return int
-     */
-    public static function memberPlatform($token)
-    {
-        $platform = 0;
-        if ($token) {
-            try {
-                $decode   = self::decode($token);
-                $platform = $decode->data->platform;
-            } catch (\Exception $e) {
-                $platform = 0;
-            }
-        }
-        return $platform;
-    }
-
-    /**
-     * Token应用
-     *
-     * @param  string $token
-     * @return int
-     */
-    public static function memberApplication($token)
-    {
-        $application = 0;
-        if ($token) {
-            try {
-                $decode      = self::decode($token);
-                $application = $decode->data->application;
-            } catch (\Exception $e) {
-                $application = 0;
-            }
-        }
-        return $application;
     }
 }

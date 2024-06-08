@@ -9,9 +9,7 @@
 
 namespace app\api\service;
 
-use think\facade\Request;
 use app\common\service\member\MemberService;
-use app\common\service\member\SettingService;
 
 /**
  * 登录退出
@@ -29,10 +27,10 @@ class LoginService
     public static function login($param, $type = '')
     {
         if (!isset($param['platform'])) {
-            $param['platform'] = Request::param('platform') ?? SettingService::PLATFORM_YA;
+            $param['platform'] = member_platform();
         }
         if (!isset($param['application'])) {
-            $param['application'] = Request::param('application') ?? SettingService::APP_UNKNOWN;
+            $param['application'] = member_application();
         }
         return MemberService::login($param, $type);
     }
@@ -41,7 +39,7 @@ class LoginService
      * 第三方登录
      *
      * @param array $user_info 第三方用户信息
-     * openid、application、headimgurl、nickname、unionid
+     * platform，application，openid，headimgurl，nickname，unionid
      *
      * @return array
      */

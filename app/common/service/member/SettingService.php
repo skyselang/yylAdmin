@@ -364,4 +364,35 @@ class SettingService
 
         return $param;
     }
+
+    /**
+     * 获取平台
+     *
+     * @param  int $application 应用
+     * @return int
+     */
+    public static function platform($application)
+    {
+        $app_ya = [self::APP_YA_MINIAPP, self::APP_YA_OFFIACC, self::APP_YA_WEBSITE, self::APP_YA_MOBILE];
+        if (in_array($application, $app_ya)) {
+            return self::PLATFORM_YA;
+        }
+
+        $app_wx = [self::APP_WX_MINIAPP, self::APP_WX_OFFIACC, self::APP_WX_WEBSITE, self::APP_WX_MOBILE];
+        if (in_array($application, $app_wx)) {
+            return self::PLATFORM_WX;
+        }
+
+        $app_qq = [self::APP_QQ_MINIAPP, self::APP_QQ_WEBSITE, self::APP_QQ_MOBILE];
+        if (in_array($application, $app_qq)) {
+            return self::PLATFORM_QQ;
+        }
+
+        $app_wb = [self::APP_WB_WEBSITE];
+        if (in_array($application, $app_wb)) {
+            return self::PLATFORM_WB;
+        }
+
+        return self::PLATFORM_YA;
+    }
 }
