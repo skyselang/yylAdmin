@@ -49,7 +49,7 @@ yylAdmin是一个基于ThinkPHP8和Vue3极简后台管理系统，只有登录�
   开启 putenv、proc_open 函数
 - MySQL >= 5.5
 - Redis >= 5.0
-- Node >= 18.12
+- Node >= 18.18
 - Npm >= 8.19
 
 ### 安装后端
