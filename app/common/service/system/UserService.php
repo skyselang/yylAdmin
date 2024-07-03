@@ -505,7 +505,10 @@ class UserService
         $update[$pk] = $id;
 
         UserCache::del($id);
-        UserCache::delToken($id);
+        $setting = SettingService::info();
+        if (!$setting['is_multi_login']) {
+            UserCache::delToken($id);
+        }
 
         return $update;
     }

@@ -946,7 +946,10 @@ class MemberService
         $update[$pk] = $id;
 
         MemberCache::del($id);
-        MemberCache::delToken($id);
+        $setting = SettingService::info();
+        if (!$setting['is_multi_login']) {
+            MemberCache::delToken($id);
+        }
 
         return $update;
     }
