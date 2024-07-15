@@ -150,6 +150,9 @@ class CategoryService
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
+        if (empty($param['category_unique'] ?? '')) {
+            $param['category_unique'] = uniqids();
+        }
 
         // 启动事务
         $model->startTrans();

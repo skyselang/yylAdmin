@@ -152,7 +152,7 @@ class FeedbackService
         unset($param[$pk]);
 
         if (empty($param['receipt_no'] ?? '')) {
-            $param['receipt_no'] = uniqid() . mt_rand(100, 999);
+            $param['receipt_no'] = uniqids();
         }
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();

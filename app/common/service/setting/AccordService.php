@@ -121,6 +121,9 @@ class AccordService
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
+        if (empty($param['unique'] ?? '')) {
+            $param['unique'] = uniqids();
+        }
 
         $model->save($param);
         $id = $model->$pk;

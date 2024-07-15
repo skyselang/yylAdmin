@@ -898,3 +898,14 @@ function lang_get()
 
     return $lang_set;
 }
+
+/**
+ * 生成随机字符串
+ *
+ * @param  integer $length 字符串长度
+ * @return string
+ */
+function uniqids($length = 16)
+{
+    return bin2hex(random_bytes($length / 2));
+}

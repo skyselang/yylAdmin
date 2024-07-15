@@ -149,6 +149,9 @@ class TagService
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
+        if (empty($param['tag_unique'] ?? '')) {
+            $param['tag_unique'] = uniqids();
+        }
 
         // 启动事务
         $model->startTrans();
