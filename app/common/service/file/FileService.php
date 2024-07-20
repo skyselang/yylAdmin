@@ -235,6 +235,9 @@ class FileService
             self::edit($id, $param);
         } else {
             unset($param[$pk]);
+            if (empty($param['unique'] ?? '')) {
+                $param['unique'] = uniqids();
+            }
             $param['create_uid']  = user_id();
             $param['create_time'] = $datetime;
             $param['update_time'] = $datetime;
