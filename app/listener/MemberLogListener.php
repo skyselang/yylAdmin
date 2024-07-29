@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 declare(strict_types=1);
 
-namespace app\listener\api;
+namespace app\listener;
 
 use app\common\service\member\LogService;
 

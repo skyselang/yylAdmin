@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 declare(strict_types=1);
 
-namespace app\listener\admin;
+namespace app\listener;
 
 use app\common\service\system\UserLogService;
 

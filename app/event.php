@@ -20,9 +20,9 @@ return [
         'LogLevel'  => [],
         'LogWrite'  => [],
         // 用户日志事件
-        'UserLog'   => ['app\listener\admin\UserLogListener'],
+        'UserLog'   => ['app\listener\UserLogListener'],
         // 会员日志事件
-        'MemberLog' => ['app\listener\api\MemberLogListener'],
+        'MemberLog' => ['app\listener\MemberLogListener'],
     ],
 
     // 事件订阅
