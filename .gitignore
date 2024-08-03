@@ -15,6 +15,7 @@
 /.project
 /vendor
 /runtime
+/public/admin
 /public/.well-known
 /public/storage
 /public/.htaccess
