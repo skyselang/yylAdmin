@@ -1,1 +1,0 @@
-import{ax as n}from"./index.CYwDHgSX.js";const t=n();function e(t=""){if(""!==t)return t;return n().pageLimit}function i(n){t.changeSetting({key:"notice",value:n})}function a(){return t.notice}function o(){t.changeSetting({key:"notice",value:0})}export{a,o as d,e as g,i as s};
