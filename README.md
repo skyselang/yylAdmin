@@ -40,6 +40,7 @@ yylAdmin是一个基于ThinkPHP8和Vue3极简后台管理系统，只有登录�
 - 密码：123456  
 - 提示：演示账号只有部分权限，请安装后体验全部功能
 - 前台：[index](https://www.yyladmin.top) 
+
 ## 安装
 
 ### 环境要求
@@ -155,11 +156,6 @@ npm run build:stage
 密码：123456  
 超管：skyselang  
 密码：123456
-
-## 预览
-
-- ![login](./public/static/img/yyladmin_login.jpg)
-- ![index](./public/static/img/yyladmin.jpg)
 
 ## 支持
 
