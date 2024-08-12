@@ -86,9 +86,9 @@ class UserCenter extends BaseController
 
         validate(UserCenterValidate::class)->scene('pwd')->check($param);
 
-        $data = UserCenterService::pwd($param['user_id'], $param);
+        UserCenterService::pwd($param['user_id'], $param);
 
-        return success($data);
+        return success();
     }
 
     /**

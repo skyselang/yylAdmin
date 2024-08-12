@@ -20,7 +20,6 @@ use app\common\service\file\FileService;
 use app\common\service\utils\SmsUtils;
 use app\common\service\utils\EmailUtils;
 use app\common\cache\Cache;
-use app\common\cache\member\MemberCache;
 use app\common\cache\utils\CaptchaSmsCache;
 use app\common\cache\utils\CaptchaEmailCache;
 use hg\apidoc\annotation as Apidoc;
@@ -137,9 +136,9 @@ class Member extends BaseController
             validate(MemberValidate::class)->scene('editpwd0')->check($param);
         }
 
-        $data = MemberService::edit($param['member_id'], ['password' => $param['password_new']]);
+        MemberService::edit($param['member_id'], ['password' => $param['password_new']]);
 
-        return success($data);
+        return success();
     }
 
     /**
@@ -356,8 +355,8 @@ class Member extends BaseController
         }
 
         $member_id = member_id(true);
-        $token     = MemberCache::getToken($member_id);
-        if (empty($token)) {
+        $api_token = api_token();
+        if (empty($api_token)) {
             echo '绑定失败，请重试！';
             return;
         }
@@ -378,7 +377,7 @@ class Member extends BaseController
         $cache['type']         = 'offiacc';
         $cache['app']          = $app;
         $cache['jump_url']     = $param['jump_url'];
-        $cache['token']        = $token;
+        $cache['token']        = $api_token;
         $cache['redirect_uri'] = $redirect_uri;
         Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
 
@@ -405,8 +404,8 @@ class Member extends BaseController
         }
 
         $member_id = member_id(true);
-        $token     = MemberCache::getToken($member_id);
-        if (empty($token)) {
+        $api_token = api_token();
+        if (empty($api_token)) {
             echo '绑定失败，请重试！';
             return;
         }
@@ -436,7 +435,7 @@ class Member extends BaseController
         $cache['app']          = $app;
         $cache['jump_url']     = $param['jump_url'];
         $cache['redirect_uri'] = $redirect_uri;
-        $cache['token']        = $token;
+        $cache['token']        = $api_token;
         Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
 
         $website->login($redirect_uri, $state);

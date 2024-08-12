@@ -121,7 +121,7 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['token_key']   = uniqid();
+                $info['token_key']   = uniqids();
                 $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
@@ -140,6 +140,7 @@ class SettingService
             $info['cache_type'] = $cache_config['default'];
             $info['token_type'] = Config::get('admin.token_type');
             $info['token_name'] = Config::get('admin.token_name');
+            $info['token_exps'] = $info['token_exp'] * 3600;
 
             SettingCache::set($key, $info);
         }
@@ -187,7 +188,7 @@ class SettingService
 
     /**
      * 缓存清除
-     * 清除所有缓存标签（用户、会员token除外）数据
+     * 清除所有缓存标签数据
      *
      * @return array
      */

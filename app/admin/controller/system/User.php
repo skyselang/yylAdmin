@@ -190,9 +190,9 @@ class User extends BaseController
 
         validate(UserValidate::class)->scene('repwd')->check($param);
 
-        $data = UserService::edit($param['ids'], $param);
+        UserService::edit($param['ids'], $param);
 
-        return success($data);
+        return success();
     }
 
     /**

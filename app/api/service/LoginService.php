@@ -39,7 +39,7 @@ class LoginService
      * 第三方登录
      *
      * @param array $user_info 第三方用户信息
-     * platform，application，openid，headimgurl，nickname，unionid
+     * platform，application，openid，headimgurl，nickname，unionid，register，avatar_id
      *
      * @return array
      */

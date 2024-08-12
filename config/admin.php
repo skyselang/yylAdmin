@@ -56,6 +56,7 @@ return [
         'words',
         'annexs',
         'others',
+        'token_key',
     ],
 
     // 地区级别：1省2市3区县4街道乡镇

@@ -294,7 +294,7 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['token_key']   = uniqid();
+                $info['token_key']   = uniqids();
                 $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);
@@ -312,6 +312,7 @@ class SettingService
 
             $info['token_type'] = Config::get('api.token_type');
             $info['token_name'] = Config::get('api.token_name');
+            $info['token_exps'] = $info['token_exp'] * 3600;
 
             SettingCache::set($key, $info);
         }

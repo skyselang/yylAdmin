@@ -24,7 +24,7 @@ class TagCache
     /**
      * 缓存键名
      *
-     * @param int $id 标签id
+     * @param int|string $id 标签id、标识
      * 
      * @return string
      */
@@ -36,9 +36,9 @@ class TagCache
     /**
      * 缓存设置
      *
-     * @param int   $id   标签id
-     * @param array $info 标签信息
-     * @param int   $ttl  有效时间（秒，0永久）
+     * @param int|string $id   标签id、标识
+     * @param array      $info 标签信息
+     * @param int        $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
@@ -50,7 +50,7 @@ class TagCache
     /**
      * 缓存获取
      *
-     * @param int $id 标签id
+     * @param int|string $id 标签id、标识
      * 
      * @return array 标签信息
      */
@@ -62,7 +62,7 @@ class TagCache
     /**
      * 缓存删除
      *
-     * @param mixed $id 标签id
+     * @param mixed $id 标签id、标识
      * 
      * @return bool
      */

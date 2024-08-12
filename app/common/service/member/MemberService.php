@@ -295,6 +295,7 @@ class MemberService
 
         // 密码
         if (isset($param['password'])) {
+            $param['pwd_time'] = datetime();
             $param['password'] = password_hash($param['password'], PASSWORD_BCRYPT);
         }
 
@@ -392,7 +393,6 @@ class MemberService
         $update['ids'] = $ids;
 
         MemberCache::del($ids);
-        MemberCache::delToken($ids);
 
         return $update;
     }
@@ -497,8 +497,8 @@ class MemberService
         $data = [];
         $setting = SettingService::info();
         $token_name = $setting['token_name'];
-        $member[$token_name] = self::token($member);
-        $fields = ['avatar_url', 'member_id', 'nickname', 'username', 'login_ip', 'login_time', 'login_num', $token_name];
+        $data[$token_name] = self::token($member);
+        $fields = ['member_id', 'avatar_uid', 'avatar_url', 'nickname', 'username', 'login_ip', 'login_time', 'login_num'];
         foreach ($fields as $field) {
             if (isset($member[$field])) {
                 $data[$field] = $member[$field];
@@ -512,7 +512,7 @@ class MemberService
      * 会员第三方账号登录
      *
      * @param array $third_info 第三方账号信息
-     * openid、platform、application、headimgurl、nickname、unionid
+     * platform，application，openid，headimgurl，nickname，unionid，register，avatar_id
      * 
      * @return array
      */
@@ -523,6 +523,7 @@ class MemberService
         $openid      = $third_info['openid'] ?? '';
         $platform    = $third_info['platform'];
         $application = $third_info['application'];
+        $phone       = $third_info['phone'] ?? '';
         $setting     = SettingService::info();
         $ip_info     = Utils::ipInfo();
         $login_ip    = $ip_info['ip'];
@@ -627,6 +628,12 @@ class MemberService
                 if (empty($member['nickname']) && isset($third_info['nickname'])) {
                     $member_update['nickname'] = $third_info['nickname'];
                 }
+                if (isset($third_info['avatar_id'])) {
+                    $member_update['avatar_id'] = $third_info['avatar_id'];
+                }
+                if ($phone) {
+                    $member_update['phone'] = $phone;
+                }
                 $member_update['login_num']    = $member['login_num'] + 1;
                 $member_update['login_ip']     = $login_ip;
                 $member_update['login_time']   = $datetime;
@@ -662,6 +669,12 @@ class MemberService
                 } else {
                     $member_insert['nickname'] = $member_insert['username'] ?? $third_username;
                 }
+                if (isset($third_info['avatar_id'])) {
+                    $member_update['avatar_id'] = $third_info['avatar_id'];
+                }
+                if ($phone) {
+                    $member_insert['phone'] = $phone;
+                }
                 $member_insert['platform']     = $platform;
                 $member_insert['application']  = $application;
                 $member_insert['login_num']    = 1;
@@ -673,6 +686,14 @@ class MemberService
                 // 注册日志
                 $member_log[$MemberPk] = $member_id;
                 LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
+            }
+
+            if ($phone) {
+                $phone_where = [[$MemberPk, '<>', $member_id], ['phone', '=', $phone], where_delete()];
+                $phone_exist = $MemberModel->field($MemberPk)->where($phone_where)->find();
+                if ($phone_exist) {
+                    return '手机号已存在：' . $phone;
+                }
             }
 
             $third_save['member_id']    = $member_id;
@@ -723,8 +744,8 @@ class MemberService
         MemberCache::del($member_id);
         $member = self::info($member_id);
         $data   = self::loginField($member);
-        $data['member_id']   = $member_id;
-        $data['third_id']    = $third_o_id;
+        $data['member_id'] = $member_id;
+        $data['third_id']  = $third_o_id;
 
         return $data;
     }
@@ -864,7 +885,7 @@ class MemberService
 
         // 会员信息
         $token_name = $setting['token_name'];
-        $data[$token_name] = MemberCache::getToken($member_id);
+        $data[$token_name] = api_token();
         $data['member_id'] = $member_id;
         $data['third_id']  = $third_o_id;
 
@@ -920,11 +941,7 @@ class MemberService
      */
     public static function token($member)
     {
-        $token     = TokenService::create($member);
-        $setting   = SettingService::info();
-        $token_exp = $setting['token_exp'] * 3600;
-        MemberCache::setToken($member['member_id'], $token, $token_exp);
-        return $token;
+        return TokenService::create($member);
     }
 
     /**
@@ -946,10 +963,6 @@ class MemberService
         $update[$pk] = $id;
 
         MemberCache::del($id);
-        $setting = SettingService::info();
-        if (!$setting['is_multi_login']) {
-            MemberCache::delToken($id);
-        }
 
         return $update;
     }

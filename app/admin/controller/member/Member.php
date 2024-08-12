@@ -212,9 +212,9 @@ class Member extends BaseController
 
         validate(MemberValidate::class)->scene('repwd')->check($param);
 
-        $data = MemberService::edit($param['ids'], $param);
+        MemberService::edit($param['ids'], $param);
 
-        return success($data);
+        return success();
     }
 
     /**

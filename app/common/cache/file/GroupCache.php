@@ -24,7 +24,7 @@ class GroupCache
     /**
      * 缓存键名
      *
-     * @param int $id 分组id
+     * @param int|string $id 分组id、标识
      * 
      * @return string
      */
@@ -36,9 +36,9 @@ class GroupCache
     /**
      * 缓存设置
      *
-     * @param int   $id   分组id
-     * @param array $info 分组信息
-     * @param int   $ttl  有效时间（秒，0永久）
+     * @param int|string $id   分组id、标识
+     * @param array      $info 分组信息
+     * @param int        $ttl  有效时间（秒，0永久）
      * 
      * @return bool
      */
@@ -50,7 +50,7 @@ class GroupCache
     /**
      * 缓存获取
      *
-     * @param int $id 分组id
+     * @param int|string $id 分组id、标识
      * 
      * @return array 文件分组信息
      */
@@ -62,7 +62,7 @@ class GroupCache
     /**
      * 缓存删除
      *
-     * @param mixed $id 分组id
+     * @param mixed $id 分组id、标识
      * 
      * @return bool
      */

@@ -24,11 +24,12 @@ class GroupService
      * @var array
      */
     public static $edit_field = [
-        'group_id/d'   => '',
-        'group_name/s' => '',
-        'group_desc/s' => '',
-        'remark/s'     => '',
-        'sort/d'       => 250,
+        'group_id/d'     => '',
+        'group_unique/s' => '',
+        'group_name/s'   => '',
+        'group_desc/s'   => '',
+        'remark/s'       => '',
+        'sort/d'         => 250,
     ];
 
     /**
@@ -48,7 +49,7 @@ class GroupService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',group_name,group_desc,remark,sort,is_disable,create_time,update_time';
+            $field = $pk . ',group_unique,group_name,group_desc,remark,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
@@ -71,8 +72,8 @@ class GroupService
     /**
      * 文件分组信息
      *
-     * @param int  $id   分组id
-     * @param bool $exce 不存在是否抛出异常
+     * @param int|string $id   分组id
+     * @param bool       $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
@@ -81,8 +82,16 @@ class GroupService
         $info = GroupCache::get($id);
         if (empty($info)) {
             $model = new GroupModel();
+            $pk = $model->getPk();
 
-            $info = $model->find($id);
+            if (is_numeric($id)) {
+                $where[] = [$pk, '=', $id];
+            } else {
+                $where[] = ['group_unique', '=', $id];
+                $where[] = where_delete();
+            }
+
+            $info = $model->where($where)->find();
             if (empty($info)) {
                 if ($exce) {
                     exception('文件分组不存在：' . $id);
@@ -113,6 +122,9 @@ class GroupService
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
+        if (empty($param['group_unique'] ?? '')) {
+            $param['group_unique'] = uniqids();
+        }
 
         $model->save($param);
         $id = $model->$pk;
@@ -143,6 +155,8 @@ class GroupService
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
+        $unique = $model->where($pk, 'in', $ids)->column('group_unique');
+
         $res = $model->where($pk, 'in', $ids)->update($param);
         if (empty($res)) {
             exception();
@@ -151,6 +165,7 @@ class GroupService
         $param['ids'] = $ids;
 
         GroupCache::del($ids);
+        GroupCache::del($unique);
 
         return $param;
     }
@@ -168,6 +183,8 @@ class GroupService
         $model = new GroupModel();
         $pk = $model->getPk();
 
+        $unique = $model->where($pk, 'in', $ids)->column('group_unique');
+
         if ($real) {
             $res = $model->where($pk, 'in', $ids)->delete();
         } else {
@@ -182,6 +199,7 @@ class GroupService
         $update['ids'] = $ids;
 
         GroupCache::del($ids);
+        GroupCache::del($unique);
 
         return $update;
     }

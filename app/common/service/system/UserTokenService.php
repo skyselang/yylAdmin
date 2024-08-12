@@ -11,7 +11,6 @@ namespace app\common\service\system;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use app\common\cache\system\UserCache;
 use app\common\service\system\SettingService;
 use app\common\service\utils\RetCodeUtils;
 
@@ -27,7 +26,9 @@ class UserTokenService
      */
     public static function config()
     {
-        return SettingService::info();
+        $config = SettingService::info();
+        $config['token_alg'] = 'HS256';
+        return $config;
     }
 
     /**
@@ -42,18 +43,38 @@ class UserTokenService
         $config = self::config();
 
         $payload = [
-            'iat'  => time(),                               //签发时间
-            'nbf'  => time(),                               //生效时间
-            'exp'  => time() + $config['token_exp'] * 3600, //过期时间
+            'iat'  => time(),                           //签发时间
+            'nbf'  => time(),                           //生效时间
+            'exp'  => time() + $config['token_exps'],   //过期时间
             'data' => [
-                'user_id' => $user['user_id'],
+                'user_id'    => $user['user_id'],
+                'login_time' => $user['login_time'],
             ],
         ];
 
-        $key   = $config['token_key']; //密钥
-        $token = JWT::encode($payload, $key, 'HS256');
+        return JWT::encode($payload, $config['token_key'], $config['token_alg']);
+    }
 
-        return $token;
+    /**
+     * Token decode
+     *
+     * @param  string $token
+     * @param  bool   $exce 是否抛出异常
+     * 
+     * @return object|Exception
+     */
+    public static function decode($token, $exce = true)
+    {
+        try {
+            $config = self::config();
+            $decode = JWT::decode($token, new Key($config['token_key'], $config['token_alg']));
+        } catch (\Exception $e) {
+            if ($exce) {
+                exception('登录状态已失效', RetCodeUtils::LOGIN_INVALID);
+            }
+        }
+
+        return $decode ?? [];
     }
 
     /**
@@ -69,32 +90,28 @@ class UserTokenService
             exception('请登录', RetCodeUtils::LOGIN_INVALID);
         }
 
-        $config = self::config();
-
         try {
-            $key     = $config['token_key'];
-            $decode  = JWT::decode($token, new Key($key, 'HS256'));
+            $decode  = self::decode($token);
             $user_id = $decode->data->user_id;
         } catch (\Exception $e) {
             exception('账号登录状态已失效', RetCodeUtils::LOGIN_INVALID);
         }
 
-        $cache_token = UserCache::getToken($user_id);
-        if (empty($cache_token)) {
-            exception('账号登录状态已过期', RetCodeUtils::LOGIN_INVALID);
-        } else {
-            if (!$config['is_multi_login']) {
-                if ($token != $cache_token) {
-                    exception('账号已在另一处登录', RetCodeUtils::LOGIN_INVALID);
-                }
-            }
+        $user = UserService::info($user_id);
+        if ($user['is_delete'] == 1) {
+            exception('账号已被删除', RetCodeUtils::LOGIN_INVALID);
+        }
+        if ($user['is_disable'] == 1) {
+            exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
+        }
+        if (($user['pwd_time'] ?? '') && $decode->data->login_time < $user['pwd_time']) {
+            exception('账号密码已修改', RetCodeUtils::LOGIN_INVALID);
+        }
 
-            $user = UserService::info($user_id);
-            if ($user['is_disable'] == 1) {
-                exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
-            }
-            if ($user['is_delete'] == 1) {
-                exception('账号已被删除', RetCodeUtils::LOGIN_INVALID);
+        $config = self::config();
+        if ($config['is_multi_login'] == 0) {
+            if ($decode->data->login_time != $user['login_time']) {
+                exception('账号已在另一处登录', RetCodeUtils::LOGIN_INVALID);
             }
         }
     }
@@ -103,7 +120,7 @@ class UserTokenService
      * Token用户id
      *
      * @param string $token token
-     * @param bool   $exce  未登录是否抛出异常
+     * @param bool   $exce  是否抛出异常
      * 
      * @return int user_id
      */
@@ -113,9 +130,7 @@ class UserTokenService
 
         if ($token) {
             try {
-                $config  = self::config();
-                $key     = $config['token_key'];
-                $decode  = JWT::decode($token, new Key($key, 'HS256'));
+                $decode  = self::decode($token);
                 $user_id = $decode->data->user_id;
             } catch (\Exception $e) {
                 $user_id = 0;

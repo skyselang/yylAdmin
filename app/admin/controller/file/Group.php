@@ -62,7 +62,7 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("文件分组添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_name,group_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_unique,group_name,group_desc,remark,sort")
      */
     public function add()
     {
@@ -78,7 +78,7 @@ class Group extends BaseController
     /**
      * @Apidoc\Title("文件分组修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_id,group_name,group_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\file\GroupModel", field="group_id,group_unique,group_name,group_desc,remark,sort")
      */
     public function edit()
     {

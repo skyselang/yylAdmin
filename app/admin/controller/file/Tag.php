@@ -62,7 +62,7 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("文件标签添加")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_name,tag_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_unique,tag_name,tag_desc,remark,sort")
      */
     public function add()
     {
@@ -78,7 +78,7 @@ class Tag extends BaseController
     /**
      * @Apidoc\Title("文件标签修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_id,tag_name,tag_desc,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\file\TagModel", field="tag_id,tag_unique,tag_name,tag_desc,remark,sort")
      */
     public function edit()
     {

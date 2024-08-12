@@ -24,11 +24,12 @@ class TagService
      * @var array
      */
     public static $edit_field = [
-        'tag_id/d'   => '',
-        'tag_name/s' => '',
-        'tag_desc/s' => '',
-        'remark/s'   => '',
-        'sort/d'     => 250,
+        'tag_id/d'     => '',
+        'tag_unique/s' => '',
+        'tag_name/s'   => '',
+        'tag_desc/s'   => '',
+        'remark/s'     => '',
+        'sort/d'       => 250,
     ];
 
     /**
@@ -48,7 +49,7 @@ class TagService
         $pk = $model->getPk();
 
         if (empty($field)) {
-            $field = $pk . ',tag_name,tag_desc,remark,sort,is_disable,create_time,update_time';
+            $field = $pk . ',tag_unique,tag_name,tag_desc,remark,sort,is_disable,create_time,update_time';
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
@@ -71,8 +72,8 @@ class TagService
     /**
      * 文件标签信息
      *
-     * @param int  $id   标签id
-     * @param bool $exce 不存在是否抛出异常
+     * @param int|string $id   标签id
+     * @param bool       $exce 不存在是否抛出异常
      * 
      * @return array|Exception
      */
@@ -81,8 +82,16 @@ class TagService
         $info = TagCache::get($id);
         if (empty($info)) {
             $model = new TagModel();
+            $pk = $model->getPk();
 
-            $info = $model->find($id);
+            if (is_numeric($id)) {
+                $where[] = [$pk, '=', $id];
+            } else {
+                $where[] = ['tag_unique', '=', $id];
+                $where[] = where_delete();
+            }
+
+            $info = $model->where($where)->find();
             if (empty($info)) {
                 if ($exce) {
                     exception('文件标签不存在：' . $id);
@@ -113,6 +122,9 @@ class TagService
 
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
+        if (empty($param['tag_unique'] ?? '')) {
+            $param['tag_unique'] = uniqids();
+        }
 
         $model->save($param);
         $id = $model->$pk;
@@ -143,6 +155,8 @@ class TagService
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
+        $unique = $model->where($pk, 'in', $ids)->column('tag_unique');
+
         $res = $model->where($pk, 'in', $ids)->update($param);
         if (empty($res)) {
             exception();
@@ -151,6 +165,7 @@ class TagService
         $param['ids'] = $ids;
 
         TagCache::del($ids);
+        TagCache::del($unique);
 
         return $param;
     }
@@ -168,6 +183,8 @@ class TagService
         $model = new TagModel();
         $pk = $model->getPk();
 
+        $unique = $model->where($pk, 'in', $ids)->column('tag_unique');
+
         if ($real) {
             $res = $model->where($pk, 'in', $ids)->delete();
         } else {
@@ -182,6 +199,7 @@ class TagService
         $update['ids'] = $ids;
 
         TagCache::del($ids);
+        TagCache::del($unique);
 
         return $update;
     }

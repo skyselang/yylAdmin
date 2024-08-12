@@ -9,8 +9,6 @@
 
 namespace app\common\service\system;
 
-use app\common\cache\system\UserCache;
-
 /**
  * 接口文档
  */
@@ -23,16 +21,8 @@ class ApidocService
      */
     public static function apidoc()
     {
-        $user_id   = user_id();
-        $token     = UserCache::getToken($user_id);
-        $token_sub = substr($token, 0, 16) . '...';
-
         $data['apidoc_url'] = server_url() . '/apidoc';
         $data['apidoc_pwd'] = config('apidoc.auth.password');
-        $data['user_id']    = $user_id;
-        $data['token']      = $token;
-        $data['token_sub']  = $token_sub;
-
         return $data;
     }
 }

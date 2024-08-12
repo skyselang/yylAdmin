@@ -56,9 +56,19 @@ class TagValidate extends Validate
         $pk = $model->getPk();
         $id = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['tag_name', '=', $data['tag_name']];
-        $where = where_delete($where);
+        $tag_unique = $data['tag_unique'] ?? '';
+        if ($tag_unique) {
+            if (is_numeric($tag_unique)) {
+                return '标识不能为纯数字';
+            }
+            $where = [[$pk, '<>', $id], ['tag_unique', '=', $tag_unique], where_delete()];
+            $info = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return '标识已存在：' . $tag_unique;
+            }
+        }
+
+        $where = [[$pk, '<>', $id], ['tag_name', '=', $data['tag_name']], where_delete()];
         $info = $model->field($pk)->where($where)->find();
         if ($info) {
             return '名称已存在：' . $data['tag_name'];

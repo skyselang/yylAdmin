@@ -282,6 +282,7 @@ class UserService
         $param['update_time'] = datetime();
         // 密码
         if (isset($param['password'])) {
+            $param['pwd_time'] = datetime();
             $param['password'] = password_hash($param['password'], PASSWORD_BCRYPT);
         }
 
@@ -381,7 +382,6 @@ class UserService
         $update['ids'] = $ids;
 
         UserCache::del($ids);
-        UserCache::delToken($ids);
 
         return $update;
     }
@@ -459,8 +459,8 @@ class UserService
         $data = [];
         $setting = SettingService::info();
         $token_name = $setting['token_name'];
-        $user[$token_name] = self::token($user);
-        $fields = ['user_id', 'nickname', 'username', $token_name];
+        $data[$token_name] = self::token($user);
+        $fields = ['user_id', 'nickname', 'username'];
         foreach ($fields as $field) {
             if (isset($user[$field])) {
                 $data[$field] = $user[$field];
@@ -479,11 +479,7 @@ class UserService
      */
     public static function token($user)
     {
-        $token = UserTokenService::create($user);
-        $setting = SettingService::info();
-        $ttl = $setting['token_exp'] * 3600;
-        UserCache::setToken($user['user_id'], $token, $ttl);
-        return $token;
+        return UserTokenService::create($user);
     }
 
     /**
@@ -505,10 +501,6 @@ class UserService
         $update[$pk] = $id;
 
         UserCache::del($id);
-        $setting = SettingService::info();
-        if (!$setting['is_multi_login']) {
-            UserCache::delToken($id);
-        }
 
         return $update;
     }

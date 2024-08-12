@@ -112,20 +112,6 @@ class Login extends BaseController
 
         $setting = SettingService::info();
         if ($setting['is_captcha_login']) {
-            if (empty($param['captcha_id'])) {
-                return error('captcha_id must');
-            }
-            if (empty($param['captcha_code'])) {
-                return error('请输入验证码');
-            }
-            $captcha_check = CaptchaUtils::check($param['captcha_id'], $param['captcha_code']);
-            if (empty($captcha_check)) {
-                return error('验证码错误');
-            }
-        }
-
-        $setting = SettingService::info();
-        if ($setting['is_captcha_login']) {
             if ($setting['captcha_mode'] == 2) {
                 $AjCaptchaUtils = new AjCaptchaUtils();
                 $captcha_check = $AjCaptchaUtils->checkTwo($setting['captcha_type'], $param['ajcaptcha']);
@@ -282,10 +268,14 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("小程序登录")
      * @Apidoc\Method("POST")
+     * @Apidoc\Desc("参数register=0静默登录，如果未注册（返回码code=402），则拉起授权，获取用户信息、手机号，传register=1进行注册")
      * @Apidoc\Param("app", type="string", default="wx", desc="应用：wx 微信小程序，qq QQ小程序")
      * @Apidoc\Param("code", type="string", require=true, desc="code 用户登录凭证")
-     * @Apidoc\Param("register", type="int", default="0", desc="是否注册1是0否。登录时如果未注册（返回码code=402）则拉起授权，获取用户信息，传register=1进行注册")
-     * @Apidoc\Param("userinfo", type="object", require=false, desc="用户信息：headimgurl 头像，nickname 昵称")
+     * @Apidoc\Param("phone_code", type="string", require=false, desc="code 手机号获取凭证")
+     * @Apidoc\Param("register", type="int", default="0", desc="是否注册1是0否")
+     * @Apidoc\Param("headimgurl", type="string", require=false, desc="头像")
+     * @Apidoc\Param("nickname", type="string", require=false, desc="昵称")
+     * @Apidoc\Param("avatar_id", type="int", require=false, desc="上传头像返回的file_id")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
@@ -298,8 +288,16 @@ class Login extends BaseController
      */
     public function miniapp()
     {
-        $param    = $this->params(['app/s' => 'wx', 'code/s' => '', 'register/d' => 0, 'userinfo/a' => []]);
-        $validate = Validate::rule(['app' => 'require', 'code' => 'require', 'userinfo' => 'array']);
+        $param = $this->params([
+            'app/s'        => 'wx',
+            'code/s'       => '',
+            'phone_code/s' => '',
+            'register/d'   => 0,
+            'headimgurl/s' => '',
+            'nickname/s'   => '',
+            'avatar_id/d'  => 0,
+        ]);
+        $validate = Validate::rule(['app' => 'require', 'code' => 'require']);
         if (!$validate->check($param)) {
             return error($validate->getError());
         }
@@ -309,6 +307,9 @@ class Login extends BaseController
             $platform    = SettingService::PLATFORM_WX;
             $application = SettingService::APP_WX_MINIAPP;
             $miniapp     = new \thirdsdk\WxMiniapp($setting['wx_miniapp_appid'], $setting['wx_miniapp_appsecret']);
+            if ($param['phone_code'] ?? '') {
+                $phone = $miniapp->getPhoneNumber($param['phone_code']);
+            }
         } elseif ($param['app'] == 'qq') {
             $platform    = SettingService::PLATFORM_QQ;
             $application = SettingService::APP_QQ_MINIAPP;
@@ -319,16 +320,21 @@ class Login extends BaseController
 
         $user_info                = $miniapp->login($param['code']);
         $user_info['register']    = $param['register'];
+        $user_info['avatar_id']   = $param['avatar_id'];
         $user_info['platform']    = $platform;
         $user_info['application'] = $application;
-        if (isset($param['userinfo']['headimgurl'])) {
-            $user_info['headimgurl'] = $param['userinfo']['headimgurl'];
+        if (isset($param['headimgurl'])) {
+            $user_info['headimgurl'] = $param['headimgurl'];
         }
-        if (isset($param['userinfo']['nickname'])) {
-            $user_info['nickname'] = $param['userinfo']['nickname'];
+        if (isset($param['nickname'])) {
+            $user_info['nickname'] = $param['nickname'];
+        }
+        if ($phone ?? '') {
+            $user_info['phone'] = $phone;
         }
 
         $data = LoginService::thirdLogin($user_info);
+        $data['phone'] = $phone ?? '';
 
         return success($data);
     }
@@ -370,7 +376,7 @@ class Login extends BaseController
         $cache['app']          = $app;
         $cache['jump_url']     = $param['jump_url'];
         $cache['redirect_uri'] = $redirect_uri;
-        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
+        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 600);
 
         $offiacc->login($redirect_uri, $state);
     }
@@ -420,14 +426,13 @@ class Login extends BaseController
         $cache['app']          = $app;
         $cache['jump_url']     = $param['jump_url'];
         $cache['redirect_uri'] = $redirect_uri;
-        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
+        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 600);
 
         $website->login($redirect_uri, $state);
     }
 
     /**
      * @Apidoc\Title("公众号/网站登录/绑定回调")
-     * @Apidoc\Desc("调试使用")
      * @Apidoc\Query("code", type="string", require=true, desc="code")
      * @Apidoc\Query("state", type="string", require=true, desc="state")
      * @Apidoc\NotHeaders()
@@ -508,7 +513,10 @@ class Login extends BaseController
      * @Apidoc\Param("code", type="string", require=true, desc="wx，code")
      * @Apidoc\Param("access_token", type="string", require=true, desc="qq，access_token")
      * @Apidoc\Param("openid", type="string", require=true, desc="qq，openid")
-     * @Apidoc\Param("userinfo", type="object", require=false, desc="用户信息：headimgurl头像，nickname昵称")
+     * @Apidoc\Param("register", type="int", default="0", desc="是否注册1是0否")
+     * @Apidoc\Param("headimgurl", type="string", require=false, desc="头像")
+     * @Apidoc\Param("nickname", type="string", require=false, desc="昵称")
+     * @Apidoc\Param("avatar_id", type="int", require=false, desc="上传头像返回的file_id")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
      * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
@@ -521,8 +529,17 @@ class Login extends BaseController
      */
     public function mobile()
     {
-        $param = $this->params(['app/s' => 'wx', 'code/s' => '', 'access_token/s' => '', 'openid/s' => '', 'userinfo/a' => []]);
-        $rule  = ['app' => 'require', 'userinfo' => 'array'];
+        $param = $this->params([
+            'app/s'          => 'wx',
+            'code/s'         => '',
+            'access_token/s' => '',
+            'openid/s'       => '',
+            'register/d'     => 0,
+            'headimgurl/s'   => '',
+            'nickname/s'     => '',
+            'avatar_id/d'    => 0,
+        ]);
+        $rule = ['app' => 'require'];
         if ($param['app'] == 'wx') {
             $rule['code'] = 'require';
         } elseif ($param['app'] == 'qq') {
@@ -552,13 +569,14 @@ class Login extends BaseController
             return error('app value error');
         }
 
+        $user_info['register']    = $param['register'];
         $user_info['platform']    = $platform;
         $user_info['application'] = $application;
-        if (isset($param['userinfo']['headimgurl'])) {
-            $user_info['headimgurl'] = $param['userinfo']['headimgurl'];
+        if (isset($param['headimgurl'])) {
+            $user_info['headimgurl'] = $param['headimgurl'];
         }
-        if (isset($param['userinfo']['nickname'])) {
-            $user_info['nickname'] = $param['userinfo']['nickname'];
+        if (isset($param['nickname'])) {
+            $user_info['nickname'] = $param['nickname'];
         }
 
         $data = LoginService::thirdLogin($user_info);
