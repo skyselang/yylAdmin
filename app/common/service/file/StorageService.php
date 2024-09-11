@@ -22,11 +22,10 @@ use Qcloud\Cos\Client;
 use BaiduBce\Services\Bos\BosClient;
 use Upyun\Upyun;
 use Upyun\Config;
+use Obs\ObsClient;
 use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
-use Aws\S3\MultipartUploader;
 use Aws\S3\Exception\S3Exception;
-use Obs\ObsClient;
 
 /**
  * 对象存储
@@ -85,7 +84,7 @@ class StorageService
                 $secretId = $setting['tencent_secret_id']; //"云 API 密钥 SecretId";
                 $secretKey = $setting['tencent_secret_key']; //"云 API 密钥 SecretKey";
                 $region = $setting['tencent_region']; //设置一个默认的存储桶地域
-                $cosClient = new Client([
+                $CosClient = new Client([
                     'region' => $region,
                     'schema' => 'https', //协议头部，默认为http
                     'credentials' => ['secretId'  => $secretId, 'secretKey' => $secretKey]
@@ -96,7 +95,7 @@ class StorageService
                     $key = $file_name; //此处的 key 为对象键，对象键是对象在存储桶中的唯一标识
                     $local_path = $file_path; //保存到用户本地路径
                     $body = fopen($local_path, "rb");
-                    $cosClient->upload($bucket, $key, $body);
+                    $CosClient->upload($bucket, $key, $body);
                 } catch (\Exception $e) {
                 }
             } elseif ($storage == 'baidu') {
@@ -111,8 +110,8 @@ class StorageService
                     $bucketName = $setting['baidu_bucket'];
                     $objectKey = $file_name;
                     $fileName = $file_path;
-                    $client = new BosClient($bos_config);
-                    $client->putObjectFromFile($bucketName, $objectKey, $fileName);
+                    $BosClient = new BosClient($bos_config);
+                    $BosClient->putObjectFromFile($bucketName, $objectKey, $fileName);
                 } catch (\Exception $e) {
                 }
             } elseif ($storage == 'upyun') {
@@ -120,22 +119,21 @@ class StorageService
                     $serviceName = $setting['upyun_service_name'];
                     $operatorName = $setting['upyun_operator_name'];
                     $operatorPassword = $setting['upyun_operator_pwd'];
-                    $serviceConfig = new Config($serviceName, $operatorName, $operatorPassword);
-                    $client = new Upyun($serviceConfig);
                     $path = $file_name;
                     $content = fopen($file_path, "rb");
-                    $client->write($path, $content);
+                    $serviceConfig = new Config($serviceName, $operatorName, $operatorPassword);
+                    $Upyun = new Upyun($serviceConfig);
+                    $Upyun->write($path, $content);
                 } catch (\Exception $e) {
                 }
             } elseif ($storage == 'huawei') {
                 try {
-                    $obsClient = new ObsClient([
+                    $ObsClient = new ObsClient([
                         'key' => $setting['huawei_access_key_id'],
                         'secret' => $setting['huawei_secret_access_key'],
                         'endpoint' => $setting['huawei_endpoint']
                     ]);
-
-                    $obsClient->putObject([
+                    $ObsClient->putObject([
                         'Bucket' => $setting['huawei_bucket'],
                         'Key' => $file_name,
                         'SourceFile' => $file_path,
@@ -145,28 +143,16 @@ class StorageService
             } elseif ($storage == 'aws') {
                 try {
                     $credentials = new Credentials($setting['aws_access_key_id'], $setting['aws_secret_access_key']);
-                    $aws = new S3Client([ //aws客户端
-                        'version' => 'latest',
-                        'region' => $setting['aws_region'], //AWS区域和终端节点
-                        'credentials' => $credentials, //加载证书
+                    $S3Client  = new S3Client([
+                        'region' => $setting['aws_region'],
+                        'endpoint' => $setting['aws_endpoint'],
+                        'credentials' => $credentials,
                     ]);
-                    $bucket = $setting['aws_bucket']; //存储桶 获取AWS存储桶的名称
-                    $source = $file_path; //需要上传的文件，文件的本地路径例:D:/www/abc.jpg;
-                    $uploader = new MultipartUploader($aws, $source, [ //多部件上传
-                        'bucket' => $bucket, //存储桶
-                        'key'    => $file_name, //上传后的新地址
-                        'ACL'    => 'public-read', //设置访问权限 公开，不然访问不了
-                        'before_initiate' => function (\Aws\Command $command) { //分段上传
-                            $command['CacheControl'] = 'max-age=3600';
-                        },
-                        'before_upload'   => function (\Aws\Command $command) {
-                            $command['RequestPayer'] = 'requester';
-                        },
-                        'before_complete' => function (\Aws\Command $command) {
-                            $command['RequestPayer'] = 'requester';
-                        },
+                    $S3Client->putObject([
+                        'Bucket' => $setting['aws_bucket'],
+                        'Key' => $file_name,
+                        'SourceFile' => $file_path,
                     ]);
-                    $uploader->upload();
                 } catch (\Exception $e) {
                 }
             }
@@ -213,14 +199,10 @@ class StorageService
         $storage = $setting['storage'];
         if ($storage == 'qiniu') {
             try {
-                $accessKey = $setting['qiniu_access_key'];
-                $secretKey = $setting['qiniu_secret_key'];
-                $bucket = $setting['qiniu_bucket'];
-                $key = $file_path;
-                $auth = new Auth($accessKey, $secretKey);
+                $auth = new Auth($setting['qiniu_access_key'], $setting['qiniu_secret_key']);
                 $config = new \Qiniu\Config();
                 $bucketManager = new \Qiniu\Storage\BucketManager($auth, $config);
-                list($fileInfo) = $bucketManager->stat($bucket, $key);
+                list($fileInfo) = $bucketManager->stat($setting['qiniu_bucket'], $file_path);
                 if ($fileInfo) {
                     return true;
                 }
@@ -231,40 +213,33 @@ class StorageService
                 $accessKeyId = $setting['aliyun_access_key_id'];
                 $accessKeySecret = $setting['aliyun_access_key_secret'];
                 $endpoint = $setting['aliyun_endpoint'];
-                $bucket = $setting['aliyun_bucket'];
-                $object = $file_path;
-                $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
-                return $ossClient->doesObjectExist($bucket, $object);
+                $OssClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+                return $OssClient->doesObjectExist($setting['aliyun_bucket'], $file_path);
             } catch (OssException $e) {
             }
         } elseif ($storage == 'tencent') {
             try {
-                $secretId = $setting['tencent_secret_id'];
-                $secretKey = $setting['tencent_secret_key'];
-                $region = $setting['tencent_region'];
-                $bucket = $setting['tencent_bucket'];
-                $object = $file_path;
-                $cosClient = new Client([
-                    'region' => $region,
+                $CosClient = new Client([
+                    'region' => $setting['tencent_region'],
                     'scheme' => 'https',
-                    'credentials' => ['secretId' => $secretId, 'secretKey' => $secretKey]
+                    'credentials' => [
+                        'secretId' => $setting['tencent_secret_id'],
+                        'secretKey' => $setting['tencent_secret_key']
+                    ]
                 ]);
-                return $cosClient->doesObjectExist($bucket, $object);
+                return $CosClient->doesObjectExist($setting['tencent_bucket'], $file_path);
             } catch (\Exception $e) {
             }
         } elseif ($storage == 'baidu') {
             try {
-                $bos_config = [
+                $BosClient = new BosClient([
                     'credentials' => [
                         'accessKeyId' => $setting['baidu_access_key'],
                         'secretAccessKey' => $setting['baidu_secret_key']
                     ],
                     'endpoint' => $setting['baidu_endpoint'],
-                ];
-                $bucket = $setting['baidu_bucket'];
-                $object = $file_path;
-                $client = new BosClient($bos_config);
-                $client->getObjectMetadata($bucket, $object);
+                ]);
+                $BosClient->getObjectMetadata($setting['baidu_bucket'], $file_path);
                 return true;
             } catch (\BaiduBce\Exception\BceServiceException $e) {
                 if (strpos($e->getMessage(), 'status:404')) {
@@ -277,36 +252,30 @@ class StorageService
                 $operatorName = $setting['upyun_operator_name'];
                 $operatorPassword = $setting['upyun_operator_pwd'];
                 $serviceConfig = new Config($serviceName, $operatorName, $operatorPassword);
-                $client = new Upyun($serviceConfig);
-                $path = $file_path;
-                return $client->has($path);
+                $Upyun = new Upyun($serviceConfig);
+                return $Upyun->has($file_path);
             } catch (\Exception $e) {
             }
         } elseif ($storage == 'huawei') {
             try {
-                $obsClient = new ObsClient([
+                $ObsClient = new ObsClient([
                     'key' => $setting['huawei_access_key_id'],
                     'secret' => $setting['huawei_secret_access_key'],
                     'endpoint' => $setting['huawei_endpoint']
                 ]);
-                $obsClient->getObjectMetadata([
-                    'Bucket' => $setting['huawei_bucket'],
-                    'Key' => $file_path,
-                ]);
+                $ObsClient->getObjectMetadata(['Bucket' => $setting['huawei_bucket'], 'Key' => $file_path]);
                 return true;
             } catch (\Exception $e) {
             }
         } elseif ($storage == 'aws') {
             try {
                 $credentials = new Credentials($setting['aws_access_key_id'], $setting['aws_secret_access_key']);
-                $aws = new S3Client([
-                    'version' => 'latest',
+                $S3Client = new S3Client([
                     'region' => $setting['aws_region'],
+                    'endpoint' => $setting['aws_endpoint'],
                     'credentials' => $credentials,
                 ]);
-                $bucket = $setting['aws_bucket'];
-                $key = $file_path;
-                $aws->headObject(['Bucket' => $bucket, 'Key' => $key]);
+                $S3Client->headObject(['Bucket' => $setting['aws_bucket'], 'Key' => $file_path]);
                 return true;
             } catch (S3Exception $e) {
             }
@@ -349,15 +318,11 @@ class StorageService
         $setting = SettingService::info();
 
         if ($qinius) {
-            try {
-                $accessKey = $setting['qiniu_access_key'];
-                $secretKey = $setting['qiniu_secret_key'];
-                $bucket = $setting['qiniu_bucket'];
-                $keys = $qinius;
-                $auth = new Auth($accessKey, $secretKey);
+            try {;
+                $auth = new Auth($setting['qiniu_access_key'], $setting['qiniu_secret_key']);
                 $config = new \Qiniu\Config();
                 $bucketManager = new \Qiniu\Storage\BucketManager($auth, $config);
-                $ops = $bucketManager->buildBatchDelete($bucket, $keys);
+                $ops = $bucketManager->buildBatchDelete($setting['qiniu_bucket'], $qinius);
                 $bucketManager->batch($ops);
             } catch (\Exception $e) {
                 self::log($e, 'qiniu');
@@ -369,10 +334,8 @@ class StorageService
                 $accessKeyId = $setting['aliyun_access_key_id'];
                 $accessKeySecret = $setting['aliyun_access_key_secret'];
                 $endpoint = $setting['aliyun_endpoint'];
-                $bucket = $setting['aliyun_bucket'];
-                $objects = $aliyuns;
                 $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
-                $ossClient->deleteObjects($bucket, $objects);
+                $ossClient->deleteObjects($setting['aliyun_bucket'], $aliyuns);
             } catch (\Exception $e) {
                 self::log($e, 'aliyun');
             }
@@ -380,17 +343,15 @@ class StorageService
 
         if ($tencents) {
             try {
-                $secretId = $setting['tencent_secret_id'];
-                $secretKey = $setting['tencent_secret_key'];
-                $region = $setting['tencent_region'];
-                $bucket = $setting['tencent_bucket'];
-                $objects = $tencents;
                 $cosClient = new Client([
-                    'region' => $region,
+                    'region' => $setting['tencent_region'],
                     'scheme' => 'https',
-                    'credentials' => ['secretId' => $secretId, 'secretKey' => $secretKey]
+                    'credentials' => [
+                        'secretId' => $setting['tencent_secret_id'],
+                        'secretKey' => $setting['tencent_secret_key']
+                    ]
                 ]);
-                $cosClient->deleteObjects(['Bucket' => $bucket, 'Objects' => $objects]);
+                $cosClient->deleteObjects(['Bucket' => $setting['tencent_bucket'], 'Objects' => $tencents]);
             } catch (\Exception $e) {
                 self::log($e, 'tencent');
             }
@@ -398,17 +359,14 @@ class StorageService
 
         if ($baidus) {
             try {
-                $bos_config = [
+                $BosClient = new BosClient([
                     'credentials' => [
                         'accessKeyId' => $setting['baidu_access_key'],
                         'secretAccessKey' => $setting['baidu_secret_key']
                     ],
                     'endpoint' => $setting['baidu_endpoint'],
-                ];
-                $bucket = $setting['baidu_bucket'];
-                $client = new BosClient($bos_config);
-                $deleteattay = $baidus;
-                $client->deleteMultipleObjects($bucket, $deleteattay);
+                ]);
+                $BosClient->deleteMultipleObjects($setting['baidu_bucket'], $baidus);
             } catch (\Exception $e) {
                 self::log($e, 'baidu');
             }
@@ -420,9 +378,9 @@ class StorageService
                 $operatorName = $setting['upyun_operator_name'];
                 $operatorPassword = $setting['upyun_operator_pwd'];
                 $serviceConfig = new Config($serviceName, $operatorName, $operatorPassword);
-                $client = new Upyun($serviceConfig);
+                $Upyun = new Upyun($serviceConfig);
                 foreach ($upyuns as $upy) {
-                    $client->delete($upy['file_path'], true);
+                    $Upyun->delete($upy['file_path'], true);
                 }
             } catch (\Exception $e) {
                 self::log($e, 'upyun');
@@ -431,13 +389,12 @@ class StorageService
 
         if ($huaweis) {
             try {
-                $obsClient = new ObsClient([
+                $ObsClient = new ObsClient([
                     'key' => $setting['huawei_access_key_id'],
                     'secret' => $setting['huawei_secret_access_key'],
                     'endpoint' => $setting['huawei_endpoint']
                 ]);
-
-                $obsClient->deleteObjects([
+                $ObsClient->deleteObjects([
                     'Bucket' => $setting['huawei_bucket'],
                     'Quiet' => true,
                     'Objects' => $huaweis,
@@ -450,14 +407,12 @@ class StorageService
         if ($awss) {
             try {
                 $credentials = new Credentials($setting['aws_access_key_id'], $setting['aws_secret_access_key']);
-                $aws = new S3Client([
-                    'version' => 'latest',
+                $S3Client = new S3Client([
                     'region' => $setting['aws_region'],
+                    'endpoint' => $setting['aws_endpoint'],
                     'credentials' => $credentials,
                 ]);
-                $bucket = $setting['aws_bucket'];
-                $objects = $awss;
-                $aws->deleteObjects(['Bucket' => $bucket, 'Delete' => ['Objects' => $objects]]);
+                $S3Client->deleteObjects(['Bucket' => $setting['aws_bucket'], 'Delete' => ['Objects' => $awss]]);
             } catch (\Exception $e) {
                 self::log($e, 'aws');
             }
@@ -493,7 +448,6 @@ class StorageService
             'line'    => $e->getLine(),
             'file'    => $e->getFile(),
             'message' => $e->getMessage(),
-            'trace0'  => $e->getTrace()[0] ?? [],
         ];
         Log::write($log, 'oss');
     }

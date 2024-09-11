@@ -85,6 +85,7 @@ class Setting extends BaseController
             'aws_secret_access_key/s'    => '',
             'aws_bucket/s'               => '',
             'aws_region/s'               => '',
+            'aws_endpoint/s'             => '',
             'aws_domain/s'               => '',
             'image_ext/s'                => '',
             'image_size/f'               => 0,

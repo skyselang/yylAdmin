@@ -18,7 +18,6 @@ use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\exception\ValidateException;
 use think\facade\Config;
-use think\facade\Log;
 use think\Response;
 use Throwable;
 
@@ -89,21 +88,14 @@ class ExceptionHandle extends Handle
         $data['code'] = $e->getCode();
         $data['msg']  = $e->getMessage();
         $data['data'] = [];
-        // 记录日志
-        $error = [
-            'code'    => $e->getCode(),
-            'line'    => $e->getLine(),
-            'file'    => $e->getFile(),
-            'message' => $e->getMessage(),
-            'trace0'  => $e->getTrace()[0] ?? [],
-        ];
-        Log::write($error, 'error');
-        // 调试模式返回错误信息
+
         $debug = Config::get('app.app_debug');
         if ($debug) {
-            unset($error['trace0']);
-            $error['trace'] = $e->getTrace();
-            $data['data']   = $error;
+            $data['data'] = [
+                'line'  => $e->getLine(),
+                'file'  => $e->getFile(),
+                'trace' => $e->getTrace(),
+            ];
         }
 
         return response($data, 200, [], 'json');
