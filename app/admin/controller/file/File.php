@@ -35,7 +35,7 @@ class File extends BaseController
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="文件列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time"),
+     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_size,file_ext,sort,is_disable,create_time,update_time,delete_time"),
      *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr", field="group_name"),
      *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr", field="tag_names"),
      *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileTypeNameAttr", field="file_type_name"),
@@ -114,7 +114,7 @@ class File extends BaseController
      * @Apidoc\Param("type", type="string", default="upl", desc="url添加，upl上传")
      * @Apidoc\Param("file_url", type="string", require=true, desc="文件链接, 添加（type=url）时必传")
      * @Apidoc\Param("file", type="file", require=true, default="", desc="文件, 上传（type=upl）时必传")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="group_id,file_name,file_type,remark,sort")
+     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="group_id,file_type,remark,sort")
      * @Apidoc\Param("tag_ids", type="array", desc="标签id")
      * @Apidoc\Returned(ref="fileReturn")
      */
@@ -125,16 +125,27 @@ class File extends BaseController
             exception('文件上传未开启，无法上传文件！');
         }
 
-        $edit_field = FileService::$edit_field;
-        unset($edit_field['tag_ids/a']);
-        $edit_field['tag_ids'] = '';
-        
         $type = $this->param('type/s', 'upl');
         if ($type == 'url') {
-            $edit_field['file_path/s'] = '';
-            $edit_field['file_url/s'] = '';
-            $edit_field['type/s'] = 'url';
+            $edit_field = [
+                'type/s'      => 'url',
+                'group_id/d'  => 0,
+                'tag_ids/a'   => [],
+                'file_type/s' => 'image',
+                'file_url/s'  => '',
+                'remark/s'    => '',
+                'sort/d'      => 250,
+            ];
             $params = $this->params($edit_field);
+            if ($params['group_id'] === 0) {
+                unset($params['group_id']);
+            }
+            if ($params['tag_ids'] === []) {
+                unset($params['tag_ids']);
+            }
+            if ($params['remark'] === '') {
+                unset($params['remark']);
+            }
 
             $files = $data = [];
             $file_urls = trim($params['file_url'], ',');
@@ -153,7 +164,6 @@ class File extends BaseController
             }
             return success($data, '添加成功');
         } else {
-            $param = $this->params($edit_field);
             $param['file'] = $this->request->file('file');
 
             validate(FileValidate::class)->scene('add')->check($param);

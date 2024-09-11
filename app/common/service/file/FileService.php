@@ -186,12 +186,20 @@ class FileService
             $param['domain']    = $scheme . '://' . $host . ($port ? ':' . $port : '');
             $param['file_path'] = $path . ($query ? '?' . $query : '');
             $param['file_ext']  = substr(strrchr($path, '.'), 1);
+            $length = strlen($param['file_ext']);
+            for ($i = 0; $i < $length; $i++) {
+                if (!ctype_alpha($param['file_ext'][$i])) {
+                    $param['file_ext'] = substr($param['file_ext'], 0, $i);
+                    break;
+                }
+            }
             if (empty($param['file_name'])) {
                 $param['file_name'] = substr(strrchr($path, '/'), 0, - (strlen($param['file_ext']) + 1));
             }
             $param['file_name'] = trim($param['file_name'], '/');
 
-            $file_exist = $model->field($pk)->where('domain', $param['domain'])->where('file_path', $param['file_path'])->find();
+            $file_where = [['domain', '=', $param['domain']], ['file_path', '=', $param['file_path']]];
+            $file_exist = $model->field($pk)->where($file_where)->find();
         } else {
             $file = $param['file'];
             unset($param['file']);
@@ -201,17 +209,17 @@ class FileService
             $file_size = $file->getSize();
             $file_md5  = $file->hash('md5');
             $file_hash = $file->hash('sha1');
-            $file_name = Filesystem::disk('public')
+            $file_path = Filesystem::disk('public')
                 ->putFile('file', $file, function () use ($file_hash) {
-                    return date('Ymd') . '/' . $file_hash;
+                    return $file_hash;
                 });
 
-            $param['file_md5']   = $file_md5;
-            $param['file_hash']  = $file_hash;
-            $param['file_path']  = 'storage/' . $file_name;
-            $param['file_ext']   = $file_ext;
-            $param['file_size']  = $file_size;
-            $param['file_type']  = $file_type;
+            $param['file_md5']  = $file_md5;
+            $param['file_hash'] = $file_hash;
+            $param['file_path'] = 'storage/' . $file_path;
+            $param['file_ext']  = $file_ext;
+            $param['file_size'] = $file_size;
+            $param['file_type'] = $file_type;
             if (empty($param['file_name'])) {
                 $param['file_name'] = mb_substr($file->getOriginalName(), 0, - (mb_strlen($param['file_ext']) + 1));
             }
@@ -220,12 +228,13 @@ class FileService
             if ($file_exist) {
                 $file_exist = $file_exist->toArray();
                 $param[$pk] = $file_exist[$pk];
+                unset($file_exist['unique'], $file_exist['group_id'], $file_exist['tag_ids'], $file_exist['unique'],);
             } else {
                 $param[$pk] = '';
             }
 
             // 对象存储
-            $param = StorageService::upload($param, $pk);
+            $param = StorageService::upload($param);
         }
 
         if ($file_exist) {
@@ -337,7 +346,7 @@ class FileService
                 $ids = [$ids];
             }
             if ($real) {
-                $file = $model->field($pk . ',file_path')->where($pk, 'in', $ids)->select();
+                $file = $model->field($pk . ',storage,file_path')->where($pk, 'in', $ids)->select();
                 foreach ($file as $v) {
                     $info = $model->find($v[$pk]);
                     // 删除标签
@@ -349,6 +358,7 @@ class FileService
                     }
                 }
                 $model->where($pk, 'in', $ids)->delete();
+                StorageService::dele($file);
             } else {
                 $update = delete_update();
                 $model->where($pk, 'in', $ids)->update($update);

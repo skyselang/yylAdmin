@@ -30,7 +30,7 @@ return [
             // 单文件日志写入
             'single'         => false,
             // 独立日志级别
-            'apart_level'    => ['error', 'sql', 'timer', 'queue', 'easysms', 'phpmailer'],
+            'apart_level'    => ['error', 'sql', 'timer', 'queue', 'easysms', 'phpmailer', 'oss'],
             // 最大日志文件数量
             'max_files'      => 0,
             // 使用JSON格式记录

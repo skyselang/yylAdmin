@@ -139,7 +139,8 @@ class SettingService
             'tencent' => '腾讯云 COS',
             'baidu'   => '百度云 BOS',
             'upyun'   => '又拍云 USS',
-            'aws'     => 'AWS S3'
+            'huawei'  => '华为云 OBS',
+            'aws'     => 'AWS S3',
         ];
         if ($storage !== '') {
             return $storages[$storage] ?? '';

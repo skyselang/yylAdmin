@@ -38,8 +38,9 @@
     "qiniu/php-sdk": "^7.11",
     "aliyuncs/oss-sdk-php": "^2.6",
     "qcloud/cos-sdk-v5": "^2.6",
-    "upyun/sdk": "^3.5",
-    "aws/aws-sdk-php": "^3.290"
+    "alapi/upyun-sdk": "^4.0",
+    "aws/aws-sdk-php": "^3.290",
+    "guzzlehttp/guzzle": "^7.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^6.0"
