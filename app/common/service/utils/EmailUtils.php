@@ -60,7 +60,7 @@ class EmailUtils
             $email_setfrom = $setting['email_setfrom'] ?: ($setting['system_name'] ?: $setting['email_username']);
 
             // 语言
-            $mail->setLanguage('zh_cn', '/optional/path/to/language/directory/');
+            $mail->setLanguage('zh_cn');
 
             // 配置
             $mail->SMTPDebug  = SMTP::DEBUG_OFF;             // 调试模式输出 
@@ -94,7 +94,7 @@ class EmailUtils
             $mail->send();
         } catch (Exception $e) {
             $error = $mail->ErrorInfo;
-            Log::write($error, 'phpmailer');
+            self::log($error);
             $debug = Config::get('app.app_debug');
             if ($debug) {
                 exception($error);
@@ -102,5 +102,16 @@ class EmailUtils
                 exception('邮件发送失败');
             }
         }
+    }
+
+    /**
+     * 邮件日志
+     *
+     * @param  array $data
+     * @return void
+     */
+    public static function log($data)
+    {
+        Log::write($data, 'phpmailer');
     }
 }

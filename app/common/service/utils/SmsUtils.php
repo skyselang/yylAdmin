@@ -96,7 +96,7 @@ class SmsUtils
             }
         } catch (NoGatewayAvailableException $e) {
             $error = $e->getLastException()->getMessage();
-            Log::write($error, 'easysms');
+            self::log($error);
             $debug = Config::get('app.app_debug');
             if ($debug) {
                 exception($error);
@@ -104,5 +104,16 @@ class SmsUtils
                 exception('短信发送失败');
             }
         }
+    }
+
+    /**
+     * 短信日志
+     *
+     * @param  array $data
+     * @return void
+     */
+    public static function log($data)
+    {
+        Log::write($data, 'easysms');
     }
 }
