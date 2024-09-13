@@ -23,12 +23,12 @@ class Setting extends BaseController
 {
     /**
      * @Apidoc\Title("系统设置信息")
-     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="system_name,page_title,logo_id,favicon_id,login_bg_id,login_bg_color,page_limit")
+     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="system_name,page_title,logo_id,favicon_id,login_bg_id,login_bg_color,page_limit,is_watermark")
      * @Apidoc\Returned(ref="app\common\service\system\SettingService\info", field="logo_url,favicon_url,login_bg_url")
      */
     public function systemInfo()
     {
-        $data = SettingService::info('system_name,page_title,logo_id,favicon_id,login_bg_id,login_bg_color,page_limit,logo_url,favicon_url,login_bg_url');
+        $data = SettingService::info('system_name,page_title,logo_id,favicon_id,login_bg_id,login_bg_color,page_limit,is_watermark,logo_url,favicon_url,login_bg_url');
 
         return success($data);
     }
@@ -36,7 +36,7 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("系统设置修改")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="system_name,page_title,logo_id,favicon_id,login_bg_id,login_bg_color,page_limit")
+     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="system_name,page_title,logo_id,favicon_id,login_bg_id,login_bg_color,page_limit,is_watermark")
      */
     public function systemEdit()
     {
@@ -48,6 +48,7 @@ class Setting extends BaseController
             'login_bg_id/d'    => 0,
             'login_bg_color/s' => '',
             'page_limit/d'     => 20,
+            'is_watermark/d'   => 0,
         ]);
 
         validate(SettingValidate::class)->scene('system_edit')->check($param);
