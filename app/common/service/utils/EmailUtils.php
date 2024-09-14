@@ -54,10 +54,9 @@ class EmailUtils
      */
     public static function send($address, $subject = '', $body = '')
     {
-        $debug   = Config::get('app.app_debug');
         $setting = SettingService::info();
         $system  = SystemSettingService::info();
-        $mail    = new PHPMailer($debug); // 传递`true`会启用异常
+        $mail    = new PHPMailer(true); // 传递`true`会启用异常
         try {
             $address = explode(',', $address);
             $email_setfrom = $setting['email_setfrom'] ?: ($system['system_name'] ?: $setting['email_username']);
@@ -98,6 +97,7 @@ class EmailUtils
         } catch (Exception $e) {
             $error = $mail->ErrorInfo;
             self::log($error);
+            $debug   = Config::get('app.app_debug');
             if ($debug) {
                 exception($error);
             } else {
