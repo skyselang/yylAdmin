@@ -48,7 +48,7 @@ class UserCenter extends BaseController
     }
 
     /**
-     * @Apidoc\Title("修改信息")
+     * @Apidoc\Title("我的信息修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\system\UserModel", field="avatar_id,nickname,username,phone,email")
      */
@@ -71,7 +71,7 @@ class UserCenter extends BaseController
     }
 
     /**
-     * @Apidoc\Title("修改密码")
+     * @Apidoc\Title("我的密码修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("password_old", type="string", require=true, desc="旧密码")
      * @Apidoc\Param("password_new", type="string", require=true, desc="新密码")
@@ -92,7 +92,7 @@ class UserCenter extends BaseController
     }
 
     /**
-     * @Apidoc\Title("我的日志")
+     * @Apidoc\Title("我的日志列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="dateQuery")

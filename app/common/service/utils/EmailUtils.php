@@ -15,7 +15,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 use app\common\cache\utils\CaptchaEmailCache;
-use app\common\service\system\SettingService;
+use app\common\service\setting\SettingService;
+use app\common\service\system\SettingService as SystemSettingService;
 
 /**
  * 邮件 https://gitee.com/skyselang/PHPMailer
@@ -53,11 +54,13 @@ class EmailUtils
      */
     public static function send($address, $subject = '', $body = '')
     {
+        $debug   = Config::get('app.app_debug');
         $setting = SettingService::info();
-        $mail    = new PHPMailer(true); // 传递`true`会启用异常
+        $system  = SystemSettingService::info();
+        $mail    = new PHPMailer($debug); // 传递`true`会启用异常
         try {
             $address = explode(',', $address);
-            $email_setfrom = $setting['email_setfrom'] ?: ($setting['system_name'] ?: $setting['email_username']);
+            $email_setfrom = $setting['email_setfrom'] ?: ($system['system_name'] ?: $setting['email_username']);
 
             // 语言
             $mail->setLanguage('zh_cn');
@@ -95,7 +98,6 @@ class EmailUtils
         } catch (Exception $e) {
             $error = $mail->ErrorInfo;
             self::log($error);
-            $debug = Config::get('app.app_debug');
             if ($debug) {
                 exception($error);
             } else {

@@ -255,7 +255,7 @@ class RoleService
     }
 
     /**
-     * 角色用户
+     * 角色用户列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

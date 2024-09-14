@@ -151,7 +151,7 @@ class Role extends BaseController
     }
 
     /**
-     * @Apidoc\Title("角色用户")
+     * @Apidoc\Title("角色用户列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\system\RoleModel", field="role_id")

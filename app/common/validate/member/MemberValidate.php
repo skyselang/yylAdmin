@@ -23,8 +23,8 @@ class MemberValidate extends Validate
     protected $rule = [
         'ids'          => ['require', 'array'],
         'member_id'    => ['require'],
-        'username'     => ['require', 'length' => '2,64'],
         'nickname'     => ['length' => '1,64'],
+        'username'     => ['require', 'length' => '2,64'],
         'password'     => ['require', 'length' => '6,18'],
         'password_old' => ['require', 'checkPwdOld'],
         'password_new' => ['require', 'length' => '6,18'],
@@ -36,9 +36,9 @@ class MemberValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'username.require'     => '请输入用户名',
-        // 'username.length'      => '用户名长度为2至64个字符',
         'nickname.length'      => '昵称长度为1至64个字符',
+        'username.require'     => '请输入用户名',
+        'username.length'      => '用户名长度为2至64个字符',
         'password.require'     => '请输入密码',
         'password.length'      => '密码长度为6至18个字符',
         'password_old.require' => '请输入旧密码',

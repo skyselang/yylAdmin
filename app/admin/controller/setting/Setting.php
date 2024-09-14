@@ -22,7 +22,7 @@ use hg\apidoc\annotation as Apidoc;
 class Setting extends BaseController
 {
     /**
-     * @Apidoc\Title("设置信息")
+     * @Apidoc\Title("设置管理信息")
      * @Apidoc\Returned(ref="app\common\model\setting\SettingModel")
      * @Apidoc\Returned(ref="app\common\service\setting\SettingService\info")
      */
@@ -34,7 +34,7 @@ class Setting extends BaseController
     }
 
     /**
-     * @Apidoc\Title("设置修改")
+     * @Apidoc\Title("设置管理修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\setting\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
      */
@@ -65,5 +65,58 @@ class Setting extends BaseController
         $data = SettingService::edit($param);
 
         return success($data);
+    }
+
+
+    /**
+     * @Apidoc\Title("邮件设置信息")
+     * @Apidoc\Returned(ref="app\common\model\setting\SettingModel", field="email_host,email_port,email_secure,email_username,email_password,email_setfrom")
+     */
+    public function emailInfo()
+    {
+        $data = SettingService::info('email_host,email_port,email_secure,email_username,email_password,email_setfrom');
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("邮件设置修改")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", field="email_host,email_secure,email_port,email_username,email_password,email_setfrom")
+     */
+    public function emailEdit()
+    {
+        $param = $this->params([
+            'email_host/s'     => '',
+            'email_secure/s'   => 'ssl',
+            'email_port/s'     => '',
+            'email_username/s' => '',
+            'email_password/s' => '',
+            'email_setfrom/s'  => '',
+        ]);
+
+        validate(SettingValidate::class)->scene('email_edit')->check($param);
+
+        $data = SettingService::edit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("邮件设置测试")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param("email_recipient", type="string", require=true, desc="收件人")
+     * @Apidoc\Param("email_theme", type="string", require=true, desc="主题")
+     * @Apidoc\Param("email_content", type="string", require=true, desc="内容")
+     */
+    public function emailTest()
+    {
+        $param = $this->params(['email_recipient/s' => '', 'email_theme/s' => '', 'email_content/s' => '']);
+
+        validate(SettingValidate::class)->scene('email_test')->check($param);
+
+        $data = SettingService::emailTest($param);
+
+        return success($data, '发送成功');
     }
 }

@@ -393,7 +393,7 @@ class MenuService
     }
 
     /**
-     * 菜单角色
+     * 菜单角色列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

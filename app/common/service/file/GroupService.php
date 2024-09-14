@@ -205,7 +205,7 @@ class GroupService
     }
 
     /**
-     * 文件分组文件
+     * 文件分组文件列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

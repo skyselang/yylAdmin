@@ -248,7 +248,7 @@ class Menu extends BaseController
     }
 
     /**
-     * @Apidoc\Title("菜单角色")
+     * @Apidoc\Title("菜单角色列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\system\MenuModel", field="menu_id")

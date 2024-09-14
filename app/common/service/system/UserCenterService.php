@@ -31,7 +31,7 @@ class UserCenterService
     }
 
     /**
-     * 修改信息
+     * 我的信息修改
      *
      * @param int   $id    用户id
      * @param array $param 用户信息
@@ -44,7 +44,7 @@ class UserCenterService
     }
 
     /**
-     * 修改密码
+     * 我的密码修改
      *
      * @param int   $id    用户id
      * @param array $param 用户密码
@@ -58,7 +58,7 @@ class UserCenterService
     }
 
     /**
-     * 我的日志
+     * 我的日志列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

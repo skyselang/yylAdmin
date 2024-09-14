@@ -132,7 +132,7 @@ class Tag extends BaseController
     }
 
     /**
-     * @Apidoc\Title("内容标签内容")
+     * @Apidoc\Title("内容标签内容列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\content\TagModel", field="tag_id")

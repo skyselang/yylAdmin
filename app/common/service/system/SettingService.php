@@ -15,7 +15,6 @@ use app\common\cache\Cache;
 use app\common\cache\system\SettingCache;
 use app\common\model\system\SettingModel;
 use app\common\service\utils\Utils;
-use app\common\service\utils\EmailUtils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -24,7 +23,7 @@ use hg\apidoc\annotation as Apidoc;
 class SettingService
 {
     /**
-     * 设置id
+     * 系统设置id
      * @var integer
      */
     private static $id = 1;
@@ -96,7 +95,7 @@ class SettingService
     }
 
     /**
-     * 设置信息
+     * 系统设置信息
      * 
      * @param string $fields 返回字段，逗号隔开，默认所有
      * @Apidoc\Returned("logo_url", type="string", require=false, default="", desc="logo链接")
@@ -161,7 +160,7 @@ class SettingService
     }
 
     /**
-     * 设置修改
+     * 系统设置修改
      *
      * @param array $param 设置信息
      *
@@ -187,7 +186,7 @@ class SettingService
     }
 
     /**
-     * 缓存清除
+     * 系统缓存清除
      * 清除所有缓存标签数据
      *
      * @return array
@@ -213,23 +212,7 @@ class SettingService
     }
 
     /**
-     * 邮箱测试
-     *
-     * @param array $param
-     *
-     * @return void
-     */
-    public static function emailTest($param)
-    {
-        $address = $param['email_test'];
-        $subject = '测试邮件';
-        $body    = '这是一封测试邮件，收到此邮件说明邮件设置和发送正常。';
-
-        EmailUtils::send($address, $subject, $body);
-    }
-
-    /**
-     * 服务器信息
+     * 系统服务器信息
      * 
      * @param bool $force 是否强制刷新
      *

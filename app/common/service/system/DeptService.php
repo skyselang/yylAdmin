@@ -193,7 +193,7 @@ class DeptService
     }
 
     /**
-     * 部门用户
+     * 部门用户列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

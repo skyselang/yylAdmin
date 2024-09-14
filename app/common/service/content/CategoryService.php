@@ -288,7 +288,7 @@ class CategoryService
     }
 
     /**
-     * 内容分类内容
+     * 内容分类内容列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

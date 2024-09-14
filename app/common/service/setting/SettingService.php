@@ -12,6 +12,7 @@ namespace app\common\service\setting;
 use think\facade\Request;
 use app\common\cache\setting\SettingCache;
 use app\common\model\setting\SettingModel;
+use app\common\service\utils\EmailUtils;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -20,7 +21,7 @@ use hg\apidoc\annotation as Apidoc;
 class SettingService
 {
     /**
-     * 设置id
+     * 设置管理id
      * @var integer
      */
     private static $id = 1;
@@ -113,7 +114,7 @@ class SettingService
     }
 
     /**
-     * 设置信息
+     * 设置管理信息
      * 
      * @param string $fields 返回字段，逗号隔开，默认所有
      * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
@@ -171,7 +172,7 @@ class SettingService
     }
 
     /**
-     * 设置修改
+     * 设置管理修改
      *
      * @param array $param 设置信息
      *
@@ -194,5 +195,21 @@ class SettingService
         SettingCache::clear();
 
         return $param;
+    }
+
+    /**
+     * 邮件设置测试
+     *
+     * @param array $param
+     *
+     * @return void
+     */
+    public static function emailTest($param)
+    {
+        $address = $param['email_recipient'];
+        $subject = $param['email_theme'];
+        $body    = $param['email_content'];
+
+        EmailUtils::send($address, $subject, $body);
     }
 }

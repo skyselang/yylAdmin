@@ -164,7 +164,7 @@ class Category extends BaseController
     }
 
     /**
-     * @Apidoc\Title("内容分类内容")
+     * @Apidoc\Title("内容分类内容列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id")

@@ -21,7 +21,7 @@ use hg\apidoc\annotation as Apidoc;
 class SettingService
 {
     /**
-     * 设置id
+     * 会员设置id
      * @var integer
      */
     private static $id = 1;
@@ -272,7 +272,7 @@ class SettingService
     }
 
     /**
-     * 设置信息
+     * 会员设置信息
      * @param string $fields  返回字段，逗号隔开，默认所有
      * @param string $without 排除字段，逗号隔开，默认不排除
      * @Apidoc\Returned("default_avatar_url", type="string", desc="会员默认头像链接")
@@ -341,7 +341,7 @@ class SettingService
     }
 
     /**
-     * 设置修改
+     * 会员设置修改
      *
      * @param array $param 设置信息
      *

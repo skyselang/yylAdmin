@@ -179,7 +179,7 @@ class User extends BaseController
     }
 
     /**
-     * @Apidoc\Title("用户重置密码")
+     * @Apidoc\Title("用户修改密码")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\system\UserModel", field="password")

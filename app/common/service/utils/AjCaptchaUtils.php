@@ -18,7 +18,7 @@ use Fastknife\Service\BlockPuzzleCaptchaService;
  */
 class AjCaptchaUtils
 {
-    // 配置
+    // 验证码配置
     protected $config;
 
     /**

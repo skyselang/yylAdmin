@@ -160,7 +160,7 @@ class Post extends BaseController
     }
 
     /**
-     * @Apidoc\Title("职位用户")
+     * @Apidoc\Title("职位用户列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\system\PostModel", field="post_id")

@@ -125,7 +125,7 @@ class Group extends BaseController
     }
 
     /**
-     * @Apidoc\Title("文件分组文件")
+     * @Apidoc\Title("文件分组文件列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\file\GroupModel", field="group_id")

@@ -184,25 +184,7 @@ class UserService
         }
 
         if ($role) {
-            $user_menu_ids = $info['menu_ids'] ?? [];
-            $role_menu_ids = RoleService::menu_ids($info['role_ids'], where_disdel());
-
-            $menu_list = MenuService::list('list', [where_delete()], [], 'menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth');
-            foreach ($menu_list as &$val) {
-                $val['is_check'] = 0;
-                $val['is_role'] = 0;
-                foreach ($user_menu_ids as $m_menu_id) {
-                    if ($val['menu_id'] == $m_menu_id) {
-                        $val['is_check'] = 1;
-                    }
-                }
-                foreach ($role_menu_ids as $g_menu_id) {
-                    if ($val['menu_id'] == $g_menu_id) {
-                        $val['is_role'] = 1;
-                    }
-                }
-            }
-            $info['menu_tree'] = list_to_tree($menu_list, 'menu_id', 'menu_pid');
+            $info = self::roleMenu($info);
         }
 
         return $info;
@@ -384,6 +366,37 @@ class UserService
         UserCache::del($ids);
 
         return $update;
+    }
+
+    /**
+     * 用户角色菜单
+     *
+     * @param  array $info
+     * @return array
+     */
+    public static function roleMenu($info)
+    {
+        $user_menu_ids = $info['menu_ids'] ?? [];
+        $role_menu_ids = RoleService::menu_ids($info['role_ids'], where_disdel());
+
+        $menu_list = MenuService::list('list', [where_delete()], [], 'menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth');
+        foreach ($menu_list as &$val) {
+            $val['is_check'] = 0;
+            $val['is_role'] = 0;
+            foreach ($user_menu_ids as $m_menu_id) {
+                if ($val['menu_id'] == $m_menu_id) {
+                    $val['is_check'] = 1;
+                }
+            }
+            foreach ($role_menu_ids as $g_menu_id) {
+                if ($val['menu_id'] == $g_menu_id) {
+                    $val['is_role'] = 1;
+                }
+            }
+        }
+        $info['menu_tree'] = list_to_tree($menu_list, 'menu_id', 'menu_pid');
+
+        return $info;
     }
 
     /**

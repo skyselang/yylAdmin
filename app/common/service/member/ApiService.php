@@ -200,7 +200,7 @@ class ApiService
     }
 
     /**
-     * 会员接口分组
+     * 会员接口分组列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

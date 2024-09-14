@@ -292,7 +292,7 @@ class File extends BaseController
     }
 
     /**
-     * @Apidoc\Title("文件回收站")
+     * @Apidoc\Title("文件回收站列表")
      * @Apidoc\Desc("请求和返回参数同文件列表")
      */
     public function recycle()

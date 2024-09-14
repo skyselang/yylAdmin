@@ -20,7 +20,7 @@ use app\common\service\utils\RetCodeUtils;
 class UserTokenService
 {
     /**
-     * Token配置
+     * 用户Token配置
      *
      * @return array
      */
@@ -32,7 +32,7 @@ class UserTokenService
     }
 
     /**
-     * Token生成
+     * 用户Token生成
      * 
      * @param array $user 用户信息
      * 
@@ -56,7 +56,7 @@ class UserTokenService
     }
 
     /**
-     * Token decode
+     * 用户Token decode
      *
      * @param  string $token
      * @param  bool   $exce 是否抛出异常
@@ -78,7 +78,7 @@ class UserTokenService
     }
 
     /**
-     * Token验证
+     * 用户Token验证
      *
      * @param string $token token
      * 
@@ -117,7 +117,7 @@ class UserTokenService
     }
 
     /**
-     * Token用户id
+     * 用户Token用户id
      *
      * @param string $token token
      * @param bool   $exce  是否抛出异常

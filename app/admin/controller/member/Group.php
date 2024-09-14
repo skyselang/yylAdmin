@@ -168,7 +168,7 @@ class Group extends BaseController
     }
 
     /**
-     * @Apidoc\Title("会员分组会员")
+     * @Apidoc\Title("会员分组会员列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\member\GroupModel", field="group_id")

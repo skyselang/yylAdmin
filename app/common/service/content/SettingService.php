@@ -20,13 +20,13 @@ use hg\apidoc\annotation as Apidoc;
 class SettingService
 {
     /**
-     * 设置id
+     * 内容设置id
      * @var integer
      */
     protected static $id = 1;
 
     /**
-     * 设置信息
+     * 内容设置信息
      * 
      * @param string $fields 返回字段，逗号隔开，默认所有
      * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
@@ -86,7 +86,7 @@ class SettingService
     }
 
     /**
-     * 设置修改
+     * 内容设置修改
      *
      * @param array $param 设置信息
      *

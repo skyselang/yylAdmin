@@ -189,57 +189,6 @@ class Setting extends BaseController
     }
 
     /**
-     * @Apidoc\Title("邮件设置信息")
-     * @Apidoc\Returned(ref="app\common\model\system\SettingModel", field="email_host,email_port,email_secure,email_username,email_password,email_setfrom,email_test")
-     */
-    public function emailInfo()
-    {
-        $data = SettingService::info('email_host,email_port,email_secure,email_username,email_password,email_setfrom,email_test');
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("邮件设置修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="email_host,email_port,email_secure,email_username,email_password,email_setfrom,email_test")
-     */
-    public function emailEdit()
-    {
-        $param = $this->params([
-            'email_host/s'     => '',
-            'email_port/s'     => '',
-            'email_secure/s'   => 'ssl',
-            'email_username/s' => '',
-            'email_password/s' => '',
-            'email_setfrom/s'  => '',
-            'email_test/s'     => '',
-        ]);
-
-        validate(SettingValidate::class)->scene('email_edit')->check($param);
-
-        $data = SettingService::edit($param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("邮件设置测试")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\SettingModel", field="email_test")
-     */
-    public function emailTest()
-    {
-        $param = $this->params(['email_test/s' => '']);
-
-        validate(SettingValidate::class)->scene('email_test')->check($param);
-
-        $data = SettingService::emailTest($param);
-
-        return success($data, '发送成功');
-    }
-
-    /**
      * @Apidoc\Title("服务器信息")
      * @Apidoc\Param("force", type="int", default=0, desc="是否强制刷新")
      */

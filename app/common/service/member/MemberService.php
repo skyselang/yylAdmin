@@ -176,44 +176,12 @@ class MemberService
 
         // 分组（接口权限）
         if ($group) {
-            $member_api_ids = $info['api_ids'] ?? [];
-            $group_api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
-            $api_field      = 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth';
-            $api_lists      = ApiService::list('list', [where_delete()], [], $api_field);
-            foreach ($api_lists as &$val) {
-                $val['is_check'] = 0;
-                $val['is_group'] = 0;
-                foreach ($member_api_ids as $m_api_id) {
-                    if ($val['api_id'] == $m_api_id) {
-                        $val['is_check'] = 1;
-                    }
-                }
-                foreach ($group_api_ids as $g_api_id) {
-                    if ($val['api_id'] == $g_api_id) {
-                        $val['is_group'] = 1;
-                    }
-                }
-            }
-            $info['api_tree'] = list_to_tree($api_lists, 'api_id', 'api_pid');
-
-            $unlogin_api_ids = ApiService::unloginList('id');
-            $unauth_api_ids  = ApiService::unauthList('id');
-            $auth_api_ids    = array_merge($member_api_ids, $group_api_ids, $unlogin_api_ids, $unauth_api_ids);
-            $auth_api_where  = [['api_id', 'in', $auth_api_ids], where_disdel(), where_delete()];
-            $auth_api_list   = ApiService::list('list', $auth_api_where, [], $api_field);
-            $info['auth_api_list'] = $auth_api_list;
-            $info['auth_api_urls'] = array_values(array_filter(array_column($auth_api_list, 'api_url')));
-            sort($info['auth_api_urls']);
+            $info = self::groupApi($info);
         }
 
         // 第三方账号
         if ($third) {
-            $MemberModel = new MemberModel();
-            $MemberPk = $MemberModel->getPk();
-            $third_where[] = [$MemberPk, '=', $info[$MemberPk]];
-            $third_where[] = where_delete();
-            $third_field = 'third_id,member_id,platform,application,headimgurl,nickname,is_disable,login_time,create_time';
-            $info['thirds'] = ThirdService::list($third_where, 0, 0, [], $third_field)['list'] ?? [];
+            $info['thirds'] = self::thirdList($id);
         }
 
         return $info;
@@ -506,6 +474,97 @@ class MemberService
         }
 
         return $data;
+    }
+
+    /**
+     * 会员token
+     *
+     * @param  array $member 会员信息
+     *
+     * @return string
+     */
+    public static function token($member)
+    {
+        return TokenService::create($member);
+    }
+
+    /**
+     * 会员退出
+     *
+     * @param int $id 会员id
+     * 
+     * @return array
+     */
+    public static function logout($id)
+    {
+        $model = new MemberModel();
+        $pk = $model->getPk();
+
+        $update['logout_time'] = datetime();
+
+        $model->where($pk, $id)->update($update);
+
+        $update[$pk] = $id;
+
+        MemberCache::del($id);
+
+        return $update;
+    }
+
+    /**
+     * 会员分组接口权限
+     *
+     * @param  array $info 会员信息
+     * @return array
+     */
+    public static function groupApi($info)
+    {
+        $member_api_ids = $info['api_ids'] ?? [];
+        $group_api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
+        $api_field      = 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth';
+        $api_lists      = ApiService::list('list', [where_delete()], [], $api_field);
+        foreach ($api_lists as &$val) {
+            $val['is_check'] = 0;
+            $val['is_group'] = 0;
+            foreach ($member_api_ids as $m_api_id) {
+                if ($val['api_id'] == $m_api_id) {
+                    $val['is_check'] = 1;
+                }
+            }
+            foreach ($group_api_ids as $g_api_id) {
+                if ($val['api_id'] == $g_api_id) {
+                    $val['is_group'] = 1;
+                }
+            }
+        }
+        $info['api_tree'] = list_to_tree($api_lists, 'api_id', 'api_pid');
+
+        $unlogin_api_ids = ApiService::unloginList('id');
+        $unauth_api_ids  = ApiService::unauthList('id');
+        $auth_api_ids    = array_merge($member_api_ids, $group_api_ids, $unlogin_api_ids, $unauth_api_ids);
+        $auth_api_where  = [['api_id', 'in', $auth_api_ids], where_disdel(), where_delete()];
+        $auth_api_list   = ApiService::list('list', $auth_api_where, [], $api_field);
+        $info['auth_api_list'] = $auth_api_list;
+        $info['auth_api_urls'] = array_values(array_filter(array_column($auth_api_list, 'api_url')));
+        sort($info['auth_api_urls']);
+
+        return $info;
+    }
+
+    /**
+     * 会员第三方账号列表
+     *
+     * @param  int $member_id 会员ID
+     * @return array
+     */
+    public static function thirdList($member_id)
+    {
+        $MemberModel = new MemberModel();
+        $MemberPk = $MemberModel->getPk();
+        $third_where[] = [$MemberPk, '=', $member_id];
+        $third_where[] = where_delete();
+        $third_field = 'third_id,member_id,platform,application,headimgurl,nickname,is_disable,login_time,create_time';
+        return ThirdService::list($third_where, 0, 0, [], $third_field)['list'] ?? [];
     }
 
     /**
@@ -930,41 +989,6 @@ class MemberService
         }
 
         return $ThirdModel->where($ThirdPk, $third_id)->update(delete_update());
-    }
-
-    /**
-     * 会员token
-     *
-     * @param  array $member 会员信息
-     *
-     * @return string
-     */
-    public static function token($member)
-    {
-        return TokenService::create($member);
-    }
-
-    /**
-     * 会员退出
-     *
-     * @param int $id 会员id
-     * 
-     * @return array
-     */
-    public static function logout($id)
-    {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-
-        $update['logout_time'] = datetime();
-
-        $model->where($pk, $id)->update($update);
-
-        $update[$pk] = $id;
-
-        MemberCache::del($id);
-
-        return $update;
     }
 
     /**

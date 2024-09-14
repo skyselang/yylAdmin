@@ -232,7 +232,7 @@ class Api extends BaseController
     }
 
     /**
-     * @Apidoc\Title("会员接口分组")
+     * @Apidoc\Title("会员接口分组列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\member\ApiModel", field="api_id")

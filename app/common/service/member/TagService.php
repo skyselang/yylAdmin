@@ -187,7 +187,7 @@ class TagService
     }
 
     /**
-     * 会员标签会员
+     * 会员标签会员列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

@@ -125,7 +125,7 @@ class Tag extends BaseController
     }
 
     /**
-     * @Apidoc\Title("会员标签会员")
+     * @Apidoc\Title("会员标签会员列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\member\TagModel", field="tag_id")

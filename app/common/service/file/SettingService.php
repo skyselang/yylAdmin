@@ -19,13 +19,13 @@ use hg\apidoc\annotation as Apidoc;
 class SettingService
 {
     /**
-     * 设置id
+     * 文件设置id
      * @var integer
      */
     private static $id = 1;
 
     /**
-     * 设置信息
+     * 文件设置信息
      * 
      * @param string $fields 返回字段，逗号隔开，默认所有
      * @Apidoc\Returned("file_types", type="object", desc="文件类型")
@@ -76,7 +76,7 @@ class SettingService
     }
 
     /**
-     * 设置修改
+     * 文件设置修改
      *
      * @param array $param 设置信息
      *

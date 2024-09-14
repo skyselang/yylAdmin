@@ -255,7 +255,7 @@ class GroupService
     }
 
     /**
-     * 会员分组会员
+     * 会员分组会员列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

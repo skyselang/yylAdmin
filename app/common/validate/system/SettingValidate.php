@@ -26,8 +26,6 @@ class SettingValidate extends Validate
         'log_save_time'  => ['require', 'between' => '0,99999'],
         'api_rate_num'   => ['require', 'between' => '0,999'],
         'api_rate_time'  => ['require', 'between' => '1,999'],
-        'email_secure'   => ['require'],
-        'email_test'     => ['require'],
     ];
 
     // 错误信息
@@ -41,14 +39,12 @@ class SettingValidate extends Validate
         'captcha_switch.require' => 'captcha_switch must',
         'captcha_switch.in'      => '验证码：1开启0关闭',
         'log_switch.require'     => 'log_switch must',
-        'log_switch.in'          => '日志记录：1开启0关闭',
+        'log_switch.in'          => '日志记录开关：1开启0关闭',
         'log_save_time.between'  => '日志保留时间范围：0-99999',
         'api_rate_num.require'   => '请输入速率次数',
         'api_rate_num.between'   => '速率次数范围：0-999',
         'api_rate_time.require'  => '请输入速率时间',
         'api_rate_time.between'  => '速率时间范围：1-999',
-        'email_secure.require'   => '请选择SMTP协议',
-        'email_test.require'     => '请输入测试邮箱',
     ];
 
     // 验证场景
@@ -58,7 +54,5 @@ class SettingValidate extends Validate
         'captcha_edit' => ['captcha_switch'],
         'log_edit'     => ['log_switch', 'log_save_time'],
         'api_edit'     => ['api_rate_num', 'api_rate_time'],
-        'email_edit'   => ['email_secure'],
-        'email_test'   => ['email_test'],
     ];
 }

@@ -20,7 +20,7 @@ use app\common\service\utils\RetCodeUtils;
 class TokenService
 {
     /**
-     * Token配置
+     * 会员Token配置
      *
      * @return array
      */
@@ -32,7 +32,7 @@ class TokenService
     }
 
     /**
-     * Token生成
+     * 会员Token生成
      * 
      * @param array $member 会员信息
      * 
@@ -56,7 +56,7 @@ class TokenService
     }
 
     /**
-     * Token decode
+     * 会员Token decode
      *
      * @param  string $token
      * @return object
@@ -74,7 +74,7 @@ class TokenService
     }
 
     /**
-     * Token验证
+     * 会员Token验证
      *
      * @param string $token token
      * 
@@ -113,7 +113,7 @@ class TokenService
     }
 
     /**
-     * Token会员id
+     * 会员Token会员id
      *
      * @param string $token token
      * @param bool   $exce  是否抛出异常

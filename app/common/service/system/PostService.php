@@ -189,7 +189,7 @@ class PostService
     }
 
     /**
-     * 职位用户
+     * 职位用户列表
      *
      * @param array  $where 条件
      * @param int    $page  页数

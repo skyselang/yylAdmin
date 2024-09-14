@@ -201,7 +201,7 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("会员重置密码")
+     * @Apidoc\Title("会员修改密码")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="password")

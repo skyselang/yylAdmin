@@ -158,7 +158,7 @@ class Dept extends BaseController
     }
 
     /**
-     * @Apidoc\Title("部门用户")
+     * @Apidoc\Title("部门用户列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="app\common\model\system\DeptModel", field="dept_id")

@@ -22,7 +22,7 @@ use hg\apidoc\annotation as Apidoc;
 class Setting extends BaseController
 {
     /**
-     * @Apidoc\Title("设置信息")
+     * @Apidoc\Title("内容设置信息")
      * @Apidoc\Returned(ref="app\common\model\content\SettingModel")
      * @Apidoc\Returned(ref="app\common\service\content\SettingService\info")
      */
@@ -34,7 +34,7 @@ class Setting extends BaseController
     }
 
     /**
-     * @Apidoc\Title("设置修改")
+     * @Apidoc\Title("内容设置修改")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="app\common\model\content\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
      */
