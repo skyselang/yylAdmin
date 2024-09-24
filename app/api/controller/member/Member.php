@@ -75,6 +75,8 @@ class Member extends BaseController
             'avatar_id/d' => 0,
             'nickname/s'  => '',
             'username/s'  => '',
+            'phone/s'     => '',
+            'email/s'     => '',
             'name/s'      => '',
             'gender/d'    => 0,
             'region_id/d' => 0,
