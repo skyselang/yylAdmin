@@ -13,6 +13,7 @@ use think\facade\Filesystem;
 use app\common\cache\file\FileCache;
 use app\common\model\file\FileModel;
 use app\common\service\file\SettingService;
+use app\common\service\file\ExportService as FileExportService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -44,26 +45,29 @@ class FileService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '', $total = true)
     {
         $model = new FileModel();
         $pk = $model->getPk();
-        $group = 'm.' . $pk;
+        $group = 'a.' . $pk;
 
         if (empty($field)) {
             $field = $group . ',unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext,file_size,sort,is_disable,create_time,update_time,delete_time';
+        } else {
+            $field = $group . ',' . $field;
         }
         if (empty($order)) {
             $order = ['update_time' => 'desc', $group => 'desc'];
         }
 
-        $model = $model->alias('m');
+        $model = $model->alias('a');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
-                $model = $model->join('file_tags t', 'm.file_id=t.file_id')->where('t.tag_id', $wv[1], $wv[2]);
+                $model = $model->join('file_tags t', 'a.file_id=t.file_id')->where('t.tag_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
@@ -73,15 +77,21 @@ class FileService
         $append   = ['tag_names', 'file_url'];
         $hidden   = ['tags'];
         $field_no = [];
-        if (strpos($field, 'group_id') !== false) {
+        if (strpos($field, 'group_id')) {
             $with[]   = $hidden[] = 'group';
             $append[] = 'group_name';
         }
-        if (strpos($field, 'file_type') !== false) {
-            $append[] = $field_no[] = 'file_type_name';
+        if (strpos($field, 'storage')) {
+            $append[] = 'storage_name';
         }
-        if (strpos($field, 'file_size') !== false) {
+        if (strpos($field, 'file_type')) {
+            $append[] = 'file_type_name';
+        }
+        if (strpos($field, 'file_size')) {
             $append[] = 'file_size';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -91,8 +101,11 @@ class FileService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->group($group)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->group($group)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }
@@ -104,12 +117,7 @@ class FileService
             ->with($with)->append($append)->hidden($hidden)
             ->order($order)->group($group)->select()->toArray();
 
-        $ids       = array_column($list, $pk);
-        $storages  = SettingService::storages();
-        $filetypes = SettingService::fileTypes();
-        $setting   = SettingService::info('file_types,storages,limit_max,accept_ext');
-
-        return compact('count', 'pages', 'page', 'limit', 'list', 'ids', 'setting');
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -384,6 +392,27 @@ class FileService
     }
 
     /**
+     * 文件导出
+     *
+     * @param  array $param
+     * @return array
+     */
+    public static function export($param = [])
+    {
+        $export = [
+            'type'       => FileExportService::TYPE_FILE,
+            'file_path'  => ExportService::$file_dir . '/content-' . date('YmdHis') . '-' . uniqids() . '.xlsx',
+            'file_name'  => '文件导出-' . date('Ymd-His') . '.xlsx',
+            'param'      => ['where' => $param['where'], 'order' => $param['order']],
+            'remark'     => $param['export_remark'] ?? '',
+            'create_uid' => user_id(),
+        ];
+        $export_id = FileExportService::add($export);
+
+        return ExportService::file(['export_id' => $export_id]);
+    }
+
+    /**
      * 文件上/下一个
      *
      * @param int    $id    文件id
@@ -395,23 +424,20 @@ class FileService
     public static function prevNext($id, $type = 'prev', $where = [])
     {
         if ($type == 'next') {
-            $where[] = ['m.file_id', '>', $id];
-            $order = ['m.file_id' => 'asc'];
+            $where[] = ['a.file_id', '>', $id];
+            $order = ['a.file_id' => 'asc'];
         } else {
-            $where[] = ['m.file_id', '<', $id];
-            $order = ['m.file_id' => 'desc'];
+            $where[] = ['a.file_id', '<', $id];
+            $order = ['a.file_id' => 'desc'];
         }
         $where[] = where_disable();
         $where[] = where_delete();
 
-        $field = 'm.file_id,unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext';
+        $field = 'unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext';
 
         $info = self::list($where, 0, 1, $order, $field)['list'];
-        if (empty($info[0] ?? [])) {
-            return [];
-        }
 
-        return $info[0];
+        return $info[0] ?? [];
     }
 
     /**

@@ -48,38 +48,41 @@ class UserService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new UserModel();
         $pk = $model->getPk();
-        $group = 'm.' . $pk;
+        $group = 'a.' . $pk;
 
         if (empty($field)) {
             $field = $group . ',avatar_id,number,nickname,username,sort,is_super,is_disable,create_time,update_time,login_time';
+        } else {
+            $field = $group . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $group => 'desc'];
         }
 
         if (user_hide_where()) {
-            $where[] = user_hide_where('m.user_id');
+            $where[] = user_hide_where('a.user_id');
         }
 
-        $model = $model->alias('m');
+        $model = $model->alias('a');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'dept_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes d', 'm.user_id=d.user_id')->where('d.dept_id', $wv[1], $wv[2]);
+                $model = $model->join('system_user_attributes d', 'a.user_id=d.user_id')->where('d.dept_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'post_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes p', 'm.user_id=p.user_id')->where('p.post_id', $wv[1], $wv[2]);
+                $model = $model->join('system_user_attributes p', 'a.user_id=p.user_id')->where('p.post_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'role_ids' && is_array($wv[2])) {
-                $model = $model->join('system_user_attributes r', 'm.user_id=r.user_id')->where('r.role_id', $wv[1], $wv[2]);
+                $model = $model->join('system_user_attributes r', 'a.user_id=r.user_id')->where('r.role_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
@@ -89,9 +92,15 @@ class UserService
         $append   = ['dept_names', 'post_names', 'role_names'];
         $hidden   = ['depts', 'posts', 'roles'];
         $field_no = [];
-        if (strpos($field, 'avatar_id') !== false) {
+        if (strpos($field, 'avatar_id')) {
             $with[]   = $hidden[] = 'avatar';
             $append[] = 'avatar_url';
+        }
+        if (strpos($field, 'is_super')) {
+            $append[] = 'is_super_name';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -101,8 +110,11 @@ class UserService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->group($group)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }

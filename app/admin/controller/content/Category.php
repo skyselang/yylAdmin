@@ -36,11 +36,10 @@ class Category extends BaseController
     {
         $where = $this->where(where_delete());
 
-        $data['list']  = CategoryService::list('tree', $where);
-        $data['tree']  = CategoryService::list('tree', [where_delete()], [], 'category_id,category_pid,category_name');
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
-
+        $data['list'] = CategoryService::list('tree', $where);
+        $data['exps'] = where_exps();
+        $data['tree'] = CategoryService::list('tree', [where_delete()], [], 'category_pid,category_name');
+        $data['count'] = count(CategoryService::list('list', $where));
         if (count($where) > 1) {
             $list = tree_to_list($data['list']);
             $all  = tree_to_list($data['tree']);
@@ -54,9 +53,6 @@ class Category extends BaseController
             }
             $data['list'] = CategoryService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
-
-        $category = CategoryService::list('list', $where, [], 'category_id');
-        $data['count'] = count($category);
 
         return success($data);
     }
@@ -176,7 +172,7 @@ class Category extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
      * })
      */
-    public function content()
+    public function contentList()
     {
         $param = $this->params(['category_id/d' => '']);
 

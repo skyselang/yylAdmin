@@ -45,7 +45,7 @@ class Region extends BaseController
     {
         $where = [where_disable(), where_delete()];
 
-        $data['list'] = RegionService::list('tree', $where, [], 'region_id,region_pid,region_name');
+        $data['list'] = RegionService::list('tree', $where, [], 'region_pid,region_name');
 
         return success($data);
     }

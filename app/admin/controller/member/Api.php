@@ -33,11 +33,10 @@ class Api extends BaseController
     {
         $where = $this->where(where_delete());
 
-        $data['list']  = ApiService::list('tree', $where);
-        $data['tree']  = ApiService::list('tree', [where_delete()], [], 'api_id,api_pid,api_name');
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
-
+        $data['list'] = ApiService::list('tree', $where);
+        $data['exps'] = where_exps();
+        $data['tree'] = ApiService::list('tree', [where_delete()], [], 'api_pid,api_name');
+        $data['count'] = count(ApiService::list('list', $where));
         if (count($where) > 1) {
             $list = tree_to_list($data['list']);
             $all  = tree_to_list($data['tree']);
@@ -51,9 +50,6 @@ class Api extends BaseController
             }
             $data['list'] = ApiService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
-
-        $api = ApiService::list('list', $where, [], 'api_id');
-        $data['count'] = count($api);
 
         return success($data);
     }
@@ -239,7 +235,7 @@ class Api extends BaseController
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\member\GroupModel", type="array", desc="分组列表", field="group_id,group_name,group_desc,sort,is_default,is_disable,create_time,update_time")
      */
-    public function group()
+    public function groupList()
     {
         $param = $this->params(['api_id/d' => '']);
 

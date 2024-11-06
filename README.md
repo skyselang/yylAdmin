@@ -73,7 +73,7 @@ composer install
 ```
 ##### 导入数据库
 ```bash
-数据库文件：private/yyladmin.sql
+数据库文件：private/database/yyladmin.sql
 数据库字符集：utf8mb4
 数据库排序规则：utf8mb4_general_ci
 ```

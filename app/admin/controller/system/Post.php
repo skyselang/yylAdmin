@@ -37,10 +37,9 @@ class Post extends BaseController
         $where = $this->where(where_delete());
 
         $data['list']  = PostService::list('tree', $where);
-        $data['tree']  = PostService::list('tree', [where_delete()], [], 'post_id,post_pid,post_name');
         $data['exps']  = where_exps();
-        $data['where'] = $where;
-
+        $data['tree']  = PostService::list('tree', [where_delete()], [], 'post_pid,post_name');
+        $data['count'] = count(PostService::list('list', $where));
         if (count($where) > 1) {
             $list = tree_to_list($data['list']);
             $all  = tree_to_list($data['tree']);
@@ -54,9 +53,6 @@ class Post extends BaseController
             }
             $data['list'] = PostService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
-
-        $post = PostService::list('list', $where, [], 'post_id');
-        $data['count'] = count($post);
 
         return success($data);
     }
@@ -173,7 +169,7 @@ class Post extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
      * })
      */
-    public function user()
+    public function userList()
     {
         $param = $this->params(['post_id/d' => '']);
 

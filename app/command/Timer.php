@@ -15,6 +15,7 @@ use think\console\Input;
 use think\console\input\Argument;
 use think\console\input\Option;
 use think\console\Output;
+use think\facade\Log;
 use Workerman\Worker;
 use app\common\service\member\LogService;
 use app\common\service\system\UserLogService;
@@ -33,10 +34,31 @@ class Timer extends Command
 
     /**
      * 多长时间执行一次（秒）
-     * 
      * @var integer
      */
     protected $interval = 5;
+
+    public function start()
+    {
+        $this->timer = \Workerman\Lib\Timer::add($this->interval, function () {
+            echo 'timer runing ' . date('Y-m-d H:i:s') . PHP_EOL;
+            try {
+                // 会员日志清除
+                LogService::clearLog();
+            } catch (\Exception $e) {
+                echo 'timer member-log-clear ' . $e->getMessage() . PHP_EOL;
+                Log::write('member-log-clear:' . $e->getMessage(), 'timer');
+            }
+
+            try {
+                // 用户日志清除
+                UserLogService::clearLog();
+            } catch (\Exception $e) {
+                echo 'timer user-log-clear ' . $e->getMessage() . PHP_EOL;
+                Log::write('user-log-clear:' . $e->getMessage(), 'timer');
+            }
+        });
+    }
 
     protected function configure()
     {
@@ -86,25 +108,5 @@ class Timer extends Command
     public function stop()
     {
         \Workerman\Lib\Timer::del($this->timer);
-    }
-
-    public function start()
-    {
-        $this->timer = \Workerman\Lib\Timer::add($this->interval, function () {
-            echo 'timer runing ' . date('Y-m-d H:i:s') . PHP_EOL;
-            try {
-                // 会员日志清除
-                LogService::clearLog();
-            } catch (\Exception $e) {
-                echo 'timer member-log-clear ' . $e->getMessage() . PHP_EOL;
-            }
-
-            try {
-                // 用户日志清除
-                UserLogService::clearLog();
-            } catch (\Exception $e) {
-                echo 'timer user-log-clear ' . $e->getMessage() . PHP_EOL;
-            }
-        });
     }
 }

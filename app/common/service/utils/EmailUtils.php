@@ -97,7 +97,7 @@ class EmailUtils
         } catch (Exception $e) {
             $error = $mail->ErrorInfo;
             self::log($error);
-            $debug   = Config::get('app.app_debug');
+            $debug = Config::get('app.app_debug');
             if ($debug) {
                 exception($error);
             } else {

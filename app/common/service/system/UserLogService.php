@@ -9,7 +9,6 @@
 
 namespace app\common\service\system;
 
-use think\facade\Log;
 use think\facade\Config;
 use think\facade\Request;
 use app\common\cache\system\UserLogCache;
@@ -29,16 +28,19 @@ class UserLogService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '', $total = true)
     {
         $model = new UserLogModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
             $field = $pk . ',user_id,menu_id,request_url,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
@@ -49,15 +51,13 @@ class UserLogService
         }
 
         $with = $append = $hidden = $field_no = [];
-        if (strpos($field, 'user_id') !== false) {
-            $with[]   = $hidden[] = 'user';
-            $append[] = 'nickname';
-            $append[] = 'username';
+        if (strpos($field, 'user_id')) {
+            $with[] = $hidden[] = 'user';
+            $append = array_merge($append, ['nickname', 'username']);
         }
-        if (strpos($field, 'menu_id') !== false) {
-            $with[]   = $hidden[] = 'menu';
-            $append[] = 'menu_name';
-            $append[] = 'menu_url';
+        if (strpos($field, 'menu_id')) {
+            $with[] = $hidden[] = 'menu';
+            $append = array_merge($append, ['menu_name', 'menu_url']);
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -67,8 +67,11 @@ class UserLogService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }
@@ -80,9 +83,7 @@ class UserLogService
             ->with($with)->append($append)->hidden($hidden)
             ->order($order)->select()->toArray();
 
-        $log_types = SettingService::logTypes();
-
-        return compact('count', 'pages', 'page', 'limit', 'list', 'log_types');
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -242,21 +243,23 @@ class UserLogService
      * 用户日志清空
      * 
      * @param array $where 条件
+     * @param int $limit 限制条数，0不限制
      * 
      * @return array
      */
-    public static function clear($where = [])
+    public static function clear($where = [], $limit = 0)
     {
         $model = new UserLogModel();
         $pk = $model->getPk();
 
         $where[] = [$pk, '>', 0];
 
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+        }
         $count = $model->where($where)->delete(true);
 
-        $data['count'] = $count;
-
-        return $data;
+        return compact('count');
     }
 
     /**
@@ -267,24 +270,13 @@ class UserLogService
     public static function clearLog()
     {
         $setting = SettingService::info('log_save_time');
-        if ($setting['log_save_time']) {
-            $time = date('H');
-            if (0 <= $time && $time <= 8) {
-                $key = 'clear';
-                $val = UserLogCache::get($key);
-                if (empty($val)) {
-                    $days = $setting['log_save_time'];
-                    $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
-                    $where = [['create_time', '<', $date]];
-                    $res = UserLogService::clear($where);
-                    $res['where'] = $where;
-
-                    $log['log'] = 'user-log-clear';
-                    $log['data'] = $res;
-                    Log::write($log, 'timer');
-
-                    UserLogCache::set($key, $days, 1800);
-                }
+        $days = $setting['log_save_time'];
+        if ($days > 0 && 0 <= date('H') && date('H') <= 8) {
+            $key = 'clear';
+            if (empty(UserLogCache::get($key))) {
+                $where = [['create_time', '<', date('Y-m-d H:i:s', strtotime("-{$days} day"))]];
+                UserLogService::clear($where, 10000);
+                UserLogCache::set($key, 1, 600);
             }
         }
     }

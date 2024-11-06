@@ -54,7 +54,7 @@ class ContentModel extends Model
     /**
      * 获取分类id
      * @Apidoc\Field("")
-     * @Apidoc\AddField("category_ids", type="array", desc="分类id")
+     * @Apidoc\AddField("category_ids", type="array", desc="分类id", mock="@integer(1, 9)")
      */
     public function getCategoryIdsAttr()
     {
@@ -78,7 +78,7 @@ class ContentModel extends Model
     /**
      * 获取标签id
      * @Apidoc\Field("")
-     * @Apidoc\AddField("tag_ids", type="array", desc="标签id")
+     * @Apidoc\AddField("tag_ids", type="array", desc="标签id", mock="@integer(1, 9)")
      */
     public function getTagIdsAttr()
     {
@@ -239,5 +239,42 @@ class ContentModel extends Model
             }
         }
         return $other_ids ?? [];
+    }
+
+    /**
+     * 获取是否置顶名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否置顶名称")
+     */
+    public function getIsTopNameAttr($value, $data)
+    {
+        return $data['is_top'] ? '是' : '否';
+    }
+    /**
+     * 获取是否热门名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否热门名称")
+     */
+    public function getIsHotNameAttr($value, $data)
+    {
+        return $data['is_hot'] ? '是' : '否';
+    }
+    /**
+     * 获取是否推荐名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否推荐名称")
+     */
+    public function getIsRecNameAttr($value, $data)
+    {
+        return $data['is_rec'] ? '是' : '否';
+    }
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

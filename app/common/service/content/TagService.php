@@ -45,32 +45,38 @@ class TagService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new TagModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
             $field = $pk . ',tag_name,tag_unique,image_id,sort,is_disable,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $with = $append = $hidden = $field_no = [];
-        if (strpos($field, 'image_id') !== false) {
+        if (strpos($field, 'image_id')) {
             $with[]   = $hidden[] = 'image';
             $append[] = 'image_url';
         }
-        if (strpos($field, 'images') !== false) {
+        if (strpos($field, 'images')) {
             $with[]   = $hidden[]   = 'files';
             $append[] = $field_no[] = 'images';
-        } elseif (strpos($field, 'image_urls') !== false) {
+        } elseif (strpos($field, 'image_urls')) {
             $with[]   = $hidden[]   = 'files';
             $append[] = $field_no[] = 'image_urls';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -80,8 +86,11 @@ class TagService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }

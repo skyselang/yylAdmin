@@ -40,32 +40,47 @@ class GroupService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new GroupModel();
         $pk = $model->getPk();
+        $group = 'a.' . $pk;
 
         if (empty($field)) {
-            $field = 'm.' . $pk . ',group_name,group_desc,remark,sort,is_default,is_disable,create_time,update_time';
+            $field = $group . ',group_name,group_desc,remark,sort,is_default,is_disable,create_time,update_time';
+        } else {
+            $field = $group . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
-        $model = $model->alias('m');
+        $model = $model->alias('a');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'api_ids' && is_array($wv[2])) {
-                $model = $model->join('member_group_apis g', 'm.group_id=g.group_id')->where('g.api_id', $wv[1], $wv[2]);
+                $model = $model->join('member_group_apis g', 'a.group_id=g.group_id')->where('g.api_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
         $where = array_values($where);
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $append = [];
+        if (strpos($field, 'is_default')) {
+            $append[] = 'is_default_name';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
+        }
+
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }
@@ -73,7 +88,7 @@ class GroupService
             $model = $model->limit($limit);
             $pages = ceil($count / $limit);
         }
-        $list = $model->field($field)->where($where)->order($order)->select()->toArray();
+        $list = $model->field($field)->where($where)->append($append)->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }

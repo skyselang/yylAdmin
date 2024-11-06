@@ -23,6 +23,16 @@ class FileModel extends Model
     // 表主键
     protected $pk = 'file_id';
 
+    /**
+     * 获取储存名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("storage_name", type="string", desc="储存名称")
+     */
+    public function getStorageNameAttr($value, $data)
+    {
+        return SettingService::storages($data['storage']);
+    }
+
     // 关联文件分组
     public function group()
     {
@@ -90,5 +100,15 @@ class FileModel extends Model
     public function getFileUrlAttr($value, $data)
     {
         return SettingService::fileUrl($data);
+    }
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

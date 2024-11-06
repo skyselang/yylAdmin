@@ -13,6 +13,7 @@ use app\common\controller\BaseController;
 use app\common\validate\member\LogValidate;
 use app\common\service\member\LogService;
 use app\common\service\member\ApiService;
+use app\common\service\member\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -43,10 +44,11 @@ class Log extends BaseController
         $where = $this->where(where_delete());
 
         $data = LogService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['api']   = ApiService::list('tree', [where_delete()], [], 'api_id,api_pid,api_name');
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
+        $data['api'] = ApiService::list('tree', [where_delete()], [], 'api_pid,api_name');
+        $data['log_types'] = SettingService::logTypes();
+        $data['platforms'] = SettingService::platforms();
+        $data['applications'] = SettingService::applications();
 
         return success($data);
     }

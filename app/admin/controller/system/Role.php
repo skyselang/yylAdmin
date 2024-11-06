@@ -39,12 +39,10 @@ class Role extends BaseController
         $where = $this->where(where_delete());
 
         $data = RoleService::list($where, $this->page(), $this->limit(), $this->order());
-        $menu = MenuService::list('list', [where_delete()], [], 'menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth,is_unrate');
-
-        $data['menu']     = list_to_tree($menu, 'menu_id', 'menu_pid');
+        $data['exps'] = where_exps();
+        $menu = MenuService::list('list', [where_delete()], [], 'menu_pid,menu_name,menu_url,is_unlogin,is_unauth,is_unrate');
+        $data['menu'] = list_to_tree($menu, 'menu_id', 'menu_pid');
         $data['menu_ids'] = array_column($menu, 'menu_id');
-        $data['exps']     = where_exps();
-        $data['where']    = $where;
 
         return success($data);
     }
@@ -164,7 +162,7 @@ class Role extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
      * })
      */
-    public function user()
+    public function userList()
     {
         $param = $this->params(['role_id/d' => '']);
 

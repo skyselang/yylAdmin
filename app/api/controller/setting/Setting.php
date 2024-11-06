@@ -61,10 +61,10 @@ class Setting extends BaseController
         // 设置管理
         $data['setting'] = SettingService::info();
         // 友链列表
-        $link_field = 'link_id,image_id,name,name_color,url,desc';
+        $link_field = 'image_id,name,name_color,url,desc';
         $link_where = [where_disable(), where_delete(), ['start_time', '<=', datetime()], ['end_time', '>=', datetime()]];
         $link_order = ['sort' => 'asc', 'link_id' => 'desc'];
-        $data['link'] = LinkService::list($link_where, 0, 0, $link_order, $link_field)['list'] ?? [];
+        $data['link'] = LinkService::list($link_where, 0, 0, $link_order, $link_field, false)['list'] ?? [];
 
         return success($data);
     }

@@ -59,8 +59,7 @@ class SettingService
             }
 
             // 命令行无法获取域名
-            $append = [];
-            $hidden = [];
+            $append = $hidden = [];
             if ($type == 'cgi') {
                 $append = array_merge($append, ['favicon_url', 'logo_url', 'offi_url', 'mini_url', 'content_default_img_url', 'category_default_img_url', 'tag_default_img_url']);
                 $hidden = array_merge($hidden, ['favicon', 'logo', 'offi', 'mini', 'contentDefaultImg', 'categoryDefaultImg', 'tagDefaultImg']);

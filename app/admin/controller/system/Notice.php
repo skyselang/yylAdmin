@@ -39,9 +39,7 @@ class Notice extends BaseController
         $where = $this->where(where_delete());
 
         $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
 
         return success($data);
     }

@@ -47,7 +47,7 @@ class RegionService
      * @param string $field 字段
      * @param int    $level 级别：1省2市3区县4街道乡镇
      *
-     * @return array 
+     * @return array []
      */
     public static function list($type = 'list', $where = [], $order = [], $field = '', $level = '')
     {
@@ -56,6 +56,8 @@ class RegionService
 
         if (empty($field)) {
             $field = $pk . ',region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,is_disable,sort';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'asc'];
@@ -69,7 +71,11 @@ class RegionService
         $key = where_cache_key($type, $where, $order, $field);
         $data = RegionCache::get($key);
         if (empty($data)) {
-            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            $append = [];
+            if (strpos($field, 'is_disable')) {
+                $append[] = 'is_disable_name';
+            }
+            $data = $model->field($field)->where($where)->append($append)->order($order)->select()->toArray();
             if ($type == 'list') {
                 foreach ($data as &$v) {
                     $v['children']    = [];

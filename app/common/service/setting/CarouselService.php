@@ -41,29 +41,31 @@ class CarouselService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new CarouselModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
             $field = $pk . ',unique,file_id,title,position,desc,remark,sort,is_disable,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
         $with = $append = $hidden = $field_no = [];
-        if (strpos($field, 'file_id') !== false) {
-            $with[]   = $hidden[] = 'file';
-            $append[] = 'file_url';
-            $append[] = 'file_name';
-            $append[] = 'file_ext';
-            $append[] = 'file_type';
-            $append[] = 'file_type_name';
+        if (strpos($field, 'file_id')) {
+            $with[] = $hidden[] = 'file';
+            $append = array_merge($append, ['file_url', 'file_name', 'file_ext', 'file_type', 'file_type_name']);
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -73,8 +75,11 @@ class CarouselService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }

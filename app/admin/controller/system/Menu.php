@@ -33,11 +33,10 @@ class Menu extends BaseController
         $where = $this->where(where_delete());
 
         $data['list']  = MenuService::list('tree', $where);
-        $data['tree']  = MenuService::list('tree', [where_delete()], [], 'menu_id,menu_pid,menu_name');
-        $data['types'] = SettingService::menuTypes();
         $data['exps']  = where_exps();
-        $data['where'] = $where;
-
+        $data['tree']  = MenuService::list('tree', [where_delete()], [], 'menu_pid,menu_name');
+        $data['types'] = SettingService::menuTypes();
+        $data['count'] = count(MenuService::list('list', $where));
         if (count($where) > 1) {
             $list = tree_to_list($data['list']);
             $all  = tree_to_list($data['tree']);
@@ -51,9 +50,6 @@ class Menu extends BaseController
             }
             $data['list'] = MenuService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
-
-        $menu = MenuService::list('list', $where, [], 'menu_id');
-        $data['count'] = count($menu);
 
         return success($data);
     }
@@ -255,7 +251,7 @@ class Menu extends BaseController
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", ref="app\common\model\system\RoleModel", type="array", desc="角色列表", field="role_id,role_name,role_desc,sort,is_disable,create_time,update_time")
      */
-    public function role()
+    public function roleList()
     {
         $param = $this->params(['menu_id/d' => '']);
 

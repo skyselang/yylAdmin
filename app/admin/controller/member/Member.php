@@ -12,6 +12,7 @@ namespace app\admin\controller\member;
 use app\common\controller\BaseController;
 use app\common\validate\member\MemberValidate;
 use app\common\service\member\MemberService;
+use app\common\service\member\ImportService;
 use app\common\service\member\TagService;
 use app\common\service\member\GroupService;
 use app\common\service\member\ThirdService;
@@ -39,6 +40,8 @@ class Member extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url"),
      *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr", field="tag_names"),
      *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getIsSuperNameAttr", field="is_super_name"),
+     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getIsDisableNameAttr", field="is_disable_name"),
      * })
      * @Apidoc\Returned("genders", type="array", desc="性别")
      * @Apidoc\Returned("platforms", type="object", desc="平台")
@@ -52,12 +55,13 @@ class Member extends BaseController
         $where = $this->where(where_delete());
 
         $data = MemberService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['tag']    = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
-        $data['group']  = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
-        $data['region'] = RegionService::list('tree', [where_delete()], [], 'region_id,region_pid,region_name');
-        $data['exps']   = where_exps();
-        $data['where']  = $where;
+        $data['exps'] = where_exps();
+        $data['tag'] = TagService::list([where_delete()], 0, 0, [], 'tag_name', false)['list'] ?? [];
+        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_name', false)['list'] ?? [];
+        $data['region'] = RegionService::list('tree', [where_delete()], [], 'region_pid,region_name');
+        $data['genders'] = SettingService::genders();
+        $data['platforms'] = SettingService::platforms();
+        $data['applications'] = SettingService::applications();
 
         return success($data);
     }
@@ -139,8 +143,7 @@ class Member extends BaseController
 
         validate(MemberValidate::class)->scene('dele')->check($param);
 
-        $type = $param['type'];
-        if ($type == 'third') {
+        if ($param['type'] == 'third') {
             $data = MemberService::thirdUnbind($param['ids'][0]);
         } else {
             $data = MemberService::dele($param['ids']);
@@ -239,7 +242,7 @@ class Member extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="is_disable")
-     * @Apidoc\Param("type", type="string", default="member", desc="member删除会员，third删除会员第三方账号")
+     * @Apidoc\Param("type", type="string", default="member", desc="member禁用会员，third禁用会员第三方账号")
      */
     public function disable()
     {
@@ -259,50 +262,54 @@ class Member extends BaseController
     }
 
     /**
+     * @Apidoc\Title("会员导出")
+     * @Apidoc\Desc("get下载导出文件，post提交导出（列表搜索参数）")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Param("export_remark", type="string", desc="导出备注")
+     * @Apidoc\Query("file_path", type="string", desc="文件路径")
+     * @Apidoc\Query("file_name", type="string", desc="文件名称")
+     * @Apidoc\Returned(ref="app\common\model\file\ExportModel")
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $param = $this->params(['export_remark/s' => '']);
+        $param['where'] = $this->where(where_delete());
+        $param['order'] = $this->order();
+
+        $data = MemberService::export($param);
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("会员导入")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param("import", type="array", desc="导入数据")
+     * @Apidoc\Desc("get下载模板，post导入文件")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Param("import_file", type="file", require=true, desc="导入文件")
+     * @Apidoc\Param("import_remark", type="int", desc="导入备注")
+     * @Apidoc\Returned("import_num", type="int", desc="导入数量")
+     * @Apidoc\Returned("success_num", type="int", desc="成功数量")
+     * @Apidoc\Returned("fail_num", type="int", desc="失败数量")
+     * @Apidoc\Returned("success", type="array", desc="成功列表")
+     * @Apidoc\Returned("fail", type="array", desc="失败列表")
      */
     public function import()
     {
-        $param = $this->params(['import/a' => []]);
-
-        validate(MemberValidate::class)->scene('import')->check($param);
-
-        $success = $fail = [];
-        foreach ($param['import'] as $v) {
-            $errmsg = '';
-            try {
-                $add = [
-                    'nickname'    => $v['昵称'] ?? '',
-                    'username'    => $v['用户名'] ?? '',
-                    'phone'       => $v['手机'] ?? '',
-                    'email'       => $v['邮箱'] ?? '',
-                    'password'    => $v['密码'] ?? '',
-                    'platform'    => SettingService::PLATFORM_YA,
-                    'application' => SettingService::APP_YA_ADMIN,
-                ];
-                validate(MemberValidate::class)->scene('add')->check($add);
-                MemberService::add($add);
-            } catch (\Exception $e) {
-                $errmsg = $e->getMessage();
-            }
-            if ($errmsg) {
-                $v['errmsg'] = $errmsg;
-                $fail[] = $v;
-            } else {
-                $v['errmsg'] = '导入成功';
-                $success[] = $v;
-            }
+        if ($this->request->isGet()) {
+            $file_tpl = ImportService::member([], true);
+            return download($file_tpl['file_tpl_path'], $file_tpl['file_tpl_name']);
         }
 
-        $data['import']  = $param['import'];
-        $data['success'] = $success;
-        $data['fail']    = $fail;
+        $param['import_file']   = $this->request->file('import_file');
+        $param['import_remark'] = $this->param('import_remark/s');
+        validate(MemberValidate::class)->scene('import')->check($param);
+        $data = MemberService::import($param);
 
-        $msg = '导入：' . count($param['import']) . '，成功：' . count($success) . '，失败：' . count($fail);
-
-        return success($data, $msg);
+        return success($data);
     }
 
     /**

@@ -32,7 +32,7 @@ class Content extends BaseController
      * @Apidoc\Returned(ref="expsReturn")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="内容列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,image_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
+     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,image_id,name,release_time,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr", field="image_url"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
@@ -45,11 +45,9 @@ class Content extends BaseController
         $where = $this->where(where_delete());
 
         $data = ContentService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['category'] = CategoryService::list('tree', [where_delete()], [], 'category_id,category_pid,category_name');
-        $data['tag']      = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
         $data['exps']     = where_exps();
-        $data['where']    = $where;
+        $data['category'] = CategoryService::list('tree', [where_delete()], [], 'category_pid,category_name');
+        $data['tag']      = TagService::list([where_delete()], 0, 0, [], 'tag_name', false)['list'] ?? [];
 
         return success($data);
     }
@@ -258,6 +256,31 @@ class Content extends BaseController
 
         $data = ContentService::edit($param['ids'], $param);
 
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("内容导出")
+     * @Apidoc\Desc("get下载导出文件，post提交导出（列表搜索参数）")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Param("export_remark", type="string", desc="导出备注")
+     * @Apidoc\Query("file_path", type="string", desc="文件路径")
+     * @Apidoc\Query("file_name", type="string", desc="文件名称")
+     * @Apidoc\Returned(ref="app\common\model\file\ExportModel")
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $param = $this->params(['export_remark/s' => '']);
+        $param['where'] = $this->where(where_delete());
+        $param['order'] = $this->order();
+
+        $data = ContentService::export($param);
+        
         return success($data);
     }
 }

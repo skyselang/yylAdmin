@@ -20,15 +20,18 @@ class TagValidate extends Validate
 {
     // 验证规则
     protected $rule = [
-        'ids'        => ['require', 'array'],
-        'tag_id'     => ['require'],
-        'tag_name'   => ['require', 'checkExisted'],
-        'member_ids' => ['array'],
+        'ids'         => ['require', 'array'],
+        'tag_id'      => ['require'],
+        'tag_name'    => ['require', 'checkExisted'],
+        'member_ids'  => ['array'],
+        'import_file' => ['require', 'file', 'fileExt' => 'xlsx'],
     ];
 
     // 错误信息
     protected $message = [
-        'tag_name.require' => '请输入名称',
+        'tag_name.require'    => '请输入名称',
+        'import_file.require' => '请选择导入文件',
+        'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
     // 验证场景
@@ -38,6 +41,7 @@ class TagValidate extends Validate
         'edit'         => ['tag_id', 'tag_name'],
         'dele'         => ['ids'],
         'disable'      => ['ids'],
+        'import'       => ['import_file'],
         'member'       => ['tag_id'],
         'memberRemove' => ['tag_id', 'member_ids'],
     ];

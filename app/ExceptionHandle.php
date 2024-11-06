@@ -62,13 +62,7 @@ class ExceptionHandle extends Handle
 
         // 接口文档异常
         if ($e instanceof \hg\apidoc\exception\HttpException) {
-            return json(
-                [
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage(),
-                ],
-                $e->getStatusCode()
-            );
+            return json(['code' => $e->getCode(), 'message' => $e->getMessage()], $e->getStatusCode());
         }
 
         // 参数验证错误

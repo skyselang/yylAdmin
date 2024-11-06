@@ -39,9 +39,7 @@ class Tag extends BaseController
         $where = $this->where(where_delete());
 
         $data = TagService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
 
         return success($data);
     }
@@ -144,7 +142,7 @@ class Tag extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
      * })
      */
-    public function content()
+    public function contentList()
     {
         $param = $this->params(['tag_id/d' => '']);
 

@@ -14,6 +14,7 @@ use app\common\validate\system\UserLogValidate;
 use app\common\service\system\UserLogService;
 use app\common\service\system\UserService;
 use app\common\service\system\MenuService;
+use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -45,11 +46,10 @@ class UserLog extends BaseController
         $where = $this->where(where_delete());
 
         $data = UserLogService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['user']  = UserService::list([where_delete()], 0, 0, [], 'user_id,nickname,username')['list'] ?? [];
-        $data['menu']  = MenuService::list('tree', [where_delete()], [], 'menu_id,menu_pid,menu_name');
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
+        $data['user'] = UserService::list([where_delete()], 0, 0, [], 'nickname,username', false)['list'] ?? [];
+        $data['menu'] = MenuService::list('tree', [where_delete()], [], 'menu_pid,menu_name');
+        $data['log_types'] = SettingService::logTypes();
 
         return success($data);
     }

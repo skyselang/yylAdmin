@@ -47,6 +47,8 @@ return [
             'password'   => Env::get('cache.password', ''),
             // 缓存标签前缀
             'tag_prefix' => Env::get('cache.tag_prefix', 'tag:'),
+            // 长连接
+            'persistent' => Env::get('cache.persistent', false),
         ],
         'memcache' => [
             // 驱动方式

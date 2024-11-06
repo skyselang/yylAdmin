@@ -45,7 +45,7 @@ class DeptService
      * @param array  $order 排序
      * @param string $field 字段
      * 
-     * @return array
+     * @return array []
      */
     public static function list($type = 'tree', $where = [], $order = [], $field = '')
     {
@@ -54,6 +54,8 @@ class DeptService
 
         if (empty($field)) {
             $field = $pk . ',dept_pid,dept_abbr,dept_name,dept_desc,sort,is_disable,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
@@ -62,7 +64,11 @@ class DeptService
         $key = where_cache_key($type, $where, $order, $field);
         $data = DeptCache::get($key);
         if (empty($data)) {
-            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            $append = [];
+            if (strpos($field, 'is_disable')) {
+                $append[] = 'is_disable_name';
+            }
+            $data = $model->field($field)->where($where)->append($append)->order($order)->select()->toArray();
             if ($type == 'tree') {
                 $data = array_to_tree($data, $pk, 'dept_pid');
             }

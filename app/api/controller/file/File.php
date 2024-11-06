@@ -47,9 +47,7 @@ class File extends BaseController
         $where[] = where_disable();
         $where[] = where_delete();
 
-        $order = ['sort' => 'desc', 'group_id' => 'desc'];
-        $field = 'group_id,group_name';
-        $data  = GroupService::list($where, $this->page(0), $this->limit(0), $this->order($order), $field);
+        $data = GroupService::list($where, $this->page(0), $this->limit(0), $this->order(), 'group_name', false);
 
         return success($data);
     }
@@ -69,9 +67,7 @@ class File extends BaseController
         $where[] = where_disable();
         $where[] = where_delete();
 
-        $order = ['sort' => 'desc', 'tag_id' => 'desc'];
-        $field = 'tag_id,tag_name';
-        $data  = TagService::list($where, $this->page(0), $this->limit(0), $this->order($order), $field);
+        $data = TagService::list($where, $this->page(0), $this->limit(0), $this->order(), 'tag_name', false);
 
         return success($data);
     }
@@ -135,19 +131,19 @@ class File extends BaseController
         } else {
             $where[] = ['tag_ids', 'in', $setting['api_file_tag_ids']];
         }
-        $order = ['sort' => 'desc', 'file_id' => 'desc'];
-        $field = 'm.file_id,unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext,file_size,sort';
-        $data  = FileService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
+        $order = ['sort' => 'desc', 'file_id' => 'desc'];
+        $field = 'unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext,file_size,sort';
+        $data = FileService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
         $data['setting'] = $setting;
 
         $where_group = $where_base;
         $where_group[] = ['group_id', 'in', $setting['api_file_group_ids']];
-        $data['group'] = GroupService::list($where_group, 0, 0, [], 'group_id,group_name')['list'] ?? [];
+        $data['group'] = GroupService::list($where_group, 0, 0, [], 'group_name', false)['list'] ?? [];
 
         $where_tag = $where_base;
         $where_tag[] = ['tag_id', 'in', $setting['api_file_tag_ids']];
-        $data['tag'] = TagService::list($where_tag, 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
+        $data['tag'] = TagService::list($where_tag, 0, 0, [], 'tag_name', false)['list'] ?? [];
 
         return success($data);
     }

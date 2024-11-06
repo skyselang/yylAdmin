@@ -48,12 +48,10 @@ class User extends BaseController
         $where = $this->where(where_delete());
 
         $data = UserService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['dept']  = DeptService::list('tree', [where_delete()], [], 'dept_id,dept_pid,dept_name');
-        $data['post']  = PostService::list('tree', [where_delete()], [], 'post_id,post_pid,post_name');
-        $data['role']  = RoleService::list([where_delete()], 0, 0, [], 'role_id,role_name')['list'] ?? [];
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
+        $data['dept'] = DeptService::list('tree', [where_delete()], [], 'dept_pid,dept_name');
+        $data['post'] = PostService::list('tree', [where_delete()], [], 'post_pid,post_name');
+        $data['role'] = RoleService::list([where_delete()], 0, 0, [], 'role_name', false)['list'] ?? [];
 
         return success($data);
     }

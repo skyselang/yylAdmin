@@ -125,10 +125,7 @@ class Member extends BaseController
      */
     public function pwd()
     {
-        $param = $this->params([
-            'password_old/s' => '',
-            'password_new/s' => '',
-        ]);
+        $param = $this->params(['password_old/s' => '', 'password_new/s' => '']);
         $param['member_id'] = member_id(true);
 
         $member = MemberService::info($param['member_id']);

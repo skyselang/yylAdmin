@@ -4,11 +4,7 @@
   "description": "Minimalist background management system based on ThinkPHP and Vue",
   "keywords": [
     "yylAdmin",
-    "yylAdminWeb",
-    "php",
-    "vue",
-    "thinkphp",
-    "element-plus"
+    "yylAdminWeb"
   ],
   "authors": [
     {
@@ -18,7 +14,12 @@
   ],
   "license": "Apache-2.0",
   "type": "project",
-  "homepage": "https://gitee.com/skyselang/yyladmin",
+  "scripts": {
+    "post-autoload-dump": [
+      "@php think service:discover",
+      "@php think vendor:publish"
+    ]
+  },
   "require": {
     "php": ">=8.0",
     "topthink/framework": "^8.0",
@@ -40,8 +41,10 @@
     "qcloud/cos-sdk-v5": "^2.6",
     "alapi/upyun-sdk": "^4.0",
     "aws/aws-sdk-php": "^3.290",
-    "guzzlehttp/guzzle": "^7.0"
+    "guzzlehttp/guzzle": "^7.0",
+    "phpoffice/phpspreadsheet": "^2.1"
   },
+  "homepage": "https://gitee.com/skyselang/yyladmin",
   "require-dev": {
     "symfony/var-dumper": "^6.0"
   },
@@ -56,11 +59,5 @@
   "config": {
     "preferred-install": "dist",
     "allow-plugins": {}
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "@php think service:discover",
-      "@php think vendor:publish"
-    ]
   }
 }

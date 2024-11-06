@@ -9,7 +9,6 @@
 
 namespace app\common\service\member;
 
-use think\facade\Log;
 use think\facade\Config;
 use think\facade\Request;
 use app\common\cache\member\LogCache;
@@ -29,36 +28,37 @@ class LogService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '', $total = true)
     {
         $model = new LogModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
             $field = $pk . ',member_id,api_id,request_ip,request_region,request_isp,request_url,response_code,response_msg,application,create_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
 
         $with = $append = $hidden = $field_no = [];
-        if (strpos($field, 'member_id') !== false) {
-            $with[]   = $hidden[] = 'member';
-            $append[] = 'nickname';
-            $append[] = 'username';
+        if (strpos($field, 'member_id')) {
+            $with[] = $hidden[] = 'member';
+            $append = array_merge($append, ['nickname', 'username']);
         }
-        if (strpos($field, 'api_id') !== false) {
-            $with[]   = $hidden[] = 'api';
-            $append[] = 'api_name';
-            $append[] = 'api_url';
+        if (strpos($field, 'api_id')) {
+            $with[] = $hidden[] = 'api';
+            $append = array_merge($append, ['api_name', 'api_url']);
         }
-        if (strpos($field, 'platform') !== false) {
+        if (strpos($field, 'platform')) {
             $append[] = 'platform_name';
         }
-        if (strpos($field, 'application') !== false) {
+        if (strpos($field, 'application')) {
             $append[] = 'application_name';
         }
         $fields = explode(',', $field);
@@ -69,8 +69,11 @@ class LogService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }
@@ -82,11 +85,7 @@ class LogService
             ->with($with)->append($append)->hidden($hidden)
             ->order($order)->select()->toArray();
 
-        $log_types    = SettingService::logTypes();
-        $platforms    = SettingService::platforms();
-        $applications = SettingService::applications();
-
-        return compact('count', 'pages', 'page', 'limit', 'list', 'log_types', 'platforms', 'applications');
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -244,21 +243,23 @@ class LogService
      * 会员日志清空
      * 
      * @param array $where 条件
+     * @param int $limit 限制条数，0不限制
      * 
      * @return array
      */
-    public static function clear($where = [])
+    public static function clear($where = [], $limit = 0)
     {
         $model = new LogModel();
         $pk = $model->getPk();
 
         $where[] = [$pk, '>', 0];
 
+        if ($limit > 0) {
+            $model = $model->limit($limit);
+        }
         $count = $model->where($where)->delete(true);
 
-        $data['count'] = $count;
-
-        return $data;
+        return compact('count');
     }
 
     /**
@@ -269,24 +270,13 @@ class LogService
     public static function clearLog()
     {
         $setting = SettingService::info('log_save_time');
-        if ($setting['log_save_time']) {
-            $time = date('H');
-            if (0 <= $time && $time <= 8) {
-                $key = 'clear';
-                $val = LogCache::get($key);
-                if (empty($val)) {
-                    $days = $setting['log_save_time'];
-                    $date = date('Y-m-d H:i:s', strtotime("-{$days} day"));
-                    $where = [['create_time', '<', $date]];
-                    $res = LogService::clear($where);
-                    $res['where'] = $where;
-
-                    $log['log'] = 'member-log-clear';
-                    $log['data'] = $res;
-                    Log::write($log, 'timer');
-
-                    LogCache::set($key, $days, 1800);
-                }
+        $days = $setting['log_save_time'];
+        if ($days > 0 && 0 <= date('H') && date('H') <= 8) {
+            $key = 'clear';
+            if (empty(LogCache::get($key))) {
+                $where = [['create_time', '<', date('Y-m-d H:i:s', strtotime("-{$days} day"))]];
+                LogService::clear($where, 10000);
+                LogCache::set($key, 1, 600);
             }
         }
     }

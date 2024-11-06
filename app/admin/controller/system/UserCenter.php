@@ -14,6 +14,7 @@ use app\common\validate\system\UserCenterValidate;
 use app\common\validate\system\UserLogValidate;
 use app\common\service\system\UserCenterService;
 use app\common\service\system\UserLogService;
+use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -78,10 +79,7 @@ class UserCenter extends BaseController
      */
     public function pwd()
     {
-        $param = $this->params([
-            'password_old/s' => '',
-            'password_new/s' => '',
-        ]);
+        $param = $this->params(['password_old/s' => '', 'password_new/s' => '']);
         $param['user_id'] = user_id(true);
 
         validate(UserCenterValidate::class)->scene('pwd')->check($param);
@@ -112,9 +110,8 @@ class UserCenter extends BaseController
         $where = $this->where(where_delete(['user_id', '=', $param['user_id']]));
 
         $data = UserCenterService::log($where, $this->page(), $this->limit(), $this->order());
-
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
+        $data['log_types'] = SettingService::logTypes();
 
         return success($data);
     }

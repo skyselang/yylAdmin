@@ -44,31 +44,37 @@ class FeedbackService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new FeedbackModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
             $field = $pk . ',member_id,receipt_no,type,title,phone,email,remark,status,is_disable,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
 
         $with = $append = $hidden = $field_no = [];
-        if (strpos($field, 'member_id') !== false) {
+        if (strpos($field, 'member_id')) {
             $with[]   = $hidden[] = 'member';
             $append[] = 'member_username';
         }
-        if (strpos($field, 'type') !== false) {
+        if (strpos($field, 'type')) {
             $append[] = 'type_name';
         }
-        if (strpos($field, 'status') !== false) {
+        if (strpos($field, 'status')) {
             $append[] = 'status_name';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -78,8 +84,11 @@ class FeedbackService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }

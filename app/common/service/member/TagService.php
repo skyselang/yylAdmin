@@ -9,8 +9,11 @@
 
 namespace app\common\service\member;
 
+use think\facade\Filesystem;
 use app\common\cache\member\TagCache;
 use app\common\cache\member\MemberCache;
+use app\common\service\file\ExportService as FileExportService;
+use app\common\service\file\ImportService as FileImportService;
 use app\common\model\member\TagModel;
 use app\common\model\member\AttributesModel;
 
@@ -39,23 +42,41 @@ class TagService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new TagModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
             $field = $pk . ',tag_name,tag_desc,remark,sort,is_disable,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $with = $append = $hidden = $field_no = [];
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
+        }
+        $fields = explode(',', $field);
+        foreach ($fields as $k => $v) {
+            if (in_array($v, $field_no)) {
+                unset($fields[$k]);
+            }
+        }
+        $field = implode(',', $fields);
+
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }
@@ -63,7 +84,9 @@ class TagService
             $model = $model->limit($limit);
             $pages = ceil($count / $limit);
         }
-        $list = $model->field($field)->where($where)->order($order)->select()->toArray();
+        $list = $model->field($field)->where($where)
+            ->with($with)->append($append)->hidden($hidden)
+            ->order($order)->select()->toArray();
 
         return compact('count', 'pages', 'page', 'limit', 'list');
     }
@@ -184,6 +207,52 @@ class TagService
         TagCache::del($ids);
 
         return $update;
+    }
+
+    /**
+     * 会员标签导出
+     *
+     * @param  array $param
+     * @return array
+     */
+    public static function export($param)
+    {
+        $export = [
+            'type'       => FileExportService::TYPE_MEMBER_TAG,
+            'file_path'  => ExportService::$file_dir . '/member-tag-' . date('YmdHis') . '-' . uniqids() . '.xlsx',
+            'file_name'  => '会员标签导出-' . date('Ymd-His') . '.xlsx',
+            'param'      => ['where' => $param['where'], 'order' => $param['order']],
+            'remark'     => $param['export_remark'] ?? '',
+            'create_uid' => user_id(),
+        ];
+        $export_id = FileExportService::add($export);
+
+        return ExportService::memberTag(['export_id' => $export_id]);
+    }
+
+    /**
+     * 会员标签导入
+     *
+     * @param  array $param
+     * @return array
+     */
+    public static function import($param)
+    {
+        $file_path = Filesystem::disk('public')
+            ->putFile(ImportService::$file_dir, $param['import_file'], function () {
+                return 'member-tag-' . date('YmdHis') . '-' . uniqids();
+            });
+        $import = [
+            'type'       => FileImportService::TYPE_MEMBER_TAG,
+            'file_name'  => $param['import_file']->getOriginalName(),
+            'file_path'  => 'storage/' . $file_path,
+            'file_size'  => $param['import_file']->getSize(),
+            'remark'     => $param['import_remark'] ?? '',
+            'create_uid' => user_id(),
+        ];
+        $import_id = FileImportService::add($import);
+
+        return ImportService::memberTag(['import_id' => $import_id]);
     }
 
     /**

@@ -41,32 +41,37 @@ class ThirdService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new ThirdModel();
         $pk = $model->getPk();
 
         if (empty($field)) {
             $field = $pk . ',member_id,platform,application,headimgurl,nickname,is_disable,login_num,login_ip,login_region,login_time,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = [$pk => 'desc'];
         }
 
         $with = $append = $hidden = $field_no = [];
-        if (strpos($field, 'member_id') !== false) {
-            $with[]   = $hidden[] = 'member';
-            $append[] = 'member_nickname';
-            $append[] = 'member_username';
+        if (strpos($field, 'member_id')) {
+            $with[] = $hidden[] = 'member';
+            $append = array_merge($append, ['member_nickname', 'member_username']);
         }
-        if (strpos($field, 'platform') !== false) {
+        if (strpos($field, 'platform')) {
             $append[] = 'platform_name';
         }
-        if (strpos($field, 'application') !== false) {
+        if (strpos($field, 'application')) {
             $append[] = 'application_name';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -76,8 +81,11 @@ class ThirdService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }

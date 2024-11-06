@@ -35,9 +35,8 @@ class Setting extends BaseController
     public function info()
     {
         $data = SettingService::info();
-
-        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
-        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
+        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_name', false)['list'] ?? [];
+        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_name', false)['list'] ?? [];
 
         return success($data);
     }

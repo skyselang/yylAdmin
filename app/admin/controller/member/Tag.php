@@ -12,6 +12,7 @@ namespace app\admin\controller\member;
 use app\common\controller\BaseController;
 use app\common\validate\member\TagValidate;
 use app\common\service\member\TagService;
+use app\common\service\member\ImportService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -36,9 +37,7 @@ class Tag extends BaseController
         $where = $this->where(where_delete());
 
         $data = TagService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
 
         return success($data);
     }
@@ -125,6 +124,60 @@ class Tag extends BaseController
     }
 
     /**
+     * @Apidoc\Title("会员标签导出")
+     * @Apidoc\Desc("get下载导出文件，post提交导出（列表搜索参数）")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Param("export_remark", type="string", desc="导出备注")
+     * @Apidoc\Query("file_path", type="string", desc="文件路径")
+     * @Apidoc\Query("file_name", type="string", desc="文件名称")
+     * @Apidoc\Returned(ref="app\common\model\file\ExportModel")
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $param = $this->params(['export_remark/s' => '']);
+        $param['where'] = $this->where(where_delete());
+        $param['order'] = $this->order();
+
+        $data = TagService::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("会员标签导入")
+     * @Apidoc\Desc("get下载模板，post导入文件")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Param("import_file", type="file", require=true, desc="导入文件")
+     * @Apidoc\Param("import_remark", type="int", desc="导入备注")
+     * @Apidoc\Returned("import_num", type="int", desc="导入数量")
+     * @Apidoc\Returned("success_num", type="int", desc="成功数量")
+     * @Apidoc\Returned("fail_num", type="int", desc="失败数量")
+     * @Apidoc\Returned("success", type="array", desc="成功列表")
+     * @Apidoc\Returned("fail", type="array", desc="失败列表")
+     */
+    public function import()
+    {
+        if ($this->request->isGet()) {
+            $file_tpl = ImportService::memberTag([], true);
+            return download($file_tpl['file_tpl_path'], $file_tpl['file_tpl_name']);
+        }
+
+        $param['import_file']   = $this->request->file('import_file');
+        $param['import_remark'] = $this->param('import_remark/s');
+
+        validate(TagValidate::class)->scene('import')->check($param);
+
+        $data = TagService::import($param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("会员标签会员列表")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
@@ -136,7 +189,7 @@ class Tag extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
      * })
      */
-    public function member()
+    public function memberList()
     {
         $param = $this->params(['tag_id/d' => '']);
 

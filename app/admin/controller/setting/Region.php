@@ -39,10 +39,8 @@ class Region extends BaseController
         }
 
         $data['list']  = RegionService::list('list', $where, $this->order());
-        $data['tree']  = RegionService::list('tree', [where_delete()], $this->order(), 'region_id,region_pid,region_name');
         $data['exps']  = where_exps();
-        $data['where'] = $where;
-
+        $data['tree']  = RegionService::list('tree', [where_delete()], $this->order(), 'region_pid,region_name');
         $data['count'] = count(tree_to_list($data['list']));
 
         return success($data);

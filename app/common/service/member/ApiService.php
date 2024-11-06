@@ -40,7 +40,7 @@ class ApiService
      * @param array  $order 排序
      * @param string $field 字段
      * 
-     * @return array 
+     * @return array []
      */
     public static function list($type = 'tree', $where = [], $order = [], $field = '')
     {
@@ -49,6 +49,8 @@ class ApiService
 
         if (empty($field)) {
             $field = $pk . ',api_pid,api_name,api_url,sort,is_unlogin,is_unauth,is_unrate,is_disable';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'asc'];
@@ -57,7 +59,20 @@ class ApiService
         $key = where_cache_key($type, $where, $order, $field);
         $data = ApiCache::get($key);
         if (empty($data)) {
-            $data = $model->field($field)->where($where)->order($order)->select()->toArray();
+            $append = [];
+            if (strpos($field, 'is_unlogin')) {
+                $append[] = 'is_unlogin_name';
+            }
+            if (strpos($field, 'is_unauth')) {
+                $append[] = 'is_unauth_name';
+            }
+            if (strpos($field, 'is_unrate')) {
+                $append[] = 'is_unrate_name';
+            }
+            if (strpos($field, 'is_disable')) {
+                $append[] = 'is_disable_name';
+            }
+            $data = $model->field($field)->where($where)->append($append)->order($order)->select()->toArray();
             if ($type == 'tree') {
                 $data = array_to_tree($data, $pk, 'api_pid');
             }

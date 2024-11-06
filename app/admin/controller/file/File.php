@@ -53,7 +53,6 @@ class File extends BaseController
         $file_type  = $this->param('file_type/s', '');
         $is_front   = $this->param('is_front/s', 0);
         $is_disable = $this->param('is_disable/s', '');
-
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
         }
@@ -76,11 +75,13 @@ class File extends BaseController
         $where = $this->where($where);
 
         $data = FileService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
-        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps']      = where_exps();
+        $data['ids']       = array_column($data['list'], 'file_id');
+        $data['storages']  = SettingService::storages();
+        $data['filetypes'] = SettingService::fileTypes();
+        $data['setting']   = SettingService::info('file_types,storages,limit_max,accept_ext');
+        $data['group']     = GroupService::list([where_delete()], 0, 0, [], 'group_name', false)['list'] ?? [];
+        $data['tag']       = TagService::list([where_delete()], 0, 0, [], 'tag_name', false)['list'] ?? [];
 
         return success($data);
     }
@@ -88,6 +89,7 @@ class File extends BaseController
     /**
      * @Apidoc\Title("文件信息")
      * @Apidoc\Query(ref="app\common\model\file\FileModel", field="file_id")
+     * @Apidoc\Query("is_down", type="int", desc="是否下载")
      * @Apidoc\Returned(ref="app\common\model\file\FileModel")
      * @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr", field="group_name")
      * @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagIdsAttr", field="tag_ids")
@@ -98,11 +100,15 @@ class File extends BaseController
      */
     public function info()
     {
-        $param = $this->params(['file_id/d' => '']);
+        $param = $this->params(['file_id/d' => '', 'is_down/d' => 0]);
 
         validate(FileValidate::class)->scene('info')->check($param);
 
         $data = FileService::info($param['file_id']);
+
+        if ($param['is_down'] && ($data['storage'] ?? '') == 'local') {
+            return download($data['file_path']);
+        }
 
         return success($data);
     }
@@ -165,6 +171,12 @@ class File extends BaseController
             return success($data, '添加成功');
         } else {
             $param['file'] = $this->request->file('file');
+            if (request()->has('group_id')) {
+                $param['group_id'] = $this->param('group_id');
+            }
+            if (request()->has('tag_ids')) {
+                $param['tag_ids'] = $this->param('tag_ids');
+            }
 
             validate(FileValidate::class)->scene('add')->check($param);
 
@@ -292,10 +304,61 @@ class File extends BaseController
     }
 
     /**
+     * @Apidoc\Title("文件导出")
+     * @Apidoc\Desc("get下载导出文件，post提交导出（列表搜索参数）")
+     * @Apidoc\Method("GET,POST")
+     * @Apidoc\Param("export_remark", type="string", desc="导出备注")
+     * @Apidoc\Query("file_path", type="string", desc="文件路径")
+     * @Apidoc\Query("file_name", type="string", desc="文件名称")
+     * @Apidoc\Returned(ref="app\common\model\file\ExportModel")
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $group_id   = $this->param('group_id/s', '');
+        $tag_ids    = $this->param('tag_ids/a', []);
+        $storage    = $this->param('storage/s', '');
+        $file_type  = $this->param('file_type/s', '');
+        $is_front   = $this->param('is_front/s', 0);
+        $is_disable = $this->param('is_disable/s', '');
+        if ($group_id !== '') {
+            $where[] = ['group_id', '=', $group_id];
+        }
+        if ($tag_ids ?? []) {
+            $where[] = ['tag_ids', 'in', $tag_ids];
+        }
+        if ($storage !== '') {
+            $where[] = ['storage', '=', $storage];
+        }
+        if ($file_type) {
+            $where[] = ['file_type', '=', $file_type];
+        }
+        if ($is_front !== '') {
+            $where[] = ['is_front', '=', $is_front];
+        }
+        if ($is_disable !== '') {
+            $where[] = ['is_disable', '=', $is_disable];
+        }
+        $where[] = where_delete();
+
+        $param = $this->params(['export_remark/s' => '']);
+        $param['where'] = $this->where($where);
+        $param['order'] = $this->order();
+
+        $data = FileService::export($param);
+        
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("文件回收站列表")
      * @Apidoc\Desc("请求和返回参数同文件列表")
      */
-    public function recycle()
+    public function recycleList()
     {
         $group_id   = $this->param('group_id/s', '');
         $tag_ids    = $this->param('tag_ids/a', []);
@@ -303,7 +366,6 @@ class File extends BaseController
         $file_type  = $this->param('file_type/s', '');
         $is_front   = $this->param('is_front/s', '');
         $is_disable = $this->param('is_disable/s', '');
-
         if ($group_id !== '') {
             $where[] = ['group_id', '=', $group_id];
         }
@@ -324,15 +386,17 @@ class File extends BaseController
         }
         $where[] = where_delete([], 1);
         $where = $this->where($where);
+        $order = ['delete_time' => 'desc', 'file_id' => 'desc'];
 
-        $order = $this->order(['delete_time' => 'desc', 'file_id' => 'desc']);
-
-        $data = FileService::list($where, $this->page(), $this->limit(), $order);
-
-        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_id,group_name')['list'] ?? [];
-        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_id,tag_name')['list'] ?? [];
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data = FileService::list($where, $this->page(), $this->limit(), $this->order($order));
+        $data['exps']      = where_exps();
+        $data['where']     = $where;
+        $data['ids']       = array_column($data['list'], 'file_id');
+        $data['storages']  = SettingService::storages();
+        $data['filetypes'] = SettingService::fileTypes();
+        $data['setting']   = SettingService::info('file_types,storages,limit_max,accept_ext');
+        $data['group']     = GroupService::list([where_delete()], 0, 0, [], 'group_name', false)['list'] ?? [];
+        $data['tag']       = TagService::list([where_delete()], 0, 0, [], 'tag_name', false)['list'] ?? [];
 
         return success($data);
     }

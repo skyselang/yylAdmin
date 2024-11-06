@@ -1,0 +1,61 @@
+/* 数据库初始化SQL语句，请按需谨慎执行，会清除数据！！！
+// +----------------------------------------------------------------------
+// | yylAdmin 前后分离，简单轻量，免费开源，开箱即用，极简后台管理系统
+// +----------------------------------------------------------------------
+// | Copyright https://gitee.com/skyselang All rights reserved
+// +----------------------------------------------------------------------
+// | Gitee: https://gitee.com/skyselang/yylAdmin
+// +----------------------------------------------------------------------
+*/
+
+TRUNCATE ya_content;
+TRUNCATE ya_content_attributes;
+TRUNCATE ya_content_category;
+TRUNCATE ya_content_setting;
+TRUNCATE ya_content_tag;
+
+TRUNCATE ya_file;
+TRUNCATE ya_file_export
+TRUNCATE ya_file_group;
+TRUNCATE ya_file_import
+TRUNCATE ya_file_setting;
+TRUNCATE ya_file_tag;
+TRUNCATE ya_file_tags;
+
+TRUNCATE ya_queue;
+TRUNCATE ya_queue_failed;
+
+TRUNCATE ya_member;
+ALTER TABLE ya_member AUTO_INCREMENT = 100000;
+DELETE FROM ya_member_api WHERE is_delete=1;
+UPDATE ya_member_api SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
+TRUNCATE ya_member_attributes;
+TRUNCATE ya_member_group;
+TRUNCATE ya_member_group_apis;
+TRUNCATE ya_member_log;
+TRUNCATE ya_member_setting;
+TRUNCATE ya_member_tag;
+TRUNCATE ya_member_third;
+
+TRUNCATE ya_setting_accord;
+TRUNCATE ya_setting_carousel;
+TRUNCATE ya_setting_feedback;
+TRUNCATE ya_setting_files;
+TRUNCATE ya_setting_link;
+TRUNCATE ya_setting_notice;
+DELETE FROM ya_setting_region WHERE is_delete=1;
+UPDATE ya_setting_region SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
+TRUNCATE ya_setting_setting;
+
+TRUNCATE ya_system_dept;
+DELETE FROM ya_system_menu WHERE is_delete=1;
+UPDATE ya_system_menu SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
+TRUNCATE ya_system_notice;
+TRUNCATE ya_system_post;
+DELETE FROM ya_system_role WHERE is_delete=1;
+UPDATE ya_system_role SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null;
+TRUNCATE ya_system_setting;
+DELETE FROM ya_system_user WHERE is_delete=1;
+UPDATE ya_system_user SET create_uid=0, update_uid=0, delete_uid=0, create_time=null, update_time=null, delete_time=null, avatar_id=0, login_num=0, login_ip='', login_region='', login_time=null, logout_time=null, pwd_time=null, phone='', email='', remark='';
+TRUNCATE ya_system_user_attributes;
+TRUNCATE ya_system_user_log;

@@ -36,9 +36,7 @@ class Tag extends BaseController
         $where = $this->where(where_delete());
 
         $data = TagService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
 
         return success($data);
     }
@@ -138,7 +136,7 @@ class Tag extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr", field="file_url"),
      * })
      */
-    public function file()
+    public function fileList()
     {
         $param = $this->params(['tag_id/s' => '']);
 

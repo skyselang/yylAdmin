@@ -39,9 +39,7 @@ class Carousel extends BaseController
         $where = $this->where(where_delete());
 
         $data = CarouselService::list($where, $this->page(), $this->limit(), $this->order());
-
-        $data['exps']  = where_exps();
-        $data['where'] = $where;
+        $data['exps'] = where_exps();
 
         return success($data);
     }

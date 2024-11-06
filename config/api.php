@@ -9,8 +9,9 @@
 
 // api配置
 return [
-    // token方式：header、param；token名称；前后端必须一致
+    // token方式：header、param
     'token_type' => env('api.token_type', 'header'),
+    // token名称；前后端必须一致
     'token_name' => env('api.token_name', 'ApiToken'),
 
     // 超级会员ID（所有权限）

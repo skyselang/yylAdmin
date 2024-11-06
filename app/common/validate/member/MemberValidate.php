@@ -31,7 +31,7 @@ class MemberValidate extends Validate
         'phone'        => ['require', 'mobile'],
         'email'        => ['require', 'email'],
         'captcha_code' => ['require'],
-        'import'       => ['require', 'array'],
+        'import_file'  => ['require', 'file', 'fileExt' => 'xlsx'],
     ];
 
     // 错误信息
@@ -49,6 +49,9 @@ class MemberValidate extends Validate
         'email.require'        => '请输入邮箱地址',
         'email.email'          => '请输入正确的邮箱地址',
         'captcha_code.require' => '请输入验证码',
+        'import_file.require'  => '请选择导入文件',
+        'import_file.fileExt'  => '只允许xlsx文件格式',
+
     ];
 
     // 验证场景
@@ -63,7 +66,7 @@ class MemberValidate extends Validate
         'repwd'                => ['ids', 'password'],
         'super'                => ['ids'],
         'disable'              => ['ids'],
-        'import'               => ['import'],
+        'import'               => ['import_file'],
         'usernameRegister'     => ['nickname', 'username', 'password'],
         'phoneRegisterCaptcha' => ['phone'],
         'phoneRegister'        => ['nickname', 'phone', 'password'],

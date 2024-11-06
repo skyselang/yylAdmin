@@ -10,9 +10,12 @@
 namespace app\common\service\member;
 
 use think\facade\Validate;
+use think\facade\Filesystem;
 use app\common\cache\member\MemberCache;
 use app\common\service\member\SettingService;
 use app\common\service\member\ThirdService;
+use app\common\service\file\ExportService as FileExportService;
+use app\common\service\file\ImportService as FileImportService;
 use app\common\service\utils\Utils;
 use app\common\service\utils\RetCodeUtils;
 use app\common\model\member\MemberModel;
@@ -52,30 +55,33 @@ class MemberService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '', $total = true)
     {
         $model = new MemberModel();
         $pk = $model->getPk();
-        $group = 'm.' . $pk;
+        $group = 'a.' . $pk;
 
         if (empty($field)) {
-            $field = $group . ',avatar_id,headimgurl,nickname,username,phone,email,sort,is_super,is_disable,create_time';
+            $field = $group . ',avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time';
+        } else {
+            $field = $group . ',' . $field;
         }
         if (empty($order)) {
             $order = [$group => 'desc'];
         }
 
-        $model = $model->alias('m');
+        $model = $model->alias('a');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
-                $model = $model->join('member_attributes t', 'm.member_id=t.member_id')->where('t.tag_id', $wv[1], $wv[2]);
+                $model = $model->join('member_attributes t', 'a.member_id=t.member_id')->where('t.tag_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'group_ids' && is_array($wv[2])) {
-                $model = $model->join('member_attributes g', 'm.member_id=g.member_id')->where('g.group_id', $wv[1], $wv[2]);
+                $model = $model->join('member_attributes g', 'a.member_id=g.member_id')->where('g.group_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
@@ -85,9 +91,16 @@ class MemberService
         $append   = ['tag_names', 'group_names'];
         $hidden   = ['tags', 'groups'];
         $field_no = [];
-        if (strpos($field, 'avatar_id') !== false) {
+        if (strpos($field, 'avatar_id')) {
             $with[]   = $hidden[] = 'avatar';
             $append[] = 'avatar_url';
+            $field .= ',headimgurl';
+        }
+        if (strpos($field, 'is_super')) {
+            $append[] = 'is_super_name';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
         }
         $fields = explode(',', $field);
         foreach ($fields as $k => $v) {
@@ -97,24 +110,23 @@ class MemberService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->group($group)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->group($group)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }
         if ($limit > 0) {
-            $model = $model->limit($limit);
             $pages = ceil($count / $limit);
+            $model = $model->limit($limit);
         }
         $list = $model->field($field)->where($where)
             ->with($with)->append($append)->hidden($hidden)
             ->order($order)->group($group)->select()->toArray();
 
-        $genders      = SettingService::genders();
-        $platforms    = SettingService::platforms();
-        $applications = SettingService::applications();
-
-        return compact('count', 'pages', 'page', 'limit', 'list', 'genders', 'platforms', 'applications');
+        return compact('count', 'pages', 'page', 'limit', 'list');
     }
 
     /**
@@ -363,6 +375,52 @@ class MemberService
         MemberCache::del($ids);
 
         return $update;
+    }
+
+    /**
+     * 会员导出
+     *
+     * @param  array $param
+     * @return array
+     */
+    public static function export($param)
+    {
+        $export = [
+            'type'       => FileExportService::TYPE_MEMBER,
+            'file_path'  => ExportService::$file_dir . '/member-' . date('YmdHis') . '-' . uniqids() . '.xlsx',
+            'file_name'  => '会员导出-' . date('Ymd-His') . '.xlsx',
+            'param'      => ['where' => $param['where'], 'order' => $param['order']],
+            'remark'     => $param['export_remark'] ?? '',
+            'create_uid' => user_id(),
+        ];
+        $export_id = FileExportService::add($export);
+
+        return ExportService::member(['export_id' => $export_id]);
+    }
+
+    /**
+     * 会员导入
+     *
+     * @param  array $param
+     * @return array
+     */
+    public static function import($param)
+    {
+        $file_path = Filesystem::disk('public')
+            ->putFile(ImportService::$file_dir, $param['import_file'], function () {
+                return 'member-' . date('YmdHis') . '-' . uniqids();
+            });
+        $import = [
+            'type'       => FileImportService::TYPE_MEMBER,
+            'file_name'  => $param['import_file']->getOriginalName(),
+            'file_path'  => 'storage/' . $file_path,
+            'file_size'  => $param['import_file']->getSize(),
+            'remark'     => $param['import_remark'] ?? '',
+            'create_uid' => user_id(),
+        ];
+        $import_id = FileImportService::add($import);
+
+        return ImportService::member(['import_id' => $import_id]);
     }
 
     /**

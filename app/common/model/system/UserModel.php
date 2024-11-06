@@ -109,4 +109,24 @@ class UserModel extends Model
     {
         return relation_fields($this['roles'], 'role_name', true);
     }
+
+    /**
+     * 获取是否超管名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_super_name", type="string", desc="是否超管名称")
+     */
+    public function getIsSuperNameAttr($value, $data)
+    {
+        return ($data['is_super'] ?? 0) ? '是' : '否';
+    }
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 }

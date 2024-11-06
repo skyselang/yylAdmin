@@ -13,6 +13,7 @@ use app\common\cache\content\ContentCache;
 use app\common\model\content\ContentModel;
 use app\common\model\content\CategoryModel;
 use app\common\model\content\AttributesModel;
+use app\common\service\file\ExportService as FileExportService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -57,30 +58,33 @@ class ContentService
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
+     * @param bool   $total 总数
      * 
-     * @return array 
+     * @return array ['count', 'pages', 'page', 'limit', 'list']
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '')
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
     {
         $model = new ContentModel();
         $pk = $model->getPk();
-        $group = 'm.' . $pk;
+        $group = 'a.' . $pk;
 
         if (empty($field)) {
             $field = $group . ',unique,image_id,name,release_time,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time';
+        } else {
+            $field = $group . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $group => 'desc'];
         }
 
-        $model = $model->alias('m');
+        $model = $model->alias('a');
         foreach ($where as $wk => $wv) {
             if ($wv[0] == 'category_ids') {
-                $model = $model->join('content_attributes c', 'm.content_id=c.content_id')->where('c.category_id', $wv[1], $wv[2]);
+                $model = $model->join('content_attributes c', 'a.content_id=c.content_id')->where('c.category_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
             if ($wv[0] == 'tag_ids') {
-                $model = $model->join('content_attributes t', 'm.content_id=t.content_id')->where('t.tag_id', $wv[1], $wv[2]);
+                $model = $model->join('content_attributes t', 'a.content_id=t.content_id')->where('t.tag_id', $wv[1], $wv[2]);
                 unset($where[$wk]);
             }
         }
@@ -90,18 +94,30 @@ class ContentService
         $append   = ['category_names', 'tag_names'];
         $hidden   = ['categorys', 'tags'];
         $field_no = [];
-        if (strpos($field, 'image_id') !== false) {
-            $with[]   = $hidden[]   = 'image';
+        if (strpos($field, 'image_id')) {
+            $with[]   = $hidden[] = 'image';
             $append[] = 'image_url';
         }
-        if (strpos($field, 'images') !== false) {
+        if (strpos($field, 'images')) {
             $with[]   = $hidden[]   = 'files';
             $append[] = $field_no[] = 'images';
-        } elseif (strpos($field, 'image_urls') !== false) {
+        } elseif (strpos($field, 'image_urls')) {
             $with[]   = $hidden[]   = 'files';
             $append[] = $field_no[] = 'image_urls';
         }
-        if (strpos($field, 'hits') !== false) {
+        if (strpos($field, 'is_top')) {
+            $append[] = 'is_top_name';
+        }
+        if (strpos($field, 'is_hot')) {
+            $append[] = 'is_hot_name';
+        }
+        if (strpos($field, 'is_rec')) {
+            $append[] = 'is_rec_name';
+        }
+        if (strpos($field, 'is_disable')) {
+            $append[] = 'is_disable_name';
+        }
+        if (strpos($field, 'hits')) {
             $append[] = 'hits_show';
         }
         $fields = explode(',', $field);
@@ -112,8 +128,11 @@ class ContentService
         }
         $field = implode(',', $fields);
 
-        $count = $model->where($where)->group($group)->count();
-        $pages = 0;
+        $count = $pages = 0;
+        if ($total) {
+            $count_model = clone $model;
+            $count = $count_model->where($where)->group($group)->count();
+        }
         if ($page > 0) {
             $model = $model->page($page);
         }
@@ -378,6 +397,27 @@ class ContentService
     }
 
     /**
+     * 内容导出
+     *
+     * @param  array $param
+     * @return array
+     */
+    public static function export($param = [])
+    {
+        $export = [
+            'type'       => FileExportService::TYPE_CONTENT,
+            'file_path'  => ExportService::$file_dir . '/content-' . date('YmdHis') . '-' . uniqids() . '.xlsx',
+            'file_name'  => '内容导出-' . date('Ymd-His') . '.xlsx',
+            'param'      => ['where' => $param['where'], 'order' => $param['order']],
+            'remark'     => $param['export_remark'] ?? '',
+            'create_uid' => user_id(),
+        ];
+        $export_id = FileExportService::add($export);
+
+        return ExportService::content(['export_id' => $export_id]);
+    }
+
+    /**
      * 内容上/下一条
      *
      * @param int    $id    内容id
@@ -389,25 +429,21 @@ class ContentService
     public static function prevNext($id, $type = 'prev', $where = [])
     {
         if ($type == 'next') {
-            $where[] = ['m.content_id', '>', $id];
-            $order = ['m.content_id' => 'asc'];
+            $where[] = ['a.content_id', '>', $id];
+            $order = ['a.content_id' => 'asc'];
         } else {
-            $where[] = ['m.content_id', '<', $id];
-            $order = ['m.content_id' => 'desc'];
+            $where[] = ['a.content_id', '<', $id];
+            $order = ['a.content_id' => 'desc'];
         }
-
         $where[] = ['release_time', '<=', datetime()];
         $where[] = where_disable();
         $where[] = where_delete();
 
-        $field = 'm.content_id,unique,image_id,name';
+        $field = 'unique,image_id,name';
 
         $info = self::list($where, 0, 1, $order, $field)['list'];
-        if (empty($info[0] ?? [])) {
-            return [];
-        }
 
-        return $info[0];
+        return $info[0] ?? [];
     }
 
     /**

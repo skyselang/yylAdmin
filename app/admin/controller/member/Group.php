@@ -39,12 +39,11 @@ class Group extends BaseController
         $where = $this->where(where_delete());
 
         $data = GroupService::list($where, $this->page(), $this->limit(), $this->order());
-        $api  = ApiService::list('list', [where_delete()], [], 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth');
-
-        $data['api']     = list_to_tree($api, 'api_id', 'api_pid');
+        $data['exps'] = where_exps();
+        $api = ApiService::list('list', [where_delete()], [], 'api_pid,api_name,api_url,is_unlogin,is_unauth');
+        $data['api'] = list_to_tree($api, 'api_id', 'api_pid');
         $data['api_ids'] = array_column($api, 'api_id');
-        $data['exps']    = where_exps();
-        $data['where']   = $where;
+
 
         return success($data);
     }
@@ -179,7 +178,7 @@ class Group extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
      * })
      */
-    public function member()
+    public function memberList()
     {
         $param = $this->params(['group_id/d' => '']);
 

@@ -61,7 +61,7 @@ class MenuService
      * @param array  $order 排序
      * @param string $field 字段
      * 
-     * @return array 
+     * @return array []
      */
     public static function list($type = 'tree', $where = [], $order = [], $field = '')
     {
@@ -70,6 +70,8 @@ class MenuService
 
         if (empty($field)) {
             $field = $pk . ',menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,hidden,sort,is_unlogin,is_unauth,is_unrate,is_disable';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'asc'];
@@ -79,8 +81,23 @@ class MenuService
         $data = MenuCache::get($key);
         if (empty($data)) {
             $append = [];
-            if (strpos($field, 'menu_type') !== false) {
+            if (strpos($field, 'menu_type')) {
                 $append[] = 'menu_type_name';
+            }
+            if (strpos($field, 'is_unlogin')) {
+                $append[] = 'is_unlogin_name';
+            }
+            if (strpos($field, 'is_unauth')) {
+                $append[] = 'is_unauth_name';
+            }
+            if (strpos($field, 'is_unrate')) {
+                $append[] = 'is_unrate_name';
+            }
+            if (strpos($field, 'is_disable')) {
+                $append[] = 'is_disable_name';
+            }
+            if (strpos($field, 'hidden')) {
+                $append[] = 'hidden_name';
             }
             $data = $model->field($field)->append($append)->where($where)->order($order)->select()->toArray();
             if ($type == 'tree') {

@@ -36,4 +36,24 @@ class GroupModel extends Model
     {
         return relation_fields($this['apis'], 'api_id');
     }
+
+    /**
+     * 获取是否默认名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_default_name", type="string", desc="是否默认名称")
+     */
+    public function getIsDefaultNameAttr($value, $data)
+    {
+        return ($data['is_default'] ?? 0) ? '是' : '否';
+    }
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 }

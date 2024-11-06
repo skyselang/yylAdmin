@@ -41,7 +41,7 @@ class PostService
      * @param array  $order 排序
      * @param string $field 字段
      * 
-     * @return array 
+     * @return array []
      */
     public static function list($type = 'tree', $where = [], $order = [], $field = '')
     {
@@ -50,6 +50,8 @@ class PostService
 
         if (empty($field)) {
             $field = $pk . ',post_pid,post_name,post_abbr,post_desc,sort,is_disable,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'asc'];

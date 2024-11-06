@@ -46,7 +46,7 @@ class CategoryService
      * @param array  $order 排序
      * @param string $field 字段
      * 
-     * @return array
+     * @return array []
      */
     public static function list($type = 'tree', $where = [], $order = [], $field = '')
     {
@@ -55,6 +55,8 @@ class CategoryService
 
         if (empty($field)) {
             $field = $pk . ',category_pid,category_name,category_unique,image_id,sort,is_disable,create_time,update_time';
+        } else {
+            $field = $pk . ',' . $field;
         }
         if (empty($order)) {
             $order = ['sort' => 'desc', $pk => 'asc'];
@@ -64,16 +66,19 @@ class CategoryService
         $data = CategoryCache::get($key);
         if (empty($data)) {
             $with = $append = $hidden = $field_no = [];
-            if (strpos($field, 'image_id') !== false) {
+            if (strpos($field, 'image_id')) {
                 $with[]   = $hidden[] = 'image';
                 $append[] = 'image_url';
             }
-            if (strpos($field, 'images') !== false) {
+            if (strpos($field, 'images')) {
                 $with[]   = $hidden[]   = 'files';
                 $append[] = $field_no[] = 'images';
-            } elseif (strpos($field, 'image_urls') !== false) {
+            } elseif (strpos($field, 'image_urls')) {
                 $with[]   = $hidden[]   = 'files';
                 $append[] = $field_no[] = 'image_urls';
+            }
+            if (strpos($field, 'is_disable')) {
+                $append[] = 'is_disable_name';
             }
             $fields = explode(',', $field);
             foreach ($fields as $k => $v) {

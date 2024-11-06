@@ -42,7 +42,7 @@ class Content extends BaseController
     {
         $where = where_disdel();
         $order = $this->order(['sort' => 'desc', 'category_id' => 'desc']);
-        $field = 'category_id,category_pid,category_name,category_unique,image_id';
+        $field = 'category_pid,category_name,category_unique,image_id';
 
         $data['list'] = CategoryService::list('tree', $where, $order, $field);
 
@@ -79,8 +79,10 @@ class Content extends BaseController
         $where[] = where_delete();
 
         $order = ['sort' => 'desc', 'tag_id' => 'desc'];
-        $field = 'tag_id,tag_name,tag_unique,image_id';
-        $data  = TagService::list($where, $this->page(0), $this->limit(0), $this->order($order), $field);
+
+        $field = 'tag_name,tag_unique,image_id';
+
+        $data = TagService::list($where, $this->page(0), $this->limit(0), $this->order($order), $field);
 
         return success($data);
     }
@@ -173,14 +175,14 @@ class Content extends BaseController
         $where_rec[] = ['is_rec', '=', 1];
 
         $order = ['sort' => 'desc', 'content_id' => 'desc'];
-        $field = 'm.content_id,unique,image_id,name,description,sort,hits,is_top,is_hot,is_rec,source,author,release_time';
+        $field = 'unique,image_id,name,description,sort,hits,is_top,is_hot,is_rec,source,author,release_time';
         $data  = ContentService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
-        $data['tops']     = ContentService::list($where_top, 0, 7, [], $field)['list'] ?? [];
-        $data['hots']     = ContentService::list($where_hot, 0, 7, [], $field)['list'] ?? [];
-        $data['recs']     = ContentService::list($where_rec, 0, 7, [], $field)['list'] ?? [];
-        $data['category'] = CategoryService::list('tree', where_disdel(), [], 'category_id,category_pid,category_name,category_unique,image_id');
-        $data['tag']      = TagService::list(where_disdel(), 0, 0, [], 'tag_id,tag_unique,tag_name,image_id')['list'] ?? [];
+        $data['tops']     = ContentService::list($where_top, 0, 7, [], $field, false)['list'] ?? [];
+        $data['hots']     = ContentService::list($where_hot, 0, 7, [], $field, false)['list'] ?? [];
+        $data['recs']     = ContentService::list($where_rec, 0, 7, [], $field, false)['list'] ?? [];
+        $data['category'] = CategoryService::list('tree', where_disdel(), [], 'category_pid,category_name,category_unique,image_id');
+        $data['tag']      = TagService::list(where_disdel(), 0, 0, [], 'tag_unique,tag_name,image_id', false)['list'] ?? [];
 
         return success($data);
     }
@@ -231,15 +233,13 @@ class Content extends BaseController
         }
 
         if ($content_ids) {
-            $where[] = ['m.content_id', 'not in', $content_ids];
+            $where[] = ['a.content_id', 'not in', $content_ids];
         }
         $where[] = ['release_time', '<=', datetime()];
         $where[] = where_disable();
         $where[] = where_delete();
 
-        $order = ['sort' => 'desc', 'content_id' => 'desc'];
-        $field = 'm.content_id,unique,image_id,name,create_time';
-        $list  = ContentService::list($where, 0, 10, $order, $field)['list'] ?? [];
+        $list = ContentService::list($where, 0, 10, [], 'unique,image_id,name,create_time', false)['list'] ?? [];
 
         $data['prev_info'] = $prev_info;
         $data['next_info'] = $next_info;

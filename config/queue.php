@@ -7,8 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 // +----------------------------------------------------------------------
-// | 监听任务并执行：php think queue:listen
-// | 查看可选参数：php think queue:listen --help
+// | 执行命令：
+// | 本地开发：php think queue:listen --tries=3 --timeout=1800 --memory=1024
+// | 正式环境：php think queue:work --tries=3 --timeout=1800 --memory=1024
+// | 查看参数：php think queue:listen --help
+// | 部分参数说明：
+// | --tries   重试次数，必须设置，不然任务会反复执行
+// | --timeout 超时时间，耗时间长的任务设置大一些
+// | --memory  内存限制，耗内存大的任务设置大一些
 // +----------------------------------------------------------------------
 
 // 队列设置：https://github.com/top-think/think-queue
@@ -26,7 +32,7 @@ return [
         'database' => [
             'type'       => 'database',
             'queue'      => 'default',
-            'table'      => 'jobs',
+            'table'      => 'queue',
             'connection' => null,
         ],
         // Redis驱动
@@ -38,12 +44,12 @@ return [
             'password'   => Env::get('cache.password', ''),
             'select'     => 1,
             'timeout'    => 0,
-            'persistent' => false,
+            'persistent' => Env::get('cache.persistent', false),
             'expire'     => 0,
         ],
     ],
     'failed'      => [
         'type'  => 'none',
-        'table' => 'jobs_failed',
+        'table' => 'queue_failed',
     ],
 ];

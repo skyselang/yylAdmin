@@ -10,6 +10,7 @@
 // 公共函数文件
 use think\facade\Config;
 use think\facade\Request;
+use think\exception\HttpException;
 use app\common\service\utils\RetCodeUtils;
 use app\common\service\system\SettingService as SystemSetting;
 use app\common\service\system\UserTokenService;
@@ -83,7 +84,7 @@ function error_e($data = [], $msg = RetCodeUtils::ERROR_MSG, $code = RetCodeUtil
  */
 function exception($msg = RetCodeUtils::ERROR_MSG, $code = RetCodeUtils::ERROR)
 {
-    throw new \think\Exception($msg, $code);
+    throw new HttpException(200, $msg, null, [], $code);
 }
 
 /**

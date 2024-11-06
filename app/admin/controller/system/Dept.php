@@ -33,11 +33,10 @@ class Dept extends BaseController
     {
         $where = $this->where(where_delete());
 
-        $data['list']  = DeptService::list('tree', $where, []);
-        $data['tree']  = DeptService::list('tree', [where_delete()], [], 'dept_id,dept_pid,dept_name');
+        $data['list']  = DeptService::list('tree', $where);
         $data['exps']  = where_exps();
-        $data['where'] = $where;
-
+        $data['tree']  = DeptService::list('tree', [where_delete()], [], 'dept_pid,dept_name');
+        $data['count'] = count(DeptService::list('list', $where));
         if (count($where) > 1) {
             $list = tree_to_list($data['list']);
             $all  = tree_to_list($data['tree']);
@@ -51,9 +50,6 @@ class Dept extends BaseController
             }
             $data['list'] = DeptService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
-
-        $dept = DeptService::list('list', $where, [], 'dept_id');
-        $data['count'] = count($dept);
 
         return success($data);
     }
@@ -171,7 +167,7 @@ class Dept extends BaseController
      *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
      * })
      */
-    public function user()
+    public function userList()
     {
         $param = $this->params(['dept_id/d' => '']);
 
