@@ -144,7 +144,9 @@ class ImportService
             $field = $pk . ',' . $field;
         }
 
-        $where = array_values($where);
+        if (user_hide_where()) {
+            $where[] = user_hide_where('create_uid');
+        }
 
         if (empty($order)) {
             $order = [$pk => 'desc'];

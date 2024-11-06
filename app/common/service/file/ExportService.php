@@ -148,6 +148,10 @@ class ExportService
             $order = [$pk => 'desc'];
         }
 
+        if (user_hide_where()) {
+            $where[] = user_hide_where('create_uid');
+        }
+
         $with = $append = $hidden = $field_no = [];
         if (strpos($field, 'type')) {
             $append[] = 'type_name';

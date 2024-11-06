@@ -15,9 +15,9 @@ TRUNCATE ya_content_setting;
 TRUNCATE ya_content_tag;
 
 TRUNCATE ya_file;
-TRUNCATE ya_file_export
+TRUNCATE ya_file_export;
 TRUNCATE ya_file_group;
-TRUNCATE ya_file_import
+TRUNCATE ya_file_import;
 TRUNCATE ya_file_setting;
 TRUNCATE ya_file_tag;
 TRUNCATE ya_file_tags;
