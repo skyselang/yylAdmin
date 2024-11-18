@@ -183,6 +183,13 @@ abstract class BaseController
         $sort_field = $this->request->param('sort_field/s', '');
         $sort_value = $this->request->param('sort_value/s', '');
         if ($sort_field && $sort_value) {
+            // is_disable_name ... => is_disable ...
+            if (strpos($sort_field, 'is_') === 0) {
+                $length = strlen($sort_field);
+                if (substr($sort_field, $length - 5) === '_name') {
+                    $sort_field = substr($sort_field, 0, $length - 5);
+                }
+            }
             $order = [$sort_field => $sort_value];
         }
         return $order;
