@@ -39,7 +39,7 @@ class Setting extends BaseController
      *   @Apidoc\Returned(ref="app\common\service\file\SettingService\info", field="accept_ext")
      * })
      * @Apidoc\Returned("setting", type="object", desc="设置管理", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\SettingModel"),
+     *   @Apidoc\Returned(ref="app\common\model\setting\SettingModel", withoutField="email_host,email_secure,email_port,email_username,email_password,email_setfrom"),
      *   @Apidoc\Returned(ref="app\common\service\setting\SettingService\info")
      * })
      * @Apidoc\Returned("link", type="array", desc="友链列表", children={
@@ -59,7 +59,7 @@ class Setting extends BaseController
         // 文件设置
         $data['file']    = FileSetting::info('is_upload_api,storage,image_ext,image_size,video_ext,video_size,audio_ext,audio_size,word_ext,word_size,other_ext,other_size,accept_ext,is_api_file,api_file_types,api_file_group_ids,api_file_tag_ids');
         // 设置管理
-        $data['setting'] = SettingService::info();
+        $data['setting'] = SettingService::info('', 'email_host,email_secure,email_port,email_username,email_password,email_setfrom');
         // 友链列表
         $link_field = 'image_id,name,name_color,url,desc';
         $link_where = [where_disable(), where_delete(), ['start_time', '<=', datetime()], ['end_time', '>=', datetime()]];

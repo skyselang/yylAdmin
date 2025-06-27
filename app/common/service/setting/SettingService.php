@@ -117,6 +117,7 @@ class SettingService
      * 设置管理信息
      * 
      * @param string $fields 返回字段，逗号隔开，默认所有
+     * @param string $withoutField 不返回字段，逗号隔开，默认无
      * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
      * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
      * @Apidoc\Returned("offi_url", type="string", desc="公众号二维码链接")
@@ -124,7 +125,7 @@ class SettingService
      * @Apidoc\Returned("feedback_type", type="array", desc="反馈类型")
      * @return array
      */
-    public static function info($fields = '')
+    public static function info($fields = '', $withoutField = '')
     {
         $id   = self::$id;
         $type = Request::isCli() ? 'cli' : 'cgi';
@@ -166,6 +167,13 @@ class SettingService
                 }
             }
             return $data;
+        }
+        if ($withoutField) {
+            $withoutField = explode(',', $withoutField);
+            foreach ($withoutField as $field) {
+                $field = trim($field);
+                unset($info[$field]);
+            }
         }
 
         return $info;
