@@ -14,5 +14,4 @@
 .env
 .htaccess
 nginx.htaccess
-composer.lock
 .history
