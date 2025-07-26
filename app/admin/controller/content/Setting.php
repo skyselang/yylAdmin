@@ -9,67 +9,87 @@
 
 namespace app\admin\controller\content;
 
-use app\common\controller\BaseController;
-use app\common\validate\content\SettingValidate;
-use app\common\service\content\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\content\SettingValidate as Validate;
+use app\common\service\content\SettingService as Service;
 
 /**
- * @Apidoc\Title("内容设置")
- * @Apidoc\Group("content")
- * @Apidoc\Sort("500")
+ * @Apidoc\Title("lang(内容设置)")
+ * @Apidoc\Group("setting")
+ * @Apidoc\Sort("200")
  */
 class Setting extends BaseController
 {
     /**
-     * @Apidoc\Title("内容设置信息")
-     * @Apidoc\Returned(ref="app\common\model\content\SettingModel")
-     * @Apidoc\Returned(ref="app\common\service\content\SettingService\info")
+     * 验证器
      */
-    public function info()
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * @Apidoc\Title("lang(基本设置信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="content_default_img_open,content_default_img_id,category_default_img_open,category_default_img_id,tag_default_img_open,tag_default_img_id,content_default_img_url,category_default_img_url,tag_default_img_url")
+     */
+    public function basicInfo()
     {
-        $data = SettingService::info();
+        $data = $this->service::info('content_default_img_open,content_default_img_id,category_default_img_open,category_default_img_id,tag_default_img_open,tag_default_img_id,content_default_img_url,category_default_img_url,tag_default_img_url');
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容设置修改")
+     * @Apidoc\Title("lang(基本设置修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="content_default_img_open,content_default_img_id,category_default_img_open,category_default_img_id,tag_default_img_open,tag_default_img_id")
      */
-    public function edit()
+    public function basicEdit()
     {
         $param = $this->params([
-            'favicon_id/d'                => 0,
-            'logo_id/d'                   => 0,
-            'name/s'                      => '',
-            'title/s'                     => '',
-            'keywords/s'                  => '',
-            'description/s'               => '',
-            'icp/s'                       => '',
-            'copyright/s'                 => '',
-            'offi_id/d'                   => 0,
-            'mini_id/d'                   => 0,
-            'address/s'                   => '',
-            'tel/s'                       => '',
-            'fax/s'                       => '',
-            'mobile/s'                    => '',
-            'email/s'                     => '',
-            'wechat/s'                    => '',
-            'qq/s'                        => '',
-            'is_api_content/d'            => 0,
-            'content_default_img_id/d'    => 0,
             'content_default_img_open/d'  => 0,
-            'category_default_img_id/d'   => 0,
+            'content_default_img_id/d'    => 0,
             'category_default_img_open/d' => 0,
-            'tag_default_img_id/d'        => 0,
+            'category_default_img_id/d'   => 0,
             'tag_default_img_open/d'      => 0,
+            'tag_default_img_id/d'        => 0,
         ]);
 
-        validate(SettingValidate::class)->scene('edit')->check($param);
+        validate($this->validate)->scene('edit')->check($param);
 
-        $data = SettingService::edit($param);
+        $data = $this->service::edit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(前台设置信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="is_api_content")
+     */
+    public function apiInfo()
+    {
+        $data = $this->service::info('is_api_content');
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(前台设置修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="is_api_content")
+     */
+    public function apiEdit()
+    {
+        $param = $this->params([
+            'is_api_content/d' => 0,
+        ]);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param);
 
         return success($data);
     }

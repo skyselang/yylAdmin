@@ -10,7 +10,8 @@
 namespace app\common\validate\file;
 
 use think\Validate;
-use app\common\model\file\TagModel;
+use app\common\service\file\TagService as Service;
+use app\common\model\file\TagModel as Model;
 use app\common\model\file\TagsModel;
 
 /**
@@ -18,28 +19,47 @@ use app\common\model\file\TagsModel;
  */
 class TagValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
-        'ids'      => ['require', 'array'],
-        'tag_id'   => ['require'],
-        'tag_name' => ['require', 'checkExisted'],
-        'file_ids' => ['array'],
+        'ids'         => ['require', 'array'],
+        'field'       => ['require', 'checkUpdateField'],
+        'tag_id'      => ['require'],
+        'tag_name'    => ['require', 'checkExisted'],
+        'import_file' => ['require', 'file', 'fileExt' => 'xlsx'],
+        'file_ids'    => ['array'],
     ];
 
     // 错误信息
     protected $message = [
-        'tag_name.require' => '请输入名称',
+        'tag_name.require'    => '请输入名称',
+        'import_file.require' => '请选择导入文件',
+        'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
     // 验证场景
     protected $scene = [
-        'info'        => ['tag_id'],
-        'add'         => ['tag_name'],
-        'edit'        => ['tag_id', 'tag_name'],
-        'dele'        => ['ids'],
-        'disable'     => ['ids'],
-        'file'        => ['tag_id'],
-        'fileRemove'  => ['tag_id', 'file_ids'],
+        'info'     => ['tag_id'],
+        'add'      => ['tag_name'],
+        'edit'     => ['tag_id', 'tag_name'],
+        'dele'     => ['ids'],
+        'disable'  => ['ids'],
+        'update'   => ['ids', 'field'],
+        'import'   => ['import_file'],
+        'fileList' => ['tag_id'],
+        'fileLift' => ['tag_id', 'file_ids'],
     ];
 
     // 验证场景定义：标签删除
@@ -52,38 +72,52 @@ class TagValidate extends Validate
     // 自定义验证规则：标签是否已存在
     protected function checkExisted($value, $rule, $data = [])
     {
-        $model = new TagModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $tag_unique = $data['tag_unique'] ?? '';
-        if ($tag_unique) {
-            if (is_numeric($tag_unique)) {
-                return '标识不能为纯数字';
+        $unique = $data['tag_unique'] ?? '';
+        if ($unique) {
+            if (is_numeric($unique)) {
+                return lang('编号不能为纯数字');
             }
-            $where = [[$pk, '<>', $id], ['tag_unique', '=', $tag_unique], where_delete()];
+            $where = where_delete([[$pk, '<>', $id], ['tag_unique', '=', $unique]]);
             $info = $model->field($pk)->where($where)->find();
             if ($info) {
-                return '标识已存在：' . $tag_unique;
+                return lang('编号已存在：') .  $unique;
             }
         }
 
-        $where = [[$pk, '<>', $id], ['tag_name', '=', $data['tag_name']], where_delete()];
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['tag_name', '=', $data['tag_name']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '名称已存在：' . $data['tag_name'];
+            return lang('名称已存在：') . $data['tag_name'];
         }
 
         return true;
     }
 
-    // 自定义验证规则：标签下是否存在文件
+    // 自定义验证规则：标签批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：标签是否存在文件
     protected function checkFile($value, $rule, $data = [])
     {
-        // $info = TagsModel::where('tag_id', 'in', $data['ids'])->find();
-        // if ($info) {
-        //     return '标签下存在文件，请在[文件]中解除后再删除：' . $info['tag_id'];
-        // }
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $info  = TagsModel::where($pk, 'in', $data['ids'])->find();
+        if ($info) {
+            // return '标签存在文件，请在[文件]中解除后再删除：' . $info[$pk];
+        }
 
         return true;
     }

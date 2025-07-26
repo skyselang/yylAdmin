@@ -16,37 +16,32 @@ class WxMobile
 {
     /**
      * 请求类
-     *
      * @var Http
      */
     protected $http = null;
 
     /**
      * 平台
-     *
      * @var string
      */
     protected $platform = 'wx';
 
     /**
      * AppID 移动应用ID APP ID
-     *
      * @var string
      */
     protected $appid;
 
     /**
      * AppSecret 移动应用密钥 AppSecret
-     *
      * @var string
      */
     protected $appsecret;
 
     /**
      * 构造函数
-     *
-     * @param  string $appid     
-     * @param  string $appsecret 
+     * @param string $appid     
+     * @param string $appsecret 
      */
     public function __construct($appid, $appsecret)
     {
@@ -57,9 +52,7 @@ class WxMobile
 
     /**
      * 登录
-     *
-     * @param  string $code
-     *
+     * @param string $code
      * @return array
      */
     public function login($code)
@@ -71,9 +64,7 @@ class WxMobile
 
     /**
      * 获取 AccessToken
-     *
-     * @param  string $code
-     *
+     * @param string $code
      * @return array 
      */
     public function getAccessToken($code)
@@ -85,15 +76,14 @@ class WxMobile
             'grant_type' => 'authorization_code',
         ]);
         $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?' . $param;
+        
         return $this->http->get($url);
     }
 
     /**
      * 获取用户信息
-     *
-     * @param  string $access_token
-     * @param  string $openid
-     *
+     * @param string $access_token
+     * @param string $openid
      * @return array
      */
     public function getUserInfo($access_token, $openid)
@@ -104,6 +94,7 @@ class WxMobile
             'lang'         => 'zh_CN',
         ]);
         $url = 'https://api.weixin.qq.com/sns/userinfo?' . $param;
+
         return $this->http->get($url);
     }
 }

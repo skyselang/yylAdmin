@@ -21,7 +21,6 @@ class ContentSettingMiddleware
 {
     /**
      * 处理请求
-     *
      * @param Request $request
      * @param Closure $next
      * @return Response
@@ -30,7 +29,7 @@ class ContentSettingMiddleware
     {
         $setting = SettingService::info('is_api_content');
         if (!$setting['is_api_content']) {
-            return error('内容功能未开启');
+            return error(lang('内容功能未开启'));
         }
 
         return $next($request);

@@ -10,8 +10,9 @@
 namespace app\common\model\system;
 
 use think\Model;
-use app\common\model\file\FileModel;
 use hg\apidoc\annotation as Apidoc;
+use app\common\model\file\FileModel;
+use app\common\service\system\SettingService;
 
 /**
  * 用户管理模型
@@ -22,6 +23,16 @@ class UserModel extends Model
     protected $name = 'system_user';
     // 表主键
     protected $pk = 'user_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     // 关联头像文件
     public function avatar()
@@ -38,6 +49,29 @@ class UserModel extends Model
         return $this['avatar']['file_url'] ?? '';
     }
 
+    /**
+     * 获取性别名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("gender_name", type="string", desc="性别名称")
+     */
+    public function getGenderNameAttr($value, $data)
+    {
+        return SettingService::genders($data['gender']);
+    }
+
+    /**
+     * 获取年龄
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("age", type="int", desc="年龄")
+     */
+    public function getAgeAttr($value, $data)
+    {
+        if ($data['birthday'] ?? '') {
+            return date('Y') - date('Y', strtotime($data['birthday']));
+        }
+        return '';
+    }
+
     // 关联部门
     public function depts()
     {
@@ -50,7 +84,7 @@ class UserModel extends Model
      */
     public function getDeptIdsAttr()
     {
-        return relation_fields($this['depts'], 'dept_id');
+        return model_relation_fields($this['depts'], 'dept_id');
     }
     /**
      * 获取部门名称
@@ -59,7 +93,7 @@ class UserModel extends Model
      */
     public function getDeptNamesAttr()
     {
-        return relation_fields($this['depts'], 'dept_name', true);
+        return model_relation_fields($this['depts'], 'dept_name', true);
     }
 
     // 关联职位
@@ -74,7 +108,7 @@ class UserModel extends Model
      */
     public function getPostIdsAttr()
     {
-        return relation_fields($this['posts'], 'post_id');
+        return model_relation_fields($this['posts'], 'post_id');
     }
     /**
      * 获取职位名称
@@ -83,7 +117,7 @@ class UserModel extends Model
      */
     public function getPostNamesAttr()
     {
-        return relation_fields($this['posts'], 'post_name', true);
+        return model_relation_fields($this['posts'], 'post_name', true);
     }
 
     // 关联角色
@@ -98,7 +132,7 @@ class UserModel extends Model
      */
     public function getRoleIdsAttr()
     {
-        return relation_fields($this['roles'], 'role_id');
+        return model_relation_fields($this['roles'], 'role_id');
     }
     /**
      * 获取角色名称
@@ -107,7 +141,7 @@ class UserModel extends Model
      */
     public function getRoleNamesAttr()
     {
-        return relation_fields($this['roles'], 'role_name', true);
+        return model_relation_fields($this['roles'], 'role_name', true);
     }
 
     /**
@@ -118,15 +152,5 @@ class UserModel extends Model
     public function getIsSuperNameAttr($value, $data)
     {
         return ($data['is_super'] ?? 0) ? '是' : '否';
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

@@ -22,6 +22,16 @@ class RoleModel extends Model
     // 表主键
     protected $pk = 'role_id';
 
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
+
     // 关联菜单
     public function menus()
     {
@@ -34,16 +44,6 @@ class RoleModel extends Model
      */
     public function getMenuIdsAttr()
     {
-        return relation_fields($this['menus'], 'menu_id');
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return model_relation_fields($this['menus'], 'menu_id');
     }
 }

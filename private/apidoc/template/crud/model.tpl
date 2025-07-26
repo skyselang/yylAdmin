@@ -18,4 +18,14 @@ class {$tables[0].model_name} extends Model
     protected $name = '{$tables[0].table_name}';
     // 表主键
     protected $pk = '{$custom.field_pk}';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
+    }
 }

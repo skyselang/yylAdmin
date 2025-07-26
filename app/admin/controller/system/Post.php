@@ -9,192 +9,266 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\BaseController;
-use app\common\validate\system\PostValidate;
-use app\common\service\system\PostService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\system\PostValidate as Validate;
+use app\common\service\system\PostService as Service;
+use app\common\model\system\PostModel as Model;
+use app\common\service\system\UserService;
 
 /**
- * @Apidoc\Title("职位管理")
+ * @Apidoc\Title("lang(职位管理)")
  * @Apidoc\Group("system")
- * @Apidoc\Sort("400")
+ * @Apidoc\Sort("300")
  */
 class Post extends BaseController
 {
     /**
-     * @Apidoc\Title("职位列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\PostModel", type="tree", desc="职位树形", field="post_id,post_pid,post_name,post_abbr,post_desc,sort,is_disable,create_time,update_time")
-     * @Apidoc\Returned("tree", ref="app\common\model\system\PostModel", type="tree", desc="职位树形", field="post_id,post_pid,post_name")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(职位列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
-        $where = $this->where(where_delete());
+        $where  = $this->where(where_delete());
+        $order  = $this->order();
+        $islist = $this->param('islist');
+        $param  = ['islist' => $islist, 'search_mode' => $this->param('search_mode')];
 
-        $data['list']  = PostService::list('tree', $where);
-        $data['exps']  = where_exps();
-        $data['tree']  = PostService::list('tree', [where_delete()], [], 'post_pid,post_name');
-        $data['count'] = count(PostService::list('list', $where));
-        if (count($where) > 1) {
-            $list = tree_to_list($data['list']);
-            $all  = tree_to_list($data['tree']);
-            $pk   = 'post_id';
-            $pid  = 'post_pid';
-            $ids  = [];
-            foreach ($list as $val) {
-                $pids = children_parent_ids($all, $val[$pk], $pk, $pid);
-                $cids = parent_children_ids($all, $val[$pk], $pk, $pid);
-                $ids  = array_merge($ids, $pids, $cids);
+        $basedata = $this->service::basedata(true);
+        if ($islist) {
+            $data['list']  = $this->service::list('list', $where, $order, '', 0, 0, $param);
+            $data['count'] = count($data['list']);
+        } else {
+            $data['list']  = $this->service::list('tree', $where, $order);
+            $data['count'] = count($this->service::list('list', $where, $order));
+            if (count($where) > 1) {
+                $list = tree_to_list($data['list']);
+                $all  = tree_to_list($basedata['trees']);
+                $pk   = $this->model()->getPk();
+                $pid  = $this->model()->pidk;
+                $ids  = [];
+                foreach ($list as $val) {
+                    $pids = children_parent_key($all, $val[$pk], $pk, $pid);
+                    $cids = parent_children_key($all, $val[$pk], $pk, $pid);
+                    $ids  = array_merge($ids, $pids, $cids);
+                }
+                $data['list'] = $this->service::list('tree', [[$pk, 'in', $ids], where_delete()], $order);
             }
-            $data['list'] = PostService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
+        $data['basedata'] = $basedata;
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("职位信息")
-     * @Apidoc\Query(ref="app\common\model\system\PostModel", field="post_id")
-     * @Apidoc\Returned(ref="app\common\model\system\PostModel")
+     * @Apidoc\Title("lang(职位信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['post_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(PostValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = PostService::info($param['post_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("职位添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_pid,post_name,post_abbr,post_desc,remark,sort")
+     * @Apidoc\Title("lang(职位添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(PostService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(PostValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = PostService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("职位修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_id,post_pid,post_name,post_abbr,post_desc,remark,sort")
+     * @Apidoc\Title("lang(职位修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(PostService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(PostValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = PostService::edit($param['post_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("职位删除")
+     * @Apidoc\Title("lang(职位删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(PostValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = PostService::dele($param['ids']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("职位修改上级")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="post_pid")
-     */
-    public function editpid()
-    {
-        $param = $this->params(['ids/a' => [], 'post_pid/d' => 0]);
-
-        validate(PostValidate::class)->scene('editpid')->check($param);
-
-        $data = PostService::edit($param['ids'], $param);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("职位是否禁用")
+     * @Apidoc\Title("lang(职位是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\PostModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(PostValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = PostService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("职位用户列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\system\PostModel", field="post_id")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="用户列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", field="dept_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", field="post_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
-     * })
+     * @Apidoc\Title("lang(职位批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(职位导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(职位用户列表)")
+     * @Apidoc\Query(ref={Service::class,"userList"})
+     * @Apidoc\Returned(ref={UserService::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"userList"})
      */
     public function userList()
     {
-        $param = $this->params(['post_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(PostValidate::class)->scene('user')->check($param);
+        validate($this->validate)->scene('userList')->check($param);
 
-        $where = $this->where(where_delete(['post_ids', 'in', [$param['post_id']]]));
+        $where = $this->where(where_delete([$pk, '=', $param[$pk]]));
 
-        $data = PostService::user($where, $this->page(), $this->limit(), $this->order());
+        $data = $this->service::userList($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = UserService::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("职位用户解除")
+     * @Apidoc\Title("lang(职位用户解除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("post_id", type="array", require=true, desc="职位id")
-     * @Apidoc\Param("user_ids", type="array", require=false, desc="用户id，为空则解除所有用户")
+     * @Apidoc\Param(ref={Service::class,"userLift"})
      */
-    public function userRemove()
+    public function userLift()
     {
-        $param = $this->params(['post_id/a' => [], 'user_ids/a' => []]);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => [], 'user_ids/a' => []]);
 
-        validate(PostValidate::class)->scene('userRemove')->check($param);
+        validate($this->validate)->scene('userLift')->check($param);
 
-        $data = PostService::userRemove($param['post_id'], $param['user_ids']);
+        $data = $this->service::userLift($param[$pk], $param['user_ids']);
 
         return success($data);
     }

@@ -9,12 +9,14 @@
 
 // 应用中间件定义文件
 return [
-    // 日志记录中间件
+    // 多语言加载
+    \think\middleware\LoadLangPack::class,
+    // 用户日志中间件
     \app\admin\middleware\UserLogMiddleware::class,
-    // 接口Token中间件
-    \app\admin\middleware\ApiTokenMiddleware::class,
-    // 接口校验中间件
-    \app\admin\middleware\ApiVerifyMiddleware::class,
+    // 用户Token中间件
+    \app\admin\middleware\UserTokenMiddleware::class,
+    // 用户菜单中间件
+    \app\admin\middleware\UserMenuMiddleware::class,
     // 接口速率中间件
     \think\middleware\Throttle::class,
 ];

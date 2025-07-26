@@ -16,7 +16,6 @@ use app\common\service\member\SettingService;
 /**
  * 接口url获取
  * 应用/控制器/操作 
- *
  * @return string eg：api/Index/index
  */
 function api_url()
@@ -26,9 +25,7 @@ function api_url()
 
 /**
  * 接口是否存在
- *
  * @param string $api_url 接口url
- *
  * @return bool
  */
 function api_is_exist($api_url = '')
@@ -47,9 +44,7 @@ function api_is_exist($api_url = '')
 
 /**
  * 接口是否已禁用
- *
  * @param string $api_url 接口url
- *
  * @return bool
  */
 function api_is_disable($api_url = '')
@@ -68,9 +63,7 @@ function api_is_disable($api_url = '')
 
 /**
  * 接口是否免登
- *
  * @param string $api_url 接口url
- *
  * @return bool
  */
 function api_is_unlogin($api_url = '')
@@ -89,9 +82,7 @@ function api_is_unlogin($api_url = '')
 
 /**
  * 接口是否免权
- *
  * @param string $api_url 接口url
- *
  * @return bool
  */
 function api_is_unauth($api_url = '')
@@ -110,9 +101,7 @@ function api_is_unauth($api_url = '')
 
 /**
  * 接口是否免限
- *
  * @param string $api_url 接口url
- *
  * @return bool
  */
 function api_is_unrate($api_url = '')
@@ -131,7 +120,6 @@ function api_is_unrate($api_url = '')
 
 /**
  * 会员平台
- *
  * @return int 请求参数或头部携带的平台代码
  */
 function member_platform()
@@ -158,7 +146,6 @@ function member_platform()
 
 /**
  * 会员应用
- *
  * @return int 请求参数或头部携带的应用代码
  */
 function member_application()

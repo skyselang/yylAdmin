@@ -13,5 +13,7 @@ return [
     'commands' => [
         // 定时任务
         'timer' => 'app\command\Timer',
+        // 语言工具
+        'lang' => 'app\command\Lang',
     ],
 ];

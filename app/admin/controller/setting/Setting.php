@@ -9,36 +9,45 @@
 
 namespace app\admin\controller\setting;
 
-use app\common\controller\BaseController;
-use app\common\validate\setting\SettingValidate;
-use app\common\service\setting\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\setting\SettingValidate as Validate;
+use app\common\service\setting\SettingService as Service;
 
 /**
- * @Apidoc\Title("设置管理")
+ * @Apidoc\Title("lang(设置管理)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("700")
+ * @Apidoc\Sort("100")
  */
 class Setting extends BaseController
 {
     /**
-     * @Apidoc\Title("设置管理信息")
-     * @Apidoc\Returned(ref="app\common\model\setting\SettingModel")
-     * @Apidoc\Returned(ref="app\common\service\setting\SettingService\info")
+     * 验证器
      */
-    public function info()
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * @Apidoc\Title("lang(基本设置信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="favicon_id,logo_id,name,title,keywords,description,icp,copyright,favicon_url,logo_url")
+     */
+    public function basicInfo()
     {
-        $data = SettingService::info();
+        $data = $this->service::info('favicon_id,logo_id,name,title,keywords,description,icp,copyright,favicon_url,logo_url');
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("设置管理修改")
+     * @Apidoc\Title("lang(基本设置修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="favicon_id,logo_id,name,title,keywords,description,icp,copyright")
      */
-    public function edit()
+    public function basicEdit()
     {
         $param = $this->params([
             'favicon_id/d'  => 0,
@@ -49,74 +58,51 @@ class Setting extends BaseController
             'description/s' => '',
             'icp/s'         => '',
             'copyright/s'   => '',
-            'offi_id/d'     => 0,
-            'mini_id/d'     => 0,
-            'address/s'     => '',
-            'tel/s'         => '',
-            'fax/s'         => '',
-            'mobile/s'      => '',
-            'email/s'       => '',
-            'qq/s'          => '',
-            'wechat/s'      => '',
         ]);
 
-        validate(SettingValidate::class)->scene('edit')->check($param);
+        validate($this->validate)->scene('edit')->check($param);
 
-        $data = SettingService::edit($param);
+        $data = $this->service::edit($param);
 
         return success($data);
     }
 
-
     /**
-     * @Apidoc\Title("邮件设置信息")
-     * @Apidoc\Returned(ref="app\common\model\setting\SettingModel", field="email_host,email_port,email_secure,email_username,email_password,email_setfrom")
+     * @Apidoc\Title("lang(联系设置信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="offi_id,mini_id,video_id,douyin_id,address,tel,fax,mobile,email,qq,wechat,offi_url,mini_url,video_url,douyin_url")
      */
-    public function emailInfo()
+    public function contactInfo()
     {
-        $data = SettingService::info('email_host,email_port,email_secure,email_username,email_password,email_setfrom');
+        $data = $this->service::info('offi_id,mini_id,douyin_id,video_id,address,tel,fax,mobile,email,qq,wechat,offi_url,mini_url,video_url,douyin_url');
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("邮件设置修改")
+     * @Apidoc\Title("lang(联系设置修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\SettingModel", field="email_host,email_secure,email_port,email_username,email_password,email_setfrom")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="offi_id,mini_id,video_id,douyin_id,address,tel,fax,mobile,email,qq,wechat")
      */
-    public function emailEdit()
+    public function contactEdit()
     {
         $param = $this->params([
-            'email_host/s'     => '',
-            'email_secure/s'   => 'ssl',
-            'email_port/s'     => '',
-            'email_username/s' => '',
-            'email_password/s' => '',
-            'email_setfrom/s'  => '',
+            'offi_id/d'   => 0,
+            'mini_id/d'   => 0,
+            'video_id/d'  => 0,
+            'douyin_id/d' => 0,
+            'address/s'   => '',
+            'tel/s'       => '',
+            'fax/s'       => '',
+            'mobile/s'    => '',
+            'email/s'     => '',
+            'qq/s'        => '',
+            'wechat/s'    => '',
         ]);
 
-        validate(SettingValidate::class)->scene('email_edit')->check($param);
+        validate($this->validate)->scene('edit')->check($param);
 
-        $data = SettingService::edit($param);
+        $data = $this->service::edit($param);
 
         return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("邮件设置测试")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param("email_recipient", type="string", require=true, desc="收件人")
-     * @Apidoc\Param("email_theme", type="string", require=true, desc="主题")
-     * @Apidoc\Param("email_content", type="string", require=true, desc="内容")
-     */
-    public function emailTest()
-    {
-        $param = $this->params(['email_recipient/s' => '', 'email_theme/s' => '', 'email_content/s' => '']);
-
-        validate(SettingValidate::class)->scene('email_test')->check($param);
-
-        $data = SettingService::emailTest($param);
-
-        return success($data, '发送成功');
     }
 }

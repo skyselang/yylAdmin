@@ -16,37 +16,32 @@ class WbWebsite
 {
     /**
      * 请求类
-     *
      * @var Http
      */
     protected $http = null;
 
     /**
      * 平台
-     *
      * @var string
      */
     protected $platform = 'wb';
 
     /**
      * AppID 网站应用ID App Key
-     *
      * @var string
      */
     protected $appid;
 
     /**
      * AppSecret 网站应用密钥 App Secret
-     *
      * @var string
      */
     protected $appsecret;
 
     /**
      * 构造函数
-     *
-     * @param  string $appid     
-     * @param  string $appsecret 
+     * @param string $appid     
+     * @param string $appsecret 
      */
     public function __construct($appid, $appsecret)
     {
@@ -57,10 +52,8 @@ class WbWebsite
 
     /**
      * 登录
-     *
-     * @param  string $redirect_uri
-     * @param  string $state
-     *
+     * @param string $redirect_uri
+     * @param string $state
      * @return void
      */
     public function login($redirect_uri, $state = '')
@@ -73,15 +66,14 @@ class WbWebsite
             'state'         => $state,
         ]);
         $url = 'https://api.weibo.com/oauth2/authorize?' . $param;
+        
         header('Location:' . $url);
     }
 
     /**
      * 获取用户信息
-     *
-     * @param  string $redirect_uri
-     * @param  string $code
-     *
+     * @param string $redirect_uri
+     * @param string $code
      * @return array
      */
     public function getUserInfo($redirect_uri, $code)
@@ -89,10 +81,10 @@ class WbWebsite
         $access_token = $this->getAccessToken($redirect_uri, $code);
         $param        = http_build_query([
             'access_token' => $access_token['access_token'],
-            'uid'          => $access_token['uid'],
+            'uid' => $access_token['uid'],
         ]);
+        $url          = 'https://api.weibo.com/2/users/show.json?' . $param;
 
-        $url                    = 'https://api.weibo.com/2/users/show.json?' . $param;
         $userinfo               = $this->http->get($url);
         $userinfo['openid']     = $userinfo['id'];
         $userinfo['unionid']    = $userinfo['idstr'] ?? '';
@@ -104,10 +96,8 @@ class WbWebsite
 
     /**
      * 获取 AccessToken
-     *
-     * @param  string $redirect_uri
-     * @param  string $code
-     *
+     * @param string $redirect_uri
+     * @param string $code
      * @return array 
      */
     public function getAccessToken($redirect_uri, $code)
@@ -120,6 +110,7 @@ class WbWebsite
             'redirect_uri'  => $redirect_uri,
         ]);
         $url = 'https://api.weibo.com/oauth2/access_token?' . $param;
+
         return $this->http->post($url);
     }
 }

@@ -10,8 +10,8 @@
 namespace app\common\model\member;
 
 use think\Model;
-use app\common\service\member\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\service\member\SettingService;
 
 /**
  * 会员第三方账号模型
@@ -22,6 +22,16 @@ class ThirdModel extends Model
     protected $name = 'member_third';
     // 表主键
     protected $pk = 'third_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     // 关联会员
     public function member()
@@ -65,15 +75,5 @@ class ThirdModel extends Model
     public function getApplicationNameAttr($value, $data)
     {
         return SettingService::applications($data['application']);
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

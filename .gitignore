@@ -1,5 +1,4 @@
 *.log
-
 .env
 .user.ini
 .htaccess
@@ -13,6 +12,10 @@
 /.settings
 /.buildpath
 /.project
+/.cursor
+/.trae
+/404.html
+/index.html
 /vendor
 /runtime
 /public/admin
@@ -24,4 +27,3 @@
 Thumbs.db
 nginx.htaccess
 composer.phar
-composer.lock

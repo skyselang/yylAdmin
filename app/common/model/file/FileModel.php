@@ -10,8 +10,8 @@
 namespace app\common\model\file;
 
 use think\Model;
-use app\common\service\file\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\service\file\SettingService;
 
 /**
  * 文件管理模型
@@ -22,6 +22,16 @@ class FileModel extends Model
     protected $name = 'file';
     // 表主键
     protected $pk = 'file_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     /**
      * 获取储存名称
@@ -56,11 +66,11 @@ class FileModel extends Model
     /**
      * 获取标签id
      * @Apidoc\Field("")
-     * @Apidoc\AddField("tag_ids", type="array", desc="标签id")
+     * @Apidoc\AddField("tag_ids", type="array", desc="标签id", mock="@natural(1,50)")
      */
     public function getTagIdsAttr()
     {
-        return relation_fields($this['tags'], 'tag_id');
+        return model_relation_fields($this['tags'], 'tag_id');
     }
     /**
      * 获取标签名称
@@ -69,7 +79,7 @@ class FileModel extends Model
      */
     public function getTagNamesAttr()
     {
-        return relation_fields($this['tags'], 'tag_name', true);
+        return model_relation_fields($this['tags'], 'tag_name', true);
     }
 
     /**
@@ -83,11 +93,11 @@ class FileModel extends Model
     }
 
     /**
-     * 获取文件大小
+     * 获取文件大小名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("file_size", type="string", desc="文件大小")
+     * @Apidoc\AddField("file_size_name", type="string", desc="文件大小名称")
      */
-    public function getFileSizeAttr($value, $data)
+    public function getFileSizeNameAttr($value, $data)
     {
         return SettingService::fileSize($data['file_size']);
     }
@@ -100,15 +110,5 @@ class FileModel extends Model
     public function getFileUrlAttr($value, $data)
     {
         return SettingService::fileUrl($data);
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

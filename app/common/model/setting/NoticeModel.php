@@ -10,9 +10,9 @@
 namespace app\common\model\setting;
 
 use think\Model;
+use hg\apidoc\annotation as Apidoc;
 use app\common\model\file\FileModel;
 use app\common\service\setting\SettingService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
  * 通告管理模型
@@ -23,6 +23,16 @@ class NoticeModel extends Model
     protected $name = 'setting_notice';
     // 表主键
     protected $pk = 'notice_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     // 关联图片
     public function image()
@@ -47,15 +57,5 @@ class NoticeModel extends Model
     public function getTypeNameAttr($value, $data)
     {
         return SettingService::noticeTypes($data['type']);
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

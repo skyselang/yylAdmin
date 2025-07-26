@@ -9,37 +9,36 @@
 
 namespace app\api\controller\setting;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\common\validate\setting\NoticeValidate;
 use app\common\service\setting\NoticeService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("通告")
+ * @Apidoc\Title("lang(通告)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("200")
+ * @Apidoc\Sort("300")
  */
 class Notice extends BaseController
 {
     /**
-     * @Apidoc\Title("通告列表")
+     * @Apidoc\Title("lang(通告列表)")
      * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query("type", type="string", default="", desc="类型")
-     * @Apidoc\Query("title", type="string", default="", desc="标题")
+     * @Apidoc\Query("unique", type="string", default="", desc="编号，多个逗号隔开")
+     * @Apidoc\Query(ref={NoticeService::class,"edit"}, field="type,title")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="通告列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel", field="notice_id,type,title,title_color,desc,start_time,end_time,sort"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr", field="image_url"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr", field="type_name")
-     * })
-     * @Apidoc\Returned("types", type="array", desc="类型数组")
+     * @Apidoc\Returned(ref={NoticeService::class,"list"})
      */
     public function list()
     {
-        $type  = $this->param('type/s', '');
-        $title = $this->param('title/s', '');
+        $unique = $this->param('unique/s', '');
+        $type   = $this->param('type/s', '');
+        $title  = $this->param('title/s', '');
 
-        $where[] = ['notice_id', '>', 0];
+        $where = [['notice_id', '>', 0]];
+        if ($unique) {
+            $where[] = ['unique', 'in', $unique];
+        }
         if ($type !== '') {
             $where[] = ['type', '=', $type];
         }
@@ -47,12 +46,12 @@ class Notice extends BaseController
             $where[] = ['title', 'like', '%' . $title . '%'];
         }
         $where[] = ['start_time', '<=', datetime()];
-        $where[] = where_disable();
-        $where[] = where_delete();
+        $where[] = ['end_time', '>=', datetime()];
+        $where = where_disdel($where);
 
         $order = ['sort' => 'desc', 'start_time' => 'desc', 'notice_id' => 'desc'];
 
-        $field = 'image_id,type,title,title_color,desc,start_time,end_time,sort';
+        $field = 'unique,image_id,type,title,title_color,desc,start_time,end_time,sort';
 
         $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
@@ -60,21 +59,19 @@ class Notice extends BaseController
     }
 
     /**
-     * @Apidoc\Title("通告信息")
-     * @Apidoc\Query(ref="app\common\model\setting\NoticeModel", field="notice_id")
-     * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel")
-     * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getImageUrlAttr")
-     * @Apidoc\Returned(ref="app\common\model\setting\NoticeModel\getTypeNameAttr")
+     * @Apidoc\Title("lang(通告信息)")
+     * @Apidoc\Query(ref={NoticeService::class,"info"})
+     * @Apidoc\Returned(ref={NoticeService::class,"info"})
      */
     public function info()
     {
-        $param = $this->params(['notice_id/d' => '']);
+        $param = $this->params(['notice_id' => '']);
 
         validate(NoticeValidate::class)->scene('info')->check($param);
 
         $data = NoticeService::info($param['notice_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error('通告不存在');
+            return error(lang('通告不存在'));
         }
 
         return success($data);

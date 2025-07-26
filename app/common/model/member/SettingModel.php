@@ -10,8 +10,8 @@
 namespace app\common\model\member;
 
 use think\Model;
-use app\common\model\file\FileModel;
 use hg\apidoc\annotation as Apidoc;
+use app\common\model\file\FileModel;
 
 /**
  * 会员设置模型
@@ -28,9 +28,20 @@ class SettingModel extends Model
     {
         return $this->hasOne(FileModel::class, 'file_id', 'default_avatar_id')->append(['file_url'])->where(where_disdel());
     }
-    // 获取会员默认头像链接
+    /**
+     * 获取会员默认头像链接
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("default_avatar_url", type="string", desc="会员默认头像链接")
+     */
     public function getDefaultAvatarUrlAttr()
     {
         return $this['defaultavatar']['file_url'] ?? '';
+    }
+
+    // 修改日志请求参数排除字段
+    public function setLogParamWithoutAttr($value)
+    {
+        $value = trim(str_replace('，', ',', $value), ',');
+        return $value;
     }
 }

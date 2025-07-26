@@ -9,25 +9,23 @@
 
 namespace app\common\service\system;
 
-use think\facade\Db;
+use hg\apidoc\annotation as Apidoc;
 use app\common\cache\Cache;
 use app\common\service\system\UserService;
-use hg\apidoc\annotation as Apidoc;
+use think\facade\Db;
 
 /**
- * 控制台
+ * 首页
  */
 class IndexService
 {
     /**
      * 首页
-     *
-     * @return array
      */
     public static function index()
     {
         $data['name']   = 'yylAdmin';
-        $data['desc']   = '基于ThinkPHP8和Vue3的极简后台管理系统';
+        $data['desc']   = lang('基于ThinkPHP和Vue的极简后台管理系统');
         $data['gitee']  = 'https://gitee.com/skyselang/yylAdmin';
         $data['github'] = 'https://github.com/skyselang/yylAdmin';
 
@@ -40,31 +38,31 @@ class IndexService
      *   @Apidoc\Returned("name", type="string", desc="名称"),
      *   @Apidoc\Returned("count", type="int", desc="总数")
      * })
-     * @return array
      */
     public static function count()
     {
-        $uid  = user_id();
-        $key  = 'statistic:count' . $uid . lang_get();
-        $data = Cache::get($key);
+        $cache = new Cache();
+        $uid   = user_id();
+        $key   = 'statistic:count' . $uid . lang_get();
+        $data  = $cache->get($key);
         if (empty($data)) {
             $count = [];
             $table = [
-                ['table' => 'member', 'name' => lang('member.member'), 'menu_url' => 'admin/member.Member/list'],
+                ['table' => 'member', 'name' => lang('会员'), 'menu_url' => 'admin/member.Member/list'],
                 // ['table' => 'member_tag', 'name' => '会员标签', 'menu_url' => 'admin/member.Tag/list'],
                 // ['table' => 'member_group', 'name' => '会员分组', 'menu_url' => 'admin/member.Group/list'],
                 // ['table' => 'member_api', 'name' => '会员接口', 'menu_url' => 'admin/member.Api/list'],
-                ['table' => 'content', 'name' => lang('content.content'), 'menu_url' => 'admin/content.Content/list'],
+                ['table' => 'content', 'name' => lang('内容'), 'menu_url' => 'admin/content.Content/list'],
                 // ['table' => 'content_category', 'name' => '内容分类', 'menu_url' => 'admin/content.Category/list'],
                 // ['table' => 'content_tag', 'name' => '内容标签', 'menu_url' => 'admin/content.Tag/list'],
-                ['table' => 'file', 'name' => lang('file.file'), 'menu_url' => 'admin/file.File/list'],
+                ['table' => 'file', 'name' => lang('文件'), 'menu_url' => 'admin/file.File/list'],
                 // ['table' => 'file_group', 'name' => '文件分组', 'menu_url' => 'admin/file.Group/list'],
                 // ['table' => 'file_tag', 'name' => '文件标签', 'menu_url' => 'admin/file.Tag/list'],
-                ['table' => 'setting_carousel', 'name' => lang('setting.carousel'), 'menu_url' => 'admin/setting.Carousel/list'],
-                ['table' => 'setting_notice', 'name' => lang('setting.notice'), 'menu_url' => 'admin/setting.Notice/list'],
-                ['table' => 'setting_accord', 'name' => lang('setting.accord'), 'menu_url' => 'admin/setting.Accord/list'],
-                ['table' => 'setting_feedback', 'name' => lang('setting.feedback'), 'menu_url' => 'admin/setting.Feedback/list'],
-                ['table' => 'setting_region', 'name' => lang('setting.region'), 'menu_url' => 'admin/setting.Region/list'],
+                ['table' => 'setting_carousel', 'name' => lang('轮播'), 'menu_url' => 'admin/setting.Carousel/list'],
+                ['table' => 'setting_notice', 'name' => lang('通告'), 'menu_url' => 'admin/setting.Notice/list'],
+                ['table' => 'setting_accord', 'name' => lang('协议'), 'menu_url' => 'admin/setting.Accord/list'],
+                ['table' => 'setting_feedback', 'name' => lang('反馈'), 'menu_url' => 'admin/setting.Feedback/list'],
+                ['table' => 'setting_region', 'name' => lang('地区'), 'menu_url' => 'admin/setting.Region/list'],
                 // ['table' => 'setting_link', 'name' => '友链', 'menu_url' => 'admin/setting.Link/list'],
                 // ['table' => 'system_menu', 'name' => '菜单', 'menu_url' => 'admin/system.Menu/list'],
                 // ['table' => 'system_role', 'name' => '角色', 'menu_url' => 'admin/system.Role/list'],
@@ -80,7 +78,7 @@ class IndexService
                     $where = [];
                     $where = [where_delete()];
                     if ($v['table'] == 'setting_region') {
-                        $where[] = ['region_level', '<=', config('admin.region_level', 3)];
+                        $where[] = ['level', '<=', config('admin.level', 3)];
                     }
 
                     $temp = [];
@@ -89,8 +87,9 @@ class IndexService
                     $count[] = $temp;
                 }
             }
+
             $data['count'] = $count;
-            Cache::set($key, $data, 3600);
+            $cache->set($key, $data, 3600);
         }
 
         return $data;

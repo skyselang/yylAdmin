@@ -10,30 +10,59 @@
 namespace app\common\validate\file;
 
 use think\Validate;
+use app\common\service\file\ExportService as Service;
+use app\common\model\file\ExportModel as Model;
 
 /**
  * 导出文件验证器
  */
 class ExportValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'       => ['require', 'array'],
+        'field'     => ['require', 'checkUpdateField'],
         'export_id' => ['require'],
-        'file_name' => ['require'],
     ];
 
     // 错误信息
     protected $message = [
-        'file_name.require' => '请输入文件名称'
+        'update' => ['field'],
     ];
 
     // 验证场景
     protected $scene = [
         'info'        => ['export_id'],
-        'edit'        => ['export_id', 'file_name'],
+        'edit'        => ['export_id'],
         'dele'        => ['ids'],
+        'disable'     => ['ids'],
+        'update'      => ['ids', 'field'],
         'recycleReco' => ['ids'],
         'recycleDele' => ['ids'],
     ];
+
+    // 自定义验证规则：导出文件批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
+
+        return true;
+    }
 }

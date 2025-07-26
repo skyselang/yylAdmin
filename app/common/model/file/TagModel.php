@@ -21,6 +21,10 @@ class TagModel extends Model
     protected $name = 'file_tag';
     // 表主键
     protected $pk = 'tag_id';
+    /**
+     * 名称键
+     */
+    public $namek = 'tag_name';
 
     /**
      * 获取是否禁用名称

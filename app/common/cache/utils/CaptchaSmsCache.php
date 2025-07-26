@@ -9,79 +9,31 @@
 
 namespace app\common\cache\utils;
 
-use think\facade\Cache;
+use app\common\cache\BaseCache;
 
 /**
- * 手机验证码缓存
+ * 短信验证码缓存
  */
-class CaptchaSmsCache
+class CaptchaSmsCache extends BaseCache
 {
     // 缓存标签
-    public static $tag = 'captcha_phone';
+    public $tag = 'captcha_sms';
+
     // 缓存前缀
-    protected static $prefix = 'captcha_phone:';
+    protected $prefix = 'captcha_sms:';
 
-    /**
-     * 缓存键名
-     *
-     * @param string $phone 手机
-     * 
-     * @return string
-     */
-    public static function key($phone)
-    {
-        return self::$prefix . $phone;
-    }
+    // 缓存有效时间（秒，0永久）
+    protected $expire = 1800;
 
-    /**
-     * 缓存设置
-     *
-     * @param int    $phone   手机
-     * @param string $captcha 验证码
-     * @param int    $ttl     有效时间（秒，0永久）
-     * 
-     * @return bool
-     */
-    public static function set($phone, $setting, $ttl = 1800)
-    {
-        return Cache::set(self::key($phone), $setting, $ttl);
-    }
+    // 是否允许清除缓存（调用系统清除缓存方法时）
+    public $allowClear = false;
 
-    /**
-     * 缓存获取
-     *
-     * @param string $phone 手机
-     * 
-     * @return string 验证码
-     */
-    public static function get($phone)
+    // 构造函数
+    function __construct()
     {
-        return Cache::get(self::key($phone));
-    }
-
-    /**
-     * 缓存删除
-     *
-     * @param mixed $phone 手机
-     * 
-     * @return bool
-     */
-    public static function del($phone)
-    {
-        $ids = var_to_array($phone);
-        foreach ($ids as $v) {
-            Cache::delete(self::key($v));
-        }
-        return true;
-    }
-
-    /**
-     * 缓存清除
-     * 
-     * @return bool
-     */
-    public static function clear()
-    {
-        return Cache::tag(self::$tag)->clear();
+        $this->tag($this->tag);
+        $this->prefix($this->prefix);
+        $this->expire($this->expire);
+        $this->allowClear($this->allowClear);
     }
 }

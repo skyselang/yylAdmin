@@ -9,19 +9,19 @@
 
 namespace app\api\controller;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\api\service\IndexService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("首页")
+ * @Apidoc\Title("lang(首页)")
  * @Apidoc\Group("index")
  * @Apidoc\Sort("100")
  */
 class Index extends BaseController
 {
     /**
-     * @Apidoc\Title("首页")
+     * @Apidoc\Title("lang(首页)")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()
      * @Apidoc\NotParams()
@@ -29,8 +29,17 @@ class Index extends BaseController
     public function index()
     {
         $data = IndexService::index();
-        $msg  = '后端安装成功，欢迎使用，如有帮助，敬请Star！';
+        $msg  = lang('后端安装成功，欢迎使用，如有帮助，敬请Star！');
 
-        return success($data, $msg);
+        if (config('app.app_debug')) {
+            return success($data, $msg);
+        } else {
+            if (request()->isAjax()) {
+                return success($data, $msg);
+            } else {
+                echo 'yyladmin';
+                // echo '<div style="display: flex;justify-content: center;align-items: center;height: 100%;"><a style="text-decoration: none;color: #909399;" href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a></div>';
+            }
+        }
     }
 }

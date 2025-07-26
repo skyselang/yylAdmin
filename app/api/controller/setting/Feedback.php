@@ -9,41 +9,43 @@
 
 namespace app\api\controller\setting;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\common\validate\setting\FeedbackValidate;
 use app\common\service\setting\FeedbackService;
 use app\common\service\setting\SettingService;
 use app\common\cache\setting\FeedbackCache;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("反馈")
+ * @Apidoc\Title("lang(反馈)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("900")
+ * @Apidoc\Sort("600")
  */
 class Feedback extends BaseController
 {
     /**
-     * @Apidoc\Title("反馈列表")
+     * @Apidoc\Title("lang(反馈列表)")
      * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Query(ref="app\common\model\member\LogModel", field="title,create_time")
+     * @Apidoc\Query("unique", type="string", default="", desc="编号，多个逗号隔开")
+     * @Apidoc\Query(ref={FeedbackService::class,"edit"}, field="title")
+     * @Apidoc\Query("create_time", type="array", default="", desc="提交时间")
+     * @Apidoc\Returned(ref={FeedbackService::class,"basedata"})
      * @Apidoc\Returned("list", type="array", desc="反馈列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel", field="feedback_id,member_id,type,title,phone,email,remark,status,receipt_no,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getTypeNameAttr", field="type_name"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getStatusNameAttr", field="status_name"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getMemberUsernameAttr", field="member_username")
+     *   @Apidoc\Returned(ref={FeedbackService::class,"info"}, field="feedback_id,unique,member_id,type,title,phone,email,remark,status,create_time,update_time,type_name,status_name,member_username"),
      * })
-     * @Apidoc\Returned("types", type="array", desc="反馈类型")
      */
     public function list()
     {
+        $unique      = $this->param('unique/s', '');
         $title       = $this->param('title/s', '');
         $create_time = $this->param('create_time/a', []);
 
-        $where[] = ['member_id', '=', member_id(true)];
-        if ($title !== '') {
-            $where[] = ['title|receipt_no', 'like', '%' . $title . '%'];
+        $where = [['member_id', '=', member_id(true)]];
+        if ($unique) {
+            $where[] = ['unique', '=', $unique];
+        }
+        if ($title) {
+            $where[] = ['title', 'like', '%' . $title . '%'];
         }
         if ($create_time) {
             $start_date = $create_time[0] ?? '';
@@ -55,22 +57,18 @@ class Feedback extends BaseController
                 $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
             }
         }
-        $where[] = where_disable();
-        $where[] = where_delete();
+        $where = where_disdel($where);
 
         $data = FeedbackService::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = FeedbackService::basedata(false);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("反馈信息")
-     * @Apidoc\Query("feedback_id", type="string", require=true, desc="反馈id、回执编号")
-     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel")
-     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getTypeNameAttr")
-     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getStatusNameAttr")
-     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel\getMemberUsernameAttr")
-     * @Apidoc\Returned(ref="imagesReturn")
+     * @Apidoc\Title("lang(反馈信息)")
+     * @Apidoc\Query("feedback_id", type="string", require=true, desc="反馈id、编号")
+     * @Apidoc\Returned(ref={FeedbackService::class,"info"})
      */
     public function info()
     {
@@ -82,22 +80,21 @@ class Feedback extends BaseController
 
         if (is_numeric($param['feedback_id'])) {
             if (($data['member_id'] ?? '') != member_id()) {
-                return error('反馈不存在');
+                return error(lang('反馈不存在'));
             }
         }
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error('反馈不存在');
+            return error(lang('反馈不存在'));
         }
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("反馈提交")
+     * @Apidoc\Title("lang(反馈提交)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\FeedbackModel", field="type,title,content,phone,email")
-     * @Apidoc\Param(ref="imagesParam")
-     * @Apidoc\Returned(ref="app\common\model\setting\FeedbackModel", field="receipt_no")
+     * @Apidoc\Param(ref={FeedbackService::class,"edit"}, field="type,title,content,phone,email,images")
+     * @Apidoc\Returned(ref={FeedbackService::class,"info"}, field="unique")
      */
     public function add()
     {
@@ -118,12 +115,13 @@ class Feedback extends BaseController
 
         validate(FeedbackValidate::class)->scene('add')->check($param);
 
-        $feedback_key = 'repeat' . $param['type'] . $param['phone'] . md5($param['title']);
-        $feedback_val = FeedbackCache::get($feedback_key);
-        if ($feedback_val) {
-            return error('请勿重复提交！');
+        $cache = new FeedbackCache();
+        $cache_key = 'repeat' . $param['type'] . $param['phone'] . md5($param['title']);
+        $cache_val = $cache->get($cache_key);
+        if ($cache_val) {
+            return error(lang('请勿重复提交'));
         } else {
-            FeedbackCache::set($feedback_key, $param['title'], 60);
+            $cache->set($cache_key, 1, 60);
         }
 
         $data = FeedbackService::add($param);

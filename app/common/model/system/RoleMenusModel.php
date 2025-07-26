@@ -18,4 +18,6 @@ class RoleMenusModel extends Pivot
 {
     // 表名
     protected $name = 'system_role_menus';
+    // 表主键
+    protected $pk = 'id';
 }

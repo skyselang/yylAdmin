@@ -21,6 +21,11 @@ class GroupModel extends Model
     protected $name = 'file_group';
     // 表主键
     protected $pk = 'group_id';
+    /**
+     * 名称键
+     */
+    public $namek = 'group_name';
+
 
     /**
      * 获取是否禁用名称

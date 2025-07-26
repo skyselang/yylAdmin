@@ -13,7 +13,7 @@ return [
     //文字验证码
     'click_world' => [
         'backgrounds' => [],
-        'word_num'    => 3,    //文字数量（2-5）
+        'word_num'    => 4,    //文字数量（2-5）
     ],
     //滑动验证码
     'block_puzzle' => [

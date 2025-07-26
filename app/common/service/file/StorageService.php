@@ -12,7 +12,7 @@ namespace app\common\service\file;
 require_once '../extend/bce-php-sdk-0.9.23/index.php';
 require_once '../extend/esdk-obs-php-3.23.11/obs-autoloader.php';
 
-use think\facade\Log;
+use app\common\model\file\FileModel;
 use app\common\service\file\SettingService;
 use Qiniu\Auth;
 use Qiniu\Storage\UploadManager;
@@ -32,14 +32,26 @@ use Aws\S3\Exception\S3Exception;
  */
 class StorageService
 {
-    private static $pk = 'file_id';
+    /**
+     * 文件模型
+     */
+    public static function model()
+    {
+        return new FileModel();
+    }
+
+    /**
+     * 文件主键
+     */
+    public static function pk()
+    {
+        $model = self::model();
+        return $model->getPk();
+    }
 
     /**
      * 文件上传
-     *
      * @param array $file_info 文件信息
-     *
-     * @return array|Exception
      */
     public static function upload($file_info)
     {
@@ -51,7 +63,7 @@ class StorageService
         $setting = SettingService::info();
         $storage = $setting['storage'];
         if (!$exist) {
-            if ($storage == 'qiniu') {
+            if ($storage === 'qiniu') {
                 $accessKey = $setting['qiniu_access_key'];
                 $secretKey = $setting['qiniu_secret_key'];
                 $bucket = $setting['qiniu_bucket'];
@@ -67,7 +79,7 @@ class StorageService
                     }
                 } catch (\Exception $e) {
                 }
-            } elseif ($storage == 'aliyun') {
+            } elseif ($storage === 'aliyun') {
                 $accessKeyId = $setting['aliyun_access_key_id'];
                 $accessKeySecret = $setting['aliyun_access_key_secret'];
                 $endpoint = $setting['aliyun_endpoint']; // Endpoint（地域节点）
@@ -79,7 +91,7 @@ class StorageService
                     $ossClient->uploadFile($bucket, $object, $filePath);
                 } catch (OssException $e) {
                 }
-            } elseif ($storage == 'tencent') {
+            } elseif ($storage === 'tencent') {
                 // SECRETID和SECRETKEY请登录访问管理控制台进行查看和管理
                 $secretId = $setting['tencent_secret_id']; //"云 API 密钥 SecretId";
                 $secretKey = $setting['tencent_secret_key']; //"云 API 密钥 SecretKey";
@@ -92,13 +104,13 @@ class StorageService
                 // 上传文件
                 try {
                     $bucket = $setting['tencent_bucket']; //存储桶名称 格式：BucketName-APPID
-                    $key = $file_name; //此处的 key 为对象键，对象键是对象在存储桶中的唯一标识
+                    $key = $file_name; //此处的 key 为对象键，对象键是对象在存储桶中的唯一编号
                     $local_path = $file_path; //保存到用户本地路径
                     $body = fopen($local_path, "rb");
                     $CosClient->upload($bucket, $key, $body);
                 } catch (\Exception $e) {
                 }
-            } elseif ($storage == 'baidu') {
+            } elseif ($storage === 'baidu') {
                 try {
                     // 设置BosClient的Access Key ID、Secret Access Key和ENDPOINT
                     $accessKeyId = $setting['baidu_access_key'];
@@ -114,7 +126,7 @@ class StorageService
                     $BosClient->putObjectFromFile($bucketName, $objectKey, $fileName);
                 } catch (\Exception $e) {
                 }
-            } elseif ($storage == 'upyun') {
+            } elseif ($storage === 'upyun') {
                 try {
                     $serviceName = $setting['upyun_service_name'];
                     $operatorName = $setting['upyun_operator_name'];
@@ -126,7 +138,7 @@ class StorageService
                     $Upyun->write($path, $content);
                 } catch (\Exception $e) {
                 }
-            } elseif ($storage == 'huawei') {
+            } elseif ($storage === 'huawei') {
                 try {
                     $ObsClient = new ObsClient([
                         'key' => $setting['huawei_access_key_id'],
@@ -140,7 +152,7 @@ class StorageService
                     ]);
                 } catch (\Exception $e) {
                 }
-            } elseif ($storage == 'aws') {
+            } elseif ($storage === 'aws') {
                 try {
                     $credentials = new Credentials($setting['aws_access_key_id'], $setting['aws_secret_access_key']);
                     $S3Client  = new S3Client([
@@ -166,7 +178,7 @@ class StorageService
             self::log($e, $storage);
         }
         if ($errmsg) {
-            if (empty($file_info[self::$pk])) {
+            if (empty($file_info[self::pk()])) {
                 try {
                     unlink($file_path);
                 } catch (\Exception $e) {
@@ -187,9 +199,7 @@ class StorageService
 
     /**
      * 文件是否存在
-     *
-     * @param  array $file_info
-     * @return bool
+     * @param array $file_info
      */
     public static function exist($file_info)
     {
@@ -197,7 +207,7 @@ class StorageService
         $file_path = $file_info['file_path'];
         $setting = SettingService::info();
         $storage = $setting['storage'];
-        if ($storage == 'qiniu') {
+        if ($storage === 'qiniu') {
             try {
                 $auth = new Auth($setting['qiniu_access_key'], $setting['qiniu_secret_key']);
                 $config = new \Qiniu\Config();
@@ -208,7 +218,7 @@ class StorageService
                 }
             } catch (\Exception $e) {
             }
-        } elseif ($storage == 'aliyun') {
+        } elseif ($storage === 'aliyun') {
             try {
                 $accessKeyId = $setting['aliyun_access_key_id'];
                 $accessKeySecret = $setting['aliyun_access_key_secret'];
@@ -217,7 +227,7 @@ class StorageService
                 return $OssClient->doesObjectExist($setting['aliyun_bucket'], $file_path);
             } catch (OssException $e) {
             }
-        } elseif ($storage == 'tencent') {
+        } elseif ($storage === 'tencent') {
             try {
                 $CosClient = new Client([
                     'region' => $setting['tencent_region'],
@@ -230,7 +240,7 @@ class StorageService
                 return $CosClient->doesObjectExist($setting['tencent_bucket'], $file_path);
             } catch (\Exception $e) {
             }
-        } elseif ($storage == 'baidu') {
+        } elseif ($storage === 'baidu') {
             try {
                 $BosClient = new BosClient([
                     'credentials' => [
@@ -246,7 +256,7 @@ class StorageService
                     return false;
                 }
             }
-        } elseif ($storage == 'upyun') {
+        } elseif ($storage === 'upyun') {
             try {
                 $serviceName = $setting['upyun_service_name'];
                 $operatorName = $setting['upyun_operator_name'];
@@ -256,7 +266,7 @@ class StorageService
                 return $Upyun->has($file_path);
             } catch (\Exception $e) {
             }
-        } elseif ($storage == 'huawei') {
+        } elseif ($storage === 'huawei') {
             try {
                 $ObsClient = new ObsClient([
                     'key' => $setting['huawei_access_key_id'],
@@ -267,7 +277,7 @@ class StorageService
                 return true;
             } catch (\Exception $e) {
             }
-        } elseif ($storage == 'aws') {
+        } elseif ($storage === 'aws') {
             try {
                 $credentials = new Credentials($setting['aws_access_key_id'], $setting['aws_secret_access_key']);
                 $S3Client = new S3Client([
@@ -281,8 +291,10 @@ class StorageService
             }
         }
 
-        if ($e) {
-            self::log($e, $storage);
+        if ($e && $e->getCode() != 404) {
+            if (!str_contains($e->getMessage(), '404')) {
+                self::log($e, $storage);
+            }
         }
 
         return false;
@@ -290,27 +302,25 @@ class StorageService
 
     /**
      * 文件删除
-     *
-     * @param  array $filelist
-     * @return void
+     * @param array $filelist
      */
     public static function dele($filelist)
     {
         $qinius = $aliyuns = $tencents = $baidus = $upyuns = $awss = $huaweis = [];
         foreach ($filelist as $file) {
-            if ($file['storage'] == 'qiniu') {
+            if ($file['storage'] === 'qiniu') {
                 $qinius[] = $file['file_path'];
-            } elseif ($file['storage'] == 'aliyun') {
+            } elseif ($file['storage'] === 'aliyun') {
                 $aliyuns[] = $file['file_path'];
-            } elseif ($file['storage'] == 'tencent') {
+            } elseif ($file['storage'] === 'tencent') {
                 $tencents[] = ['Key' => $file['file_path']];
-            } elseif ($file['storage'] == 'baidu') {
+            } elseif ($file['storage'] === 'baidu') {
                 $baidus[] = ['key' => $file['file_path']];
-            } elseif ($file['storage'] == 'upyun') {
+            } elseif ($file['storage'] === 'upyun') {
                 $upyuns[] = $file;
-            } elseif ($file['storage'] == 'huawei') {
+            } elseif ($file['storage'] === 'huawei') {
                 $huaweis[] = ['Key' => $file['file_path']];
-            } elseif ($file['storage'] == 'aws') {
+            } elseif ($file['storage'] === 'aws') {
                 $awss[] = ['Key' => $file['file_path']];
             }
         }
@@ -412,7 +422,9 @@ class StorageService
                     'endpoint' => $setting['aws_endpoint'],
                     'credentials' => $credentials,
                 ]);
-                $S3Client->deleteObjects(['Bucket' => $setting['aws_bucket'], 'Delete' => ['Objects' => $awss]]);
+                foreach ($awss as $aws) {
+                    $S3Client->deleteObject(['Bucket' => $setting['aws_bucket'], 'Key' => $aws['Key']]);
+                }
             } catch (\Exception $e) {
                 self::log($e, 'aws');
             }
@@ -421,34 +433,33 @@ class StorageService
 
     /**
      * 文件域名
-     *
-     * @param  array $file_info
-     * @return array
+     * @param array $file_info
      */
     public static function domain($file_info)
     {
         $setting = SettingService::info();
         $storage = $setting['storage'];
         $file_info['domain'] = $setting[$storage . '_domain'] ?? '';
+
         return $file_info;
     }
 
     /**
      * 文件日志
-     *
-     * @param  \Exception $e
-     * @param  string $storage
-     * @return void
+     * @param \Exception $e
+     * @param string     $storage
      */
     public static function log($e, $storage)
     {
-        $log = [
+        $data = [
             'storage' => $storage,
             'code'    => $e->getCode(),
             'line'    => $e->getLine(),
             'file'    => $e->getFile(),
             'message' => $e->getMessage(),
         ];
-        Log::write($log, 'oss');
+        $log['type'] = 'oss';
+        $log['data'] = $data;
+        trace($log, 'log');
     }
 }

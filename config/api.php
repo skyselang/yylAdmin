@@ -32,18 +32,19 @@ return [
         'api/member.Login/redirectUri',
         'api/member.Login/mobile',
     ],
-
     // 接口免权url（无需权限）
     'api_is_unauth' => [
         'api/member.Member/info',
         'api/member.Logout/logout',
     ],
-
     // 接口免限url（不限速率）
     'api_is_unrate' => [],
 
     // 日志记录请求参数排除字段（敏感、内容多等信息）
+    // 例如: ['name', 'array.phone', 'list*price']
     'log_param_without' => [
+        env('admin.token_name', 'AdminToken'),
+        env('api.token_name', 'ApiToken'),
         'password',
         'password_new',
         'password_old',
@@ -54,5 +55,7 @@ return [
         'words',
         'annexs',
         'others',
-    ]
+        'token_key',
+        's',
+    ],
 ];

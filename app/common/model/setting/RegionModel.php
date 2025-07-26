@@ -21,6 +21,11 @@ class RegionModel extends Model
     protected $name = 'setting_region';
     // 表主键
     protected $pk = 'region_id';
+    /**
+     * 上级id键
+     * @var string
+     */
+    public $pidk = 'region_pid';
 
     /**
      * 获取是否禁用名称

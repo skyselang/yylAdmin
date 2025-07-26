@@ -9,274 +9,342 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\BaseController;
-use app\common\validate\system\MenuValidate;
-use app\common\service\system\MenuService;
-use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\system\MenuValidate as Validate;
+use app\common\service\system\MenuService as Service;
+use app\common\model\system\MenuModel as Model;
+use app\common\service\system\RoleService;
 
 /**
- * @Apidoc\Title("菜单管理")
+ * @Apidoc\Title("lang(菜单管理)")
  * @Apidoc\Group("system")
- * @Apidoc\Sort("100")
+ * @Apidoc\Sort("200")
  */
 class Menu extends BaseController
 {
     /**
-     * @Apidoc\Title("菜单列表")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Returned("list", ref="app\common\model\system\MenuModel", type="tree", desc="菜单树形", field="menu_id,menu_pid,menu_name,menu_type,meta_icon,menu_url,path,name,component,hidden,sort,is_unlogin,is_unauth,is_unrate,is_disable")
-     * @Apidoc\Returned("tree", ref="app\common\model\system\MenuModel", type="tree", desc="菜单树形", field="menu_id,menu_pid,menu_name")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
-        $where = $this->where(where_delete());
+        $where  = $this->where(where_delete());
+        $order  = $this->order();
+        $islist = $this->param('islist');
+        $param  = ['islist' => $islist, 'search_mode' => $this->param('search_mode')];
 
-        $data['list']  = MenuService::list('tree', $where);
-        $data['exps']  = where_exps();
-        $data['tree']  = MenuService::list('tree', [where_delete()], [], 'menu_pid,menu_name');
-        $data['types'] = SettingService::menuTypes();
-        $data['count'] = count(MenuService::list('list', $where));
-        if (count($where) > 1) {
-            $list = tree_to_list($data['list']);
-            $all  = tree_to_list($data['tree']);
-            $pk   = 'menu_id';
-            $pid  = 'menu_pid';
-            $ids  = [];
-            foreach ($list as $val) {
-                $pids = children_parent_ids($all, $val[$pk], $pk, $pid);
-                $cids = parent_children_ids($all, $val[$pk], $pk, $pid);
-                $ids  = array_merge($ids, $pids, $cids);
+        $basedata = $this->service::basedata(true);
+        if ($islist) {
+            $data['list']  = $this->service::list('list', $where, $order, '', 0, 0, $param);
+            $data['count'] = count($data['list']);
+        } else {
+            $data['list']  = $this->service::list('tree', $where, $order);
+            $data['count'] = count($this->service::list('list', $where, $order));
+            if (count($where) > 1) {
+                $list = tree_to_list($data['list']);
+                $all  = tree_to_list($basedata['trees']);
+                $pk   = $this->model()->getPk();
+                $pid  = $this->model()->pidk;
+                $ids  = [];
+                foreach ($list as $val) {
+                    $pids = children_parent_key($all, $val[$pk], $pk, $pid);
+                    $cids = parent_children_key($all, $val[$pk], $pk, $pid);
+                    $ids  = array_merge($ids, $pids, $cids);
+                }
+                $data['list'] = $this->service::list('tree', [[$pk, 'in', $ids], where_delete()], $order);
             }
-            $data['list'] = MenuService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
+        $data['basedata'] = $basedata;
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单信息")
-     * @Apidoc\Query(ref="app\common\model\system\MenuModel", field="menu_id")
-     * @Apidoc\Returned(ref="app\common\model\system\MenuModel")
+     * @Apidoc\Title("lang(菜单信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['menu_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(MenuValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = MenuService::info($param['menu_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="menu_pid,menu_type,meta_icon,menu_name,menu_url,path,component,name,meta_query,hidden,sort,is_unlogin,is_unauth,is_unrate,is_disable")
+     * @Apidoc\Title("lang(菜单添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(MenuService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(MenuValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = MenuService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="menu_id,menu_pid,menu_type,meta_icon,menu_name,menu_url,path,component,name,meta_query,hidden,sort,is_unlogin,is_unauth,is_unrate,is_disable")
+     * @Apidoc\Title("lang(菜单修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
      */
     public function edit()
     {
-        $param = $this->params(MenuService::$edit_field);
+        $pk = $this->model()->getPk();
 
-        validate(MenuValidate::class)->scene('edit')->check($param);
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        $data = MenuService::edit($param['menu_id'], $param);
+            validate($this->validate)->scene('info')->check($param);
+
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单删除")
+     * @Apidoc\Title("lang(菜单删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(MenuValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = MenuService::dele($param['ids']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("菜单修改排序")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="sort")
-     */
-    public function editsort()
-    {
-        $param = $this->params(['ids/a' => [], 'sort/d' => 250, 'sort_incdec/d' => 0]);
-
-        validate(MenuValidate::class)->scene('editsort')->check($param);
-
-        if ($param['sort_incdec']) {
-            foreach ($param['ids'] as $k => $id) {
-                $data[] = MenuService::update([$id], ['sort' => $param['sort_incdec'] * $k + $param['sort']]);
-            }
-        } else {
-            $data = MenuService::update($param['ids'], $param);
-        }
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单修改上级")
+     * @Apidoc\Title("lang(菜单是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="menu_pid")
-     */
-    public function editpid()
-    {
-        $param = $this->params(['ids/a' => [], 'menu_pid/d' => 0]);
-
-        validate(MenuValidate::class)->scene('editpid')->check($param);
-
-        $data = MenuService::update($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("菜单是否免登")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="is_unlogin")
-     */
-    public function unlogin()
-    {
-        $param = $this->params(['ids/a' => [], 'is_unlogin/d' => 0]);
-
-        validate(MenuValidate::class)->scene('unlogin')->check($param);
-
-        $data = MenuService::update($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("菜单是否免权")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="is_unauth")
-     */
-    public function unauth()
-    {
-        $param = $this->params(['ids/a' => [], 'is_unauth/d' => 0]);
-
-        validate(MenuValidate::class)->scene('unauth')->check($param);
-
-        $data = MenuService::update($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("菜单是否免限")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="is_unrate")
-     */
-    public function unrate()
-    {
-        $param = $this->params(['ids/a' => [], 'is_unrate/d' => 0]);
-
-        validate(MenuValidate::class)->scene('unrate')->check($param);
-
-        $data = MenuService::update($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("菜单是否隐藏")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="is_hidden")
-     */
-    public function hidden()
-    {
-        $param = $this->params(['ids/a' => [], 'hidden/d' => 0]);
-
-        validate(MenuValidate::class)->scene('hidden')->check($param);
-
-        $data = MenuService::update($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("菜单是否禁用")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\MenuModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(MenuValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = MenuService::update($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单角色列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\system\MenuModel", field="menu_id")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\RoleModel", type="array", desc="角色列表", field="role_id,role_name,role_desc,sort,is_disable,create_time,update_time")
+     * @Apidoc\Title("lang(菜单批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单修改上级)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"editPid"})
+     */
+    public function editPid()
+    {
+        $param = $this->params(['ids/a' => [], 'menu_pid/d' => 0]);
+
+        validate($this->validate)->scene('editPid')->check($param);
+
+        $data = $this->service::editPid($param['ids'], $param['menu_pid']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单修改免登)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"editUnlogin"})
+     */
+    public function editUnlogin()
+    {
+        $param = $this->params(['ids/a' => [], 'is_unlogin/d' => 0]);
+
+        validate($this->validate)->scene('editUnlogin')->check($param);
+
+        $data = $this->service::editUnlogin($param['ids'], $param['is_unlogin']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单修改免权)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"editUnauth"})
+     */
+    public function editUnauth()
+    {
+        $param = $this->params(['ids/a' => [], 'is_unauth/d' => 0]);
+
+        validate($this->validate)->scene('editUnauth')->check($param);
+
+        $data = $this->service::editUnauth($param['ids'], $param['is_unauth']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单修改免限)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"editUnrate"})
+     */
+    public function editUnrate()
+    {
+        $param = $this->params(['ids/a' => [], 'is_unrate/d' => 0]);
+
+        validate($this->validate)->scene('editUnrate')->check($param);
+
+        $data = $this->service::editUnrate($param['ids'], $param['is_unrate']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单角色列表)")
+     * @Apidoc\Query(ref={Service::class,"roleList"})
+     * @Apidoc\Returned(ref={RoleService::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"roleList"})
      */
     public function roleList()
     {
-        $param = $this->params(['menu_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(MenuValidate::class)->scene('role')->check($param);
+        validate($this->validate)->scene('roleList')->check($param);
 
-        $where = $this->where(where_delete(['menu_ids', 'in', [$param['menu_id']]]));
+        $where = $this->where(where_delete([$pk, '=', $param[$pk]]));
 
-        $data = MenuService::role($where, $this->page(), $this->limit(), $this->order());
+        $data = $this->service::roleList($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = RoleService::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("菜单角色解除")
+     * @Apidoc\Title("lang(菜单角色解除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("menu_id", type="array", require=true, desc="菜单id")
-     * @Apidoc\Param("role_ids", type="array", require=false, desc="角色id，为空则解除所有菜单")
+     * @Apidoc\Param(ref={Service::class,"roleLift"})
      */
-    public function roleRemove()
+    public function roleLift()
     {
-        $param = $this->params(['menu_id/a' => [], 'role_ids/a' => []]);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => [], 'role_ids/a' => []]);
 
-        validate(MenuValidate::class)->scene('roleRemove')->check($param);
+        validate($this->validate)->scene('roleLift')->check($param);
 
-        $data = MenuService::roleRemove($param['menu_id'], $param['role_ids']);
+        $data = $this->service::roleLift($param[$pk], $param['role_ids']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(菜单重置ID)")
+     * @Apidoc\Method("POST")
+     */
+    public function resetId()
+    {
+        $data = $this->service::resetId();
 
         return success($data);
     }

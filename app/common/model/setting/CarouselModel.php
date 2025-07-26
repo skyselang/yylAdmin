@@ -10,8 +10,8 @@
 namespace app\common\model\setting;
 
 use think\Model;
-use app\common\model\file\FileModel;
 use hg\apidoc\annotation as Apidoc;
+use app\common\model\file\FileModel;
 
 /**
  * 轮播管理模型
@@ -22,6 +22,16 @@ class CarouselModel extends Model
     protected $name = 'setting_carousel';
     // 表主键
     protected $pk = 'carousel_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     /**
      * 关联文件
@@ -92,15 +102,5 @@ class CarouselModel extends Model
             $file_ids = array_column($this['files']->append(['file_url'])->toArray(), 'file_id');
         }
         return $file_ids ?? [];
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

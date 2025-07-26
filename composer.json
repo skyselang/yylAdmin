@@ -1,10 +1,14 @@
 {
   "name": "skyselang/yyladmin",
-  "version": "4.0.0",
+  "homepage": "https://gitee.com/skyselang/yyladmin",
   "description": "Minimalist background management system based on ThinkPHP and Vue",
   "keywords": [
-    "yylAdmin",
-    "yylAdminWeb"
+    "vue",
+    "php",
+    "element-plus",
+    "thinkphp",
+    "admin",
+    "yyladmin"
   ],
   "authors": [
     {
@@ -21,30 +25,29 @@
     ]
   },
   "require": {
-    "php": ">=8.0",
-    "topthink/framework": "^8.0",
-    "topthink/think-orm": "^3.0",
+    "php": ">=8.2",
+    "topthink/framework": "^8.1",
+    "topthink/think-orm": "^4.0",
     "topthink/think-multi-app": "^1.0",
-    "topthink/think-filesystem": "^2.0",
-    "topthink/think-worker": "^4.0",
     "topthink/think-throttle": "^2.0",
+    "topthink/think-filesystem": "^3.0",
     "topthink/think-queue": "^3.0",
     "firebase/php-jwt": "^6.1",
     "overtrue/pinyin": "^5.3",
-    "overtrue/easy-sms": "^2.5",
+    "overtrue/easy-sms": "^3.0",
     "phpmailer/phpmailer": "^6.9",
     "fastknife/ajcaptcha": "^1.2",
     "chinayin/ip2region": "^2.0",
-    "hg/apidoc": "5.2.4",
+    "hg/apidoc": "5.3.0",
     "qiniu/php-sdk": "^7.11",
-    "aliyuncs/oss-sdk-php": "^2.6",
+    "aliyuncs/oss-sdk-php": "^2.7",
     "qcloud/cos-sdk-v5": "^2.6",
     "alapi/upyun-sdk": "^4.0",
-    "aws/aws-sdk-php": "^3.290",
+    "aws/aws-sdk-php": "^3.333",
     "guzzlehttp/guzzle": "^7.0",
-    "phpoffice/phpspreadsheet": "^2.1"
+    "openspout/openspout": "^4.28",
+    "workerman/workerman": "^5.0"
   },
-  "homepage": "https://gitee.com/skyselang/yyladmin",
   "require-dev": {
     "symfony/var-dumper": "^6.0"
   },

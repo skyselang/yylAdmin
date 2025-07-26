@@ -9,42 +9,31 @@
 
 namespace app\api\controller\member;
 
-use think\facade\Validate;
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\common\validate\member\MemberValidate;
 use app\common\validate\file\FileValidate;
 use app\common\service\member\SettingService;
 use app\common\service\member\MemberService;
+use app\common\service\member\ThirdService;
 use app\common\service\member\LogService;
 use app\common\service\file\FileService;
-use app\common\service\utils\SmsUtils;
-use app\common\service\utils\EmailUtils;
-use app\common\cache\Cache;
 use app\common\cache\utils\CaptchaSmsCache;
 use app\common\cache\utils\CaptchaEmailCache;
-use hg\apidoc\annotation as Apidoc;
+use app\common\cache\Cache;
+use app\common\utils\SmsUtils;
+use app\common\utils\EmailUtils;
 
 /**
- * @Apidoc\Title("会员中心")
+ * @Apidoc\Title("lang(会员中心)")
  * @Apidoc\Group("member")
  * @Apidoc\Sort("300")
  */
 class Member extends BaseController
 {
     /**
-     * @Apidoc\Title("我的信息")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", children={
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel", withoutField="password,remark,sort,is_disable,is_delete,delete_time"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr", field="tag_names"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getPlatformNameAttr", field="platform_name"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getApplicationNameAttr", field="application_name"),
-     * })
-     * @Apidoc\Returned("auth_api_urls", type="array", desc="权限接口url")
-     * @Apidoc\Returned("auth_api_list", type="array", desc="权限接口列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\member\ApiModel", field="api_id,api_pid,api_name,api_url,is_unlogin,is_unauth")
-     * })
+     * @Apidoc\Title("lang(我的信息)")
+     * @Apidoc\Returned(ref={MemberService::class,"info"}, withoutField="password,remark,sort,is_disable,is_delete,delete_time")
      */
     public function info()
     {
@@ -54,9 +43,9 @@ class Member extends BaseController
 
         $data = MemberService::info($param['member_id'], true, true, true);
         if ($data['is_disable'] == 1) {
-            return error('会员已被禁用');
+            return error(lang('会员已被禁用'));
         } else if ($data['is_delete'] == 1) {
-            return error('会员已被注销');
+            return error(lang('会员已被注销'));
         }
 
         unset($data['password'], $data['remark'], $data['sort'], $data['is_disable'], $data['is_delete'], $data['delete_time'], $data['api_ids'], $data['api_urls'], $data['api_list'], $data['api_tree']);
@@ -65,21 +54,23 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("修改信息")
+     * @Apidoc\Title("lang(修改信息)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\MemberModel", field="nickname,username,name,gender,region_id")
+     * @Apidoc\Param(ref={MemberService::class,"edit"}, field="nickname,username,phone,email,name,gender,region_id")
      */
     public function edit()
     {
         $param = $this->params([
-            'avatar_id/d' => 0,
-            'nickname/s'  => '',
-            'username/s'  => '',
-            'phone/s'     => '',
-            'email/s'     => '',
-            'name/s'      => '',
-            'gender/d'    => 0,
-            'region_id/d' => 0,
+            'avatar_id/d'   => 0,
+            'nickname/s'    => '',
+            'username/s'    => '',
+            'phone/s'       => '',
+            'email/s'       => '',
+            'name/s'        => '',
+            'gender/d'      => 0,
+            'birthday/s'    => '',
+            'hometown_id/d' => 0,
+            'region_id/d'   => 0,
         ]);
         $param['member_id'] = member_id(true);
 
@@ -91,7 +82,7 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("更换头像")
+     * @Apidoc\Title("lang(更换头像)")
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
      * @Apidoc\Param(ref="fileParam")
@@ -114,11 +105,11 @@ class Member extends BaseController
         $data = FileService::add($param);
         MemberService::edit($param['member_id'], ['avatar_id' => $data['file_id']]);
 
-        return success($data, '更换成功');
+        return success($data, lang('更换成功'));
     }
 
     /**
-     * @Apidoc\Title("修改密码")
+     * @Apidoc\Title("lang(修改密码)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("password_old", type="string", require=true, desc="原密码,会员信息pwd_edit_type=0需输入原密码")
      * @Apidoc\Param("password_new", type="string", require=true, desc="新密码,会员信息pwd_edit_type=1直接设置新密码")
@@ -141,14 +132,12 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("日志记录")
+     * @Apidoc\Title("lang(日志记录)")
      * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Query(ref="app\common\model\member\LogModel", field="log_type,create_time")
+     * @Apidoc\Query(ref={LogService::class,"edit"}, field="log_type,create_time")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="日志列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\member\LogModel", field="log_id,request_ip,request_region,request_isp,response_code,response_msg,create_time"),
-     *   @Apidoc\Returned(ref="app\common\model\member\ApiModel", field="api_url,api_name"),
+     *   @Apidoc\Returned(ref={LogService::class,"info"}, field="log_id,request_ip,request_region,request_isp,response_code,response_msg,create_time,api_url,api_name"),
      * })
      */
     public function log()
@@ -156,7 +145,7 @@ class Member extends BaseController
         $log_type    = $this->param('log_type/s', '');
         $create_time = $this->param('create_time/a', []);
 
-        $where[] = ['member_id', '=', member_id(true)];
+        $where = [['member_id', '=', member_id(true)]];
         if ($log_type !== '') {
             $where[] = ['log_type', '=', $log_type];
         }
@@ -170,7 +159,7 @@ class Member extends BaseController
                 $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
             }
         }
-        $where[] = where_delete();
+        $where = where_disdel($where);
 
         $data = LogService::list($where, $this->page(), $this->limit(), $this->order());
 
@@ -178,7 +167,7 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("手机绑定验证码")
+     * @Apidoc\Title("lang(手机绑定验证码)")
      * @Apidoc\Query("phone", type="string", require=true, desc="手机")
      */
     public function phoneCaptcha()
@@ -190,11 +179,11 @@ class Member extends BaseController
 
         SmsUtils::captcha($param['phone']);
 
-        return success([], '发送成功');
+        return success([], lang('发送成功'));
     }
 
     /**
-     * @Apidoc\Title("手机绑定")
+     * @Apidoc\Title("lang(手机绑定)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("phone", type="string", require=true, desc="手机")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
@@ -205,19 +194,21 @@ class Member extends BaseController
         $param['member_id'] = member_id(true);
 
         validate(MemberValidate::class)->scene('phoneBind')->check($param);
-        $captcha = CaptchaSmsCache::get($param['phone']);
+
+        $cache = new CaptchaSmsCache();
+        $captcha = $cache->get($param['phone']);
         if ($captcha != $param['captcha_code']) {
-            return error('验证码错误');
+            return error(lang('验证码错误'));
         }
 
         $data = MemberService::edit($param['member_id'], ['phone' => $param['phone']]);
-        CaptchaSmsCache::del($param['phone']);
+        $cache->del($param['phone']);
 
-        return success($data, '绑定成功');
+        return success($data, lang('绑定成功'));
     }
 
     /**
-     * @Apidoc\Title("手机绑定(小程序)")
+     * @Apidoc\Title("lang(手机绑定(小程序))")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("app", type="string", default="wx", desc="wx 微信小程序，qq QQ小程序（暂不支持）")
      * @Apidoc\Param("phone_code", type="string", require=true, desc="手机号获取凭证 code")
@@ -225,11 +216,11 @@ class Member extends BaseController
     public function phoneBindMiniapp()
     {
         $param = $this->params(['app/s' => 'wx', 'phone_code/s' => '']);
-        $validate = Validate::rule(['app' => 'require', 'phone_code' => 'require']);
+        $param['member_id'] = member_id(true);
+        $validate = validate(['app' => 'require', 'phone_code' => 'require'], [], false, false);
         if (!$validate->check($param)) {
             return error($validate->getError());
         }
-        $param['member_id']    = member_id(true);
         $param['captcha_code'] = $param['phone_code'];
 
         $setting = SettingService::info();
@@ -237,10 +228,10 @@ class Member extends BaseController
             $miniapp = new \thirdsdk\WxMiniapp($setting['wx_miniapp_appid'], $setting['wx_miniapp_appsecret']);
             $phone   = $miniapp->getPhoneNumber($param['phone_code']);
         } else {
-            return error('app value error');
+            return error(lang('app错误'));
         }
         if (empty($phone)) {
-            return error('获取手机号失败');
+            return error(lang('获取手机号失败'));
         }
         $param['phone'] = $phone;
         validate(MemberValidate::class)->scene('phoneBind')->check($param);
@@ -251,7 +242,7 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("邮箱绑定验证码")
+     * @Apidoc\Title("lang(邮箱绑定验证码)")
      * @Apidoc\Query("email", type="string", require=true, desc="邮箱")
      */
     public function emailCaptcha()
@@ -263,11 +254,11 @@ class Member extends BaseController
 
         EmailUtils::captcha($param['email']);
 
-        return success([], '发送成功');
+        return success([], lang('发送成功'));
     }
 
     /**
-     * @Apidoc\Title("邮箱绑定")
+     * @Apidoc\Title("lang(邮箱绑定)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("email", type="string", require=true, desc="邮箱")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
@@ -278,19 +269,20 @@ class Member extends BaseController
         $param['member_id'] = member_id(true);
 
         validate(MemberValidate::class)->scene('emailBind')->check($param);
-        $captcha = CaptchaEmailCache::get($param['email']);
+        $cache = new CaptchaEmailCache();
+        $captcha = $cache->get($param['email']);
         if ($captcha != $param['captcha_code']) {
-            return error('验证码错误');
+            return error(lang('验证码错误'));
         }
 
         $data = MemberService::edit($param['member_id'], ['email' => $param['email']]);
-        CaptchaEmailCache::del($param['email']);
+        $cache->del($param['email']);
 
-        return success($data, '绑定成功');
+        return success($data, lang('绑定成功'));
     }
 
     /**
-     * @Apidoc\Title("绑定小程序")
+     * @Apidoc\Title("lang(绑定小程序)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("app", type="string", default="wx", desc="wx 微信小程序，qq QQ小程序")
      * @Apidoc\Param("code", type="string", require=true, desc="code 用户绑定凭证")
@@ -300,7 +292,7 @@ class Member extends BaseController
     {
         $member_id = member_id(true);
         $param     = $this->params(['app/s' => 'wx', 'code/s' => '', 'userinfo/a' => []]);
-        $validate  = Validate::rule(['app' => 'require', 'code' => 'require', 'userinfo' => 'array']);
+        $validate  = validate(['app' => 'require', 'code' => 'require', 'userinfo' => 'array'], [], false, false);
         if (!$validate->check($param)) {
             return error($validate->getError());
         }
@@ -315,7 +307,7 @@ class Member extends BaseController
             $application = SettingService::APP_QQ_MINIAPP;
             $miniapp     = new \thirdsdk\QqMiniapp($setting['qq_miniapp_appid'], $setting['qq_miniapp_appsecret']);
         } else {
-            return error('app value error');
+            return error(lang('app错误'));
         }
 
         $user_info                = $miniapp->login($param['code']);
@@ -335,7 +327,7 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("绑定公众号")
+     * @Apidoc\Title("lang(绑定公众号)")
      * @Apidoc\Desc("拼接参数后打开链接")
      * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信公众号")
      * @Apidoc\Query("jump_url", type="string", require=true, desc="绑定成功后跳转地址，会携带 token 参数")
@@ -347,16 +339,17 @@ class Member extends BaseController
     {
         $setting  = SettingService::info();
         $param    = $this->params(['app/s' => 'wx', 'jump_url/s' => '', 'redirect_uri/s' => '', $setting['token_name'] => '']);
-        $validate = Validate::rule(['app' => 'require', 'jump_url' => 'require|url', 'redirect_uri' => 'url', $setting['token_name'] => 'require']);
+        $rule     = ['app' => 'require', 'jump_url' => 'require|url', 'redirect_uri' => 'url', $setting['token_name'] => 'require'];
+        $validate = validate($rule, [], false, false);
         if (!$validate->check($param)) {
             echo $validate->getError();
             return;
         }
 
-        $member_id = member_id(true);
-        $api_token = api_token();
-        if (empty($api_token)) {
-            echo '绑定失败，请重试！';
+        $member_id    = member_id(true);
+        $member_token = member_token();
+        if (empty($member_token)) {
+            echo lang('绑定失败，请重试');
             return;
         }
 
@@ -366,25 +359,27 @@ class Member extends BaseController
             $app['application'] = SettingService::APP_WX_OFFIACC;
             $offiacc            = new \thirdsdk\WxOffiacc($setting['wx_offiacc_appid'], $setting['wx_offiacc_appsecret']);
         } else {
-            echo 'app value error';
+            echo lang('app错误');
             return;
         }
 
         $redirect_uri = $param['redirect_uri'] ?: (string) url('api/member.Login/redirectUri', [], false, true);
         $state        = md5(uniqid('offiacc' . $member_id, true));
 
-        $cache['type']         = 'offiacc';
-        $cache['app']          = $app;
-        $cache['jump_url']     = $param['jump_url'];
-        $cache['token']        = $api_token;
-        $cache['redirect_uri'] = $redirect_uri;
-        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
+        $cache = new Cache();
+        $cache_key = SettingService::OFFIACC_WEBSITE_KEY . $state;
+        $cache_val['type']         = 'offiacc';
+        $cache_val['app']          = $app;
+        $cache_val['jump_url']     = $param['jump_url'];
+        $cache_val['token']        = $member_token;
+        $cache_val['redirect_uri'] = $redirect_uri;
+        $cache->set($cache_key, $cache_val, 1800);
 
         $offiacc->login($redirect_uri, $state);
     }
 
     /**
-     * @Apidoc\Title("绑定网站应用")
+     * @Apidoc\Title("lang(绑定网站应用)")
      * @Apidoc\Desc("拼接参数后打开链接")
      * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信网站应用，qq QQ网站应用，wb 微博网站应用")
      * @Apidoc\Query("jump_url", type="string", require=true, desc="绑定成功后跳转地址，会携带 token 参数")
@@ -396,16 +391,17 @@ class Member extends BaseController
     {
         $setting  = SettingService::info();
         $param    = $this->params(['app/s' => 'wx', 'jump_url/s' => '', 'redirect_uri/s' => '', $setting['token_name'] => '']);
-        $validate = Validate::rule(['app' => 'require', 'jump_url' => 'require|url', 'redirect_uri' => 'url', $setting['token_name'] => 'require']);
+        $rule     = ['app' => 'require', 'jump_url' => 'require|url', 'redirect_uri' => 'url', $setting['token_name'] => 'require'];
+        $validate = validate($rule, [], false, false);
         if (!$validate->check($param)) {
             echo $validate->getError();
             return;
         }
 
-        $member_id = member_id(true);
-        $api_token = api_token();
-        if (empty($api_token)) {
-            echo '绑定失败，请重试！';
+        $member_id    = member_id(true);
+        $member_token = member_token();
+        if (empty($member_token)) {
+            echo lang('绑定失败，请重试');
             return;
         }
 
@@ -423,33 +419,34 @@ class Member extends BaseController
             $app['application'] = SettingService::APP_WB_WEBSITE;
             $website            = new \thirdsdk\WbWebsite($setting['wb_website_appid'], $setting['wb_website_appsecret']);
         } else {
-            echo 'app value error';
+            echo lang('app错误');
             return;
         }
 
         $redirect_uri = $param['redirect_uri'] ?: (string) url('api/member.Login/redirectUri', [], false, true);
         $state        = md5(uniqid('website' . $member_id, true));
 
-        $cache['type']         = 'website';
-        $cache['app']          = $app;
-        $cache['jump_url']     = $param['jump_url'];
-        $cache['redirect_uri'] = $redirect_uri;
-        $cache['token']        = $api_token;
-        Cache::set(SettingService::OFFIACC_WEBSITE_KEY . $state, $cache, 1800);
+        $cache = new Cache();
+        $cache_key = SettingService::OFFIACC_WEBSITE_KEY . $state;
+        $cache_val['type']         = 'website';
+        $cache_val['app']          = $app;
+        $cache_val['jump_url']     = $param['jump_url'];
+        $cache_val['redirect_uri'] = $redirect_uri;
+        $cache_val['token']        = $member_token;
+        $cache->set($cache_key, $cache_val, 1800);
 
         $website->login($redirect_uri, $state);
     }
 
     /**
-     * @Apidoc\Title("绑定移动应用")
+     * @Apidoc\Title("lang(绑定移动应用)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("app", type="string", default="wx", desc="应用：wx 微信移动应用，qq QQ移动应用")
      * @Apidoc\Param("code", type="string", require=true, desc="wx，code")
      * @Apidoc\Param("access_token", type="string", require=true, desc="qq，access_token")
      * @Apidoc\Param("openid", type="string", require=true, desc="qq，openid")
      * @Apidoc\Param("userinfo", type="object", require=false, desc="用户信息：headimgurl头像，nickname昵称")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel\getAvatarUrlAttr", field="avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,nickname,username,login_ip,login_time,login_num")
+     * @Apidoc\Returned(ref={MemberService::class,"info"}, field="member_id,nickname,username,login_ip,login_time,login_num,avatar_url")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
@@ -466,9 +463,9 @@ class Member extends BaseController
             $rule['access_token'] = 'require';
             $rule['openid'] = 'require';
         } else {
-            return error('app value error');
+            return error(lang('app错误'));
         }
-        $validate = Validate::rule($rule);
+        $validate = validate($rule, [], false, false);
         if (!$validate->check($param)) {
             return error($validate->getError());
         }
@@ -485,7 +482,7 @@ class Member extends BaseController
             $mobile      = new \thirdsdk\QqMobile($setting['qq_mobile_appid'], $setting['qq_mobile_appsecret']);
             $user_info   = $mobile->login($param['access_token'], $param['openid']);
         } else {
-            return error('app value error');
+            return error(lang('app错误'));
         }
 
         $user_info['member_id']   = $member_id;
@@ -504,11 +501,9 @@ class Member extends BaseController
     }
 
     /**
-     * @Apidoc\Title("第三方账号列表")
+     * @Apidoc\Title("lang(第三方账号列表)")
      * @Apidoc\Returned("list", type="array", desc="第三方账号列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\member\ThirdModel", field="third_id,member_id,platform,application,headimgurl,nickname,create_time,login_time"),
-     *   @Apidoc\Returned(ref="app\common\model\member\ThirdModel\getPlatformNameAttr", field="platform_name"),
-     *   @Apidoc\Returned(ref="app\common\model\member\ThirdModel\getApplicationNameAttr", field="application_name"),
+     *   @Apidoc\Returned(ref={ThirdService::class,"info"}, field="third_id,member_id,platform,application,headimgurl,nickname,create_time,login_time,platform_name,application_name"),
      * })
      */
     public function thirdList()
@@ -517,23 +512,24 @@ class Member extends BaseController
 
         validate(MemberValidate::class)->scene('info')->check($param);
 
-        $member = MemberService::info($param['member_id'], true, false, true);
-        $data['list'] = $member['thirds'];
+        $where = where_disdel([['member_id', '=', $param['member_id']]]);
+
+        $data = ThirdService::list($where, 0, 0, [], '', false);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("第三方账号解绑")
+     * @Apidoc\Title("lang(第三方账号解绑)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param("third_id", type="int", require=true, desc="第三方账号id")
      */
     public function thirdUnbind()
     {
         $member_id = member_id(true);
-        $third_id  = $this->param('third_id/d', 0);
+        $third_id  = $this->param('third_id', '');
         if (empty($third_id)) {
-            return error('third_id must');
+            return error(lang('third_id必须'));
         }
 
         $data = MemberService::thirdUnbind($third_id, $member_id);

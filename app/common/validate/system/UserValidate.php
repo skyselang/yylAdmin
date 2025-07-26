@@ -10,7 +10,8 @@
 namespace app\common\validate\system;
 
 use think\Validate;
-use app\common\model\system\UserModel;
+use app\common\service\system\UserService as Service;
+use app\common\model\system\UserModel as Model;
 use app\common\model\system\UserAttributesModel;
 
 /**
@@ -18,53 +19,69 @@ use app\common\model\system\UserAttributesModel;
  */
 class UserValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'      => ['require', 'array'],
+        'field'    => ['require', 'checkUpdateField'],
         'user_id'  => ['require'],
-        'number'   => ['length' => '1,63', 'checkNumber'],
-        'nickname' => ['require', 'checkNickname', 'length' => '1,63'],
-        'username' => ['require', 'checkUsername', 'length' => '2,63'],
+        'unique'   => ['checkUnique'],
+        'nickname' => ['require', 'checkNickname', 'length' => '1,64'],
+        'username' => ['require', 'checkUsername', 'length' => '2,64'],
         'password' => ['require', 'length' => '6,18'],
         'phone'    => ['mobile', 'checkPhone'],
         'email'    => ['email', 'checkEmail'],
-        'dept_ids' => ['array'],
-        'post_ids' => ['array'],
         'role_ids' => ['array'],
     ];
 
     // 错误信息
     protected $message = [
-        'number.length'    => '编号长度为1至63个字符',
         'nickname.require' => '请输入昵称',
-        'nickname.length'  => '昵称长度为1至63个字符',
-        'username.require' => 'Please enter your account/phone/email',
-        'username.length'  => '账号长度为2至63个字符',
-        'password.require' => 'Please enter password',
+        'nickname.length'  => '昵称长度为1至64个字符',
+        'username.require' => '请输入账号',
+        'username.length'  => '账号长度为2至64个字符',
+        'password.require' => '请输入密码',
         'password.length'  => '密码长度为6至18个字符',
-        'phone.mobile'     => '请输入正确的手机号码',
-        'email.email'      => '请输入正确的邮箱地址',
+        'phone.mobile'     => '请输入正确手机号码',
+        'email.email'      => '请输入正确邮箱地址',
     ];
 
     // 验证场景
     protected $scene = [
-        'info'     => ['user_id'],
-        'add'      => ['number', 'nickname', 'username', 'password', 'phone', 'email'],
-        'edit'     => ['user_id', 'number', 'nickname', 'username', 'phone', 'email'],
-        'dele'     => ['ids'],
-        'editdept' => ['ids', 'dept_ids'],
-        'editpost' => ['ids', 'post_ids'],
-        'editrole' => ['ids', 'role_ids'],
-        'repwd'    => ['ids', 'password'],
-        'super'    => ['ids'],
-        'disable'  => ['ids'],
-        'login'    => ['username', 'password'],
+        'info'      => ['user_id'],
+        'add'       => ['unique', 'nickname', 'username', 'password', 'phone', 'email'],
+        'edit'      => ['user_id', 'unique', 'nickname', 'username', 'phone', 'email'],
+        'dele'      => ['ids'],
+        'disable'   => ['ids'],
+        'update'    => ['ids', 'field'],
+        'editrole'  => ['ids', 'role_ids'],
+        'editpwd'   => ['ids', 'password'],
+        'editsuper' => ['ids'],
+        'login'     => ['username', 'password'],
     ];
+
+    // 验证场景定义：添加
+    protected function sceneAdd()
+    {
+        return $this->only(['unique', 'nickname', 'username', 'phone', 'email']);
+    }
 
     // 验证场景定义：修改
     protected function sceneEdit()
     {
-        return $this->only(['user_id', 'number', 'nickname', 'username', 'phone', 'email'])
+        return $this->only(['user_id', 'unique', 'nickname', 'username', 'phone', 'email'])
             ->append('user_id', ['checkIsSuper']);
     }
 
@@ -82,15 +99,15 @@ class UserValidate extends Validate
             ->append('ids', ['checkIsSuper']);
     }
 
-    // 验证场景定义：重置密码
-    protected function sceneRepwd()
+    // 验证场景定义：修改密码
+    protected function sceneEditpwd()
     {
         return $this->only(['ids', 'password'])
             ->append('ids', ['checkIsSuper']);
     }
 
     // 验证场景定义：是否超管
-    protected function sceneSuper()
+    protected function sceneEditsuper()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkIsSuper']);
@@ -111,21 +128,31 @@ class UserValidate extends Validate
             ->remove('password', ['length']);
     }
 
-    // 自定义验证规则：编号是否已存在
-    protected function checkNumber($value, $rule, $data = [])
+    // 自定义验证规则：用户批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
     {
-        $number = $data['number'] ?? '';
-        if ($number) {
-            $model = new UserModel();
-            $pk = $model->getPk();
-            $id = $data[$pk] ?? 0;
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
 
-            $where[] = [$pk, '<>', $id];
-            $where[] = ['number', '=', $number];
-            $where = where_delete($where);
-            $info = $model->field($pk)->where($where)->find();
+        return true;
+    }
+
+    // 自定义验证规则：编号是否已存在
+    protected function checkUnique($value, $rule, $data = [])
+    {
+        $unique = $data['unique'] ?? '';
+        if ($unique) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $id    = $data[$pk] ?? 0;
+
+            $where = where_delete([[$pk, '<>', $id], ['unique', '=', $unique]]);
+            $info  = $model->field($pk)->where($where)->find();
             if ($info) {
-                return '编号已存在：' . $number;
+                return lang('编号已存在：') . $unique;
             }
         }
 
@@ -135,16 +162,14 @@ class UserValidate extends Validate
     // 自定义验证规则：昵称是否已存在
     protected function checkNickname($value, $rule, $data = [])
     {
-        $model = new UserModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['nickname', '=', $data['nickname']];
-        $where[] = where_delete();
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['nickname', '=', $data['nickname']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '昵称已存在：' . $data['nickname'];
+            return lang('昵称已存在：') . $data['nickname'];
         }
 
         return true;
@@ -153,16 +178,14 @@ class UserValidate extends Validate
     // 自定义验证规则：账号是否已存在
     protected function checkUsername($value, $rule, $data = [])
     {
-        $model = new UserModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['username', '=', $data['username']];
-        $where[] = where_delete();
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['username', '=', $data['username']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '账号已存在：' . $data['username'];
+            return lang('账号已存在：') . $data['username'];
         }
 
         return true;
@@ -171,16 +194,14 @@ class UserValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhone($value, $rule, $data = [])
     {
-        $model = new UserModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['phone', '=', $data['phone']];
-        $where[] = where_delete();
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['phone', '=', $data['phone']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '手机已存在：' . $data['phone'];
+            return lang('手机已存在：') . $data['phone'];
         }
 
         return true;
@@ -189,16 +210,14 @@ class UserValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmail($value, $rule, $data = [])
     {
-        $model = new UserModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['email', '=', $data['email']];
-        $where[] = where_delete();
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['email', '=', $data['email']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '邮箱已存在：' . $data['email'];
+            return lang('邮箱已存在：') . $data['email'];
         }
 
         return true;
@@ -216,7 +235,7 @@ class UserValidate extends Validate
             $is_super = user_is_super(user_id());
             $user_id  = user_is_super($id);
             if (!$is_super && $user_id) {
-                return '无法对系统超管用户进行操作:' . $id;
+                return lang('无法对系统超管用户进行操作：') . $id;
             }
         }
 
@@ -229,7 +248,7 @@ class UserValidate extends Validate
         $ids = $data['ids'] ?? [];
         foreach ($ids as $id) {
             if (user_is_super($id)) {
-                return '无法对系统超管用户进行操作:' . $id;
+                return lang('无法对系统超管用户进行操作：') . $id;
             }
         }
 
@@ -242,7 +261,7 @@ class UserValidate extends Validate
         $ids = $data['ids'] ?? [];
         foreach ($ids as $id) {
             if (user_is_super($id)) {
-                return '无法对系统超管用户进行操作:' . $id;
+                return lang('无法对系统超管用户进行操作：') . $id;
             }
         }
 
@@ -252,20 +271,23 @@ class UserValidate extends Validate
     // 自定义验证规则：用户是否已存在部门或职位或角色
     protected function checkDeptPostRole($value, $rule, $data = [])
     {
-        // $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('role_id', '>', 0)->find();
-        // if ($info) {
-        //     return '用户存在角色，请在[角色]中解除后再删除：' . $info['user_id'];
-        // }
+        $model = $this->model();
+        $pk    = $model->getPk();
 
-        // $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('dept_id', '>', 0)->find();
-        // if ($info) {
-        //     return '用户存在部门，请在[修改]中解除后再删除：' . $info['user_id'];
-        // }
+        $info = UserAttributesModel::where($pk, 'in', $data['ids'])->where('role_id', '>', 0)->find();
+        if ($info) {
+            // return '用户存在角色，请在[角色]中解除后再删除：' . $info[$pk];
+        }
 
-        // $info = UserAttributesModel::where('user_id', 'in', $data['ids'])->where('post_id', '>', 0)->find();
-        // if ($info) {
-        //     return '用户存在职位，请在[修改]中解除后再删除：' . $info['user_id'];
-        // }
+        $info = UserAttributesModel::where($pk, 'in', $data['ids'])->where('dept_id', '>', 0)->find();
+        if ($info) {
+            // return '用户存在部门，请在[修改]中解除后再删除：' . $info[$pk];
+        }
+
+        $info = UserAttributesModel::where($pk, 'in', $data['ids'])->where('post_id', '>', 0)->find();
+        if ($info) {
+            // return '用户存在职位，请在[修改]中解除后再删除：' . $info[$pk];
+        }
 
         return true;
     }

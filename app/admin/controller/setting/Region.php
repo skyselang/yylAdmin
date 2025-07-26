@@ -9,172 +9,229 @@
 
 namespace app\admin\controller\setting;
 
-use app\common\controller\BaseController;
-use app\common\validate\setting\RegionValidate;
-use app\common\service\setting\RegionService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\setting\RegionValidate as Validate;
+use app\common\service\setting\RegionService as Service;
+use app\common\model\setting\RegionModel as Model;
 
 /**
- * @Apidoc\Title("地区管理")
+ * @Apidoc\Title("lang(地区管理)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("600")
+ * @Apidoc\Sort("550")
  */
 class Region extends BaseController
 {
     /**
-     * @Apidoc\Title("地区列表")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Query(ref="app\common\model\setting\RegionModel", field="region_pid")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel", type="array", desc="地区列表", field="region_id,region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,sort")
-     * @Apidoc\Returned("tree", ref="app\common\model\setting\RegionModel", type="tree", desc="地区树形", field="region_id,region_pid,region_name")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(地区列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
-        $where = $this->where(where_delete());
-        if (count($where) == 1) {
-            $where[] = ['region_pid', '=', $this->param('region_pid/d', 0)];
-        }
+        $where  = $this->where(where_delete());
+        $order  = $this->order();
+        $islist = $this->param('islist');
+        $param  = ['islist' => $islist, 'search_mode' => $this->param('search_mode')];
 
-        $data['list']  = RegionService::list('list', $where, $this->order());
-        $data['exps']  = where_exps();
-        $data['tree']  = RegionService::list('tree', [where_delete()], $this->order(), 'region_pid,region_name');
-        $data['count'] = count(tree_to_list($data['list']));
+        $basedata = $this->service::basedata(true);
+        if ($islist) {
+            $data['list']  = $this->service::list('list', $where, $order, '', 0, 0, $param);
+            $data['count'] = count($data['list']);
+        } else {
+            $data['list']  = $this->service::list('tree', $where, $order);
+            $data['count'] = count($this->service::list('list', $where, $order));
+            if (count($where) > 1) {
+                $list = tree_to_list($data['list']);
+                $all  = tree_to_list($basedata['trees']);
+                $pk   = $this->model()->getPk();
+                $pid  = $this->model()->pidk;
+                $ids  = [];
+                foreach ($list as $val) {
+                    $pids = children_parent_key($all, $val[$pk], $pk, $pid);
+                    $cids = parent_children_key($all, $val[$pk], $pk, $pid);
+                    $ids  = array_merge($ids, $pids, $cids);
+                }
+                $data['list'] = $this->service::list('tree', [[$pk, 'in', $ids], where_delete()], $order);
+            }
+        }
+        $data['basedata'] = $basedata;
+        $list = $this->service::list('list', $where, $order);
+        $data['ids'] = array_column($list, $this->model()->getPk());
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("地区信息")
-     * @Apidoc\Query(ref="app\common\model\setting\RegionModel", field="region_id")
-     * @Apidoc\Returned(ref="app\common\model\setting\RegionModel")
-     * @Apidoc\Returned(ref="app\common\service\setting\RegionService\info")
+     * @Apidoc\Title("lang(地区信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['region_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(RegionValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = RegionService::info($param['region_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("地区添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\RegionModel", field="region_pid,region_level,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_longitude,region_latitude,sort")
+     * @Apidoc\Title("lang(地区添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(RegionService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(RegionValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = RegionService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("地区修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\RegionModel", field="region_id,region_pid,region_level,region_name,region_pinyin,region_jianpin,region_initials,region_citycode,region_zipcode,region_longitude,region_latitude,sort")
+     * @Apidoc\Title("lang(地区修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(RegionService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(RegionValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = RegionService::edit($param['region_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("地区删除")
+     * @Apidoc\Title("lang(地区删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(RegionValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = RegionService::dele($param['ids']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("地区修改上级")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\RegionModel", field="region_pid")
-     */
-    public function editpid()
-    {
-        $param = $this->params(['ids/a' => [], 'region_pid/d' => 0]);
-
-        validate(RegionValidate::class)->scene('editpid')->check($param);
-
-        $data = RegionService::editpid($param['ids'], $param['region_pid']);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("地区修改区号")
+     * @Apidoc\Title("lang(地区是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\RegionModel", field="region_citycode")
-     */
-    public function citycode()
-    {
-        $param = $this->params(['ids/a' => [], 'region_citycode/s' => '']);
-
-        validate(RegionValidate::class)->scene('citycode')->check($param);
-
-        $data = RegionService::update($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("地区修改邮编")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\RegionModel", field="region_zipcode")
-     */
-    public function zipcode()
-    {
-        $param = $this->params(['ids/a' => [], 'region_zipcode/s' => '']);
-
-        validate(RegionValidate::class)->scene('zipcode')->check($param);
-
-        $data = RegionService::update($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("地区是否禁用")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\RegionModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(RegionValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = RegionService::update($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(地区批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(地区导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
 
         return success($data);
     }

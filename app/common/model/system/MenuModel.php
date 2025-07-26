@@ -10,8 +10,8 @@
 namespace app\common\model\system;
 
 use think\Model;
-use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\service\system\SettingService;
 
 /**
  * 菜单管理模型
@@ -22,6 +22,21 @@ class MenuModel extends Model
     protected $name = 'system_menu';
     // 表主键
     protected $pk = 'menu_id';
+    /**
+     * 上级id键
+     * @var string
+     */
+    public $pidk = 'menu_pid';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     /**
      * 获取菜单类型名称
@@ -42,6 +57,7 @@ class MenuModel extends Model
     {
         return ($data['is_unlogin'] ?? 0) ? '是' : '否';
     }
+    
     /**
      * 获取是否免权名称
      * @Apidoc\Field("")
@@ -51,6 +67,7 @@ class MenuModel extends Model
     {
         return ($data['is_unauth'] ?? 0) ? '是' : '否';
     }
+
     /**
      * 获取是否免限名称
      * @Apidoc\Field("")
@@ -59,15 +76,6 @@ class MenuModel extends Model
     public function getIsUnrateNameAttr($value, $data)
     {
         return ($data['is_unrate'] ?? 0) ? '是' : '否';
-    }
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 
     /**

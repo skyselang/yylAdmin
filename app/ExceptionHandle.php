@@ -7,20 +7,22 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 应用异常处理类
 namespace app;
 
-use app\common\service\utils\RetCodeUtils;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
+use Throwable;
+use think\Response;
+use think\facade\Config;
 use think\exception\Handle;
 use think\exception\HttpException;
-use think\exception\HttpResponseException;
 use think\exception\ValidateException;
-use think\facade\Config;
-use think\Response;
-use Throwable;
+use think\exception\HttpResponseException;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
+use app\common\utils\ReturnCodeUtils;
 
+/**
+ * 应用异常处理类
+ */
 class ExceptionHandle extends Handle
 {
     /**
@@ -37,7 +39,6 @@ class ExceptionHandle extends Handle
 
     /**
      * 记录异常信息（包括日志或者其它方式记录）
-     *
      * @access public
      * @param  Throwable $exception
      * @return void
@@ -50,7 +51,6 @@ class ExceptionHandle extends Handle
 
     /**
      * Render an exception into an HTTP response.
-     *
      * @access public
      * @param \think\Request $request
      * @param Throwable $e
@@ -67,7 +67,7 @@ class ExceptionHandle extends Handle
 
         // 参数验证错误
         if ($e instanceof ValidateException) {
-            $data['code'] = RetCodeUtils::ERROR;
+            $data['code'] = ReturnCodeUtils::ERROR;
             $data['msg']  = $e->getError();
             $data['data'] = [];
             return response($data, 200, [], 'json');
@@ -79,11 +79,10 @@ class ExceptionHandle extends Handle
         }
 
         // 其它异常
+        $debug = Config::get('app.app_debug');
         $data['code'] = $e->getCode();
         $data['msg']  = $e->getMessage();
         $data['data'] = [];
-
-        $debug = Config::get('app.app_debug');
         if ($debug) {
             $data['data'] = [
                 'line'  => $e->getLine(),

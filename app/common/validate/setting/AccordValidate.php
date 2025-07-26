@@ -10,54 +10,85 @@
 namespace app\common\validate\setting;
 
 use think\Validate;
-use app\common\model\setting\AccordModel;
+use app\common\service\setting\AccordService as Service;
+use app\common\model\setting\AccordModel as Model;
 
 /**
  * 协议管理验证器
  */
 class AccordValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'       => ['require', 'array'],
+        'field'     => ['require', 'checkUpdateField'],
         'accord_id' => ['require'],
-        'unique'    => ['require', 'checkExisted'],
-        'name'      => ['require'],
+        'name'      => ['require', 'checkExisted'],
     ];
 
     // 错误信息
     protected $message = [
-        'unique.require' => '请输入标识',
-        'name.require'   => '请输入名称',
+        'name.require' => '请输入名称',
     ];
 
     // 验证场景
     protected $scene = [
         'info'    => ['accord_id'],
-        'add'     => ['unique', 'name'],
-        'edit'    => ['accord_id', 'unique', 'name'],
+        'add'     => ['name'],
+        'edit'    => ['accord_id', 'name'],
         'dele'    => ['ids'],
         'disable' => ['ids'],
+        'update'  => ['ids', 'field'],
     ];
 
     // 自定义验证规则：协议是否已存在
     protected function checkExisted($value, $rule, $data = [])
     {
-        $model = new AccordModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $unique = $data['unique'];
-        if (is_numeric($unique)) {
-            return '标识不能为纯数字';
+        $unique = $data['unique'] ?? '';
+        if ($unique) {
+            if (is_numeric($unique)) {
+                return lang('编号不能为纯数字');
+            }
+            $where = where_delete([[$pk, '<>', $id], ['unique', '=', $unique]]);
+            $info  = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return lang('编号已存在：') . $unique;
+            }
         }
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['unique', '=', $unique];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['name', '=', $data['name']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '标识已存在：' . $unique;
+            return lang('名称已存在：') . $data['name'];
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：协议批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
         }
 
         return true;

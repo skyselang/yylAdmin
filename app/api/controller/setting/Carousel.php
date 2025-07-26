@@ -9,44 +9,46 @@
 
 namespace app\api\controller\setting;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\common\validate\setting\CarouselValidate;
 use app\common\service\setting\CarouselService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("轮播")
+ * @Apidoc\Title("lang(轮播)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("700")
+ * @Apidoc\Sort("200")
  */
 class Carousel extends BaseController
 {
     /**
-     * @Apidoc\Title("轮播列表")
+     * @Apidoc\Title("lang(轮播列表)")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query("title", type="string", default="", desc="标题")
-     * @Apidoc\Query("position", type="string", default="", desc="位置")
+     * @Apidoc\Query("unique", type="string", default="", desc="编号，多个逗号隔开")
+     * @Apidoc\Query(ref={CarouselService::class,"edit"}, field="title,position")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="轮播列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,url,position,desc,sort,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
+     *   @Apidoc\Returned(ref={CarouselService::class,"info"}, field="carousel_id,unique,file_id,title,url,position,desc,sort,is_disable,create_time,update_time,file_url,file_name,file_ext,file_type,file_type_name"),
      * })
      */
     public function list()
     {
+        $unique   = $this->param('unique/s', '');
         $title    = $this->param('title/s', '');
         $position = $this->param('position/s', '');
 
-        $where[] = ['carousel_id', '>', 0];
+        $where = [['carousel_id', '>', 0]];
+        if ($unique) {
+            $where[] = ['unique', 'in', $unique];
+        }
         if ($title) {
             $where[] = ['title', 'like', '%' . $title . '%'];
         }
         if ($position) {
             $where[] = ['position', '=', $position];
         }
-        $where[] = where_disable();
-        $where[] = where_delete();
+        $where = where_disdel($where);
 
         $order = ['sort' => 'desc', 'carousel_id' => 'desc'];
 
@@ -56,11 +58,9 @@ class Carousel extends BaseController
     }
 
     /**
-     * @Apidoc\Title("轮播信息")
-     * @Apidoc\Query("carousel_id", type="string", require=true, default="", desc="轮播id、标识")
-     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel"),
-     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
-     * @Apidoc\Returned("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表")
+     * @Apidoc\Title("lang(轮播信息)")
+     * @Apidoc\Query("carousel_id", type="string", require=true, default="", desc="轮播id、编号")
+     * @Apidoc\Returned(ref={CarouselService::class,"info"})
      */
     public function info()
     {
@@ -70,7 +70,7 @@ class Carousel extends BaseController
 
         $data = CarouselService::info($param['carousel_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error('轮播不存在');
+            return error(lang('轮播不存在'));
         }
 
         return success($data);

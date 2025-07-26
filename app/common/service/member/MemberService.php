@@ -9,18 +9,21 @@
 
 namespace app\common\service\member;
 
-use think\facade\Validate;
-use think\facade\Filesystem;
-use app\common\cache\member\MemberCache;
-use app\common\service\member\SettingService;
-use app\common\service\member\ThirdService;
-use app\common\service\file\ExportService as FileExportService;
-use app\common\service\file\ImportService as FileImportService;
-use app\common\service\utils\Utils;
-use app\common\service\utils\RetCodeUtils;
-use app\common\model\member\MemberModel;
-use app\common\model\member\ThirdModel;
 use hg\apidoc\annotation as Apidoc;
+use app\common\cache\member\MemberCache as Cache;
+use app\common\model\member\MemberModel as Model;
+use app\common\service\file\SettingService as FileSettingService;
+use app\common\service\file\ExportService;
+use app\common\service\file\ImportService;
+use app\common\service\file\FileService;
+use app\common\service\setting\RegionService;
+use app\common\model\member\GroupModel;
+use app\common\model\member\TagModel;
+use app\common\model\member\ThirdModel;
+use app\common\model\member\AttributesModel;
+use app\common\utils\ReturnCodeUtils;
+use app\common\utils\Utils;
+use think\facade\Db;
 
 /**
  * 会员管理
@@ -28,61 +31,150 @@ use hg\apidoc\annotation as Apidoc;
 class MemberService
 {
     /**
-     * 添加修改字段
-     * @var array
+     * 缓存
      */
-    public static $edit_field = [
-        'member_id/d' => '',
-        'avatar_id/d' => 0,
-        'nickname/s'  => '',
-        'username/s'  => '',
-        'phone/s'     => '',
-        'email/s'     => '',
-        'name/s'      => '',
-        'gender/d'    => 0,
-        'region_id/d' => 0,
-        'remark/s'    => '',
-        'sort/d'      => 250,
-        'tag_ids/a'   => [],
-        'group_ids/a' => [],
+    public static function cache()
+    {
+        return new Cache();
+    }
+
+    /**
+     * 模型
+     */
+    public static function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * 添加修改字段
+     */
+    public static $editField = [
+        'member_id'     => '',
+        'unique/s'      => '',
+        'avatar_id/d'   => 0,
+        'nickname/s'    => '',
+        'username/s'    => '',
+        'phone/s'       => '',
+        'email/s'       => '',
+        'name/s'        => '',
+        'gender/d'      => 0,
+        'birthday/s'    => '',
+        'hometown_id/d' => 0,
+        'region_id/d'   => 0,
+        'sort/d'        => 250,
+        'remark/s'      => '',
+        'is_super/d'    => 0,
+        'tag_ids/a'     => [],
+        'group_ids/a'   => [],
     ];
 
     /**
+     * 批量修改字段
+     */
+    public static $updateField = ['remark', 'sort', 'unique', 'avatar_id', 'gender', 'region_id', 'tag_ids', 'group_ids'];
+
+    /**
+     * 基础数据
+     * @param bool $exp 是否返回查询表达式
+     * @Apidoc\Returned("basedata", type="object", desc="基础数据", children={
+     *   @Apidoc\Returned(ref="expsReturn"),
+     *   @Apidoc\Returned("tags", ref={TagService::class,"info"}, type="array", desc="标签", field="tag_id,tag_name"),
+     *   @Apidoc\Returned("groups", ref={GroupService::class,"info"}, type="array", desc="分组", field="group_id,group_name"),
+     *   @Apidoc\Returned("regions", ref={RegionService::class,"info"}, type="tree", desc="地区", field="region_id,region_pid,region_name"),
+     *   @Apidoc\Returned("api_ids", type="array", desc="接口id"),
+     *   @Apidoc\Returned("genders", type="array", desc="性别"),
+     *   @Apidoc\Returned("platforms", type="array", desc="平台"),
+     *   @Apidoc\Returned("applications", type="array", desc="应用"),
+     * })
+     */
+    public static function basedata($exp = false)
+    {
+        $exps         = $exp ? where_exps() : [];
+        $tags         = TagService::list([where_delete()], 0, 0, [], 'tag_name', false)['list'] ?? [];
+        $groups       = GroupService::list([where_delete()], 0, 0, [], 'group_name', false)['list'] ?? [];
+        $regions      = RegionService::list('tree', [where_delete()], [], 'region_name');
+        $api_ids      = array_column(ApiService::list('list', [where_delete()], [], 'api_name'), 'api_id');
+        $genders      = SettingService::genders('', true);
+        $platforms    = SettingService::platforms('', true);
+        $applications = SettingService::applications('', true);
+
+        return [
+            'exps'         => $exps,
+            'tags'         => $tags,
+            'groups'       => $groups,
+            'regions'      => $regions,
+            'api_ids'      => $api_ids,
+            'genders'      => $genders,
+            'platforms'    => $platforms,
+            'applications' => $applications,
+        ];
+    }
+
+    /**
      * 会员列表
-     *
      * @param array  $where 条件
      * @param int    $page  分页
      * @param int    $limit 数量
      * @param array  $order 排序
      * @param string $field 字段
      * @param bool   $total 总数
-     * 
-     * @return array ['count', 'pages', 'page', 'limit', 'list']
+     * @Apidoc\Query(ref="pagingQuery")
+     * @Apidoc\Query(ref="sortQuery")
+     * @Apidoc\Query(ref="searchQuery")
+     * @Apidoc\Returned(ref="pagingReturn")
+     * @Apidoc\Returned("list", type="array", desc="列表", children={
+     *   @Apidoc\Returned(ref={Model::class}, field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time"),
+     *   @Apidoc\Returned(ref={Model::class,"getAvatarUrlAttr"}, field="avatar_url"),
+     *   @Apidoc\Returned(ref={Model::class,"getTagNamesAttr"}, field="tag_names"),
+     *   @Apidoc\Returned(ref={Model::class,"getGroupNamesAttr"}, field="group_names"),
+     *   @Apidoc\Returned(ref={Model::class,"getIsSuperNameAttr"}, field="is_super_name"),
+     *   @Apidoc\Returned(ref={Model::class,"getIsDisableNameAttr"}, field="is_disable_name"),
+     * })
      */
     public static function list($where = [], $page = 1, $limit = 10, $order = [], $field = '', $total = true)
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
+        $model = self::model();
+        $pk    = $model->getPk();
         $group = 'a.' . $pk;
 
+        if (empty($where)) {
+            $where[] = where_delete();
+        }
+        if (empty($order)) {
+            $order = [$group => 'desc'];
+        }
         if (empty($field)) {
             $field = $group . ',avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time';
         } else {
             $field = $group . ',' . $field;
         }
-        if (empty($order)) {
-            $order = [$group => 'desc'];
-        }
 
+        $wt = 'member_attributes ';
+        $wa = 'b';
         $model = $model->alias('a');
+        $where_scope = [];
         foreach ($where as $wk => $wv) {
-            if ($wv[0] == 'tag_ids' && is_array($wv[2])) {
-                $model = $model->join('member_attributes t', 'a.member_id=t.member_id')->where('t.tag_id', $wv[1], $wv[2]);
+            if ($wv[0] === 'tag_ids') {
+                $wa++;
+                $model = $model->join($wt . $wa, 'a.member_id=' . $wa . '.member_id');
+                $where[$wk] = [$wa . '.tag_id', $wv[1], $wv[2]];
+            } elseif ($wv[0] === 'tag_id') {
+                $wa++;
+                $model = $model->join($wt . $wa, 'a.member_id=' . $wa . '.member_id');
+                $where_scope[] = [$wa . '.tag_id', $wv[1], $wv[2]];
                 unset($where[$wk]);
-            }
-            if ($wv[0] == 'group_ids' && is_array($wv[2])) {
-                $model = $model->join('member_attributes g', 'a.member_id=g.member_id')->where('g.group_id', $wv[1], $wv[2]);
+            } elseif ($wv[0] === 'group_ids') {
+                $wa++;
+                $model = $model->join($wt . $wa, 'a.member_id=' . $wa . '.member_id');
+                $where[$wk] = [$wa . '.group_id', $wv[1], $wv[2]];
+            } elseif ($wv[0] === 'group_id') {
+                $wa++;
+                $model = $model->join($wt . $wa, 'a.member_id=' . $wa . '.member_id');
+                $where_scope[] = [$wa . '.group_id', $wv[1], $wv[2]];
                 unset($where[$wk]);
+            } elseif ($wv[0] === $pk) {
+                $where[$wk] = ['a.' . $wv[0], $wv[1], $wv[2]];
             }
         }
         $where = array_values($where);
@@ -112,8 +204,7 @@ class MemberService
 
         $count = $pages = 0;
         if ($total) {
-            $count_model = clone $model;
-            $count = $count_model->where($where)->group($group)->count();
+            $count = model_where(clone $model, $where, $where_scope)->group($group)->count();
         }
         if ($page > 0) {
             $model = $model->page($page);
@@ -122,38 +213,57 @@ class MemberService
             $pages = ceil($count / $limit);
             $model = $model->limit($limit);
         }
-        $list = $model->field($field)->where($where)
-            ->with($with)->append($append)->hidden($hidden)
-            ->order($order)->group($group)->select()->toArray();
+        $model = $model->field($field);
+        $model = model_where($model, $where, $where_scope);
+        $list  = $model->with($with)->append($append)->hidden($hidden)->order($order)->group($group)->select()->toArray();
 
-        return compact('count', 'pages', 'page', 'limit', 'list');
+        return ['count' => $count, 'pages' => $pages, 'page' => $page, 'limit' => $limit, 'list' => $list];
     }
 
     /**
      * 会员信息
-     *
      * @param int  $id    会员id
      * @param bool $exce  不存在是否抛出异常
      * @param bool $group 是否返回分组信息
      * @param bool $third 是否返回第三方账号信息
-     * 
-     * @return array|Exception
+     * @param string $field_no 排除字段
+     * @return array
+     * @Apidoc\Query(ref={Model::class}, field="member_id")
+     * @Apidoc\Returned(ref={Model::class})
+     * @Apidoc\Returned(ref={Model::class,"getAvatarUrlAttr"}, field="avatar_url")
+     * @Apidoc\Returned(ref={Model::class,"getGenderNameAttr"}, field="gender_name")
+     * @Apidoc\Returned(ref={Model::class,"getAgeAttr"}, field="age")
+     * @Apidoc\Returned(ref={Model::class,"getHometownNameAttr"}, field="hometown_name")
+     * @Apidoc\Returned(ref={Model::class,"getRegionNameAttr"}, field="region_name")
+     * @Apidoc\Returned(ref={Model::class,"getPlatformNameAttr"}, field="platform_name")
+     * @Apidoc\Returned(ref={Model::class,"getApplicationNameAttr"}, field="application_name")
+     * @Apidoc\Returned(ref={Model::class,"getIsSuperNameAttr"}, field="is_super_name")
+     * @Apidoc\Returned(ref={Model::class,"getIsDisableNameAttr"}, field="is_disable_name")
+     * @Apidoc\Returned(ref={Model::class,"getTagIdsAttr"}, field="tag_ids")
+     * @Apidoc\Returned(ref={Model::class,"getTagNamesAttr"}, field="tag_names")
+     * @Apidoc\Returned(ref={Model::class,"getGroupIdsAttr"}, field="group_ids")
+     * @Apidoc\Returned(ref={Model::class,"getGroupNamesAttr"}, field="group_names")
+     * @Apidoc\Returned("api_ids", type="array", desc="接口id")
+     * @Apidoc\Returned("api_urls", type="array", desc="接口url")
+     * @Apidoc\Returned("api_list", type="array", desc="接口列表", ref={ApiService::class,"info"}, field="api_id,api_pid,api_name,api_url,is_unlogin,is_unauth")
+     * @Apidoc\Returned("thirds", type="array", desc="第三方账号", ref={ThirdService::class,"info"}, field="member_id,platform,application,headimgurl,nickname,is_disable,login_time,create_time")
      */
-    public static function info($id, $exce = true, $group = false, $third = false)
+    public static function info($id, $exce = true, $group = false, $third = false, $field_no = '')
     {
-        $info = MemberCache::get($id);
+        $cache = self::cache();
+        $info  = $cache->get($id);
         if (empty($info)) {
-            $model = new MemberModel();
+            $model = self::model();
 
             $info = $model->with(['avatar', 'tags', 'groups'])->find($id);
             if (empty($info)) {
                 if ($exce) {
-                    exception('会员不存在：' . $id);
+                    exception(lang('会员不存在：') . $id);
                 }
                 return [];
             }
             $info = $info
-                ->append(['avatar_url', 'tag_ids', 'tag_names', 'group_ids', 'group_names', 'gender_name', 'platform_name', 'application_name'])
+                ->append(['avatar_url', 'gender_name', 'age', 'platform_name', 'application_name', 'is_super_name', 'is_disable_name', 'tag_ids', 'tag_names', 'group_ids', 'group_names', 'hometown_name', 'region_name'])
                 ->hidden(['avatar', 'tags', 'groups'])
                 ->toArray();
 
@@ -163,18 +273,21 @@ class MemberService
                 $info['pwd_edit_type'] = 1;
             }
 
+
             if (member_is_super($id)) {
                 $api_list = ApiService::list('list', [where_delete()], [], 'api_url');
                 $api_ids  = array_column($api_list, 'api_id');
                 $api_urls = array_column($api_list, 'api_url');
-            } elseif ($info['is_super'] == 1) {
+            } elseif ($info['is_super']) {
                 $api_list = ApiService::list('list', where_disdel(), [], 'api_url');
                 $api_ids  = array_column($api_list, 'api_id');
                 $api_urls = array_column($api_list, 'api_url');
             } else {
-                $api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
-                $api_list = ApiService::list('list', where_disdel(['api_id', 'in', $api_ids]), [], 'api_url');
-                $api_urls = array_column($api_list, 'api_url');
+                $group_api_ids  = GroupService::apiIds($info['group_ids'], where_disdel());
+                $unauth_api_ids = ApiService::unauthList('id');
+                $api_ids        = array_merge($group_api_ids, $unauth_api_ids);
+                $api_list       = ApiService::list('list', where_disdel(['api_id', 'in', $api_ids]), [], 'api_url');
+                $api_urls       = array_column($api_list, 'api_url');
             }
             $api_ids  = array_values(array_filter($api_ids));
             $api_urls = array_values(array_filter($api_urls));
@@ -183,12 +296,24 @@ class MemberService
             $info['api_ids']  = $api_ids;
             $info['api_urls'] = $api_urls;
 
-            MemberCache::set($id, $info);
+            $cache->set($id, $info);
         }
 
-        // 分组（接口权限）
+        // 分组（权限）
         if ($group) {
-            $info = self::groupApi($info);
+            $member_api_ids = $info['api_ids'] ?? [];
+            $api_field      = 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth';
+            $api_lists      = ApiService::list('list', [where_delete()], [], $api_field);
+            foreach ($api_lists as &$val) {
+                $val['is_check'] = 0;
+                $val['is_group'] = 0;
+                foreach ($member_api_ids as $m_api_id) {
+                    if ($val['api_id'] == $m_api_id) {
+                        $val['is_check'] = 1;
+                    }
+                }
+            }
+            $info['api_list'] = list_to_tree($api_lists, 'api_id', 'api_pid');
         }
 
         // 第三方账号
@@ -196,23 +321,33 @@ class MemberService
             $info['thirds'] = self::thirdList($id);
         }
 
+        if ($field_no) {
+            $field_no = explode(',', $field_no);
+            foreach ($field_no as $val) {
+                $val = trim($val);
+                unset($info[$val]);
+            }
+        }
+
         return $info;
     }
 
     /**
      * 会员添加
-     *
      * @param array $param 会员信息
-     * 
-     * @return array|Exception
+     * @Apidoc\Param(ref={Model::class}, field="avatar_id,nickname,username,password,phone,email,name,gender,birthday,hometown_id,region_id,remark,sort")
+     * @Apidoc\Param(ref={Model::class,"getTagIdsAttr"}, field="tag_ids")
+     * @Apidoc\Param(ref={Model::class,"getGroupIdsAttr"}, field="group_ids")
      */
     public static function add($param)
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
+        $model = self::model();
+        $pk    = $model->getPk();
 
         unset($param[$pk]);
-
+        if (empty($param['unique'] ?? '')) {
+            $param['unique'] = uniqids();
+        }
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
 
@@ -222,7 +357,7 @@ class MemberService
         }
         // 默认分组
         if (empty($param['group_ids'])) {
-            $param['group_ids'] = GroupService::default_ids();
+            $param['group_ids'] = GroupService::defaultIds();
         }
 
         // 启动事务
@@ -257,19 +392,19 @@ class MemberService
 
     /**
      * 会员修改
-     *
      * @param int|array $ids   会员id
      * @param array     $param 会员信息
-     * 
-     * @return array|Exception
+     * @Apidoc\Query(ref={Model::class})
+     * @Apidoc\Param(ref={Model::class}, field="member_id,avatar_id,nickname,username,password,phone,email,name,gender,birthday,hometown_id,region_id,remark,sort")
+     * @Apidoc\Param(ref={Model::class,"getTagIdsAttr"}, field="tag_ids")
+     * @Apidoc\Param(ref={Model::class,"getGroupIdsAttr"}, field="group_ids")
      */
     public static function edit($ids, $param = [])
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
+        $model = self::model();
+        $pk    = $model->getPk();
 
         unset($param[$pk], $param['ids']);
-
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
@@ -293,12 +428,12 @@ class MemberService
                     // 修改标签
                     if (isset($param['tag_ids'])) {
                         $info = $info->append(['tag_ids']);
-                        relation_update($info, $info['tag_ids'], $param['tag_ids'], 'tags');
+                        model_relation_update($info, $info['tag_ids'], $param['tag_ids'], 'tags');
                     }
                     // 修改分组
                     if (isset($param['group_ids'])) {
                         $info = $info->append(['group_ids']);
-                        relation_update($info, $info['group_ids'], $param['group_ids'], 'groups');
+                        model_relation_update($info, $info['group_ids'], $param['group_ids'], 'groups');
                     }
                 }
             }
@@ -316,25 +451,25 @@ class MemberService
 
         $param['ids'] = $ids;
 
-        MemberCache::del($ids);
+        $cache = self::cache();
+        $cache->del($ids);
 
         return $param;
     }
 
     /**
      * 会员删除
-     *
      * @param int|array $ids  会员id
      * @param bool      $real 是否真实删除
-     * 
-     * @return array|Exception
+     * @Apidoc\Param("type", type="string", default="member", desc="member会员账号，third第三方账号")
+     * @Apidoc\Param(ref="idsParam")
      */
     public static function dele($ids, $real = false)
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
+        $model = self::model();
+        $pk    = $model->getPk();
 
-        $Third = new ThirdModel();
+        $ThirdModel = new ThirdModel();
 
         // 启动事务
         $model::startTrans();
@@ -345,18 +480,15 @@ class MemberService
             if ($real) {
                 foreach ($ids as $id) {
                     $info = $model->find($id);
-                    // 删除标签
-                    $info->tags()->detach();
-                    // 删除分组
-                    $info->groups()->detach();
+                    $info->tags()->detach(); // 删除标签
+                    $info->groups()->detach(); // 删除分组
                 }
+                $ThirdModel->where($pk, 'in', $ids)->delete(); // 删除第三方账号
                 $model->where($pk, 'in', $ids)->delete();
-                // 删除三方账号
-                $Third->where($pk, 'in', $ids)->delete();
             } else {
-                $update = delete_update();
+                $update = update_softdele();
+                $ThirdModel->where($pk, 'in', $ids)->update($update);
                 $model->where($pk, 'in', $ids)->update($update);
-                $Third->where($pk, 'in', $ids)->update($update);
             }
             // 提交事务
             $model::commit();
@@ -365,97 +497,401 @@ class MemberService
             // 回滚事务
             $model::rollback();
         }
-
         if (isset($errmsg)) {
             exception($errmsg);
         }
 
         $update['ids'] = $ids;
 
-        MemberCache::del($ids);
+        $cache = self::cache();
+        $cache->del($ids);
 
         return $update;
     }
 
     /**
-     * 会员导出
-     *
-     * @param  array $param
-     * @return array
+     * 会员是否禁用
+     * @param array $ids        id
+     * @param int   $is_disable 是否禁用
+     * @Apidoc\Param("type", type="string", default="member", desc="member会员账号，third第三方账号")
+     * @Apidoc\Param(ref="disableParam")
      */
-    public static function export($param)
+    public static function disable($ids, $is_disable)
     {
-        $export = [
-            'type'       => FileExportService::TYPE_MEMBER,
-            'file_path'  => ExportService::$file_dir . '/member-' . date('YmdHis') . '-' . uniqids() . '.xlsx',
-            'file_name'  => '会员导出-' . date('Ymd-His') . '.xlsx',
-            'param'      => ['where' => $param['where'], 'order' => $param['order']],
-            'remark'     => $param['export_remark'] ?? '',
-            'create_uid' => user_id(),
-        ];
-        $export_id = FileExportService::add($export);
+        $data = self::edit($ids, ['is_disable' => $is_disable]);
 
-        return ExportService::member(['export_id' => $export_id]);
+        return $data;
+    }
+
+    /**
+     * 会员批量修改
+     * @param array  $ids   id
+     * @param string $field 字段
+     * @param mixed  $value 值
+     * @Apidoc\Param(ref="updateParam")
+     */
+    public static function update($ids, $field, $value)
+    {
+        $model = self::model();
+
+        if ($field == 'unique') {
+            $data = update_unique($model, $ids, $field, $value, __CLASS__);
+        } elseif ($field == 'sort') {
+            $data = update_sort($model, $ids, $field, $value, __CLASS__);
+        } else {
+            $data = self::edit($ids, [$field => $value]);
+        }
+
+        return $data;
+    }
+
+    /**
+     * 会员修改密码
+     * @param array  $ids      id
+     * @param string $password 密码
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param("password", type="string", require=true, desc="密码")
+     */
+    public static function editpwd($ids, $password)
+    {
+        $data = self::edit($ids, ['password' => $password]);
+
+        return $data;
+    }
+
+    /**
+     * 会员修改分组
+     * @param array $ids       id
+     * @param array $group_ids 分组id
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param("group_ids", type="array", require=true, desc="分组id")
+     */
+    public static function editgroup($ids, $group_ids)
+    {
+        $data = self::edit($ids, ['group_ids' => $group_ids]);
+
+        return $data;
+    }
+
+    /**
+     * 会员修改超会
+     * @param array $ids      id
+     * @param int   $is_super 是否超会
+     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param("is_super", type="int", require=true, desc="是否超会")
+     */
+    public static function editsuper($ids, $is_super)
+    {
+        $data = self::edit($ids, ['is_super' => $is_super]);
+
+        return $data;
+    }
+
+    /**
+     * 会员导出导入表头
+     * @param string $exp_imp export导出，import导入
+     */
+    public static function header($exp_imp = 'import')
+    {
+        $model = self::model();
+        $pk    = $model->getPk();
+        $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
+        $avatar_id = $exp_imp == 'export' ? 'avatar_url' : 'avatar_id';
+        $group_ids = $exp_imp == 'export' ? 'group_names' : 'group_ids';
+        $tag_ids = $exp_imp == 'export' ? 'tag_names' : 'tag_ids';
+        $is_super = $exp_imp == 'export' ? 'is_super_name' : 'is_super';
+        // index下标，field字段，name名称，width宽度，color颜色，type类型
+        $header = [
+            ['field' => $pk, 'name' => 'ID', 'width' => 12],
+            ['field' => $avatar_id, 'name' => '头像', 'width' => 16],
+            ['field' => 'nickname', 'name' => '昵称', 'width' => 26],
+            ['field' => 'username', 'name' => '用户名', 'width' => 26, 'color' => 'FF0000'],
+            ['field' => 'phone', 'name' => '手机', 'width' => 14],
+            ['field' => 'email', 'name' => '邮箱', 'width' => 30],
+            ['field' => $group_ids, 'name' => '分组', 'width' => 20],
+            ['field' => $tag_ids, 'name' => '标签', 'width' => 20],
+            ['field' => $is_super, 'name' => '超会', 'width' => 10],
+            ['field' => 'remark', 'name' => '备注', 'width' => 20],
+            ['field' => $is_disable, 'name' => '禁用', 'width' => 10],
+            ['field' => 'sort', 'name' => '排序', 'width' => 10],
+            ['field' => 'create_time', 'name' => '注册时间', 'width' => 22],
+            ['field' => 'update_time', 'name' => '修改时间', 'width' => 22],
+            ['field' => 'password', 'name' => '密码', 'width' => 16],
+        ];
+        // 生成下标
+        foreach ($header as $index => &$value) {
+            $value['index'] = $index;
+        }
+        if ($exp_imp == 'import') {
+            $header[] = ['index' => -1, 'field' => 'result_msg', 'name' => lang('导入结果'), 'width' => 60];
+        }
+
+        return $header;
+    }
+
+    /**
+     * 会员导出
+     * @param array $export_info 导出信息
+     * @Apidoc\Query(ref="exportParam")
+     * @Apidoc\Param(ref="exportParam")
+     * @Apidoc\Returned(ref={ExportService::class,"info"})
+     */
+    public static function export($export_info)
+    {
+        $export_info['is_tree'] = 0;
+        $export_info['type']    = FileSettingService::EXPIMP_TYPE_MEMBER;
+
+        $field = '';
+        $limit = 10000;
+        $data  = ExportService::exports(__CLASS__, $export_info, $field, $limit);
+
+        return $data;
     }
 
     /**
      * 会员导入
-     *
-     * @param  array $param
-     * @return array
+     * @param array $import_info 导入信息
+     * @param bool  $is_add      是否添加导入信息
+     * @Apidoc\Query(ref="importParam")
+     * @Apidoc\Param(ref="importParam")
+     * @Apidoc\Returned(ref="importParam")
+     * @Apidoc\Returned(ref={ImportService::class,"info"})
      */
-    public static function import($param)
+    public static function import($import_info, $is_add = false)
     {
-        $file_path = Filesystem::disk('public')
-            ->putFile(ImportService::$file_dir, $param['import_file'], function () {
-                return 'member-' . date('YmdHis') . '-' . uniqids();
-            });
-        $import = [
-            'type'       => FileImportService::TYPE_MEMBER,
-            'file_name'  => $param['import_file']->getOriginalName(),
-            'file_path'  => 'storage/' . $file_path,
-            'file_size'  => $param['import_file']->getSize(),
-            'remark'     => $param['import_remark'] ?? '',
-            'create_uid' => user_id(),
-        ];
-        $import_id = FileImportService::add($import);
+        if ($is_add) {
+            $import_info['type'] = FileSettingService::EXPIMP_TYPE_MEMBER;
+            $import_id = ImportService::add($import_info);
+            $data = ImportService::imports($import_id, __CLASS__, __FUNCTION__);
+            return $data;
+        }
 
-        return ImportService::member(['import_id' => $import_id]);
+        $header = self::header('import');
+        $import = ImportService::importsReader($header, $import_info['file_path']);
+        $model = self::model();
+        $table = $model->getTable();
+        $pk = $model->getPk();
+        $import_num = count($import);
+        $success = $fail = [];
+        $datetime = datetime();
+        $batch_num = 10000;
+
+        while (count($import) > 0) {
+            $batchs = array_splice($import, 0, $batch_num);
+            foreach ($batchs as $key => $val) {
+                $temp = [];
+                foreach ($header as $vh) {
+                    if ($vh['index'] > -1) {
+                        $temp[$vh['field']] = $val[$vh['index']] ?? '';
+                    }
+                }
+                $batchs[$key] = $temp;
+            }
+
+            $ids = array_column($batchs, $pk);
+            $usernames = array_column($batchs, 'username');
+            $phones = array_column($batchs, 'phone');
+            $emails = array_column($batchs, 'email');
+            $ids_repeat = array_repeat($ids);
+            $usernames_repeat = array_repeat($usernames);
+            $phones_repeat = array_repeat($phones);
+            $emails_repeat = array_repeat($emails);
+            $ids = Db::table($table)->where($pk, '>', 0)->where($pk, 'in', $ids)->where('is_delete', 0)->column($pk);
+            $usernames = Db::table($table)->where($pk, '>', 0)->where($pk, 'not in', $ids)->where('username', 'in', $usernames)
+                ->where('is_delete', 0)->column('username');
+            $phones = Db::table($table)->where($pk, '>', 0)->where($pk, 'not in', $ids)->where('phone', 'in', $phones)
+                ->where('is_delete', 0)->column('phone');
+            $emails = Db::table($table)->where($pk, '>', 0)->where($pk, 'not in', $ids)->where('email', 'in', $emails)
+                ->where('is_delete', 0)->column('email');
+
+            $updates = $inserts = [];
+            foreach ($batchs as $batch) {
+                $batch['result_msg'] = [];
+                if ($batch[$pk]) {
+                    if (filter_var($batch[$pk], FILTER_VALIDATE_INT) === false) {
+                        $batch['result_msg'][] = lang('ID只能是整数');
+                    } elseif (in_array($batch[$pk], $ids_repeat)) {
+                        $batch['result_msg'][] = lang('ID重复');
+                    } elseif (!$import_info['is_update'] && in_array($batch[$pk], $ids)) {
+                        $batch['result_msg'][] = lang('ID已存在');
+                    }
+                }
+                if ($batch['avatar_id']) {
+                    if (!is_numeric($batch['avatar_id']) && filter_var($batch['avatar_id'], FILTER_VALIDATE_URL) === false) {
+                        $batch['result_msg'][] = lang('头像必须是文件id或有效url');
+                    }
+                }
+                if (mb_strlen($batch['nickname']) > 64) {
+                    $batch['result_msg'][] = '昵称长度为1-64位';
+                }
+                if ($batch['username']) {
+                    if (mb_strlen($batch['username']) < 2 || mb_strlen($batch['username']) > 64) {
+                        $batch['result_msg'][] = '用户名长度为2-64位';
+                    } elseif (in_array($batch['username'], $usernames_repeat)) {
+                        $batch['result_msg'][] = '用户名重复';
+                    } elseif (in_array($batch['username'], $usernames)) {
+                        $batch['result_msg'][] = '用户名已存在';
+                    }
+                } else {
+                    $batch['result_msg'][] = '用户名不能为空';
+                }
+                if ($batch['phone']) {
+                    if (!preg_match('/^1[3-9]\d{9}$/', $batch['phone'])) {
+                        $batch['result_msg'][] = '手机格式错误';
+                    } elseif (in_array($batch['phone'], $phones_repeat)) {
+                        $batch['result_msg'][] = '手机重复';
+                    } elseif (in_array($batch['phone'], $phones)) {
+                        $batch['result_msg'][] = '手机已存在';
+                    }
+                }
+                if ($batch['email']) {
+                    if (!filter_var($batch['email'], FILTER_VALIDATE_EMAIL)) {
+                        $batch['result_msg'][] = '邮箱格式错误';
+                    } elseif (in_array($batch['email'], $emails_repeat)) {
+                        $batch['result_msg'][] = '邮箱重复';
+                    } elseif (in_array($batch['email'], $emails)) {
+                        $batch['result_msg'][] = '邮箱已存在';
+                    }
+                }
+                if ($batch['create_time']) {
+                    if (!strtotime($batch['create_time'])) {
+                        $batch['result_msg'][] = lang('注册时间格式错误');
+                    }
+                }
+                if ($batch['update_time']) {
+                    if (!strtotime($batch['update_time'])) {
+                        $batch['result_msg'][] = lang('修改时间格式错误');
+                    }
+                }
+                if ($batch['password']) {
+                    if (mb_strlen($batch['password']) < 6 || mb_strlen($batch['password']) > 18) {
+                        $batch['result_msg'][] = '密码长度为6-18位';
+                    }
+                }
+
+                if ($batch['result_msg']) {
+                    $batch['result_msg'] = lang('失败：') . implode('，', $batch['result_msg']);
+                    $fail[] = $batch;
+                } else {
+                    $batch['result_msg'] = lang('成功：');
+                    $batch_tmp = $batch;
+                    $batch_tmp['is_disable'] = (in_array($batch['is_disable'], ['1', lang('是')])) ? 1 : 0;
+                    $batch_tmp['avatar_id'] = is_numeric($batch['avatar_id']) ? $batch['avatar_id'] : FileService::fileId($batch['avatar_id']);
+                    $batch_tmp['group_ids'] = GroupService::nameId($batch['group_ids']);
+                    $batch_tmp['tag_ids'] = TagService::nameId($batch['tag_ids']);
+                    $batch_tmp['is_super'] = (in_array($batch['is_super'], ['1', lang('是')])) ? 1 : 0;
+                    if ($batch_tmp['password']) {
+                        $batch_tmp['password'] = password_hash($batch_tmp['password'], PASSWORD_BCRYPT);
+                    }
+                    if ($batch[$pk] && in_array($batch[$pk], $ids)) {
+                        $batch['result_msg'] .= lang('修改');
+                        $batch_tmp['create_time'] = empty($batch['create_time']) ? null : $batch['create_time'];
+                        $batch_tmp['update_time'] = empty($batch['update_time']) ? $datetime : $batch['update_time'];
+                        $updates[] = $batch_tmp;
+                    } else {
+                        $batch['result_msg'] .= lang('添加');
+                        $batch_tmp['create_time'] = empty($batch['create_time']) ? $datetime : $batch['create_time'];
+                        $batch_tmp['update_time'] = empty($batch['update_time']) ? null : $batch['update_time'];
+                        unset($batch_tmp[$pk]);
+                        $inserts[] = $batch_tmp;
+                    }
+                    $success[] = $batch;
+                }
+            }
+            unset($batchs, $usernames, $phones, $emails);
+
+            $attr_adds = [];
+            if ($updates) {
+                foreach ($updates as $key => $update) {
+                    if ($update['group_ids']) {
+                        foreach ($update['group_ids'] as $group_id) {
+                            $attr_adds[] = [$pk => $update[$pk], 'group_id' => $group_id, 'tag_id' => 0];
+                        }
+                    }
+                    if ($update['tag_ids']) {
+                        foreach ($update['tag_ids'] as $tag_id) {
+                            $attr_adds[] = [$pk => $update[$pk], 'group_id' => 0, 'tag_id' => $tag_id];
+                        }
+                    }
+                    unset($update['group_ids'], $update['tag_ids']);
+                    $updates[$key] = $update;
+                }
+            }
+            if ($inserts) {
+                foreach ($inserts as $key => $insert) {
+                    $insert_tmp = $insert;
+                    unset($insert_tmp['group_ids'], $insert_tmp['tag_ids']);
+                    $id = Db::table($table)->insertGetId($insert_tmp);
+                    if ($insert['group_ids']) {
+                        foreach ($insert['group_ids'] as $group_id) {
+                            $attr_adds[] = [$pk => $id, 'group_id' => $group_id, 'tag_id' => 0];
+                        }
+                    }
+                    if ($insert['tag_ids']) {
+                        foreach ($insert['tag_ids'] as $tag_id) {
+                            $attr_adds[] = [$pk => $id, 'group_id' => 0, 'tag_id' => $tag_id];
+                        }
+                    }
+                }
+            }
+            $batch_header = $header;
+            foreach ($batch_header as $key => $val) {
+                if (in_array($val['field'], ['group_ids', 'tag_ids'])) {
+                    unset($batch_header[$key]);
+                }
+            }
+            $attr_del_ids = array_column($updates, $pk);
+            batch_update($model, $batch_header, $updates);
+            self::deleGroupAttr($attr_del_ids);
+            self::deleTagAttr($attr_del_ids);
+            if ($attr_adds) {
+                AttributesModel::insertAll($attr_adds);
+            }
+            if ($updates || $inserts) {
+                $cache = self::cache();
+                $cache->clear();
+            }
+            unset($updates, $inserts);
+        }
+        unset($import);
+
+        return ['import_num' => $import_num, 'header' => $header, 'success' => $success, 'fail' => $fail];
     }
 
     /**
      * 会员登录
-     *
      * @param array  $param 登录信息
-     * @param string $type  登录方式
-     * 
-     * @return array
+     * @param string $type  登录方式：username账号，phone手机，email邮箱，register注册
      */
     public static function login($param, $type = '')
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
+        $model = self::model();
+        $pk    = $model->getPk();
 
-        $account  = $param['account'] ?? '';
-        $username = $param['username'] ?? $account;
-        $phone    = $param['phone'] ?? $account;
-        $email    = $param['email'] ?? $account;
-        $password = $param['password'] ?? '';
+        $account   = $param['account'] ?? '';
+        $username  = $param['username'] ?? $account;
+        $phone     = $param['phone'] ?? $account;
+        $email     = $param['email'] ?? $account;
+        $member_id = $param[$pk] ?? 0;
+        $password  = $param['password'] ?? '';
 
         $where = [];
-        if ($type == 'username') {
+        if ($type === 'username') {
             // 通过用户名登录
             $where[] = ['username', '=', $username];
-        } else if ($type == 'phone') {
+        } else if ($type === 'phone') {
             // 通过手机登录
             $where[] = ['phone', '=', $phone];
-        } else if ($type == 'email') {
+        } else if ($type === 'email') {
             // 通过邮箱登录
             $where[] = ['email', '=', $email];
+        } else if ($type === 'register') {
+            // 注册后登录
+            $where[] = [$pk, '=', $member_id];
         } else {
-            if (Validate::rule('account', 'mobile')->check(['account' => $account])) {
+            if (validate(['account' => 'mobile'], [], false, false)->check(['account' => $account])) {
                 $where[] = ['phone', '=', $account];
-            } else if (Validate::rule('account', 'email')->check(['account' => $account])) {
+            } else if (validate(['account' => 'email'], [], false, false)->check(['account' => $account])) {
                 $where[] = ['email', '=', $account];
             } else {
                 $where[] = ['username', '=', $account];
@@ -463,25 +899,25 @@ class MemberService
         }
         $where[] = where_delete();
 
-        $field = $pk . ',username,nickname,phone,email,password,login_num,is_disable';
+        $field  = $pk . ',username,nickname,phone,email,password,login_num,is_disable';
         $member = $model->field($field)->where($where)->find();
         if (empty($member)) {
             if (empty($type)) {
                 $member = $model->field($field)->where('username|phone|email', $account)->where([where_delete()])->find();
             }
             if (empty($member)) {
-                exception('账号或密码错误.');
+                exception(lang('账号或密码错误'));
             }
         }
         if ($password) {
             if (!password_verify($password, $member['password'])) {
-                exception('账号或密码错误..');
+                exception(lang('账号或密码错误'));
             }
         }
 
         $member = $member->toArray();
         if ($member['is_disable'] == 1) {
-            exception('账号已被禁用，请联系客服');
+            exception(lang('账号已被禁用'));
         }
 
         $ip_info   = Utils::ipInfo();
@@ -494,18 +930,12 @@ class MemberService
         $update['login_time']   = datetime();
         $model->where($pk, $member_id)->update($update);
 
-        // 登录日志
-        $member_log[$pk]           = $member_id;
-        $member_log['platform']    = $param['platform'] ?? SettingService::PLATFORM_YA;
-        $member_log['application'] = $param['application'] ?? SettingService::APP_UNKNOWN;
-        LogService::add($member_log, SettingService::LOG_TYPE_LOGIN);
-
         // 会员信息
-        MemberCache::del($member_id);
-        $member = MemberService::info($member_id);
+        $cache = self::cache();
+        $cache->del($member_id);
+        $member = self::info($member_id);
+
         // 返回字段
-        $member['platform']    = $member_log['platform'];
-        $member['application'] = $member_log['application'];
         $data = self::loginField($member);
 
         return $data;
@@ -513,10 +943,7 @@ class MemberService
 
     /**
      * 会员登录返回字段
-     *
      * @param array $member 会员信息
-     *
-     * @return array
      */
     public static function loginField($member)
     {
@@ -524,7 +951,7 @@ class MemberService
         $setting = SettingService::info();
         $token_name = $setting['token_name'];
         $data[$token_name] = self::token($member);
-        $fields = ['member_id', 'avatar_uid', 'avatar_url', 'nickname', 'username', 'login_ip', 'login_time', 'login_num'];
+        $fields = ['member_id', 'avatar_id', 'avatar_url', 'nickname', 'username', 'login_ip', 'login_time', 'login_num'];
         foreach ($fields as $field) {
             if (isset($member[$field])) {
                 $data[$field] = $member[$field];
@@ -536,10 +963,7 @@ class MemberService
 
     /**
      * 会员token
-     *
-     * @param  array $member 会员信息
-     *
-     * @return string
+     * @param array $member 会员信息
      */
     public static function token($member)
     {
@@ -548,15 +972,12 @@ class MemberService
 
     /**
      * 会员退出
-     *
      * @param int $id 会员id
-     * 
-     * @return array
      */
     public static function logout($id)
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
+        $model = self::model();
+        $pk    = $model->getPk();
 
         $update['logout_time'] = datetime();
 
@@ -564,21 +985,19 @@ class MemberService
 
         $update[$pk] = $id;
 
-        MemberCache::del($id);
+        $cache = self::cache();
+        $cache->del($id);
 
         return $update;
     }
 
     /**
      * 会员分组接口权限
-     *
-     * @param  array $info 会员信息
-     * @return array
+     * @param array $info 会员信息
      */
     public static function groupApi($info)
     {
         $member_api_ids = $info['api_ids'] ?? [];
-        $group_api_ids  = GroupService::api_ids($info['group_ids'], where_disdel());
         $api_field      = 'api_id,api_pid,api_name,api_url,is_unlogin,is_unauth';
         $api_lists      = ApiService::list('list', [where_delete()], [], $api_field);
         foreach ($api_lists as &$val) {
@@ -589,17 +1008,12 @@ class MemberService
                     $val['is_check'] = 1;
                 }
             }
-            foreach ($group_api_ids as $g_api_id) {
-                if ($val['api_id'] == $g_api_id) {
-                    $val['is_group'] = 1;
-                }
-            }
         }
-        $info['api_tree'] = list_to_tree($api_lists, 'api_id', 'api_pid');
+        $info['group_api_tree'] = list_to_tree($api_lists, 'api_id', 'api_pid');
 
         $unlogin_api_ids = ApiService::unloginList('id');
         $unauth_api_ids  = ApiService::unauthList('id');
-        $auth_api_ids    = array_merge($member_api_ids, $group_api_ids, $unlogin_api_ids, $unauth_api_ids);
+        $auth_api_ids    = array_merge($member_api_ids, $unlogin_api_ids, $unauth_api_ids);
         $auth_api_where  = [['api_id', 'in', $auth_api_ids], where_disdel(), where_delete()];
         $auth_api_list   = ApiService::list('list', $auth_api_where, [], $api_field);
         $info['auth_api_list'] = $auth_api_list;
@@ -611,27 +1025,22 @@ class MemberService
 
     /**
      * 会员第三方账号列表
-     *
-     * @param  int $member_id 会员ID
-     * @return array
+     * @param int $member_id 会员ID
      */
     public static function thirdList($member_id)
     {
-        $MemberModel = new MemberModel();
+        $MemberModel = self::model();
         $MemberPk = $MemberModel->getPk();
         $third_where[] = [$MemberPk, '=', $member_id];
         $third_where[] = where_delete();
-        $third_field = 'third_id,member_id,platform,application,headimgurl,nickname,is_disable,login_time,create_time';
+        $third_field = 'member_id,platform,application,headimgurl,nickname,is_disable,login_time,create_time';
         return ThirdService::list($third_where, 0, 0, [], $third_field)['list'] ?? [];
     }
 
     /**
      * 会员第三方账号登录
-     *
      * @param array $third_info 第三方账号信息
      * platform，application，openid，headimgurl，nickname，unionid，register，avatar_id
-     * 
-     * @return array
      */
     public static function thirdLogin($third_info)
     {
@@ -648,7 +1057,7 @@ class MemberService
 
 
         if (empty($openid)) {
-            exception('登录失败：get openid fail');
+            exception(lang('登录失败') . '：get openid fail');
         }
 
         $applications = [
@@ -662,13 +1071,13 @@ class MemberService
             SettingService::APP_WB_WEBSITE,
         ];
         if (!in_array($application, $applications)) {
-            exception('登录错误：application absent ' . $application);
+            exception(lang('登录失败') . '：application absent ' . $application);
         }
 
         $ThirdModel = new ThirdModel();
         $ThirdPk    = $ThirdModel->getPk();
 
-        $MemberModel = new MemberModel();
+        $MemberModel = self::model();
         $MemberPk    = $MemberModel->getPk();
 
         $third_field = $ThirdPk . ',member_id,platform,application,openid,unionid,login_num,is_disable';
@@ -679,8 +1088,8 @@ class MemberService
         $third_o_where = [['application', '=', $application], ['openid', '=', $openid], where_delete()];
         $third_openid  = $ThirdModel->field($third_field)->where($third_o_where)->find();
 
-        $errmsg_login    = '系统维护，无法登录';
-        $errmsg_register = '系统维护，无法注册';
+        $errmsg_login    = lang('系统维护，无法登录');
+        $errmsg_register = lang('系统维护，无法注册');
         if ($third_unionid ?? [] || $third_openid) {
             if ($application == SettingService::APP_WX_MINIAPP && !$setting['wx_miniapp_login']) {
                 exception($errmsg_login . '：wx miniapp');
@@ -703,7 +1112,7 @@ class MemberService
             $third_o_id = $third_openid[$ThirdPk] ?? 0;
             $member_id  = $third_unionid[$MemberPk] ?? $third_openid[$MemberPk] ?? 0;
             if ($third_unionid['is_disable'] ?? 0 || $third_openid['is_disable'] ?? 0) {
-                exception($errmsg_login . '：第三方账号已禁用');
+                exception($errmsg_login . '：' . lang('会员第三方账号已被禁用'));
             }
         } else {
             if ($application == SettingService::APP_WX_MINIAPP && !$setting['wx_miniapp_register']) {
@@ -728,7 +1137,7 @@ class MemberService
             $member_id  = 0;
 
             if ($register == 0) {
-                exception('未注册', RetCodeUtils::THIRD_UNREGISTERED);
+                exception(lang('未注册'), ReturnCodeUtils::THIRD_UNREGISTERED);
             }
         }
 
@@ -798,7 +1207,7 @@ class MemberService
                 $member_insert['login_ip']     = $login_ip;
                 $member_insert['login_time']   = $datetime;
                 $member_insert['login_region'] = $ip_info['region'];
-                $member_add = MemberService::add($member_insert);
+                $member_add = self::add($member_insert);
                 $member_id  = $member_add[$MemberPk];
                 // 注册日志
                 $member_log[$MemberPk] = $member_id;
@@ -809,7 +1218,7 @@ class MemberService
                 $phone_where = [[$MemberPk, '<>', $member_id], ['phone', '=', $phone], where_delete()];
                 $phone_exist = $MemberModel->field($MemberPk)->where($phone_where)->find();
                 if ($phone_exist) {
-                    return '手机号已存在：' . $phone;
+                    return lang('手机已存在：') . $phone;
                 }
             }
 
@@ -848,7 +1257,7 @@ class MemberService
             // 提交事务
             $ThirdModel->commit();
         } catch (\Exception $e) {
-            $errmsg = '登录失败：' . $e->getMessage();
+            $errmsg = lang('登录失败') . '：' . $e->getMessage();
             // 回滚事务
             $ThirdModel->rollback();
         }
@@ -858,7 +1267,8 @@ class MemberService
         }
 
         // 会员信息
-        MemberCache::del($member_id);
+        $cache = self::cache();
+        $cache->del($member_id);
         $member = self::info($member_id);
         $data   = self::loginField($member);
         $data['member_id'] = $member_id;
@@ -869,11 +1279,8 @@ class MemberService
 
     /**
      * 会员第三方账号绑定
-     *
      * @param array $third_info 第三方账号信息
      * member_id、openid、platform、application、headimgurl、nickname、unionid
-     * 
-     * @return array
      */
     public static function thirdBind($third_info)
     {
@@ -886,10 +1293,10 @@ class MemberService
         $datetime    = datetime();
 
         if (empty($member_id)) {
-            exception('绑定失败：member_id is null');
+            exception(lang('绑定失败') . '：member_id is null');
         }
         if (empty($openid)) {
-            exception('绑定失败：get openid fail');
+            exception(lang('绑定失败') . '：get openid fail');
         }
 
         $applications = [
@@ -903,13 +1310,13 @@ class MemberService
             SettingService::APP_WB_WEBSITE,
         ];
         if (!in_array($application, $applications)) {
-            exception('绑定错误：application absent ' . $application);
+            exception(lang('绑定失败') . '：application absent ' . $application);
         }
 
         $ThirdModel = new ThirdModel();
         $ThirdPk    = $ThirdModel->getPk();
 
-        $MemberModel = new MemberModel();
+        $MemberModel = self::model();
         $MemberPk    = $MemberModel->getPk();
 
         $third_field = $ThirdPk . ',member_id,platform,application,openid,unionid,login_num';
@@ -920,7 +1327,7 @@ class MemberService
         $third_o_where = [['openid', '=', $openid], ['application', '=', $application], where_delete()];
         $third_openid  = $ThirdModel->field($third_field)->where($third_o_where)->find();
 
-        $errmsg_bind = '功能维护，无法绑定';
+        $errmsg_bind = lang('功能维护，无法绑定');
         if ($application == SettingService::APP_WX_MINIAPP && !$setting['wx_miniapp_bind']) {
             exception($errmsg_bind . '：wx miniapp');
         } elseif ($application == SettingService::APP_WX_OFFIACC && !$setting['wx_offiacc_bind']) {
@@ -942,7 +1349,7 @@ class MemberService
         $third_o_id = $third_openid[$ThirdPk] ?? 0;
         $third_m_id = $third_unionid[$MemberPk] ?? $third_openid[$MemberPk] ?? 0;
         if ($third_m_id && $third_m_id != $member_id) {
-            exception('绑定失败：已被其它会员绑定');
+            exception(lang('绑定失败，已被其它会员绑定'));
         }
 
         // 启动事务
@@ -991,7 +1398,7 @@ class MemberService
             // 提交事务
             $ThirdModel->commit();
         } catch (\Exception $e) {
-            $errmsg = '绑定失败：' . $e->getMessage();
+            $errmsg = lang('绑定失败') . '：' . $e->getMessage();
             // 回滚事务
             $ThirdModel->rollback();
         }
@@ -1002,7 +1409,7 @@ class MemberService
 
         // 会员信息
         $token_name = $setting['token_name'];
-        $data[$token_name] = api_token();
+        $data[$token_name] = member_token();
         $data['member_id'] = $member_id;
         $data['third_id']  = $third_o_id;
 
@@ -1011,29 +1418,26 @@ class MemberService
 
     /**
      * 会员第三方账号解绑
-     *
-     * @param  int $third_id  第三方账号id
-     * @param  int $member_id 会员id
-     *
-     * @return bool|Exception
+     * @param int $third_id  第三方账号id
+     * @param int $member_id 会员id
      */
     public static function thirdUnbind($third_id, $member_id = 0)
     {
         $ThirdModel = new ThirdModel();
         $ThirdPk = $ThirdModel->getPk();
 
-        $MemberModel = new MemberModel();
+        $MemberModel = self::model();
         $MemberPk = $MemberModel->getPk();
 
         $third = $ThirdModel->find($third_id);
         if (empty($third) || $third['is_delete']) {
-            exception('第三方账号不存在：' . $third_id);
+            exception(lang('第三方账号不存在') . '：' . $third_id);
         }
         if ($member_id && $third[$MemberPk] != $member_id) {
-            exception('解绑失败：非本会员绑定 ' . $third_id);
+            exception(lang('解绑失败，非本会员绑定') . '：' . $third_id);
         }
         if ($third['is_delete']) {
-            exception('第三方账号已解绑：' . $third_id);
+            exception(lang('第三方账号已解绑') . '：' . $third_id);
         }
         if (empty($member_id)) {
             $member_id = $third[$MemberPk];
@@ -1043,25 +1447,34 @@ class MemberService
         $third_where = [where_delete(), [$MemberPk, '=', $third[$MemberPk]]];
         $third_count = $ThirdModel->where($third_where)->count();
         if (empty($member['password']) && $third_count == 1) {
-            exception('无法解绑：会员密码未设置且仅绑定了一个第三方账号');
+            exception(lang('无法解绑，会员未设置密码且仅绑定了一个第三方账号'));
         }
 
-        return $ThirdModel->where($ThirdPk, $third_id)->update(delete_update());
+        return $ThirdModel->where($ThirdPk, $third_id)->update(update_softdele());
     }
 
     /**
      * 会员统计
-     *
      * @param string $type 日期类型：day，month
      * @param array  $date 日期范围：[开始日期，结束日期]
      * @param string $stat 统计类型：count总计，number数量，platform平台，application应用
-     * @Apidoc\Returned("type", type="string", desc="日期类型")
-     * @Apidoc\Returned("date", type="array", desc="日期范围")
-     * @Apidoc\Returned("title", type="string", desc="图表title.text")
-     * @Apidoc\Returned("legend", type="array", desc="图表legend.data")
-     * @Apidoc\Returned("xAxis", type="array", desc="图表xAxis.data")
-     * @Apidoc\Returned("series", type="array", desc="图表series")
      * @return array
+     * @Apidoc\Query("type", type="string", default="month", desc="日期类型：day、month")
+     * @Apidoc\Query("date", type="array", default="", desc="日期范围，默认30天、12个月")
+     * @Apidoc\Returned("count", type="object", desc="数量统计", children={
+     *   @Apidoc\Returned("name", type="string", desc="名称"),
+     *   @Apidoc\Returned("date", type="string", desc="时间"),
+     *   @Apidoc\Returned("count", type="string", desc="数量"),
+     *   @Apidoc\Returned("title", type="string", desc="标题"),
+     * })
+     * @Apidoc\Returned("echart", type="array", desc="图表数据", children={
+     *   @Apidoc\Returned("type", type="string", desc="日期类型"),
+     *   @Apidoc\Returned("date", type="array", desc="日期范围"),
+     *   @Apidoc\Returned("title", type="string", desc="图表title.text"),
+     *   @Apidoc\Returned("legend", type="array", desc="图表legend.data"),
+     *   @Apidoc\Returned("xAxis", type="array", desc="图表xAxis.data"),
+     *   @Apidoc\Returned("series", type="array", desc="图表series"),
+     * })
      */
     public static function statistic($type = 'month', $date = [], $stat = 'count')
     {
@@ -1078,8 +1491,9 @@ class MemberService
         $sta_date = $date[0];
         $end_date = $date[1];
 
-        $key  = $type . $stat . $sta_date . '_' . $end_date . lang_get();
-        $data = MemberCache::get($key);
+        $cache = self::cache();
+        $key = $type . $stat . $sta_date . '_' . $end_date . lang_get();
+        $data = $cache->get($key);
         if (empty($data)) {
             $dates = [];
             if ($type == 'day') {
@@ -1111,19 +1525,19 @@ class MemberService
             $where[] = ['create_time', '<=', $end_date . ' 23:59:59'];
             $where[] = where_delete();
 
-            $model = new MemberModel();
+            $model = self::model();
             $pk = $model->getPk();
 
             if ($stat == 'count') {
                 $data = [
-                    ['date' => 'total', 'name' => lang('member.total'), 'title' => lang('member.total'), 'count' => 0],
-                    ['date' => 'online', 'name' => lang('member.online'), 'title' => lang('member.number'), 'count' => 0],
-                    ['date' => 'today', 'name' => lang('member.today'), 'title' => lang('member.added'), 'count' => 0],
-                    ['date' => 'yesterday', 'name' => lang('member.yesterday'), 'title' => lang('member.added'), 'count' => 0],
-                    ['date' => 'thisweek', 'name' => lang('member.this week'), 'title' => lang('member.added'), 'count' => 0],
-                    ['date' => 'lastweek', 'name' => lang('member.last week'), 'title' => lang('member.added'), 'count' => 0],
-                    ['date' => 'thismonth', 'name' => lang('member.this month'), 'title' => lang('member.added'), 'count' => 0],
-                    ['date' => 'lastmonth', 'name' => lang('member.last month'), 'title' => lang('member.added'), 'count' => 0],
+                    ['date' => 'total', 'name' => lang('总数'), 'title' => lang('总数'), 'count' => 0],
+                    ['date' => 'online', 'name' => lang('在线'), 'title' => lang('数量'), 'count' => 0],
+                    ['date' => 'today', 'name' => lang('今天'), 'title' => lang('新增'), 'count' => 0],
+                    ['date' => 'yesterday', 'name' => lang('昨天'), 'title' => lang('新增'), 'count' => 0],
+                    ['date' => 'thisweek', 'name' => lang('本周'), 'title' => lang('新增'), 'count' => 0],
+                    ['date' => 'lastweek', 'name' => lang('上周'), 'title' => lang('新增'), 'count' => 0],
+                    ['date' => 'thismonth', 'name' => lang('本月'), 'title' => lang('新增'), 'count' => 0],
+                    ['date' => 'lastmonth', 'name' => lang('上月'), 'title' => lang('新增'), 'count' => 0],
                 ];
 
                 foreach ($data as $k => $v) {
@@ -1159,12 +1573,12 @@ class MemberService
                     $data[$k]['count'] = $model->where($where)->count();
                 }
 
-                MemberCache::set($key, $data, 120);
+                $cache->set($key, $data, 120);
 
                 return $data;
             } elseif ($stat == 'number') {
-                $data['title'] = lang('member.number');
-                $data['selected'] = [lang('member.total') => false];
+                $data['title'] = lang('数量');
+                $data['selected'] = [lang('总数') => false];
                 $add = $total = [];
                 // 新增会员
                 $adds = $model->field($field)->where($where)->group($group)->select()->column('num', 'date');
@@ -1179,11 +1593,11 @@ class MemberService
                     $total[$k] = $model->where(where_delete(['create_time', '<=', $e_t . ' 23:59:59']))->count();
                 }
                 $series = [
-                    ['name' => lang('member.total'), 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
-                    ['name' => lang('member.added'), 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => lang('总数'), 'type' => 'line', 'data' => $total, 'label' => ['show' => true, 'position' => 'top']],
+                    ['name' => lang('新增'), 'type' => 'line', 'data' => $add, 'label' => ['show' => true, 'position' => 'top']],
                 ];
             } elseif ($stat == 'application') {
-                $data['title'] = lang('member.application');
+                $data['title'] = lang('应用');
                 $data['selected'] = [];
                 $series = [];
                 $applications = SettingService::applications();
@@ -1203,7 +1617,7 @@ class MemberService
                     }
                 }
             } elseif ($stat == 'platform') {
-                $data['title'] = lang('member.platform');
+                $data['title'] = lang('平台');
                 $data['selected'] = [];
                 $series = [];
                 $platforms = SettingService::platforms();
@@ -1232,9 +1646,45 @@ class MemberService
             $data['xAxis']  = $dates;
             $data['series'] = $series;
 
-            MemberCache::set($key, $data);
+            $cache->set($key, $data);
         }
 
         return $data;
+    }
+
+    /**
+     * 删除关联分组
+     * @param array $ids id
+     * @return int
+     */
+    public static function deleGroupAttr($ids)
+    {
+        if (empty($ids)) {
+            return 0;
+        }
+        $model       = self::model();
+        $pk          = $model->getPk();
+        $group_model = new GroupModel();
+        $group_pk    = $group_model->getPk();
+        $res         = AttributesModel::where($pk, 'in', $ids)->where($group_pk, '>', 0)->delete();
+        return $res;
+    }
+
+    /**
+     * 删除关联标签
+     * @param array $ids id
+     * @return int
+     */
+    public static function deleTagAttr($ids)
+    {
+        if (empty($ids)) {
+            return 0;
+        }
+        $model     = self::model();
+        $pk        = $model->getPk();
+        $tag_model = new TagModel();
+        $tag_pk    = $tag_model->getPk();
+        $res       = AttributesModel::where($pk, 'in', $ids)->where($tag_pk, '>', 0)->delete();
+        return $res;
     }
 }

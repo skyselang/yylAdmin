@@ -10,10 +10,9 @@
 namespace app\common\model\file;
 
 use think\Model;
+use hg\apidoc\annotation as Apidoc;
 use app\common\model\system\UserModel;
 use app\common\service\file\SettingService;
-use app\common\service\file\ImportService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
  * 导入文件模型
@@ -32,46 +31,55 @@ class ImportModel extends Model
      */
     public function getTypeNameAttr($value, $data)
     {
-        $types = ImportService::types();
-        return $types[$data['type']] ?? '';
+        return SettingService::expImpType($data['type'], 'import');
     }
 
     /**
-     * 获取文件名称
+     * 获取文件名称（成功）
      * @Apidoc\Field("")
      * @Apidoc\AddField("file_name_success", type="string", desc="文件名称（成功）")
-     * @Apidoc\AddField("file_name_fail", type="string", desc="文件名称（失败）")
      */
     public function getFileNameSuccessAttr($value, $data)
     {
         return substr($data['file_name'], 0, -5) . '-成功.xlsx';
     }
+
+    /**
+     * 获取文件名称（失败）
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_name_fail", type="string", desc="文件名称（失败）")
+     */
     public function getFileNameFailAttr($value, $data)
     {
         return substr($data['file_name'], 0, -5) . '-失败.xlsx';
     }
 
     /**
-     * 获取文件路径
+     * 获取文件路径（成功）
      * @Apidoc\Field("")
      * @Apidoc\AddField("file_path_success", type="string", desc="文件路径（成功）")
-     * @Apidoc\AddField("file_path_fail", type="string", desc="文件路径（失败）")
      */
     public function getFilePathSuccessAttr($value, $data)
     {
-        return ImportService::filePathSuccess($data['file_path']);
+        return SettingService::impFilePathSuccess($data['file_path']);
     }
+
+    /**
+     * 获取文件路径（失败）
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_path_fail", type="string", desc="文件路径（失败）")
+     */
     public function getFilePathFailAttr($value, $data)
     {
-        return ImportService::filePathFail($data['file_path']);
+        return SettingService::impFilePathFail($data['file_path']);
     }
 
     /**
      * 获取文件链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("file_url", type="string", desc="文件链接")
-     * @Apidoc\AddField("file_success_url", type="string", desc="文件链接（成功）")
-     * @Apidoc\AddField("file_fail_url", type="string", desc="文件链接（失败）")
+     * @Apidoc\AddField("file_url_success", type="string", desc="文件链接（成功）")
+     * @Apidoc\AddField("file_url_fail", type="string", desc="文件链接（失败）")
      */
     public function getFileUrlAttr($value, $data)
     {
@@ -87,11 +95,11 @@ class ImportModel extends Model
     }
 
     /**
-     * 获取文件大小
+     * 获取文件大小名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("file_size", type="string", desc="文件大小")
+     * @Apidoc\AddField("file_size_name", type="string", desc="文件大小名称")
      */
-    public function getFileSizeAttr($value, $data)
+    public function getFileSizeNameAttr($value, $data)
     {
         return SettingService::fileSize($data['file_size']);
     }
@@ -99,21 +107,20 @@ class ImportModel extends Model
     /**
      * 获取状态名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("status_name", status="string", desc="状态名称")
+     * @Apidoc\AddField("status_name", type="string", desc="状态名称")
      */
     public function getStatusNameAttr($value, $data)
     {
-        $statuss = ImportService::statuss();
-        return $statuss[$data['status']] ?? '';
+        return SettingService::expImpStatus($data['status']);
     }
 
     /**
-     * 关联提交人
+     * 关联添加用户
      * @Apidoc\Field("")
-     * @Apidoc\AddField("create_name", type="string", desc="提交人")
+     * @Apidoc\AddField("create_uname", type="string", desc="添加用户名称")
      */
     public function createUser()
     {
-        return $this->hasOne(UserModel::class, 'user_id', 'create_uid')->bind(['create_name' => 'nickname']);
+        return $this->hasOne(UserModel::class, 'user_id', 'create_uid')->bind(['create_uname' => 'nickname']);
     }
 }

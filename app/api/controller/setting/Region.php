@@ -9,28 +9,28 @@
 
 namespace app\api\controller\setting;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\common\validate\setting\RegionValidate;
 use app\common\service\setting\RegionService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("地区")
+ * @Apidoc\Title("lang(地区)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("600")
+ * @Apidoc\Sort("700")
  */
 class Region extends BaseController
 {
     /**
-     * @Apidoc\Title("地区列表")
+     * @Apidoc\Title("lang(地区列表)")
      * @Apidoc\Query("region_id", type="int", require=false, default="0", desc="地区id")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel", type="array", desc="地区列表", field="region_id,region_pid,region_name,region_pinyin,region_citycode,region_zipcode,region_longitude,region_latitude,sort")
+     * @Apidoc\Returned("list", ref={RegionService::class,"info"}, type="array", desc="地区列表", field="region_id,region_pid,region_name,pinyin,citycode,zipcode,longitude,latitude,sort")
      */
     public function list()
     {
         $region_pid = $this->param('region_id/d', 0);
 
-        $where = [['region_pid', '=', $region_pid], where_disable(), where_delete()];
+        $where = where_disdel(['region_pid', '=', $region_pid]);
 
         $data['list'] = RegionService::list('list', $where);
 
@@ -38,12 +38,12 @@ class Region extends BaseController
     }
 
     /**
-     * @Apidoc\Title("地区树形")
-     * @Apidoc\Returned("list", ref="app\common\model\setting\RegionModel", type="tree", desc="地区树形", field="region_id,region_pid,region_name")
+     * @Apidoc\Title("lang(地区树形)")
+     * @Apidoc\Returned("list", ref={RegionService::class,"info"}, type="tree", desc="地区树形", field="region_id,region_pid,region_name")
      */
     public function tree()
     {
-        $where = [where_disable(), where_delete()];
+        $where = where_disdel();
 
         $data['list'] = RegionService::list('tree', $where, [], 'region_pid,region_name');
 
@@ -51,10 +51,9 @@ class Region extends BaseController
     }
 
     /**
-     * @Apidoc\Title("地区信息")
-     * @Apidoc\Query(ref="app\common\model\setting\RegionModel", field="region_id")
-     * @Apidoc\Returned(ref="app\common\model\setting\RegionModel")
-     * @Apidoc\Returned(ref="app\common\service\setting\RegionService\info")
+     * @Apidoc\Title("lang(地区信息)")
+     * @Apidoc\Query(ref={RegionService::class,"info"})
+     * @Apidoc\Returned(ref={RegionService::class,"info"})
      */
     public function info()
     {
@@ -64,7 +63,7 @@ class Region extends BaseController
 
         $data = RegionService::info($param['region_id'], false);
         if (empty($data) || $data['is_disable'] || $data['is_delete']) {
-            return error('地区不存在');
+            return error(lang('地区不存在'));
         }
 
         return success($data);

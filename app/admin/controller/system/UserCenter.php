@@ -9,52 +9,69 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\BaseController;
-use app\common\validate\system\UserCenterValidate;
-use app\common\validate\system\UserLogValidate;
-use app\common\service\system\UserCenterService;
-use app\common\service\system\UserLogService;
-use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\system\UserCenterValidate as Validate;
+use app\common\service\system\UserCenterService as Service;
+use app\common\model\system\UserModel as Model;
+use app\common\validate\system\UserLogValidate;
+use app\common\service\system\SettingService;
 
 /**
- * @Apidoc\Title("个人中心")
+ * @Apidoc\Title("lang(个人中心)")
  * @Apidoc\Group("system")
- * @Apidoc\Sort("800")
+ * @Apidoc\Sort("600")
  */
 class UserCenter extends BaseController
 {
     /**
-     * @Apidoc\Title("我的信息")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel", withoutField="password")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptIdsAttr", field="dept_ids")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostIdsAttr", field="post_ids")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleIdsAttr", field="role_ids")
-     * @Apidoc\Returned("menus", type="array", desc="菜单路由")
-     * @Apidoc\Returned("roles", type="array", desc="菜单链接（权限标识）")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(我的信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, withoutField="password")
+     * @Apidoc\Returned("setting",type="object", desc="lang(系统设置)",ref={SettingService::class,"info"},field="system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type")
      */
     public function info()
     {
-        $param['user_id'] = user_id(true);
+        $pk = $this->model()->getPk();
+        $param[$pk] = user_id(true);
 
-        validate(UserCenterValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = UserCenterService::info($param['user_id']);
+        $data = $this->service::info($param[$pk]);
         if ($data['is_delete'] == 1) {
-            exception('账号已被删除！');
+            exception(lang('账号已被删除'));
         }
+
+        $data['setting'] = SettingService::info('system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type');
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("我的信息修改")
+     * @Apidoc\Title("lang(我的信息修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\UserModel", field="avatar_id,nickname,username,phone,email")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="avatar_id,nickname,username,phone,email")
      */
     public function edit()
     {
+        $pk    = $this->model()->getPk();
         $param = $this->params([
             'avatar_id/d' => 0,
             'nickname/s'  => '',
@@ -62,76 +79,68 @@ class UserCenter extends BaseController
             'phone/s'     => '',
             'email/s'     => '',
         ]);
-        $param['user_id'] = user_id(true);
+        $param[$pk] = user_id(true);
 
-        validate(UserCenterValidate::class)->scene('edit')->check($param);
+        validate($this->validate)->scene('edit')->check($param);
 
-        $data = UserCenterService::edit($param['user_id'], $param);
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("我的密码修改")
+     * @Apidoc\Title("lang(我的密码修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("password_old", type="string", require=true, desc="旧密码")
-     * @Apidoc\Param("password_new", type="string", require=true, desc="新密码")
+     * @Apidoc\Param(ref={Service::class,"pwd"})
      */
     public function pwd()
     {
+        $pk    = $this->model()->getPk();
         $param = $this->params(['password_old/s' => '', 'password_new/s' => '']);
-        $param['user_id'] = user_id(true);
+        $param[$pk] = user_id(true);
 
-        validate(UserCenterValidate::class)->scene('pwd')->check($param);
+        validate($this->validate)->scene('pwd')->check($param);
 
-        UserCenterService::pwd($param['user_id'], $param);
+        $this->service::pwd($param[$pk], $param);
 
         return success();
     }
 
     /**
-     * @Apidoc\Title("我的日志列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="日志列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\system\UserLogModel"),
-     *   @Apidoc\Returned(ref="app\common\model\system\MenuModel", field="menu_name,menu_url")
-     * })
+     * @Apidoc\Title("lang(我的日志列表)")
+     * @Apidoc\Query(ref={Service::class,"logList"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"logList"})
      */
-    public function log()
+    public function logList()
     {
-        $param['user_id'] = user_id(true);
+        $pk = $this->model()->getPk();
+        $param[$pk] = user_id(true);
 
-        validate(UserCenterValidate::class)->scene('log')->check($param);
+        validate($this->validate)->scene('log')->check($param);
 
-        $where = $this->where(where_delete(['user_id', '=', $param['user_id']]));
+        $where = $this->where(where_disable([$pk, '=', $param[$pk]]));
 
-        $data = UserCenterService::log($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
-        $data['log_types'] = SettingService::logTypes();
+        $data = $this->service::logList($where, $this->page(), $this->limit(), $this->order());
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("我的日志信息")
-     * @Apidoc\Query(ref="app\common\model\system\UserLogModel", field="log_id")
-     * @Apidoc\Returned(ref="app\common\model\system\UserLogModel")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel", field="nickname,username")
-     * @Apidoc\Returned(ref="app\common\model\system\MenuModel", field="menu_name,menu_url")
+     * @Apidoc\Title("lang(我的日志信息)")
+     * @Apidoc\Query(ref={Service::class,"logInfo"})
+     * @Apidoc\Returned(ref={Service::class,"logInfo"})
      */
     public function logInfo()
     {
-        $param   = $this->params(['log_id/d' => '']);
+        $pk      = $this->model()->getPk();
+        $param   = $this->params(['log_id' => '']);
         $user_id = user_id(true);
 
         validate(UserLogValidate::class)->scene('info')->check($param);
 
-        $data = UserLogService::info($param['log_id']);
-        if ($data['user_id'] != $user_id) {
+        $data = $this->service::logInfo($param['log_id']);
+        if ($data[$pk] != $user_id) {
             $data = [];
         }
 
@@ -139,9 +148,9 @@ class UserCenter extends BaseController
     }
 
     /**
-     * @Apidoc\Title("我的日志删除")
+     * @Apidoc\Title("lang(我的日志删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"logDele"})
      */
     public function logDele()
     {
@@ -150,7 +159,21 @@ class UserCenter extends BaseController
 
         validate(UserLogValidate::class)->scene('dele')->check($param);
 
-        $data = UserLogService::dele($param['ids'], false, $user_id);
+        $data = $this->service::logDele($param['ids'], $user_id);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(我的日志清空)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Query(ref={Service::class,"logClear"})
+     */
+    public function logClear()
+    {
+        $where = $this->where(['user_id', '=', user_id(true)]);
+
+        $data = $this->service::logClear($where);
 
         return success($data);
     }

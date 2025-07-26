@@ -18,4 +18,6 @@ class SettingFilesModel extends Pivot
 {
     // 表名
     protected $name = 'setting_files';
+    // 表主键
+    protected $pk = 'id';
 }

@@ -9,85 +9,31 @@
 
 namespace app\common\cache;
 
-use think\facade\Cache as TpCache;
+use app\common\cache\BaseCache;
 
 /**
  * 缓存通用类
  */
-class Cache extends TpCache
+class Cache extends BaseCache
 {
     // 缓存标签
-    public static $tag = 'cache';
+    public $tag = 'cache';
+
     // 缓存前缀
-    protected static $prefix = 'cache:';
+    protected $prefix = 'cache:';
 
-    /**
-     * 缓存键名
-     * @param  int $name 缓存变量名
-     * @return string
-     */
-    public static function key($name)
-    {
-        return self::$prefix . $name;
-    }
+    // 缓存有效时间（秒，0永久）
+    protected $expire = null;
 
-    /**
-     * 写入缓存
-     * @access public
-     * @param  string            $name   缓存变量名
-     * @param  mixed             $value  存储数据
-     * @param  integer|\DateTime $expire 有效时间（秒）
-     * @return bool
-     */
-    public static function set($name, $value, $expire = null)
-    {
-        return TpCache::tag(self::$tag)->set(self::key($name), $value, $expire);
-    }
+    // 是否允许清除缓存（调用系统清除缓存方法时）
+    public $allowClear = true;
 
-    /**
-     * 读取缓存
-     * @access public
-     * @param  string $name    缓存变量名
-     * @param  mixed  $default 默认值
-     * @return mixed
-     */
-    public static function get($name, $default = null)
+    // 构造函数
+    function __construct()
     {
-        return TpCache::get(self::key($name), $default);
-    }
-
-    /**
-     * 删除缓存
-     * @access public
-     * @param  string $name 缓存变量名
-     * @return bool
-     */
-    public static function del($name)
-    {
-        $keys = var_to_array($name);
-        foreach ($keys as $key) {
-            TpCache::delete(self::key($key));
-        }
-        return true;
-    }
-    /**
-     * 删除缓存
-     * @access public
-     * @param  string $name 缓存变量名
-     * @return bool
-     */
-    public static function delete($name)
-    {
-        return self::del(self::key($name));
-    }
-
-    /**
-     * 清除缓存
-     * @access public
-     * @return bool
-     */
-    public static function clear()
-    {
-        return TpCache::tag(self::$tag)->clear();
+        $this->tag($this->tag);
+        $this->prefix($this->prefix);
+        $this->expire($this->expire);
+        $this->allowClear($this->allowClear);
     }
 }

@@ -9,52 +9,45 @@
 
 namespace app\admin\controller\system;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\common\service\system\IndexService;
 use app\common\service\system\NoticeService;
 use app\common\service\member\MemberService;
 use app\common\service\content\ContentService;
 use app\common\service\file\FileService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("控制台")
- * @Apidoc\Group("console")
+ * @Apidoc\Title("lang(首页)")
+ * @Apidoc\Group("home")
  * @Apidoc\Sort("150")
  */
 class Index extends BaseController
 {
     /**
-     * @Apidoc\Title("首页")
+     * @Apidoc\Title("lang(首页)")
      */
     public function index()
     {
         $data = IndexService::index();
-        $msg  = '后端安装成功，欢迎使用，如有帮助，敬请Star！';
+        $msg  = lang('后端安装成功，欢迎使用，如有帮助，敬请Star！');
 
         return success($data, $msg);
     }
 
     /**
-     * @Apidoc\Title("公告")
+     * @Apidoc\Title("lang(公告)")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="公告列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel", field="notice_id,image_id,title,title_color,desc,start_time"),
-     *   @Apidoc\Returned(ref="app\common\model\system\NoticeModel\getImageUrlAttr", field="image_url")
-     * })
+     * @Apidoc\Returned(ref={NoticeService::class,"list"})
      */
     public function notice()
     {
-        $where[] = ['start_time', '<=', datetime()];
-        $where[] = ['end_time', '>=', datetime()];
-        $where[] = where_disable();
-        $where[] = where_delete();
-        $where = $this->where($where);
+        $where = $this->where(where_disdel([['start_time', '<=', datetime()], ['end_time', '>=', datetime()]]));
 
         $order = ['sort' => 'desc', 'start_time' => 'desc', 'notice_id' => 'desc'];
 
-        $field = 'image_id,title,title_color,desc,start_time';
+        $field = 'image_id,title,title_color,start_time,end_time,desc';
 
         $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 
@@ -62,7 +55,7 @@ class Index extends BaseController
     }
 
     /**
-     * @Apidoc\Title("总数统计")
+     * @Apidoc\Title("lang(总数统计)")
      * @Apidoc\Returned(ref="app\common\service\system\IndexService\count")
      */
     public function count()
@@ -73,10 +66,9 @@ class Index extends BaseController
     }
 
     /**
-     * @Apidoc\Title("会员统计")
-     * @Apidoc\Query("type", type="string", default="month", desc="日期类型：day、month")
-     * @Apidoc\Query("date", type="array", default="", desc="日期范围，默认30天、12个月")
-     * @Apidoc\Returned("number", type="array", desc="图表数据", children={
+     * @Apidoc\Title("lang(会员统计)")
+     * @Apidoc\Query(ref="app\common\service\member\MemberService\statistic")
+     * @Apidoc\Returned("number", type="array", desc="lang(图表数据)", children={
      *   @Apidoc\Returned(ref="app\common\service\member\MemberService\statistic")
      * })
      */
@@ -91,7 +83,7 @@ class Index extends BaseController
     }
 
     /**
-     * @Apidoc\Title("内容统计")
+     * @Apidoc\Title("lang(内容统计)")
      * @Apidoc\Returned(ref="app\common\service\content\ContentService\statistic")
      */
     public function content()
@@ -102,7 +94,7 @@ class Index extends BaseController
     }
 
     /**
-     * @Apidoc\Title("文件统计")
+     * @Apidoc\Title("lang(文件统计)")
      * @Apidoc\Returned(ref="app\common\service\file\FileService\statistic")
      */
     public function file()

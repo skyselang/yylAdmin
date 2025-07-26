@@ -18,37 +18,32 @@ class WxMiniapp
 {
     /**
      * 请求类
-     *
      * @var Http
      */
     protected $http = null;
 
     /**
      * 平台
-     *
      * @var string
      */
     protected $platform = 'wx';
 
     /**
      * AppID 小程序ID AppID
-     *
      * @var string
      */
     protected $appid;
 
     /**
      * AppSecret 小程序密钥 AppSecret
-     *
      * @var string
      */
     protected $appsecret;
 
     /**
      * 构造函数
-     *
-     * @param  string $appid     
-     * @param  string $appsecret 
+     * @param string $appid     
+     * @param string $appsecret 
      */
     public function __construct($appid, $appsecret)
     {
@@ -59,9 +54,7 @@ class WxMiniapp
 
     /**
      * 登录
-     * 
      * @param array $code 登录凭证 code
-     * 
      * @return array openid,unionid,errmsg,errcode(0请求成功)
      */
     public function login($code)
@@ -73,6 +66,7 @@ class WxMiniapp
             'grant_type' => 'authorization_code',
         ]);
         $url = 'https://api.weixin.qq.com/sns/jscode2session?' . $param;
+        
         return $this->http->get($url);
     }
 
@@ -96,14 +90,13 @@ class WxMiniapp
             $access_token = $res['access_token'];
             Cache::set($access_token_key, $access_token, $res['expires_in']);
         }
+
         return $access_token;
     }
 
     /**
      * 获取手机号
-     *
-     * @param  string $code 手机号获取凭证 code
-     *
+     * @param string $code 手机号获取凭证 code
      * @return string
      */
     public function getPhoneNumber($code)
@@ -113,6 +106,7 @@ class WxMiniapp
         $url          = 'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=' . $access_token;
         $res          = $this->http->post($url, $param);
         $phone        = $res['phone_info']['purePhoneNumber'] ?? '';
+
         return $phone;
     }
 }

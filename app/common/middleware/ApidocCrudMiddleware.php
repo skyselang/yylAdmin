@@ -17,25 +17,6 @@ class ApidocCrudMiddleware
     // 生成文件及数据表前执行
     public function before($tplParams)
     {
-        $group_name = $tplParams['form']['group'];
-        $file_names = ['service', 'validate', 'cache'];
-        foreach ($file_names as $file_name) {
-            if (isset($tplParams[$file_name])) {
-                // $tplParams[$file_name]['path']      = str_replace('${form.group}', $group_name, $tplParams[$file_name]['path']);
-                // $tplParams[$file_name]['namespace'] = str_replace('${form.group}', $group_name, $tplParams[$file_name]['namespace']);
-
-                $file_name_compare = substr_compare($file_name, $tplParams[$file_name]['class_name'], -strlen($tplParams[$file_name]['class_name']));
-                if ($file_name_compare != 0) {
-                    $tplParams[$file_name]['class_name'] .= ucfirst($file_name);
-                }
-            }
-        }
-
-        $model_name_compare = substr_compare('Model', $tplParams['tables'][0]['model_name'], -strlen($tplParams['tables'][0]['model_name']));
-        if ($model_name_compare != 0) {
-            $tplParams['tables'][0]['model_name'] .= 'Model';
-        }
-
         $field_pk       = 'id';
         $field_list     = [];
         $field_add      = [];
@@ -65,12 +46,10 @@ class ApidocCrudMiddleware
             'field_add_edit' => $field_add_edit,
         ];
         $tplParams['custom'] = $custom;
-        // error_e($tplParams);
+
         return $tplParams;
     }
 
     // 生成文件及数据表后执行
-    public function after($tplParams)
-    {
-    }
+    public function after($tplParams) {}
 }

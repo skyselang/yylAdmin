@@ -18,6 +18,8 @@ class AttributesModel extends Pivot
 {
     // 表名
     protected $name = 'content_attributes';
+    // 表主键
+    protected $pk = 'id';
 
     // 关联内容
     public function content()

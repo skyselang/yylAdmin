@@ -14,16 +14,16 @@
 $tableFieldTypes = ['int', 'tinyint', 'integer', 'float', 'decimal', 'char', 'varchar', 'blob', 'text', 'point', 'datetime'];
 // 表字段可选的验证规则
 $tableFieldCheckOptions = [
-    ['label' => '必填', 'value' => 'require', 'message' => '缺少必要参数{$item.field}'],
-    ['label' => '数字', 'value' => 'number', 'message' => '{$item.field}字段类型为数字'],
-    ['label' => '整数', 'value' => 'integer', 'message' => '{$item.field}为整数'],
-    ['label' => '布尔', 'value' => 'boolean', 'message' => '{$item.field}为布尔值'],
+    ['label' => lang('必填'), 'value' => 'require', 'message' =>  lang('缺少必要参数') . '{$item.field}'],
+    ['label' => lang('数字'), 'value' => 'number', 'message' => '{$item.field}' . lang('为数字类型')],
+    ['label' => lang('整数'), 'value' => 'integer', 'message' => '{$item.field}' . lang('为整数类型')],
+    ['label' => lang('布尔'), 'value' => 'boolean', 'message' => '{$item.field}' . lang('为布尔值类型')],
 ];
 // 主表默认字段
 $tableDefaultRows = [
     [
         'field'       => 'id',
-        'desc'        => '主键ID',
+        'desc'        => lang('主键'),
         'type'        => 'int',
         'length'      => 11,
         'default'     => '',
@@ -37,8 +37,21 @@ $tableDefaultRows = [
         'edit'        => true,
     ],
     [
-        'field'       => 'title',
-        'desc'        => '标题',
+        'field'       => 'unique',
+        'desc'        => lang('编号'),
+        'type'        => 'varchar',
+        'length'      => 32,
+        'default'     => '',
+        'not_null'    => false,
+        'main_key'    => false,
+        'incremental' => false,
+        'list'        => true,
+        'add'         => true,
+        'edit'        => true,
+    ],
+    [
+        'field'       => 'name',
+        'desc'        => lang('名称'),
         'type'        => 'varchar',
         'length'      => 255,
         'default'     => '',
@@ -50,12 +63,38 @@ $tableDefaultRows = [
         'edit'        => true,
     ],
     [
-        'field'       => 'content',
-        'desc'        => '内容',
-        'type'        => 'text',
-        'length'      => '',
-        'default'     => null,
-        'not_null'    => true,
+        'field'       => 'desc',
+        'desc'        => lang('描述'),
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => '',
+        'not_null'    => false,
+        'main_key'    => false,
+        'incremental' => false,
+        'list'        => true,
+        'add'         => true,
+        'edit'        => true,
+    ],
+    [
+        'field'       => 'remark',
+        'desc'        => lang('备注'),
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => '',
+        'not_null'    => false,
+        'main_key'    => false,
+        'incremental' => false,
+        'list'        => true,
+        'add'         => true,
+        'edit'        => true,
+    ],
+    [
+        'field'       => 'sort',
+        'desc'        => lang('排序'),
+        'type'        => 'int',
+        'length'      => 11,
+        'default'     => 250,
+        'not_null'    => false,
         'main_key'    => false,
         'incremental' => false,
         'list'        => true,
@@ -64,7 +103,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'is_disable',
-        'desc'        => '是否禁用，1是0否',
+        'desc'        => lang('是否禁用，1是0否'),
         'type'        => 'tinyint',
         'length'      => 1,
         'default'     => 0,
@@ -77,7 +116,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'is_delete',
-        'desc'        => '是否删除，1是0否',
+        'desc'        => lang('是否删除，1是0否'),
         'type'        => 'tinyint',
         'length'      => 1,
         'default'     => 0,
@@ -87,7 +126,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'create_uid',
-        'desc'        => '添加用户id',
+        'desc'        => lang('添加用户id'),
         'type'        => 'int',
         'length'      => 11,
         'default'     => 0,
@@ -97,7 +136,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'update_uid',
-        'desc'        => '修改用户id',
+        'desc'        => lang('修改用户id'),
         'type'        => 'int',
         'length'      => 11,
         'default'     => 0,
@@ -107,7 +146,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'delete_uid',
-        'desc'        => '删除用户id',
+        'desc'        => lang('删除用户id'),
         'type'        => 'int',
         'length'      => 11,
         'default'     => 0,
@@ -117,7 +156,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'create_time',
-        'desc'        => '创建时间',
+        'desc'        => lang('添加时间'),
         'type'        => 'datetime',
         'length'      => '',
         'default'     => null,
@@ -128,7 +167,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'update_time',
-        'desc'        => '修改时间',
+        'desc'        => lang('修改时间'),
         'type'        => 'datetime',
         'length'      => '',
         'default'     => null,
@@ -139,7 +178,7 @@ $tableDefaultRows = [
     ],
     [
         'field'       => 'delete_time',
-        'desc'        => '删除时间',
+        'desc'        => lang('删除时间'),
         'type'        => 'datetime',
         'length'      => '',
         'default'     => null,
@@ -151,12 +190,12 @@ $tableDefaultRows = [
 // crud的表配置自定义列
 $crudTableColumns = [
     [
-        'title' => '验证',
+        'title' => lang('验证'),
         'field' => 'check',
         'type' => 'select',
         'width' => 180,
         'props' => [
-            'placeholder' => '请输入',
+            'placeholder' => lang('请输入'),
             'mode' => 'multiple',
             'maxTagCount' => 1,
             'options' => $tableFieldCheckOptions
@@ -169,7 +208,7 @@ $crudTableColumns = [
     //     'width' => 60
     // ],
     [
-        'title' => '列表',
+        'title' => lang('列表'),
         'field' => 'list',
         'type' => 'checkbox',
         'width' => 60
@@ -181,13 +220,13 @@ $crudTableColumns = [
     //     'width' => 60
     // ],
     [
-        'title' => '添加',
+        'title' => lang('添加'),
         'field' => 'add',
         'type' => 'checkbox',
         'width' => 60
     ],
     [
-        'title' => '修改',
+        'title' => lang('修改'),
         'field' => 'edit',
         'type' => 'checkbox',
         'width' => 60
@@ -195,20 +234,22 @@ $crudTableColumns = [
 ];
 // 模型名规则
 $modelNameRules = [
-    ['pattern' => '^[A-Z]{1}([a-zA-Z0-9]|[._]){2,99}$', 'message' => '模型文件名错误，请输入大写字母开头的字母+数字，长度2-99的组合']
+    ['pattern' => '^[A-Z]{1}([a-zA-Z0-9]|[._]){2,99}$', 'message' => lang('模型文件名错误，请输入大写字母开头的字母+数字，长度2-99的组合')]
 ];
 // 表名规则
 $tableNameRules = [
-    ['pattern' => '^[a-z]{1}([a-z0-9]|[_]){2,99}$', 'message' => '表名错误，请输入小写字母开头的字母+数字/下划线，长度2-99的组合']
+    ['pattern' => '^[a-z]{1}([a-z0-9]|[_]){2,99}$', 'message' => lang('表名错误，请输入小写字母开头的字母+数字/下划线，长度2-99的组合')]
 ];
 
 return [
-    // （选配）文档标题，显示在左上角与首页
-    'title' => env('apidoc.title', 'yylAdmin-接口文档'),
-    // （选配）文档描述，显示在首页
-    'desc' => env('apidoc.desc', 'yylAdmin-接口文档与调试'),
     // （选配）是否启用Apidoc，默认true
     'enable' => env('apidoc.enable', true),
+    // 文档目录名称
+    'dir_name' => env('apidoc.dir_name', 'apidoc'),
+    // （选配）文档标题，显示在左上角与首页
+    'title' => env('apidoc.title', 'yylAdmin-' . lang('接口文档')),
+    // （选配）文档描述，显示在首页
+    'desc' => env('apidoc.desc', 'yylAdmin-' . lang('接口文档与调试')),
     // （必须）设置文档的应用/版本
     'apps' => [
         [
@@ -221,21 +262,22 @@ return [
             // （选配）当前应用全局参数
             'params' => [
                 // （选配）当前应用全局的请求Header
-                'header' => [['name' => env('admin.token_name', 'AdminToken'), 'type' => 'string', 'require' => true, 'desc' => 'admin token']],
+                'header' => [['name' => env('admin.token_name', 'AdminToken'), 'type' => 'string', 'require' => true, 'desc' => lang('token，也可以放在请求参数')]],
                 // （选配）当前应用全局的请求Query
-                'query' => [['name' => env('admin.token_name', 'AdminToken'), 'type' => 'string', 'require' => true, 'desc' => 'admin token']],
+                'query' => [],
                 // （选配）当前应用全局的请求Body
-                'body' => [['name' => env('admin.token_name', 'AdminToken'), 'type' => 'string', 'require' => true, 'desc' => 'admin token']],
+                'body' => [],
             ],
             // （选配）当前应用控制器分组
             'groups' => [
-                ['title' => '登录', 'name' => 'logout'],
-                ['title' => '控制台', 'name' => 'console'],
-                ['title' => '会员管理', 'name' => 'member'],
-                ['title' => '内容管理', 'name' => 'content'],
-                ['title' => '文件管理', 'name' => 'file'],
-                ['title' => '设置管理', 'name' => 'setting'],
-                ['title' => '系统管理', 'name' => 'system'],
+                ['title' => lang('登录'), 'name' => 'logout'],
+                ['title' => lang('首页'), 'name' => 'home'],
+                ['title' => lang('会员管理'), 'name' => 'member'],
+                ['title' => lang('内容管理'), 'name' => 'content'],
+                ['title' => lang('文件管理'), 'name' => 'file'],
+                ['title' => lang('日志管理'), 'name' => 'log'],
+                ['title' => lang('设置管理'), 'name' => 'setting'],
+                ['title' => lang('系统管理'), 'name' => 'system'],
             ],
         ],
         [
@@ -243,22 +285,22 @@ return [
             'path' => 'app\api\controller',
             'key' => 'api',
             'params' => [
-                'header' => [['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => 'api token']],
-                'query' => [['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => 'api token']],
-                'body' => [['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => 'api token']],
+                'header' => [['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => lang('token，也可以放在请求参数')]],
+                'query' => [],
+                'body' => [],
             ],
             'groups' => [
-                ['title' => '首页', 'name' => 'index'],
-                ['title' => '设置', 'name' => 'setting'],
-                ['title' => '文件', 'name' => 'file'],
-                ['title' => '内容', 'name' => 'content'],
-                ['title' => '会员', 'name' => 'member'],
+                ['title' => lang('首页'), 'name' => 'index'],
+                ['title' => lang('设置'), 'name' => 'setting'],
+                ['title' => lang('内容'), 'name' => 'content'],
+                ['title' => lang('文件'), 'name' => 'file'],
+                ['title' => lang('会员'), 'name' => 'member'],
             ],
         ]
     ],
     // （必须）指定通用注释定义的文件地址
     'definitions' => 'app\common\controller\ApidocDefinitions',
-    // （必须）自动生成url规则，当接口不添加@Apidoc\Url('xxx')注解时，使用以下规则自动生成
+    // （必须）自动生成url规则，当接口不添加@Apidoc\Url('xxx)'注解时，使用以下规则自动生成
     'auto_url' => [
         // 字母规则，lcfirst=首字母小写；ucfirst=首字母大写；
         'letter_rule' => 'lcfirst',
@@ -313,16 +355,16 @@ return [
     'responses' => [
         // 成功响应体
         'success' => [
-            ['name' => 'code', 'desc' => '返回码，200成功，其它失败', 'type' => 'int', 'require' => 1, 'default' => 200],
-            ['name' => 'msg', 'desc' => '返回描述', 'type' => 'string', 'require' => 1],
+            ['name' => 'code', 'desc' => lang('返回码，200成功，401登录失效，其它失败'), 'type' => 'int', 'require' => 1, 'default' => 200],
+            ['name' => 'msg', 'desc' => lang('返回描述'), 'type' => 'string', 'require' => 1],
             //参数同上 headers；main=true来指定接口Returned参数挂载节点
-            ['name' => 'data', 'desc' => '返回数据', 'main' => true, 'type' => 'object', 'require' => 1],
+            ['name' => 'data', 'desc' => lang('返回数据'), 'main' => true, 'type' => 'object', 'require' => 1],
         ],
         // 异常响应体
         'error' => [
-            ['name' => 'code', 'desc' => '返回码，200成功，其它失败', 'type' => 'int', 'require' => 1, 'md' => ''],
-            ['name' => 'msg', 'desc' => '返回描述', 'type' => 'string', 'require' => 1],
-            ['name' => 'data', 'desc' => '返回数据', 'main' => true, 'type' => 'object', 'require' => 1],
+            ['name' => 'code', 'desc' => lang('返回码，200成功，401登录失效，其它失败'), 'type' => 'int', 'require' => 1, 'md' => ''],
+            ['name' => 'msg', 'desc' => lang('返回描述'), 'type' => 'string', 'require' => 1],
+            ['name' => 'data', 'desc' => lang('返回数据'), 'main' => true, 'type' => 'object', 'require' => 1],
         ]
     ],
     // （选配）默认请求类型
@@ -341,19 +383,19 @@ return [
     // （选配）Markdown文档
     'docs' => [
         // title=文档标题，path=.md文件地址，appKey=指定应用/版本，多级分组使用children嵌套
-        ['title' => '接口文档说明', 'path' => './private/apidoc/apidocs'],
+        ['title' => lang('接口文档说明'), 'path' => './private/apidoc/docs/apidocs'],
     ],
     // （选配）代码生成器配置 注意：是一个二维数组
     'generator' => [
         [
-            'title' => '创建Crud',
+            'title' => lang('创建Crud'),
             'enable' => env('apidoc.generator_enable', false),
             'middleware' => [\app\common\middleware\ApidocCrudMiddleware::class],
             'form' => [
                 'colspan' => 3,
                 'items' => [
                     [
-                        'title' => '控制器标题',
+                        'title' => lang('控制器标题'),
                         'field' => 'controller_title',
                         'type' => 'input'
                     ],
@@ -367,8 +409,8 @@ return [
                     'namespace' => 'app\${app[0].key}\controller\${form.group}',
                     'template' => 'private\apidoc\template\crud\controller.tpl',
                     'rules' => [
-                        ['required' => true, 'message' => '请输入控制器文件名'],
-                        ['pattern' => '^[A-Z]{1}([a-zA-Z0-9]|[._]){2,99}$', 'message' => '请输入正确的目录名'],
+                        ['required' => true, 'message' => lang('请输入控制器文件名')],
+                        ['pattern' => '^[A-Z]{1}([a-zA-Z0-9]|[._]){2,99}$', 'message' => lang('请输入正确的目录名')],
                     ]
                 ],
                 [
@@ -397,10 +439,10 @@ return [
                 'field_types' => $tableFieldTypes,
                 'items' => [
                     [
-                        'title' => '数据表',
+                        'title' => lang('数据表'),
                         'model_name' => 'TestModel',
-                        'path' => 'app\common\model',
-                        'namespace' => 'app\common\model',
+                        'path' => 'app\common\model\${form.group}',
+                        'namespace' => 'app\common\model\${form.group}',
                         'template' => 'private\apidoc\template\crud\model.tpl',
                         'model_rules' => $modelNameRules,
                         'table_rules' => $tableNameRules,
@@ -418,5 +460,5 @@ return [
                 ]
             ]
         ],
-    ]
+    ],
 ];

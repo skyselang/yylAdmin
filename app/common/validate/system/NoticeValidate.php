@@ -10,17 +10,33 @@
 namespace app\common\validate\system;
 
 use think\Validate;
+use app\common\service\system\NoticeService as Service;
+use app\common\model\system\NoticeModel as Model;
 
 /**
  * 公告管理验证器
  */
 class NoticeValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'        => ['require', 'array'],
+        'field'      => ['require', 'checkUpdateField'],
         'notice_id'  => ['require'],
-        'title'      => ['require'],
+        'title'      => ['require', 'checkExisted'],
         'start_time' => ['require', 'date'],
         'end_time'   => ['require', 'date'],
     ];
@@ -34,13 +50,51 @@ class NoticeValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'info'        => ['notice_id'],
-        'add'         => ['title', 'start_time', 'end_time'],
-        'edit'        => ['notice_id', 'title', 'start_time', 'end_time'],
-        'dele'        => ['ids'],
-        'disable'     => ['ids'],
-        'datetime'    => ['ids', 'start_time', 'end_time'],
-        'recycleReco' => ['ids'],
-        'recycleDele' => ['ids'],
+        'info'    => ['notice_id'],
+        'add'     => ['title', 'start_time', 'end_time'],
+        'edit'    => ['notice_id', 'title', 'start_time', 'end_time'],
+        'dele'    => ['ids'],
+        'disable' => ['ids'],
+        'update'  => ['ids', 'field'],
     ];
+
+    // 自定义验证规则：公告是否已存在
+    protected function checkExisted($value, $rule, $data = [])
+    {
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
+
+        $unique = $data['unique'] ?? '';
+        if ($unique) {
+            if (is_numeric($unique)) {
+                return lang('编号不能为纯数字');
+            }
+            $where = where_delete([[$pk, '<>', $id], ['unique', '=', $unique]]);
+            $info  = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return lang('编号已存在：') . $unique;
+            }
+        }
+
+        $where = where_delete([[$pk, '<>', $id], ['title', '=', $data['title']]]);
+        $info  = $model->field($pk)->where($where)->find();
+        if ($info) {
+            return lang('标题已存在：') . $data['title'];
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：公告批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
+
+        return true;
+    }
 }

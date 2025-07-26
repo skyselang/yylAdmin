@@ -10,10 +10,9 @@
 namespace app\common\model\file;
 
 use think\Model;
+use hg\apidoc\annotation as Apidoc;
 use app\common\model\system\UserModel;
 use app\common\service\file\SettingService;
-use app\common\service\file\ExportService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
  * 导出文件模型
@@ -32,8 +31,7 @@ class ExportModel extends Model
      */
     public function getTypeNameAttr($value, $data)
     {
-        $types = ExportService::types();
-        return $types[$data['type']] ?? '';
+        return SettingService::expImpType($data['type'], 'export');
     }
 
     /**
@@ -47,11 +45,11 @@ class ExportModel extends Model
     }
 
     /**
-     * 获取文件大小
+     * 获取文件大小名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("file_size", type="string", desc="文件大小")
+     * @Apidoc\AddField("file_size_name", type="string", desc="文件大小名称")
      */
-    public function getFileSizeAttr($value, $data)
+    public function getFileSizeNameAttr($value, $data)
     {
         return SettingService::fileSize($data['file_size']);
     }
@@ -59,33 +57,35 @@ class ExportModel extends Model
     /**
      * 获取状态名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("status_name", status="string", desc="状态名称")
+     * @Apidoc\AddField("status_name", type="string", desc="状态名称")
      */
     public function getStatusNameAttr($value, $data)
     {
-        $statuss = ExportService::statuss();
-        return $statuss[$data['status']] ?? '';
+        return SettingService::expImpStatus($data['status']);
     }
 
+    /**
+     * 修改参数
+     */
+    public function setParamAttr($value)
+    {
+        return json_encode($value);
+    }
     /**
      * 获取参数
      */
     public function getParamAttr($value)
     {
-        return unserialize($value);
-    }
-    public function setParamAttr($value)
-    {
-        return serialize($value);
+        return json_decode($value, true);
     }
 
     /**
-     * 关联提交人
+     * 关联添加用户
      * @Apidoc\Field("")
-     * @Apidoc\AddField("create_name", type="string", desc="提交人")
+     * @Apidoc\AddField("create_uname", type="string", desc="添加用户名称")
      */
     public function createUser()
     {
-        return $this->hasOne(UserModel::class, 'user_id', 'create_uid')->bind(['create_name' => 'nickname']);
+        return $this->hasOne(UserModel::class, 'user_id', 'create_uid')->bind(['create_uname' => 'nickname']);
     }
 }
