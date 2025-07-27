@@ -9,79 +9,31 @@
 
 namespace app\common\cache\utils;
 
-use think\facade\Cache;
+use app\common\cache\BaseCache;
 
 /**
  * 邮件验证码缓存
  */
-class CaptchaEmailCache
+class CaptchaEmailCache extends BaseCache
 {
     // 缓存标签
-    public static $tag = 'captcha_email';
+    public $tag = 'captcha_email';
+
     // 缓存前缀
-    protected static $prefix = 'captcha_email:';
+    protected $prefix = 'captcha_email:';
 
-    /**
-     * 缓存键名
-     *
-     * @param string $email 邮箱
-     * 
-     * @return string
-     */
-    public static function key($email)
-    {
-        return self::$prefix . $email;
-    }
+    // 缓存有效时间（秒，0永久）
+    protected $expire = 1800;
 
-    /**
-     * 缓存设置
-     *
-     * @param string $email   邮箱
-     * @param string $captcha 验证码
-     * @param int    $ttl     有效时间（秒，0永久）
-     * 
-     * @return bool
-     */
-    public static function set($email, $setting, $ttl = 1800)
-    {
-        return Cache::set(self::key($email), $setting, $ttl);
-    }
+    // 是否允许清除缓存（调用系统清除缓存方法时）
+    public $allowClear = false;
 
-    /**
-     * 缓存获取
-     *
-     * @param string $email 邮箱
-     * 
-     * @return array 验证码
-     */
-    public static function get($email)
+    // 构造函数
+    function __construct()
     {
-        return Cache::get(self::key($email));
-    }
-
-    /**
-     * 缓存删除
-     *
-     * @param mixed $email 邮箱
-     * 
-     * @return bool
-     */
-    public static function del($email)
-    {
-        $ids = var_to_array($email);
-        foreach ($ids as $v) {
-            Cache::delete(self::key($v));
-        }
-        return true;
-    }
-
-    /**
-     * 缓存清除
-     * 
-     * @return bool
-     */
-    public static function clear()
-    {
-        return Cache::tag(self::$tag)->clear();
+        $this->tag($this->tag);
+        $this->prefix($this->prefix);
+        $this->expire($this->expire);
+        $this->allowClear($this->allowClear);
     }
 }

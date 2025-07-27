@@ -13,15 +13,15 @@ use Closure;
 use think\Request;
 use think\Response;
 use app\common\service\system\UserLogService;
+use app\common\service\system\SettingService;
 
 /**
- * 日志记录中间件
+ * 用户日志中间件
  */
 class UserLogMiddleware
 {
     /**
      * 处理请求
-     *
      * @param Request $request
      * @param Closure $next
      * @return Response
@@ -30,21 +30,36 @@ class UserLogMiddleware
     {
         $response = $next($request);
 
-        $user_id = user_id();
-        if ($user_id) {
-            $response_data = $response->getData();
-            if (isset($response_data['code'])) {
-                $user_log['response_code'] = $response_data['code'];
-            }
-            if (isset($response_data['msg'])) {
-                $user_log['response_msg'] = $response_data['msg'];
-            } else {
-                if (isset($response_data['message'])) {
-                    $user_log['response_msg'] = $response_data['message'];
+        $setting = SettingService::info();
+        // 用户日志记录是否开启
+        if ($setting['log_switch']) {
+            $user_id  = user_id();
+            $menu_url = menu_url();
+
+            // 未登录是否记录免登日志
+            $log_unlogin = false;
+            if (empty($user_id)) {
+                if ($setting['log_unlogin'] && menu_is_exist($menu_url)) {
+                    $log_unlogin = true;
                 }
             }
-            $user_log['user_id'] = $user_id;
-            UserLogService::add($user_log);
+
+            if ($user_id || $log_unlogin) {
+                $response_data = $response->getData();
+                if (isset($response_data['code'])) {
+                    $user_log['response_code'] = $response_data['code'];
+                }
+                if (isset($response_data['msg'])) {
+                    $user_log['response_msg'] = $response_data['msg'];
+                } else {
+                    if (isset($response_data['message'])) {
+                        $user_log['response_msg'] = $response_data['message'];
+                    }
+                }
+                $user_log['user_id']       = $user_id;
+                $user_log['response_data'] = $response_data;
+                UserLogService::add($user_log);
+            }
         }
 
         return $response;

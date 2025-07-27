@@ -9,128 +9,186 @@
 
 namespace app\admin\controller\member;
 
-use app\common\controller\BaseController;
-use app\common\validate\member\TagValidate;
-use app\common\service\member\TagService;
-use app\common\service\member\ImportService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\member\TagValidate as Validate;
+use app\common\service\member\TagService as Service;
+use app\common\model\member\TagModel as Model;
+use app\common\service\member\MemberService;
 
 /**
- * @Apidoc\Title("会员标签")
+ * @Apidoc\Title("lang(会员标签)")
  * @Apidoc\Group("member")
  * @Apidoc\Sort("200")
  */
 class Tag extends BaseController
 {
     /**
-     * @Apidoc\Title("会员标签列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\TagModel", type="array", desc="标签列表", field="tag_id,tag_name,remark,sort,is_disable,create_time,update_time")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员标签列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = TagService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签信息")
-     * @Apidoc\Query(ref="app\common\model\member\TagModel", field="tag_id")
-     * @Apidoc\Returned(ref="app\common\model\member\TagModel")
+     * @Apidoc\Title("lang(会员标签信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['tag_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(TagValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = TagService::info($param['tag_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\TagModel", field="tag_name,tag_desc,remark,sort")
+     * @Apidoc\Title("lang(会员标签添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(TagService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(TagValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = TagService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\TagModel", field="tag_id,tag_name,tag_desc,remark,sort")
+     * @Apidoc\Title("lang(会员标签修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(TagService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(TagValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = TagService::edit($param['tag_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签删除")
+     * @Apidoc\Title("lang(会员标签删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(TagValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = TagService::dele($param['ids']);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签是否禁用")
+     * @Apidoc\Title("lang(会员标签是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\member\TagModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(TagValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = TagService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签导出")
-     * @Apidoc\Desc("get下载导出文件，post提交导出（列表搜索参数）")
-     * @Apidoc\Method("GET,POST")
-     * @Apidoc\Param("export_remark", type="string", desc="导出备注")
-     * @Apidoc\Query("file_path", type="string", desc="文件路径")
-     * @Apidoc\Query("file_name", type="string", desc="文件名称")
-     * @Apidoc\Returned(ref="app\common\model\file\ExportModel")
+     * @Apidoc\Title("lang(会员标签批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员标签导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
      */
     public function export()
     {
@@ -139,82 +197,87 @@ class Tag extends BaseController
             return download($param['file_path'], $param['file_name']);
         }
 
-        $param = $this->params(['export_remark/s' => '']);
-        $param['where'] = $this->where(where_delete());
-        $param['order'] = $this->order();
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
 
-        $data = TagService::export($param);
+        $data = $this->service::export($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签导入")
-     * @Apidoc\Desc("get下载模板，post导入文件")
-     * @Apidoc\Method("GET,POST")
-     * @Apidoc\Param("import_file", type="file", require=true, desc="导入文件")
-     * @Apidoc\Param("import_remark", type="int", desc="导入备注")
-     * @Apidoc\Returned("import_num", type="int", desc="导入数量")
-     * @Apidoc\Returned("success_num", type="int", desc="成功数量")
-     * @Apidoc\Returned("fail_num", type="int", desc="失败数量")
-     * @Apidoc\Returned("success", type="array", desc="成功列表")
-     * @Apidoc\Returned("fail", type="array", desc="失败列表")
+     * @Apidoc\Title("lang(会员标签导入)")
+     * @Apidoc\Desc("lang(get下载导入模板，post提交导入文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\ParamType("formdata")
+     * @Apidoc\Query(ref={Service::class,"import"})
+     * @Apidoc\Param(ref={Service::class,"import"})
+     * @Apidoc\Returned(ref={Service::class,"import"})
      */
     public function import()
     {
         if ($this->request->isGet()) {
-            $file_tpl = ImportService::memberTag([], true);
-            return download($file_tpl['file_tpl_path'], $file_tpl['file_tpl_name']);
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            if ($param['file_path']) {
+                return download($param['file_path'], $param['file_name']);
+            } else {
+                $data = $this->service::export(['is_import' => 1, 'param' => ['where' => [where_delete()]]]);
+                return success($data);
+            }
         }
 
-        $param['import_file']   = $this->request->file('import_file');
-        $param['import_remark'] = $this->param('import_remark/s');
+        $param['import_file'] = $this->request->file('import_file');
+        $param['is_update']   = $this->param('is_update/d', 0);
+        $param['remark']      = $this->param('remark/s');
 
-        validate(TagValidate::class)->scene('import')->check($param);
+        validate($this->validate)->scene('import')->check($param);
 
-        $data = TagService::import($param);
+        $data = $this->service::import($param, true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签会员列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\member\TagModel", field="tag_id")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="会员列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr", field="tag_names"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
-     * })
+     * @Apidoc\Title("lang(会员标签会员列表)")
+     * @Apidoc\Query(ref={Service::class,"memberList"})
+     * @Apidoc\Returned(ref={MemberService::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"memberList"})
      */
     public function memberList()
     {
-        $param = $this->params(['tag_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(TagValidate::class)->scene('member')->check($param);
+        validate($this->validate)->scene('memberList')->check($param);
 
-        $where = $this->where(where_delete(['tag_ids', 'in', [$param['tag_id']]]));
+        $where = $this->where(where_delete([$pk, '=', $param[$pk]]));
 
-        $data = TagService::member($where, $this->page(), $this->limit(), $this->order());
+        $data = $this->service::memberList($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = MemberService::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员标签会员解除")
+     * @Apidoc\Title("lang(会员标签会员解除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("tag_id", type="array", require=true, desc="标签id")
-     * @Apidoc\Param("member_ids", type="array", require=false, desc="会员id，为空则解除所有会员")
+     * @Apidoc\Param(ref={Service::class,"memberLift"})
      */
-    public function memberRemove()
+    public function memberLift()
     {
-        $param = $this->params(['tag_id/a' => [], 'member_ids/a' => []]);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => [], 'member_ids/a' => []]);
 
-        validate(TagValidate::class)->scene('memberRemove')->check($param);
+        validate($this->validate)->scene('memberLift')->check($param);
 
-        $data = TagService::memberRemove($param['tag_id'], $param['member_ids']);
+        $data = $this->service::memberLift($param[$pk], $param['member_ids']);
 
         return success($data);
     }

@@ -9,36 +9,61 @@
 
 namespace app\api\controller\setting;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\common\validate\file\FileValidate;
 use app\common\service\file\FileService;
 use app\common\service\file\GroupService;
 use app\common\service\file\TagService;
 use app\common\service\file\SettingService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("上传")
+ * @Apidoc\Title("lang(上传)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("380")
+ * @Apidoc\Sort("200")
  */
 class Upload extends BaseController
 {
     /**
-     * @Apidoc\Title("上传文件")
+     * @Apidoc\Title("lang(上传文件)")
      * @Apidoc\Method("POST")
      * @Apidoc\ParamType("formdata")
-     * @Apidoc\Param("group_id", type="string", require=false, desc="分组id或标识")
-     * @Apidoc\Param("tag_ids", type="string", require=false, desc="标签id或标识，多个逗号隔开")
-     * @Apidoc\Param(ref="app\common\model\file\FileModel", field="file_type,file_name")
+     * @Apidoc\Param("group_id", type="string", require=false, desc="分组id或编号")
+     * @Apidoc\Param("tag_ids", type="string", require=false, desc="标签id或编号，多个逗号隔开")
+     * @Apidoc\Param(ref={FileService::class,"edit"}, field="file_type,file_name")
      * @Apidoc\Param(ref="fileParam")
      * @Apidoc\Returned(ref="fileReturn")
      */
     public function file()
     {
+        return $this->upload();
+    }
+
+    /**
+     * @Apidoc\Title("lang(上传文件(登录后))")
+     * @Apidoc\Desc("登录后上传文件调用此接口")
+     * @Apidoc\Method("POST")
+     * @Apidoc\ParamType("formdata")
+     * @Apidoc\Param("group_id", type="string", require=false, desc="分组id或编号")
+     * @Apidoc\Param("tag_ids", type="string", require=false, desc="标签id或编号，多个逗号隔开")
+     * @Apidoc\Param(ref={FileService::class,"edit"}, field="file_type,file_name")
+     * @Apidoc\Param(ref="fileParam")
+     * @Apidoc\Returned(ref="fileReturn")
+     */
+    public function files()
+    {
+        return $this->upload(true);
+    }
+
+    /**
+     * @param bool $login 是否需要登录
+     * @return array|string
+     */
+    private function upload($login = false)
+    {
         $setting = SettingService::info();
         if (!$setting['is_upload_api']) {
-            return error('文件上传未开启，无法上传文件！');
+            return error(lang('文件上传功能未开启'));
         }
 
         $param = $this->params([
@@ -47,8 +72,9 @@ class Upload extends BaseController
             'file_type/s' => 'image',
             'file_name/s' => '',
         ]);
-        $param['file']     = $this->request->file('file');
-        $param['is_front'] = 1;
+        $param['file']      = $this->request->file('file');
+        $param['member_id'] = member_id($login);
+        $param['is_front']  = 1;
 
         validate(FileValidate::class)->scene('add')->check($param);
 
@@ -72,6 +98,6 @@ class Upload extends BaseController
 
         $data = FileService::add($param);
 
-        return success($data, '上传成功');
+        return success($data, lang('上传成功'));
     }
 }

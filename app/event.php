@@ -19,10 +19,17 @@ return [
         'HttpEnd'   => [],
         'LogLevel'  => [],
         'LogWrite'  => [],
-        // 用户日志事件
-        'UserLog'   => ['app\listener\UserLogListener'],
-        // 会员日志事件
-        'MemberLog' => ['app\listener\MemberLogListener'],
+        // 日志清除事件
+        'LogClear'  => [
+            // 会员日志清除事件
+            'app\event\MemberLogClearEvent',
+            // 用户日志清除事件
+            'app\event\UserLogClearEvent',
+            // 邮件日志清除事件
+            'app\event\EmailLogClearEvent',
+            // 短信日志清除事件
+            'app\event\SmsLogClearEvent'
+        ],
     ],
 
     // 事件订阅

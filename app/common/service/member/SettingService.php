@@ -9,11 +9,11 @@
 
 namespace app\common\service\member;
 
-use think\facade\Config;
-use think\facade\Request;
-use app\common\cache\member\SettingCache;
-use app\common\model\member\SettingModel;
 use hg\apidoc\annotation as Apidoc;
+use app\common\cache\member\SettingCache as Cache;
+use app\common\model\member\SettingModel as Model;
+use app\common\utils\CaptchaUtils;
+use app\common\utils\AjCaptchaUtils;
 
 /**
  * 会员设置
@@ -21,13 +21,48 @@ use hg\apidoc\annotation as Apidoc;
 class SettingService
 {
     /**
+     * 缓存
+     */
+    public static function cache()
+    {
+        return new Cache();
+    }
+
+    /**
+     * 模型
+     */
+    public static function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * 基础数据
+     * @param bool $exp 是否返回查询表达式
+     * @Apidoc\Returned("basedata", type="object", desc="基础数据", children={ 
+     *   @Apidoc\Returned(ref="expsReturn"),
+     *   @Apidoc\Returned("captcha_modes", type="array", desc="验证码方式"),
+     *   @Apidoc\Returned("captcha_strs", type="array", desc="字符验证码"),
+     *   @Apidoc\Returned("captcha_ajs", type="array", desc="行为验证码"),
+     * })
+     */
+    public static function basedata($exp = false)
+    {
+        $exps    = $exp ? where_exps() : [];
+        $modes   = [['value' => 1, 'label' => lang('字符')], ['value' => 2, 'label' => lang('行为')]];
+        $typestr = CaptchaUtils::types();
+        $typeaj  = AjCaptchaUtils::types();
+
+        return ['exps' => $exps, 'captcha_modes' => $modes, 'captcha_strs' => $typestr, 'captcha_ajs' => $typeaj];
+    }
+
+    /**
      * 会员设置id
-     * @var integer
      */
     private static $id = 1;
 
     /**
-     * 公众号/网站，登录/绑定信息缓存键
+     * 公众号/网站，登录/绑定，信息缓存键
      */
     const OFFIACC_WEBSITE_KEY = 'offiaccWebsiteLogin:';
 
@@ -48,19 +83,27 @@ class SettingService
     const GENDER_WOMAN   = 2;
     /**
      * 性别数组或名称
-     * @param string $gender 性别
-     * @return array|string  
+     * @param string $gender  性别
+     * @param bool   $val_lab 是否返回带value、label下标的数组
      */
-    public static function genders($gender = '')
+    public static function genders($gender = '', $val_lab = false)
     {
         $genders = [
-            self::GENDER_UNKNOWN => '未知',
-            self::GENDER_MAN     => '男',
-            self::GENDER_WOMAN   => '女',
+            self::GENDER_UNKNOWN => lang('未知'),
+            self::GENDER_MAN     => lang('男'),
+            self::GENDER_WOMAN   => lang('女'),
         ];
         if ($gender !== '') {
             return $genders[$gender] ?? '';
         }
+        if ($val_lab) {
+            $val_labs = [];
+            foreach ($genders as $key => $label) {
+                $val_labs[] = ['value' => $key, 'label' => $label];
+            }
+            return $val_labs;
+        }
+
         return $genders;
     }
 
@@ -95,17 +138,16 @@ class SettingService
     /**
      * 平台数组或名称
      * @param string $platform 平台
-     * @param bool   $val_lab  是否返回带value、label的数组
-     * @return array|string 
+     * @param bool   $val_lab  是否返回带value、label下标的数组
      * @Apidoc\Param("platform", type="string", default="10", desc="平台：10系统，20微信，30 QQ，40微博")
      */
     public static function platforms($platform = '', $val_lab = false)
     {
         $platforms = [
-            self::PLATFORM_YA => '系统',
-            self::PLATFORM_WX => '微信',
-            self::PLATFORM_QQ => 'QQ',
-            self::PLATFORM_WB => '微博',
+            self::PLATFORM_YA => lang('系统'),
+            self::PLATFORM_WX => lang('微信'),
+            self::PLATFORM_QQ => lang('QQ'),
+            self::PLATFORM_WB => lang('微博'),
         ];
         if ($platform !== '') {
             return $platforms[$platform] ?? '';
@@ -117,7 +159,37 @@ class SettingService
             }
             return $val_labs;
         }
+
         return $platforms;
+    }
+
+    /**
+     * 获取平台
+     * @param int $application 应用
+     */
+    public static function platform($application)
+    {
+        $app_ya = [self::APP_YA_MINIAPP, self::APP_YA_OFFIACC, self::APP_YA_WEBSITE, self::APP_YA_MOBILE];
+        if (in_array($application, $app_ya)) {
+            return self::PLATFORM_YA;
+        }
+
+        $app_wx = [self::APP_WX_MINIAPP, self::APP_WX_OFFIACC, self::APP_WX_WEBSITE, self::APP_WX_MOBILE];
+        if (in_array($application, $app_wx)) {
+            return self::PLATFORM_WX;
+        }
+
+        $app_qq = [self::APP_QQ_MINIAPP, self::APP_QQ_WEBSITE, self::APP_QQ_MOBILE];
+        if (in_array($application, $app_qq)) {
+            return self::PLATFORM_QQ;
+        }
+
+        $app_wb = [self::APP_WB_WEBSITE];
+        if (in_array($application, $app_wb)) {
+            return self::PLATFORM_WB;
+        }
+
+        return self::PLATFORM_YA;
     }
 
     /**
@@ -197,27 +269,26 @@ class SettingService
     /**
      * 应用数组或名称
      * @param string $application 应用
-     * @param bool   $val_lab     是否返回带value、label的数组
-     * @return array|string 
+     * @param bool   $val_lab     是否返回带value、label下标的数组
      * @Apidoc\Param("application", type="string", default="0", desc="应用：0未知，10系统后台，11系统小程序，12系统公众号，13系统网站应用，14系统移动应用；21微信小程序，22微信公众号，23微信网页应用，24微信移动应用；31QQ小程序，33QQ网站应用，34QQ移动应用；43微博网站应用")
      */
     public static function applications($application = '', $val_lab = false)
     {
         $applications = [
-            self::APP_UNKNOWN    => '未知',
-            self::APP_YA_ADMIN   => '系统后台',
-            self::APP_YA_MINIAPP => '系统小程序',
-            self::APP_YA_OFFIACC => '系统公众号',
-            self::APP_YA_WEBSITE => '系统网站应用',
-            self::APP_YA_MOBILE  => '系统移动应用',
-            self::APP_WX_MINIAPP => '微信小程序',
-            self::APP_WX_OFFIACC => '微信公众号',
-            self::APP_WX_WEBSITE => '微信网站应用',
-            self::APP_WX_MOBILE  => '微信移动应用',
-            self::APP_QQ_MINIAPP => 'QQ小程序',
-            self::APP_QQ_WEBSITE => 'QQ网站应用',
-            self::APP_QQ_MOBILE  => 'QQ移动应用',
-            self::APP_WB_WEBSITE => '微博网站应用',
+            self::APP_UNKNOWN    => lang('未知'),
+            self::APP_YA_ADMIN   => lang('后台', ['name' => lang('系统')]),
+            self::APP_YA_MINIAPP => lang('小程序', ['name' => lang('系统')]),
+            self::APP_YA_OFFIACC => lang('公众号', ['name' => lang('系统')]),
+            self::APP_YA_WEBSITE => lang('网站应用', ['name' => lang('系统')]),
+            self::APP_YA_MOBILE  => lang('移动应用', ['name' => lang('系统')]),
+            self::APP_WX_MINIAPP => lang('小程序', ['name' => lang('微信')]),
+            self::APP_WX_OFFIACC => lang('公众号', ['name' => lang('微信')]),
+            self::APP_WX_WEBSITE => lang('网站应用', ['name' => lang('微信')]),
+            self::APP_WX_MOBILE  => lang('移动应用', ['name' => lang('微信')]),
+            self::APP_QQ_MINIAPP => lang('小程序', ['name' => lang('QQ')]),
+            self::APP_QQ_WEBSITE => lang('网站应用', ['name' => lang('QQ')]),
+            self::APP_QQ_MOBILE  => lang('移动应用', ['name' => lang('QQ')]),
+            self::APP_WB_WEBSITE => lang('网站应用', ['name' => lang('微博')]),
         ];
         if ($application !== '') {
             return $applications[$application] ?? '';
@@ -229,6 +300,7 @@ class SettingService
             }
             return $val_labs;
         }
+
         return $applications;
     }
 
@@ -255,19 +327,27 @@ class SettingService
     /**
      * 日志类型数组或名称
      * @param string $log_type 日志类型
-     * @return array|string 
+     * @param bool   $val_lab  是否返回带value、label下标的数组
      */
-    public static function logTypes($log_type = '')
+    public static function logTypes($log_type = '', $val_lab = false)
     {
         $log_types = [
-            self::LOG_TYPE_REGISTER  => '注册',
-            self::LOG_TYPE_LOGIN     => '登录',
-            self::LOG_TYPE_OPERATION => '操作',
-            self::LOG_TYPE_LOGOUT    => '退出',
+            self::LOG_TYPE_REGISTER  => lang('注册'),
+            self::LOG_TYPE_LOGIN     => lang('登录'),
+            self::LOG_TYPE_OPERATION => lang('操作'),
+            self::LOG_TYPE_LOGOUT    => lang('退出'),
         ];
         if ($log_type !== '') {
             return $log_types[$log_type] ?? '';
         }
+        if ($val_lab) {
+            $val_labs = [];
+            foreach ($log_types as $key => $label) {
+                $val_labs[] = ['value' => $key, 'label' => $label];
+            }
+            return $val_labs;
+        }
+
         return $log_types;
     }
 
@@ -275,20 +355,23 @@ class SettingService
      * 会员设置信息
      * @param string $fields  返回字段，逗号隔开，默认所有
      * @param string $without 排除字段，逗号隔开，默认不排除
-     * @Apidoc\Returned("default_avatar_url", type="string", desc="会员默认头像链接")
+     * @return array
+     * @Apidoc\Param(ref={Model::class})
+     * @Apidoc\Returned(ref={Model::class})
+     * @Apidoc\Returned(ref={Model::class,"getDefaultAvatarUrlAttr"}, field="default_avatar_url")
      * @Apidoc\Returned("token_type", type="string", require=false, default="", desc="token方式")
      * @Apidoc\Returned("token_name", type="string", require=false, default="", desc="token名称")
-     * @return array
      */
     public static function info($fields = '', $withouts = '')
     {
         $id   = self::$id;
-        $type = Request::isCli() ? 'cli' : 'cgi';
+        $type = request()->isCli() ? 'cli' : 'cgi';
         $key  = $id . $type;
 
-        $info = SettingCache::get($key);
+        $cache = self::cache();
+        $info = $cache->get($key);
         if (empty($info)) {
-            $model = new SettingModel();
+            $model = self::model();
             $pk = $model->getPk();
 
             $info = $model->find($id);
@@ -310,11 +393,11 @@ class SettingService
             }
             $info = $info->append($append)->hidden($hidden)->toArray();
 
-            $info['token_type'] = Config::get('api.token_type');
-            $info['token_name'] = Config::get('api.token_name');
+            $info['token_type'] = config('api.token_type');
+            $info['token_name'] = config('api.token_name');
             $info['token_exps'] = $info['token_exp'] * 3600;
 
-            SettingCache::set($key, $info);
+            $cache->set($key, $info);
         }
 
         if ($withouts) {
@@ -342,58 +425,25 @@ class SettingService
 
     /**
      * 会员设置修改
-     *
      * @param array $param 设置信息
-     *
-     * @return array|Exception
      */
     public static function edit($param)
     {
-        $model = new SettingModel();
-        $id = self::$id;
+        $model = self::model();
+        $id    = self::$id;
 
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
         $info = $model->find($id);
-        $res = $info->save($param);
+        $res  = $info->save($param);
         if (empty($res)) {
             exception();
         }
 
-        SettingCache::clear();
+        $cache = self::cache();
+        $cache->clear();
 
         return $param;
-    }
-
-    /**
-     * 获取平台
-     *
-     * @param  int $application 应用
-     * @return int
-     */
-    public static function platform($application)
-    {
-        $app_ya = [self::APP_YA_MINIAPP, self::APP_YA_OFFIACC, self::APP_YA_WEBSITE, self::APP_YA_MOBILE];
-        if (in_array($application, $app_ya)) {
-            return self::PLATFORM_YA;
-        }
-
-        $app_wx = [self::APP_WX_MINIAPP, self::APP_WX_OFFIACC, self::APP_WX_WEBSITE, self::APP_WX_MOBILE];
-        if (in_array($application, $app_wx)) {
-            return self::PLATFORM_WX;
-        }
-
-        $app_qq = [self::APP_QQ_MINIAPP, self::APP_QQ_WEBSITE, self::APP_QQ_MOBILE];
-        if (in_array($application, $app_qq)) {
-            return self::PLATFORM_QQ;
-        }
-
-        $app_wb = [self::APP_WB_WEBSITE];
-        if (in_array($application, $app_wb)) {
-            return self::PLATFORM_WB;
-        }
-
-        return self::PLATFORM_YA;
     }
 }

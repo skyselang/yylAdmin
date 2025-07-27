@@ -9,139 +9,205 @@
 
 namespace app\admin\controller\setting;
 
-use app\common\controller\BaseController;
-use app\common\validate\setting\CarouselValidate;
-use app\common\service\setting\CarouselService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\setting\CarouselValidate as Validate;
+use app\common\service\setting\CarouselService as Service;
+use app\common\model\setting\CarouselModel as Model;
 
 /**
- * @Apidoc\Title("轮播管理")
+ * @Apidoc\Title("lang(轮播管理)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("100")
+ * @Apidoc\Sort("300")
  */
 class Carousel extends BaseController
 {
     /**
-     * @Apidoc\Title("轮播列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="轮播列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,link,position,desc,sort,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
-     * })
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(轮播列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = CarouselService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("轮播信息")
-     * @Apidoc\Query(ref="app\common\model\setting\CarouselModel", field="carousel_id")
-     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel")
-     * @Apidoc\Returned(ref="app\common\model\setting\CarouselModel\file")
-     * @Apidoc\Returned("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表")
+     * @Apidoc\Title("lang(轮播信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['carousel_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(CarouselValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = CarouselService::info($param['carousel_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("轮播添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="unique,file_id,title,link,position,desc,sort")
-     * @Apidoc\Param("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id")
+     * @Apidoc\Title("lang(轮播添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(CarouselService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(CarouselValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = CarouselService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("轮播修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="carousel_id,unique,file_id,title,link,position,desc,sort")
-     * @Apidoc\Param("file_list", ref="app\common\model\file\FileModel", type="array", desc="文件列表", field="file_id")
+     * @Apidoc\Title("lang(轮播修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(CarouselService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(CarouselValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = CarouselService::edit($param['carousel_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("轮播删除")
+     * @Apidoc\Title("lang(轮播删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(CarouselValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = CarouselService::dele($param['ids']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("轮播修改位置")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="position")
-     */
-    public function position()
-    {
-        $param = $this->params(['ids/a' => [], 'position/s' => '']);
-
-        validate(CarouselValidate::class)->scene('position')->check($param);
-
-        $data = CarouselService::edit($param['ids'], $param);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("轮播是否禁用")
+     * @Apidoc\Title("lang(轮播是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\CarouselModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(CarouselValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = CarouselService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(轮播批量修改)")
+
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(轮播导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
 
         return success($data);
     }

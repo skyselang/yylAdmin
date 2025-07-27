@@ -14,7 +14,6 @@ use app\common\service\system\MenuService;
 /**
  * 菜单url获取
  * 应用/控制器/操作 
- * 
  * @return string eg：admin/Index/index
  */
 function menu_url()
@@ -24,9 +23,7 @@ function menu_url()
 
 /**
  * 菜单是否存在
- *
  * @param string $menu_url 菜单url
- *
  * @return bool
  */
 function menu_is_exist($menu_url = '')
@@ -45,9 +42,7 @@ function menu_is_exist($menu_url = '')
 
 /**
  * 菜单是否已禁用
- *
  * @param string $menu_url 菜单url
- *
  * @return bool
  */
 function menu_is_disable($menu_url = '')
@@ -66,9 +61,7 @@ function menu_is_disable($menu_url = '')
 
 /**
  * 菜单是否免登
- *
  * @param string $menu_url 菜单url
- *
  * @return bool
  */
 function menu_is_unlogin($menu_url = '')
@@ -87,9 +80,7 @@ function menu_is_unlogin($menu_url = '')
 
 /**
  * 菜单是否免权
- *
  * @param string $menu_url 菜单url
- *
  * @return bool
  */
 function menu_is_unauth($menu_url = '')
@@ -108,9 +99,7 @@ function menu_is_unauth($menu_url = '')
 
 /**
  * 菜单是否免限
- *
  * @param string $menu_url 菜单url
- *
  * @return bool
  */
 function menu_is_unrate($menu_url = '')

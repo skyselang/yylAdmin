@@ -21,7 +21,6 @@ class FileSettingMiddleware
 {
     /**
      * 处理请求
-     *
      * @param Request $request
      * @param Closure $next
      * @return Response
@@ -30,7 +29,7 @@ class FileSettingMiddleware
     {
         $setting = SettingService::info('is_api_file');
         if (!$setting['is_api_file']) {
-            return error('文件功能未开启');
+            return error(lang('文件功能未开启'));
         }
 
         return $next($request);

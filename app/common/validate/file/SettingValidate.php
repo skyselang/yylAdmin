@@ -10,12 +10,27 @@
 namespace app\common\validate\file;
 
 use think\Validate;
+use app\common\service\file\SettingService as Service;
+use app\common\model\file\SettingModel as Model;
 
 /**
  * 文件设置验证器
  */
 class SettingValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'storage'                  => ['require'],
@@ -59,6 +74,7 @@ class SettingValidate extends Validate
         'word_size'                => ['require', '>=:0', 'float'],
         'other_size'               => ['require', '>=:0', 'float'],
         'limit_max'                => ['require', '>:0', 'number'],
+        'is_api_file'              => ['number'],
     ];
 
     // 错误信息
@@ -90,7 +106,7 @@ class SettingValidate extends Validate
         'huawei_access_key_id.require'     => '请输入 Access Key ID',
         'huawei_secret_access_key.require' => '请输入 Secret Access KEY',
         'huawei_bucket.require'            => '请输入桶名称',
-        'huawei_endpoint.require'          => '请输入Endpoint(地域节点)',
+        'huawei_endpoint.require'          => '请输入 Endpoint（地域节点）',
         'huawei_domain.require'            => '请输入访问域名',
         'aws_access_key_id.require'        => '请输入 Access Key ID',
         'aws_secret_access_key.require'    => '请输入 Secret Access KEY',
@@ -108,13 +124,15 @@ class SettingValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'local'   => ['storage', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
-        'qiniu'   => ['storage', 'qiniu_access_key', 'qiniu_secret_key', 'qiniu_bucket', 'qiniu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
-        'aliyun'  => ['storage', 'aliyun_access_key_id', 'aliyun_access_key_secret', 'aliyun_bucket', 'aliyun_endpoint',  'aliyun_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
-        'tencent' => ['storage', 'tencent_secret_id', 'tencent_secret_key', 'tencent_bucket', 'tencent_region', 'tencent_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
-        'baidu'   => ['storage', 'baidu_access_key', 'baidu_secret_key', 'baidu_bucket', 'baidu_endpoint', 'baidu_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
-        'upyun'   => ['storage', 'upyun_service_name', 'upyun_operator_name', 'upyun_operator_pwd', 'upyun_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
-        'aws'     => ['storage', 'aws_access_key_id', 'aws_secret_access_key', 'aws_bucket', 'aws_region', 'aws_endpoint', 'aws_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
-        'huawei'  => ['storage', 'huawei_access_key_id', 'huawei_secret_access_key', 'huawei_bucket', 'huawei_endpoint', 'huawei_domain', 'image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        'limitEdit' => ['image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
+        'apiEdit'   => ['is_api_file'],
+        'local'     => ['storage'],
+        'qiniu'     => ['storage', 'qiniu_access_key', 'qiniu_secret_key', 'qiniu_bucket', 'qiniu_domain'],
+        'aliyun'    => ['storage', 'aliyun_access_key_id', 'aliyun_access_key_secret', 'aliyun_bucket', 'aliyun_endpoint',  'aliyun_domain'],
+        'tencent'   => ['storage', 'tencent_secret_id', 'tencent_secret_key', 'tencent_bucket', 'tencent_region', 'tencent_domain'],
+        'baidu'     => ['storage', 'baidu_access_key', 'baidu_secret_key', 'baidu_bucket', 'baidu_endpoint', 'baidu_domain'],
+        'upyun'     => ['storage', 'upyun_service_name', 'upyun_operator_name', 'upyun_operator_pwd', 'upyun_domain'],
+        'huawei'    => ['storage', 'huawei_access_key_id', 'huawei_secret_access_key', 'huawei_bucket', 'huawei_endpoint', 'huawei_domain'],
+        'aws'       => ['storage', 'aws_access_key_id', 'aws_secret_access_key', 'aws_bucket', 'aws_region', 'aws_endpoint', 'aws_domain'],
     ];
 }

@@ -16,37 +16,32 @@ class WxWebsite
 {
     /**
      * 请求类
-     *
      * @var Http
      */
     protected $http = null;
 
     /**
      * 平台
-     *
      * @var string
      */
     protected $platform = 'wx';
 
     /**
      * AppID 网站应用ID AppID
-     *
      * @var string
      */
     protected $appid;
 
     /**
      * AppSecret 网站应用密钥 AppSecret
-     *
      * @var string
      */
     protected $appsecret;
 
     /**
      * 构造函数
-     *
-     * @param  string $appid     
-     * @param  string $appsecret 
+     * @param string $appid     
+     * @param string $appsecret 
      */
     public function __construct($appid, $appsecret)
     {
@@ -57,10 +52,8 @@ class WxWebsite
 
     /**
      * 登录
-     *
-     * @param  string $redirect_uri
-     * @param  string $state
-     *
+     * @param string $redirect_uri
+     * @param string $state
      * @return void
      */
     public function login($redirect_uri, $state = '')
@@ -74,14 +67,13 @@ class WxWebsite
             'state'         => $state,
         ]);
         $url = 'https://open.weixin.qq.com/connect/qrconnect?' . $param;
+        
         header('Location:' . $url);
     }
 
     /**
      * 获取 Access Token
-     *
-     * @param  string $code
-     *
+     * @param string $code
      * @return array 
      */
     public function getAccessToken($code)
@@ -93,14 +85,13 @@ class WxWebsite
             'grant_type' => 'authorization_code',
         ]);
         $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?' . $param;
+
         return $this->http->get($url);
     }
 
     /**
      * 获取用户个人信息
-     *
-     * @param  string $code
-     *
+     * @param string $code
      * @return array
      */
     public function getUserinfo($code)
@@ -112,6 +103,7 @@ class WxWebsite
             'lang'         => 'zh_CN',
         ]);
         $url = 'https://api.weixin.qq.com/sns/userinfo?' . $param;
+
         return $this->http->get($url);
     }
 }

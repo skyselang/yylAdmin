@@ -10,7 +10,8 @@
 namespace app\common\validate\member;
 
 use think\Validate;
-use app\common\model\member\TagModel;
+use app\common\service\member\TagService as Service;
+use app\common\model\member\TagModel as Model;
 use app\common\model\member\AttributesModel;
 
 /**
@@ -18,13 +19,27 @@ use app\common\model\member\AttributesModel;
  */
 class TagValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'         => ['require', 'array'],
+        'field'       => ['require', 'checkUpdateField'],
         'tag_id'      => ['require'],
         'tag_name'    => ['require', 'checkExisted'],
-        'member_ids'  => ['array'],
         'import_file' => ['require', 'file', 'fileExt' => 'xlsx'],
+        'member_ids'  => ['array'],
     ];
 
     // 错误信息
@@ -36,14 +51,15 @@ class TagValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'info'         => ['tag_id'],
-        'add'          => ['tag_name'],
-        'edit'         => ['tag_id', 'tag_name'],
-        'dele'         => ['ids'],
-        'disable'      => ['ids'],
-        'import'       => ['import_file'],
-        'member'       => ['tag_id'],
-        'memberRemove' => ['tag_id', 'member_ids'],
+        'info'       => ['tag_id'],
+        'add'        => ['tag_name'],
+        'edit'       => ['tag_id', 'tag_name'],
+        'dele'       => ['ids'],
+        'disable'    => ['ids'],
+        'update'     => ['ids', 'field'],
+        'import'     => ['import_file'],
+        'memberList' => ['tag_id'],
+        'memberLift' => ['tag_id', 'member_ids'],
     ];
 
     // 验证场景定义：标签删除
@@ -56,28 +72,52 @@ class TagValidate extends Validate
     // 自定义验证规则：标签是否已存在
     protected function checkExisted($value, $rule, $data = [])
     {
-        $model = new TagModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['tag_name', '=', $data['tag_name']];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $unique = $data['tag_unique'] ?? '';
+        if ($unique) {
+            if (is_numeric($unique)) {
+                return lang('编号不能为纯数字');
+            }
+            $where = where_delete([[$pk, '<>', $id], ['tag_unique', '=', $unique]]);
+            $info  = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return lang('编号已存在：') . $unique;
+            }
+        }
+
+        $where = where_delete([[$pk, '<>', $id], ['tag_name', '=', $data['tag_name']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '名称已存在：' . $data['tag_name'];
+            return lang('名称已存在：') . $data['tag_name'];
         }
 
         return true;
     }
 
-    // 自定义验证规则：标签下是否存在会员
+    // 自定义验证规则：标签批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：标签是否存在会员
     protected function checkMember($value, $rule, $data = [])
     {
-        // $info = AttributesModel::field('tag_id')->where('tag_id', 'in', $data['ids'])->find();
-        // if ($info) {
-        //     return '标签下存在会员，请在[会员]中解除后再删除：' . $info['tag_id'];
-        // }
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $info  = AttributesModel::field($pk)->where($pk, 'in', $data['ids'])->find();
+        if ($info) {
+            // return '标签存在会员，请在[会员]中解除后再删除：' . $info[$pk];
+        }
 
         return true;
     }

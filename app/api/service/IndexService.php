@@ -16,13 +16,12 @@ class IndexService
 {
     /**
      * 首页
-     *
      * @return array
      */
     public static function index()
     {
         $data['name']   = 'yylAdmin';
-        $data['desc']   = '基于ThinkPHP8和Vue3的极简后台管理系统';
+        $data['desc']   = lang('基于ThinkPHP和Vue的极简后台管理系统');
         $data['gitee']  = 'https://gitee.com/skyselang/yylAdmin';
         $data['github'] = 'https://github.com/skyselang/yylAdmin';
 

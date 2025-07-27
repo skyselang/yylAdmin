@@ -16,15 +16,13 @@ class Http
 {
     /**
      * 平台
-     *
      * @var string
      */
     protected $platform = '';
 
     /**
      * 构造函数
-     *
-     * @param  string $platform 平台
+     * @param string $platform 平台
      */
     public function __construct($platform)
     {
@@ -33,10 +31,8 @@ class Http
 
     /**
      * GET 请求
-     *
      * @param string $url    请求地址
      * @param array  $header 请求头部
-     *
      * @return array
      */
     public function get($url, $header = [])
@@ -59,17 +55,14 @@ class Http
 
     /**
      * POST 请求
-     *
      * @param string $url    请求地址
      * @param array  $param  请求参数
      * @param array  $header 请求头部
-     *
      * @return array
      */
     public function post($url, $param = [], $header = [])
     {
-        $param = json_encode($param);
-
+        $param  = json_encode($param);
         $header = array_merge($header, ['Content-type:application/json;charset=utf-8', 'Accept:application/json']);
 
         $curl = curl_init();
@@ -90,10 +83,8 @@ class Http
 
     /**
      * 响应拦截
-     *
-     * @param  array $res
-     *
-     * @return Exception|void
+     * @param array $res
+     * @return \think\Exception|void
      */
     public function response($res)
     {

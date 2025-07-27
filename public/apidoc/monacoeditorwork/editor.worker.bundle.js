@@ -1,5 +1,5 @@
 (() => {
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/errors.js
+  // node_modules/monaco-editor/esm/vs/base/common/errors.js
   var ErrorHandler = class {
     constructor() {
       this.listeners = [];
@@ -34,7 +34,7 @@
   }
   function transformErrorForSerialization(error) {
     if (error instanceof Error) {
-      let {name, message} = error;
+      let { name, message } = error;
       const stack = error.stacktrace || error.stack;
       return {
         $isError: true,
@@ -59,7 +59,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/functional.js
+  // node_modules/monaco-editor/esm/vs/base/common/functional.js
   function once(fn) {
     const _this = this;
     let didCall = false;
@@ -74,7 +74,7 @@
     };
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/iterator.js
+  // node_modules/monaco-editor/esm/vs/base/common/iterator.js
   var Iterable;
   (function(Iterable2) {
     function is(thing) {
@@ -186,9 +186,9 @@
         }
         consumed.push(next.value);
       }
-      return [consumed, {[Symbol.iterator]() {
+      return [consumed, { [Symbol.iterator]() {
         return iterator;
-      }}];
+      } }];
     }
     Iterable2.consume = consume;
     function equals2(a, b, comparator = (at, bt) => at === bt) {
@@ -209,7 +209,7 @@
     Iterable2.equals = equals2;
   })(Iterable || (Iterable = {}));
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/lifecycle.js
+  // node_modules/monaco-editor/esm/vs/base/common/lifecycle.js
   var TRACK_DISPOSABLES = false;
   var disposableTracker = null;
   function setDisposableTracker(tracker) {
@@ -309,7 +309,7 @@
   }
   var DisposableStore = class {
     constructor() {
-      this._toDispose = new Set();
+      this._toDispose = /* @__PURE__ */ new Set();
       this._isDisposed = false;
       trackDisposable(this);
     }
@@ -367,8 +367,8 @@
       return this._store.add(o);
     }
   };
-  Disposable.None = Object.freeze({dispose() {
-  }});
+  Disposable.None = Object.freeze({ dispose() {
+  } });
   var SafeDisposable = class {
     constructor() {
       this.dispose = () => {
@@ -393,7 +393,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/linkedList.js
+  // node_modules/monaco-editor/esm/vs/base/common/linkedList.js
   var Node = class {
     constructor(element) {
       this.element = element;
@@ -501,7 +501,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/platform.js
+  // node_modules/monaco-editor/esm/vs/base/common/platform.js
   var _a;
   var LANGUAGE_DEFAULT = "en";
   var _isWindows = false;
@@ -593,7 +593,7 @@
           id: myId,
           callback
         });
-        globals.postMessage({vscodeScheduleAsyncWork: myId}, "*");
+        globals.postMessage({ vscodeScheduleAsyncWork: myId }, "*");
       };
     }
     return (callback) => setTimeout(callback);
@@ -604,7 +604,7 @@
   var isEdge = !!(userAgent && userAgent.indexOf("Edg/") >= 0);
   var isAndroid = !!(userAgent && userAgent.indexOf("Android") >= 0);
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/stopwatch.js
+  // node_modules/monaco-editor/esm/vs/base/common/stopwatch.js
   var hasPerformanceNow = globals.performance && typeof globals.performance.now === "function";
   var StopWatch = class {
     constructor(highResolution) {
@@ -629,7 +629,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/event.js
+  // node_modules/monaco-editor/esm/vs/base/common/event.js
   var _enableDisposeWithListenerWarning = false;
   var _enableSnapshotPotentialLeakWarning = false;
   var Event;
@@ -637,7 +637,7 @@
     Event2.None = () => Disposable.None;
     function _addLeakageTraceLogic(options) {
       if (_enableSnapshotPotentialLeakWarning) {
-        const {onListenerDidAdd: origListenerDidAdd} = options;
+        const { onListenerDidAdd: origListenerDidAdd } = options;
         const stack = Stacktrace.create();
         let count = 0;
         options.onListenerDidAdd = () => {
@@ -856,7 +856,7 @@
       const fn = (...args) => result.fire(map2(...args));
       const onFirstListenerAdd = () => emitter.on(eventName, fn);
       const onLastListenerRemove = () => emitter.removeListener(eventName, fn);
-      const result = new Emitter({onFirstListenerAdd, onLastListenerRemove});
+      const result = new Emitter({ onFirstListenerAdd, onLastListenerRemove });
       return result.event;
     }
     Event2.fromNodeEventEmitter = fromNodeEventEmitter;
@@ -864,7 +864,7 @@
       const fn = (...args) => result.fire(map2(...args));
       const onFirstListenerAdd = () => emitter.addEventListener(eventName, fn);
       const onLastListenerRemove = () => emitter.removeEventListener(eventName, fn);
-      const result = new Emitter({onFirstListenerAdd, onLastListenerRemove});
+      const result = new Emitter({ onFirstListenerAdd, onLastListenerRemove });
       return result.event;
     }
     Event2.fromDOMEventEmitter = fromDOMEventEmitter;
@@ -936,7 +936,7 @@
         return void 0;
       }
       if (!this._stacks) {
-        this._stacks = new Map();
+        this._stacks = /* @__PURE__ */ new Map();
       }
       const count = this._stacks.get(stack.value) || 0;
       this._stacks.set(stack.value, count + 1);
@@ -1090,7 +1090,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/types.js
+  // node_modules/monaco-editor/esm/vs/base/common/types.js
   function getAllPropertyNames(obj) {
     let res = [];
     let proto = Object.getPrototypeOf(obj);
@@ -1126,7 +1126,7 @@
     throw new Error(message);
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/cache.js
+  // node_modules/monaco-editor/esm/vs/base/common/cache.js
   var LRUCachedComputed = class {
     constructor(computeFn) {
       this.computeFn = computeFn;
@@ -1143,7 +1143,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/lazy.js
+  // node_modules/monaco-editor/esm/vs/base/common/lazy.js
   var Lazy = class {
     constructor(executor) {
       this.executor = executor;
@@ -1169,7 +1169,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/strings.js
+  // node_modules/monaco-editor/esm/vs/base/common/strings.js
   var _a2;
   function escapeRegExpCharacters(value) {
     return value.replace(/[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]/g, "\\$&");
@@ -1290,7 +1290,7 @@
   });
   AmbiguousCharacters.cache = new LRUCachedComputed((locales) => {
     function arrayToMap(arr) {
-      const result = new Map();
+      const result = /* @__PURE__ */ new Map();
       for (let i = 0; i < arr.length; i += 2) {
         result.set(arr[i], arr[i + 1]);
       }
@@ -1307,7 +1307,7 @@
       if (!map1) {
         return map2;
       }
-      const result = new Map();
+      const result = /* @__PURE__ */ new Map();
       for (const [key, value] of map1) {
         if (map2.has(key)) {
           result.set(key, value);
@@ -1349,7 +1349,7 @@
   };
   InvisibleCharacters._data = void 0;
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js
+  // node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js
   var INITIALIZE = "$initialize";
   var RequestMessage = class {
     constructor(vsWorker, req, method, args) {
@@ -1398,9 +1398,9 @@
       this._workerId = -1;
       this._handler = handler;
       this._lastSentReq = 0;
-      this._pendingReplies = Object.create(null);
-      this._pendingEmitters = new Map();
-      this._pendingEvents = new Map();
+      this._pendingReplies = /* @__PURE__ */ Object.create(null);
+      this._pendingEmitters = /* @__PURE__ */ new Map();
+      this._pendingEvents = /* @__PURE__ */ new Map();
     }
     setWorkerId(workerId) {
       this._workerId = workerId;
@@ -1646,7 +1646,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/diff/diffChange.js
+  // node_modules/monaco-editor/esm/vs/base/common/diff/diffChange.js
   var DiffChange = class {
     constructor(originalStart, originalLength, modifiedStart, modifiedLength) {
       this.originalStart = originalStart;
@@ -1662,7 +1662,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/hash.js
+  // node_modules/monaco-editor/esm/vs/base/common/hash.js
   function numberHash(val, initialHashVal) {
     return (initialHashVal << 5) - initialHashVal + val | 0;
   }
@@ -1852,7 +1852,7 @@
   };
   StringSHA1._bigBlock32 = new DataView(new ArrayBuffer(320));
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/diff/diff.js
+  // node_modules/monaco-editor/esm/vs/base/common/diff/diff.js
   var StringDiffSequence = class {
     constructor(source) {
       this.source = source;
@@ -2484,7 +2484,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/process.js
+  // node_modules/monaco-editor/esm/vs/base/common/process.js
   var safeProcess;
   if (typeof globals.vscode !== "undefined" && typeof globals.vscode.process !== "undefined") {
     const sandboxProcess = globals.vscode.process;
@@ -2537,7 +2537,7 @@
   var env = safeProcess.env;
   var platform = safeProcess.platform;
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/path.js
+  // node_modules/monaco-editor/esm/vs/base/common/path.js
   var CHAR_UPPERCASE_A = 65;
   var CHAR_LOWERCASE_A = 97;
   var CHAR_UPPERCASE_Z = 90;
@@ -2812,14 +2812,14 @@
       const code = path.charCodeAt(0);
       return isPathSeparator(code) || len > 2 && isWindowsDeviceRoot(code) && path.charCodeAt(1) === CHAR_COLON && isPathSeparator(path.charCodeAt(2));
     },
-    join(...paths2) {
-      if (paths2.length === 0) {
+    join(...paths) {
+      if (paths.length === 0) {
         return ".";
       }
       let joined;
       let firstPart;
-      for (let i = 0; i < paths2.length; ++i) {
-        const arg = paths2[i];
+      for (let i = 0; i < paths.length; ++i) {
+        const arg = paths[i];
         validateString(arg, "path");
         if (arg.length > 0) {
           if (joined === void 0) {
@@ -3135,7 +3135,7 @@
     format: _format.bind(null, "\\"),
     parse(path) {
       validateString(path, "path");
-      const ret = {root: "", dir: "", base: "", ext: "", name: ""};
+      const ret = { root: "", dir: "", base: "", ext: "", name: "" };
       if (path.length === 0) {
         return ret;
       }
@@ -3285,13 +3285,13 @@
       validateString(path, "path");
       return path.length > 0 && path.charCodeAt(0) === CHAR_FORWARD_SLASH;
     },
-    join(...paths2) {
-      if (paths2.length === 0) {
+    join(...paths) {
+      if (paths.length === 0) {
         return ".";
       }
       let joined;
-      for (let i = 0; i < paths2.length; ++i) {
-        const arg = paths2[i];
+      for (let i = 0; i < paths.length; ++i) {
+        const arg = paths[i];
         validateString(arg, "path");
         if (arg.length > 0) {
           if (joined === void 0) {
@@ -3486,7 +3486,7 @@
     format: _format.bind(null, "/"),
     parse(path) {
       validateString(path, "path");
-      const ret = {root: "", dir: "", base: "", ext: "", name: ""};
+      const ret = { root: "", dir: "", base: "", ext: "", name: "" };
       if (path.length === 0) {
         return ret;
       }
@@ -3559,7 +3559,7 @@
   var extname = platform === "win32" ? win32.extname : posix.extname;
   var sep = platform === "win32" ? win32.sep : posix.sep;
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/uri.js
+  // node_modules/monaco-editor/esm/vs/base/common/uri.js
   var _schemePattern = /^\w[\w\d+.-]*$/;
   var _singleSlashStart = /^\//;
   var _doubleSlashStart = /^\/\//;
@@ -3638,7 +3638,7 @@
       if (!change) {
         return this;
       }
-      let {scheme, authority, path, query, fragment} = change;
+      let { scheme, authority, path, query, fragment } = change;
       if (scheme === void 0) {
         scheme = this.scheme;
       } else if (scheme === null) {
@@ -3708,7 +3708,7 @@
       } else {
         newPath = posix.join(uri.path, ...pathFragment);
       }
-      return uri.with({path: newPath});
+      return uri.with({ path: newPath });
     }
     toString(skipEncoding = false) {
       return _asFormatted(this, skipEncoding);
@@ -3874,7 +3874,7 @@
   function _asFormatted(uri, skipEncoding) {
     const encoder = !skipEncoding ? encodeURIComponentFast : encodeURIComponentMinimal;
     let res = "";
-    let {scheme, authority, path, query, fragment} = uri;
+    let { scheme, authority, path, query, fragment } = uri;
     if (scheme) {
       res += scheme;
       res += ":";
@@ -3950,7 +3950,7 @@
     return str.replace(_rEncodedAsHex, (match) => decodeURIComponentGraceful(match));
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/core/position.js
+  // node_modules/monaco-editor/esm/vs/editor/common/core/position.js
   var Position = class {
     constructor(lineNumber, column) {
       this.lineNumber = lineNumber;
@@ -4023,7 +4023,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/core/range.js
+  // node_modules/monaco-editor/esm/vs/editor/common/core/range.js
   var Range = class {
     constructor(startLineNumber, startColumn, endLineNumber, endColumn) {
       if (startLineNumber > endLineNumber || startLineNumber === endLineNumber && startColumn > endColumn) {
@@ -4277,7 +4277,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/diff/diffComputer.js
+  // node_modules/monaco-editor/esm/vs/editor/common/diff/diffComputer.js
   var MINIMUM_MATCHING_CHARACTER_LENGTH = 3;
   function computeDiff(originalSequence, modifiedSequence, continueProcessingPredicate, pretty) {
     const diffAlgo = new LcsDiff(originalSequence, modifiedSequence, continueProcessingPredicate);
@@ -4650,7 +4650,7 @@
     };
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/uint.js
+  // node_modules/monaco-editor/esm/vs/base/common/uint.js
   function toUint8(v) {
     if (v < 0) {
       return 0;
@@ -4670,7 +4670,7 @@
     return v | 0;
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/model/prefixSumComputer.js
+  // node_modules/monaco-editor/esm/vs/editor/common/model/prefixSumComputer.js
   var PrefixSumComputer = class {
     constructor(values) {
       this.values = values;
@@ -4802,7 +4802,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js
+  // node_modules/monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js
   var MirrorTextModel = class {
     constructor(uri, lines, eol, versionId) {
       this._uri = uri;
@@ -4890,7 +4890,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/core/wordHelper.js
+  // node_modules/monaco-editor/esm/vs/editor/common/core/wordHelper.js
   var USUAL_WORD_SEPARATORS = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
   function createWordRegExp(allowInWords = "") {
     let source = "(-?\\d*\\.\\d\\w*)|([^";
@@ -4986,13 +4986,13 @@
     return null;
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/core/characterClassifier.js
+  // node_modules/monaco-editor/esm/vs/editor/common/core/characterClassifier.js
   var CharacterClassifier = class {
     constructor(_defaultValue) {
       const defaultValue = toUint8(_defaultValue);
       this._defaultValue = defaultValue;
       this._asciiMap = CharacterClassifier._createAsciiMap(defaultValue);
-      this._map = new Map();
+      this._map = /* @__PURE__ */ new Map();
     }
     static _createAsciiMap(defaultValue) {
       const asciiMap = new Uint8Array(256);
@@ -5018,7 +5018,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/languages/linkComputer.js
+  // node_modules/monaco-editor/esm/vs/editor/common/languages/linkComputer.js
   var Uint8Matrix = class {
     constructor(rows, cols, defaultValue) {
       const data = new Uint8Array(rows * cols);
@@ -5253,7 +5253,7 @@
     return LinkComputer.computeLinks(model);
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/languages/supports/inplaceReplaceSupport.js
+  // node_modules/monaco-editor/esm/vs/editor/common/languages/supports/inplaceReplaceSupport.js
   var BasicInplaceReplace = class {
     constructor() {
       this._defaultValueSet = [
@@ -5332,12 +5332,12 @@
   };
   BasicInplaceReplace.INSTANCE = new BasicInplaceReplace();
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/cancellation.js
+  // node_modules/monaco-editor/esm/vs/base/common/cancellation.js
   var shortcutEvent = Object.freeze(function(callback, context) {
     const handle = setTimeout(callback.bind(context), 0);
-    return {dispose() {
+    return { dispose() {
       clearTimeout(handle);
-    }};
+    } };
   });
   var CancellationToken;
   (function(CancellationToken2) {
@@ -5430,11 +5430,11 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/keyCodes.js
+  // node_modules/monaco-editor/esm/vs/base/common/keyCodes.js
   var KeyCodeStrMap = class {
     constructor() {
       this._keyCodeToStr = [];
-      this._strToKeyCode = Object.create(null);
+      this._strToKeyCode = /* @__PURE__ */ Object.create(null);
     }
     define(keyCode, str) {
       this._keyCodeToStr[keyCode] = str;
@@ -5453,8 +5453,8 @@
   var EVENT_KEY_CODE_MAP = new Array(230);
   var NATIVE_WINDOWS_KEY_CODE_TO_KEY_CODE = {};
   var scanCodeIntToStr = [];
-  var scanCodeStrToInt = Object.create(null);
-  var scanCodeLowerCaseStrToInt = Object.create(null);
+  var scanCodeStrToInt = /* @__PURE__ */ Object.create(null);
+  var scanCodeLowerCaseStrToInt = /* @__PURE__ */ Object.create(null);
   var IMMUTABLE_CODE_TO_KEY_CODE = [];
   var IMMUTABLE_KEY_CODE_TO_CODE = [];
   for (let i = 0; i <= 193; i++) {
@@ -5775,7 +5775,7 @@
     return (firstPart | chordPart) >>> 0;
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/core/selection.js
+  // node_modules/monaco-editor/esm/vs/editor/common/core/selection.js
   var Selection = class extends Range {
     constructor(selectionStartLineNumber, selectionStartColumn, positionLineNumber, positionColumn) {
       super(selectionStartLineNumber, selectionStartColumn, positionLineNumber, positionColumn);
@@ -5858,7 +5858,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/tokenizationRegistry.js
+  // node_modules/monaco-editor/esm/vs/editor/common/tokenizationRegistry.js
   var __awaiter = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve2) {
@@ -5888,8 +5888,8 @@
   };
   var TokenizationRegistry = class {
     constructor() {
-      this._map = new Map();
-      this._factories = new Map();
+      this._map = /* @__PURE__ */ new Map();
+      this._factories = /* @__PURE__ */ new Map();
       this._onDidChange = new Emitter();
       this.onDidChange = this._onDidChange.event;
       this._colorMap = null;
@@ -6006,7 +6006,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/base/common/codicons.js
+  // node_modules/monaco-editor/esm/vs/base/common/codicons.js
   var Codicon = class {
     constructor(id, definition, description) {
       this.id = id;
@@ -6028,506 +6028,506 @@
     }
   };
   Codicon._allCodicons = [];
-  Codicon.add = new Codicon("add", {fontCharacter: "\\ea60"});
+  Codicon.add = new Codicon("add", { fontCharacter: "\\ea60" });
   Codicon.plus = new Codicon("plus", Codicon.add.definition);
   Codicon.gistNew = new Codicon("gist-new", Codicon.add.definition);
   Codicon.repoCreate = new Codicon("repo-create", Codicon.add.definition);
-  Codicon.lightbulb = new Codicon("lightbulb", {fontCharacter: "\\ea61"});
-  Codicon.lightBulb = new Codicon("light-bulb", {fontCharacter: "\\ea61"});
-  Codicon.repo = new Codicon("repo", {fontCharacter: "\\ea62"});
-  Codicon.repoDelete = new Codicon("repo-delete", {fontCharacter: "\\ea62"});
-  Codicon.gistFork = new Codicon("gist-fork", {fontCharacter: "\\ea63"});
-  Codicon.repoForked = new Codicon("repo-forked", {fontCharacter: "\\ea63"});
-  Codicon.gitPullRequest = new Codicon("git-pull-request", {fontCharacter: "\\ea64"});
-  Codicon.gitPullRequestAbandoned = new Codicon("git-pull-request-abandoned", {fontCharacter: "\\ea64"});
-  Codicon.recordKeys = new Codicon("record-keys", {fontCharacter: "\\ea65"});
-  Codicon.keyboard = new Codicon("keyboard", {fontCharacter: "\\ea65"});
-  Codicon.tag = new Codicon("tag", {fontCharacter: "\\ea66"});
-  Codicon.tagAdd = new Codicon("tag-add", {fontCharacter: "\\ea66"});
-  Codicon.tagRemove = new Codicon("tag-remove", {fontCharacter: "\\ea66"});
-  Codicon.person = new Codicon("person", {fontCharacter: "\\ea67"});
-  Codicon.personFollow = new Codicon("person-follow", {fontCharacter: "\\ea67"});
-  Codicon.personOutline = new Codicon("person-outline", {fontCharacter: "\\ea67"});
-  Codicon.personFilled = new Codicon("person-filled", {fontCharacter: "\\ea67"});
-  Codicon.gitBranch = new Codicon("git-branch", {fontCharacter: "\\ea68"});
-  Codicon.gitBranchCreate = new Codicon("git-branch-create", {fontCharacter: "\\ea68"});
-  Codicon.gitBranchDelete = new Codicon("git-branch-delete", {fontCharacter: "\\ea68"});
-  Codicon.sourceControl = new Codicon("source-control", {fontCharacter: "\\ea68"});
-  Codicon.mirror = new Codicon("mirror", {fontCharacter: "\\ea69"});
-  Codicon.mirrorPublic = new Codicon("mirror-public", {fontCharacter: "\\ea69"});
-  Codicon.star = new Codicon("star", {fontCharacter: "\\ea6a"});
-  Codicon.starAdd = new Codicon("star-add", {fontCharacter: "\\ea6a"});
-  Codicon.starDelete = new Codicon("star-delete", {fontCharacter: "\\ea6a"});
-  Codicon.starEmpty = new Codicon("star-empty", {fontCharacter: "\\ea6a"});
-  Codicon.comment = new Codicon("comment", {fontCharacter: "\\ea6b"});
-  Codicon.commentAdd = new Codicon("comment-add", {fontCharacter: "\\ea6b"});
-  Codicon.alert = new Codicon("alert", {fontCharacter: "\\ea6c"});
-  Codicon.warning = new Codicon("warning", {fontCharacter: "\\ea6c"});
-  Codicon.search = new Codicon("search", {fontCharacter: "\\ea6d"});
-  Codicon.searchSave = new Codicon("search-save", {fontCharacter: "\\ea6d"});
-  Codicon.logOut = new Codicon("log-out", {fontCharacter: "\\ea6e"});
-  Codicon.signOut = new Codicon("sign-out", {fontCharacter: "\\ea6e"});
-  Codicon.logIn = new Codicon("log-in", {fontCharacter: "\\ea6f"});
-  Codicon.signIn = new Codicon("sign-in", {fontCharacter: "\\ea6f"});
-  Codicon.eye = new Codicon("eye", {fontCharacter: "\\ea70"});
-  Codicon.eyeUnwatch = new Codicon("eye-unwatch", {fontCharacter: "\\ea70"});
-  Codicon.eyeWatch = new Codicon("eye-watch", {fontCharacter: "\\ea70"});
-  Codicon.circleFilled = new Codicon("circle-filled", {fontCharacter: "\\ea71"});
-  Codicon.primitiveDot = new Codicon("primitive-dot", {fontCharacter: "\\ea71"});
-  Codicon.closeDirty = new Codicon("close-dirty", {fontCharacter: "\\ea71"});
-  Codicon.debugBreakpoint = new Codicon("debug-breakpoint", {fontCharacter: "\\ea71"});
-  Codicon.debugBreakpointDisabled = new Codicon("debug-breakpoint-disabled", {fontCharacter: "\\ea71"});
-  Codicon.debugHint = new Codicon("debug-hint", {fontCharacter: "\\ea71"});
-  Codicon.primitiveSquare = new Codicon("primitive-square", {fontCharacter: "\\ea72"});
-  Codicon.edit = new Codicon("edit", {fontCharacter: "\\ea73"});
-  Codicon.pencil = new Codicon("pencil", {fontCharacter: "\\ea73"});
-  Codicon.info = new Codicon("info", {fontCharacter: "\\ea74"});
-  Codicon.issueOpened = new Codicon("issue-opened", {fontCharacter: "\\ea74"});
-  Codicon.gistPrivate = new Codicon("gist-private", {fontCharacter: "\\ea75"});
-  Codicon.gitForkPrivate = new Codicon("git-fork-private", {fontCharacter: "\\ea75"});
-  Codicon.lock = new Codicon("lock", {fontCharacter: "\\ea75"});
-  Codicon.mirrorPrivate = new Codicon("mirror-private", {fontCharacter: "\\ea75"});
-  Codicon.close = new Codicon("close", {fontCharacter: "\\ea76"});
-  Codicon.removeClose = new Codicon("remove-close", {fontCharacter: "\\ea76"});
-  Codicon.x = new Codicon("x", {fontCharacter: "\\ea76"});
-  Codicon.repoSync = new Codicon("repo-sync", {fontCharacter: "\\ea77"});
-  Codicon.sync = new Codicon("sync", {fontCharacter: "\\ea77"});
-  Codicon.clone = new Codicon("clone", {fontCharacter: "\\ea78"});
-  Codicon.desktopDownload = new Codicon("desktop-download", {fontCharacter: "\\ea78"});
-  Codicon.beaker = new Codicon("beaker", {fontCharacter: "\\ea79"});
-  Codicon.microscope = new Codicon("microscope", {fontCharacter: "\\ea79"});
-  Codicon.vm = new Codicon("vm", {fontCharacter: "\\ea7a"});
-  Codicon.deviceDesktop = new Codicon("device-desktop", {fontCharacter: "\\ea7a"});
-  Codicon.file = new Codicon("file", {fontCharacter: "\\ea7b"});
-  Codicon.fileText = new Codicon("file-text", {fontCharacter: "\\ea7b"});
-  Codicon.more = new Codicon("more", {fontCharacter: "\\ea7c"});
-  Codicon.ellipsis = new Codicon("ellipsis", {fontCharacter: "\\ea7c"});
-  Codicon.kebabHorizontal = new Codicon("kebab-horizontal", {fontCharacter: "\\ea7c"});
-  Codicon.mailReply = new Codicon("mail-reply", {fontCharacter: "\\ea7d"});
-  Codicon.reply = new Codicon("reply", {fontCharacter: "\\ea7d"});
-  Codicon.organization = new Codicon("organization", {fontCharacter: "\\ea7e"});
-  Codicon.organizationFilled = new Codicon("organization-filled", {fontCharacter: "\\ea7e"});
-  Codicon.organizationOutline = new Codicon("organization-outline", {fontCharacter: "\\ea7e"});
-  Codicon.newFile = new Codicon("new-file", {fontCharacter: "\\ea7f"});
-  Codicon.fileAdd = new Codicon("file-add", {fontCharacter: "\\ea7f"});
-  Codicon.newFolder = new Codicon("new-folder", {fontCharacter: "\\ea80"});
-  Codicon.fileDirectoryCreate = new Codicon("file-directory-create", {fontCharacter: "\\ea80"});
-  Codicon.trash = new Codicon("trash", {fontCharacter: "\\ea81"});
-  Codicon.trashcan = new Codicon("trashcan", {fontCharacter: "\\ea81"});
-  Codicon.history = new Codicon("history", {fontCharacter: "\\ea82"});
-  Codicon.clock = new Codicon("clock", {fontCharacter: "\\ea82"});
-  Codicon.folder = new Codicon("folder", {fontCharacter: "\\ea83"});
-  Codicon.fileDirectory = new Codicon("file-directory", {fontCharacter: "\\ea83"});
-  Codicon.symbolFolder = new Codicon("symbol-folder", {fontCharacter: "\\ea83"});
-  Codicon.logoGithub = new Codicon("logo-github", {fontCharacter: "\\ea84"});
-  Codicon.markGithub = new Codicon("mark-github", {fontCharacter: "\\ea84"});
-  Codicon.github = new Codicon("github", {fontCharacter: "\\ea84"});
-  Codicon.terminal = new Codicon("terminal", {fontCharacter: "\\ea85"});
-  Codicon.console = new Codicon("console", {fontCharacter: "\\ea85"});
-  Codicon.repl = new Codicon("repl", {fontCharacter: "\\ea85"});
-  Codicon.zap = new Codicon("zap", {fontCharacter: "\\ea86"});
-  Codicon.symbolEvent = new Codicon("symbol-event", {fontCharacter: "\\ea86"});
-  Codicon.error = new Codicon("error", {fontCharacter: "\\ea87"});
-  Codicon.stop = new Codicon("stop", {fontCharacter: "\\ea87"});
-  Codicon.variable = new Codicon("variable", {fontCharacter: "\\ea88"});
-  Codicon.symbolVariable = new Codicon("symbol-variable", {fontCharacter: "\\ea88"});
-  Codicon.array = new Codicon("array", {fontCharacter: "\\ea8a"});
-  Codicon.symbolArray = new Codicon("symbol-array", {fontCharacter: "\\ea8a"});
-  Codicon.symbolModule = new Codicon("symbol-module", {fontCharacter: "\\ea8b"});
-  Codicon.symbolPackage = new Codicon("symbol-package", {fontCharacter: "\\ea8b"});
-  Codicon.symbolNamespace = new Codicon("symbol-namespace", {fontCharacter: "\\ea8b"});
-  Codicon.symbolObject = new Codicon("symbol-object", {fontCharacter: "\\ea8b"});
-  Codicon.symbolMethod = new Codicon("symbol-method", {fontCharacter: "\\ea8c"});
-  Codicon.symbolFunction = new Codicon("symbol-function", {fontCharacter: "\\ea8c"});
-  Codicon.symbolConstructor = new Codicon("symbol-constructor", {fontCharacter: "\\ea8c"});
-  Codicon.symbolBoolean = new Codicon("symbol-boolean", {fontCharacter: "\\ea8f"});
-  Codicon.symbolNull = new Codicon("symbol-null", {fontCharacter: "\\ea8f"});
-  Codicon.symbolNumeric = new Codicon("symbol-numeric", {fontCharacter: "\\ea90"});
-  Codicon.symbolNumber = new Codicon("symbol-number", {fontCharacter: "\\ea90"});
-  Codicon.symbolStructure = new Codicon("symbol-structure", {fontCharacter: "\\ea91"});
-  Codicon.symbolStruct = new Codicon("symbol-struct", {fontCharacter: "\\ea91"});
-  Codicon.symbolParameter = new Codicon("symbol-parameter", {fontCharacter: "\\ea92"});
-  Codicon.symbolTypeParameter = new Codicon("symbol-type-parameter", {fontCharacter: "\\ea92"});
-  Codicon.symbolKey = new Codicon("symbol-key", {fontCharacter: "\\ea93"});
-  Codicon.symbolText = new Codicon("symbol-text", {fontCharacter: "\\ea93"});
-  Codicon.symbolReference = new Codicon("symbol-reference", {fontCharacter: "\\ea94"});
-  Codicon.goToFile = new Codicon("go-to-file", {fontCharacter: "\\ea94"});
-  Codicon.symbolEnum = new Codicon("symbol-enum", {fontCharacter: "\\ea95"});
-  Codicon.symbolValue = new Codicon("symbol-value", {fontCharacter: "\\ea95"});
-  Codicon.symbolRuler = new Codicon("symbol-ruler", {fontCharacter: "\\ea96"});
-  Codicon.symbolUnit = new Codicon("symbol-unit", {fontCharacter: "\\ea96"});
-  Codicon.activateBreakpoints = new Codicon("activate-breakpoints", {fontCharacter: "\\ea97"});
-  Codicon.archive = new Codicon("archive", {fontCharacter: "\\ea98"});
-  Codicon.arrowBoth = new Codicon("arrow-both", {fontCharacter: "\\ea99"});
-  Codicon.arrowDown = new Codicon("arrow-down", {fontCharacter: "\\ea9a"});
-  Codicon.arrowLeft = new Codicon("arrow-left", {fontCharacter: "\\ea9b"});
-  Codicon.arrowRight = new Codicon("arrow-right", {fontCharacter: "\\ea9c"});
-  Codicon.arrowSmallDown = new Codicon("arrow-small-down", {fontCharacter: "\\ea9d"});
-  Codicon.arrowSmallLeft = new Codicon("arrow-small-left", {fontCharacter: "\\ea9e"});
-  Codicon.arrowSmallRight = new Codicon("arrow-small-right", {fontCharacter: "\\ea9f"});
-  Codicon.arrowSmallUp = new Codicon("arrow-small-up", {fontCharacter: "\\eaa0"});
-  Codicon.arrowUp = new Codicon("arrow-up", {fontCharacter: "\\eaa1"});
-  Codicon.bell = new Codicon("bell", {fontCharacter: "\\eaa2"});
-  Codicon.bold = new Codicon("bold", {fontCharacter: "\\eaa3"});
-  Codicon.book = new Codicon("book", {fontCharacter: "\\eaa4"});
-  Codicon.bookmark = new Codicon("bookmark", {fontCharacter: "\\eaa5"});
-  Codicon.debugBreakpointConditionalUnverified = new Codicon("debug-breakpoint-conditional-unverified", {fontCharacter: "\\eaa6"});
-  Codicon.debugBreakpointConditional = new Codicon("debug-breakpoint-conditional", {fontCharacter: "\\eaa7"});
-  Codicon.debugBreakpointConditionalDisabled = new Codicon("debug-breakpoint-conditional-disabled", {fontCharacter: "\\eaa7"});
-  Codicon.debugBreakpointDataUnverified = new Codicon("debug-breakpoint-data-unverified", {fontCharacter: "\\eaa8"});
-  Codicon.debugBreakpointData = new Codicon("debug-breakpoint-data", {fontCharacter: "\\eaa9"});
-  Codicon.debugBreakpointDataDisabled = new Codicon("debug-breakpoint-data-disabled", {fontCharacter: "\\eaa9"});
-  Codicon.debugBreakpointLogUnverified = new Codicon("debug-breakpoint-log-unverified", {fontCharacter: "\\eaaa"});
-  Codicon.debugBreakpointLog = new Codicon("debug-breakpoint-log", {fontCharacter: "\\eaab"});
-  Codicon.debugBreakpointLogDisabled = new Codicon("debug-breakpoint-log-disabled", {fontCharacter: "\\eaab"});
-  Codicon.briefcase = new Codicon("briefcase", {fontCharacter: "\\eaac"});
-  Codicon.broadcast = new Codicon("broadcast", {fontCharacter: "\\eaad"});
-  Codicon.browser = new Codicon("browser", {fontCharacter: "\\eaae"});
-  Codicon.bug = new Codicon("bug", {fontCharacter: "\\eaaf"});
-  Codicon.calendar = new Codicon("calendar", {fontCharacter: "\\eab0"});
-  Codicon.caseSensitive = new Codicon("case-sensitive", {fontCharacter: "\\eab1"});
-  Codicon.check = new Codicon("check", {fontCharacter: "\\eab2"});
-  Codicon.checklist = new Codicon("checklist", {fontCharacter: "\\eab3"});
-  Codicon.chevronDown = new Codicon("chevron-down", {fontCharacter: "\\eab4"});
+  Codicon.lightbulb = new Codicon("lightbulb", { fontCharacter: "\\ea61" });
+  Codicon.lightBulb = new Codicon("light-bulb", { fontCharacter: "\\ea61" });
+  Codicon.repo = new Codicon("repo", { fontCharacter: "\\ea62" });
+  Codicon.repoDelete = new Codicon("repo-delete", { fontCharacter: "\\ea62" });
+  Codicon.gistFork = new Codicon("gist-fork", { fontCharacter: "\\ea63" });
+  Codicon.repoForked = new Codicon("repo-forked", { fontCharacter: "\\ea63" });
+  Codicon.gitPullRequest = new Codicon("git-pull-request", { fontCharacter: "\\ea64" });
+  Codicon.gitPullRequestAbandoned = new Codicon("git-pull-request-abandoned", { fontCharacter: "\\ea64" });
+  Codicon.recordKeys = new Codicon("record-keys", { fontCharacter: "\\ea65" });
+  Codicon.keyboard = new Codicon("keyboard", { fontCharacter: "\\ea65" });
+  Codicon.tag = new Codicon("tag", { fontCharacter: "\\ea66" });
+  Codicon.tagAdd = new Codicon("tag-add", { fontCharacter: "\\ea66" });
+  Codicon.tagRemove = new Codicon("tag-remove", { fontCharacter: "\\ea66" });
+  Codicon.person = new Codicon("person", { fontCharacter: "\\ea67" });
+  Codicon.personFollow = new Codicon("person-follow", { fontCharacter: "\\ea67" });
+  Codicon.personOutline = new Codicon("person-outline", { fontCharacter: "\\ea67" });
+  Codicon.personFilled = new Codicon("person-filled", { fontCharacter: "\\ea67" });
+  Codicon.gitBranch = new Codicon("git-branch", { fontCharacter: "\\ea68" });
+  Codicon.gitBranchCreate = new Codicon("git-branch-create", { fontCharacter: "\\ea68" });
+  Codicon.gitBranchDelete = new Codicon("git-branch-delete", { fontCharacter: "\\ea68" });
+  Codicon.sourceControl = new Codicon("source-control", { fontCharacter: "\\ea68" });
+  Codicon.mirror = new Codicon("mirror", { fontCharacter: "\\ea69" });
+  Codicon.mirrorPublic = new Codicon("mirror-public", { fontCharacter: "\\ea69" });
+  Codicon.star = new Codicon("star", { fontCharacter: "\\ea6a" });
+  Codicon.starAdd = new Codicon("star-add", { fontCharacter: "\\ea6a" });
+  Codicon.starDelete = new Codicon("star-delete", { fontCharacter: "\\ea6a" });
+  Codicon.starEmpty = new Codicon("star-empty", { fontCharacter: "\\ea6a" });
+  Codicon.comment = new Codicon("comment", { fontCharacter: "\\ea6b" });
+  Codicon.commentAdd = new Codicon("comment-add", { fontCharacter: "\\ea6b" });
+  Codicon.alert = new Codicon("alert", { fontCharacter: "\\ea6c" });
+  Codicon.warning = new Codicon("warning", { fontCharacter: "\\ea6c" });
+  Codicon.search = new Codicon("search", { fontCharacter: "\\ea6d" });
+  Codicon.searchSave = new Codicon("search-save", { fontCharacter: "\\ea6d" });
+  Codicon.logOut = new Codicon("log-out", { fontCharacter: "\\ea6e" });
+  Codicon.signOut = new Codicon("sign-out", { fontCharacter: "\\ea6e" });
+  Codicon.logIn = new Codicon("log-in", { fontCharacter: "\\ea6f" });
+  Codicon.signIn = new Codicon("sign-in", { fontCharacter: "\\ea6f" });
+  Codicon.eye = new Codicon("eye", { fontCharacter: "\\ea70" });
+  Codicon.eyeUnwatch = new Codicon("eye-unwatch", { fontCharacter: "\\ea70" });
+  Codicon.eyeWatch = new Codicon("eye-watch", { fontCharacter: "\\ea70" });
+  Codicon.circleFilled = new Codicon("circle-filled", { fontCharacter: "\\ea71" });
+  Codicon.primitiveDot = new Codicon("primitive-dot", { fontCharacter: "\\ea71" });
+  Codicon.closeDirty = new Codicon("close-dirty", { fontCharacter: "\\ea71" });
+  Codicon.debugBreakpoint = new Codicon("debug-breakpoint", { fontCharacter: "\\ea71" });
+  Codicon.debugBreakpointDisabled = new Codicon("debug-breakpoint-disabled", { fontCharacter: "\\ea71" });
+  Codicon.debugHint = new Codicon("debug-hint", { fontCharacter: "\\ea71" });
+  Codicon.primitiveSquare = new Codicon("primitive-square", { fontCharacter: "\\ea72" });
+  Codicon.edit = new Codicon("edit", { fontCharacter: "\\ea73" });
+  Codicon.pencil = new Codicon("pencil", { fontCharacter: "\\ea73" });
+  Codicon.info = new Codicon("info", { fontCharacter: "\\ea74" });
+  Codicon.issueOpened = new Codicon("issue-opened", { fontCharacter: "\\ea74" });
+  Codicon.gistPrivate = new Codicon("gist-private", { fontCharacter: "\\ea75" });
+  Codicon.gitForkPrivate = new Codicon("git-fork-private", { fontCharacter: "\\ea75" });
+  Codicon.lock = new Codicon("lock", { fontCharacter: "\\ea75" });
+  Codicon.mirrorPrivate = new Codicon("mirror-private", { fontCharacter: "\\ea75" });
+  Codicon.close = new Codicon("close", { fontCharacter: "\\ea76" });
+  Codicon.removeClose = new Codicon("remove-close", { fontCharacter: "\\ea76" });
+  Codicon.x = new Codicon("x", { fontCharacter: "\\ea76" });
+  Codicon.repoSync = new Codicon("repo-sync", { fontCharacter: "\\ea77" });
+  Codicon.sync = new Codicon("sync", { fontCharacter: "\\ea77" });
+  Codicon.clone = new Codicon("clone", { fontCharacter: "\\ea78" });
+  Codicon.desktopDownload = new Codicon("desktop-download", { fontCharacter: "\\ea78" });
+  Codicon.beaker = new Codicon("beaker", { fontCharacter: "\\ea79" });
+  Codicon.microscope = new Codicon("microscope", { fontCharacter: "\\ea79" });
+  Codicon.vm = new Codicon("vm", { fontCharacter: "\\ea7a" });
+  Codicon.deviceDesktop = new Codicon("device-desktop", { fontCharacter: "\\ea7a" });
+  Codicon.file = new Codicon("file", { fontCharacter: "\\ea7b" });
+  Codicon.fileText = new Codicon("file-text", { fontCharacter: "\\ea7b" });
+  Codicon.more = new Codicon("more", { fontCharacter: "\\ea7c" });
+  Codicon.ellipsis = new Codicon("ellipsis", { fontCharacter: "\\ea7c" });
+  Codicon.kebabHorizontal = new Codicon("kebab-horizontal", { fontCharacter: "\\ea7c" });
+  Codicon.mailReply = new Codicon("mail-reply", { fontCharacter: "\\ea7d" });
+  Codicon.reply = new Codicon("reply", { fontCharacter: "\\ea7d" });
+  Codicon.organization = new Codicon("organization", { fontCharacter: "\\ea7e" });
+  Codicon.organizationFilled = new Codicon("organization-filled", { fontCharacter: "\\ea7e" });
+  Codicon.organizationOutline = new Codicon("organization-outline", { fontCharacter: "\\ea7e" });
+  Codicon.newFile = new Codicon("new-file", { fontCharacter: "\\ea7f" });
+  Codicon.fileAdd = new Codicon("file-add", { fontCharacter: "\\ea7f" });
+  Codicon.newFolder = new Codicon("new-folder", { fontCharacter: "\\ea80" });
+  Codicon.fileDirectoryCreate = new Codicon("file-directory-create", { fontCharacter: "\\ea80" });
+  Codicon.trash = new Codicon("trash", { fontCharacter: "\\ea81" });
+  Codicon.trashcan = new Codicon("trashcan", { fontCharacter: "\\ea81" });
+  Codicon.history = new Codicon("history", { fontCharacter: "\\ea82" });
+  Codicon.clock = new Codicon("clock", { fontCharacter: "\\ea82" });
+  Codicon.folder = new Codicon("folder", { fontCharacter: "\\ea83" });
+  Codicon.fileDirectory = new Codicon("file-directory", { fontCharacter: "\\ea83" });
+  Codicon.symbolFolder = new Codicon("symbol-folder", { fontCharacter: "\\ea83" });
+  Codicon.logoGithub = new Codicon("logo-github", { fontCharacter: "\\ea84" });
+  Codicon.markGithub = new Codicon("mark-github", { fontCharacter: "\\ea84" });
+  Codicon.github = new Codicon("github", { fontCharacter: "\\ea84" });
+  Codicon.terminal = new Codicon("terminal", { fontCharacter: "\\ea85" });
+  Codicon.console = new Codicon("console", { fontCharacter: "\\ea85" });
+  Codicon.repl = new Codicon("repl", { fontCharacter: "\\ea85" });
+  Codicon.zap = new Codicon("zap", { fontCharacter: "\\ea86" });
+  Codicon.symbolEvent = new Codicon("symbol-event", { fontCharacter: "\\ea86" });
+  Codicon.error = new Codicon("error", { fontCharacter: "\\ea87" });
+  Codicon.stop = new Codicon("stop", { fontCharacter: "\\ea87" });
+  Codicon.variable = new Codicon("variable", { fontCharacter: "\\ea88" });
+  Codicon.symbolVariable = new Codicon("symbol-variable", { fontCharacter: "\\ea88" });
+  Codicon.array = new Codicon("array", { fontCharacter: "\\ea8a" });
+  Codicon.symbolArray = new Codicon("symbol-array", { fontCharacter: "\\ea8a" });
+  Codicon.symbolModule = new Codicon("symbol-module", { fontCharacter: "\\ea8b" });
+  Codicon.symbolPackage = new Codicon("symbol-package", { fontCharacter: "\\ea8b" });
+  Codicon.symbolNamespace = new Codicon("symbol-namespace", { fontCharacter: "\\ea8b" });
+  Codicon.symbolObject = new Codicon("symbol-object", { fontCharacter: "\\ea8b" });
+  Codicon.symbolMethod = new Codicon("symbol-method", { fontCharacter: "\\ea8c" });
+  Codicon.symbolFunction = new Codicon("symbol-function", { fontCharacter: "\\ea8c" });
+  Codicon.symbolConstructor = new Codicon("symbol-constructor", { fontCharacter: "\\ea8c" });
+  Codicon.symbolBoolean = new Codicon("symbol-boolean", { fontCharacter: "\\ea8f" });
+  Codicon.symbolNull = new Codicon("symbol-null", { fontCharacter: "\\ea8f" });
+  Codicon.symbolNumeric = new Codicon("symbol-numeric", { fontCharacter: "\\ea90" });
+  Codicon.symbolNumber = new Codicon("symbol-number", { fontCharacter: "\\ea90" });
+  Codicon.symbolStructure = new Codicon("symbol-structure", { fontCharacter: "\\ea91" });
+  Codicon.symbolStruct = new Codicon("symbol-struct", { fontCharacter: "\\ea91" });
+  Codicon.symbolParameter = new Codicon("symbol-parameter", { fontCharacter: "\\ea92" });
+  Codicon.symbolTypeParameter = new Codicon("symbol-type-parameter", { fontCharacter: "\\ea92" });
+  Codicon.symbolKey = new Codicon("symbol-key", { fontCharacter: "\\ea93" });
+  Codicon.symbolText = new Codicon("symbol-text", { fontCharacter: "\\ea93" });
+  Codicon.symbolReference = new Codicon("symbol-reference", { fontCharacter: "\\ea94" });
+  Codicon.goToFile = new Codicon("go-to-file", { fontCharacter: "\\ea94" });
+  Codicon.symbolEnum = new Codicon("symbol-enum", { fontCharacter: "\\ea95" });
+  Codicon.symbolValue = new Codicon("symbol-value", { fontCharacter: "\\ea95" });
+  Codicon.symbolRuler = new Codicon("symbol-ruler", { fontCharacter: "\\ea96" });
+  Codicon.symbolUnit = new Codicon("symbol-unit", { fontCharacter: "\\ea96" });
+  Codicon.activateBreakpoints = new Codicon("activate-breakpoints", { fontCharacter: "\\ea97" });
+  Codicon.archive = new Codicon("archive", { fontCharacter: "\\ea98" });
+  Codicon.arrowBoth = new Codicon("arrow-both", { fontCharacter: "\\ea99" });
+  Codicon.arrowDown = new Codicon("arrow-down", { fontCharacter: "\\ea9a" });
+  Codicon.arrowLeft = new Codicon("arrow-left", { fontCharacter: "\\ea9b" });
+  Codicon.arrowRight = new Codicon("arrow-right", { fontCharacter: "\\ea9c" });
+  Codicon.arrowSmallDown = new Codicon("arrow-small-down", { fontCharacter: "\\ea9d" });
+  Codicon.arrowSmallLeft = new Codicon("arrow-small-left", { fontCharacter: "\\ea9e" });
+  Codicon.arrowSmallRight = new Codicon("arrow-small-right", { fontCharacter: "\\ea9f" });
+  Codicon.arrowSmallUp = new Codicon("arrow-small-up", { fontCharacter: "\\eaa0" });
+  Codicon.arrowUp = new Codicon("arrow-up", { fontCharacter: "\\eaa1" });
+  Codicon.bell = new Codicon("bell", { fontCharacter: "\\eaa2" });
+  Codicon.bold = new Codicon("bold", { fontCharacter: "\\eaa3" });
+  Codicon.book = new Codicon("book", { fontCharacter: "\\eaa4" });
+  Codicon.bookmark = new Codicon("bookmark", { fontCharacter: "\\eaa5" });
+  Codicon.debugBreakpointConditionalUnverified = new Codicon("debug-breakpoint-conditional-unverified", { fontCharacter: "\\eaa6" });
+  Codicon.debugBreakpointConditional = new Codicon("debug-breakpoint-conditional", { fontCharacter: "\\eaa7" });
+  Codicon.debugBreakpointConditionalDisabled = new Codicon("debug-breakpoint-conditional-disabled", { fontCharacter: "\\eaa7" });
+  Codicon.debugBreakpointDataUnverified = new Codicon("debug-breakpoint-data-unverified", { fontCharacter: "\\eaa8" });
+  Codicon.debugBreakpointData = new Codicon("debug-breakpoint-data", { fontCharacter: "\\eaa9" });
+  Codicon.debugBreakpointDataDisabled = new Codicon("debug-breakpoint-data-disabled", { fontCharacter: "\\eaa9" });
+  Codicon.debugBreakpointLogUnverified = new Codicon("debug-breakpoint-log-unverified", { fontCharacter: "\\eaaa" });
+  Codicon.debugBreakpointLog = new Codicon("debug-breakpoint-log", { fontCharacter: "\\eaab" });
+  Codicon.debugBreakpointLogDisabled = new Codicon("debug-breakpoint-log-disabled", { fontCharacter: "\\eaab" });
+  Codicon.briefcase = new Codicon("briefcase", { fontCharacter: "\\eaac" });
+  Codicon.broadcast = new Codicon("broadcast", { fontCharacter: "\\eaad" });
+  Codicon.browser = new Codicon("browser", { fontCharacter: "\\eaae" });
+  Codicon.bug = new Codicon("bug", { fontCharacter: "\\eaaf" });
+  Codicon.calendar = new Codicon("calendar", { fontCharacter: "\\eab0" });
+  Codicon.caseSensitive = new Codicon("case-sensitive", { fontCharacter: "\\eab1" });
+  Codicon.check = new Codicon("check", { fontCharacter: "\\eab2" });
+  Codicon.checklist = new Codicon("checklist", { fontCharacter: "\\eab3" });
+  Codicon.chevronDown = new Codicon("chevron-down", { fontCharacter: "\\eab4" });
   Codicon.dropDownButton = new Codicon("drop-down-button", Codicon.chevronDown.definition);
-  Codicon.chevronLeft = new Codicon("chevron-left", {fontCharacter: "\\eab5"});
-  Codicon.chevronRight = new Codicon("chevron-right", {fontCharacter: "\\eab6"});
-  Codicon.chevronUp = new Codicon("chevron-up", {fontCharacter: "\\eab7"});
-  Codicon.chromeClose = new Codicon("chrome-close", {fontCharacter: "\\eab8"});
-  Codicon.chromeMaximize = new Codicon("chrome-maximize", {fontCharacter: "\\eab9"});
-  Codicon.chromeMinimize = new Codicon("chrome-minimize", {fontCharacter: "\\eaba"});
-  Codicon.chromeRestore = new Codicon("chrome-restore", {fontCharacter: "\\eabb"});
-  Codicon.circleOutline = new Codicon("circle-outline", {fontCharacter: "\\eabc"});
-  Codicon.debugBreakpointUnverified = new Codicon("debug-breakpoint-unverified", {fontCharacter: "\\eabc"});
-  Codicon.circleSlash = new Codicon("circle-slash", {fontCharacter: "\\eabd"});
-  Codicon.circuitBoard = new Codicon("circuit-board", {fontCharacter: "\\eabe"});
-  Codicon.clearAll = new Codicon("clear-all", {fontCharacter: "\\eabf"});
-  Codicon.clippy = new Codicon("clippy", {fontCharacter: "\\eac0"});
-  Codicon.closeAll = new Codicon("close-all", {fontCharacter: "\\eac1"});
-  Codicon.cloudDownload = new Codicon("cloud-download", {fontCharacter: "\\eac2"});
-  Codicon.cloudUpload = new Codicon("cloud-upload", {fontCharacter: "\\eac3"});
-  Codicon.code = new Codicon("code", {fontCharacter: "\\eac4"});
-  Codicon.collapseAll = new Codicon("collapse-all", {fontCharacter: "\\eac5"});
-  Codicon.colorMode = new Codicon("color-mode", {fontCharacter: "\\eac6"});
-  Codicon.commentDiscussion = new Codicon("comment-discussion", {fontCharacter: "\\eac7"});
-  Codicon.compareChanges = new Codicon("compare-changes", {fontCharacter: "\\eafd"});
-  Codicon.creditCard = new Codicon("credit-card", {fontCharacter: "\\eac9"});
-  Codicon.dash = new Codicon("dash", {fontCharacter: "\\eacc"});
-  Codicon.dashboard = new Codicon("dashboard", {fontCharacter: "\\eacd"});
-  Codicon.database = new Codicon("database", {fontCharacter: "\\eace"});
-  Codicon.debugContinue = new Codicon("debug-continue", {fontCharacter: "\\eacf"});
-  Codicon.debugDisconnect = new Codicon("debug-disconnect", {fontCharacter: "\\ead0"});
-  Codicon.debugPause = new Codicon("debug-pause", {fontCharacter: "\\ead1"});
-  Codicon.debugRestart = new Codicon("debug-restart", {fontCharacter: "\\ead2"});
-  Codicon.debugStart = new Codicon("debug-start", {fontCharacter: "\\ead3"});
-  Codicon.debugStepInto = new Codicon("debug-step-into", {fontCharacter: "\\ead4"});
-  Codicon.debugStepOut = new Codicon("debug-step-out", {fontCharacter: "\\ead5"});
-  Codicon.debugStepOver = new Codicon("debug-step-over", {fontCharacter: "\\ead6"});
-  Codicon.debugStop = new Codicon("debug-stop", {fontCharacter: "\\ead7"});
-  Codicon.debug = new Codicon("debug", {fontCharacter: "\\ead8"});
-  Codicon.deviceCameraVideo = new Codicon("device-camera-video", {fontCharacter: "\\ead9"});
-  Codicon.deviceCamera = new Codicon("device-camera", {fontCharacter: "\\eada"});
-  Codicon.deviceMobile = new Codicon("device-mobile", {fontCharacter: "\\eadb"});
-  Codicon.diffAdded = new Codicon("diff-added", {fontCharacter: "\\eadc"});
-  Codicon.diffIgnored = new Codicon("diff-ignored", {fontCharacter: "\\eadd"});
-  Codicon.diffModified = new Codicon("diff-modified", {fontCharacter: "\\eade"});
-  Codicon.diffRemoved = new Codicon("diff-removed", {fontCharacter: "\\eadf"});
-  Codicon.diffRenamed = new Codicon("diff-renamed", {fontCharacter: "\\eae0"});
-  Codicon.diff = new Codicon("diff", {fontCharacter: "\\eae1"});
-  Codicon.discard = new Codicon("discard", {fontCharacter: "\\eae2"});
-  Codicon.editorLayout = new Codicon("editor-layout", {fontCharacter: "\\eae3"});
-  Codicon.emptyWindow = new Codicon("empty-window", {fontCharacter: "\\eae4"});
-  Codicon.exclude = new Codicon("exclude", {fontCharacter: "\\eae5"});
-  Codicon.extensions = new Codicon("extensions", {fontCharacter: "\\eae6"});
-  Codicon.eyeClosed = new Codicon("eye-closed", {fontCharacter: "\\eae7"});
-  Codicon.fileBinary = new Codicon("file-binary", {fontCharacter: "\\eae8"});
-  Codicon.fileCode = new Codicon("file-code", {fontCharacter: "\\eae9"});
-  Codicon.fileMedia = new Codicon("file-media", {fontCharacter: "\\eaea"});
-  Codicon.filePdf = new Codicon("file-pdf", {fontCharacter: "\\eaeb"});
-  Codicon.fileSubmodule = new Codicon("file-submodule", {fontCharacter: "\\eaec"});
-  Codicon.fileSymlinkDirectory = new Codicon("file-symlink-directory", {fontCharacter: "\\eaed"});
-  Codicon.fileSymlinkFile = new Codicon("file-symlink-file", {fontCharacter: "\\eaee"});
-  Codicon.fileZip = new Codicon("file-zip", {fontCharacter: "\\eaef"});
-  Codicon.files = new Codicon("files", {fontCharacter: "\\eaf0"});
-  Codicon.filter = new Codicon("filter", {fontCharacter: "\\eaf1"});
-  Codicon.flame = new Codicon("flame", {fontCharacter: "\\eaf2"});
-  Codicon.foldDown = new Codicon("fold-down", {fontCharacter: "\\eaf3"});
-  Codicon.foldUp = new Codicon("fold-up", {fontCharacter: "\\eaf4"});
-  Codicon.fold = new Codicon("fold", {fontCharacter: "\\eaf5"});
-  Codicon.folderActive = new Codicon("folder-active", {fontCharacter: "\\eaf6"});
-  Codicon.folderOpened = new Codicon("folder-opened", {fontCharacter: "\\eaf7"});
-  Codicon.gear = new Codicon("gear", {fontCharacter: "\\eaf8"});
-  Codicon.gift = new Codicon("gift", {fontCharacter: "\\eaf9"});
-  Codicon.gistSecret = new Codicon("gist-secret", {fontCharacter: "\\eafa"});
-  Codicon.gist = new Codicon("gist", {fontCharacter: "\\eafb"});
-  Codicon.gitCommit = new Codicon("git-commit", {fontCharacter: "\\eafc"});
-  Codicon.gitCompare = new Codicon("git-compare", {fontCharacter: "\\eafd"});
-  Codicon.gitMerge = new Codicon("git-merge", {fontCharacter: "\\eafe"});
-  Codicon.githubAction = new Codicon("github-action", {fontCharacter: "\\eaff"});
-  Codicon.githubAlt = new Codicon("github-alt", {fontCharacter: "\\eb00"});
-  Codicon.globe = new Codicon("globe", {fontCharacter: "\\eb01"});
-  Codicon.grabber = new Codicon("grabber", {fontCharacter: "\\eb02"});
-  Codicon.graph = new Codicon("graph", {fontCharacter: "\\eb03"});
-  Codicon.gripper = new Codicon("gripper", {fontCharacter: "\\eb04"});
-  Codicon.heart = new Codicon("heart", {fontCharacter: "\\eb05"});
-  Codicon.home = new Codicon("home", {fontCharacter: "\\eb06"});
-  Codicon.horizontalRule = new Codicon("horizontal-rule", {fontCharacter: "\\eb07"});
-  Codicon.hubot = new Codicon("hubot", {fontCharacter: "\\eb08"});
-  Codicon.inbox = new Codicon("inbox", {fontCharacter: "\\eb09"});
-  Codicon.issueClosed = new Codicon("issue-closed", {fontCharacter: "\\eba4"});
-  Codicon.issueReopened = new Codicon("issue-reopened", {fontCharacter: "\\eb0b"});
-  Codicon.issues = new Codicon("issues", {fontCharacter: "\\eb0c"});
-  Codicon.italic = new Codicon("italic", {fontCharacter: "\\eb0d"});
-  Codicon.jersey = new Codicon("jersey", {fontCharacter: "\\eb0e"});
-  Codicon.json = new Codicon("json", {fontCharacter: "\\eb0f"});
-  Codicon.kebabVertical = new Codicon("kebab-vertical", {fontCharacter: "\\eb10"});
-  Codicon.key = new Codicon("key", {fontCharacter: "\\eb11"});
-  Codicon.law = new Codicon("law", {fontCharacter: "\\eb12"});
-  Codicon.lightbulbAutofix = new Codicon("lightbulb-autofix", {fontCharacter: "\\eb13"});
-  Codicon.linkExternal = new Codicon("link-external", {fontCharacter: "\\eb14"});
-  Codicon.link = new Codicon("link", {fontCharacter: "\\eb15"});
-  Codicon.listOrdered = new Codicon("list-ordered", {fontCharacter: "\\eb16"});
-  Codicon.listUnordered = new Codicon("list-unordered", {fontCharacter: "\\eb17"});
-  Codicon.liveShare = new Codicon("live-share", {fontCharacter: "\\eb18"});
-  Codicon.loading = new Codicon("loading", {fontCharacter: "\\eb19"});
-  Codicon.location = new Codicon("location", {fontCharacter: "\\eb1a"});
-  Codicon.mailRead = new Codicon("mail-read", {fontCharacter: "\\eb1b"});
-  Codicon.mail = new Codicon("mail", {fontCharacter: "\\eb1c"});
-  Codicon.markdown = new Codicon("markdown", {fontCharacter: "\\eb1d"});
-  Codicon.megaphone = new Codicon("megaphone", {fontCharacter: "\\eb1e"});
-  Codicon.mention = new Codicon("mention", {fontCharacter: "\\eb1f"});
-  Codicon.milestone = new Codicon("milestone", {fontCharacter: "\\eb20"});
-  Codicon.mortarBoard = new Codicon("mortar-board", {fontCharacter: "\\eb21"});
-  Codicon.move = new Codicon("move", {fontCharacter: "\\eb22"});
-  Codicon.multipleWindows = new Codicon("multiple-windows", {fontCharacter: "\\eb23"});
-  Codicon.mute = new Codicon("mute", {fontCharacter: "\\eb24"});
-  Codicon.noNewline = new Codicon("no-newline", {fontCharacter: "\\eb25"});
-  Codicon.note = new Codicon("note", {fontCharacter: "\\eb26"});
-  Codicon.octoface = new Codicon("octoface", {fontCharacter: "\\eb27"});
-  Codicon.openPreview = new Codicon("open-preview", {fontCharacter: "\\eb28"});
-  Codicon.package_ = new Codicon("package", {fontCharacter: "\\eb29"});
-  Codicon.paintcan = new Codicon("paintcan", {fontCharacter: "\\eb2a"});
-  Codicon.pin = new Codicon("pin", {fontCharacter: "\\eb2b"});
-  Codicon.play = new Codicon("play", {fontCharacter: "\\eb2c"});
-  Codicon.run = new Codicon("run", {fontCharacter: "\\eb2c"});
-  Codicon.plug = new Codicon("plug", {fontCharacter: "\\eb2d"});
-  Codicon.preserveCase = new Codicon("preserve-case", {fontCharacter: "\\eb2e"});
-  Codicon.preview = new Codicon("preview", {fontCharacter: "\\eb2f"});
-  Codicon.project = new Codicon("project", {fontCharacter: "\\eb30"});
-  Codicon.pulse = new Codicon("pulse", {fontCharacter: "\\eb31"});
-  Codicon.question = new Codicon("question", {fontCharacter: "\\eb32"});
-  Codicon.quote = new Codicon("quote", {fontCharacter: "\\eb33"});
-  Codicon.radioTower = new Codicon("radio-tower", {fontCharacter: "\\eb34"});
-  Codicon.reactions = new Codicon("reactions", {fontCharacter: "\\eb35"});
-  Codicon.references = new Codicon("references", {fontCharacter: "\\eb36"});
-  Codicon.refresh = new Codicon("refresh", {fontCharacter: "\\eb37"});
-  Codicon.regex = new Codicon("regex", {fontCharacter: "\\eb38"});
-  Codicon.remoteExplorer = new Codicon("remote-explorer", {fontCharacter: "\\eb39"});
-  Codicon.remote = new Codicon("remote", {fontCharacter: "\\eb3a"});
-  Codicon.remove = new Codicon("remove", {fontCharacter: "\\eb3b"});
-  Codicon.replaceAll = new Codicon("replace-all", {fontCharacter: "\\eb3c"});
-  Codicon.replace = new Codicon("replace", {fontCharacter: "\\eb3d"});
-  Codicon.repoClone = new Codicon("repo-clone", {fontCharacter: "\\eb3e"});
-  Codicon.repoForcePush = new Codicon("repo-force-push", {fontCharacter: "\\eb3f"});
-  Codicon.repoPull = new Codicon("repo-pull", {fontCharacter: "\\eb40"});
-  Codicon.repoPush = new Codicon("repo-push", {fontCharacter: "\\eb41"});
-  Codicon.report = new Codicon("report", {fontCharacter: "\\eb42"});
-  Codicon.requestChanges = new Codicon("request-changes", {fontCharacter: "\\eb43"});
-  Codicon.rocket = new Codicon("rocket", {fontCharacter: "\\eb44"});
-  Codicon.rootFolderOpened = new Codicon("root-folder-opened", {fontCharacter: "\\eb45"});
-  Codicon.rootFolder = new Codicon("root-folder", {fontCharacter: "\\eb46"});
-  Codicon.rss = new Codicon("rss", {fontCharacter: "\\eb47"});
-  Codicon.ruby = new Codicon("ruby", {fontCharacter: "\\eb48"});
-  Codicon.saveAll = new Codicon("save-all", {fontCharacter: "\\eb49"});
-  Codicon.saveAs = new Codicon("save-as", {fontCharacter: "\\eb4a"});
-  Codicon.save = new Codicon("save", {fontCharacter: "\\eb4b"});
-  Codicon.screenFull = new Codicon("screen-full", {fontCharacter: "\\eb4c"});
-  Codicon.screenNormal = new Codicon("screen-normal", {fontCharacter: "\\eb4d"});
-  Codicon.searchStop = new Codicon("search-stop", {fontCharacter: "\\eb4e"});
-  Codicon.server = new Codicon("server", {fontCharacter: "\\eb50"});
-  Codicon.settingsGear = new Codicon("settings-gear", {fontCharacter: "\\eb51"});
-  Codicon.settings = new Codicon("settings", {fontCharacter: "\\eb52"});
-  Codicon.shield = new Codicon("shield", {fontCharacter: "\\eb53"});
-  Codicon.smiley = new Codicon("smiley", {fontCharacter: "\\eb54"});
-  Codicon.sortPrecedence = new Codicon("sort-precedence", {fontCharacter: "\\eb55"});
-  Codicon.splitHorizontal = new Codicon("split-horizontal", {fontCharacter: "\\eb56"});
-  Codicon.splitVertical = new Codicon("split-vertical", {fontCharacter: "\\eb57"});
-  Codicon.squirrel = new Codicon("squirrel", {fontCharacter: "\\eb58"});
-  Codicon.starFull = new Codicon("star-full", {fontCharacter: "\\eb59"});
-  Codicon.starHalf = new Codicon("star-half", {fontCharacter: "\\eb5a"});
-  Codicon.symbolClass = new Codicon("symbol-class", {fontCharacter: "\\eb5b"});
-  Codicon.symbolColor = new Codicon("symbol-color", {fontCharacter: "\\eb5c"});
-  Codicon.symbolCustomColor = new Codicon("symbol-customcolor", {fontCharacter: "\\eb5c"});
-  Codicon.symbolConstant = new Codicon("symbol-constant", {fontCharacter: "\\eb5d"});
-  Codicon.symbolEnumMember = new Codicon("symbol-enum-member", {fontCharacter: "\\eb5e"});
-  Codicon.symbolField = new Codicon("symbol-field", {fontCharacter: "\\eb5f"});
-  Codicon.symbolFile = new Codicon("symbol-file", {fontCharacter: "\\eb60"});
-  Codicon.symbolInterface = new Codicon("symbol-interface", {fontCharacter: "\\eb61"});
-  Codicon.symbolKeyword = new Codicon("symbol-keyword", {fontCharacter: "\\eb62"});
-  Codicon.symbolMisc = new Codicon("symbol-misc", {fontCharacter: "\\eb63"});
-  Codicon.symbolOperator = new Codicon("symbol-operator", {fontCharacter: "\\eb64"});
-  Codicon.symbolProperty = new Codicon("symbol-property", {fontCharacter: "\\eb65"});
-  Codicon.wrench = new Codicon("wrench", {fontCharacter: "\\eb65"});
-  Codicon.wrenchSubaction = new Codicon("wrench-subaction", {fontCharacter: "\\eb65"});
-  Codicon.symbolSnippet = new Codicon("symbol-snippet", {fontCharacter: "\\eb66"});
-  Codicon.tasklist = new Codicon("tasklist", {fontCharacter: "\\eb67"});
-  Codicon.telescope = new Codicon("telescope", {fontCharacter: "\\eb68"});
-  Codicon.textSize = new Codicon("text-size", {fontCharacter: "\\eb69"});
-  Codicon.threeBars = new Codicon("three-bars", {fontCharacter: "\\eb6a"});
-  Codicon.thumbsdown = new Codicon("thumbsdown", {fontCharacter: "\\eb6b"});
-  Codicon.thumbsup = new Codicon("thumbsup", {fontCharacter: "\\eb6c"});
-  Codicon.tools = new Codicon("tools", {fontCharacter: "\\eb6d"});
-  Codicon.triangleDown = new Codicon("triangle-down", {fontCharacter: "\\eb6e"});
-  Codicon.triangleLeft = new Codicon("triangle-left", {fontCharacter: "\\eb6f"});
-  Codicon.triangleRight = new Codicon("triangle-right", {fontCharacter: "\\eb70"});
-  Codicon.triangleUp = new Codicon("triangle-up", {fontCharacter: "\\eb71"});
-  Codicon.twitter = new Codicon("twitter", {fontCharacter: "\\eb72"});
-  Codicon.unfold = new Codicon("unfold", {fontCharacter: "\\eb73"});
-  Codicon.unlock = new Codicon("unlock", {fontCharacter: "\\eb74"});
-  Codicon.unmute = new Codicon("unmute", {fontCharacter: "\\eb75"});
-  Codicon.unverified = new Codicon("unverified", {fontCharacter: "\\eb76"});
-  Codicon.verified = new Codicon("verified", {fontCharacter: "\\eb77"});
-  Codicon.versions = new Codicon("versions", {fontCharacter: "\\eb78"});
-  Codicon.vmActive = new Codicon("vm-active", {fontCharacter: "\\eb79"});
-  Codicon.vmOutline = new Codicon("vm-outline", {fontCharacter: "\\eb7a"});
-  Codicon.vmRunning = new Codicon("vm-running", {fontCharacter: "\\eb7b"});
-  Codicon.watch = new Codicon("watch", {fontCharacter: "\\eb7c"});
-  Codicon.whitespace = new Codicon("whitespace", {fontCharacter: "\\eb7d"});
-  Codicon.wholeWord = new Codicon("whole-word", {fontCharacter: "\\eb7e"});
-  Codicon.window = new Codicon("window", {fontCharacter: "\\eb7f"});
-  Codicon.wordWrap = new Codicon("word-wrap", {fontCharacter: "\\eb80"});
-  Codicon.zoomIn = new Codicon("zoom-in", {fontCharacter: "\\eb81"});
-  Codicon.zoomOut = new Codicon("zoom-out", {fontCharacter: "\\eb82"});
-  Codicon.listFilter = new Codicon("list-filter", {fontCharacter: "\\eb83"});
-  Codicon.listFlat = new Codicon("list-flat", {fontCharacter: "\\eb84"});
-  Codicon.listSelection = new Codicon("list-selection", {fontCharacter: "\\eb85"});
-  Codicon.selection = new Codicon("selection", {fontCharacter: "\\eb85"});
-  Codicon.listTree = new Codicon("list-tree", {fontCharacter: "\\eb86"});
-  Codicon.debugBreakpointFunctionUnverified = new Codicon("debug-breakpoint-function-unverified", {fontCharacter: "\\eb87"});
-  Codicon.debugBreakpointFunction = new Codicon("debug-breakpoint-function", {fontCharacter: "\\eb88"});
-  Codicon.debugBreakpointFunctionDisabled = new Codicon("debug-breakpoint-function-disabled", {fontCharacter: "\\eb88"});
-  Codicon.debugStackframeActive = new Codicon("debug-stackframe-active", {fontCharacter: "\\eb89"});
-  Codicon.debugStackframeDot = new Codicon("debug-stackframe-dot", {fontCharacter: "\\eb8a"});
-  Codicon.debugStackframe = new Codicon("debug-stackframe", {fontCharacter: "\\eb8b"});
-  Codicon.debugStackframeFocused = new Codicon("debug-stackframe-focused", {fontCharacter: "\\eb8b"});
-  Codicon.debugBreakpointUnsupported = new Codicon("debug-breakpoint-unsupported", {fontCharacter: "\\eb8c"});
-  Codicon.symbolString = new Codicon("symbol-string", {fontCharacter: "\\eb8d"});
-  Codicon.debugReverseContinue = new Codicon("debug-reverse-continue", {fontCharacter: "\\eb8e"});
-  Codicon.debugStepBack = new Codicon("debug-step-back", {fontCharacter: "\\eb8f"});
-  Codicon.debugRestartFrame = new Codicon("debug-restart-frame", {fontCharacter: "\\eb90"});
-  Codicon.callIncoming = new Codicon("call-incoming", {fontCharacter: "\\eb92"});
-  Codicon.callOutgoing = new Codicon("call-outgoing", {fontCharacter: "\\eb93"});
-  Codicon.menu = new Codicon("menu", {fontCharacter: "\\eb94"});
-  Codicon.expandAll = new Codicon("expand-all", {fontCharacter: "\\eb95"});
-  Codicon.feedback = new Codicon("feedback", {fontCharacter: "\\eb96"});
-  Codicon.groupByRefType = new Codicon("group-by-ref-type", {fontCharacter: "\\eb97"});
-  Codicon.ungroupByRefType = new Codicon("ungroup-by-ref-type", {fontCharacter: "\\eb98"});
-  Codicon.account = new Codicon("account", {fontCharacter: "\\eb99"});
-  Codicon.bellDot = new Codicon("bell-dot", {fontCharacter: "\\eb9a"});
-  Codicon.debugConsole = new Codicon("debug-console", {fontCharacter: "\\eb9b"});
-  Codicon.library = new Codicon("library", {fontCharacter: "\\eb9c"});
-  Codicon.output = new Codicon("output", {fontCharacter: "\\eb9d"});
-  Codicon.runAll = new Codicon("run-all", {fontCharacter: "\\eb9e"});
-  Codicon.syncIgnored = new Codicon("sync-ignored", {fontCharacter: "\\eb9f"});
-  Codicon.pinned = new Codicon("pinned", {fontCharacter: "\\eba0"});
-  Codicon.githubInverted = new Codicon("github-inverted", {fontCharacter: "\\eba1"});
-  Codicon.debugAlt = new Codicon("debug-alt", {fontCharacter: "\\eb91"});
-  Codicon.serverProcess = new Codicon("server-process", {fontCharacter: "\\eba2"});
-  Codicon.serverEnvironment = new Codicon("server-environment", {fontCharacter: "\\eba3"});
-  Codicon.pass = new Codicon("pass", {fontCharacter: "\\eba4"});
-  Codicon.stopCircle = new Codicon("stop-circle", {fontCharacter: "\\eba5"});
-  Codicon.playCircle = new Codicon("play-circle", {fontCharacter: "\\eba6"});
-  Codicon.record = new Codicon("record", {fontCharacter: "\\eba7"});
-  Codicon.debugAltSmall = new Codicon("debug-alt-small", {fontCharacter: "\\eba8"});
-  Codicon.vmConnect = new Codicon("vm-connect", {fontCharacter: "\\eba9"});
-  Codicon.cloud = new Codicon("cloud", {fontCharacter: "\\ebaa"});
-  Codicon.merge = new Codicon("merge", {fontCharacter: "\\ebab"});
-  Codicon.exportIcon = new Codicon("export", {fontCharacter: "\\ebac"});
-  Codicon.graphLeft = new Codicon("graph-left", {fontCharacter: "\\ebad"});
-  Codicon.magnet = new Codicon("magnet", {fontCharacter: "\\ebae"});
-  Codicon.notebook = new Codicon("notebook", {fontCharacter: "\\ebaf"});
-  Codicon.redo = new Codicon("redo", {fontCharacter: "\\ebb0"});
-  Codicon.checkAll = new Codicon("check-all", {fontCharacter: "\\ebb1"});
-  Codicon.pinnedDirty = new Codicon("pinned-dirty", {fontCharacter: "\\ebb2"});
-  Codicon.passFilled = new Codicon("pass-filled", {fontCharacter: "\\ebb3"});
-  Codicon.circleLargeFilled = new Codicon("circle-large-filled", {fontCharacter: "\\ebb4"});
-  Codicon.circleLargeOutline = new Codicon("circle-large-outline", {fontCharacter: "\\ebb5"});
-  Codicon.combine = new Codicon("combine", {fontCharacter: "\\ebb6"});
-  Codicon.gather = new Codicon("gather", {fontCharacter: "\\ebb6"});
-  Codicon.table = new Codicon("table", {fontCharacter: "\\ebb7"});
-  Codicon.variableGroup = new Codicon("variable-group", {fontCharacter: "\\ebb8"});
-  Codicon.typeHierarchy = new Codicon("type-hierarchy", {fontCharacter: "\\ebb9"});
-  Codicon.typeHierarchySub = new Codicon("type-hierarchy-sub", {fontCharacter: "\\ebba"});
-  Codicon.typeHierarchySuper = new Codicon("type-hierarchy-super", {fontCharacter: "\\ebbb"});
-  Codicon.gitPullRequestCreate = new Codicon("git-pull-request-create", {fontCharacter: "\\ebbc"});
-  Codicon.runAbove = new Codicon("run-above", {fontCharacter: "\\ebbd"});
-  Codicon.runBelow = new Codicon("run-below", {fontCharacter: "\\ebbe"});
-  Codicon.notebookTemplate = new Codicon("notebook-template", {fontCharacter: "\\ebbf"});
-  Codicon.debugRerun = new Codicon("debug-rerun", {fontCharacter: "\\ebc0"});
-  Codicon.workspaceTrusted = new Codicon("workspace-trusted", {fontCharacter: "\\ebc1"});
-  Codicon.workspaceUntrusted = new Codicon("workspace-untrusted", {fontCharacter: "\\ebc2"});
-  Codicon.workspaceUnspecified = new Codicon("workspace-unspecified", {fontCharacter: "\\ebc3"});
-  Codicon.terminalCmd = new Codicon("terminal-cmd", {fontCharacter: "\\ebc4"});
-  Codicon.terminalDebian = new Codicon("terminal-debian", {fontCharacter: "\\ebc5"});
-  Codicon.terminalLinux = new Codicon("terminal-linux", {fontCharacter: "\\ebc6"});
-  Codicon.terminalPowershell = new Codicon("terminal-powershell", {fontCharacter: "\\ebc7"});
-  Codicon.terminalTmux = new Codicon("terminal-tmux", {fontCharacter: "\\ebc8"});
-  Codicon.terminalUbuntu = new Codicon("terminal-ubuntu", {fontCharacter: "\\ebc9"});
-  Codicon.terminalBash = new Codicon("terminal-bash", {fontCharacter: "\\ebca"});
-  Codicon.arrowSwap = new Codicon("arrow-swap", {fontCharacter: "\\ebcb"});
-  Codicon.copy = new Codicon("copy", {fontCharacter: "\\ebcc"});
-  Codicon.personAdd = new Codicon("person-add", {fontCharacter: "\\ebcd"});
-  Codicon.filterFilled = new Codicon("filter-filled", {fontCharacter: "\\ebce"});
-  Codicon.wand = new Codicon("wand", {fontCharacter: "\\ebcf"});
-  Codicon.debugLineByLine = new Codicon("debug-line-by-line", {fontCharacter: "\\ebd0"});
-  Codicon.inspect = new Codicon("inspect", {fontCharacter: "\\ebd1"});
-  Codicon.layers = new Codicon("layers", {fontCharacter: "\\ebd2"});
-  Codicon.layersDot = new Codicon("layers-dot", {fontCharacter: "\\ebd3"});
-  Codicon.layersActive = new Codicon("layers-active", {fontCharacter: "\\ebd4"});
-  Codicon.compass = new Codicon("compass", {fontCharacter: "\\ebd5"});
-  Codicon.compassDot = new Codicon("compass-dot", {fontCharacter: "\\ebd6"});
-  Codicon.compassActive = new Codicon("compass-active", {fontCharacter: "\\ebd7"});
-  Codicon.azure = new Codicon("azure", {fontCharacter: "\\ebd8"});
-  Codicon.issueDraft = new Codicon("issue-draft", {fontCharacter: "\\ebd9"});
-  Codicon.gitPullRequestClosed = new Codicon("git-pull-request-closed", {fontCharacter: "\\ebda"});
-  Codicon.gitPullRequestDraft = new Codicon("git-pull-request-draft", {fontCharacter: "\\ebdb"});
-  Codicon.debugAll = new Codicon("debug-all", {fontCharacter: "\\ebdc"});
-  Codicon.debugCoverage = new Codicon("debug-coverage", {fontCharacter: "\\ebdd"});
-  Codicon.runErrors = new Codicon("run-errors", {fontCharacter: "\\ebde"});
-  Codicon.folderLibrary = new Codicon("folder-library", {fontCharacter: "\\ebdf"});
-  Codicon.debugContinueSmall = new Codicon("debug-continue-small", {fontCharacter: "\\ebe0"});
-  Codicon.beakerStop = new Codicon("beaker-stop", {fontCharacter: "\\ebe1"});
-  Codicon.graphLine = new Codicon("graph-line", {fontCharacter: "\\ebe2"});
-  Codicon.graphScatter = new Codicon("graph-scatter", {fontCharacter: "\\ebe3"});
-  Codicon.pieChart = new Codicon("pie-chart", {fontCharacter: "\\ebe4"});
+  Codicon.chevronLeft = new Codicon("chevron-left", { fontCharacter: "\\eab5" });
+  Codicon.chevronRight = new Codicon("chevron-right", { fontCharacter: "\\eab6" });
+  Codicon.chevronUp = new Codicon("chevron-up", { fontCharacter: "\\eab7" });
+  Codicon.chromeClose = new Codicon("chrome-close", { fontCharacter: "\\eab8" });
+  Codicon.chromeMaximize = new Codicon("chrome-maximize", { fontCharacter: "\\eab9" });
+  Codicon.chromeMinimize = new Codicon("chrome-minimize", { fontCharacter: "\\eaba" });
+  Codicon.chromeRestore = new Codicon("chrome-restore", { fontCharacter: "\\eabb" });
+  Codicon.circleOutline = new Codicon("circle-outline", { fontCharacter: "\\eabc" });
+  Codicon.debugBreakpointUnverified = new Codicon("debug-breakpoint-unverified", { fontCharacter: "\\eabc" });
+  Codicon.circleSlash = new Codicon("circle-slash", { fontCharacter: "\\eabd" });
+  Codicon.circuitBoard = new Codicon("circuit-board", { fontCharacter: "\\eabe" });
+  Codicon.clearAll = new Codicon("clear-all", { fontCharacter: "\\eabf" });
+  Codicon.clippy = new Codicon("clippy", { fontCharacter: "\\eac0" });
+  Codicon.closeAll = new Codicon("close-all", { fontCharacter: "\\eac1" });
+  Codicon.cloudDownload = new Codicon("cloud-download", { fontCharacter: "\\eac2" });
+  Codicon.cloudUpload = new Codicon("cloud-upload", { fontCharacter: "\\eac3" });
+  Codicon.code = new Codicon("code", { fontCharacter: "\\eac4" });
+  Codicon.collapseAll = new Codicon("collapse-all", { fontCharacter: "\\eac5" });
+  Codicon.colorMode = new Codicon("color-mode", { fontCharacter: "\\eac6" });
+  Codicon.commentDiscussion = new Codicon("comment-discussion", { fontCharacter: "\\eac7" });
+  Codicon.compareChanges = new Codicon("compare-changes", { fontCharacter: "\\eafd" });
+  Codicon.creditCard = new Codicon("credit-card", { fontCharacter: "\\eac9" });
+  Codicon.dash = new Codicon("dash", { fontCharacter: "\\eacc" });
+  Codicon.dashboard = new Codicon("dashboard", { fontCharacter: "\\eacd" });
+  Codicon.database = new Codicon("database", { fontCharacter: "\\eace" });
+  Codicon.debugContinue = new Codicon("debug-continue", { fontCharacter: "\\eacf" });
+  Codicon.debugDisconnect = new Codicon("debug-disconnect", { fontCharacter: "\\ead0" });
+  Codicon.debugPause = new Codicon("debug-pause", { fontCharacter: "\\ead1" });
+  Codicon.debugRestart = new Codicon("debug-restart", { fontCharacter: "\\ead2" });
+  Codicon.debugStart = new Codicon("debug-start", { fontCharacter: "\\ead3" });
+  Codicon.debugStepInto = new Codicon("debug-step-into", { fontCharacter: "\\ead4" });
+  Codicon.debugStepOut = new Codicon("debug-step-out", { fontCharacter: "\\ead5" });
+  Codicon.debugStepOver = new Codicon("debug-step-over", { fontCharacter: "\\ead6" });
+  Codicon.debugStop = new Codicon("debug-stop", { fontCharacter: "\\ead7" });
+  Codicon.debug = new Codicon("debug", { fontCharacter: "\\ead8" });
+  Codicon.deviceCameraVideo = new Codicon("device-camera-video", { fontCharacter: "\\ead9" });
+  Codicon.deviceCamera = new Codicon("device-camera", { fontCharacter: "\\eada" });
+  Codicon.deviceMobile = new Codicon("device-mobile", { fontCharacter: "\\eadb" });
+  Codicon.diffAdded = new Codicon("diff-added", { fontCharacter: "\\eadc" });
+  Codicon.diffIgnored = new Codicon("diff-ignored", { fontCharacter: "\\eadd" });
+  Codicon.diffModified = new Codicon("diff-modified", { fontCharacter: "\\eade" });
+  Codicon.diffRemoved = new Codicon("diff-removed", { fontCharacter: "\\eadf" });
+  Codicon.diffRenamed = new Codicon("diff-renamed", { fontCharacter: "\\eae0" });
+  Codicon.diff = new Codicon("diff", { fontCharacter: "\\eae1" });
+  Codicon.discard = new Codicon("discard", { fontCharacter: "\\eae2" });
+  Codicon.editorLayout = new Codicon("editor-layout", { fontCharacter: "\\eae3" });
+  Codicon.emptyWindow = new Codicon("empty-window", { fontCharacter: "\\eae4" });
+  Codicon.exclude = new Codicon("exclude", { fontCharacter: "\\eae5" });
+  Codicon.extensions = new Codicon("extensions", { fontCharacter: "\\eae6" });
+  Codicon.eyeClosed = new Codicon("eye-closed", { fontCharacter: "\\eae7" });
+  Codicon.fileBinary = new Codicon("file-binary", { fontCharacter: "\\eae8" });
+  Codicon.fileCode = new Codicon("file-code", { fontCharacter: "\\eae9" });
+  Codicon.fileMedia = new Codicon("file-media", { fontCharacter: "\\eaea" });
+  Codicon.filePdf = new Codicon("file-pdf", { fontCharacter: "\\eaeb" });
+  Codicon.fileSubmodule = new Codicon("file-submodule", { fontCharacter: "\\eaec" });
+  Codicon.fileSymlinkDirectory = new Codicon("file-symlink-directory", { fontCharacter: "\\eaed" });
+  Codicon.fileSymlinkFile = new Codicon("file-symlink-file", { fontCharacter: "\\eaee" });
+  Codicon.fileZip = new Codicon("file-zip", { fontCharacter: "\\eaef" });
+  Codicon.files = new Codicon("files", { fontCharacter: "\\eaf0" });
+  Codicon.filter = new Codicon("filter", { fontCharacter: "\\eaf1" });
+  Codicon.flame = new Codicon("flame", { fontCharacter: "\\eaf2" });
+  Codicon.foldDown = new Codicon("fold-down", { fontCharacter: "\\eaf3" });
+  Codicon.foldUp = new Codicon("fold-up", { fontCharacter: "\\eaf4" });
+  Codicon.fold = new Codicon("fold", { fontCharacter: "\\eaf5" });
+  Codicon.folderActive = new Codicon("folder-active", { fontCharacter: "\\eaf6" });
+  Codicon.folderOpened = new Codicon("folder-opened", { fontCharacter: "\\eaf7" });
+  Codicon.gear = new Codicon("gear", { fontCharacter: "\\eaf8" });
+  Codicon.gift = new Codicon("gift", { fontCharacter: "\\eaf9" });
+  Codicon.gistSecret = new Codicon("gist-secret", { fontCharacter: "\\eafa" });
+  Codicon.gist = new Codicon("gist", { fontCharacter: "\\eafb" });
+  Codicon.gitCommit = new Codicon("git-commit", { fontCharacter: "\\eafc" });
+  Codicon.gitCompare = new Codicon("git-compare", { fontCharacter: "\\eafd" });
+  Codicon.gitMerge = new Codicon("git-merge", { fontCharacter: "\\eafe" });
+  Codicon.githubAction = new Codicon("github-action", { fontCharacter: "\\eaff" });
+  Codicon.githubAlt = new Codicon("github-alt", { fontCharacter: "\\eb00" });
+  Codicon.globe = new Codicon("globe", { fontCharacter: "\\eb01" });
+  Codicon.grabber = new Codicon("grabber", { fontCharacter: "\\eb02" });
+  Codicon.graph = new Codicon("graph", { fontCharacter: "\\eb03" });
+  Codicon.gripper = new Codicon("gripper", { fontCharacter: "\\eb04" });
+  Codicon.heart = new Codicon("heart", { fontCharacter: "\\eb05" });
+  Codicon.home = new Codicon("home", { fontCharacter: "\\eb06" });
+  Codicon.horizontalRule = new Codicon("horizontal-rule", { fontCharacter: "\\eb07" });
+  Codicon.hubot = new Codicon("hubot", { fontCharacter: "\\eb08" });
+  Codicon.inbox = new Codicon("inbox", { fontCharacter: "\\eb09" });
+  Codicon.issueClosed = new Codicon("issue-closed", { fontCharacter: "\\eba4" });
+  Codicon.issueReopened = new Codicon("issue-reopened", { fontCharacter: "\\eb0b" });
+  Codicon.issues = new Codicon("issues", { fontCharacter: "\\eb0c" });
+  Codicon.italic = new Codicon("italic", { fontCharacter: "\\eb0d" });
+  Codicon.jersey = new Codicon("jersey", { fontCharacter: "\\eb0e" });
+  Codicon.json = new Codicon("json", { fontCharacter: "\\eb0f" });
+  Codicon.kebabVertical = new Codicon("kebab-vertical", { fontCharacter: "\\eb10" });
+  Codicon.key = new Codicon("key", { fontCharacter: "\\eb11" });
+  Codicon.law = new Codicon("law", { fontCharacter: "\\eb12" });
+  Codicon.lightbulbAutofix = new Codicon("lightbulb-autofix", { fontCharacter: "\\eb13" });
+  Codicon.linkExternal = new Codicon("link-external", { fontCharacter: "\\eb14" });
+  Codicon.link = new Codicon("link", { fontCharacter: "\\eb15" });
+  Codicon.listOrdered = new Codicon("list-ordered", { fontCharacter: "\\eb16" });
+  Codicon.listUnordered = new Codicon("list-unordered", { fontCharacter: "\\eb17" });
+  Codicon.liveShare = new Codicon("live-share", { fontCharacter: "\\eb18" });
+  Codicon.loading = new Codicon("loading", { fontCharacter: "\\eb19" });
+  Codicon.location = new Codicon("location", { fontCharacter: "\\eb1a" });
+  Codicon.mailRead = new Codicon("mail-read", { fontCharacter: "\\eb1b" });
+  Codicon.mail = new Codicon("mail", { fontCharacter: "\\eb1c" });
+  Codicon.markdown = new Codicon("markdown", { fontCharacter: "\\eb1d" });
+  Codicon.megaphone = new Codicon("megaphone", { fontCharacter: "\\eb1e" });
+  Codicon.mention = new Codicon("mention", { fontCharacter: "\\eb1f" });
+  Codicon.milestone = new Codicon("milestone", { fontCharacter: "\\eb20" });
+  Codicon.mortarBoard = new Codicon("mortar-board", { fontCharacter: "\\eb21" });
+  Codicon.move = new Codicon("move", { fontCharacter: "\\eb22" });
+  Codicon.multipleWindows = new Codicon("multiple-windows", { fontCharacter: "\\eb23" });
+  Codicon.mute = new Codicon("mute", { fontCharacter: "\\eb24" });
+  Codicon.noNewline = new Codicon("no-newline", { fontCharacter: "\\eb25" });
+  Codicon.note = new Codicon("note", { fontCharacter: "\\eb26" });
+  Codicon.octoface = new Codicon("octoface", { fontCharacter: "\\eb27" });
+  Codicon.openPreview = new Codicon("open-preview", { fontCharacter: "\\eb28" });
+  Codicon.package_ = new Codicon("package", { fontCharacter: "\\eb29" });
+  Codicon.paintcan = new Codicon("paintcan", { fontCharacter: "\\eb2a" });
+  Codicon.pin = new Codicon("pin", { fontCharacter: "\\eb2b" });
+  Codicon.play = new Codicon("play", { fontCharacter: "\\eb2c" });
+  Codicon.run = new Codicon("run", { fontCharacter: "\\eb2c" });
+  Codicon.plug = new Codicon("plug", { fontCharacter: "\\eb2d" });
+  Codicon.preserveCase = new Codicon("preserve-case", { fontCharacter: "\\eb2e" });
+  Codicon.preview = new Codicon("preview", { fontCharacter: "\\eb2f" });
+  Codicon.project = new Codicon("project", { fontCharacter: "\\eb30" });
+  Codicon.pulse = new Codicon("pulse", { fontCharacter: "\\eb31" });
+  Codicon.question = new Codicon("question", { fontCharacter: "\\eb32" });
+  Codicon.quote = new Codicon("quote", { fontCharacter: "\\eb33" });
+  Codicon.radioTower = new Codicon("radio-tower", { fontCharacter: "\\eb34" });
+  Codicon.reactions = new Codicon("reactions", { fontCharacter: "\\eb35" });
+  Codicon.references = new Codicon("references", { fontCharacter: "\\eb36" });
+  Codicon.refresh = new Codicon("refresh", { fontCharacter: "\\eb37" });
+  Codicon.regex = new Codicon("regex", { fontCharacter: "\\eb38" });
+  Codicon.remoteExplorer = new Codicon("remote-explorer", { fontCharacter: "\\eb39" });
+  Codicon.remote = new Codicon("remote", { fontCharacter: "\\eb3a" });
+  Codicon.remove = new Codicon("remove", { fontCharacter: "\\eb3b" });
+  Codicon.replaceAll = new Codicon("replace-all", { fontCharacter: "\\eb3c" });
+  Codicon.replace = new Codicon("replace", { fontCharacter: "\\eb3d" });
+  Codicon.repoClone = new Codicon("repo-clone", { fontCharacter: "\\eb3e" });
+  Codicon.repoForcePush = new Codicon("repo-force-push", { fontCharacter: "\\eb3f" });
+  Codicon.repoPull = new Codicon("repo-pull", { fontCharacter: "\\eb40" });
+  Codicon.repoPush = new Codicon("repo-push", { fontCharacter: "\\eb41" });
+  Codicon.report = new Codicon("report", { fontCharacter: "\\eb42" });
+  Codicon.requestChanges = new Codicon("request-changes", { fontCharacter: "\\eb43" });
+  Codicon.rocket = new Codicon("rocket", { fontCharacter: "\\eb44" });
+  Codicon.rootFolderOpened = new Codicon("root-folder-opened", { fontCharacter: "\\eb45" });
+  Codicon.rootFolder = new Codicon("root-folder", { fontCharacter: "\\eb46" });
+  Codicon.rss = new Codicon("rss", { fontCharacter: "\\eb47" });
+  Codicon.ruby = new Codicon("ruby", { fontCharacter: "\\eb48" });
+  Codicon.saveAll = new Codicon("save-all", { fontCharacter: "\\eb49" });
+  Codicon.saveAs = new Codicon("save-as", { fontCharacter: "\\eb4a" });
+  Codicon.save = new Codicon("save", { fontCharacter: "\\eb4b" });
+  Codicon.screenFull = new Codicon("screen-full", { fontCharacter: "\\eb4c" });
+  Codicon.screenNormal = new Codicon("screen-normal", { fontCharacter: "\\eb4d" });
+  Codicon.searchStop = new Codicon("search-stop", { fontCharacter: "\\eb4e" });
+  Codicon.server = new Codicon("server", { fontCharacter: "\\eb50" });
+  Codicon.settingsGear = new Codicon("settings-gear", { fontCharacter: "\\eb51" });
+  Codicon.settings = new Codicon("settings", { fontCharacter: "\\eb52" });
+  Codicon.shield = new Codicon("shield", { fontCharacter: "\\eb53" });
+  Codicon.smiley = new Codicon("smiley", { fontCharacter: "\\eb54" });
+  Codicon.sortPrecedence = new Codicon("sort-precedence", { fontCharacter: "\\eb55" });
+  Codicon.splitHorizontal = new Codicon("split-horizontal", { fontCharacter: "\\eb56" });
+  Codicon.splitVertical = new Codicon("split-vertical", { fontCharacter: "\\eb57" });
+  Codicon.squirrel = new Codicon("squirrel", { fontCharacter: "\\eb58" });
+  Codicon.starFull = new Codicon("star-full", { fontCharacter: "\\eb59" });
+  Codicon.starHalf = new Codicon("star-half", { fontCharacter: "\\eb5a" });
+  Codicon.symbolClass = new Codicon("symbol-class", { fontCharacter: "\\eb5b" });
+  Codicon.symbolColor = new Codicon("symbol-color", { fontCharacter: "\\eb5c" });
+  Codicon.symbolCustomColor = new Codicon("symbol-customcolor", { fontCharacter: "\\eb5c" });
+  Codicon.symbolConstant = new Codicon("symbol-constant", { fontCharacter: "\\eb5d" });
+  Codicon.symbolEnumMember = new Codicon("symbol-enum-member", { fontCharacter: "\\eb5e" });
+  Codicon.symbolField = new Codicon("symbol-field", { fontCharacter: "\\eb5f" });
+  Codicon.symbolFile = new Codicon("symbol-file", { fontCharacter: "\\eb60" });
+  Codicon.symbolInterface = new Codicon("symbol-interface", { fontCharacter: "\\eb61" });
+  Codicon.symbolKeyword = new Codicon("symbol-keyword", { fontCharacter: "\\eb62" });
+  Codicon.symbolMisc = new Codicon("symbol-misc", { fontCharacter: "\\eb63" });
+  Codicon.symbolOperator = new Codicon("symbol-operator", { fontCharacter: "\\eb64" });
+  Codicon.symbolProperty = new Codicon("symbol-property", { fontCharacter: "\\eb65" });
+  Codicon.wrench = new Codicon("wrench", { fontCharacter: "\\eb65" });
+  Codicon.wrenchSubaction = new Codicon("wrench-subaction", { fontCharacter: "\\eb65" });
+  Codicon.symbolSnippet = new Codicon("symbol-snippet", { fontCharacter: "\\eb66" });
+  Codicon.tasklist = new Codicon("tasklist", { fontCharacter: "\\eb67" });
+  Codicon.telescope = new Codicon("telescope", { fontCharacter: "\\eb68" });
+  Codicon.textSize = new Codicon("text-size", { fontCharacter: "\\eb69" });
+  Codicon.threeBars = new Codicon("three-bars", { fontCharacter: "\\eb6a" });
+  Codicon.thumbsdown = new Codicon("thumbsdown", { fontCharacter: "\\eb6b" });
+  Codicon.thumbsup = new Codicon("thumbsup", { fontCharacter: "\\eb6c" });
+  Codicon.tools = new Codicon("tools", { fontCharacter: "\\eb6d" });
+  Codicon.triangleDown = new Codicon("triangle-down", { fontCharacter: "\\eb6e" });
+  Codicon.triangleLeft = new Codicon("triangle-left", { fontCharacter: "\\eb6f" });
+  Codicon.triangleRight = new Codicon("triangle-right", { fontCharacter: "\\eb70" });
+  Codicon.triangleUp = new Codicon("triangle-up", { fontCharacter: "\\eb71" });
+  Codicon.twitter = new Codicon("twitter", { fontCharacter: "\\eb72" });
+  Codicon.unfold = new Codicon("unfold", { fontCharacter: "\\eb73" });
+  Codicon.unlock = new Codicon("unlock", { fontCharacter: "\\eb74" });
+  Codicon.unmute = new Codicon("unmute", { fontCharacter: "\\eb75" });
+  Codicon.unverified = new Codicon("unverified", { fontCharacter: "\\eb76" });
+  Codicon.verified = new Codicon("verified", { fontCharacter: "\\eb77" });
+  Codicon.versions = new Codicon("versions", { fontCharacter: "\\eb78" });
+  Codicon.vmActive = new Codicon("vm-active", { fontCharacter: "\\eb79" });
+  Codicon.vmOutline = new Codicon("vm-outline", { fontCharacter: "\\eb7a" });
+  Codicon.vmRunning = new Codicon("vm-running", { fontCharacter: "\\eb7b" });
+  Codicon.watch = new Codicon("watch", { fontCharacter: "\\eb7c" });
+  Codicon.whitespace = new Codicon("whitespace", { fontCharacter: "\\eb7d" });
+  Codicon.wholeWord = new Codicon("whole-word", { fontCharacter: "\\eb7e" });
+  Codicon.window = new Codicon("window", { fontCharacter: "\\eb7f" });
+  Codicon.wordWrap = new Codicon("word-wrap", { fontCharacter: "\\eb80" });
+  Codicon.zoomIn = new Codicon("zoom-in", { fontCharacter: "\\eb81" });
+  Codicon.zoomOut = new Codicon("zoom-out", { fontCharacter: "\\eb82" });
+  Codicon.listFilter = new Codicon("list-filter", { fontCharacter: "\\eb83" });
+  Codicon.listFlat = new Codicon("list-flat", { fontCharacter: "\\eb84" });
+  Codicon.listSelection = new Codicon("list-selection", { fontCharacter: "\\eb85" });
+  Codicon.selection = new Codicon("selection", { fontCharacter: "\\eb85" });
+  Codicon.listTree = new Codicon("list-tree", { fontCharacter: "\\eb86" });
+  Codicon.debugBreakpointFunctionUnverified = new Codicon("debug-breakpoint-function-unverified", { fontCharacter: "\\eb87" });
+  Codicon.debugBreakpointFunction = new Codicon("debug-breakpoint-function", { fontCharacter: "\\eb88" });
+  Codicon.debugBreakpointFunctionDisabled = new Codicon("debug-breakpoint-function-disabled", { fontCharacter: "\\eb88" });
+  Codicon.debugStackframeActive = new Codicon("debug-stackframe-active", { fontCharacter: "\\eb89" });
+  Codicon.debugStackframeDot = new Codicon("debug-stackframe-dot", { fontCharacter: "\\eb8a" });
+  Codicon.debugStackframe = new Codicon("debug-stackframe", { fontCharacter: "\\eb8b" });
+  Codicon.debugStackframeFocused = new Codicon("debug-stackframe-focused", { fontCharacter: "\\eb8b" });
+  Codicon.debugBreakpointUnsupported = new Codicon("debug-breakpoint-unsupported", { fontCharacter: "\\eb8c" });
+  Codicon.symbolString = new Codicon("symbol-string", { fontCharacter: "\\eb8d" });
+  Codicon.debugReverseContinue = new Codicon("debug-reverse-continue", { fontCharacter: "\\eb8e" });
+  Codicon.debugStepBack = new Codicon("debug-step-back", { fontCharacter: "\\eb8f" });
+  Codicon.debugRestartFrame = new Codicon("debug-restart-frame", { fontCharacter: "\\eb90" });
+  Codicon.callIncoming = new Codicon("call-incoming", { fontCharacter: "\\eb92" });
+  Codicon.callOutgoing = new Codicon("call-outgoing", { fontCharacter: "\\eb93" });
+  Codicon.menu = new Codicon("menu", { fontCharacter: "\\eb94" });
+  Codicon.expandAll = new Codicon("expand-all", { fontCharacter: "\\eb95" });
+  Codicon.feedback = new Codicon("feedback", { fontCharacter: "\\eb96" });
+  Codicon.groupByRefType = new Codicon("group-by-ref-type", { fontCharacter: "\\eb97" });
+  Codicon.ungroupByRefType = new Codicon("ungroup-by-ref-type", { fontCharacter: "\\eb98" });
+  Codicon.account = new Codicon("account", { fontCharacter: "\\eb99" });
+  Codicon.bellDot = new Codicon("bell-dot", { fontCharacter: "\\eb9a" });
+  Codicon.debugConsole = new Codicon("debug-console", { fontCharacter: "\\eb9b" });
+  Codicon.library = new Codicon("library", { fontCharacter: "\\eb9c" });
+  Codicon.output = new Codicon("output", { fontCharacter: "\\eb9d" });
+  Codicon.runAll = new Codicon("run-all", { fontCharacter: "\\eb9e" });
+  Codicon.syncIgnored = new Codicon("sync-ignored", { fontCharacter: "\\eb9f" });
+  Codicon.pinned = new Codicon("pinned", { fontCharacter: "\\eba0" });
+  Codicon.githubInverted = new Codicon("github-inverted", { fontCharacter: "\\eba1" });
+  Codicon.debugAlt = new Codicon("debug-alt", { fontCharacter: "\\eb91" });
+  Codicon.serverProcess = new Codicon("server-process", { fontCharacter: "\\eba2" });
+  Codicon.serverEnvironment = new Codicon("server-environment", { fontCharacter: "\\eba3" });
+  Codicon.pass = new Codicon("pass", { fontCharacter: "\\eba4" });
+  Codicon.stopCircle = new Codicon("stop-circle", { fontCharacter: "\\eba5" });
+  Codicon.playCircle = new Codicon("play-circle", { fontCharacter: "\\eba6" });
+  Codicon.record = new Codicon("record", { fontCharacter: "\\eba7" });
+  Codicon.debugAltSmall = new Codicon("debug-alt-small", { fontCharacter: "\\eba8" });
+  Codicon.vmConnect = new Codicon("vm-connect", { fontCharacter: "\\eba9" });
+  Codicon.cloud = new Codicon("cloud", { fontCharacter: "\\ebaa" });
+  Codicon.merge = new Codicon("merge", { fontCharacter: "\\ebab" });
+  Codicon.exportIcon = new Codicon("export", { fontCharacter: "\\ebac" });
+  Codicon.graphLeft = new Codicon("graph-left", { fontCharacter: "\\ebad" });
+  Codicon.magnet = new Codicon("magnet", { fontCharacter: "\\ebae" });
+  Codicon.notebook = new Codicon("notebook", { fontCharacter: "\\ebaf" });
+  Codicon.redo = new Codicon("redo", { fontCharacter: "\\ebb0" });
+  Codicon.checkAll = new Codicon("check-all", { fontCharacter: "\\ebb1" });
+  Codicon.pinnedDirty = new Codicon("pinned-dirty", { fontCharacter: "\\ebb2" });
+  Codicon.passFilled = new Codicon("pass-filled", { fontCharacter: "\\ebb3" });
+  Codicon.circleLargeFilled = new Codicon("circle-large-filled", { fontCharacter: "\\ebb4" });
+  Codicon.circleLargeOutline = new Codicon("circle-large-outline", { fontCharacter: "\\ebb5" });
+  Codicon.combine = new Codicon("combine", { fontCharacter: "\\ebb6" });
+  Codicon.gather = new Codicon("gather", { fontCharacter: "\\ebb6" });
+  Codicon.table = new Codicon("table", { fontCharacter: "\\ebb7" });
+  Codicon.variableGroup = new Codicon("variable-group", { fontCharacter: "\\ebb8" });
+  Codicon.typeHierarchy = new Codicon("type-hierarchy", { fontCharacter: "\\ebb9" });
+  Codicon.typeHierarchySub = new Codicon("type-hierarchy-sub", { fontCharacter: "\\ebba" });
+  Codicon.typeHierarchySuper = new Codicon("type-hierarchy-super", { fontCharacter: "\\ebbb" });
+  Codicon.gitPullRequestCreate = new Codicon("git-pull-request-create", { fontCharacter: "\\ebbc" });
+  Codicon.runAbove = new Codicon("run-above", { fontCharacter: "\\ebbd" });
+  Codicon.runBelow = new Codicon("run-below", { fontCharacter: "\\ebbe" });
+  Codicon.notebookTemplate = new Codicon("notebook-template", { fontCharacter: "\\ebbf" });
+  Codicon.debugRerun = new Codicon("debug-rerun", { fontCharacter: "\\ebc0" });
+  Codicon.workspaceTrusted = new Codicon("workspace-trusted", { fontCharacter: "\\ebc1" });
+  Codicon.workspaceUntrusted = new Codicon("workspace-untrusted", { fontCharacter: "\\ebc2" });
+  Codicon.workspaceUnspecified = new Codicon("workspace-unspecified", { fontCharacter: "\\ebc3" });
+  Codicon.terminalCmd = new Codicon("terminal-cmd", { fontCharacter: "\\ebc4" });
+  Codicon.terminalDebian = new Codicon("terminal-debian", { fontCharacter: "\\ebc5" });
+  Codicon.terminalLinux = new Codicon("terminal-linux", { fontCharacter: "\\ebc6" });
+  Codicon.terminalPowershell = new Codicon("terminal-powershell", { fontCharacter: "\\ebc7" });
+  Codicon.terminalTmux = new Codicon("terminal-tmux", { fontCharacter: "\\ebc8" });
+  Codicon.terminalUbuntu = new Codicon("terminal-ubuntu", { fontCharacter: "\\ebc9" });
+  Codicon.terminalBash = new Codicon("terminal-bash", { fontCharacter: "\\ebca" });
+  Codicon.arrowSwap = new Codicon("arrow-swap", { fontCharacter: "\\ebcb" });
+  Codicon.copy = new Codicon("copy", { fontCharacter: "\\ebcc" });
+  Codicon.personAdd = new Codicon("person-add", { fontCharacter: "\\ebcd" });
+  Codicon.filterFilled = new Codicon("filter-filled", { fontCharacter: "\\ebce" });
+  Codicon.wand = new Codicon("wand", { fontCharacter: "\\ebcf" });
+  Codicon.debugLineByLine = new Codicon("debug-line-by-line", { fontCharacter: "\\ebd0" });
+  Codicon.inspect = new Codicon("inspect", { fontCharacter: "\\ebd1" });
+  Codicon.layers = new Codicon("layers", { fontCharacter: "\\ebd2" });
+  Codicon.layersDot = new Codicon("layers-dot", { fontCharacter: "\\ebd3" });
+  Codicon.layersActive = new Codicon("layers-active", { fontCharacter: "\\ebd4" });
+  Codicon.compass = new Codicon("compass", { fontCharacter: "\\ebd5" });
+  Codicon.compassDot = new Codicon("compass-dot", { fontCharacter: "\\ebd6" });
+  Codicon.compassActive = new Codicon("compass-active", { fontCharacter: "\\ebd7" });
+  Codicon.azure = new Codicon("azure", { fontCharacter: "\\ebd8" });
+  Codicon.issueDraft = new Codicon("issue-draft", { fontCharacter: "\\ebd9" });
+  Codicon.gitPullRequestClosed = new Codicon("git-pull-request-closed", { fontCharacter: "\\ebda" });
+  Codicon.gitPullRequestDraft = new Codicon("git-pull-request-draft", { fontCharacter: "\\ebdb" });
+  Codicon.debugAll = new Codicon("debug-all", { fontCharacter: "\\ebdc" });
+  Codicon.debugCoverage = new Codicon("debug-coverage", { fontCharacter: "\\ebdd" });
+  Codicon.runErrors = new Codicon("run-errors", { fontCharacter: "\\ebde" });
+  Codicon.folderLibrary = new Codicon("folder-library", { fontCharacter: "\\ebdf" });
+  Codicon.debugContinueSmall = new Codicon("debug-continue-small", { fontCharacter: "\\ebe0" });
+  Codicon.beakerStop = new Codicon("beaker-stop", { fontCharacter: "\\ebe1" });
+  Codicon.graphLine = new Codicon("graph-line", { fontCharacter: "\\ebe2" });
+  Codicon.graphScatter = new Codicon("graph-scatter", { fontCharacter: "\\ebe3" });
+  Codicon.pieChart = new Codicon("pie-chart", { fontCharacter: "\\ebe4" });
   Codicon.bracket = new Codicon("bracket", Codicon.json.definition);
-  Codicon.bracketDot = new Codicon("bracket-dot", {fontCharacter: "\\ebe5"});
-  Codicon.bracketError = new Codicon("bracket-error", {fontCharacter: "\\ebe6"});
-  Codicon.lockSmall = new Codicon("lock-small", {fontCharacter: "\\ebe7"});
-  Codicon.azureDevops = new Codicon("azure-devops", {fontCharacter: "\\ebe8"});
-  Codicon.verifiedFilled = new Codicon("verified-filled", {fontCharacter: "\\ebe9"});
-  Codicon.newLine = new Codicon("newline", {fontCharacter: "\\ebea"});
-  Codicon.layout = new Codicon("layout", {fontCharacter: "\\ebeb"});
-  Codicon.layoutActivitybarLeft = new Codicon("layout-activitybar-left", {fontCharacter: "\\ebec"});
-  Codicon.layoutActivitybarRight = new Codicon("layout-activitybar-right", {fontCharacter: "\\ebed"});
-  Codicon.layoutPanelLeft = new Codicon("layout-panel-left", {fontCharacter: "\\ebee"});
-  Codicon.layoutPanelCenter = new Codicon("layout-panel-center", {fontCharacter: "\\ebef"});
-  Codicon.layoutPanelJustify = new Codicon("layout-panel-justify", {fontCharacter: "\\ebf0"});
-  Codicon.layoutPanelRight = new Codicon("layout-panel-right", {fontCharacter: "\\ebf1"});
-  Codicon.layoutPanel = new Codicon("layout-panel", {fontCharacter: "\\ebf2"});
-  Codicon.layoutSidebarLeft = new Codicon("layout-sidebar-left", {fontCharacter: "\\ebf3"});
-  Codicon.layoutSidebarRight = new Codicon("layout-sidebar-right", {fontCharacter: "\\ebf4"});
-  Codicon.layoutStatusbar = new Codicon("layout-statusbar", {fontCharacter: "\\ebf5"});
-  Codicon.layoutMenubar = new Codicon("layout-menubar", {fontCharacter: "\\ebf6"});
-  Codicon.layoutCentered = new Codicon("layout-centered", {fontCharacter: "\\ebf7"});
-  Codicon.target = new Codicon("target", {fontCharacter: "\\ebf8"});
-  Codicon.indent = new Codicon("indent", {fontCharacter: "\\ebf9"});
-  Codicon.recordSmall = new Codicon("record-small", {fontCharacter: "\\ebfa"});
-  Codicon.errorSmall = new Codicon("error-small", {fontCharacter: "\\ebfb"});
-  Codicon.arrowCircleDown = new Codicon("arrow-circle-down", {fontCharacter: "\\ebfc"});
-  Codicon.arrowCircleLeft = new Codicon("arrow-circle-left", {fontCharacter: "\\ebfd"});
-  Codicon.arrowCircleRight = new Codicon("arrow-circle-right", {fontCharacter: "\\ebfe"});
-  Codicon.arrowCircleUp = new Codicon("arrow-circle-up", {fontCharacter: "\\ebff"});
+  Codicon.bracketDot = new Codicon("bracket-dot", { fontCharacter: "\\ebe5" });
+  Codicon.bracketError = new Codicon("bracket-error", { fontCharacter: "\\ebe6" });
+  Codicon.lockSmall = new Codicon("lock-small", { fontCharacter: "\\ebe7" });
+  Codicon.azureDevops = new Codicon("azure-devops", { fontCharacter: "\\ebe8" });
+  Codicon.verifiedFilled = new Codicon("verified-filled", { fontCharacter: "\\ebe9" });
+  Codicon.newLine = new Codicon("newline", { fontCharacter: "\\ebea" });
+  Codicon.layout = new Codicon("layout", { fontCharacter: "\\ebeb" });
+  Codicon.layoutActivitybarLeft = new Codicon("layout-activitybar-left", { fontCharacter: "\\ebec" });
+  Codicon.layoutActivitybarRight = new Codicon("layout-activitybar-right", { fontCharacter: "\\ebed" });
+  Codicon.layoutPanelLeft = new Codicon("layout-panel-left", { fontCharacter: "\\ebee" });
+  Codicon.layoutPanelCenter = new Codicon("layout-panel-center", { fontCharacter: "\\ebef" });
+  Codicon.layoutPanelJustify = new Codicon("layout-panel-justify", { fontCharacter: "\\ebf0" });
+  Codicon.layoutPanelRight = new Codicon("layout-panel-right", { fontCharacter: "\\ebf1" });
+  Codicon.layoutPanel = new Codicon("layout-panel", { fontCharacter: "\\ebf2" });
+  Codicon.layoutSidebarLeft = new Codicon("layout-sidebar-left", { fontCharacter: "\\ebf3" });
+  Codicon.layoutSidebarRight = new Codicon("layout-sidebar-right", { fontCharacter: "\\ebf4" });
+  Codicon.layoutStatusbar = new Codicon("layout-statusbar", { fontCharacter: "\\ebf5" });
+  Codicon.layoutMenubar = new Codicon("layout-menubar", { fontCharacter: "\\ebf6" });
+  Codicon.layoutCentered = new Codicon("layout-centered", { fontCharacter: "\\ebf7" });
+  Codicon.target = new Codicon("target", { fontCharacter: "\\ebf8" });
+  Codicon.indent = new Codicon("indent", { fontCharacter: "\\ebf9" });
+  Codicon.recordSmall = new Codicon("record-small", { fontCharacter: "\\ebfa" });
+  Codicon.errorSmall = new Codicon("error-small", { fontCharacter: "\\ebfb" });
+  Codicon.arrowCircleDown = new Codicon("arrow-circle-down", { fontCharacter: "\\ebfc" });
+  Codicon.arrowCircleLeft = new Codicon("arrow-circle-left", { fontCharacter: "\\ebfd" });
+  Codicon.arrowCircleRight = new Codicon("arrow-circle-right", { fontCharacter: "\\ebfe" });
+  Codicon.arrowCircleUp = new Codicon("arrow-circle-up", { fontCharacter: "\\ebff" });
   Codicon.dialogError = new Codicon("dialog-error", Codicon.error.definition);
   Codicon.dialogWarning = new Codicon("dialog-warning", Codicon.warning.definition);
   Codicon.dialogInfo = new Codicon("dialog-info", Codicon.info.definition);
@@ -6579,7 +6579,7 @@
     CSSIcon2.asCSSSelector = asCSSSelector;
   })(CSSIcon || (CSSIcon = {}));
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/languages.js
+  // node_modules/monaco-editor/esm/vs/editor/common/languages.js
   var Token = class {
     constructor(offset, type, language) {
       this._tokenBrand = void 0;
@@ -6593,7 +6593,7 @@
   };
   var CompletionItemKinds;
   (function(CompletionItemKinds2) {
-    const byKind = new Map();
+    const byKind = /* @__PURE__ */ new Map();
     byKind.set(0, Codicon.symbolMethod);
     byKind.set(1, Codicon.symbolFunction);
     byKind.set(2, Codicon.symbolConstructor);
@@ -6632,7 +6632,7 @@
       return codicon;
     }
     CompletionItemKinds2.toIcon = toIcon;
-    const data = new Map();
+    const data = /* @__PURE__ */ new Map();
     data.set("method", 0);
     data.set("function", 1);
     data.set("constructor", 2);
@@ -6691,7 +6691,7 @@
   })(DocumentHighlightKind || (DocumentHighlightKind = {}));
   var SymbolKinds;
   (function(SymbolKinds2) {
-    const byKind = new Map();
+    const byKind = /* @__PURE__ */ new Map();
     byKind.set(0, Codicon.symbolFile);
     byKind.set(1, Codicon.symbolModule);
     byKind.set(2, Codicon.symbolNamespace);
@@ -6753,7 +6753,7 @@
   })(InlayHintKind || (InlayHintKind = {}));
   var TokenizationRegistry2 = new TokenizationRegistry();
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js
+  // node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js
   var AccessibilitySupport;
   (function(AccessibilitySupport2) {
     AccessibilitySupport2[AccessibilitySupport2["Unknown"] = 0] = "Unknown";
@@ -7299,7 +7299,7 @@
     WrappingIndent2[WrappingIndent2["DeepIndent"] = 3] = "DeepIndent";
   })(WrappingIndent || (WrappingIndent = {}));
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/services/editorBaseApi.js
+  // node_modules/monaco-editor/esm/vs/editor/common/services/editorBaseApi.js
   var KeyMod = class {
     static chord(firstPart, secondPart) {
       return KeyChord(firstPart, secondPart);
@@ -7328,7 +7328,7 @@
     };
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/core/wordCharacterClassifier.js
+  // node_modules/monaco-editor/esm/vs/editor/common/core/wordCharacterClassifier.js
   var WordCharacterClassifier = class extends CharacterClassifier {
     constructor(wordSeparators) {
       super(0);
@@ -7350,7 +7350,7 @@
   }
   var getMapForWordSeparators = once2((input) => new WordCharacterClassifier(input));
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/model.js
+  // node_modules/monaco-editor/esm/vs/editor/common/model.js
   var OverviewRulerLane2;
   (function(OverviewRulerLane3) {
     OverviewRulerLane3[OverviewRulerLane3["Left"] = 1] = "Left";
@@ -7371,7 +7371,7 @@
     InjectedTextCursorStops3[InjectedTextCursorStops3["None"] = 3] = "None";
   })(InjectedTextCursorStops2 || (InjectedTextCursorStops2 = {}));
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/model/textModelSearch.js
+  // node_modules/monaco-editor/esm/vs/editor/common/model/textModelSearch.js
   function leftIsWordBounday(wordSeparators, text, textLength, matchStartIndex, matchLength) {
     if (matchStartIndex === 0) {
       return true;
@@ -7459,7 +7459,7 @@
     }
   };
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/services/unicodeTextModelHighlighter.js
+  // node_modules/monaco-editor/esm/vs/editor/common/services/unicodeTextModelHighlighter.js
   var UnicodeTextModelHighlighter = class {
     static computeUnicodeHighlights(model, options, range) {
       const startLine = range ? range.startLineNumber : 1;
@@ -7539,15 +7539,15 @@
         case 0:
           return null;
         case 2:
-          return {kind: 1};
+          return { kind: 1 };
         case 3: {
           const codePoint = char.codePointAt(0);
           const primaryConfusable = codePointHighlighter.ambiguousCharacters.getPrimaryConfusable(codePoint);
-          const notAmbiguousInLocales = AmbiguousCharacters.getLocales().filter((l) => !AmbiguousCharacters.getInstance(new Set([...options.allowedLocales, l])).isAmbiguous(codePoint));
-          return {kind: 0, confusableWith: String.fromCodePoint(primaryConfusable), notAmbiguousInLocales};
+          const notAmbiguousInLocales = AmbiguousCharacters.getLocales().filter((l) => !AmbiguousCharacters.getInstance(/* @__PURE__ */ new Set([...options.allowedLocales, l])).isAmbiguous(codePoint));
+          return { kind: 0, confusableWith: String.fromCodePoint(primaryConfusable), notAmbiguousInLocales };
         }
         case 1:
-          return {kind: 2};
+          return { kind: 2 };
       }
     }
   };
@@ -7565,7 +7565,7 @@
       if (this.options.nonBasicASCII) {
         return "allNonBasicAscii";
       }
-      const set = new Set();
+      const set = /* @__PURE__ */ new Set();
       if (this.options.invisibleCharacters) {
         for (const cp of InvisibleCharacters.codePoints) {
           if (!isAllowedInvisibleCharacter(String.fromCodePoint(cp))) {
@@ -7623,7 +7623,7 @@
     return character === " " || character === "\n" || character === "	";
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js
+  // node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve2) {
@@ -7726,7 +7726,7 @@
         if (match[0].length === 0) {
           break;
         }
-        result.push({start: match.index, end: match.index + match[0].length});
+        result.push({ start: match.index, end: match.index + match[0].length });
       }
       return result;
     }
@@ -7763,8 +7763,8 @@
       };
     }
     _validateRange(range) {
-      const start = this._validatePosition({lineNumber: range.startLineNumber, column: range.startColumn});
-      const end = this._validatePosition({lineNumber: range.endLineNumber, column: range.endColumn});
+      const start = this._validatePosition({ lineNumber: range.startLineNumber, column: range.startColumn });
+      const end = this._validatePosition({ lineNumber: range.endLineNumber, column: range.endColumn });
       if (start.lineNumber !== range.startLineNumber || start.column !== range.startColumn || end.lineNumber !== range.endLineNumber || end.column !== range.endColumn) {
         return {
           startLineNumber: start.lineNumber,
@@ -7779,7 +7779,7 @@
       if (!Position.isIPosition(position)) {
         throw new Error("bad position");
       }
-      let {lineNumber, column} = position;
+      let { lineNumber, column } = position;
       let hasChanged = false;
       if (lineNumber < 1) {
         lineNumber = 1;
@@ -7802,19 +7802,19 @@
       if (!hasChanged) {
         return position;
       } else {
-        return {lineNumber, column};
+        return { lineNumber, column };
       }
     }
   };
   var EditorSimpleWorker = class {
     constructor(host, foreignModuleFactory) {
       this._host = host;
-      this._models = Object.create(null);
+      this._models = /* @__PURE__ */ Object.create(null);
       this._foreignModuleFactory = foreignModuleFactory;
       this._foreignModule = null;
     }
     dispose() {
-      this._models = Object.create(null);
+      this._models = /* @__PURE__ */ Object.create(null);
     }
     _getModel(uri) {
       return this._models[uri];
@@ -7844,7 +7844,7 @@
       return __awaiter2(this, void 0, void 0, function* () {
         const model = this._getModel(url);
         if (!model) {
-          return {ranges: [], hasMore: false, ambiguousCharacterCount: 0, invisibleCharacterCount: 0, nonBasicAsciiCharacterCount: 0};
+          return { ranges: [], hasMore: false, ambiguousCharacterCount: 0, invisibleCharacterCount: 0, nonBasicAsciiCharacterCount: 0 };
         }
         return UnicodeTextModelHighlighter.computeUnicodeHighlights(model, options, range);
       });
@@ -7905,7 +7905,7 @@
           const bRng = b.range ? 0 : 1;
           return aRng - bRng;
         });
-        for (let {range, text, eol} of edits) {
+        for (let { range, text, eol } of edits) {
           if (typeof eol === "number") {
             lastEol = eol;
           }
@@ -7918,7 +7918,7 @@
             continue;
           }
           if (Math.max(text.length, original.length) > EditorSimpleWorker._diffLimit) {
-            result.push({range, text});
+            result.push({ range, text });
             continue;
           }
           const changes = stringDiff(original, text, false);
@@ -7928,7 +7928,7 @@
             const end = model.positionAt(editOffset + change.originalStart + change.originalLength);
             const newEdit = {
               text: text.substr(change.modifiedStart, change.modifiedLength),
-              range: {startLineNumber: start.lineNumber, startColumn: start.column, endLineNumber: end.lineNumber, endColumn: end.column}
+              range: { startLineNumber: start.lineNumber, startColumn: start.column, endLineNumber: end.lineNumber, endColumn: end.column }
             };
             if (model.getValueInRange(newEdit.range) !== newEdit.text) {
               result.push(newEdit);
@@ -7936,7 +7936,7 @@
           }
         }
         if (typeof lastEol === "number") {
-          result.push({eol: lastEol, text: "", range: {startLineNumber: 0, startColumn: 0, endLineNumber: 0, endColumn: 0}});
+          result.push({ eol: lastEol, text: "", range: { startLineNumber: 0, startColumn: 0, endLineNumber: 0, endColumn: 0 } });
         }
         return result;
       });
@@ -7954,7 +7954,7 @@
       return __awaiter2(this, void 0, void 0, function* () {
         const sw = new StopWatch(true);
         const wordDefRegExp = new RegExp(wordDef, wordDefFlags);
-        const seen = new Set();
+        const seen = /* @__PURE__ */ new Set();
         outer:
           for (let url of modelUrls) {
             const model = this._getModel(url);
@@ -7971,17 +7971,17 @@
               }
             }
           }
-        return {words: Array.from(seen), duration: sw.elapsed()};
+        return { words: Array.from(seen), duration: sw.elapsed() };
       });
     }
     computeWordRanges(modelUrl, range, wordDef, wordDefFlags) {
       return __awaiter2(this, void 0, void 0, function* () {
         const model = this._getModel(modelUrl);
         if (!model) {
-          return Object.create(null);
+          return /* @__PURE__ */ Object.create(null);
         }
         const wordDefRegExp = new RegExp(wordDef, wordDefFlags);
-        const result = Object.create(null);
+        const result = /* @__PURE__ */ Object.create(null);
         for (let line = range.startLineNumber; line < range.endLineNumber; line++) {
           const words = model.getLineWords(line, wordDefRegExp);
           for (const word of words) {
@@ -8020,7 +8020,7 @@
           };
         }
         const selectionText = model.getValueInRange(range);
-        const wordRange = model.getWordAtPosition({lineNumber: range.startLineNumber, column: range.startColumn}, wordDefRegExp);
+        const wordRange = model.getWordAtPosition({ lineNumber: range.startLineNumber, column: range.startColumn }, wordDefRegExp);
         if (!wordRange) {
           return null;
         }
@@ -8063,7 +8063,7 @@
     globals.monaco = createMonacoBaseAPI();
   }
 
-  // node_modules/.pnpm/monaco-editor@0.33.0/node_modules/monaco-editor/esm/vs/editor/editor.worker.js
+  // node_modules/monaco-editor/esm/vs/editor/editor.worker.js
   var initialized = false;
   function initialize(foreignModule) {
     if (initialized) {

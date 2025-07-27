@@ -9,96 +9,218 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\BaseController;
-use app\common\validate\system\UserLogValidate;
-use app\common\service\system\UserLogService;
-use app\common\service\system\UserService;
-use app\common\service\system\MenuService;
-use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\system\UserLogValidate as Validate;
+use app\common\service\system\UserLogService as Service;
+use app\common\model\system\UserLogModel as Model;
 
 /**
- * @Apidoc\Title("用户日志")
- * @Apidoc\Group("system")
- * @Apidoc\Sort("600")
+ * @Apidoc\Title("lang(用户日志)")
+ * @Apidoc\Group("log")
+ * @Apidoc\Sort("150")
  */
 class UserLog extends BaseController
 {
     /**
-     * @Apidoc\Title("用户日志列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="日志列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\system\UserLogModel", field="log_id,user_id,menu_id,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="nickname,username"),
-     *   @Apidoc\Returned(ref="app\common\model\system\MenuModel", field="menu_name,menu_url"),
-     * })
-     * @Apidoc\Returned("user", ref="app\common\model\system\UserModel", type="array", desc="用户列表", field="user_id,nickname,username")
-     * @Apidoc\Returned("menu", ref="app\common\model\system\MenuModel", type="tree", desc="菜单树形", field="menu_id,menu_pid,menu_name")
-     * @Apidoc\Returned("log_types", type="array", desc="日志类型")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(用户日志列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = UserLogService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
-        $data['user'] = UserService::list([where_delete()], 0, 0, [], 'nickname,username', false)['list'] ?? [];
-        $data['menu'] = MenuService::list('tree', [where_delete()], [], 'menu_pid,menu_name');
-        $data['log_types'] = SettingService::logTypes();
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("用户日志信息")
-     * @Apidoc\Query(ref="app\common\model\system\UserLogModel", field="log_id")
-     * @Apidoc\Returned(ref="app\common\model\system\UserLogModel")
-     * @Apidoc\Returned(ref="app\common\model\system\UserModel", field="nickname,username")
-     * @Apidoc\Returned(ref="app\common\model\system\MenuModel", field="menu_name,menu_url")
+     * @Apidoc\Title("lang(用户日志信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['log_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(UserLogValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = UserLogService::info($param['log_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("用户日志删除")
+     * @Apidoc\Title("lang(用户日志添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     */
+    public function add()
+    {
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
+
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
+
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param, false);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(用户日志修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     */
+    public function edit()
+    {
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
+
+            validate($this->validate)->scene('info')->check($param);
+
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(用户日志删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(UserLogValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = UserLogService::dele($param['ids'], true);
+        $data = $this->service::dele($param['ids'], true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("用户日志清空")
+     * @Apidoc\Title("lang(用户日志是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
+     * @Apidoc\Param(ref={Service::class,"disable"})
+     */
+    public function disable()
+    {
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
+
+        validate($this->validate)->scene('disable')->check($param);
+
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(用户日志批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(用户日志导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(用户日志清空)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Query(ref={Service::class,"clear"})
      */
     public function clear()
     {
         $where = $this->where();
 
-        $data = UserLogService::clear($where);
+        $data = $this->service::clear($where);
 
         return success($data);
     }

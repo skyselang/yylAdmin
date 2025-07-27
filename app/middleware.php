@@ -10,9 +10,9 @@
 // 全局中间件定义文件
 return [
     // 全局跨域请求
-    \app\common\middleware\AllowCrossDomain::class,
+    \app\common\middleware\AllowCrossDomainMiddleware::class,
     // 全局日志清除
-    \app\common\middleware\LogClear::class,
+    \app\common\middleware\LogClearMiddleware::class,
     // 全局请求缓存
     // \think\middleware\CheckRequestCache::class,
     // 多语言加载

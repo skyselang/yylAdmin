@@ -18,4 +18,6 @@ class UserAttributesModel extends Pivot
 {
     // 表名
     protected $name = 'system_user_attributes';
+    // 表主键
+    protected $pk = 'id';
 }

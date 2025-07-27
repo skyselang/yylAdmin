@@ -12,7 +12,7 @@ namespace app\common\service\system;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use app\common\service\system\SettingService;
-use app\common\service\utils\RetCodeUtils;
+use app\common\utils\ReturnCodeUtils;
 
 /**
  * 用户Token
@@ -21,22 +21,18 @@ class UserTokenService
 {
     /**
      * 用户Token配置
-     *
-     * @return array
      */
     public static function config()
     {
         $config = SettingService::info();
         $config['token_alg'] = 'HS256';
+
         return $config;
     }
 
     /**
      * 用户Token生成
-     * 
      * @param array $user 用户信息
-     * 
-     * @return string
      */
     public static function create($user)
     {
@@ -57,11 +53,8 @@ class UserTokenService
 
     /**
      * 用户Token decode
-     *
-     * @param  string $token
-     * @param  bool   $exce 是否抛出异常
-     * 
-     * @return object|Exception
+     * @param string $token token
+     * @param bool   $exce  是否抛出异常
      */
     public static function decode($token, $exce = true)
     {
@@ -70,7 +63,7 @@ class UserTokenService
             $decode = JWT::decode($token, new Key($config['token_key'], $config['token_alg']));
         } catch (\Exception $e) {
             if ($exce) {
-                exception('登录状态已失效', RetCodeUtils::LOGIN_INVALID);
+                exception(lang('账号登录状态已失效'), ReturnCodeUtils::LOGIN_INVALID);
             }
         }
 
@@ -79,50 +72,44 @@ class UserTokenService
 
     /**
      * 用户Token验证
-     *
      * @param string $token token
-     * 
-     * @return void|Exception
      */
     public static function verify($token)
     {
         if (empty($token)) {
-            exception('请登录', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('请登录'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         try {
             $decode  = self::decode($token);
             $user_id = $decode->data->user_id;
         } catch (\Exception $e) {
-            exception('账号登录状态已失效', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号登录状态已失效'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         $user = UserService::info($user_id);
         if ($user['is_delete'] == 1) {
-            exception('账号已被删除', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号已被删除'), ReturnCodeUtils::LOGIN_INVALID);
         }
         if ($user['is_disable'] == 1) {
-            exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号已被禁用'), ReturnCodeUtils::LOGIN_INVALID);
         }
         if (($user['pwd_time'] ?? '') && $decode->data->login_time < $user['pwd_time']) {
-            exception('账号密码已修改', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号密码已修改'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         $config = self::config();
         if ($config['is_multi_login'] == 0) {
             if ($decode->data->login_time != $user['login_time']) {
-                exception('账号已在另一处登录', RetCodeUtils::LOGIN_INVALID);
+                exception(lang('账号已在另一处登录'), ReturnCodeUtils::LOGIN_INVALID);
             }
         }
     }
 
     /**
      * 用户Token用户id
-     *
      * @param string $token token
      * @param bool   $exce  是否抛出异常
-     * 
-     * @return int user_id
      */
     public static function userId($token, $exce = false)
     {
@@ -138,7 +125,7 @@ class UserTokenService
         }
 
         if (empty($user_id) && $exce) {
-            exception('请登录', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('请登录'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         return $user_id;

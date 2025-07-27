@@ -21,6 +21,21 @@ class GroupModel extends Model
     protected $name = 'member_group';
     // 表主键
     protected $pk = 'group_id';
+    /**
+     * 名称键
+     * @var string
+     */
+    public $namek = 'group_name';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     // 关联接口
     public function apis()
@@ -34,7 +49,7 @@ class GroupModel extends Model
      */
     public function getApiIdsAttr()
     {
-        return relation_fields($this['apis'], 'api_id');
+        return model_relation_fields($this['apis'], 'api_id');
     }
 
     /**
@@ -45,15 +60,5 @@ class GroupModel extends Model
     public function getIsDefaultNameAttr($value, $data)
     {
         return ($data['is_default'] ?? 0) ? '是' : '否';
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

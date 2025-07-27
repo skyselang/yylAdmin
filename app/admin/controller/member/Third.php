@@ -9,90 +9,132 @@
 
 namespace app\admin\controller\member;
 
-use app\common\controller\BaseController;
-use app\common\validate\member\ThirdValidate;
-use app\common\service\member\ThirdService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\member\ThirdValidate as Validate;
+use app\common\service\member\ThirdService as Service;
+use app\common\model\member\ThirdModel as Model;
 
 /**
- * @Apidoc\Title("会员第三方账号")
+ * @Apidoc\Title("lang(会员第三方账号)")
  * @Apidoc\Group("member")
- * @Apidoc\Sort("600")
+ * @Apidoc\Sort("400")
  */
 class Third extends BaseController
 {
     /**
-     * @Apidoc\Title("会员第三方账号列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\ThirdModel", type="array", desc="第三方账号列表", field="third_id,platform,application,openid,is_disable,create_time,update_time")
-     * @Apidoc\Returned("platforms", type="array", desc="平台")
-     * @Apidoc\Returned("applications", type="array", desc="应用")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员第三方账号列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = ThirdService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员第三方账号信息")
-     * @Apidoc\Query(ref="app\common\model\member\ThirdModel", field="third_id")
-     * @Apidoc\Returned(ref="app\common\model\member\ThirdModel")
+     * @Apidoc\Title("lang(会员第三方账号信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['third_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(ThirdValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = ThirdService::info($param['third_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员第三方账号添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\ThirdModel", field="member_id,platform,application,unionid,openid,headimgurl,nickname,remark")
+     * @Apidoc\Title("lang(会员第三方账号添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(ThirdService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(ThirdValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = ThirdService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员第三方账号修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\ThirdModel", field="third_id,member_id,platform,application,unionid,openid,headimgurl,nickname,remark")
+     * @Apidoc\Title("lang(会员第三方账号修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(ThirdService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(ThirdValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = ThirdService::edit($param['third_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员第三方账号删除")
+     * @Apidoc\Title("lang(会员第三方账号删除)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      */
@@ -100,26 +142,103 @@ class Third extends BaseController
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(ThirdValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = ThirdService::dele($param['ids']);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员第三方账号是否禁用")
+     * @Apidoc\Title("lang(会员第三方账号是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\member\ThirdModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(ThirdValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = ThirdService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员第三方账号批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员第三方账号导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员第三方账号导入)")
+     * @Apidoc\Desc("lang(get下载导入模板，post提交导入文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\ParamType("formdata")
+     * @Apidoc\Query(ref={Service::class,"import"})
+     * @Apidoc\Param(ref={Service::class,"import"})
+     * @Apidoc\Returned(ref={Service::class,"import"})
+     */
+    public function import()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            if ($param['file_path']) {
+                return download($param['file_path'], $param['file_name']);
+            } else {
+                $data = $this->service::export(['is_import' => 1, 'param' => ['where' => [where_delete()]]]);
+                return success($data);
+            }
+        }
+
+        $param['import_file'] = $this->request->file('import_file');
+        $param['is_update']   = $this->param('is_update/d', 0);
+        $param['remark']      = $this->param('remark/s');
+
+        validate($this->validate)->scene('import')->check($param);
+
+        $data = $this->service::import($param, true);
 
         return success($data);
     }

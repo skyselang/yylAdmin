@@ -6,20 +6,10 @@
 // +----------------------------------------------------------------------
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
-// +----------------------------------------------------------------------
-// | 执行命令：
-// | 本地开发：php think queue:listen --tries=3 --timeout=1800 --memory=1024
-// | 正式环境：php think queue:work --tries=3 --timeout=1800 --memory=1024
-// | 查看参数：php think queue:listen --help
-// | 部分参数说明：
-// | --tries   重试次数，必须设置，不然任务会反复执行
-// | --timeout 超时时间，耗时间长的任务设置大一些
-// | --memory  内存限制，耗内存大的任务设置大一些
-// +----------------------------------------------------------------------
 
-// 队列设置：https://github.com/top-think/think-queue
 use think\facade\Env;
 
+// 队列设置：https://github.com/top-think/think-queue
 return [
     // 驱动类型：sync、database、redis
     'default'     => 'database',

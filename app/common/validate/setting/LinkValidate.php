@@ -10,16 +10,31 @@
 namespace app\common\validate\setting;
 
 use think\Validate;
-use app\common\model\setting\LinkModel;
+use app\common\service\setting\LinkService as Service;
+use app\common\model\setting\LinkModel as Model;
 
 /**
  * 友链管理验证器
  */
 class LinkValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'        => ['require', 'array'],
+        'field'      => ['require', 'checkUpdateField'],
         'link_id'    => ['require'],
         'name'       => ['require', 'checkExisted'],
         'start_time' => ['dateFormat:Y-m-d H:i:s'],
@@ -28,41 +43,54 @@ class LinkValidate extends Validate
 
     // 错误信息
     protected $message = [
-        'name.require'          => '请输入名称',
-        'start_time.dateFormat' => '开始时间日期格式：YYYY-MM-DD hh:mm:ss',
-        'start_time.dateFormat' => '结束时间日期格式：YYYY-MM-DD hh:mm:ss',
+        'name.require' => '请输入名称',
     ];
 
     // 验证场景
     protected $scene = [
-        'info'     => ['link_id'],
-        'add'      => ['name', 'start_time', 'end_time'],
-        'edit'     => ['link_id', 'name', 'start_time', 'end_time'],
-        'dele'     => ['ids'],
-        'disable'  => ['ids'],
-        'datetime' => ['ids', 'start_time', 'end_time'],
+        'info'    => ['link_id'],
+        'add'     => ['name', 'start_time', 'end_time'],
+        'edit'    => ['link_id', 'name', 'start_time', 'end_time'],
+        'dele'    => ['ids'],
+        'disable' => ['ids'],
+        'update'  => ['ids', 'field'],
     ];
 
     // 自定义验证规则：友链是否已存在
     protected function checkExisted($value, $rule, $data = [])
     {
-        $model = new LinkModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
         $unique = $data['unique'] ?? '';
         if ($unique) {
             if (is_numeric($unique)) {
-                return '标识不能为纯数字';
+                return lang('编号不能为纯数字');
             }
-
-            $where[] = [$pk, '<>', $id];
-            $where[] = ['unique', '=', $unique];
-            $where = where_delete($where);
-            $info = $model->field($pk)->where($where)->find();
+            $where = where_delete([[$pk, '<>', $id], ['unique', '=', $unique]]);
+            $info  = $model->field($pk)->where($where)->find();
             if ($info) {
-                return '标识已存在：' . $unique;
+                return lang('编号已存在：') . $unique;
             }
+        }
+
+        $where = where_delete([[$pk, '<>', $id], ['name', '=', $data['name']]]);
+        $info  = $model->field($pk)->where($where)->find();
+        if ($info) {
+            return lang('名称已存在：') . $data['name'];
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：友链批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
         }
 
         return true;

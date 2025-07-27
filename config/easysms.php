@@ -22,7 +22,7 @@ return [
     'gateways' => [
         // 错误日志
         'errorlog' => [
-            'file' => runtime_path() . '/easysms/' . date('Ym') . '/' . date('Ymd') . 'easysms.log',
+            'file' => runtime_path() . '/easysms/' . date('Ym') . '/easysms' . date('Ymd') . '.log',
         ],
         // 阿里云
         'aliyun' => [

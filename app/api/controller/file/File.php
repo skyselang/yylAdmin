@@ -9,6 +9,7 @@
 
 namespace app\api\controller\file;
 
+use hg\apidoc\annotation as Apidoc;
 use app\common\controller\BaseController;
 use app\api\middleware\FileSettingMiddleware;
 use app\common\validate\file\FileValidate;
@@ -16,10 +17,9 @@ use app\common\service\file\SettingService;
 use app\common\service\file\FileService;
 use app\common\service\file\GroupService;
 use app\common\service\file\TagService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
- * @Apidoc\Title("文件")
+ * @Apidoc\Title("lang(文件)")
  * @Apidoc\Group("file")
  * @Apidoc\Sort("90")
  */
@@ -27,66 +27,57 @@ class File extends BaseController
 {
     /**
      * 控制器中间件
-     * 
-     * @var array
      */
     protected $middleware = [FileSettingMiddleware::class];
 
     /**
-     * @Apidoc\Title("分组列表")
+     * @Apidoc\Title("lang(分组列表)")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", ref="app\common\model\file\GroupModel", field="group_id,group_name", desc="分组列表")
+     * @Apidoc\Returned("list", type="array", ref={GroupService::class,"info"}, field="group_id,group_unique,group_name", desc="分组列表")
      */
     public function group()
     {
         $setting = SettingService::info();
 
-        $where[] = ['group_id', 'in', $setting['api_file_group_ids']];
-        $where[] = where_disable();
-        $where[] = where_delete();
+        $where = where_disable(['group_id', 'in', $setting['api_file_group_ids']]);
 
-        $data = GroupService::list($where, $this->page(0), $this->limit(0), $this->order(), 'group_name', false);
+        $data = GroupService::list($where, $this->page(0), $this->limit(0), $this->order(), 'group_unique,group_name', false);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("标签列表")
+     * @Apidoc\Title("lang(标签列表)")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", ref="app\common\model\file\TagModel", field="tag_id,tag_name", desc="标签列表")
+     * @Apidoc\Returned("list", type="array", ref={TagService::class,"info"}, field="tag_id,tag_unique,tag_name", desc="标签列表")
      */
     public function tag()
     {
         $setting = SettingService::info();
 
-        $where[] = ['tag_id', 'in', $setting['api_file_tag_ids']];
-        $where[] = where_disable();
-        $where[] = where_delete();
+        $where = where_disdel(['tag_id', 'in', $setting['api_file_tag_ids']]);
 
-        $data = TagService::list($where, $this->page(0), $this->limit(0), $this->order(), 'tag_name', false);
+        $data = TagService::list($where, $this->page(0), $this->limit(0), $this->order(), 'tag_unique,tag_name', false);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("文件列表")
+     * @Apidoc\Title("lang(文件列表)")
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\file\FileModel", field="group_id,file_type")
-     * @Apidoc\Query(ref="app\common\model\file\TagModel", field="tag_id")
+     * @Apidoc\Query(ref={GroupService::class,"edit"}, field="group_id,file_type")
+     * @Apidoc\Query(ref={TagService::class,"edit"}, field="tag_id")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="文件列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext,file_size,sort"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr", field="file_url"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr", field="group_name"),
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr", field="tag_names"),
+     *   @Apidoc\Returned(ref={FileService::class,"info"}, field="file_id,unique,group_id,storage,domain,file_type,file_hash,file_name,file_path,file_ext,file_size,sort,file_url,group_name,tag_names"),
      * })
-     * @Apidoc\Returned("group", type="array", ref="app\common\model\file\GroupModel", field="group_id,group_name", desc="分组列表")
-     * @Apidoc\Returned("tag", type="array", ref="app\common\model\file\TagModel", field="tag_id,tag_name", desc="标签列表")
+     * @Apidoc\Returned("group", type="array", ref={GroupService::class,"info"}, field="group_id,group_unique,group_name", desc="分组列表")
+     * @Apidoc\Returned("tag", type="array", ref={TagService::class,"info"}, field="tag_id,tag_unique,tag_name", desc="标签列表")
      */
     public function list()
     {
@@ -139,27 +130,24 @@ class File extends BaseController
 
         $where_group = $where_base;
         $where_group[] = ['group_id', 'in', $setting['api_file_group_ids']];
-        $data['group'] = GroupService::list($where_group, 0, 0, [], 'group_name', false)['list'] ?? [];
+        $data['group'] = GroupService::list($where_group, 0, 0, [], 'group_unique,group_name', false)['list'] ?? [];
 
         $where_tag = $where_base;
         $where_tag[] = ['tag_id', 'in', $setting['api_file_tag_ids']];
-        $data['tag'] = TagService::list($where_tag, 0, 0, [], 'tag_name', false)['list'] ?? [];
+        $data['tag'] = TagService::list($where_tag, 0, 0, [], 'tag_unique,tag_name', false)['list'] ?? [];
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("文件信息")
-     * @Apidoc\Query("file_id", type="string", require=true, default="", desc="文件id、标识")
-     * @Apidoc\Returned(ref="app\common\model\file\FileModel")
-     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getFileUrlAttr")
-     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getGroupNameAttr")
-     * @Apidoc\Returned(ref="app\common\model\file\FileModel\getTagNamesAttr")
+     * @Apidoc\Title("lang(文件信息)")
+     * @Apidoc\Query("file_id", type="string", require=true, default="", desc="文件id、编号")
+     * @Apidoc\Returned(ref={FileService::class,"info"})
      * @Apidoc\Returned("prev_info", type="object", desc="上一条", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,file_name")
+     *   @Apidoc\Returned(ref={FileService::class,"info"})
      * })
      * @Apidoc\Returned("next_info", type="object", desc="下一条", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\FileModel", field="file_id,file_name")
+     *   @Apidoc\Returned(ref={FileService::class,"info"})
      * })
      */
     public function info()
@@ -183,7 +171,7 @@ class File extends BaseController
             $tag_id = 0;
         }
         if (empty($data) || $data['is_disable'] || $data['is_delete'] || !$file_type || !$group_id || !$tag_id) {
-            return error('文件不存在');
+            return error(lang('文件不存在'));
         }
 
         $where = [where_disable(), where_delete()];

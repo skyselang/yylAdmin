@@ -12,7 +12,7 @@ namespace app\common\service\member;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use app\common\service\member\SettingService;
-use app\common\service\utils\RetCodeUtils;
+use app\common\utils\ReturnCodeUtils;
 
 /**
  * 会员Token
@@ -21,22 +21,18 @@ class TokenService
 {
     /**
      * 会员Token配置
-     *
-     * @return array
      */
     public static function config()
     {
         $config = SettingService::info();
         $config['token_alg'] = 'HS256';
+
         return $config;
     }
 
     /**
      * 会员Token生成
-     * 
      * @param array $member 会员信息
-     * 
-     * @return string
      */
     public static function create($member)
     {
@@ -57,9 +53,7 @@ class TokenService
 
     /**
      * 会员Token decode
-     *
-     * @param  string $token
-     * @return object
+     * @param string $token
      */
     public static function decode($token)
     {
@@ -67,7 +61,7 @@ class TokenService
             $config = self::config();
             $decode = JWT::decode($token, new Key($config['token_key'], $config['token_alg']));
         } catch (\Exception $e) {
-            exception('登录状态已失效', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号登录状态已失效'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         return $decode;
@@ -75,49 +69,44 @@ class TokenService
 
     /**
      * 会员Token验证
-     *
      * @param string $token token
-     * 
-     * @return void|Exception
      */
     public static function verify($token)
     {
         if (empty($token)) {
-            exception('请登录', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('请登录'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         try {
             $decode    = self::decode($token);
             $member_id = $decode->data->member_id;
         } catch (\Exception $e) {
-            exception('账号登录状态已失效', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号登录状态已失效'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         $member = MemberService::info($member_id);
         if ($member['is_delete'] == 1) {
-            exception('账号已被注销', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号已被注销'), ReturnCodeUtils::LOGIN_INVALID);
         }
         if ($member['is_disable'] == 1) {
-            exception('账号已被禁用', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号已被禁用'), ReturnCodeUtils::LOGIN_INVALID);
         }
         if (($member['pwd_time'] ?? '') && $decode->data->login_time < $member['pwd_time']) {
-            exception('账号密码已修改', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('账号密码已修改'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         $config = self::config();
         if ($config['is_multi_login'] == 0) {
             if ($decode->data->login_time != $member['login_time']) {
-                exception('账号已在另一处登录', RetCodeUtils::LOGIN_INVALID);
+                exception(lang('账号已在另一处登录'), ReturnCodeUtils::LOGIN_INVALID);
             }
         }
     }
 
     /**
      * 会员Token会员id
-     *
      * @param string $token token
      * @param bool   $exce  是否抛出异常
-     * 
      * @return int member_id
      */
     public static function memberId($token, $exce = false)
@@ -134,7 +123,7 @@ class TokenService
         }
 
         if (empty($member_id) && $exce) {
-            exception('请登录', RetCodeUtils::LOGIN_INVALID);
+            exception(lang('请登录'), ReturnCodeUtils::LOGIN_INVALID);
         }
 
         return $member_id;

@@ -18,4 +18,6 @@ class GroupApisModel extends Pivot
 {
     // 表名
     protected $name = 'member_group_apis';
+    // 表主键
+    protected $pk = 'id';
 }

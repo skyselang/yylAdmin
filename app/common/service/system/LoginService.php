@@ -9,6 +9,8 @@
 
 namespace app\common\service\system;
 
+use hg\apidoc\annotation as Apidoc;
+
 /**
  * 登录退出
  */
@@ -16,10 +18,9 @@ class LoginService
 {
     /**
      * 登录
-     *
      * @param array $param 登录信息
-     * 
-     * @return array
+     * @Apidoc\Param(ref={UserService::class,"login"})
+     * @Apidoc\Returned(ref={UserService::class,"login"})
      */
     public static function login($param)
     {
@@ -28,10 +29,7 @@ class LoginService
 
     /**
      * 退出
-     *
      * @param int $user_id 用户id
-     * 
-     * @return array
      */
     public static function logout($user_id)
     {

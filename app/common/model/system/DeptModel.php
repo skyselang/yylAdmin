@@ -21,6 +21,11 @@ class DeptModel extends Model
     protected $name = 'system_dept';
     // 表主键
     protected $pk = 'dept_id';
+    /**
+     * 上级id键
+     * @var string
+     */
+    public $pidk = 'dept_pid';
 
     /**
      * 获取是否禁用名称

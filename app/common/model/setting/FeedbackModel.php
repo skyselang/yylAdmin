@@ -10,10 +10,10 @@
 namespace app\common\model\setting;
 
 use think\Model;
+use hg\apidoc\annotation as Apidoc;
 use app\common\model\file\FileModel;
 use app\common\model\member\MemberModel;
 use app\common\service\setting\SettingService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
  * 反馈管理模型
@@ -24,6 +24,16 @@ class FeedbackModel extends Model
     protected $name = 'setting_feedback';
     // 表主键
     protected $pk = 'feedback_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     /**
      * 获取类型名称
@@ -49,6 +59,15 @@ class FeedbackModel extends Model
     public function member()
     {
         return $this->hasOne(MemberModel::class, 'member_id', 'member_id');
+    }
+    /**
+     * 获取会员昵称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("member_nickname", type="string", desc="会员昵称")
+     */
+    public function getMemberNicknameAttr()
+    {
+        return $this['member']['nickname'] ?? '';
     }
     /**
      * 获取会员用户名
@@ -80,15 +99,5 @@ class FeedbackModel extends Model
             $image_ids = array_column($this['image']->append(['file_url'])->toArray(), 'file_id');
         }
         return $image_ids ?? [];
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

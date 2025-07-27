@@ -13,7 +13,7 @@ return [
     'default'      => env('log.channel', 'file'),
     // 日志记录级别
     'level'        => [],
-    // 日志类型记录的通道 ['error'=>'email',...]
+    // 日志类型记录的通道
     'type_channel' => [],
     // 关闭全局日志写入
     'close'        => false,
@@ -30,9 +30,9 @@ return [
             // 单文件日志写入
             'single'         => false,
             // 独立日志级别
-            'apart_level'    => ['error', 'sql', 'timer', 'queue', 'easysms', 'phpmailer', 'oss'],
+            'apart_level'    => ['error', 'sql', 'log'],
             // 最大日志文件数量
-            'max_files'      => 0,
+            'max_files'      => 90,
             // 使用JSON格式记录
             'json'           => false,
             // 日志处理

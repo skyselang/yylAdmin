@@ -9,10 +9,9 @@
 
 namespace app\common\service\content;
 
-use think\facade\Request;
-use app\common\cache\content\SettingCache;
-use app\common\model\content\SettingModel;
 use hg\apidoc\annotation as Apidoc;
+use app\common\cache\content\SettingCache as Cache;
+use app\common\model\content\SettingModel as Model;
 
 /**
  * 内容设置
@@ -20,34 +19,46 @@ use hg\apidoc\annotation as Apidoc;
 class SettingService
 {
     /**
+     * 缓存
+     */
+    public static function cache()
+    {
+        return new Cache();
+    }
+
+    /**
+     * 模型
+     */
+    public static function model()
+    {
+        return new Model();
+    }
+
+    /**
      * 内容设置id
-     * @var integer
      */
     protected static $id = 1;
 
     /**
      * 内容设置信息
-     * 
      * @param string $fields 返回字段，逗号隔开，默认所有
-     * @Apidoc\Returned("favicon_url", type="string", desc="favicon链接")
-     * @Apidoc\Returned("logo_url", type="string", desc="logo链接")
-     * @Apidoc\Returned("offi_url", type="string", desc="公众号二维码链接")
-     * @Apidoc\Returned("mini_url", type="string", desc="小程序码链接")
-     * @Apidoc\Returned("content_default_img_url", type="string", desc="内容默认图片链接")
-     * @Apidoc\Returned("category_default_img_url", type="string", desc="分类默认图片链接")
-     * @Apidoc\Returned("tag_default_img_url", type="string", desc="标签默认图片链接")
      * @return array
+     * @Apidoc\Returned(ref={Model::class})
+     * @Apidoc\Returned(ref={Model::class,"getContentDefaultImgUrlAttr"}, field="content_default_img_url")
+     * @Apidoc\Returned(ref={Model::class,"getCategoryDefaultImgUrlAttr"}, field="category_default_img_url")
+     * @Apidoc\Returned(ref={Model::class,"getTagDefaultImgUrlAttr"}, field="tag_default_img_url")
      */
     public static function info($fields = '')
     {
         $id   = self::$id;
-        $type = Request::isCli() ? 'cli' : 'cgi';
+        $type = request()->isCli() ? 'cli' : 'cgi';
         $key  = $id . $type;
 
-        $info = SettingCache::get($key);
+        $cache = self::cache();
+        $info  = $cache->get($key);
         if (empty($info)) {
-            $model = new SettingModel();
-            $pk = $model->getPk();
+            $model = self::model();
+            $pk    = $model->getPk();
 
             $info = $model->find($id);
             if (empty($info)) {
@@ -61,16 +72,16 @@ class SettingService
             // 命令行无法获取域名
             $append = $hidden = [];
             if ($type == 'cgi') {
-                $append = array_merge($append, ['favicon_url', 'logo_url', 'offi_url', 'mini_url', 'content_default_img_url', 'category_default_img_url', 'tag_default_img_url']);
-                $hidden = array_merge($hidden, ['favicon', 'logo', 'offi', 'mini', 'contentDefaultImg', 'categoryDefaultImg', 'tagDefaultImg']);
+                $append = array_merge($append, ['content_default_img_url', 'category_default_img_url', 'tag_default_img_url']);
+                $hidden = array_merge($hidden, ['contentDefaultImg', 'categoryDefaultImg', 'tagDefaultImg']);
             }
             $info = $info->append($append)->hidden($hidden)->toArray();
 
-            SettingCache::set($key, $info);
+            $cache->set($key, $info);
         }
 
         if ($fields) {
-            $data = [];
+            $data   = [];
             $fields = explode(',', $fields);
             foreach ($fields as $field) {
                 $field = trim($field);
@@ -86,26 +97,25 @@ class SettingService
 
     /**
      * 内容设置修改
-     *
      * @param array $param 设置信息
-     *
-     * @return array|Exception
+     * @Apidoc\Param(ref={Model::class}, withoutField="setting_id,create_uid,update_uid,create_time,update_time")
      */
     public static function edit($param)
     {
-        $model = new SettingModel();
-        $id = self::$id;
+        $model = self::model();
+        $id    = self::$id;
 
         $param['update_uid']  = user_id();
         $param['update_time'] = datetime();
 
         $info = $model->find($id);
-        $res = $info->save($param);
+        $res  = $info->save($param);
         if (empty($res)) {
             exception();
         }
 
-        SettingCache::clear();
+        $cache = self::cache();
+        $cache->clear();
 
         return $param;
     }

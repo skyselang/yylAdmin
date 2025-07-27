@@ -7,13 +7,14 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 缓存设置
 use think\facade\Env;
 
+// 缓存设置
 return [
     // 默认缓存驱动
     'default' => env('cache.driver', 'file'),
-
+    // 缓存有效期 0表示永久缓存
+    'expire' => Env::get('cache.expire', 0),
     // 缓存连接方式配置
     'stores'  => [
         'file' => [

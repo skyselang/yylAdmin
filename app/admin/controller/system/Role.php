@@ -9,185 +9,248 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\BaseController;
-use app\common\validate\system\RoleValidate;
-use app\common\service\system\RoleService;
-use app\common\service\system\MenuService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\system\RoleValidate as Validate;
+use app\common\service\system\RoleService as Service;
+use app\common\model\system\RoleModel as Model;
+use app\common\service\system\UserService;
 
 /**
- * @Apidoc\Title("角色管理")
+ * @Apidoc\Title("lang(角色管理)")
  * @Apidoc\Group("system")
- * @Apidoc\Sort("200")
+ * @Apidoc\Sort("150")
  */
 class Role extends BaseController
 {
     /**
-     * @Apidoc\Title("角色列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\system\RoleModel", type="array", desc="角色列表", field="role_id,role_name,role_desc,remark,sort,is_disable,create_time,update_time")
-     * @Apidoc\Returned("menu", ref="app\common\model\system\MenuModel", type="tree", desc="菜单树形", field="menu_id,menu_pid,menu_name,menu_url,is_unlogin,is_unauth,is_unrate")
-     * @Apidoc\Returned(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(角色列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = RoleService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
-        $menu = MenuService::list('list', [where_delete()], [], 'menu_pid,menu_name,menu_url,is_unlogin,is_unauth,is_unrate');
-        $data['menu'] = list_to_tree($menu, 'menu_id', 'menu_pid');
-        $data['menu_ids'] = array_column($menu, 'menu_id');
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("角色信息")
-     * @Apidoc\Query(ref="app\common\model\system\RoleModel", field="role_id")
-     * @Apidoc\Returned(ref="app\common\model\system\RoleModel")
-     * @Apidoc\Returned(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
+     * @Apidoc\Title("lang(角色信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['role_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(RoleValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = RoleService::info($param['role_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("角色添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel", field="role_name,role_desc,remark,sort")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
+     * @Apidoc\Title("lang(角色添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(RoleService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(RoleValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = RoleService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("角色修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel", field="role_id,role_name,role_desc,remark,sort")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
+     * @Apidoc\Title("lang(角色修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(RoleService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(RoleValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = RoleService::edit($param['role_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("角色删除")
+     * @Apidoc\Title("lang(角色删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(RoleValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = RoleService::dele($param['ids']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("角色修改菜单")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel\getMenuIdsAttr", field="menu_ids")
-     */
-    public function editmenu()
-    {
-        $param = $this->params(['ids/a' => [], 'menu_ids/a' => []]);
-
-        validate(RoleValidate::class)->scene('editmenu')->check($param);
-
-        $data = RoleService::edit($param['ids'], $param);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("角色是否禁用")
+     * @Apidoc\Title("lang(角色是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\system\RoleModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(RoleValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = RoleService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("角色用户列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\system\RoleModel", field="role_id")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="用户列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel", field="user_id,nickname,username,sort,is_super,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getAvatarUrlAttr", field="avatar_url"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getDeptNamesAttr", field="dept_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getPostNamesAttr", field="post_names"),
-     *   @Apidoc\Returned(ref="app\common\model\system\UserModel\getRoleNamesAttr", field="role_names"),
-     * })
+     * @Apidoc\Title("lang(角色批量修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
+
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(角色导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(角色用户列表)")
+     * @Apidoc\Query(ref={Service::class,"userList"})
+     * @Apidoc\Returned(ref={UserService::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"userList"})
      */
     public function userList()
     {
-        $param = $this->params(['role_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(RoleValidate::class)->scene('user')->check($param);
+        validate($this->validate)->scene('userList')->check($param);
 
-        $where = $this->where(where_delete(['role_ids', 'in', [$param['role_id']]]));
+        $where = $this->where(where_delete([$pk, '=', $param[$pk]]));
 
-        $data = RoleService::user($where, $this->page(), $this->limit(), $this->order());
+        $data = $this->service::userList($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = UserService::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("角色用户解除")
+     * @Apidoc\Title("lang(角色用户解除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("role_id", type="array", require=true, desc="角色id")
-     * @Apidoc\Param("user_ids", type="array", require=false, desc="用户id，为空则解除所有用户")
+     * @Apidoc\Param(ref={Service::class,"userLift"})
      */
-    public function userRemove()
+    public function userLift()
     {
-        $param = $this->params(['role_id/a' => [], 'user_ids/a' => []]);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => [], 'user_ids/a' => []]);
 
-        validate(RoleValidate::class)->scene('userRemove')->check($param);
+        validate($this->validate)->scene('userLift')->check($param);
 
-        $data = RoleService::userRemove($param['role_id'], $param['user_ids']);
+        $data = $this->service::userLift($param[$pk], $param['user_ids']);
 
         return success($data);
     }

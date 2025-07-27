@@ -10,9 +10,10 @@
 namespace app\common\model\content;
 
 use think\Model;
+use hg\apidoc\annotation as Apidoc;
 use app\common\model\file\FileModel;
 use app\common\service\content\SettingService;
-use hg\apidoc\annotation as Apidoc;
+use app\common\service\content\CategoryService;
 
 /**
  * 内容管理模型
@@ -23,6 +24,16 @@ class ContentModel extends Model
     protected $name = 'content';
     // 表主键
     protected $pk = 'content_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     // 关联图片
     public function image()
@@ -58,7 +69,7 @@ class ContentModel extends Model
      */
     public function getCategoryIdsAttr()
     {
-        return relation_fields($this['categorys'], 'category_id');
+        return model_relation_fields($this['categorys'], 'category_id');
     }
     /**
      * 获取分类名称
@@ -67,7 +78,16 @@ class ContentModel extends Model
      */
     public function getCategoryNamesAttr()
     {
-        return relation_fields($this['categorys'], 'category_name', true);
+        return model_relation_fields($this['categorys'], 'category_name', true);
+    }
+    /**
+     * 获取分类完整名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("category_full_names", type="string", desc="分类完整名称")
+     */
+    public function getCategoryFullNamesAttr()
+    {
+        return CategoryService::fullPathName($this['category_ids'] ?? []);
     }
 
     // 关联标签
@@ -82,7 +102,7 @@ class ContentModel extends Model
      */
     public function getTagIdsAttr()
     {
-        return relation_fields($this['tags'], 'tag_id');
+        return model_relation_fields($this['tags'], 'tag_id');
     }
     /**
      * 获取标签名称
@@ -91,7 +111,7 @@ class ContentModel extends Model
      */
     public function getTagNamesAttr()
     {
-        return relation_fields($this['tags'], 'tag_name', true);
+        return model_relation_fields($this['tags'], 'tag_name', true);
     }
 
     /**
@@ -244,7 +264,7 @@ class ContentModel extends Model
     /**
      * 获取是否置顶名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否置顶名称")
+     * @Apidoc\AddField("is_top_name", type="string", desc="是否置顶名称")
      */
     public function getIsTopNameAttr($value, $data)
     {
@@ -253,7 +273,7 @@ class ContentModel extends Model
     /**
      * 获取是否热门名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否热门名称")
+     * @Apidoc\AddField("is_hot_name", type="string", desc="是否热门名称")
      */
     public function getIsHotNameAttr($value, $data)
     {
@@ -262,19 +282,10 @@ class ContentModel extends Model
     /**
      * 获取是否推荐名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否推荐名称")
+     * @Apidoc\AddField("is_rec_name", type="string", desc="是否推荐名称")
      */
     public function getIsRecNameAttr($value, $data)
     {
         return $data['is_rec'] ? '是' : '否';
-    }
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 }

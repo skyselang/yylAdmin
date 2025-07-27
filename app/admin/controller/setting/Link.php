@@ -9,135 +9,204 @@
 
 namespace app\admin\controller\setting;
 
-use app\common\controller\BaseController;
-use app\common\validate\setting\LinkValidate;
-use app\common\service\setting\LinkService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\setting\LinkValidate as Validate;
+use app\common\service\setting\LinkService as Service;
+use app\common\model\setting\LinkModel as Model;
 
 /**
- * @Apidoc\Title("友链管理")
+ * @Apidoc\Title("lang(友链管理)")
  * @Apidoc\Group("setting")
- * @Apidoc\Sort("550")
+ * @Apidoc\Sort("450")
  */
 class Link extends BaseController
 {
     /**
-     * @Apidoc\Title("友链列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="友链列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\setting\LinkModel", field="link_id,unique,image_id,name,name_color,url,desc,sort,is_disable,start_time,end_time,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\setting\LinkModel\getImageUrlAttr", field="image_url")
-     * })
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(友链列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = LinkService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("友链信息")
-     * @Apidoc\Query(ref="app\common\model\setting\LinkModel", field="link_id")
-     * @Apidoc\Returned(ref="app\common\model\setting\LinkModel")
+     * @Apidoc\Title("lang(友链信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['link_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(LinkValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = LinkService::info($param['link_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("友链添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="unique,image_id,name,name_color,url,desc,start_time,end_time,underline,remark,sort")
+     * @Apidoc\Title("lang(友链添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(LinkService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(LinkValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = LinkService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("友链修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="link_id,unique,image_id,name,name_color,url,desc,start_time,end_time,underline,remark,sort")
+     * @Apidoc\Title("lang(友链修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(LinkService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(LinkValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = LinkService::edit($param['link_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("友链删除")
+     * @Apidoc\Title("lang(友链删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(LinkValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = LinkService::dele($param['ids']);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("友链是否禁用")
+     * @Apidoc\Title("lang(友链是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(LinkValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = LinkService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("友链修改时间")
+     * @Apidoc\Title("lang(友链批量修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\setting\LinkModel", field="start_time,end_time")
+     * @Apidoc\Param(ref={Service::class,"update"})
      */
-    public function datetime()
+    public function update()
     {
-        $param = $this->params(['ids/a' => [], 'start_time/s' => '', 'end_time/s' => '']);
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
 
-        validate(LinkValidate::class)->scene('datetime')->check($param);
+        validate($this->validate)->scene('update')->check($param);
 
-        $data = LinkService::edit($param['ids'], $param);
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(友链导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
 
         return success($data);
     }

@@ -10,7 +10,8 @@
 namespace app\common\validate\system;
 
 use think\Validate;
-use app\common\model\system\MenuModel;
+use app\common\service\system\MenuService as Service;
+use app\common\model\system\MenuModel as Model;
 use app\common\model\system\RoleMenusModel;
 
 /**
@@ -18,9 +19,23 @@ use app\common\model\system\RoleMenusModel;
  */
 class MenuValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'       => ['require', 'array'],
+        'field'     => ['require', 'checkUpdateField'],
         'menu_id'   => ['require'],
         'menu_pid'  => ['checkPid'],
         'menu_name' => ['require', 'checkExisted'],
@@ -34,19 +49,18 @@ class MenuValidate extends Validate
 
     // 验证场景
     protected $scene = [
-        'info'       => ['menu_id'],
-        'add'        => ['menu_name'],
-        'edit'       => ['menu_id', 'menu_pid', 'menu_name'],
-        'dele'       => ['ids'],
-        'editsort'   => ['ids'],
-        'editpid'    => ['ids', 'menu_pid'],
-        'unlogin'    => ['ids'],
-        'unauth'     => ['ids'],
-        'unrate'     => ['ids'],
-        'hidden'     => ['ids'],
-        'disable'    => ['ids'],
-        'role'       => ['menu_id'],
-        'roleRemove' => ['menu_id', 'role_ids'],
+        'info'        => ['menu_id'],
+        'add'         => ['menu_pid', 'menu_name'],
+        'edit'        => ['menu_id', 'menu_pid', 'menu_name'],
+        'dele'        => ['ids'],
+        'update'      => ['ids', 'field'],
+        'disable'     => ['ids'],
+        'editPid'     => ['ids', 'menu_pid'],
+        'editUnlogin' => ['ids'],
+        'editUnauth'  => ['ids'],
+        'editUnrate'  => ['ids'],
+        'roleList'    => ['menu_id'],
+        'roleLift'    => ['menu_id', 'role_ids'],
     ];
 
     // 验证场景定义：菜单删除
@@ -56,61 +70,87 @@ class MenuValidate extends Validate
             ->append('ids', ['checkChild', 'checkRole']);
     }
 
-    // 自定义验证规则：菜单上级
-    protected function checkPid($value, $rule, $data = [])
-    {
-        $ids = $data['ids'] ?? [];
-        if ($data['menu_id'] ?? 0) {
-            $ids[] = $data['menu_id'];
-        }
-
-        foreach ($ids as $id) {
-            if ($data['menu_pid'] == $id) {
-                return '菜单上级不能等于菜单本身';
-            }
-        }
-
-        return true;
-    }
-
     // 自定义验证规则：菜单是否已存在
     protected function checkExisted($value, $rule, $data = [])
     {
-        $model = new MenuModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
-        $pid = $data['menu_pid'] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $pidk  = $model->pidk;
+        $id    = $data[$pk] ?? 0;
+        $pid   = $data[$pidk] ?? 0;
 
-        $where_name[] = [$pk, '<>', $id];
-        $where_name[] = ['menu_pid', '=', $pid];
-        $where_name[] = ['menu_name', '=', $data['menu_name']];
-        $where_name = where_delete($where_name);
-        $info = $model->field($pk)->where($where_name)->find();
+        $where = where_delete([[$pk, '<>', $id], [$pidk, '=', $pid], ['menu_name', '=', $data['menu_name']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '菜单名称已存在：' . $data['menu_name'];
+            return lang('菜单名称已存在：') . $data['menu_name'];
         }
 
-        $url = $data['menu_url'];
-        if ($url) {
-            $where_url[] = [$pk, '<>', $id];
-            $where_url[] = ['menu_url', '=', $url];
-            $where_url = where_delete($where_url);
-            $info = $model->field($pk)->where($where_url)->find();
+        $menu_url = $data['menu_url'] ?? '';
+        if ($menu_url) {
+            $where = where_delete([[$pk, '<>', $id], ['menu_url', '=', $menu_url]]);
+            $info  = $model->field($pk)->where($where)->find();
             if ($info) {
-                return '菜单链接已存在：' . $data['menu_url'];
+                return lang('菜单链接已存在：') . $data['menu_url'];
             }
         }
 
         return true;
     }
 
-    // 自定义验证规则：菜单是否存在下级菜单
+    // 自定义验证规则：菜单批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
+
+        $model = $this->model();
+        $pidk  = $model->pidk;
+        if ($edit_field == $pidk) {
+            $data[$pidk] = $data['value'];
+            return $this->checkPid($value, $rule, $data);
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：菜单上级
+    protected function checkPid($value, $rule, $data = [])
+    {
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $pidk  = $model->pidk;
+
+        $ids = $data['ids'] ?? [];
+        if ($data[$pk] ?? 0) {
+            $ids[] = $data[$pk];
+        }
+
+        $list = $this->service::list('list', [where_delete()]);
+        foreach ($ids as $id) {
+            if ($data[$pidk] == $id) {
+                return lang('上级不能等于自己');
+            }
+            $cycle = tree_is_cycle($list, $id, $data[$pidk], $pk, $pidk);
+            if ($cycle) {
+                return lang('不能选择该上级');
+            }
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：菜单是否存在下级
     protected function checkChild($value, $rule, $data = [])
     {
-        $where = where_delete(['menu_pid', 'in', $data['ids']]);
-        $info = MenuModel::field('menu_pid')->where($where)->find();
+        $model = $this->model();
+        $pidk  = $model->pidk;
+        $where = where_delete([$pidk, 'in', $data['ids']]);
+        $info  = $model->field($pidk)->where($where)->find();
         if ($info) {
-            return '菜单存在下级菜单，无法删除：' . $info['menu_pid'];
+            return lang('存在下级，无法删除：') . $info[$pidk];
         }
 
         return true;
@@ -119,10 +159,12 @@ class MenuValidate extends Validate
     // 自定义验证规则：菜单是否存在角色
     protected function checkRole($value, $rule, $data = [])
     {
-        // $info = RoleMenusModel::where('menu_id', 'in', $data['ids'])->find();
-        // if ($info) {
-        //     return '菜单存在角色，请在[角色]中解除后再删除：' . $info['menu_id'];
-        // }
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $info  = RoleMenusModel::where($pk, 'in', $data['ids'])->find();
+        if ($info) {
+            // return '菜单存在角色，请在[角色]中解除后再删除：' . $info[$pk];
+        }
 
         return true;
     }

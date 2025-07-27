@@ -9,201 +9,274 @@
 
 namespace app\admin\controller\member;
 
-use app\common\controller\BaseController;
-use app\common\validate\member\GroupValidate;
-use app\common\service\member\GroupService;
-use app\common\service\member\ApiService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\member\GroupValidate as Validate;
+use app\common\service\member\GroupService as Service;
+use app\common\model\member\GroupModel as Model;
+use app\common\service\member\MemberService;
 
 /**
- * @Apidoc\Title("会员分组")
+ * @Apidoc\Title("lang(会员分组)")
  * @Apidoc\Group("member")
- * @Apidoc\Sort("300")
+ * @Apidoc\Sort("150")
  */
 class Group extends BaseController
 {
     /**
-     * @Apidoc\Title("会员分组列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", ref="app\common\model\member\GroupModel", type="array", desc="分组列表", field="group_id,group_name,group_desc,remark,sort,is_default,is_disable,create_time,update_time")
-     * @Apidoc\Returned("api", ref="app\common\model\member\ApiModel", type="tree", desc="接口树形", field="api_id,api_pid,api_name,api_url,is_unlogin,is_unauth")
-     * @Apidoc\Returned(ref="app\common\model\member\GroupModel\getApiIdsAttr")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员分组列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = GroupService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
-        $api = ApiService::list('list', [where_delete()], [], 'api_pid,api_name,api_url,is_unlogin,is_unauth');
-        $data['api'] = list_to_tree($api, 'api_id', 'api_pid');
-        $data['api_ids'] = array_column($api, 'api_id');
-
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员分组信息")
-     * @Apidoc\Query(ref="app\common\model\member\GroupModel", field="group_id")
-     * @Apidoc\Returned(ref="app\common\model\member\GroupModel")
-     * @Apidoc\Returned(ref="app\common\model\member\GroupModel\getApiIdsAttr")
+     * @Apidoc\Title("lang(会员分组信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['group_id/d' => '']);
+        $param = $this->params(['group_id' => '']);
 
-        validate(GroupValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = GroupService::info($param['group_id']);
+        $data = $this->service::info($param['group_id']);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员分组添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="group_name,group_desc,remark,sort")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel\getApiIdsAttr", field="api_ids")
+     * @Apidoc\Title("lang(会员分组添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(GroupService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(GroupValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = GroupService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员分组修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="group_id,group_name,group_desc,remark,sort")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel\getApiIdsAttr", field="api_ids")
+     * @Apidoc\Title("lang(会员分组修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(GroupService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(GroupValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = GroupService::edit($param['group_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param['group_id'], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员分组删除")
+     * @Apidoc\Title("lang(会员分组删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(GroupValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = GroupService::dele($param['ids']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("会员分组修改接口")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel\getApiIdsAttr", field="api_ids")
-     */
-    public function editapi()
-    {
-        $param = $this->params(['ids/a' => [], 'api_ids/a' => []]);
-
-        validate(GroupValidate::class)->scene('editapi')->check($param);
-
-        $data = GroupService::edit($param['ids'], $param);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员分组是否默认")
+     * @Apidoc\Title("lang(会员分组是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="is_default")
-     */
-    public function defaults()
-    {
-        $param = $this->params(['ids/a' => [], 'is_default/d' => 0]);
-
-        validate(GroupValidate::class)->scene('default')->check($param);
-
-        $data = GroupService::edit($param['ids'], $param);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("会员分组是否禁用")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\member\GroupModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(GroupValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = GroupService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员分组会员列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\member\GroupModel", field="group_id")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="会员列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel", field="member_id,avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getTagNamesAttr", field="tag_names"),
-     *   @Apidoc\Returned(ref="app\common\model\member\MemberModel\getGroupNamesAttr", field="group_names"),
-     * })
+     * @Apidoc\Title("lang(会员分组批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员分组导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员分组导入)")
+     * @Apidoc\Desc("lang(get下载导入模板，post提交导入文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\ParamType("formdata")
+     * @Apidoc\Query(ref={Service::class,"import"})
+     * @Apidoc\Param(ref={Service::class,"import"})
+     * @Apidoc\Returned(ref={Service::class,"import"})
+     */
+    public function import()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            if ($param['file_path']) {
+                return download($param['file_path'], $param['file_name']);
+            } else {
+                $data = $this->service::export(['is_import' => 1, 'param' => ['where' => [where_delete()]]]);
+                return success($data);
+            }
+        }
+
+        $param['import_file'] = $this->request->file('import_file');
+        $param['is_update']   = $this->param('is_update/d', 0);
+        $param['remark']      = $this->param('remark/s');
+
+        validate($this->validate)->scene('import')->check($param);
+
+        $data = $this->service::import($param, true);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(会员分组会员列表)")
+     * @Apidoc\Query(ref={Service::class,"memberList"})
+     * @Apidoc\Returned(ref={MemberService::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"memberList"})
      */
     public function memberList()
     {
-        $param = $this->params(['group_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(GroupValidate::class)->scene('member')->check($param);
+        validate($this->validate)->scene('memberList')->check($param);
 
-        $where = $this->where(where_delete(['group_ids', 'in', [$param['group_id']]]));
+        $where = $this->where(where_delete([$pk, '=', $param[$pk]]));
 
-        $data = GroupService::member($where, $this->page(), $this->limit(), $this->order());
+        $data = $this->service::memberList($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = MemberService::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("会员分组会员解除")
+     * @Apidoc\Title("lang(会员分组会员解除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("group_id", type="array", require=true, desc="分组id")
-     * @Apidoc\Param("member_ids", type="array", require=false, desc="会员id，为空则解除所有会员")
+     * @Apidoc\Param(ref={Service::class,"memberLift"})
      */
-    public function memberRemove()
+    public function memberLift()
     {
-        $param = $this->params(['group_id/a' => [], 'member_ids/a' => []]);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => [], 'member_ids/a' => []]);
 
-        validate(GroupValidate::class)->scene('memberRemove')->check($param);
+        validate($this->validate)->scene('memberLift')->check($param);
 
-        $data = GroupService::memberRemove($param['group_id'], $param['member_ids']);
+        $data = $this->service::memberLift($param[$pk], $param['member_ids']);
 
         return success($data);
     }

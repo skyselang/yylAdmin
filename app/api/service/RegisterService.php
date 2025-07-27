@@ -9,9 +9,9 @@
 
 namespace app\api\service;
 
-use app\common\service\member\SettingService;
+use hg\apidoc\annotation as Apidoc;
 use app\common\service\member\MemberService;
-use app\common\service\member\LogService;
+use app\common\service\member\SettingService;
 
 /**
  * 注册
@@ -20,12 +20,12 @@ class RegisterService
 {
     /**
      * 账号注册
-     *
      * @param array $param 注册信息
-     *
+     * @param bool  $login 是否登录
      * @return array
+     * @Apidoc\Param(ref={MemberService::class,"edit"})
      */
-    public static function register($param)
+    public static function register($param, $login = null)
     {
         if (!isset($param['platform'])) {
             $param['platform'] = member_platform();
@@ -34,14 +34,20 @@ class RegisterService
             $param['application'] = member_application();
         }
         if (empty($param['username'])) {
-            $param['username'] = md5(uniqid(mt_rand(), true));
+            $param['username'] = uniqids();
         }
-        $data = MemberService::add($param);
 
-        $member_log['member_id']   = $data['member_id'];
-        $member_log['platform']    = member_platform();
-        $member_log['application'] = member_application();
-        LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
+        unset($param['captcha_id'], $param['captcha_code'], $param['ajcaptcha']);
+        $data = MemberService::add($param);
+        unset($data['password'], $data['create_uid']);
+
+        if ($login === null) {
+            $setting = SettingService::info();
+            $login   = $setting['is_auto_login'] ? true : false;
+        }
+        if ($login) {
+            $data = MemberService::login($data, 'register');
+        }
 
         return $data;
     }

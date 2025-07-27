@@ -10,8 +10,8 @@
 namespace app\common\model\setting;
 
 use think\Model;
-use app\common\model\file\FileModel;
 use hg\apidoc\annotation as Apidoc;
+use app\common\model\file\FileModel;
 
 /**
  * 友链管理模型
@@ -22,6 +22,16 @@ class LinkModel extends Model
     protected $name = 'setting_link';
     // 表主键
     protected $pk = 'link_id';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     // 关联图片
     public function image()
@@ -39,12 +49,12 @@ class LinkModel extends Model
     }
 
     /**
-     * 获取是否禁用名称
+     * 获取是否显示下划线名称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @Apidoc\AddField("underline_name", type="string", desc="是否显示下划线名称")
      */
-    public function getIsDisableNameAttr($value, $data)
+    public function getUnderlineNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['underline'] ?? 0) ? '是' : '否';
     }
 }

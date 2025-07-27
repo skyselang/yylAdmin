@@ -10,9 +10,9 @@
 namespace app\common\model\content;
 
 use think\Model;
+use hg\apidoc\annotation as Apidoc;
 use app\common\model\file\FileModel;
 use app\common\service\content\SettingService;
-use hg\apidoc\annotation as Apidoc;
 
 /**
  * 内容标签模型
@@ -23,6 +23,21 @@ class TagModel extends Model
     protected $name = 'content_tag';
     // 表主键
     protected $pk = 'tag_id';
+    /**
+     * 名称键
+     * @var string
+     */
+    public $namek = 'tag_name';
+
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
+    {
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
 
     // 关联图片
     public function image()
@@ -54,26 +69,16 @@ class TagModel extends Model
     // 获取图片列表
     public function getImagesAttr()
     {
-        return relation_fields($this['files']->append(['file_url']), '');
+        return model_relation_fields($this['files']->append(['file_url']), '');
     }
     // 获取图片id数组
     public function getImageIdsAttr()
     {
-        return relation_fields($this['files']->append(['file_url']), 'file_id');
+        return model_relation_fields($this['files']->append(['file_url']), 'file_id');
     }
     // 获取图片url数组
     public function getImageUrlsAttr()
     {
-        return relation_fields($this['files']->append(['file_url']), 'file_url');
-    }
-
-    /**
-     * 获取是否禁用名称
-     * @Apidoc\Field("")
-     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
-     */
-    public function getIsDisableNameAttr($value, $data)
-    {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return model_relation_fields($this['files']->append(['file_url']), 'file_url');
     }
 }

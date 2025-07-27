@@ -10,7 +10,8 @@
 namespace app\common\validate\member;
 
 use think\Validate;
-use app\common\model\member\ApiModel;
+use app\common\service\member\ApiService as Service;
+use app\common\model\member\ApiModel as Model;
 use app\common\model\member\GroupApisModel;
 
 /**
@@ -18,34 +19,52 @@ use app\common\model\member\GroupApisModel;
  */
 class ApiValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
-        'ids'       => ['require', 'array'],
-        'api_id'    => ['require'],
-        'api_pid'   => ['checkPid'],
-        'api_name'  => ['require', 'checkExisted'],
-        'group_ids' => ['array'],
+        'ids'         => ['require', 'array'],
+        'field'       => ['require', 'checkUpdateField'],
+        'api_id'      => ['require'],
+        'api_pid'     => ['checkPid'],
+        'api_name'    => ['require', 'checkExisted'],
+        'import_file' => ['require', 'file', 'fileExt' => 'xlsx'],
+        'group_ids'   => ['array'],
     ];
 
     // 错误信息
     protected $message = [
-        'api_name.require' => '请输入接口名称',
+        'api_name.require'    => '请输入名称',
+        'import_file.require' => '请选择导入文件',
+        'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
     // 验证场景
     protected $scene = [
         'info'        => ['api_id'],
-        'add'         => ['api_name'],
+        'add'         => ['api_pid', 'api_name'],
         'edit'        => ['api_id', 'api_pid', 'api_name'],
         'dele'        => ['ids'],
-        'editsort'    => ['ids'],
-        'editpid'     => ['ids', 'api_pid'],
-        'unlogin'     => ['ids'],
-        'unauth'      => ['ids'],
-        'unrate'      => ['ids'],
         'disable'     => ['ids'],
-        'group'       => ['api_id'],
-        'groupRemove' => ['api_id', 'group_ids'],
+        'update'      => ['ids', 'field'],
+        'editPid'     => ['ids', 'api_pid'],
+        'editUnlogin' => ['ids'],
+        'editUnauth'  => ['ids'],
+        'editUnrate'  => ['ids'],
+        'import'      => ['import_file'],
+        'groupList'   => ['api_id'],
+        'groupLift'   => ['api_id', 'group_ids'],
     ];
 
     // 验证场景定义：接口删除
@@ -55,61 +74,87 @@ class ApiValidate extends Validate
             ->append('ids', ['checkChild', 'checkGroup']);
     }
 
-    // 自定义验证规则：接口上级
-    protected function checkPid($value, $rule, $data = [])
-    {
-        $ids = $data['ids'] ?? [];
-        if ($data['api_id'] ?? 0) {
-            $ids[] = $data['api_id'];
-        }
-
-        foreach ($ids as $id) {
-            if ($data['api_pid'] == $id) {
-                return '接口上级不能等于接口本身';
-            }
-        }
-
-        return true;
-    }
-
     // 自定义验证规则：接口是否已存在
     protected function checkExisted($value, $rule, $data = [])
     {
-        $model = new ApiModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
-        $pid = $data['api_pid'] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $pidk  = $model->pidk;
+        $id    = $data[$pk] ?? 0;
+        $pid   = $data[$pidk] ?? 0;
 
-        $where_name[] = [$pk, '<>', $id];
-        $where_name[] = ['api_pid', '=', $pid];
-        $where_name[] = ['api_name', '=', $data['api_name']];
-        $where_name = where_delete($where_name);
-        $info = $model->field($pk)->where($where_name)->find();
+        $where = where_delete([[$pk, '<>', $id], [$pidk, '=', $pid], ['api_name', '=', $data['api_name']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '接口名称已存在：' . $data['api_name'];
+            return lang('名称已存在：') . $data['api_name'];
         }
 
         $url = $data['api_url'] ?? '';
         if ($url) {
-            $where_url[] = [$pk, '<>', $id];
-            $where_url[] = ['api_url', '=', $url];
-            $where_url = where_delete($where_url);
-            $info = $model->field($pk)->where($where_url)->find();
+            $where = where_delete([[$pk, '<>', $id], ['api_url', '=', $url]]);
+            $info  = $model->field($pk)->where($where)->find();
             if ($info) {
-                return '接口链接已存在：' . $url;
+                return lang('接口链接已存在：') . $url;
             }
         }
 
         return true;
     }
 
-    // 自定义验证规则：接口是否存在下级接口
+    // 自定义验证规则：接口批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
+
+        $model = $this->model();
+        $pidk  = $model->pidk;
+        if ($edit_field == $pidk) {
+            $data[$pidk] = $data['value'];
+            return $this->checkPid($value, $rule, $data);
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：接口上级
+    protected function checkPid($value, $rule, $data = [])
+    {
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $pidk  = $model->pidk;
+
+        $ids = $data['ids'] ?? [];
+        if ($data[$pk] ?? 0) {
+            $ids[] = $data[$pk];
+        }
+
+        $list = $this->service::list('list');
+        foreach ($ids as $id) {
+            if ($data[$pidk] == $id) {
+                return lang('上级不能等于自己');
+            }
+            $cycle = tree_is_cycle($list, $id, $data[$pidk], $pk, $pidk);
+            if ($cycle) {
+                return lang('不能选择该上级');
+            }
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：接口是否存在下级
     protected function checkChild($value, $rule, $data = [])
     {
-        $where = where_delete(['api_pid', 'in', $data['ids']]);
-        $info = ApiModel::field('api_pid')->where($where)->find();
+        $model = $this->model();
+        $pidk  = $model->pidk;
+        $where = where_delete([$pidk, 'in', $data['ids']]);
+        $info  = $model->field($pidk)->where($where)->find();
         if ($info) {
-            return '接口存在下级接口，无法删除：' . $info['api_pid'];
+            return lang('存在下级，无法删除：') . $info[$pidk];
         }
 
         return true;
@@ -118,10 +163,12 @@ class ApiValidate extends Validate
     // 自定义验证规则：接口是否存在分组
     protected function checkGroup($value, $rule, $data = [])
     {
-        // $info = GroupApisModel::field('api_id')->where('api_id', 'in', $data['ids'])->find();
-        // if ($info) {
-        //     return '接口存在分组，请在[分组]中解除后再删除：' . $info['api_id'];
-        // }
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $info  = GroupApisModel::field($pk)->where($pk, 'in', $data['ids'])->find();
+        if ($info) {
+            // return '接口存在分组，请在[分组]中解除后再删除：' . $info[$pk];
+        }
 
         return true;
     }

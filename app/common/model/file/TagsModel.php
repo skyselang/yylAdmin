@@ -18,4 +18,6 @@ class TagsModel extends Pivot
 {
     // 表名
     protected $name = 'file_tags';
+    // 表主键
+    protected $pk = 'id';
 }

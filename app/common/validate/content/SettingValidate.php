@@ -10,12 +10,27 @@
 namespace app\common\validate\content;
 
 use think\Validate;
+use app\common\service\content\SettingService as Service;
+use app\common\model\content\SettingModel as Model;
 
 /**
  * 内容设置验证器
  */
 class SettingValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [];
 
@@ -24,6 +39,7 @@ class SettingValidate extends Validate
 
     // 验证场景
     protected $scene = [
+        'info' => [],
         'edit' => [],
     ];
 }

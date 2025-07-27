@@ -10,6 +10,7 @@
 namespace app\common\model\system;
 
 use think\Model;
+use app\common\service\system\SettingService;
 use hg\apidoc\annotation as Apidoc;
 
 /**
@@ -22,15 +23,24 @@ class UserLogModel extends Model
     // 表主键
     protected $pk = 'log_id';
 
-    // 修改请求参数
-    public function setRequestParamAttr($value)
+    /**
+     * 获取是否禁用名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     */
+    public function getIsDisableNameAttr($value, $data)
     {
-        return serialize($value);
+        return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
-    // 获取请求参数
-    public function getRequestParamAttr($value)
+
+    /**
+     * 获取日志类型名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("log_type_name", type="string", desc="日志类型名称")
+     */
+    public function getLogTypeNameAttr($value, $data)
     {
-        return unserialize($value);
+        return SettingService::logTypes($data['log_type']);
     }
 
     // 关联用户
@@ -38,12 +48,20 @@ class UserLogModel extends Model
     {
         return $this->hasOne(UserModel::class, 'user_id', 'user_id');
     }
-    // 获取用户昵称
+    /**
+     * 获取用户昵称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("nickname", type="string", desc="用户昵称")
+     */
     public function getNicknameAttr()
     {
         return $this['user']['nickname'] ?? '';
     }
-    // 获取用户账号
+    /**
+     * 获取用户账号
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("username", type="string", desc="用户账号")
+     */
     public function getUsernameAttr()
     {
         return $this['user']['username'] ?? '';
@@ -54,14 +72,45 @@ class UserLogModel extends Model
     {
         return $this->hasOne(MenuModel::class, 'menu_id', 'menu_id');
     }
-    // 获取菜单名称
-    public function getMenuNameAttr()
+    /**
+     * 获取菜单名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("menu_name", type="string", desc="菜单名称")
+     */
+    public function getMenuNameAttr($value, $data)
     {
-        return $this['menu']['menu_name'] ?? '';
+        $menu_name = $this['menu']['menu_name'] ?? '';
+        if ($menu_name) {
+            return $menu_name;
+        }
+        return $data['menu_name'] ?? '';
     }
-    // 获取菜单链接
+    /**
+     * 获取菜单链接
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("menu_url", type="string", desc="菜单链接")
+     */
     public function getMenuUrlAttr($value, $data)
     {
         return $this['menu']['menu_url'] ?? $data['request_url'] ?? '';
+    }
+
+    /**
+     * 修改请求方法
+     */
+    public function setRequestMethodAttr($value)
+    {
+        return strtoupper($value);
+    }
+
+    // 修改请求参数
+    public function setRequestParamAttr($value)
+    {
+        return json_encode($value);
+    }
+    // 获取请求参数
+    public function getRequestParamAttr($value)
+    {
+        return json_decode($value, true);
     }
 }

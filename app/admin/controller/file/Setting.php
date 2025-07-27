@@ -9,48 +9,52 @@
 
 namespace app\admin\controller\file;
 
-use app\common\controller\BaseController;
-use app\common\validate\file\SettingValidate;
-use app\common\service\file\SettingService;
-use app\common\service\file\GroupService;
-use app\common\service\file\TagService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\file\SettingValidate as Validate;
+use app\common\service\file\SettingService as Service;
 
 /**
- * @Apidoc\Title("文件设置")
- * @Apidoc\Group("file")
- * @Apidoc\Sort("400")
+ * @Apidoc\Title("lang(文件设置)")
+ * @Apidoc\Group("setting")
+ * @Apidoc\Sort("250")
  */
 class Setting extends BaseController
 {
     /**
-     * @Apidoc\Title("文件设置信息")
-     * @Apidoc\Returned("setting", type="object", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\SettingModel"),
-     *   @Apidoc\Returned(ref="app\common\service\file\SettingService\info"),
-     * })
-     * @Apidoc\Returned("group", type="array", ref="app\common\model\file\GroupModel", field="group_id,group_name", desc="分组列表")
-     * @Apidoc\Returned("tag", type="array", ref="app\common\model\file\TagModel", field="tag_id,tag_name", desc="标签列表")
+     * 验证器
      */
-    public function info()
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * @Apidoc\Title("lang(基本设置信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="is_upload_api,is_upload_admin,is_storage_https,storage,qiniu_access_key,qiniu_secret_key,qiniu_bucket,qiniu_domain,aliyun_access_key_id,aliyun_access_key_secret,aliyun_bucket,aliyun_endpoint,aliyun_domain,tencent_secret_id,tencent_secret_key,tencent_bucket,tencent_region,tencent_domain,baidu_access_key,baidu_secret_key,baidu_bucket,baidu_endpoint,baidu_domain,upyun_service_name,upyun_operator_name,upyun_operator_pwd,upyun_domain,huawei_access_key_id,huawei_secret_access_key,huawei_bucket,huawei_endpoint,huawei_domain,aws_access_key_id,aws_secret_access_key,aws_bucket,aws_region,aws_endpoint,aws_domain")
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     */
+    public function basicInfo()
     {
-        $data = SettingService::info();
-        $data['group'] = GroupService::list([where_delete()], 0, 0, [], 'group_name', false)['list'] ?? [];
-        $data['tag']   = TagService::list([where_delete()], 0, 0, [], 'tag_name', false)['list'] ?? [];
+        $data = $this->service::info('is_upload_api,is_upload_admin,is_storage_https,storage,qiniu_access_key,qiniu_secret_key,qiniu_bucket,qiniu_domain,aliyun_access_key_id,aliyun_access_key_secret,aliyun_bucket,aliyun_endpoint,aliyun_domain,tencent_secret_id,tencent_secret_key,tencent_bucket,tencent_region,tencent_domain,baidu_access_key,baidu_secret_key,baidu_bucket,baidu_endpoint,baidu_domain,upyun_service_name,upyun_operator_name,upyun_operator_pwd,upyun_domain,huawei_access_key_id,huawei_secret_access_key,huawei_bucket,huawei_endpoint,huawei_domain,aws_access_key_id,aws_secret_access_key,aws_bucket,aws_region,aws_endpoint,aws_domain');
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("文件设置修改")
+     * @Apidoc\Title("lang(基本设置修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\SettingModel", withoutField="setting_id,create_uid,update_uid,create_time,update_time")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="is_upload_api,is_upload_admin,is_storage_https,storage,qiniu_access_key,qiniu_secret_key,qiniu_bucket,qiniu_domain,aliyun_access_key_id,aliyun_access_key_secret,aliyun_bucket,aliyun_endpoint,aliyun_domain,tencent_secret_id,tencent_secret_key,tencent_bucket,tencent_region,tencent_domain,baidu_access_key,baidu_secret_key,baidu_bucket,baidu_endpoint,baidu_domain,upyun_service_name,upyun_operator_name,upyun_operator_pwd,upyun_domain,huawei_access_key_id,huawei_secret_access_key,huawei_bucket,huawei_endpoint,huawei_domain,aws_access_key_id,aws_secret_access_key,aws_bucket,aws_region,aws_endpoint,aws_domain")
      */
-    public function edit()
+    public function basicEdit()
     {
         $param = $this->params([
-            'is_upload_admin/d'          => 1,
             'is_upload_api/d'            => 1,
+            'is_upload_admin/d'          => 1,
+            'is_storage_https/d'         => 1,
             'storage/s'                  => 'local',
             'qiniu_access_key/s'         => '',
             'qiniu_secret_key/s'         => '',
@@ -86,26 +90,86 @@ class Setting extends BaseController
             'aws_region/s'               => '',
             'aws_endpoint/s'             => '',
             'aws_domain/s'               => '',
-            'image_ext/s'                => '',
-            'image_size/f'               => 0,
-            'video_ext/s'                => '',
-            'video_size/f'               => 0,
-            'audio_ext/s'                => '',
-            'audio_size/f'               => 0,
-            'word_ext/s'                 => '',
-            'word_size/f'                => 0,
-            'other_ext/s'                => '',
-            'other_size/f'               => 0,
-            'limit_max/d'                => 9,
-            'is_api_file/d'              => 0,
-            'api_file_types/a'           => [],
-            'api_file_group_ids/a'       => [],
-            'api_file_tag_ids/a'         => [],
         ]);
 
-        validate(SettingValidate::class)->scene($param['storage'])->check($param);
+        validate($this->validate)->scene($param['storage'])->check($param);
 
-        $data = SettingService::edit($param);
+        $data = $this->service::edit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(限制设置信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="image_size,image_ext,video_size,video_ext,audio_size,audio_ext,word_size,word_ext,other_size,other_ext,limit_max,image_exts,video_exts,audio_exts,word_exts,other_exts")
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     */
+    public function limitInfo()
+    {
+        $data = $this->service::info('image_size,image_ext,video_size,video_ext,audio_size,audio_ext,word_size,word_ext,other_size,other_ext,limit_max,image_exts,video_exts,audio_exts,word_exts,other_exts');
+        $data['basedata'] = $this->service::basedata();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(限制设置修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="image_size,image_ext,video_size,video_ext,audio_size,audio_ext,word_size,word_ext,other_size,other_ext,limit_max")
+     */
+    public function limitEdit()
+    {
+        $param = $this->params([
+            'image_size/f' => 0,
+            'image_ext/a'  => [],
+            'video_size/f' => 0,
+            'video_ext/a'  => [],
+            'audio_size/f' => 0,
+            'audio_ext/a'  => [],
+            'word_size/f'  => 0,
+            'word_ext/a'   => [],
+            'other_size/f' => 0,
+            'other_ext/s'  => '',
+            'limit_max/d'  => 9,
+        ]);
+
+        validate($this->validate)->scene('limitEdit')->check($param);
+
+        $data = $this->service::edit($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(前台设置信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="is_api_file,api_file_types,api_file_group_ids,api_file_tag_ids")
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     */
+    public function apiInfo()
+    {
+        $data = $this->service::info('is_api_file,api_file_types,api_file_group_ids,api_file_tag_ids');
+        $data['basedata'] = $this->service::basedata();
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(前台设置修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="is_api_file,api_file_types,api_file_group_ids,api_file_tag_ids")
+     */
+    public function apiEdit()
+    {
+        $param = $this->params([
+            'is_api_file/d'        => 0,
+            'api_file_types/a'     => [],
+            'api_file_group_ids/a' => [],
+            'api_file_tag_ids/a'   => [],
+        ]);
+
+        validate($this->validate)->scene('apiEdit')->check($param);
+
+        $data = $this->service::edit($param);
 
         return success($data);
     }

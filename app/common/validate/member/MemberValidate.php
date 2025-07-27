@@ -10,8 +10,8 @@
 namespace app\common\validate\member;
 
 use think\Validate;
-use app\common\service\member\MemberService;
-use app\common\model\member\MemberModel;
+use app\common\service\member\MemberService as Service;
+use app\common\model\member\MemberModel as Model;
 use app\common\model\member\AttributesModel;
 
 /**
@@ -19,9 +19,23 @@ use app\common\model\member\AttributesModel;
  */
 class MemberValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'ids'          => ['require', 'array'],
+        'field'        => ['require', 'checkUpdateField'],
         'member_id'    => ['require'],
         'nickname'     => ['length' => '1,64'],
         'username'     => ['require', 'length' => '2,64'],
@@ -31,6 +45,7 @@ class MemberValidate extends Validate
         'phone'        => ['require', 'mobile'],
         'email'        => ['require', 'email'],
         'captcha_code' => ['require'],
+        'group_ids'    => ['array'],
         'import_file'  => ['require', 'file', 'fileExt' => 'xlsx'],
     ];
 
@@ -51,7 +66,6 @@ class MemberValidate extends Validate
         'captcha_code.require' => '请输入验证码',
         'import_file.require'  => '请选择导入文件',
         'import_file.fileExt'  => '只允许xlsx文件格式',
-
     ];
 
     // 验证场景
@@ -60,12 +74,11 @@ class MemberValidate extends Validate
         'add'                  => ['nickname', 'username', 'password', 'phone', 'email'],
         'edit'                 => ['member_id', 'nickname', 'username', 'phone', 'email'],
         'dele'                 => ['ids'],
-        'region'               => ['ids'],
-        'edittag'              => ['ids'],
-        'editgroup'            => ['ids'],
-        'repwd'                => ['ids', 'password'],
-        'super'                => ['ids'],
         'disable'              => ['ids'],
+        'update'               => ['ids', 'field'],
+        'editgroup'            => ['ids', 'group_ids'],
+        'editpwd'              => ['ids', 'password'],
+        'editsuper'            => ['ids'],
         'import'               => ['import_file'],
         'usernameRegister'     => ['nickname', 'username', 'password'],
         'phoneRegisterCaptcha' => ['phone'],
@@ -88,7 +101,8 @@ class MemberValidate extends Validate
     // 验证场景定义：后台添加
     protected function sceneAdd()
     {
-        return $this->only(['nickname', 'username', 'password', 'phone', 'email'])
+        return $this->only(['unique', 'nickname', 'username', 'phone', 'email'])
+            ->append('unique', ['checkUniqueExisted'])
             ->append('username', ['checkUsernameExisted'])
             ->append('phone', ['checkPhoneExisted'])
             ->append('email', ['checkEmailExisted'])
@@ -99,7 +113,8 @@ class MemberValidate extends Validate
     // 验证场景定义：后台修改
     protected function sceneEdit()
     {
-        return $this->only(['member_id', 'nickname', 'username', 'phone', 'email'])
+        return $this->only(['member_id', 'unique', 'nickname', 'username', 'phone', 'email'])
+            ->append('unique', ['checkUniqueExisted'])
             ->append('username', ['checkUsernameExisted'])
             ->append('phone', ['checkPhoneExisted'])
             ->append('email', ['checkEmailExisted'])
@@ -205,19 +220,47 @@ class MemberValidate extends Validate
             ->append('email', ['require', 'checkEmailExisted']);
     }
 
+    // 自定义验证规则：会员批量修改字段
+    protected function checkUpdateField($value, $rule, $data = [])
+    {
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
+        }
+
+        return true;
+    }
+
+    // 自定义验证规则：编号是否已存在
+    protected function checkUniqueExisted($value, $rule, $data = [])
+    {
+        if ($data['unique'] ?? '') {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $id    = $data[$pk] ?? 0;
+
+            $where = where_delete([[$pk, '<>', $id], ['unique', '=', $data['unique']]]);
+            $info  = $model->field($pk)->where($where)->find();
+            if ($info) {
+                return lang('编号已存在：') . $data['unique'];
+            }
+        }
+
+        return true;
+    }
+
     // 自定义验证规则：用户名是否已存在
     protected function checkUsernameExisted($value, $rule, $data = [])
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['username', '=', $data['username']];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['username', '=', $data['username']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '用户名已存在：' . $data['username'];
+            return lang('用户名已存在：') . $data['username'];
         }
 
         return true;
@@ -226,16 +269,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：用户名是否存在
     protected function checkUsernameIsExist($value, $rule, $data = [])
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['username', '=', $data['username']];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['username', '=', $data['username']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if (empty($info)) {
-            return '用户名不存在：' . $data['username'];
+            return lang('用户名不存在：') . $data['username'];
         }
 
         return true;
@@ -244,16 +285,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：手机是否已存在
     protected function checkPhoneExisted($value, $rule, $data = [])
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['phone', '=', $data['phone']];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['phone', '=', $data['phone']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '手机已存在：' . $data['phone'];
+            return lang('手机已存在：') . $data['phone'];
         }
 
         return true;
@@ -262,16 +301,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：手机是否存在
     protected function checkPhoneIsExist($value, $rule, $data = [])
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['phone', '=', $data['phone']];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['phone', '=', $data['phone']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if (empty($info)) {
-            return '手机不存在：' . $data['phone'];
+            return lang('手机不存在：') . $data['phone'];
         }
 
         return true;
@@ -280,16 +317,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：邮箱是否已存在
     protected function checkEmailExisted($value, $rule, $data = [])
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['email', '=', $data['email']];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['email', '=', $data['email']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if ($info) {
-            return '邮箱已存在：' . $data['email'];
+            return lang('邮箱已存在：') . $data['email'];
         }
 
         return true;
@@ -298,16 +333,14 @@ class MemberValidate extends Validate
     // 自定义验证规则：邮箱是否存在
     protected function checkEmailIsExist($value, $rule, $data = [])
     {
-        $model = new MemberModel();
-        $pk = $model->getPk();
-        $id = $data[$pk] ?? 0;
+        $model = $this->model();
+        $pk    = $model->getPk();
+        $id    = $data[$pk] ?? 0;
 
-        $where[] = [$pk, '<>', $id];
-        $where[] = ['email', '=', $data['email']];
-        $where = where_delete($where);
-        $info = $model->field($pk)->where($where)->find();
+        $where = where_delete([[$pk, '<>', $id], ['email', '=', $data['email']]]);
+        $info  = $model->field($pk)->where($where)->find();
         if (empty($info)) {
-            return '邮箱不存在：' . $data['email'];
+            return lang('邮箱不存在：') . $data['email'];
         }
 
         return true;
@@ -316,9 +349,9 @@ class MemberValidate extends Validate
     // 自定义验证规则：旧密码是否正确
     protected function checkPwdOld($value, $rule, $data = [])
     {
-        $info = MemberService::info($data['member_id'] ?? 0);
+        $info = $this->service::info($data['member_id'] ?? 0);
         if (!password_verify($data['password_old'], $info['password'])) {
-            return '旧密码错误';
+            return lang('旧密码错误');
         }
 
         return true;
@@ -327,15 +360,18 @@ class MemberValidate extends Validate
     // 自定义验证规则：会员是否存在标签或分组
     protected function checkTagGroup($value, $rule, $data = [])
     {
-        // $info = AttributesModel::field('member_id')->where('member_id', 'in', $data['ids'])->where('tag_id', '>', 0)->find();
-        // if ($info) {
-        //     return '会员存在标签，请在[标签]解除后再删除：' . $info['member_id'];
-        // }
+        $model = $this->model();
+        $pk    = $model->getPk();
 
-        // $info = AttributesModel::field('member_id')->where('member_id', 'in', $data['ids'])->where('group_id', '>', 0)->find();
-        // if ($info) {
-        //     return '会员存在分组，请在[分组]解除后再删除：' . $info['member_id'];
-        // }
+        $info = AttributesModel::field($pk)->whereIn($pk, $data['ids'])->where('tag_id', '>', 0)->find();
+        if ($info) {
+            // return '会员存在标签，请在[标签]解除后再删除：' . $info[$pk];
+        }
+
+        $info = AttributesModel::field($pk)->whereIn($pk, $data['ids'])->where('group_id', '>', 0)->find();
+        if ($info) {
+            // return '会员存在分组，请在[分组]解除后再删除：' . $info[$pk];
+        }
 
         return true;
     }

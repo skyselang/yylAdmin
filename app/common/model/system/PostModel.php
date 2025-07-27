@@ -21,6 +21,11 @@ class PostModel extends Model
     protected $name = 'system_post';
     // 表主键
     protected $pk = 'post_id';
+    /**
+     * 上级id键
+     * @var string
+     */
+    public $pidk = 'post_pid';
 
     /**
      * 获取是否禁用名称

@@ -19,7 +19,9 @@ return [
     // 系统超管用户是否隐藏
     'super_hide' => env('admin.super_hide', true),
     // 系统超管用户上传文件大小是否不受限制
-    'super_upload_size' => env('admin.super_upload_size', false),
+    'super_upload_limit' => env('admin.super_upload_limit', false),
+    // 系统超管用户接口请求速率是否不受限制
+    'super_api_rate' => env('admin.super_api_rate', false),
 
     // 菜单免登url（无需登录）
     'menu_is_unlogin' => [
@@ -27,7 +29,6 @@ return [
         'admin/system.Login/captcha',
         'admin/system.Login/login',
     ],
-
     // 菜单免权url（无需权限）
     'menu_is_unauth' => [
         'admin/system.Index/index',
@@ -36,7 +37,6 @@ return [
         'admin/system.Login/logout',
         'admin/system.UserCenter/info',
     ],
-
     // 菜单免限url（不限速率）
     'menu_is_unrate' => [
         'admin/file.File/add',
@@ -44,7 +44,10 @@ return [
     ],
 
     // 日志记录请求参数排除字段（敏感、内容多等信息）
+    // 例如: ['name', 'array.phone', 'list*price']
     'log_param_without' => [
+        env('admin.token_name', 'AdminToken'),
+        env('api.token_name', 'ApiToken'),
         'password',
         'password_old',
         'password_new',
@@ -57,6 +60,7 @@ return [
         'annexs',
         'others',
         'token_key',
+        's',
     ],
 
     // 地区级别：1省2市3区县4街道乡镇

@@ -18,4 +18,6 @@ class AttributesModel extends Pivot
 {
     // 表名
     protected $name = 'member_attributes';
+    // 表主键
+    protected $pk = 'id';
 }

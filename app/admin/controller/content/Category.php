@@ -9,196 +9,298 @@
 
 namespace app\admin\controller\content;
 
-use app\common\controller\BaseController;
-use app\common\validate\content\CategoryValidate;
-use app\common\service\content\CategoryService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\content\CategoryValidate as Validate;
+use app\common\service\content\CategoryService as Service;
+use app\common\model\content\CategoryModel as Model;
+use app\common\service\content\ContentService;
 
 /**
- * @Apidoc\Title("内容分类")
+ * @Apidoc\Title("lang(内容分类)")
  * @Apidoc\Group("content")
- * @Apidoc\Sort("200")
+ * @Apidoc\Sort("150")
  */
 class Category extends BaseController
 {
     /**
-     * @Apidoc\Title("内容分类列表")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned("list", type="tree", desc="分类树形", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique,image_id,sort,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url"),
-     * })
-     * @Apidoc\Returned("tree", ref="app\common\model\content\CategoryModel", type="tree", desc="分类树形", field="category_id,category_pid,category_name")
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(内容分类列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
-        $where = $this->where(where_delete());
+        $where  = $this->where(where_delete());
+        $order  = $this->order();
+        $islist = $this->param('islist');
+        $param  = ['islist' => $islist, 'search_mode' => $this->param('search_mode')];
 
-        $data['list'] = CategoryService::list('tree', $where);
-        $data['exps'] = where_exps();
-        $data['tree'] = CategoryService::list('tree', [where_delete()], [], 'category_pid,category_name');
-        $data['count'] = count(CategoryService::list('list', $where));
-        if (count($where) > 1) {
-            $list = tree_to_list($data['list']);
-            $all  = tree_to_list($data['tree']);
-            $pk   = 'category_id';
-            $pid  = 'category_pid';
-            $ids  = [];
-            foreach ($list as $val) {
-                $pids = children_parent_ids($all, $val[$pk], $pk, $pid);
-                $cids = parent_children_ids($all, $val[$pk], $pk, $pid);
-                $ids  = array_merge($ids, $pids, $cids);
+        $basedata = $this->service::basedata(true);
+        if ($islist) {
+            $data['list']  = $this->service::list('list', $where, $order, '', 0, 0, $param);
+            $data['count'] = count($data['list']);
+        } else {
+            $data['list']  = $this->service::list('tree', $where, $order);
+            $data['count'] = count($this->service::list('list', $where, $order));
+            if (count($where) > 1) {
+                $list = tree_to_list($data['list']);
+                $all  = tree_to_list($basedata['trees']);
+                $pk   = $this->model()->getPk();
+                $pid  = $this->model()->pidk;
+                $ids  = [];
+                foreach ($list as $val) {
+                    $pids = children_parent_key($all, $val[$pk], $pk, $pid);
+                    $cids = parent_children_key($all, $val[$pk], $pk, $pid);
+                    $ids  = array_merge($ids, $pids, $cids);
+                }
+                $data['list'] = $this->service::list('tree', [[$pk, 'in', $ids], where_delete()], $order);
             }
-            $data['list'] = CategoryService::list('tree', [[$pk, 'in', $ids], where_delete()]);
         }
+        $data['basedata'] = $basedata;
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容分类信息")
-     * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id")
-     * @Apidoc\Returned(ref="app\common\model\content\CategoryModel")
-     * @Apidoc\Returned(ref="app\common\model\content\CategoryModel\getImageUrlAttr", field="image_url")
-     * @Apidoc\Returned(ref="imagesReturn")
+     * @Apidoc\Title("lang(内容分类信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function info()
     {
-        $param = $this->params(['category_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(CategoryValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = CategoryService::info($param['category_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容分类添加")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_pid,category_name,category_unique,image_id,title,keywords,description,sort,remark")
-     * @Apidoc\Param(ref="imagesParam")
+     * @Apidoc\Title("lang(内容分类添加)")
+     * @Apidoc\Desc("lang(get获取基础数据，post提交添加)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Param(ref={Service::class,"add"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function add()
     {
-        $param = $this->params(CategoryService::$edit_field);
+        if ($this->request->isGet()) {
+            $data['basedata'] = $this->service::basedata();
+            return success($data);
+        }
 
-        validate(CategoryValidate::class)->scene('add')->check($param);
+        $pk    = $this->model()->getPk();
+        $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
-        $data = CategoryService::add($param);
+        validate($this->validate)->scene('add')->check($param);
+
+        $data = $this->service::add($param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容分类修改")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_id,category_pid,category_name,category_unique,image_id,title,keywords,description,sort,remark")
-     * @Apidoc\Param(ref="imagesParam")
+     * @Apidoc\Title("lang(内容分类修改)")
+     * @Apidoc\Desc("lang(get获取数据，post提交修改)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Param(ref={Service::class,"edit"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function edit()
     {
-        $param = $this->params(CategoryService::$edit_field);
+        $pk = $this->model()->getPk();
 
-        validate(CategoryValidate::class)->scene('edit')->check($param);
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        $data = CategoryService::edit($param['category_id'], $param);
+            validate($this->validate)->scene('info')->check($param);
+
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容分类删除")
+     * @Apidoc\Title("lang(内容分类删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(CategoryValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = CategoryService::dele($param['ids']);
-
-        return success($data);
-    }
-
-    /**
-     * @Apidoc\Title("内容分类修改上级")
-     * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="category_pid")
-     */
-    public function editpid()
-    {
-        $param = $this->params(['ids/a' => [], 'category_pid' => 0]);
-
-        validate(CategoryValidate::class)->scene('editpid')->check($param);
-
-        $data = CategoryService::edit($param['ids'], $param);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容分类是否禁用")
+     * @Apidoc\Title("lang(内容分类是否禁用)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
-     * @Apidoc\Param(ref="app\common\model\content\CategoryModel", field="is_disable")
+     * @Apidoc\Param(ref={Service::class,"disable"})
      */
     public function disable()
     {
         $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
 
-        validate(CategoryValidate::class)->scene('disable')->check($param);
+        validate($this->validate)->scene('disable')->check($param);
 
-        $data = CategoryService::edit($param['ids'], $param);
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容分类内容列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="app\common\model\content\CategoryModel", field="category_id")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="内容列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel", field="content_id,image_id,name,unique,sort,hits,is_top,is_hot,is_rec,is_disable,create_time,update_time"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getImageUrlAttr", field="image_url"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getCategoryNamesAttr", field="category_names"),
-     *   @Apidoc\Returned(ref="app\common\model\content\ContentModel\getTagNamesAttr", field="tag_names"),
-     * })
+     * @Apidoc\Title("lang(内容分类批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(内容分类导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(内容分类导入)")
+     * @Apidoc\Desc("lang(get下载导入模板，post提交导入文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\ParamType("formdata")
+     * @Apidoc\Query(ref={Service::class,"import"})
+     * @Apidoc\Param(ref={Service::class,"import"})
+     * @Apidoc\Returned(ref={Service::class,"import"})
+     */
+    public function import()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            if ($param['file_path']) {
+                return download($param['file_path'], $param['file_name']);
+            } else {
+                $data = $this->service::export(['is_import' => 1, 'param' => ['where' => [where_delete()]]]);
+                return success($data);
+            }
+        }
+
+        $param['import_file'] = $this->request->file('import_file');
+        $param['is_update']   = $this->param('is_update/d', 0);
+        $param['remark']      = $this->param('remark/s');
+
+        validate($this->validate)->scene('import')->check($param);
+
+        $data = $this->service::import($param, true);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(内容分类内容列表)")
+     * @Apidoc\Query(ref={Service::class,"contentList"})
+     * @Apidoc\Returned(ref={ContentService::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"contentList"})
      */
     public function contentList()
     {
-        $param = $this->params(['category_id/d' => '']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '']);
 
-        validate(CategoryValidate::class)->scene('content')->check($param);
+        validate($this->validate)->scene('contentList')->check($param);
 
-        $where = $this->where(where_delete(['category_ids', 'in', [$param['category_id']]]));
+        $where = $this->where(where_delete([$pk, '=', $param[$pk]]));
 
-        $data = CategoryService::content($where, $this->page(), $this->limit(), $this->order());
+        $data = $this->service::contentList($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = ContentService::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("内容分类内容解除")
+     * @Apidoc\Title("lang(内容分类内容解除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param("category_id", type="array", require=true, desc="分类id")
-     * @Apidoc\Param("content_ids", type="array", require=false, desc="内容id，为空则解除所有内容")
+     * @Apidoc\Param(ref={Service::class,"contentLift"})
      */
-    public function contentRemove()
+    public function contentLift()
     {
-        $param = $this->params(['category_id/a' => [], 'content_ids/a' => []]);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => [], 'content_ids/a' => []]);
 
-        validate(CategoryValidate::class)->scene('contentRemove')->check($param);
+        validate($this->validate)->scene('contentLift')->check($param);
 
-        $data = CategoryService::contentRemove($param['category_id'], $param['content_ids']);
-
+        $data = $this->service::contentLift($param[$pk], $param['content_ids']);
         return success($data);
     }
 }

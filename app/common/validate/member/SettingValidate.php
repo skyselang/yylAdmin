@@ -10,12 +10,27 @@
 namespace app\common\validate\member;
 
 use think\Validate;
+use app\common\service\member\SettingService as Service;
+use app\common\model\member\SettingModel as Model;
 
 /**
  * 会员设置管理验证器
  */
 class SettingValidate extends Validate
 {
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
     // 验证规则
     protected $rule = [
         'token_key'     => ['require', 'alphaNum', 'length' => '6,32'],
@@ -32,12 +47,8 @@ class SettingValidate extends Validate
         'token_key.require'     => '请输入Token密钥',
         'token_key.alphaNum'    => 'Token密钥组成：字母和数字',
         'token_key.length'      => 'Token密钥长度：6-32',
-        'token_exp.require'     => 'token_exp must',
         'token_exp.between'     => 'Token有效时间：1-99999',
-        'is_member_api.in'      => '会员接口：1开启0关闭',
-        'log_switch.require'    => 'log_switch must',
-        'log_switch.in'         => '日志记录：1开启0关闭',
-        'log_save_time.between' => '保留时间：0-99999',
+        'log_save_time.between' => '日志保留时间：0-99999',
         'api_rate_num.require'  => '请输入速率次数',
         'api_rate_num.between'  => '速率次数：0-999',
         'api_rate_time.require' => '请输入速率时间',

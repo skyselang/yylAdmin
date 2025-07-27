@@ -9,62 +9,70 @@
 
 namespace app\admin\controller\file;
 
-use app\common\controller\BaseController;
-use app\common\validate\file\ImportValidate;
-use app\common\service\file\ImportService;
 use hg\apidoc\annotation as Apidoc;
+use app\common\controller\BaseController;
+use app\common\validate\file\ImportValidate as Validate;
+use app\common\service\file\ImportService as Service;
+use app\common\model\file\ImportModel as Model;
 
 /**
- * @Apidoc\Title("导入文件")
+ * @Apidoc\Title("lang(导入文件)")
  * @Apidoc\Group("file")
- * @Apidoc\Sort("500")
+ * @Apidoc\Sort("300")
  */
 class Import extends BaseController
 {
     /**
-     * @Apidoc\Title("导入文件列表")
-     * @Apidoc\Query(ref="pagingQuery")
-     * @Apidoc\Query(ref="sortQuery")
-     * @Apidoc\Query(ref="searchQuery")
-     * @Apidoc\Query(ref="dateQuery")
-     * @Apidoc\Returned(ref="expsReturn")
-     * @Apidoc\Returned(ref="pagingReturn")
-     * @Apidoc\Returned("list", type="array", desc="导入文件列表", children={
-     *   @Apidoc\Returned(ref="app\common\model\file\ImportModel", field="import_id,type,file_name,file_path,file_size,remark,create_uid,create_time,update_time,delete_time"),
-     *   @Apidoc\Returned(ref="app\common\model\file\ImportModel\createUser"),
-     *   @Apidoc\Returned(ref="app\common\model\file\ImportModel\getFileUrlAttr"),
-     *   @Apidoc\Returned(ref="app\common\model\file\ImportModel\getTypeNameAttr"),
-     * })
+     * 验证器
+     */
+    protected $validate = Validate::class;
+
+    /**
+     * 服务
+     */
+    protected $service = Service::class;
+
+    /**
+     * 模型
+     */
+    protected function model()
+    {
+        return new Model();
+    }
+
+    /**
+     * @Apidoc\Title("lang(导入文件列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function list()
     {
         $where = $this->where(where_delete());
 
-        $data = ImportService::list($where, $this->page(), $this->limit(), $this->order());
-        $data['exps'] = where_exps();
-        $data['types'] = ImportService::types();
-        $data['statuss'] = ImportService::statuss();
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("导入文件信息")
-     * @Apidoc\Query(ref="app\common\model\file\ImportModel", field="import_id")
-     * @Apidoc\Query("is_down", type="int", desc="是否下载文件，1是，0否")
-     * @Apidoc\Query("file_type", type="string", desc="下载文件类型，import导入文件，success成功文件，fail失败文件")
-     * @Apidoc\Returned(ref="app\common\model\file\ImportModel")
-     * @Apidoc\Returned(ref="app\common\model\file\ImportModel\createUser")
-     * @Apidoc\Returned(ref="app\common\model\file\ImportModel\getFileUrlAttr")
-     * @Apidoc\Returned(ref="app\common\model\file\ImportModel\getTypeNameAttr")
+     * @Apidoc\Title("lang(导入文件信息)")
+     * @Apidoc\Query(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"info"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Query("is_down", type="int", desc="lang(是否下载文件，1是，0否)")
+     * @Apidoc\Query("file_type", type="string", desc="lang(下载文件类型，import导入文件，success成功文件，fail失败文件)")
      */
     public function info()
     {
-        $param = $this->params(['import_id/d' => '', 'is_down/d' => 0, 'file_type/s' => 'import']);
+        $pk    = $this->model()->getPk();
+        $param = $this->params([$pk => '', 'is_down/d' => 0, 'file_type/s' => 'import']);
 
-        validate(ImportValidate::class)->scene('info')->check($param);
+        validate($this->validate)->scene('info')->check($param);
 
-        $data = ImportService::info($param['import_id']);
+        $data = $this->service::info($param[$pk]);
+        $data['basedata'] = $this->service::basedata();
 
         if ($param['is_down']) {
             try {
@@ -84,57 +92,133 @@ class Import extends BaseController
     }
 
     /**
-     * @Apidoc\Title("导入文件修改")
+     * @Apidoc\Title("lang(导入文件修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="app\common\model\file\ImportModel", field="import_id,remark")
+     * @Apidoc\Param(ref={Service::class,"edit"})
      */
     public function edit()
     {
-        $param = $this->params(ImportService::$edit_field);
+        $pk = $this->model()->getPk();
+        
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
 
-        validate(ImportValidate::class)->scene('edit')->check($param);
+            validate($this->validate)->scene('info')->check($param);
 
-        $data = ImportService::edit($param['import_id'], $param);
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
+        $param = $this->params($this->service::$editField);
+
+        validate($this->validate)->scene('edit')->check($param);
+
+        $data = $this->service::edit($param[$pk], $param);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("导入文件删除")
+     * @Apidoc\Title("lang(导入文件删除)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref="idsParam")
+     * @Apidoc\Param(ref={Service::class,"dele"})
      */
     public function dele()
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(ImportValidate::class)->scene('dele')->check($param);
+        validate($this->validate)->scene('dele')->check($param);
 
-        $data = ImportService::dele($param['ids']);
+        $data = $this->service::dele($param['ids']);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("导入文件回收站列表")
-     * @Apidoc\Desc("请求和返回参数同导入文件列表")
+     * @Apidoc\Title("lang(导入文件批量修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"update"})
+     */
+    public function update()
+    {
+        $param = $this->params(['ids/a' => [], 'field/s' => '', 'value']);
+
+        validate($this->validate)->scene('update')->check($param);
+
+        $data = $this->service::update($param['ids'], $param['field'], $param['value']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(导入文件是否禁用)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"disable"})
+     */
+    public function disable()
+    {
+        $param = $this->params(['ids/a' => [], 'is_disable/d' => 0]);
+
+        validate($this->validate)->scene('disable')->check($param);
+
+        $data = $this->service::disable($param['ids'], $param['is_disable']);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(导入文件导出)")
+     * @Apidoc\Desc("lang(post提交导出，get下载导出文件)")
+     * @Apidoc\Method("POST,GET")
+     * @Apidoc\Query(ref={Service::class,"export"})
+     * @Apidoc\Param(ref={Service::class,"export"})
+     * @Apidoc\Returned(ref={Service::class,"export"})
+     */
+    public function export()
+    {
+        if ($this->request->isGet()) {
+            $param = $this->params(['file_path/s' => '', 'file_name/s' => '']);
+            return download($param['file_path'], $param['file_name']);
+        }
+
+        $recycle = $this->param('recycle/d', 0);
+        $ids     = $this->param('ids/a', []);
+        $where   = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
+        $param['remark'] = $this->param('remark/s');
+        $param['param']  = ['where' => $this->where(where_delete($where, $recycle)), 'order' => $this->order()];
+
+        $data = $this->service::export($param);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(导入文件回收站列表)")
+     * @Apidoc\Query(ref={Service::class,"list"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"list"})
      */
     public function recycleList()
     {
+        $pk    = $this->model()->getPk();
         $where = $this->where(where_delete([], 1));
+        $order = $this->order(['delete_time' => 'desc', $pk => 'desc']);
 
-        $order = $this->order(['delete_time' => 'desc', 'import_id' => 'desc']);
-
-        $data = ImportService::list($where, $this->page(), $this->limit(), $order);
-        $data['exps'] = where_exps();
-        $data['types'] = ImportService::types();
-        $data['statuss'] = ImportService::statuss();
+        $data = $this->service::list($where, $this->page(), $this->limit(), $order);
+        $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("导入文件回收站恢复")
+     * @Apidoc\Title("lang(导入文件回收站恢复)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      */
@@ -142,15 +226,15 @@ class Import extends BaseController
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(ImportValidate::class)->scene('recycleReco')->check($param);
+        validate($this->validate)->scene('recycleReco')->check($param);
 
-        $data = ImportService::edit($param['ids'], ['is_delete' => 0]);
+        $data = $this->service::edit($param['ids'], ['is_delete' => 0]);
 
         return success($data);
     }
 
     /**
-     * @Apidoc\Title("导入文件回收站删除")
+     * @Apidoc\Title("lang(导入文件回收站删除)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref="idsParam")
      */
@@ -158,9 +242,9 @@ class Import extends BaseController
     {
         $param = $this->params(['ids/a' => []]);
 
-        validate(ImportValidate::class)->scene('recycleDele')->check($param);
+        validate($this->validate)->scene('recycleDele')->check($param);
 
-        $data = ImportService::dele($param['ids'], true);
+        $data = $this->service::dele($param['ids'], true);
 
         return success($data);
     }
