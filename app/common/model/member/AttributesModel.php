@@ -16,8 +16,14 @@ use think\model\Pivot;
  */
 class AttributesModel extends Pivot
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'member_attributes';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'id';
 }

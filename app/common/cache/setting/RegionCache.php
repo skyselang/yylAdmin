@@ -16,16 +16,28 @@ use app\common\cache\BaseCache;
  */
 class RegionCache extends BaseCache
 {
-    // 缓存标签
+    /**
+     * 缓存标签
+     * @var string
+     */
     public $tag = 'setting_region';
 
-    // 缓存前缀
+    /**
+     * 缓存前缀
+     * @var string
+     */
     protected $prefix = 'setting_region:';
 
-    // 缓存有效时间（秒，0永久）
-    protected $expire = 43200;
+    /**
+     * 缓存有效时间（秒，0永久）
+     * @var int
+     */
+    protected $expire = 7 * 24 * 3600; // 7天
 
-    // 构造函数
+    /**
+     * 构造函数
+     * @return void
+     */
     function __construct()
     {
         $this->tag($this->tag);

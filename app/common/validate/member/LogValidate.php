@@ -31,7 +31,9 @@ class LogValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'           => ['require', 'array'],
         'field'         => ['require', 'checkUpdateField'],
@@ -39,10 +41,14 @@ class LogValidate extends Validate
         'request_param' => ['checkRequestParam'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['log_id'],
         'add'     => ['request_param'],
@@ -52,7 +58,9 @@ class LogValidate extends Validate
         'update'  => ['ids', 'field'],
     ];
 
-    // 自定义验证规则：批量修改字段
+    /**
+     * 自定义验证规则：批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -64,7 +72,9 @@ class LogValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：请求参数
+    /**
+     * 自定义验证规则：请求参数
+     */
     protected function checkRequestParam($value, $rule, $data = [])
     {
         $request_param = $data['request_param'] ?? '';

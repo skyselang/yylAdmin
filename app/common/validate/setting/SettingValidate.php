@@ -31,13 +31,19 @@ class SettingValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info' => [],
         'edit' => [],

@@ -17,17 +17,31 @@ use hg\apidoc\annotation as Apidoc;
  */
 class SmsLogModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'system_sms_log';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'log_id';
 
-    // 修改模板变量
+    /**
+     * 修改模板变量
+     * @param mixed $value 数据
+     * @return string
+     */
     public function setDataAttr($value)
     {
         return json_encode($value);
     }
-    // 获取模板变量
+    /**
+     * 获取模板变量
+     * @param mixed $value 数据
+     * @return array
+     */
     public function getDataAttr($value)
     {
         return json_decode($value, true);

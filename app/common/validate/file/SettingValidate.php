@@ -31,7 +31,9 @@ class SettingValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'storage'                  => ['require'],
         'qiniu_access_key'         => ['require'],
@@ -77,7 +79,9 @@ class SettingValidate extends Validate
         'is_api_file'              => ['number'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'storage.require'                  => '请选择存储方式',
         'qiniu_access_key.require'         => '请输入 AccessKey',
@@ -122,7 +126,9 @@ class SettingValidate extends Validate
         'limit_max.require'                => '请输入最大上传个数',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'limitEdit' => ['image_size', 'video_size', 'audio_size', 'word_size', 'other_size', 'limit_max'],
         'apiEdit'   => ['is_api_file'],

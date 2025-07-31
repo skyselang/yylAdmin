@@ -31,7 +31,9 @@ class LinkValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'        => ['require', 'array'],
         'field'      => ['require', 'checkUpdateField'],
@@ -41,12 +43,16 @@ class LinkValidate extends Validate
         'end_time'   => ['dateFormat:Y-m-d H:i:s'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'name.require' => '请输入名称',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['link_id'],
         'add'     => ['name', 'start_time', 'end_time'],
@@ -56,7 +62,9 @@ class LinkValidate extends Validate
         'update'  => ['ids', 'field'],
     ];
 
-    // 自定义验证规则：友链是否已存在
+    /**
+     * 自定义验证规则：友链是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -84,7 +92,9 @@ class LinkValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：友链批量修改字段
+    /**
+     * 自定义验证规则：友链批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];

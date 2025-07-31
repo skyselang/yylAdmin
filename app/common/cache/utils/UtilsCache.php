@@ -16,19 +16,34 @@ use app\common\cache\BaseCache;
  */
 class UtilsCache extends BaseCache
 {
-    // 缓存标签
+    /**
+     * 缓存标签
+     * @var string
+     */
     public $tag = 'utils';
 
-    // 缓存前缀
+    /**
+     * 缓存前缀
+     * @var string
+     */
     protected $prefix = 'utils:';
 
-    // 缓存有效时间（秒，0永久）
-    protected $expire = 43200;
+    /**
+     * 缓存有效时间（秒，0永久）
+     * @var int
+     */
+    protected $expire = 86400;
 
-    // 是否允许清除缓存（调用系统清除缓存方法时）
+    /**
+     * 是否允许清除缓存（调用系统清除缓存方法时）
+     * @var bool
+     */
     public $allowClear = false;
 
-    // 构造函数
+    /**
+     * 构造函数
+     * @return void
+     */
     function __construct()
     {
         $this->tag($this->tag);

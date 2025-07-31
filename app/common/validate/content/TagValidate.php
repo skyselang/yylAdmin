@@ -32,7 +32,9 @@ class TagValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'         => ['require', 'array'],
         'field'       => ['require', 'checkUpdateField'],
@@ -42,14 +44,18 @@ class TagValidate extends Validate
         'content_ids' => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'tag_name.require'    => '请输入名称',
         'import_file.require' => '请选择导入文件',
         'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'        => ['tag_id'],
         'add'         => ['tag_name'],
@@ -62,14 +68,18 @@ class TagValidate extends Validate
         'contentLift' => ['tag_id', 'content_ids'],
     ];
 
-    // 验证场景定义：标签删除
+    /**
+     * 验证场景定义：标签删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkContent');
     }
 
-    // 自定义验证规则：标签是否已存在
+    /**
+     * 自定义验证规则：标签是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -97,7 +107,9 @@ class TagValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：标签批量修改字段
+    /**
+     * 自定义验证规则：标签批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -109,7 +121,9 @@ class TagValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：标签是否存在内容
+    /**
+     * 自定义验证规则：标签是否存在内容
+     */
     protected function checkContent($value, $rule, $data = [])
     {
         $model = $this->model();

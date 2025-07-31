@@ -142,7 +142,7 @@ class TagService
         $info  = $cache->get($id);
         if (empty($info)) {
             $model = self::model();
-            $pk = $model->getPk();
+            $pk    = $model->getPk();
 
             if (is_numeric($id)) {
                 $where[] = [$pk, '=', $id];

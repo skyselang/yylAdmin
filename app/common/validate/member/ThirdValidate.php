@@ -33,7 +33,9 @@ class ThirdValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'         => ['require', 'array'],
         'field'       => ['require', 'checkUpdateField'],
@@ -45,7 +47,9 @@ class ThirdValidate extends Validate
         'import_file' => ['require', 'file', 'fileExt' => 'xlsx'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'unionid.requireWithout' => '请输入unionid或openid',
         'openid.requireWithout' => '请输入unionid或openid',
@@ -53,7 +57,9 @@ class ThirdValidate extends Validate
         'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['third_id'],
         'add'     => ['application', 'member_id', 'unionid', 'openid'],
@@ -64,14 +70,18 @@ class ThirdValidate extends Validate
         'import'  => ['import_file'],
     ];
 
-    // 验证场景定义：第三方账号删除
+    /**
+     * 验证场景定义：第三方账号删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkDele');
     }
 
-    // 自定义验证规则：第三方账号是否已存在
+    /**
+     * 自定义验证规则：第三方账号是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model   = $this->model();
@@ -102,7 +112,9 @@ class ThirdValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：第三方账号批量修改字段
+    /**
+     * 自定义验证规则：第三方账号批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -114,7 +126,9 @@ class ThirdValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：第三方账号删除验证
+    /**
+     * 自定义验证规则：第三方账号删除验证
+     */
     protected function checkDele($value, $rule, $data = [])
     {
         $model = $this->model();

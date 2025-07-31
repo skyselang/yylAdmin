@@ -18,15 +18,22 @@ use hg\apidoc\annotation as Apidoc;
  */
 class UserLogModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'system_user_log';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'log_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
@@ -37,13 +44,17 @@ class UserLogModel extends Model
      * 获取日志类型名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("log_type_name", type="string", desc="日志类型名称")
+     * @return string
      */
     public function getLogTypeNameAttr($value, $data)
     {
         return SettingService::logTypes($data['log_type']);
     }
 
-    // 关联用户
+    /**
+     * 关联用户
+     * @return \think\model\relation\HasOne
+     */
     public function user()
     {
         return $this->hasOne(UserModel::class, 'user_id', 'user_id');
@@ -52,6 +63,7 @@ class UserLogModel extends Model
      * 获取用户昵称
      * @Apidoc\Field("")
      * @Apidoc\AddField("nickname", type="string", desc="用户昵称")
+     * @return string
      */
     public function getNicknameAttr()
     {
@@ -61,13 +73,17 @@ class UserLogModel extends Model
      * 获取用户账号
      * @Apidoc\Field("")
      * @Apidoc\AddField("username", type="string", desc="用户账号")
+     * @return string
      */
     public function getUsernameAttr()
     {
         return $this['user']['username'] ?? '';
     }
 
-    // 关联菜单
+    /**
+     * 关联菜单
+     * @return \think\model\relation\HasOne
+     */
     public function menu()
     {
         return $this->hasOne(MenuModel::class, 'menu_id', 'menu_id');
@@ -76,6 +92,7 @@ class UserLogModel extends Model
      * 获取菜单名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("menu_name", type="string", desc="菜单名称")
+     * @return string
      */
     public function getMenuNameAttr($value, $data)
     {
@@ -89,6 +106,7 @@ class UserLogModel extends Model
      * 获取菜单链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("menu_url", type="string", desc="菜单链接")
+     * @return string
      */
     public function getMenuUrlAttr($value, $data)
     {
@@ -97,18 +115,28 @@ class UserLogModel extends Model
 
     /**
      * 修改请求方法
+     * @param mixed $value 数据
+     * @return string
      */
     public function setRequestMethodAttr($value)
     {
         return strtoupper($value);
     }
 
-    // 修改请求参数
+    /**
+     * 修改请求参数
+     * @param mixed $value 数据
+     * @return string
+     */
     public function setRequestParamAttr($value)
     {
         return json_encode($value);
     }
-    // 获取请求参数
+    /**
+     * 获取请求参数
+     * @param mixed $value 数据
+     * @return mixed
+     */
     public function getRequestParamAttr($value)
     {
         return json_decode($value, true);

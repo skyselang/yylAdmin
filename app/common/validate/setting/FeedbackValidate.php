@@ -31,7 +31,9 @@ class FeedbackValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'         => ['require', 'array'],
         'feedback_id' => ['require'],
@@ -42,7 +44,9 @@ class FeedbackValidate extends Validate
         'email'       => ['email'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'title.require'   => '请输入标题',
         'content.require' => '请输入内容',
@@ -50,7 +54,9 @@ class FeedbackValidate extends Validate
         'email.email'     => '请输入正确邮箱地址',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['feedback_id'],
         'add'     => ['title', 'content', 'images', 'phone', 'email'],
@@ -60,7 +66,9 @@ class FeedbackValidate extends Validate
         'update'  => ['ids', 'field'],
     ];
 
-    // 自定义验证规则：反馈是否已存在
+    /**
+     * 自定义验证规则：反馈是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -82,7 +90,9 @@ class FeedbackValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：反馈批量修改字段
+    /**
+     * 自定义验证规则：反馈批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];

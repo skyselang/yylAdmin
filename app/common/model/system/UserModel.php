@@ -19,22 +19,32 @@ use app\common\service\system\SettingService;
  */
 class UserModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'system_user';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'user_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
         return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 
-    // 关联头像文件
+    /**
+     * 关联头像文件
+     * @return \think\model\relation\HasOne
+     */
     public function avatar()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'avatar_id')->append(['file_url'])->where(where_disdel());
@@ -43,6 +53,7 @@ class UserModel extends Model
      * 获取头像链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("avatar_url", type="string", desc="头像链接")
+     * @return string
      */
     public function getAvatarUrlAttr()
     {
@@ -53,6 +64,7 @@ class UserModel extends Model
      * 获取性别名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("gender_name", type="string", desc="性别名称")
+     * @return string
      */
     public function getGenderNameAttr($value, $data)
     {
@@ -63,6 +75,7 @@ class UserModel extends Model
      * 获取年龄
      * @Apidoc\Field("")
      * @Apidoc\AddField("age", type="int", desc="年龄")
+     * @return string
      */
     public function getAgeAttr($value, $data)
     {
@@ -72,7 +85,10 @@ class UserModel extends Model
         return '';
     }
 
-    // 关联部门
+    /**
+     * 关联部门
+     * @return \think\model\relation\BelongsToMany
+     */
     public function depts()
     {
         return $this->belongsToMany(DeptModel::class, UserAttributesModel::class, 'dept_id', 'user_id');
@@ -81,6 +97,7 @@ class UserModel extends Model
      * 获取部门id
      * @Apidoc\Field("")
      * @Apidoc\AddField("dept_ids", type="array", desc="部门id")
+     * @return array
      */
     public function getDeptIdsAttr()
     {
@@ -90,13 +107,17 @@ class UserModel extends Model
      * 获取部门名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("dept_names", type="string", desc="部门名称")
+     * @return string
      */
     public function getDeptNamesAttr()
     {
         return model_relation_fields($this['depts'], 'dept_name', true);
     }
 
-    // 关联职位
+    /**
+     * 关联职位
+     * @return \think\model\relation\BelongsToMany
+     */
     public function posts()
     {
         return $this->belongsToMany(PostModel::class, UserAttributesModel::class, 'post_id', 'user_id');
@@ -105,6 +126,7 @@ class UserModel extends Model
      * 获取职位id
      * @Apidoc\Field("")
      * @Apidoc\AddField("post_ids", type="array", desc="职位id")
+     * @return array
      */
     public function getPostIdsAttr()
     {
@@ -114,13 +136,17 @@ class UserModel extends Model
      * 获取职位名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("post_names", type="string", desc="职位名称")
+     * @return string
      */
     public function getPostNamesAttr()
     {
         return model_relation_fields($this['posts'], 'post_name', true);
     }
 
-    // 关联角色
+    /**
+     * 关联角色
+     * @return \think\model\relation\BelongsToMany
+     */
     public function roles()
     {
         return $this->belongsToMany(RoleModel::class, UserAttributesModel::class, 'role_id', 'user_id');
@@ -129,6 +155,7 @@ class UserModel extends Model
      * 获取角色id
      * @Apidoc\Field("")
      * @Apidoc\AddField("role_ids", type="array", desc="角色id")
+     * @return array
      */
     public function getRoleIdsAttr()
     {
@@ -138,6 +165,7 @@ class UserModel extends Model
      * 获取角色名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("role_names", type="string", desc="角色名称")
+     * @return string
      */
     public function getRoleNamesAttr()
     {
@@ -148,6 +176,7 @@ class UserModel extends Model
      * 获取是否超管名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_super_name", type="string", desc="是否超管名称")
+     * @return string
      */
     public function getIsSuperNameAttr($value, $data)
     {

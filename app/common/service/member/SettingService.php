@@ -369,10 +369,10 @@ class SettingService
         $key  = $id . $type;
 
         $cache = self::cache();
-        $info = $cache->get($key);
+        $info  = $cache->get($key);
         if (empty($info)) {
             $model = self::model();
-            $pk = $model->getPk();
+            $pk    = $model->getPk();
 
             $info = $model->find($id);
             if (empty($info)) {

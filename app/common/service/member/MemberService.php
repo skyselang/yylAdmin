@@ -1526,7 +1526,7 @@ class MemberService
             $where[] = where_delete();
 
             $model = self::model();
-            $pk = $model->getPk();
+            $pk    = $model->getPk();
 
             if ($stat == 'count') {
                 $data = [

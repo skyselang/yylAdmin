@@ -47,7 +47,6 @@ class ImportService
 
     /**
      * 修改字段
-     * @var array
      */
     public static $editField = [
         'import_id' => '',
@@ -191,9 +190,9 @@ class ImportService
         $info  = $cache->get($id);
         if (empty($info)) {
             $model = self::model();
-            $pk = $model->getPk();
+            $pk    = $model->getPk();
             $where = [[$pk, '=', $id]];
-            $info = $model->with(['createUser'])->where($where)->find();
+            $info  = $model->with(['createUser'])->where($where)->find();
             if (empty($info)) {
                 if ($exce) {
                     exception(lang('导入文件不存在：') . $id);
@@ -221,11 +220,13 @@ class ImportService
 
         $import_file = $param['import_file'];
         unset($param[$pk], $param['import_file']);
-        $param['file_path'] = SettingService::expImpFilePath($param['type'], 'import');
-        $param['file_name'] = $import_file->getOriginalName();
-        $param['file_size'] = $import_file->getSize();
-        $param['create_uid'] = user_id();
+
+        $param['file_path']   = SettingService::expImpFilePath($param['type'], 'import');
+        $param['file_name']   = $import_file->getOriginalName();
+        $param['file_size']   = $import_file->getSize();
+        $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
+
         $file_path = SettingService::impFilePathSave($param['file_path']);
         Filesystem::disk('public')->putFileAs(SettingService::IMPORT_DIR, $import_file, $file_path);
         $model->save($param);

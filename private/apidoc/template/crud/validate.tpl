@@ -31,7 +31,9 @@ class {$validate.class_name} extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids' => ['require', 'array'],
         'field' => ['require', 'checkUpdateField'],
@@ -45,7 +47,9 @@ class {$validate.class_name} extends Validate
         'is_disable' => ['require', 'in' => '0,1'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         {foreach $tables[0].datas as $k=>$item}
         {if '{$item.check}'}{foreach $item.check as $j=>$checkItem}'{$item.field}.{$checkItem.value}' => '{$checkItem.message}',
@@ -53,7 +57,9 @@ class {$validate.class_name} extends Validate
         {/foreach}
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['{$custom.field_pk}'],
         'add'     => [{foreach $tables[0].datas as $k=>$item}{if '{$item.add}'=='true' && ('{$item.not_null}' || '{$item.check}')}'{$item.field}', {/if}{/foreach}],
@@ -63,7 +69,9 @@ class {$validate.class_name} extends Validate
         'update'  => ['ids', 'field'],
     ];
 
-    // 自定义验证规则：是否已存在
+    /**
+     * 自定义验证规则：是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -92,13 +100,15 @@ class {$validate.class_name} extends Validate
         return true;
     }
 
-    // 自定义验证规则：批量修改字段
+    /**
+     * 自定义验证规则：批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
-        $field = $data['field'];
-        $updateField = $this->service::$updateField;
-        if (!in_array($field, $updateField)) {
-            return lang('不允许修改的字段：') . $field;
+        $edit_field   = $data['field'];
+        $update_field = $this->service::$updateField;
+        if (!in_array($edit_field, $update_field)) {
+            return lang('不允许修改的字段：') . $edit_field;
         }
 
         return true;

@@ -31,7 +31,9 @@ class CarouselValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'         => ['require', 'array'],
         'field'       => ['require', 'checkUpdateField'],
@@ -39,12 +41,16 @@ class CarouselValidate extends Validate
         'title'       => ['require', 'checkExisted'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'title.require' => '请输入标题',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['carousel_id'],
         'add'     => ['title'],
@@ -54,7 +60,9 @@ class CarouselValidate extends Validate
         'update'  => ['ids', 'field'],
     ];
 
-    // 自定义验证规则：轮播是否已存在
+    /**
+     * 自定义验证规则：轮播是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -82,7 +90,9 @@ class CarouselValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：轮播批量修改字段
+    /**
+     * 自定义验证规则：轮播批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];

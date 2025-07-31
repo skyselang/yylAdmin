@@ -92,7 +92,7 @@ class RegionService
      * @param string $field 字段
      * @param int    $page  页数
      * @param int    $limit 数量
-     * @param array  $param level级别：1省2市3区县4街道乡镇
+     * @param array  $param 参数，level级别：1省2市3区县4街道乡镇
      * @return array []
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="searchQuery")
@@ -171,7 +171,7 @@ class RegionService
         $info  = $cache->get($id);
         if (empty($info)) {
             $model = self::model();
-            $pk = $model->getPk();
+            $pk    = $model->getPk();
 
             $info = $model->find($id);
             if (empty($info)) {

@@ -17,12 +17,18 @@ use hg\apidoc\annotation as Apidoc;
  */
 class GroupModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'member_group';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'group_id';
     /**
-     * 名称键
+     * 名称字段
      * @var string
      */
     public $namek = 'group_name';
@@ -31,13 +37,17 @@ class GroupModel extends Model
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
         return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 
-    // 关联接口
+    /**
+     * 关联接口
+     * @return \think\model\relation\BelongsToMany
+     */
     public function apis()
     {
         return $this->belongsToMany(ApiModel::class, GroupApisModel::class, 'api_id', 'group_id');
@@ -46,6 +56,7 @@ class GroupModel extends Model
      * 获取接口id
      * @Apidoc\Field("")
      * @Apidoc\AddField("api_ids", type="array", desc="接口id")
+     * @return array
      */
     public function getApiIdsAttr()
     {
@@ -56,6 +67,7 @@ class GroupModel extends Model
      * 获取是否默认名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_default_name", type="string", desc="是否默认名称")
+     * @return string
      */
     public function getIsDefaultNameAttr($value, $data)
     {

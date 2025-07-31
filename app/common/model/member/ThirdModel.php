@@ -18,22 +18,32 @@ use app\common\service\member\SettingService;
  */
 class ThirdModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'member_third';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'third_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
         return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 
-    // 关联会员
+    /**
+     * 关联会员
+     * @return \think\model\relation\HasOne
+     */
     public function member()
     {
         return $this->hasOne(MemberModel::class, 'member_id', 'member_id');
@@ -42,6 +52,7 @@ class ThirdModel extends Model
      * 获取会员昵称
      * @Apidoc\Field("")
      * @Apidoc\AddField("member_nickname", type="string", desc="会员昵称")
+     * @return string
      */
     public function getMemberNicknameAttr($value, $data)
     {
@@ -51,6 +62,7 @@ class ThirdModel extends Model
      * 获取会员用户名
      * @Apidoc\Field("")
      * @Apidoc\AddField("member_username", type="string", desc="会员用户名")
+     * @return string
      */
     public function getMemberUsernameAttr($value, $data)
     {
@@ -61,6 +73,7 @@ class ThirdModel extends Model
      * 获取平台名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("platform_name", type="string", desc="平台名称")
+     * @return string
      */
     public function getPlatformNameAttr($value, $data)
     {
@@ -71,6 +84,7 @@ class ThirdModel extends Model
      * 获取应用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("application_name", type="string", desc="应用名称")
+     * @return string
      */
     public function getApplicationNameAttr($value, $data)
     {

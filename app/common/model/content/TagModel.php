@@ -19,12 +19,18 @@ use app\common\service\content\SettingService;
  */
 class TagModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'content_tag';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'tag_id';
     /**
-     * 名称键
+     * 名称字段
      * @var string
      */
     public $namek = 'tag_name';
@@ -33,13 +39,17 @@ class TagModel extends Model
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
         return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 
-    // 关联图片
+    /**
+     * 关联图片
+     * @return \think\model\relation\HasOne
+     */
     public function image()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'image_id')->append(['file_url'])->where(where_disdel());
@@ -48,6 +58,7 @@ class TagModel extends Model
      * 获取图片链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("image_url", type="string", desc="图片链接")
+     * @return string
      */
     public function getImageUrlAttr($value, $data)
     {
@@ -61,22 +72,40 @@ class TagModel extends Model
         return $file_url;
     }
 
-    // 关联文件列表
+    /**
+     * 关联文件列表
+     * @return \think\model\relation\BelongsToMany
+     */
     public function files()
     {
         return $this->belongsToMany(FileModel::class, AttributesModel::class, 'file_id', 'tag_id');
     }
-    // 获取图片列表
+    /**
+     * 获取图片列表
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("images", type="array", desc="图片列表")
+     * @return array
+     */
     public function getImagesAttr()
     {
         return model_relation_fields($this['files']->append(['file_url']), '');
     }
-    // 获取图片id数组
+    /**
+     * 获取图片id数组
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("image_ids", type="array", desc="图片id数组")
+     * @return array
+     */
     public function getImageIdsAttr()
     {
         return model_relation_fields($this['files']->append(['file_url']), 'file_id');
     }
-    // 获取图片url数组
+    /**
+     * 获取图片url数组
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("image_urls", type="array", desc="图片url数组")
+     * @return array
+     */
     public function getImageUrlsAttr()
     {
         return model_relation_fields($this['files']->append(['file_url']), 'file_url');

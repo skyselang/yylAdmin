@@ -17,12 +17,18 @@ use hg\apidoc\annotation as Apidoc;
  */
 class ApiModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'member_api';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'api_id';
     /**
-     * 上级id键
+     * 上级id字段
      * @var string
      */
     public $pidk = 'api_pid';
@@ -31,6 +37,7 @@ class ApiModel extends Model
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
@@ -41,6 +48,7 @@ class ApiModel extends Model
      * 获取是否免登名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_unlogin_name", type="string", desc="是否免登名称")
+     * @return string
      */
     public function getIsUnloginNameAttr($value, $data)
     {
@@ -51,6 +59,7 @@ class ApiModel extends Model
      * 获取是否免权名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_unauth_name", type="string", desc="是否免权名称")
+     * @return string
      */
     public function getIsUnauthNameAttr($value, $data)
     {
@@ -61,6 +70,7 @@ class ApiModel extends Model
      * 获取是否免限名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_unrate_name", type="string", desc="是否免限名称")
+     * @return string
      */
     public function getIsUnrateNameAttr($value, $data)
     {

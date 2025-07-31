@@ -20,22 +20,32 @@ use app\common\service\content\CategoryService;
  */
 class ContentModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'content';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'content_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
         return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 
-    // 关联图片
+    /**
+     * 关联图片
+     * @return \think\model\relation\HasOne
+     */
     public function image()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'image_id')->append(['file_url'])->where(where_disdel());
@@ -44,6 +54,7 @@ class ContentModel extends Model
      * 获取图片链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("image_url", type="string", desc="图片链接")
+     * @return string
      */
     public function getImageUrlAttr($value, $data)
     {
@@ -57,7 +68,10 @@ class ContentModel extends Model
         return $file_url;
     }
 
-    // 关联分类
+    /**
+     * 关联分类
+     * @return \think\model\relation\BelongsToMany
+     */
     public function categorys()
     {
         return $this->belongsToMany(CategoryModel::class, AttributesModel::class, 'category_id', 'content_id');
@@ -66,6 +80,7 @@ class ContentModel extends Model
      * 获取分类id
      * @Apidoc\Field("")
      * @Apidoc\AddField("category_ids", type="array", desc="分类id", mock="@integer(1, 9)")
+     * @return array
      */
     public function getCategoryIdsAttr()
     {
@@ -75,6 +90,7 @@ class ContentModel extends Model
      * 获取分类名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("category_names", type="string", desc="分类名称")
+     * @return string|array
      */
     public function getCategoryNamesAttr()
     {
@@ -84,13 +100,17 @@ class ContentModel extends Model
      * 获取分类完整名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("category_full_names", type="string", desc="分类完整名称")
+     * @return string
      */
     public function getCategoryFullNamesAttr()
     {
         return CategoryService::fullPathName($this['category_ids'] ?? []);
     }
 
-    // 关联标签
+    /**
+     * 关联标签
+     * @return \think\model\relation\BelongsToMany
+     */
     public function tags()
     {
         return $this->belongsToMany(TagModel::class, AttributesModel::class, 'tag_id', 'content_id');
@@ -99,6 +119,7 @@ class ContentModel extends Model
      * 获取标签id
      * @Apidoc\Field("")
      * @Apidoc\AddField("tag_ids", type="array", desc="标签id", mock="@integer(1, 9)")
+     * @return array
      */
     public function getTagIdsAttr()
     {
@@ -108,6 +129,7 @@ class ContentModel extends Model
      * 获取标签名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("tag_names", type="string", desc="标签名称")
+     * @return string|array
      */
     public function getTagNamesAttr()
     {
@@ -118,6 +140,7 @@ class ContentModel extends Model
      * 获取展示点击量
      * @Apidoc\Field("")
      * @Apidoc\AddField("hits_show", type="int", desc="展示点击量")
+     * @return int
      */
     public function getHitsShowAttr($value, $data)
     {
@@ -125,12 +148,20 @@ class ContentModel extends Model
         return ($data['hits_initial'] ?? 0) + ($data['hits'] ?? 0);
     }
 
-    // 关联文件
+    /**
+     * 关联文件
+     * @return \think\model\relation\BelongsToMany
+     */
     public function files()
     {
         return $this->belongsToMany(FileModel::class, AttributesModel::class, 'file_id', 'content_id')->where(where_disdel());
     }
-    // 获取图片文件列表
+    /**
+     * 获取图片文件列表
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("images", type="array", desc="图片文件列表")
+     * @return array
+     */
     public function getImagesAttr()
     {
         if ($this['files']) {
@@ -143,7 +174,12 @@ class ContentModel extends Model
         }
         return $images ?? [];
     }
-    // 获取图片文件id
+    /**
+     * 获取图片文件id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("image_ids", type="array", desc="图片文件id")
+     * @return array
+     */
     public function getImageIdsAttr()
     {
         if ($this['files']) {
@@ -156,7 +192,12 @@ class ContentModel extends Model
         }
         return $image_ids ?? [];
     }
-    // 获取视频文件列表
+    /**
+     * 获取视频文件列表
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("videos", type="array", desc="视频文件列表")
+     * @return array
+     */
     public function getVideosAttr()
     {
         if ($this['files']) {
@@ -169,7 +210,12 @@ class ContentModel extends Model
         }
         return $videos ?? [];
     }
-    // 获取视频文件id
+    /**
+     * 获取视频文件id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("video_ids", type="array", desc="视频文件id")
+     * @return array
+     */
     public function getVideoIdsAttr()
     {
         if ($this['files']) {
@@ -182,7 +228,12 @@ class ContentModel extends Model
         }
         return $video_ids ?? [];
     }
-    // 获取音频文件列表
+    /**
+     * 获取音频文件列表
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("audios", type="array", desc="音频文件列表")
+     * @return array
+     */
     public function getAudiosAttr()
     {
         if ($this['files']) {
@@ -195,7 +246,12 @@ class ContentModel extends Model
         }
         return $audios ?? [];
     }
-    // 获取音频文件id
+    /**
+     * 获取音频文件id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("audio_ids", type="array", desc="音频文件id")
+     * @return array
+     */
     public function getAudioIdsAttr()
     {
         if ($this['files']) {
@@ -208,7 +264,12 @@ class ContentModel extends Model
         }
         return $audio_ids ?? [];
     }
-    // 获取文档文件列表
+    /**
+     * 获取文档文件列表
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("words", type="array", desc="文档文件列表")
+     * @return array
+     */
     public function getWordsAttr()
     {
         if ($this['files']) {
@@ -221,7 +282,12 @@ class ContentModel extends Model
         }
         return $words ?? [];
     }
-    // 获取文档文件id
+    /**
+     * 获取文档文件id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("word_ids", type="array", desc="文档文件id")
+     * @return array
+     */
     public function getWordIdsAttr()
     {
         if ($this['files']) {
@@ -234,7 +300,12 @@ class ContentModel extends Model
         }
         return $word_ids ?? [];
     }
-    // 获取其它文件列表
+    /**
+     * 获取其它文件列表
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("others", type="array", desc="其它文件列表")
+     * @return array
+     */
     public function getOthersAttr()
     {
         if ($this['files']) {
@@ -247,7 +318,12 @@ class ContentModel extends Model
         }
         return $others ?? [];
     }
-    // 获取其它文件id
+    /**
+     * 获取其它文件id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("other_ids", type="array", desc="其它文件id")
+     * @return array
+     */
     public function getOtherIdsAttr()
     {
         if ($this['files']) {
@@ -265,6 +341,7 @@ class ContentModel extends Model
      * 获取是否置顶名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_top_name", type="string", desc="是否置顶名称")
+     * @return string
      */
     public function getIsTopNameAttr($value, $data)
     {
@@ -274,6 +351,7 @@ class ContentModel extends Model
      * 获取是否热门名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_hot_name", type="string", desc="是否热门名称")
+     * @return string
      */
     public function getIsHotNameAttr($value, $data)
     {
@@ -283,6 +361,7 @@ class ContentModel extends Model
      * 获取是否推荐名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_rec_name", type="string", desc="是否推荐名称")
+     * @return string
      */
     public function getIsRecNameAttr($value, $data)
     {

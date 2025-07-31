@@ -20,15 +20,22 @@ use app\common\service\setting\SettingService;
  */
 class FeedbackModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'setting_feedback';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'feedback_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
@@ -39,6 +46,7 @@ class FeedbackModel extends Model
      * 获取类型名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("type_name", type="string", desc="类型名称")
+     * @return string
      */
     public function getTypeNameAttr($value, $data)
     {
@@ -49,13 +57,17 @@ class FeedbackModel extends Model
      * 获取状态名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("status_name", type="string", desc="状态名称")
+     * @return string
      */
     public function getStatusNameAttr($value, $data)
     {
         return SettingService::feedbackStatuss($data['status']);
     }
 
-    // 关联会员
+    /**
+     * 关联会员
+     * @return \think\model\relation\HasOne
+     */
     public function member()
     {
         return $this->hasOne(MemberModel::class, 'member_id', 'member_id');
@@ -64,6 +76,7 @@ class FeedbackModel extends Model
      * 获取会员昵称
      * @Apidoc\Field("")
      * @Apidoc\AddField("member_nickname", type="string", desc="会员昵称")
+     * @return string
      */
     public function getMemberNicknameAttr()
     {
@@ -73,18 +86,27 @@ class FeedbackModel extends Model
      * 获取会员用户名
      * @Apidoc\Field("")
      * @Apidoc\AddField("member_username", type="string", desc="会员用户名")
+     * @return string
      */
     public function getMemberUsernameAttr()
     {
         return $this['member']['username'] ?? '';
     }
 
-    // 关联图片
+    /**
+     * 关联图片
+     * @return \think\model\relation\BelongsToMany
+     */
     public function image()
     {
         return $this->belongsToMany(FileModel::class, SettingFilesModel::class, 'file_id', 'feedback_id')->where(where_disdel());
     }
-    // 获取图片
+    /**
+     * 获取图片
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("images", type="array", desc="图片")
+     * @return array
+     */
     public function getImagesAttr()
     {
         if ($this['image']) {
@@ -92,7 +114,12 @@ class FeedbackModel extends Model
         }
         return $images ?? [];
     }
-    // 获取图片id
+    /**
+     * 获取图片id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("image_ids", type="array", desc="图片id")
+     * @return array
+     */
     public function getImageIdsAttr()
     {
         if ($this['image']) {

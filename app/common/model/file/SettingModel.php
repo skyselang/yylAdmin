@@ -17,12 +17,22 @@ use hg\apidoc\annotation as Apidoc;
  */
 class SettingModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'file_setting';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'setting_id';
 
-    // 修改前台文件功能文件类型
+    /**
+     * 修改前台文件功能文件类型
+     * @param mixed $value 数据
+     * @return string
+     */
     public function setApiFileTypesAttr($value)
     {
         if (empty($value[0] ?? '')) {
@@ -30,7 +40,11 @@ class SettingModel extends Model
         }
         return implode(',', $value);
     }
-    // 获取前台文件功能文件类型
+    /**
+     * 获取前台文件功能文件类型
+     * @param mixed $value 数据
+     * @return array
+     */
     public function getApiFileTypesAttr($value)
     {
         if (empty($value)) {
@@ -39,7 +53,11 @@ class SettingModel extends Model
         return explode(',', $value);
     }
 
-    // 修改前台文件功能分组ID
+    /**
+     * 修改前台文件功能分组ID
+     * @param mixed $value 数据
+     * @return string
+     */
     public function setApiFileGroupIdsAttr($value)
     {
         if (empty($value[0] ?? '')) {
@@ -47,7 +65,11 @@ class SettingModel extends Model
         }
         return implode(',', $value);
     }
-    // 获取前台文件功能分组ID
+    /**
+     * 获取前台文件功能分组ID
+     * @param mixed $value 数据
+     * @return array
+     */
     public function getApiFileGroupIdsAttr($value)
     {
         if (empty($value)) {
@@ -60,7 +82,11 @@ class SettingModel extends Model
         return $tag_ids;
     }
 
-    // 修改前台文件功能标签ID
+    /**
+     * 修改前台文件功能标签ID
+     * @param mixed $value 数据
+     * @return string
+     */
     public function setApiFileTagIdsAttr($value)
     {
         if (empty($value[0] ?? '')) {
@@ -68,7 +94,11 @@ class SettingModel extends Model
         }
         return implode(',', $value);
     }
-    // 获取前台文件功能标签ID
+    /**
+     * 获取前台文件功能标签ID
+     * @param mixed $value 数据
+     * @return array
+     */
     public function getApiFileTagIdsAttr($value)
     {
         if (empty($value)) {

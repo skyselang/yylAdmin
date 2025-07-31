@@ -16,8 +16,14 @@ use think\model\Pivot;
  */
 class SettingFilesModel extends Pivot
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'setting_files';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'id';
 }

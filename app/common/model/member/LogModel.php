@@ -18,9 +18,15 @@ use app\common\service\member\SettingService;
  */
 class LogModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'member_log';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'log_id';
 
     /**
@@ -28,17 +34,26 @@ class LogModel extends Model
      * @Apidoc\Field("")
      * @Apidoc\AddField("nickname", type="string", desc="会员昵称")
      * @Apidoc\AddField("username", type="string", desc="会员用户名")
+     * @return \think\model\relation\HasOne
      */
     public function member()
     {
         return $this->hasOne(MemberModel::class, 'member_id', 'member_id');
     }
-    // 获取会员昵称
+    /**
+     * 获取会员昵称
+     * @param mixed $value 数据
+     * @return string
+     */
     public function getNicknameAttr($value)
     {
         return $this['member']['nickname'] ?? '';
     }
-    // 获取会员用户名
+    /**
+     * 获取会员用户名
+     * @param mixed $value 数据
+     * @return string
+     */
     public function getUsernameAttr($value)
     {
         return $this['member']['username'] ?? '';
@@ -49,12 +64,18 @@ class LogModel extends Model
      * @Apidoc\Field("")
      * @Apidoc\AddField("api_name", type="string", desc="接口名称")
      * @Apidoc\AddField("api_url", type="string", desc="接口链接")
+     * @return \think\model\relation\HasOne
      */
     public function api()
     {
         return $this->hasOne(ApiModel::class, 'api_id', 'api_id');
     }
-    // 获取会员接口名称
+    /**
+     * 获取会员接口名称
+     * @param mixed $value 数据
+     * @param mixed $data 数据
+     * @return string
+     */
     public function getApiNameAttr($value, $data)
     {
         $api_name = $this['api']['api_name'] ?? '';
@@ -63,7 +84,12 @@ class LogModel extends Model
         }
         return $data['api_name'] ?? '';
     }
-    // 获取会员接口链接
+    /**
+     * 获取会员接口链接
+     * @param mixed $value 数据
+     * @param mixed $data 数据
+     * @return string
+     */
     public function getApiUrlAttr($value, $data)
     {
         return $this['api']['api_url'] ?? $data['request_url'] ?? '';
@@ -73,6 +99,7 @@ class LogModel extends Model
      * 获取平台名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("platform_name", type="string", desc="平台名称")
+     * @return string
      */
     public function getPlatformNameAttr($value, $data)
     {
@@ -83,18 +110,27 @@ class LogModel extends Model
      * 获取应用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("application_name", type="string", desc="应用名称")
+     * @return string
      */
     public function getApplicationNameAttr($value, $data)
     {
         return SettingService::applications($data['application']);
     }
 
-    // 修改请求参数
+    /**
+     * 修改请求参数
+     * @param mixed $value 数据
+     * @return string
+     */
     public function setRequestParamAttr($value)
     {
         return json_encode($value);
     }
-    // 获取请求参数
+    /**
+     * 获取请求参数
+     * @param mixed $value 数据
+     * @return mixed
+     */
     public function getRequestParamAttr($value)
     {
         return json_decode($value, true);

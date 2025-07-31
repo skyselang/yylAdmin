@@ -88,6 +88,7 @@ class CategoryService
      * @param string $field 字段
      * @param int    $page  页数
      * @param int    $limit 数量
+     * @param array  $param 参数
      * @return array []
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="searchQuery")
@@ -397,7 +398,7 @@ class CategoryService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $image_id = $exp_imp == 'export' ? 'image_url' : 'image_id';
+        $image_id   = $exp_imp == 'export' ? 'image_url' : 'image_id';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],

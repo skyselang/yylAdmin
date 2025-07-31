@@ -18,12 +18,21 @@ use app\common\model\file\FileModel;
  */
 class SettingModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'content_setting';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'setting_id';
 
-    // 关联favicon文件
+    /**
+     * 关联favicon文件
+     * @return \think\model\relation\HasOne
+     */
     public function favicon()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'favicon_id')->append(['file_url'])->where(where_disdel());
@@ -32,13 +41,17 @@ class SettingModel extends Model
      * 获取favicon链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("favicon_url", type="string", desc="favicon链接")
+     * @return string
      */
     public function getFaviconUrlAttr($value, $data)
     {
         return $this['favicon']['file_url'] ?? '';
     }
 
-    // 关联logo文件
+    /**
+     * 关联logo文件
+     * @return \think\model\relation\HasOne
+     */
     public function logo()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'logo_id')->append(['file_url'])->where(where_disdel());
@@ -47,13 +60,17 @@ class SettingModel extends Model
      * 获取logo链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("logo_url", type="string", desc="logo链接")
+     * @return string
      */
     public function getLogoUrlAttr($value, $data)
     {
         return $this['logo']['file_url'] ?? '';
     }
 
-    // 关联公众号二维码文件
+    /**
+     * 关联公众号二维码文件
+     * @return \think\model\relation\HasOne
+     */
     public function offi()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'offi_id')->append(['file_url'])->where(where_disdel());
@@ -62,13 +79,17 @@ class SettingModel extends Model
      * 获取公众号二维码链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("offi_url", type="string", desc="公众号二维码链接")
+     * @return string
      */
     public function getOffiUrlAttr($value, $data)
     {
         return $this['offi']['file_url'] ?? '';
     }
 
-    // 关联小程序码文件
+    /**
+     * 关联小程序码文件
+     * @return \think\model\relation\HasOne
+     */
     public function mini()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'mini_id')->append(['file_url'])->where(where_disdel());
@@ -77,13 +98,17 @@ class SettingModel extends Model
      * 获取小程序码链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("mini_url", type="string", desc="小程序码链接")
+     * @return string
      */
     public function getMiniUrlAttr($value, $data)
     {
         return $this['mini']['file_url'] ?? '';
     }
 
-    // 关联内容默认图片文件
+    /**
+     * 关联内容默认图片文件
+     * @return \think\model\relation\HasOne
+     */
     public function contentDefaultImg()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'content_default_img_id')->append(['file_url'])->where(where_disdel());
@@ -92,13 +117,17 @@ class SettingModel extends Model
      * 获取内容默认图片链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("content_default_img_url", type="string", desc="内容默认图片链接")
+     * @return string
      */
     public function getContentDefaultImgUrlAttr($value, $data)
     {
         return $this['contentDefaultImg']['file_url'] ?? '';
     }
 
-    // 关联分类默认图片文件
+    /**
+     * 关联分类默认图片文件
+     * @return \think\model\relation\HasOne
+     */
     public function categoryDefaultImg()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'category_default_img_id')->append(['file_url'])->where(where_disdel());
@@ -107,13 +136,17 @@ class SettingModel extends Model
      * 获取分类默认图片链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("category_default_img_url", type="string", desc="分类默认图片链接")
+     * @return string
      */
     public function getCategoryDefaultImgUrlAttr($value, $data)
     {
         return $this['categoryDefaultImg']['file_url'] ?? '';
     }
 
-    // 关联标签默认图片文件
+    /**
+     * 关联标签默认图片文件
+     * @return \think\model\relation\HasOne
+     */
     public function tagDefaultImg()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'tag_default_img_id')->append(['file_url'])->where(where_disdel());
@@ -122,6 +155,7 @@ class SettingModel extends Model
      * 获取标签默认图片链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("tag_default_img_url", type="string", desc="标签默认图片链接")
+     * @return string
      */
     public function getTagDefaultImgUrlAttr($value, $data)
     {

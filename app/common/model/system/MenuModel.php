@@ -18,12 +18,18 @@ use app\common\service\system\SettingService;
  */
 class MenuModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'system_menu';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'menu_id';
     /**
-     * 上级id键
+     * 上级id字段
      * @var string
      */
     public $pidk = 'menu_pid';
@@ -32,6 +38,7 @@ class MenuModel extends Model
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
@@ -42,6 +49,7 @@ class MenuModel extends Model
      * 获取菜单类型名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("menu_type_name", type="string", desc="菜单类型名称")
+     * @return string
      */
     public function getMenuTypeNameAttr($value, $data)
     {
@@ -52,6 +60,7 @@ class MenuModel extends Model
      * 获取是否免登名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_unlogin_name", type="string", desc="是否免登名称")
+     * @return string
      */
     public function getIsUnloginNameAttr($value, $data)
     {
@@ -62,6 +71,7 @@ class MenuModel extends Model
      * 获取是否免权名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_unauth_name", type="string", desc="是否免权名称")
+     * @return string
      */
     public function getIsUnauthNameAttr($value, $data)
     {
@@ -72,6 +82,7 @@ class MenuModel extends Model
      * 获取是否免限名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_unrate_name", type="string", desc="是否免限名称")
+     * @return string
      */
     public function getIsUnrateNameAttr($value, $data)
     {
@@ -82,6 +93,7 @@ class MenuModel extends Model
      * 获取是否隐藏名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("hidden_name", type="string", desc="是否隐藏名称")
+     * @return string
      */
     public function getHiddenNameAttr($value, $data)
     {

@@ -2,7 +2,7 @@
 
 本地BASE_URL：[http://localhost:9526](http://localhost:9526)
 
-测试BASE_URL：
+测试BASE_URL：[https://api.yyladmin.top](https://api.yyladmin.top)
 
 正式BASE_URL：
 
@@ -22,11 +22,13 @@
 
 ### 响应参数
 
+```json
 {
   "code": 200,
   "msg": "操作成功",
   "data": {}
 }
+```
 
 ### code描述
 |code|描述|

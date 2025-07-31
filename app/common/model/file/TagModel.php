@@ -17,12 +17,19 @@ use hg\apidoc\annotation as Apidoc;
  */
 class TagModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'file_tag';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'tag_id';
     /**
-     * 名称键
+     * 名称字段
+     * @var string
      */
     public $namek = 'tag_name';
 
@@ -30,6 +37,7 @@ class TagModel extends Model
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {

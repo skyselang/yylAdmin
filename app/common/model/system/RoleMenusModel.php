@@ -16,8 +16,14 @@ use think\model\Pivot;
  */
 class RoleMenusModel extends Pivot
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'system_role_menus';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'id';
 }

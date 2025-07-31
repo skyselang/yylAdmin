@@ -281,7 +281,7 @@ class Setting extends BaseController
      */
     public function tokenEdit()
     {
-        $param = $this->params(['token_key/s' => '', 'token_exp/d' => 720, 'is_multi_login/d' => 0]);
+        $param = $this->params(['token_key/s' => '', 'token_exp/f' => 720, 'is_multi_login/d' => 0]);
 
         validate($this->validate)->scene('token_edit')->check($param);
 

@@ -32,7 +32,9 @@ class ApiValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'         => ['require', 'array'],
         'field'       => ['require', 'checkUpdateField'],
@@ -43,14 +45,18 @@ class ApiValidate extends Validate
         'group_ids'   => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'api_name.require'    => '请输入名称',
         'import_file.require' => '请选择导入文件',
         'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'        => ['api_id'],
         'add'         => ['api_pid', 'api_name'],
@@ -67,14 +73,18 @@ class ApiValidate extends Validate
         'groupLift'   => ['api_id', 'group_ids'],
     ];
 
-    // 验证场景定义：接口删除
+    /**
+     * 验证场景定义：接口删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkChild', 'checkGroup']);
     }
 
-    // 自定义验证规则：接口是否已存在
+    /**
+     * 自定义验证规则：接口是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -101,7 +111,9 @@ class ApiValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：接口批量修改字段
+    /**
+     * 自定义验证规则：接口批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -120,7 +132,9 @@ class ApiValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：接口上级
+    /**
+     * 自定义验证规则：接口上级
+     */
     protected function checkPid($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -146,7 +160,9 @@ class ApiValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：接口是否存在下级
+    /**
+     * 自定义验证规则：接口是否存在下级
+     */
     protected function checkChild($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -160,7 +176,9 @@ class ApiValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：接口是否存在分组
+    /**
+     * 自定义验证规则：接口是否存在分组
+     */
     protected function checkGroup($value, $rule, $data = [])
     {
         $model = $this->model();

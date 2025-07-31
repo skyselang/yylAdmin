@@ -33,7 +33,9 @@ class GroupValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'         => ['require', 'array'],
         'field'       => ['require', 'checkUpdateField'],
@@ -44,14 +46,18 @@ class GroupValidate extends Validate
         'member_ids'  => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'group_name.require'  => '请输入名称',
         'import_file.require' => '请选择导入文件',
         'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'       => ['group_id'],
         'add'        => ['group_name'],
@@ -64,14 +70,18 @@ class GroupValidate extends Validate
         'memberLift' => ['group_id', 'member_ids'],
     ];
 
-    // 验证场景定义：分组删除
+    /**
+     * 验证场景定义：分组删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkApiMember');
     }
 
-    // 自定义验证规则：分组是否已存在
+    /**
+     * 自定义验证规则：分组是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -99,7 +109,9 @@ class GroupValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分组批量修改字段
+    /**
+     * 自定义验证规则：分组批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -111,7 +123,9 @@ class GroupValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分组是否存在接口或会员
+    /**
+     * 自定义验证规则：分组是否存在接口或会员
+     */
     protected function checkApiMember($value, $rule, $data = [])
     {
         $model = $this->model();

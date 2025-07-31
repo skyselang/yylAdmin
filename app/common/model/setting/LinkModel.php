@@ -18,22 +18,32 @@ use app\common\model\file\FileModel;
  */
 class LinkModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'setting_link';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'link_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
         return ($data['is_disable'] ?? 0) ? '是' : '否';
     }
 
-    // 关联图片
+    /**
+     * 关联图片
+     * @return \think\model\relation\HasOne
+     */
     public function image()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'image_id')->append(['file_url'])->where(where_disdel());
@@ -42,6 +52,7 @@ class LinkModel extends Model
      * 获取图片链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("image_url", type="string", desc="图片链接")
+     * @return string
      */
     public function getImageUrlAttr($value, $data)
     {
@@ -52,6 +63,7 @@ class LinkModel extends Model
      * 获取是否显示下划线名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("underline_name", type="string", desc="是否显示下划线名称")
+     * @return string
      */
     public function getUnderlineNameAttr($value, $data)
     {

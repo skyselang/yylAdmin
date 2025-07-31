@@ -32,7 +32,9 @@ class UserValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'      => ['require', 'array'],
         'field'    => ['require', 'checkUpdateField'],
@@ -46,7 +48,9 @@ class UserValidate extends Validate
         'role_ids' => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'nickname.require' => '请输入昵称',
         'nickname.length'  => '昵称长度为1至64个字符',
@@ -58,7 +62,9 @@ class UserValidate extends Validate
         'email.email'      => '请输入正确邮箱地址',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'      => ['user_id'],
         'add'       => ['unique', 'nickname', 'username', 'password', 'phone', 'email'],
@@ -72,55 +78,71 @@ class UserValidate extends Validate
         'login'     => ['username', 'password'],
     ];
 
-    // 验证场景定义：添加
+    /**
+     * 验证场景定义：添加
+     */
     protected function sceneAdd()
     {
         return $this->only(['unique', 'nickname', 'username', 'phone', 'email']);
     }
 
-    // 验证场景定义：修改
+    /**
+     * 验证场景定义：修改
+     */
     protected function sceneEdit()
     {
         return $this->only(['user_id', 'unique', 'nickname', 'username', 'phone', 'email'])
             ->append('user_id', ['checkIsSuper']);
     }
 
-    // 验证场景定义：删除
+    /**
+     * 验证场景定义：删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkIsDelete', 'checkDeptPostRole']);
     }
 
-    // 验证场景定义：修改角色
+    /**
+     * 验证场景定义：修改角色
+     */
     protected function sceneEditrole()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkIsSuper']);
     }
 
-    // 验证场景定义：修改密码
+    /**
+     * 验证场景定义：修改密码
+     */
     protected function sceneEditpwd()
     {
         return $this->only(['ids', 'password'])
             ->append('ids', ['checkIsSuper']);
     }
 
-    // 验证场景定义：是否超管
+    /**
+     * 验证场景定义：是否超管
+     */
     protected function sceneEditsuper()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkIsSuper']);
     }
 
-    // 验证场景定义：是否禁用
+    /**
+     * 验证场景定义：是否禁用
+     */
     protected function sceneDisable()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkIsDisable']);
     }
 
-    // 验证场景定义：登录
+    /**
+     * 验证场景定义：登录
+     */
     protected function sceneLogin()
     {
         return $this->only(['username', 'password'])
@@ -128,7 +150,9 @@ class UserValidate extends Validate
             ->remove('password', ['length']);
     }
 
-    // 自定义验证规则：用户批量修改字段
+    /**
+     * 自定义验证规则：用户批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -140,7 +164,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：编号是否已存在
+    /**
+     * 自定义验证规则：编号是否已存在
+     */
     protected function checkUnique($value, $rule, $data = [])
     {
         $unique = $data['unique'] ?? '';
@@ -159,7 +185,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：昵称是否已存在
+    /**
+     * 自定义验证规则：昵称是否已存在
+     */
     protected function checkNickname($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -175,7 +203,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：账号是否已存在
+    /**
+     * 自定义验证规则：账号是否已存在
+     */
     protected function checkUsername($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -191,7 +221,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：手机是否已存在
+    /**
+     * 自定义验证规则：手机是否已存在
+     */
     protected function checkPhone($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -207,7 +239,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：邮箱是否已存在
+    /**
+     * 自定义验证规则：邮箱是否已存在
+     */
     protected function checkEmail($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -223,7 +257,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否超管
+    /**
+     * 自定义验证规则：用户是否超管
+     */
     protected function checkIsSuper($value, $rule, $data = [])
     {
         $ids = $data['ids'] ?? [];
@@ -242,7 +278,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否禁用
+    /**
+     * 自定义验证规则：用户是否禁用
+     */
     protected function checkIsDisable($value, $rule, $data = [])
     {
         $ids = $data['ids'] ?? [];
@@ -255,7 +293,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户删除
+    /**
+     * 自定义验证规则：用户删除
+     */
     protected function checkIsDelete($value, $rule, $data = [])
     {
         $ids = $data['ids'] ?? [];
@@ -268,7 +308,9 @@ class UserValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户是否已存在部门或职位或角色
+    /**
+     * 自定义验证规则：用户是否已存在部门或职位或角色
+     */
     protected function checkDeptPostRole($value, $rule, $data = [])
     {
         $model = $this->model();

@@ -33,7 +33,9 @@ class RoleValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'       => ['require', 'array'],
         'field'     => ['require', 'checkUpdateField'],
@@ -43,12 +45,16 @@ class RoleValidate extends Validate
         'user_ids'  => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'role_name.require' => '请输入名称',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'     => ['role_id'],
         'add'      => ['role_name'],
@@ -60,14 +66,18 @@ class RoleValidate extends Validate
         'userLift' => ['role_id', 'user_ids'],
     ];
 
-    // 验证场景定义：删除
+    /**
+     * 验证场景定义：删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkMenuUser');
     }
 
-    // 自定义验证规则：角色是否已存在
+    /**
+     * 自定义验证规则：角色是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -95,7 +105,9 @@ class RoleValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：角色批量修改字段
+    /**
+     * 自定义验证规则：角色批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -107,7 +119,9 @@ class RoleValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：角色是否存在菜单或用户
+    /**
+     * 自定义验证规则：角色是否存在菜单或用户
+     */
     protected function checkMenuUser($value, $rule, $data = [])
     {
         $model = $this->model();

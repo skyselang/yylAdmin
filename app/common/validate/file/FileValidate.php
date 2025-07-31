@@ -45,7 +45,9 @@ class FileValidate extends Validate
         'import_file' => ['require', 'file', 'fileExt' => 'xlsx'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'file.require'        => '请选择上传文件',
         'file_type.require'   => '请选择文件类型',
@@ -55,7 +57,9 @@ class FileValidate extends Validate
         'import_file.fileExt' => '只允许xlsx文件格式',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'        => ['file_id'],
         'add'         => ['file'],
@@ -69,14 +73,18 @@ class FileValidate extends Validate
         'recycleDele' => ['ids'],
     ];
 
-    // 验证场景定义：文件删除
+    /**
+     * 验证场景定义：文件删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkTagGroup');
     }
 
-    // 自定义验证规则：编号是否已存在
+    /**
+     * 自定义验证规则：编号是否已存在
+     */
     protected function checkUnique($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -98,7 +106,9 @@ class FileValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：文件批量修改字段
+    /**
+     * 自定义验证规则：文件批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -110,7 +120,9 @@ class FileValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：文件限制
+    /**
+     * 自定义验证规则：文件限制
+     */
     protected function checkLimit($value, $rule, $data = [])
     {
         $file    = $data['file'];
@@ -143,7 +155,9 @@ class FileValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：文件是否存在标签或分组
+    /**
+     * 自定义验证规则：文件是否存在标签或分组
+     */
     protected function checkTagGroup($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -162,7 +176,9 @@ class FileValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：文件链接
+    /**
+     * 自定义验证规则：文件链接
+     */
     protected function checkFileUrl($value, $rule, $data = [])
     {
         $file_url  = $data['file_url'];

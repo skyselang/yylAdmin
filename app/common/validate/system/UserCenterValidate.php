@@ -31,7 +31,9 @@ class UserCenterValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'user_id'      => ['require'],
         'nickname'     => ['require', 'checkNickname', 'length' => '1,64'],
@@ -42,7 +44,9 @@ class UserCenterValidate extends Validate
         'email'        => ['email', 'checkEmail'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'nickname.require'     => '请输入昵称',
         'nickname.length'      => '昵称长度为1至64个字符',
@@ -55,7 +59,9 @@ class UserCenterValidate extends Validate
         'email.email'          => '请输入正确邮箱地址',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info' => ['user_id'],
         'edit' => ['user_id', 'username', 'nickname', 'phone', 'email'],
@@ -63,7 +69,9 @@ class UserCenterValidate extends Validate
         'log'  => ['user_id'],
     ];
 
-    // 自定义验证规则：昵称是否已存在
+    /**
+     * 自定义验证规则：昵称是否已存在
+     */
     protected function checkNickname($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -79,7 +87,9 @@ class UserCenterValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：账号是否已存在
+    /**
+     * 自定义验证规则：账号是否已存在
+     */
     protected function checkUsername($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -95,7 +105,9 @@ class UserCenterValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：手机是否已存在
+    /**
+     * 自定义验证规则：手机是否已存在
+     */
     protected function checkPhone($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -111,7 +123,9 @@ class UserCenterValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：邮箱是否已存在
+    /**
+     * 自定义验证规则：邮箱是否已存在
+     */
     protected function checkEmail($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -127,7 +141,9 @@ class UserCenterValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：旧密码是否正确
+    /**
+     * 自定义验证规则：旧密码是否正确
+     */
     protected function checkOldPwd($value, $rule, $data = [])
     {
         $model = $this->model();

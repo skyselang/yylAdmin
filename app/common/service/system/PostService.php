@@ -81,6 +81,7 @@ class PostService
      * @param string $field 字段
      * @param int    $page  页数
      * @param int    $limit 数量
+     * @param array  $param 参数
      * @return array []
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="searchQuery")

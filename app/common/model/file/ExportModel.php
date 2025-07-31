@@ -19,9 +19,15 @@ use app\common\service\file\SettingService;
  */
 class ExportModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'file_export';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'export_id';
 
     /**
@@ -66,6 +72,8 @@ class ExportModel extends Model
 
     /**
      * 修改参数
+     * @param mixed $value 数据
+     * @return string
      */
     public function setParamAttr($value)
     {
@@ -73,6 +81,8 @@ class ExportModel extends Model
     }
     /**
      * 获取参数
+     * @param mixed $value 数据
+     * @return mixed
      */
     public function getParamAttr($value)
     {
@@ -83,6 +93,7 @@ class ExportModel extends Model
      * 关联添加用户
      * @Apidoc\Field("")
      * @Apidoc\AddField("create_uname", type="string", desc="添加用户名称")
+     * @return \think\model\relation\HasOne
      */
     public function createUser()
     {

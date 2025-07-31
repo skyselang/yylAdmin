@@ -134,10 +134,10 @@ class {$service.class_name}
     public static function info($id, $exce = true)
     {
         $cache = self::cache();
-        $info = $cache->get($id);
+        $info  = $cache->get($id);
         if (empty($info)) {
             $model = self::model();
-            $pk = $model->getPk();
+            $pk    = $model->getPk();
 
             if (is_numeric($id)) {
                 $where[] = [$pk, '=', $id];
@@ -170,7 +170,7 @@ class {$service.class_name}
     public static function add($param)
     {
         $model = self::model();
-        $pk = $model->getPk();
+        $pk    = $model->getPk();
 
         unset($param[$pk]);
         if (empty($param['unique'] ?? '')) {
@@ -200,7 +200,7 @@ class {$service.class_name}
     public static function edit($ids, $param = [])
     {
         $model = self::model();
-        $pk = $model->getPk();
+        $pk    = $model->getPk();
 
         unset($param[$pk], $param['ids']);
         $param['update_uid'] = user_id();
@@ -231,7 +231,7 @@ class {$service.class_name}
     public static function dele($ids, $real = false)
     {
         $model = self::model();
-        $pk = $model->getPk();
+        $pk    = $model->getPk();
 
         $unique = $model->where($pk, 'in', $ids)->column('unique');
 
@@ -296,7 +296,7 @@ class {$service.class_name}
     public static function header($exp_imp = 'import')
     {
         $model = self::model();
-        $pk = $model->getPk();
+        $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
@@ -331,10 +331,10 @@ class {$service.class_name}
     public static function export($export_info)
     {
         $export_info['is_tree'] = 0;
-        $export_info['type']    = FileSettingService::EXPIMP_TYPE_XXX;
+        $export_info['type']    = FileSettingService::EXPIMP_TYPE_{$tables[0].table_name};// 导出导入类型
 
         $field = '{$custom.field_list}';
-        $limit = 100000;
+        $limit = 10000;
         $data  = ExportService::exports(__CLASS__, $export_info, $field, $limit);
 
         return $data;

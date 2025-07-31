@@ -102,6 +102,7 @@ class FileService
      * @param array  $order 排序
      * @param string $field 字段
      * @param bool   $total 总数
+     * @param array  $param 参数
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="searchQuery")
@@ -241,7 +242,7 @@ class FileService
         $info  = $cache->get($id);
         if (empty($info)) {
             $model = self::model();
-            $pk = $model->getPk();
+            $pk    = $model->getPk();
 
             if (is_numeric($id)) {
                 $where[] = [$pk, '=', $id];

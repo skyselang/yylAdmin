@@ -32,7 +32,9 @@ class MenuValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'       => ['require', 'array'],
         'field'     => ['require', 'checkUpdateField'],
@@ -42,12 +44,16 @@ class MenuValidate extends Validate
         'role_ids'  => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'menu_name.require' => '请输入菜单名称',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'        => ['menu_id'],
         'add'         => ['menu_pid', 'menu_name'],
@@ -63,14 +69,18 @@ class MenuValidate extends Validate
         'roleLift'    => ['menu_id', 'role_ids'],
     ];
 
-    // 验证场景定义：菜单删除
+    /**
+     * 验证场景定义：菜单删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkChild', 'checkRole']);
     }
 
-    // 自定义验证规则：菜单是否已存在
+    /**
+     * 自定义验证规则：菜单是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -97,7 +107,9 @@ class MenuValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：菜单批量修改字段
+    /**
+     * 自定义验证规则：菜单批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -116,7 +128,9 @@ class MenuValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：菜单上级
+    /**
+     * 自定义验证规则：菜单上级
+     */
     protected function checkPid($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -142,7 +156,9 @@ class MenuValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：菜单是否存在下级
+    /**
+     * 自定义验证规则：菜单是否存在下级
+     */
     protected function checkChild($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -156,7 +172,9 @@ class MenuValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：菜单是否存在角色
+    /**
+     * 自定义验证规则：菜单是否存在角色
+     */
     protected function checkRole($value, $rule, $data = [])
     {
         $model = $this->model();

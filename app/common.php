@@ -293,7 +293,6 @@ function list_to_path($list = [], $idk = 'id', $pidk = 'pid', $namek = 'name', $
 	return $result;
 }
 
-
 /**
  * 列表转树形（根节点未知）
  * @param array  $list   列表
@@ -304,20 +303,17 @@ function list_to_path($list = [], $idk = 'id', $pidk = 'pid', $namek = 'name', $
  */
 function array_to_tree($list = [], $idk = 'id', $pidk = 'pid', $childk = 'children')
 {
-	$parent_ids = [];
-	foreach ($list as $val) {
-		$pids = children_parent_key($list, $val[$idk], $idk, $pidk);
-		$parent_ids[] = end($pids);
-	}
+	// 构建所有id的哈希表
+	$ids = array_column($list, $idk);
+	$ids_flip = array_flip($ids);
 
-	$parent_ids = array_unique($parent_ids);
+	// 只遍历一次，直接将所有父id不在id集合中的节点pid设为0
 	foreach ($list as &$v) {
-		foreach ($parent_ids as $vp) {
-			if ($v[$idk] === $vp) {
-				$v[$pidk] = 0;
-			}
+		if (!isset($ids_flip[$v[$pidk]])) {
+			$v[$pidk] = 0;
 		}
 	}
+	unset($v);
 
 	return list_to_tree($list, $idk, $pidk, 0, $childk);
 }
@@ -331,18 +327,21 @@ function array_to_tree($list = [], $idk = 'id', $pidk = 'pid', $childk = 'childr
 function tree_to_list($tree = [], $childk = 'children')
 {
 	$list = [];
-	foreach ($tree as $val) {
-		if (isset($val[$childk])) {
-			$children = $val[$childk];
-			unset($val[$childk]);
-			$list[] = $val;
-			if (is_array($children)) {
-				$list = array_merge($list, tree_to_list($children, $childk));
+	$flatten = function ($nodes) use (&$flatten, &$list, $childk) {
+		foreach ($nodes as $val) {
+			if (isset($val[$childk])) {
+				$children = $val[$childk];
+				unset($val[$childk]);
+				$list[] = $val;
+				if (is_array($children) && $children) {
+					$flatten($children);
+				}
+			} else {
+				$list[] = $val;
 			}
-		} else {
-			$list[] = $val;
 		}
-	}
+	};
+	$flatten($tree);
 
 	return $list;
 }
@@ -434,14 +433,24 @@ function parent_children_key($list, $id, $idk = 'id', $pidk = 'pid', $colk = '')
 		$colk = $idk;
 	}
 
+	// 先将列表按pid分组，避免递归时每次全表遍历
+	static $grouped = null;
+	if ($grouped === null) {
+		$grouped = [];
+		foreach ($list as $v) {
+			$grouped[$v[$pidk]][] = $v;
+		}
+	}
+
 	$children = [];
-	foreach ($list as $v) {
-		if ($v[$pidk] == $id) {
+	if (isset($grouped[$id])) {
+		foreach ($grouped[$id] as $v) {
 			$children[] = $v[$colk];
 			$children = array_merge($children, parent_children_key($list, $v[$idk], $idk, $pidk, $colk));
 		}
 	}
 
+	// 递归出口
 	return $children;
 }
 
@@ -460,12 +469,27 @@ function children_parent_key($list, $id, $idk = 'id', $pidk = 'pid', $colk = '')
 		$colk = $idk;
 	}
 
-	$parent = [];
+	// 构建id到数据的映射
+	$map = [];
 	foreach ($list as $v) {
-		if ($v[$idk] == $id) {
-			$parent[] = $v[$colk];
-			$parent = array_merge($parent, children_parent_key($list, $v[$pidk], $idk, $pidk, $colk));
+		$map[$v[$idk]] = $v;
+	}
+
+	$parent = [];
+	$visited = []; // 防止环形结构死循环
+	while (isset($map[$id])) {
+		// 防止死循环
+		if (in_array($id, $visited, true)) {
+			break;
 		}
+		$visited[] = $id;
+
+		$parent[] = $map[$id][$colk];
+		$nextId = $map[$id][$pidk];
+		if ($nextId === $id || !isset($map[$nextId])) {
+			break;
+		}
+		$id = $nextId;
 	}
 
 	return $parent;
@@ -511,7 +535,7 @@ function var_isset($alls, $vars = [])
 }
 
 /**
- * 用户token
+ * 用户token获取
  * @return string
  */
 function user_token()
@@ -549,7 +573,7 @@ function user_token_verify($user_token = '')
 }
 
 /**
- * 用户id
+ * 用户id获取
  * @param bool $exce 未登录是否抛出异常
  * @return int
  */

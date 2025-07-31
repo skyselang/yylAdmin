@@ -18,15 +18,22 @@ use app\common\service\file\SettingService;
  */
 class FileModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'file';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'file_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
@@ -37,13 +44,17 @@ class FileModel extends Model
      * 获取储存名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("storage_name", type="string", desc="储存名称")
+     * @return string
      */
     public function getStorageNameAttr($value, $data)
     {
         return SettingService::storages($data['storage']);
     }
 
-    // 关联文件分组
+    /**
+     * 关联文件分组
+     * @return \think\model\relation\HasOne
+     */
     public function group()
     {
         return $this->hasOne(GroupModel::class, 'group_id', 'group_id')->where([where_delete()]);
@@ -52,13 +63,17 @@ class FileModel extends Model
      * 获取文件分组名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("group_name", type="string", desc="分组名称")
+     * @return string
      */
     public function getGroupNameAttr($value, $data)
     {
         return $this['group']['group_name'] ?? '';
     }
 
-    // 关联标签
+    /**
+     * 关联标签
+     * @return \think\model\relation\BelongsToMany
+     */
     public function tags()
     {
         return $this->belongsToMany(TagModel::class, TagsModel::class, 'tag_id', 'file_id');
@@ -67,6 +82,7 @@ class FileModel extends Model
      * 获取标签id
      * @Apidoc\Field("")
      * @Apidoc\AddField("tag_ids", type="array", desc="标签id", mock="@natural(1,50)")
+     * @return string|array
      */
     public function getTagIdsAttr()
     {
@@ -76,6 +92,7 @@ class FileModel extends Model
      * 获取标签名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("tag_names", type="string", desc="标签名称")
+     * @return string|array
      */
     public function getTagNamesAttr()
     {
@@ -86,6 +103,7 @@ class FileModel extends Model
      * 获取文件类型名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("file_type_name", type="string", desc="文件类型名称")
+     * @return string
      */
     public function getFileTypeNameAttr($value, $data)
     {
@@ -96,6 +114,7 @@ class FileModel extends Model
      * 获取文件大小名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("file_size_name", type="string", desc="文件大小名称")
+     * @return string
      */
     public function getFileSizeNameAttr($value, $data)
     {
@@ -106,6 +125,7 @@ class FileModel extends Model
      * 获取文件链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("file_url", type="string", desc="文件链接")
+     * @return string
      */
     public function getFileUrlAttr($value, $data)
     {

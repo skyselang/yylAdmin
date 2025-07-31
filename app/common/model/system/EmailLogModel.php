@@ -17,8 +17,14 @@ use hg\apidoc\annotation as Apidoc;
  */
 class EmailLogModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'system_email_log';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'log_id';
 }

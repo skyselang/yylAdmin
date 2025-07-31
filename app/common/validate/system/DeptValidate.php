@@ -32,7 +32,9 @@ class DeptValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'       => ['require', 'array'],
         'field'     => ['require', 'checkUpdateField'],
@@ -42,12 +44,16 @@ class DeptValidate extends Validate
         'user_ids'  => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'dept_name.require' => '请输入名称',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'     => ['dept_id'],
         'add'      => ['dept_pid', 'dept_name'],
@@ -59,14 +65,18 @@ class DeptValidate extends Validate
         'userLift' => ['dept_id', 'user_ids'],
     ];
 
-    // 验证场景定义：部门删除
+    /**
+     * 验证场景定义：部门删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkChild', 'checkUser']);
     }
 
-    // 自定义验证规则：部门是否已存在
+    /**
+     * 自定义验证规则：部门是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -96,7 +106,9 @@ class DeptValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：部门批量修改字段
+    /**
+     * 自定义验证规则：部门批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -115,7 +127,9 @@ class DeptValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：部门上级
+    /**
+     * 自定义验证规则：部门上级
+     */
     protected function checkPid($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -141,7 +155,9 @@ class DeptValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：部门是否存在下级
+    /**
+     * 自定义验证规则：部门是否存在下级
+     */
     protected function checkChild($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -155,7 +171,9 @@ class DeptValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：部门是否存在用户
+    /**
+     * 自定义验证规则：部门是否存在用户
+     */
     protected function checkUser($value, $rule, $data = [])
     {
         $model = $this->model();

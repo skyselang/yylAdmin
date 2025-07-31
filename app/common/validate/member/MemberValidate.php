@@ -32,7 +32,9 @@ class MemberValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'          => ['require', 'array'],
         'field'        => ['require', 'checkUpdateField'],
@@ -49,7 +51,9 @@ class MemberValidate extends Validate
         'import_file'  => ['require', 'file', 'fileExt' => 'xlsx'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'nickname.length'      => '昵称长度为1至64个字符',
         'username.require'     => '请输入用户名',
@@ -68,7 +72,9 @@ class MemberValidate extends Validate
         'import_file.fileExt'  => '只允许xlsx文件格式',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'                 => ['member_id'],
         'add'                  => ['nickname', 'username', 'password', 'phone', 'email'],
@@ -98,7 +104,9 @@ class MemberValidate extends Validate
         'logout'               => ['member_id'],
     ];
 
-    // 验证场景定义：后台添加
+    /**
+     * 验证场景定义：后台添加
+     */
     protected function sceneAdd()
     {
         return $this->only(['unique', 'nickname', 'username', 'phone', 'email'])
@@ -110,7 +118,9 @@ class MemberValidate extends Validate
             ->remove('email', ['require']);
     }
 
-    // 验证场景定义：后台修改
+    /**
+     * 验证场景定义：后台修改
+     */
     protected function sceneEdit()
     {
         return $this->only(['member_id', 'unique', 'nickname', 'username', 'phone', 'email'])
@@ -122,105 +132,135 @@ class MemberValidate extends Validate
             ->remove('email', ['require']);
     }
 
-    // 验证场景定义：后台删除
+    /**
+     * 验证场景定义：后台删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', 'checkTagGroup');
     }
 
-    // 验证场景定义：用户名注册
+    /**
+     * 验证场景定义：用户名注册
+     */
     protected function sceneUsernameRegister()
     {
         return $this->only(['nickname', 'username', 'password'])
             ->append('username', ['checkUsernameExisted']);
     }
 
-    // 验证场景定义：手机注册验证码
+    /**
+     * 验证场景定义：手机注册验证码
+     */
     protected function scenePhoneRegisterCaptcha()
     {
         return $this->only(['phone'])
             ->append('phone', ['require', 'checkPhoneExisted']);
     }
 
-    // 验证场景定义：手机注册
+    /**
+     * 验证场景定义：手机注册
+     */
     protected function scenePhoneRegister()
     {
         return $this->only(['nickname', 'phone', 'password'])
             ->append('phone', ['require', 'checkPhoneExisted']);
     }
 
-    // 验证场景定义：手机登录验证码
+    /**
+     * 验证场景定义：手机登录验证码
+     */
     protected function scenePhoneLoginCaptcha()
     {
         return $this->only(['phone'])
             ->append('phone', ['require', 'checkPhoneIsExist']);
     }
 
-    // 验证场景定义：手机登录
+    /**
+     * 验证场景定义：手机登录
+     */
     protected function scenePhoneLogin()
     {
         return $this->only(['phone'])
             ->append('phone', ['require', 'checkPhoneIsExist']);
     }
 
-    // 验证场景定义：手机绑定验证码
+    /**
+     * 验证场景定义：手机绑定验证码
+     */
     protected function scenePhoneBindCaptcha()
     {
         return $this->only(['member_id', 'phone'])
             ->append('phone', ['require', 'checkPhoneExisted']);
     }
 
-    // 验证场景定义：手机绑定
+    /**
+     * 验证场景定义：手机绑定
+     */
     protected function scenePhoneBind()
     {
         return $this->only(['member_id', 'phone', 'captcha_code'])
             ->append('phone', ['require', 'checkPhoneExisted']);
     }
 
-    // 验证场景定义：邮箱注册验证码
+    /**
+     * 验证场景定义：邮箱注册验证码
+     */
     protected function sceneEmailRegisterCaptcha()
     {
         return $this->only(['email'])
             ->append('email', ['require', 'checkEmailExisted']);
     }
 
-    // 验证场景定义：邮箱注册
+    /**
+     * 验证场景定义：邮箱注册
+     */
     protected function sceneEmailRegister()
     {
         return $this->only(['email', 'nickname', 'password'])
             ->append('email', ['require', 'checkEmailExisted']);
     }
 
-    // 验证场景定义：邮箱登录验证码
+    /**
+     * 验证场景定义：邮箱登录验证码
+     */
     protected function sceneEmailLoginCaptcha()
     {
         return $this->only(['email'])
             ->append('email', ['require', 'checkEmailIsExist']);
     }
 
-    // 验证场景定义：邮箱登录
+    /**
+     * 验证场景定义：邮箱登录
+     */
     protected function sceneEmailLogin()
     {
         return $this->only(['email'])
             ->append('email', ['require', 'checkEmailIsExist']);
     }
 
-    // 验证场景定义：邮箱绑定验证码
+    /**
+     * 验证场景定义：邮箱绑定验证码
+     */
     protected function sceneEmailBindCaptcha()
     {
         return $this->only(['member_id', 'email'])
             ->append('email', ['require', 'checkEmailExisted']);
     }
 
-    // 验证场景定义：邮箱绑定
+    /**
+     * 验证场景定义：邮箱绑定
+     */
     protected function sceneEmailBind()
     {
         return $this->only(['member_id', 'email', 'captcha_code'])
             ->append('email', ['require', 'checkEmailExisted']);
     }
 
-    // 自定义验证规则：会员批量修改字段
+    /**
+     * 自定义验证规则：会员批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -232,7 +272,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：编号是否已存在
+    /**
+     * 自定义验证规则：编号是否已存在
+     */
     protected function checkUniqueExisted($value, $rule, $data = [])
     {
         if ($data['unique'] ?? '') {
@@ -250,7 +292,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户名是否已存在
+    /**
+     * 自定义验证规则：用户名是否已存在
+     */
     protected function checkUsernameExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -266,7 +310,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：用户名是否存在
+    /**
+     * 自定义验证规则：用户名是否存在
+     */
     protected function checkUsernameIsExist($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -282,7 +328,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：手机是否已存在
+    /**
+     * 自定义验证规则：手机是否已存在
+     */
     protected function checkPhoneExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -298,7 +346,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：手机是否存在
+    /**
+     * 自定义验证规则：手机是否存在
+     */
     protected function checkPhoneIsExist($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -314,7 +364,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：邮箱是否已存在
+    /**
+     * 自定义验证规则：邮箱是否已存在
+     */
     protected function checkEmailExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -330,7 +382,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：邮箱是否存在
+    /**
+     * 自定义验证规则：邮箱是否存在
+     */
     protected function checkEmailIsExist($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -346,7 +400,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：旧密码是否正确
+    /**
+     * 自定义验证规则：旧密码是否正确
+     */
     protected function checkPwdOld($value, $rule, $data = [])
     {
         $info = $this->service::info($data['member_id'] ?? 0);
@@ -357,7 +413,9 @@ class MemberValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：会员是否存在标签或分组
+    /**
+     * 自定义验证规则：会员是否存在标签或分组
+     */
     protected function checkTagGroup($value, $rule, $data = [])
     {
         $model = $this->model();

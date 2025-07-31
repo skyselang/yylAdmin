@@ -16,23 +16,40 @@ use think\model\Pivot;
  */
 class AttributesModel extends Pivot
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'content_attributes';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'id';
 
-    // 关联内容
+    /**
+     * 关联内容
+     * @return \think\model\relation\HasMany
+     */
     public function content()
     {
         return $this->hasMany(ContentModel::class, 'content_id', 'content_id')->where([where_delete()]);
     }
 
-    // 关联分类
+    /**
+     * 关联分类
+     * @return \think\model\relation\HasOne
+     */
     public function category()
     {
         return $this->hasOne(CategoryModel::class, 'category_id', 'category_id')->where([where_delete()]);
     }
-    // 获取分类名称
+    /**
+     * 获取分类名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("category_name", type="string", desc="分类名称")
+     * @return string
+     */
     public function getCategoryNameAttr()
     {
         return $this['category']['category_name'] ?? '';

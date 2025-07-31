@@ -18,15 +18,22 @@ use app\common\model\file\FileModel;
  */
 class CarouselModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'setting_carousel';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'carousel_id';
 
     /**
      * 获取是否禁用名称
      * @Apidoc\Field("")
      * @Apidoc\AddField("is_disable_name", type="string", desc="是否禁用名称")
+     * @return string
      */
     public function getIsDisableNameAttr($value, $data)
     {
@@ -41,6 +48,7 @@ class CarouselModel extends Model
      * @Apidoc\AddField("file_ext", type="string", desc="文件后缀")
      * @Apidoc\AddField("file_type", type="string", desc="文件类型")
      * @Apidoc\AddField("file_type_name", type="string", desc="文件类型名称")
+     * @return \think\model\relation\HasOne
      */
     public function file()
     {
@@ -48,6 +56,9 @@ class CarouselModel extends Model
     }
     /**
      * 获取文件链接
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_url", type="string", desc="文件链接")
+     * @return string
      */
     public function getFileUrlAttr()
     {
@@ -55,6 +66,9 @@ class CarouselModel extends Model
     }
     /**
      * 获取文件名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_name", type="string", desc="文件名称")
+     * @return string
      */
     public function getFileNameAttr()
     {
@@ -62,6 +76,9 @@ class CarouselModel extends Model
     }
     /**
      * 获取文件后缀
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_ext", type="string", desc="文件后缀")
+     * @return string
      */
     public function getFileExtAttr()
     {
@@ -69,6 +86,9 @@ class CarouselModel extends Model
     }
     /**
      * 获取文件类型
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_type", type="string", desc="文件类型")
+     * @return string
      */
     public function getFileTypeAttr($value, $data)
     {
@@ -76,18 +96,29 @@ class CarouselModel extends Model
     }
     /**
      * 获取文件类型名称
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_type_name", type="string", desc="文件类型名称")
+     * @return string
      */
     public function getFileTypeNameAttr($value, $data)
     {
         return $this['file']['file_type_name'] ?? '';
     }
 
-    // 关联文件列表
+    /**
+     * 关联文件列表
+     * @return \think\model\relation\BelongsToMany
+     */
     public function files()
     {
         return $this->belongsToMany(FileModel::class, SettingFilesModel::class, 'file_id', 'carousel_id')->where(where_disdel());
     }
-    // 获取文件列表
+    /**
+     * 获取文件列表
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_list", type="array", desc="文件列表")
+     * @return array
+     */
     public function getFileListAttr()
     {
         if ($this['files']) {
@@ -95,7 +126,12 @@ class CarouselModel extends Model
         }
         return $files ?? [];
     }
-    // 获取文件列表id
+    /**
+     * 获取文件列表id
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("file_list_ids", type="array", desc="文件列表id")
+     * @return array
+     */
     public function getFileListIdsAttr()
     {
         if ($this['files']) {

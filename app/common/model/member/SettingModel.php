@@ -18,12 +18,21 @@ use app\common\model\file\FileModel;
  */
 class SettingModel extends Model
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'member_setting';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'setting_id';
 
-    // 关联会员默认头像文件
+    /**
+     * 关联会员默认头像文件
+     * @return \think\model\relation\HasOne
+     */
     public function defaultavatar()
     {
         return $this->hasOne(FileModel::class, 'file_id', 'default_avatar_id')->append(['file_url'])->where(where_disdel());
@@ -32,13 +41,18 @@ class SettingModel extends Model
      * 获取会员默认头像链接
      * @Apidoc\Field("")
      * @Apidoc\AddField("default_avatar_url", type="string", desc="会员默认头像链接")
+     * @return string
      */
     public function getDefaultAvatarUrlAttr()
     {
         return $this['defaultavatar']['file_url'] ?? '';
     }
 
-    // 修改日志请求参数排除字段
+    /**
+     * 修改日志请求参数排除字段
+     * @param mixed $value 数据
+     * @return string
+     */
     public function setLogParamWithoutAttr($value)
     {
         $value = trim(str_replace('，', ',', $value), ',');

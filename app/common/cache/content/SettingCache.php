@@ -16,16 +16,28 @@ use app\common\cache\BaseCache;
  */
 class SettingCache extends BaseCache
 {
-    // 缓存标签
+    /**
+     * 缓存标签
+     * @var string
+     */
     public $tag = 'content_setting';
 
-    // 缓存前缀
+    /**
+     * 缓存前缀
+     * @var string
+     */
     protected $prefix = 'content_setting:';
 
-    // 缓存有效时间（秒，0永久）
-    protected $expire = 43200;
+    /**
+     * 缓存有效时间（秒，0永久）
+     * @var int
+     */
+    protected $expire = 86400;
 
-    // 构造函数
+    /**
+     * 构造函数
+     * @return void
+     */
     function __construct()
     {
         $this->tag($this->tag);

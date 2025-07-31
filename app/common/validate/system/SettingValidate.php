@@ -31,11 +31,13 @@ class SettingValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'system_name'    => ['length' => '0,256'],
         'token_key'      => ['require', 'alphaNum', 'length' => '6,32'],
-        'token_exp'      => ['require', 'between' => '1,8760'],
+        'token_exp'      => ['require', 'between' => '0.1,999999999'],
         'captcha_switch' => ['require', 'in' => '0,1'],
         'email_host'     => ['require'],
         'email_secure'   => ['require'],
@@ -43,24 +45,26 @@ class SettingValidate extends Validate
         'email_username' => ['require'],
         'email_password' => ['require'],
         'log_switch'     => ['require', 'in' => '0,1'],
-        'log_save_time'  => ['require', 'between' => '0,99999'],
+        'log_save_time'  => ['require', 'between' => '0,999999999'],
         'api_rate_num'   => ['require', 'between' => '0,999'],
         'api_rate_time'  => ['require', 'between' => '1,999'],
         'api_timeout'    => ['require', 'between' => '5,300'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'token_key.require'      => '请输入Token密钥',
         'token_key.alphaNum'     => 'Token密钥组成：字母和数字',
         'token_key.length'       => 'Token密钥长度：6-32',
-        'token_exp.between'      => 'Token有效时间：1-8760',
+        'token_exp.between'      => 'Token有效时间：0.1-999999999',
         'email_host.require'     => '请输入SMTP服务器',
         'email_secure.require'   => '请选择SMTP协议',
         'email_port.require'     => '请输入SMTP端口',
         'email_username.require' => '请输入SMTP账号',
         'email_password.require' => '请输入SMTP密码',
-        'log_save_time.between'  => '日志保留时间：0-99999',
+        'log_save_time.between'  => '日志保留时间：0-999999999',
         'api_rate_num.require'   => '请输入速率次数',
         'api_rate_num.between'   => '速率次数：0-999',
         'api_rate_time.require'  => '请输入速率时间',
@@ -69,7 +73,9 @@ class SettingValidate extends Validate
         'api_timeout.between'    => '请求超时范围：5-300',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'system_edit'  => ['system_name'],
         'token_edit'   => ['token_key', 'token_exp'],

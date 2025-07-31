@@ -31,7 +31,9 @@ class NoticeValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'        => ['require', 'array'],
         'field'      => ['require', 'checkUpdateField'],
@@ -42,7 +44,9 @@ class NoticeValidate extends Validate
         'end_time'   => ['require', 'date'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'type.require'       => '请选择类型',
         'title.require'      => '请输入标题',
@@ -50,7 +54,9 @@ class NoticeValidate extends Validate
         'end_time.require'   => '请选择结束时间',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['notice_id'],
         'add'     => ['type', 'title', 'start_time', 'end_time'],
@@ -61,7 +67,9 @@ class NoticeValidate extends Validate
         'import'  => ['import_file'],
     ];
 
-    // 自定义验证规则：通告是否已存在
+    /**
+     * 自定义验证规则：通告是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -89,7 +97,9 @@ class NoticeValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：通告批量修改字段
+    /**
+     * 自定义验证规则：通告批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];

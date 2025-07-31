@@ -31,7 +31,9 @@ class EmailLogValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'         => ['require', 'array'],
         'field'       => ['require', 'checkUpdateField'],
@@ -40,13 +42,17 @@ class EmailLogValidate extends Validate
         'create_time' => ['dateFormat:Y-m-d H:i:s']
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'sender.email'           => '请输入正确邮箱地址',
         'create_time.dateFormat' => '请输入正确时间格式'
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'    => ['log_id'],
         'add'     => ['sender', 'create_time'],
@@ -56,7 +62,9 @@ class EmailLogValidate extends Validate
         'update'  => ['ids', 'field'],
     ];
 
-    // 自定义验证规则：批量修改字段
+    /**
+     * 自定义验证规则：批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];

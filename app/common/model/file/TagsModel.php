@@ -16,8 +16,14 @@ use think\model\Pivot;
  */
 class TagsModel extends Pivot
 {
-    // 表名
+    /**
+     * 表名
+     * @var string
+     */
     protected $name = 'file_tags';
-    // 表主键
+    /**
+     * 主键字段
+     * @var string
+     */
     protected $pk = 'id';
 }

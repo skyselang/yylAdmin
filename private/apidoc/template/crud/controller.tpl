@@ -88,8 +88,10 @@ class {$controller.class_name} extends BaseController
             $data['basedata'] = $this->service::basedata();
             return success($data);
         }
-        
+
+        $pk    = $this->model()->getPk();
         $param = $this->params($this->service::$editField);
+        unset($param[$pk]);
 
         validate($this->validate)->scene('add')->check($param);
 
@@ -105,7 +107,19 @@ class {$controller.class_name} extends BaseController
     */
     public function edit()
     {
-        $pk    = $this->model()->getPk();
+        $pk = $this->model()->getPk();
+
+        if ($this->request->isGet()) {
+            $param = $this->params([$pk => '']);
+
+            validate($this->validate)->scene('info')->check($param);
+
+            $data = $this->service::info($param[$pk]);
+            $data['basedata'] = $this->service::basedata();
+
+            return success($data);
+        }
+
         $param = $this->params($this->service::$editField);
 
         validate($this->validate)->scene('edit')->check($param);
@@ -179,8 +193,15 @@ class {$controller.class_name} extends BaseController
             return download($param['file_path'], $param['file_name']);
         }
 
+        $ids   = $this->param('ids/a', []);
+        $where = [];
+        if ($ids) {
+            $model = $this->model();
+            $pk    = $model->getPk();
+            $where = [$pk, 'in', $ids];
+        }
         $param['remark'] = $this->param('remark/s');
-        $param['param']  = ['where' => $this->where(where_delete()), 'order' => $this->order()];
+        $param['param']  = ['where' => $this->where(where_delete($where)), 'order' => $this->order()];
 
         $data = $this->service::export($param);
 

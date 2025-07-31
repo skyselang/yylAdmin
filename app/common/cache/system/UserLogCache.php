@@ -16,16 +16,28 @@ use app\common\cache\BaseCache;
  */
 class UserLogCache extends BaseCache
 {
-    // 缓存标签
+    /**
+     * 缓存标签
+     * @var string
+     */
     public $tag = 'system_user_log';
 
-    // 缓存前缀
+    /**
+     * 缓存前缀
+     * @var string
+     */
     protected $prefix = 'system_user_log:';
 
-    // 缓存有效时间（秒，0永久）
+    /**
+     * 缓存有效时间（秒，0永久）
+     * @var int
+     */
     protected $expire = 43200;
 
-    // 构造函数
+    /**
+     * 构造函数
+     * @return void
+     */
     function __construct()
     {
         $this->tag($this->tag);

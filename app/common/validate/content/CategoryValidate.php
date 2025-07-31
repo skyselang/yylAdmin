@@ -20,7 +20,7 @@ use app\common\model\content\AttributesModel;
 class CategoryValidate extends Validate
 {
     /**
-     * 服务*
+     * 服务
      */
     protected $service = Service::class;
 
@@ -32,7 +32,9 @@ class CategoryValidate extends Validate
         return new Model();
     }
 
-    // 验证规则
+    /**
+     * 验证规则
+     */
     protected $rule = [
         'ids'           => ['require', 'array'],
         'field'         => ['require', 'checkUpdateField'],
@@ -43,14 +45,18 @@ class CategoryValidate extends Validate
         'content_ids'   => ['array'],
     ];
 
-    // 错误信息
+    /**
+     * 错误信息
+     */
     protected $message = [
         'category_name.require' => '请输入名称',
         'import_file.require'   => '请选择导入文件',
         'import_file.fileExt'   => '只允许xlsx文件格式',
     ];
 
-    // 验证场景
+    /**
+     * 验证场景
+     */
     protected $scene = [
         'info'        => ['category_id'],
         'add'         => ['category_pid', 'category_name'],
@@ -63,14 +69,18 @@ class CategoryValidate extends Validate
         'contentLift' => ['category_id', 'content_ids'],
     ];
 
-    // 验证场景定义：分类删除
+    /**
+     * 验证场景定义：分类删除
+     */
     protected function sceneDele()
     {
         return $this->only(['ids'])
             ->append('ids', ['checkChild', 'checkContent']);
     }
 
-    // 自定义验证规则：分类是否已存在
+    /**
+     * 自定义验证规则：分类是否已存在
+     */
     protected function checkExisted($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -100,7 +110,9 @@ class CategoryValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分类批量修改字段
+    /**
+     * 自定义验证规则：分类批量修改字段
+     */
     protected function checkUpdateField($value, $rule, $data = [])
     {
         $edit_field   = $data['field'];
@@ -119,7 +131,9 @@ class CategoryValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分类上级
+    /**
+     * 自定义验证规则：分类上级
+     */
     protected function checkPid($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -145,7 +159,9 @@ class CategoryValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分类是否存在下级
+    /**
+     * 自定义验证规则：分类是否存在下级
+     */
     protected function checkChild($value, $rule, $data = [])
     {
         $model = $this->model();
@@ -159,7 +175,9 @@ class CategoryValidate extends Validate
         return true;
     }
 
-    // 自定义验证规则：分类是否存在内容
+    /**
+     * 自定义验证规则：分类是否存在内容
+     */
     protected function checkContent($value, $rule, $data = [])
     {
         $model = $this->model();
