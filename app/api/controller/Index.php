@@ -37,8 +37,7 @@ class Index extends BaseController
             if (request()->isAjax()) {
                 return success($data, $msg);
             } else {
-                echo 'yyladmin';
-                // echo '<div style="display: flex;justify-content: center;align-items: center;height: 100%;"><a style="text-decoration: none;color: #909399;" href="https://gitee.com/skyselang/yylAdmin" target="_blank">yylAdmin</a></div>';
+                return '<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>yyladmin</title></head><body><div style="display: flex;justify-content: center;"><a style="text-decoration: none;color: #909399;" href="https://gitee.com/skyselang/yylAdmin" target="_blank">yyladmin</a></div></body></html>';
             }
         }
     }
