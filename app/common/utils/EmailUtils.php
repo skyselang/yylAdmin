@@ -83,7 +83,8 @@ class EmailUtils
 
             $mail->send();
         } catch (Exception $e) {
-            $error = $mail->ErrorInfo;
+            $error = $e->getMessage();
+            // $error = $mail->ErrorInfo;
             self::log($error);
             if ($email_log['log_id'] ?? 0) {
                 EmailLogService::edit($email_log['log_id'], ['error' => $error]);
