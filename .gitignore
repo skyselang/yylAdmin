@@ -18,6 +18,9 @@
 /index.html
 /vendor
 /runtime
+/public/pc
+/public/h5
+/public/web
 /public/admin
 /public/.well-known
 /public/storage
