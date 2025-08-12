@@ -285,7 +285,10 @@ return [
             'path' => 'app\api\controller',
             'key' => 'api',
             'params' => [
-                'header' => [['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => lang('token，也可以放在请求参数')]],
+                'header' => [
+                    ['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => lang('token，也可以放在请求参数')],
+                    ['name' => 'application', 'type' => 'int', 'require' => true, 'default' => 0, 'desc' => lang('应用代码，也可以放在请求参数')],
+                ],
                 'query' => [],
                 'body' => [],
             ],

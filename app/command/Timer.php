@@ -70,7 +70,7 @@ class Timer extends Command
 
         $this->log(implode(' ', $argv));
 
-        Worker::$logFile = runtime_path() . '/workerman/' . date('Ym') . '/workerman' . date('Ymd') . '.log';
+        Worker::$logFile = runtime_path() . '/log/' . date('Ymd') . '_log.log';
 
         $worker = new Worker();
         $worker->onWorkerStart = [$this, 'start'];
@@ -88,8 +88,8 @@ class Timer extends Command
                 // 日志清除
                 event('LogClear');
             } catch (\Exception $e) {
-                $output->writeln('timer LogClear ' . $e->getMessage());
-                $this->log(['msg' => 'LogClear:' . $e->getMessage()]);
+                $output->writeln('timer ' . $e->getMessage());
+                $this->log(['msg' => $e->getMessage()]);
             }
         });
     }

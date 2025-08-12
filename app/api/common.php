@@ -119,40 +119,25 @@ function api_is_unrate($api_url = '')
 }
 
 /**
- * 会员平台
- * @return int 请求参数或头部携带的平台代码
+ * 会员平台代码
+ * @return int
  */
 function member_platform()
 {
-    $field = 'platform';
-    $admin = Config::get('admin');
-    if ($admin['token_type'] == 'header') {
-        $platform = Request::header($field, '');
-    } else {
-        $platform = Request::param($field, '');
-    }
-    if (empty($platform)) {
-        $platform = Request::param($field, '');
-    }
-    if (empty($platform)) {
-        $platform = Request::header($field, '');
-    }
-    if (empty($platform)) {
-        $platform = SettingService::platform(member_application());
-    }
+    $platform = SettingService::platform(member_application());
 
     return $platform;
 }
 
 /**
- * 会员应用
- * @return int 请求参数或头部携带的应用代码
+ * 会员应用代码
+ * @return int
  */
 function member_application()
 {
     $field = 'application';
     $admin = Config::get('admin');
-    if ($admin['token_type'] == 'header') {
+    if ($admin['token_type'] === 'header') {
         $application = Request::header($field, '');
     } else {
         $application = Request::param($field, '');

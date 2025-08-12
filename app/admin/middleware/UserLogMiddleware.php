@@ -14,6 +14,7 @@ use think\Request;
 use think\Response;
 use app\common\service\system\UserLogService;
 use app\common\service\system\SettingService;
+use app\common\service\system\MenuService;
 
 /**
  * 用户日志中间件
@@ -39,8 +40,15 @@ class UserLogMiddleware
             // 未登录是否记录免登日志
             $log_unlogin = false;
             if (empty($user_id)) {
-                if ($setting['log_unlogin'] && menu_is_exist($menu_url)) {
+                if ($setting['log_unlogin']) {
                     $log_unlogin = true;
+                } else {
+                    if (menu_is_exist($menu_url)) {
+                        $menu_info = MenuService::info($menu_url);
+                        if ($menu_info['log_type'] === SettingService::LOG_TYPE_LOGIN) {
+                            $log_unlogin = true;
+                        }
+                    }
                 }
             }
 

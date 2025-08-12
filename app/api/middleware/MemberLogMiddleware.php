@@ -14,6 +14,7 @@ use think\Request;
 use think\Response;
 use app\common\service\member\LogService;
 use app\common\service\member\SettingService;
+use app\common\service\member\ApiService;
 
 /**
  * 会员日志中间件
@@ -39,8 +40,15 @@ class MemberLogMiddleware
             // 未登录是否记录免登日志
             $log_unlogin = false;
             if (empty($member_id)) {
-                if ($setting['log_unlogin'] && api_is_exist($api_url)) {
+                if ($setting['log_unlogin']) {
                     $log_unlogin = true;
+                } else {
+                    if (api_is_exist($api_url)) {
+                        $api_info = ApiService::info($api_url);
+                        if ($api_info['log_type'] === SettingService::LOG_TYPE_LOGIN) {
+                            $log_unlogin = true;
+                        }
+                    }
                 }
             }
 

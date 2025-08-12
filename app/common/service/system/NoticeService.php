@@ -310,9 +310,8 @@ class NoticeService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $type = $exp_imp == 'export' ? 'type_name' : 'type';
-        $image_id = $exp_imp == 'export' ? 'image_url' : 'image_id';
-
+        $type       = $exp_imp == 'export' ? 'type_name' : 'type';
+        $image_id   = $exp_imp == 'export' ? 'image_url' : 'image_id';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => 'ID', 'width' => 12],

@@ -562,8 +562,8 @@ class UserService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $avatar_id = $exp_imp == 'export' ? 'avatar_url' : 'avatar_id';
-        $is_super = $exp_imp == 'export' ? 'is_super_name' : 'is_super';
+        $avatar_id  = $exp_imp == 'export' ? 'avatar_url' : 'avatar_id';
+        $is_super   = $exp_imp == 'export' ? 'is_super_name' : 'is_super';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 10],

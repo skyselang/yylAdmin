@@ -22,9 +22,6 @@ class Index extends BaseController
 {
     /**
      * @Apidoc\Title("lang(首页)")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function index()
     {

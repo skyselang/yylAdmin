@@ -39,9 +39,6 @@ class Login extends BaseController
      * @Apidoc\Param("pointJson", type="string", default="", desc="行为，pointJson")
      * @Apidoc\Param("token", type="string", default="", desc="行为，token")
      * @Apidoc\Returned(ref="captchaReturn")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function captcha()
     {
@@ -74,7 +71,6 @@ class Login extends BaseController
      * @Apidoc\Param("type", type="string", require=false, desc="账号类型：username用户名、phone手机、email邮箱")
      * @Apidoc\Param("account", type="string", require=true, desc="账号：用户名、手机、邮箱")
      * @Apidoc\Param("password", type="string", require=true, default="123456", desc="密码")
-     * @Apidoc\Param(ref={SettingService::class,"platforms"})
      * @Apidoc\Param(ref={SettingService::class,"applications"})
      * @Apidoc\Param(ref="captchaParam")
      * @Apidoc\Returned(ref={MemberService::class,"info"}, field="member_id,nickname,username,login_ip,login_time,login_num,avatar_url")
@@ -82,9 +78,6 @@ class Login extends BaseController
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function login()
     {
@@ -138,9 +131,6 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("lang(手机登录验证码)")
      * @Apidoc\Query("phone", type="string", require=true, desc="手机")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function phoneCaptcha()
     {
@@ -163,16 +153,12 @@ class Login extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param("phone", type="string", require=true, desc="手机")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
-     * @Apidoc\Param(ref={SettingService::class,"platforms"})
      * @Apidoc\Param(ref={SettingService::class,"applications"})
      * @Apidoc\Returned(ref={MemberService::class,"info"}, field="member_id,nickname,username,login_ip,login_time,login_num,avatar_url")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function phoneLogin()
     {
@@ -203,9 +189,6 @@ class Login extends BaseController
     /**
      * @Apidoc\Title("lang(邮箱登录验证码)")
      * @Apidoc\Query("email", type="string", require=true, desc="邮箱")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function emailCaptcha()
     {
@@ -228,16 +211,12 @@ class Login extends BaseController
      * @Apidoc\Method("POST")
      * @Apidoc\Param("email", type="string", require=true, desc="邮箱")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
-     * @Apidoc\Param(ref={SettingService::class,"platforms"})
      * @Apidoc\Param(ref={SettingService::class,"applications"})
      * @Apidoc\Returned(ref={MemberService::class,"info"}, field="member_id,nickname,username,login_ip,login_time,login_num,avatar_url")
      * @Apidoc\Returned("ApiToken", type="string", desc="token")
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function emailLogin()
     {
@@ -281,9 +260,6 @@ class Login extends BaseController
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function miniapp()
     {
@@ -342,9 +318,6 @@ class Login extends BaseController
      * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信公众号")
      * @Apidoc\Query("jump_url", type="string", require=true, desc="登录成功后跳转地址，会携带 token 参数")
      * @Apidoc\Query("redirect_uri", type="string", require=false, desc="redirect_uri，调试使用")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function offiacc()
     {
@@ -386,9 +359,6 @@ class Login extends BaseController
      * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信网站应用，qq QQ网站应用，wb 微博网站应用")
      * @Apidoc\Query("jump_url", type="string", require=true, desc="登录成功后跳转地址，会携带 token 参数")
      * @Apidoc\Query("redirect_uri", type="string", require=false, desc="redirect_uri，调试使用")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function website()
     {
@@ -436,9 +406,6 @@ class Login extends BaseController
      * @Apidoc\Title("lang(公众号/网站登录/绑定回调)")
      * @Apidoc\Query("code", type="string", require=true, desc="code")
      * @Apidoc\Query("state", type="string", require=true, desc="state")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function redirectUri()
     {
@@ -526,9 +493,6 @@ class Login extends BaseController
      * @Apidoc\After(event="setGlobalBody", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalQuery", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
      * @Apidoc\After(event="setGlobalHeader", key="ApiToken", value="res.data.data.ApiToken", desc="ApiToken")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function mobile()
     {

@@ -551,6 +551,10 @@ class SettingService
      */
     public const EXPIMP_TYPE_SYSTEM_USER_LOG = 'system_user_log';
     /**
+     * 导出导入类型：用户消息
+     */
+    public const EXPIMP_TYPE_SYSTEM_USER_MESSAGE = 'system_user_message';
+    /**
      * 导出导入类型：部门
      */
     public const EXPIMP_TYPE_SYSTEM_DEPT = 'system_dept';
@@ -562,6 +566,10 @@ class SettingService
      * 导出导入类型：公告
      */
     public const EXPIMP_TYPE_SYSTEM_NOTICE = 'system_notice';
+    /**
+     * 导出导入类型：消息
+     */
+    public const EXPIMP_TYPE_SYSTEM_MESSAGE = 'system_message';
     /**
      * 导出导入类型：职位
      */
@@ -587,35 +595,37 @@ class SettingService
     public static function expImpType($type = '', $exp_imp = 'export', $val_lab = false)
     {
         $types = [
-            self::EXPIMP_TYPE_MEMBER            => lang('会员'),
-            self::EXPIMP_TYPE_MEMBER_TAG        => lang('会员标签'),
-            self::EXPIMP_TYPE_MEMBER_GROUP      => lang('会员分组'),
-            self::EXPIMP_TYPE_MEMBER_API        => lang('会员接口'),
-            self::EXPIMP_TYPE_MEMBER_LOG        => lang('会员日志'),
-            self::EXPIMP_TYPE_MEMBER_THIRD      => lang('会员第三方账号'),
-            self::EXPIMP_TYPE_CONTENT           => lang('内容'),
-            self::EXPIMP_TYPE_CONTENT_CATEGORY  => lang('内容分类'),
-            self::EXPIMP_TYPE_CONTENT_TAG       => lang('内容标签'),
-            self::EXPIMP_TYPE_FILE              => lang('文件'),
-            self::EXPIMP_TYPE_FILE_GROUP        => lang('文件分组'),
-            self::EXPIMP_TYPE_FILE_TAG          => lang('文件标签'),
-            self::EXPIMP_TYPE_FILE_EXPORT       => lang('导出文件'),
-            self::EXPIMP_TYPE_FILE_IMPORT       => lang('导入文件'),
-            self::EXPIMP_TYPE_SETTING_ACCORD    => lang('协议'),
-            self::EXPIMP_TYPE_SETTING_CAROUSEL  => lang('轮播'),
-            self::EXPIMP_TYPE_SETTING_FEEDBACK  => lang('反馈'),
-            self::EXPIMP_TYPE_SETTING_LINK      => lang('友链'),
-            self::EXPIMP_TYPE_SETTING_NOTICE    => lang('通告'),
-            self::EXPIMP_TYPE_SETTING_REGION    => lang('地区'),
-            self::EXPIMP_TYPE_SYSTEM_USER       => lang('用户'),
-            self::EXPIMP_TYPE_SYSTEM_USER_LOG   => lang('用户日志'),
-            self::EXPIMP_TYPE_SYSTEM_DEPT       => lang('部门'),
-            self::EXPIMP_TYPE_SYSTEM_MENU       => lang('菜单'),
-            self::EXPIMP_TYPE_SYSTEM_NOTICE     => lang('公告'),
-            self::EXPIMP_TYPE_SYSTEM_POST       => lang('职位'),
-            self::EXPIMP_TYPE_SYSTEM_ROLE       => lang('角色'),
-            self::EXPIMP_TYPE_SETTING_EMAIL_LOG => lang('邮件日志'),
-            self::EXPIMP_TYPE_SETTING_SMS_LOG   => lang('短信日志'),
+            self::EXPIMP_TYPE_MEMBER              => lang('会员'),
+            self::EXPIMP_TYPE_MEMBER_TAG          => lang('会员标签'),
+            self::EXPIMP_TYPE_MEMBER_GROUP        => lang('会员分组'),
+            self::EXPIMP_TYPE_MEMBER_API          => lang('会员接口'),
+            self::EXPIMP_TYPE_MEMBER_LOG          => lang('会员日志'),
+            self::EXPIMP_TYPE_MEMBER_THIRD        => lang('会员第三方账号'),
+            self::EXPIMP_TYPE_CONTENT             => lang('内容'),
+            self::EXPIMP_TYPE_CONTENT_CATEGORY    => lang('内容分类'),
+            self::EXPIMP_TYPE_CONTENT_TAG         => lang('内容标签'),
+            self::EXPIMP_TYPE_FILE                => lang('文件'),
+            self::EXPIMP_TYPE_FILE_GROUP          => lang('文件分组'),
+            self::EXPIMP_TYPE_FILE_TAG            => lang('文件标签'),
+            self::EXPIMP_TYPE_FILE_EXPORT         => lang('导出文件'),
+            self::EXPIMP_TYPE_FILE_IMPORT         => lang('导入文件'),
+            self::EXPIMP_TYPE_SETTING_ACCORD      => lang('协议'),
+            self::EXPIMP_TYPE_SETTING_CAROUSEL    => lang('轮播'),
+            self::EXPIMP_TYPE_SETTING_FEEDBACK    => lang('反馈'),
+            self::EXPIMP_TYPE_SETTING_LINK        => lang('友链'),
+            self::EXPIMP_TYPE_SETTING_NOTICE      => lang('通告'),
+            self::EXPIMP_TYPE_SETTING_REGION      => lang('地区'),
+            self::EXPIMP_TYPE_SYSTEM_USER         => lang('用户'),
+            self::EXPIMP_TYPE_SYSTEM_USER_LOG     => lang('用户日志'),
+            self::EXPIMP_TYPE_SYSTEM_USER_MESSAGE => lang('用户消息'),
+            self::EXPIMP_TYPE_SYSTEM_DEPT         => lang('部门'),
+            self::EXPIMP_TYPE_SYSTEM_MENU         => lang('菜单'),
+            self::EXPIMP_TYPE_SYSTEM_NOTICE       => lang('公告'),
+            self::EXPIMP_TYPE_SYSTEM_MESSAGE      => lang('消息'),
+            self::EXPIMP_TYPE_SYSTEM_POST         => lang('职位'),
+            self::EXPIMP_TYPE_SYSTEM_ROLE         => lang('角色'),
+            self::EXPIMP_TYPE_SETTING_EMAIL_LOG   => lang('邮件日志'),
+            self::EXPIMP_TYPE_SETTING_SMS_LOG     => lang('短信日志'),
         ];
         if ($exp_imp == 'import') {
             $exp_imp_name = lang('导入');

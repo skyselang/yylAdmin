@@ -36,9 +36,6 @@ class Register extends BaseController
      * @Apidoc\Param("pointJson", type="string", default="", desc="行为，pointJson")
      * @Apidoc\Param("token", type="string", default="", desc="行为，token")
      * @Apidoc\Returned(ref="captchaReturn")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function captcha()
     {
@@ -69,12 +66,8 @@ class Register extends BaseController
      * @Apidoc\Title("lang(用户名注册)")
      * @Apidoc\Method("POST")
      * @Apidoc\Param(ref={RegisterService::class,"register"}, field="nickname,username,password")
-     * @Apidoc\Param(ref={SettingService::class,"platforms"})
      * @Apidoc\Param(ref={SettingService::class,"applications"})
      * @Apidoc\Param(ref="captchaParam")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function register()
     {
@@ -124,9 +117,6 @@ class Register extends BaseController
     /**
      * @Apidoc\Title("lang(手机注册验证码)")
      * @Apidoc\Query("phone", type="string", require=true, desc="手机", mock="@phone")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function phoneCaptcha()
     {
@@ -150,11 +140,7 @@ class Register extends BaseController
      * @Apidoc\Param("phone", type="string", require=true, desc="手机", mock="@phone")
      * @Apidoc\Param(ref={RegisterService::class,"register"}, field="nickname,password")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="手机验证码")
-     * @Apidoc\Param(ref={SettingService::class,"platforms"})
      * @Apidoc\Param(ref={SettingService::class,"applications"})
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function phoneRegister()
     {
@@ -190,9 +176,6 @@ class Register extends BaseController
     /**
      * @Apidoc\Title("lang(邮箱注册验证码)")
      * @Apidoc\Query("email", type="string", require=true, desc="邮箱", mock="@email")
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function emailCaptcha()
     {
@@ -216,11 +199,7 @@ class Register extends BaseController
      * @Apidoc\Param("email", type="string", require=true, desc="邮箱", mock="@email")
      * @Apidoc\Param(ref={RegisterService::class,"register"}, field="nickname,password")
      * @Apidoc\Param("captcha_code", type="string", require=true, desc="邮箱验证码")
-     * @Apidoc\Param(ref={SettingService::class,"platforms"})
      * @Apidoc\Param(ref={SettingService::class,"applications"})
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function emailRegister()
     {

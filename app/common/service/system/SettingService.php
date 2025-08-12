@@ -140,7 +140,7 @@ class SettingService
     /**
      * 公告类型数组或名称
      * @param int  $notice_type 公告类型
-     * @param bool $val_lab  是否返回带value、label下标的数组
+     * @param bool $val_lab     是否返回带value、label下标的数组
      */
     public static function noticeTypes($notice_type = '', $val_lab = false)
     {
@@ -282,7 +282,7 @@ class SettingService
         }
 
         if ($fields) {
-            $data = [];
+            $data   = [];
             $fields = explode(',', $fields);
             foreach ($fields as $field) {
                 $field = trim($field);
@@ -361,7 +361,7 @@ class SettingService
     public static function serverInfo($force = false)
     {
         $cache = self::cache();
-        $key = 'serverInfo';
+        $key   = 'serverInfo';
 
         if ($force) {
             $cache->del($key);

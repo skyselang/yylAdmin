@@ -332,8 +332,6 @@ class Member extends BaseController
      * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信公众号")
      * @Apidoc\Query("jump_url", type="string", require=true, desc="绑定成功后跳转地址，会携带 token 参数")
      * @Apidoc\Query("redirect_uri", type="string", require=false, desc="redirect_uri，调试使用")
-     * @Apidoc\NotHeaders()
-     * NotParams
      */
     public function bindOffiacc()
     {
@@ -384,8 +382,6 @@ class Member extends BaseController
      * @Apidoc\Query("app", type="string", default="wx", desc="应用：wx 微信网站应用，qq QQ网站应用，wb 微博网站应用")
      * @Apidoc\Query("jump_url", type="string", require=true, desc="绑定成功后跳转地址，会携带 token 参数")
      * @Apidoc\Query("redirect_uri", type="string", require=false, desc="redirect_uri，调试使用")
-     * @Apidoc\NotHeaders()
-     * NotParams
      */
     public function bindWebsite()
     {

@@ -63,10 +63,11 @@ class UserCenterValidate extends Validate
      * 验证场景
      */
     protected $scene = [
-        'info' => ['user_id'],
-        'edit' => ['user_id', 'username', 'nickname', 'phone', 'email'],
-        'pwd'  => ['user_id', 'password_old', 'password_new', 'phone'],
-        'log'  => ['user_id'],
+        'info'    => ['user_id'],
+        'edit'    => ['user_id', 'username', 'nickname', 'phone', 'email'],
+        'pwd'     => ['user_id', 'password_old', 'password_new', 'phone'],
+        'log'     => ['user_id'],
+        'message' => ['user_id']
     ];
 
     /**

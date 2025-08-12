@@ -15,6 +15,7 @@ use app\common\validate\system\UserCenterValidate as Validate;
 use app\common\service\system\UserCenterService as Service;
 use app\common\model\system\UserModel as Model;
 use app\common\validate\system\UserLogValidate;
+use app\common\validate\system\UserMessageValidate;
 use app\common\service\system\SettingService;
 
 /**
@@ -119,7 +120,7 @@ class UserCenter extends BaseController
 
         validate($this->validate)->scene('log')->check($param);
 
-        $where = $this->where(where_disable([$pk, '=', $param[$pk]]));
+        $where = $this->where(where_disdel([$pk, '=', $param[$pk]]));
 
         $data = $this->service::logList($where, $this->page(), $this->limit(), $this->order());
 
@@ -140,7 +141,7 @@ class UserCenter extends BaseController
         validate(UserLogValidate::class)->scene('info')->check($param);
 
         $data = $this->service::logInfo($param['log_id']);
-        if ($data[$pk] != $user_id) {
+        if ($data[$pk] != $user_id || $data['is_disable'] == 1 || $data['is_delete'] == 1) {
             $data = [];
         }
 
@@ -171,9 +172,97 @@ class UserCenter extends BaseController
      */
     public function logClear()
     {
-        $where = $this->where(['user_id', '=', user_id(true)]);
+        $pk      = $this->model()->getPk();
+        $user_id = user_id(true);
+
+        $where = $this->where([[$pk, '=', $user_id]]);
 
         $data = $this->service::logClear($where);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(我的消息列表)")
+     * @Apidoc\Query(ref={Service::class,"messageList"})
+     * @Apidoc\Returned(ref={Service::class,"basedata"})
+     * @Apidoc\Returned(ref={Service::class,"messageList"})
+     */
+    public function messageList()
+    {
+        $pk = $this->model()->getPk();
+        $param[$pk] = user_id(true);
+
+        validate($this->validate)->scene('message')->check($param);
+
+        $where = $this->where(where_disdel([$pk, '=', $param[$pk]]));
+
+        $order = $this->order(['is_read' => 'asc', 'user_message_id' => 'desc']);
+
+        $data = $this->service::messageList($where, $this->page(), $this->limit(), $order);
+
+        $unread_where = [[$pk, '=', $param[$pk]], ['is_read', '=', 0]];
+        $unread_where = where_disdel($unread_where);
+        $data['unread_count'] = $this->service::messageUnreadCount($unread_where);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(我的消息信息)")
+     * @Apidoc\Query(ref={Service::class,"messageInfo"})
+     * @Apidoc\Returned(ref={Service::class,"messageInfo"})
+     */
+    public function messageInfo()
+    {
+        $pk      = $this->model()->getPk();
+        $param   = $this->params(['user_message_id' => '']);
+        $user_id = user_id(true);
+
+        validate(UserMessageValidate::class)->scene('info')->check($param);
+
+        $data = $this->service::messageInfo($param['user_message_id']);
+        if ($data[$pk] != $user_id || $data['is_disable'] == 1 || $data['is_delete'] == 1) {
+            $data = [];
+        }
+        if ($data && $data['is_read'] == 0) {
+            $read_where = [['user_message_id', '=', $data['user_message_id']]];
+            $this->service::messageRead($read_where);
+        }
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(我的消息删除)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"messageDele"})
+     */
+    public function messageDele()
+    {
+        $param   = $this->params(['ids/a' => []]);
+        $user_id = user_id(true);
+
+        validate(UserMessageValidate::class)->scene('dele')->check($param);
+
+        $data = $this->service::messageDele($param['ids'], $user_id);
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(我的消息已读)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Query(ref={Service::class,"messageRead"})
+     */
+    public function messageRead()
+    {
+        $pk      = $this->model()->getPk();
+        $user_id = user_id(true);
+
+        $where = $this->where([[$pk, '=', $user_id], ['is_read', '=', 0]]);
+
+        $data = $this->service::messageRead($where);
 
         return success($data);
     }

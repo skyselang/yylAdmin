@@ -45,9 +45,6 @@ class Setting extends BaseController
      * @Apidoc\Returned("notice", type="array", desc="通告列表", children={
      *   @Apidoc\Returned(ref={NoticeService::class,"info"}, field="notice_id,unique,image_id,type,title,title_color,start_time,end_time,image_url"),
      * })
-     * @Apidoc\NotHeaders()
-     * @Apidoc\NotQuerys()
-     * @Apidoc\NotParams()
      */
     public function setting()
     {
