@@ -70,7 +70,7 @@ class Timer extends Command
 
         $this->log(implode(' ', $argv));
 
-        Worker::$logFile = runtime_path() . '/log/' . date('Ymd') . '_log.log';
+        Worker::$logFile = runtime_path() . '/log/workerman.log';
 
         $worker = new Worker();
         $worker->onWorkerStart = [$this, 'start'];
