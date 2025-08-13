@@ -461,7 +461,6 @@ class MemberService
      * 会员删除
      * @param int|array $ids  会员id
      * @param bool      $real 是否真实删除
-     * @Apidoc\Param("type", type="string", default="member", desc="member会员账号，third第三方账号")
      * @Apidoc\Param(ref="idsParam")
      */
     public static function dele($ids, $real = false)
@@ -513,7 +512,6 @@ class MemberService
      * 会员是否禁用
      * @param array $ids        id
      * @param int   $is_disable 是否禁用
-     * @Apidoc\Param("type", type="string", default="member", desc="member会员账号，third第三方账号")
      * @Apidoc\Param(ref="disableParam")
      */
     public static function disable($ids, $is_disable)
@@ -1686,5 +1684,28 @@ class MemberService
         $tag_pk    = $tag_model->getPk();
         $res       = AttributesModel::where($pk, 'in', $ids)->where($tag_pk, '>', 0)->delete();
         return $res;
+    }
+
+    /**
+     * 注销账号
+     * @param int    $member_id 会员id
+     * @param string $password  密码
+     */
+    public static function cancel($member_id, $password)
+    {
+        $member = self::info($member_id);
+        if (empty($member)) {
+            exception(lang('会员不存在'));
+        }
+
+        // 验证密码
+        if (!empty($member['password'])) {
+            if (!password_verify($password, $member['password'])) {
+                exception(lang('密码错误'));
+            }
+        }
+
+        // 删除会员
+        return self::dele($member_id);
     }
 }
