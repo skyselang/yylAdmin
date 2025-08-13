@@ -716,4 +716,10 @@ return [
   '文件格式不允许：' => 'File format not allowed:',
   '文件下载失败: ' => 'File download failed: ',
   '作者' => 'Author',
+  '会员不存在' => 'Member does not exist',
+  '密码不能为空' => 'Password cannot be empty',
+  '密码错误' => 'Password error',
+  '消息' => 'Message',
+  '消息不存在：' => 'Message does not exist:',
+  '用户消息' => 'User message',
 ];

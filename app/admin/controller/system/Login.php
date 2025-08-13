@@ -36,7 +36,7 @@ class Login extends BaseController
      */
     public function setting()
     {
-        $data = SettingService::info('system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type');
+        $data = SettingService::info('system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type,login_msg_switch,login_msg_type,login_msg_time,login_msg_text');
 
         $data['captcha_img'] = '';
         if ($data['captcha_switch']) {

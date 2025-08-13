@@ -242,6 +242,33 @@ class Setting extends BaseController
     }
 
     /**
+     * @Apidoc\Title("lang(登录页提示信息)")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="login_msg_switch,login_msg_type,login_msg_time,login_msg_text")
+     */
+    public function loginMsgInfo()
+    {
+        $data = $this->service::info('login_msg_switch,login_msg_type,login_msg_time,login_msg_text');
+
+        return success($data);
+    }
+
+    /**
+     * @Apidoc\Title("lang(登录页提示修改)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="login_msg_switch,login_msg_type,login_msg_time,login_msg_text")
+     */
+    public function loginMsgEdit()
+    {
+        $param = $this->params(['login_msg_switch/d' => 0, 'login_msg_type/s' => 'primary', 'login_msg_time/d' => 15, 'login_msg_text/s' => '']);
+
+        validate($this->validate)->scene('login_msg_edit')->check($param);
+
+        $data = $this->service::edit($param);
+
+        return success($data);
+    }
+
+    /**
      * @Apidoc\Title("lang(服务器信息)")
      * @Apidoc\Query(ref={Service::class,"serverInfo"})
      */

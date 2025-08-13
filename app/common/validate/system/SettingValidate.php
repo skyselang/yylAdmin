@@ -35,20 +35,22 @@ class SettingValidate extends Validate
      * 验证规则
      */
     protected $rule = [
-        'system_name'    => ['length' => '0,256'],
-        'token_key'      => ['require', 'alphaNum', 'length' => '6,32'],
-        'token_exp'      => ['require', 'between' => '0.1,999999999'],
-        'captcha_switch' => ['require', 'in' => '0,1'],
-        'email_host'     => ['require'],
-        'email_secure'   => ['require'],
-        'email_port'     => ['require'],
-        'email_username' => ['require'],
-        'email_password' => ['require'],
-        'log_switch'     => ['require', 'in' => '0,1'],
-        'log_save_time'  => ['require', 'between' => '0,999999999'],
-        'api_rate_num'   => ['require', 'between' => '0,999'],
-        'api_rate_time'  => ['require', 'between' => '1,999'],
-        'api_timeout'    => ['require', 'between' => '5,300'],
+        'system_name'      => ['length' => '0,256'],
+        'token_key'        => ['require', 'alphaNum', 'length' => '6,32'],
+        'token_exp'        => ['require', 'between' => '0.1,999999999'],
+        'captcha_switch'   => ['require', 'in' => '0,1'],
+        'email_host'       => ['require'],
+        'email_secure'     => ['require'],
+        'email_port'       => ['require'],
+        'email_username'   => ['require'],
+        'email_password'   => ['require'],
+        'log_switch'       => ['require', 'in' => '0,1'],
+        'log_save_time'    => ['require', 'between' => '0,999999999'],
+        'api_rate_num'     => ['require', 'between' => '0,999'],
+        'api_rate_time'    => ['require', 'between' => '1,999'],
+        'api_timeout'      => ['require', 'between' => '5,300'],
+        'login_msg_switch' => ['in' => '0,1'],
+        'login_msg_time'   => ['between' => '0,999999999'],
     ];
 
     /**
@@ -71,17 +73,19 @@ class SettingValidate extends Validate
         'api_rate_time.between'  => '速率时间：1-999',
         'api_timeout.require'    => '请输入请求超时',
         'api_timeout.between'    => '请求超时范围：5-300',
+        'login_msg_time.between' => '登录页提示时间：0-999999999',
     ];
 
     /**
      * 验证场景
      */
     protected $scene = [
-        'system_edit'  => ['system_name'],
-        'token_edit'   => ['token_key', 'token_exp'],
-        'captcha_edit' => ['captcha_switch'],
-        'email_edit'   => ['email_host', 'email_secure', 'email_port', 'email_username', 'email_password'],
-        'log_edit'     => ['log_switch', 'log_save_time'],
-        'api_edit'     => ['api_rate_num', 'api_rate_time', 'api_timeout'],
+        'system_edit'    => ['system_name'],
+        'token_edit'     => ['token_key', 'token_exp'],
+        'captcha_edit'   => ['captcha_switch'],
+        'email_edit'     => ['email_host', 'email_secure', 'email_port', 'email_username', 'email_password'],
+        'log_edit'       => ['log_switch', 'log_save_time'],
+        'api_edit'       => ['api_rate_num', 'api_rate_time', 'api_timeout'],
+        'login_msg_edit' => ['login_msg_switch', 'login_msg_time'],
     ];
 }
