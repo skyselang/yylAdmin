@@ -59,7 +59,7 @@ class MemberService
         'email/s'       => '',
         'name/s'        => '',
         'gender/d'      => 0,
-        'birthday/s'    => '',
+        'birthday'      => NULL,
         'hometown_id/d' => 0,
         'region_id/d'   => 0,
         'sort/d'        => 250,
