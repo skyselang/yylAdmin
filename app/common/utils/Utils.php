@@ -136,47 +136,79 @@ class Utils
             $mysql_version = '';
         }
 
-        $server['thinkphp']            = \think\facade\App::version();              //thinkphp
-        $server['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
-        $server['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
-        $server['mysql']               = $mysql_version;                            //mysql
-        $server['php_version']         = PHP_VERSION;                               //php
-        $server['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //protocol
-        $server['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
-        $server['domain']              = $_SERVER['SERVER_NAME'];                   //domain
-        $server['port']                = $_SERVER['SERVER_PORT'];                   //port
-        $server['php_sapi_name']       = php_sapi_name();                           //php_sapi_name
-        $server['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //max_execution_time
-        $server['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
-        $server['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
+        $data['thinkphp']            = \think\facade\App::version();              //thinkphp
+        $data['system_info']         = php_uname('s') . ' ' . php_uname('r');     //os
+        $data['server_software']     = $_SERVER['SERVER_SOFTWARE'];               //web
+        $data['mysql']               = $mysql_version;                            //mysql
+        $data['php_version']         = PHP_VERSION;                               //php
+        $data['server_protocol']     = $_SERVER['SERVER_PROTOCOL'];               //protocol
+        $data['ip']                  = $_SERVER['SERVER_ADDR'];                   //ip
+        $data['domain']              = $_SERVER['SERVER_NAME'];                   //domain
+        $data['port']                = $_SERVER['SERVER_PORT'];                   //port
+        $data['php_sapi_name']       = php_sapi_name();                           //php_sapi_name
+        $data['max_execution_time']  = get_cfg_var('max_execution_time') . '秒 '; //max_execution_time
+        $data['upload_max_filesize'] = get_cfg_var('upload_max_filesize');        //upload_max_filesize
+        $data['post_max_size']       = get_cfg_var('post_max_size');              //post_max_size
+        $data['memory_limit']        = ini_get('memory_limit');                   //memory_limit
+        $data['timezone']            = date_default_timezone_get();               //timezone
 
         $cache_class = new UtilsCache();
         $cache_config = $cache_class->cache()::getConfig();
-        if ($cache_config['default'] === 'redis') {
+        $data['cache_type'] = $cache_config['default']; //缓存类型
+        if ($cache_config['default'] === 'file') {
+            $data['cache_path'] = 'runtime/cache'; //缓存文件路径
+        } elseif ($cache_config['default'] === 'redis') {
             $Cache = $cache_class->cache()::handler();
             $cache = $Cache->info();
-
-            $cache['uptime_in_days']        = $cache['uptime_in_days'] . '天';
-            $cache['used_memory_lua_human'] = Utils::formatBytes($cache['used_memory_lua']);
+            $data['redis_version']              = $cache['redis_version']; //redis版本
+            $data['uptime_in_days']             = $cache['uptime_in_days'] . '天'; //redis运行时长
+            $data['used_memory_human']          = Utils::formatBytes($cache['used_memory']); //redis已用内存
+            $data['used_memory_peak_human']     = Utils::formatBytes($cache['used_memory_peak']); //redis已用内存峰值
+            $data['used_memory_lua_human']      = Utils::formatBytes($cache['used_memory_lua']); //redis已用内存lua
+            $data['connected_clients']          = $cache['connected_clients']; //redis当前打开链接数
+            $data['total_connections_received'] = $cache['total_connections_received']; //redis曾打开连接总数
+            $data['total_commands_processed']   = $cache['total_commands_processed']; //redis执行命令总数
+            $data['mem_fragmentation_ratio']    = $cache['mem_fragmentation_ratio']; //redis内存碎片率
+            $data['db0']                        = $cache['db0']; //redis数据库0
+            for ($i = 1; $i <= 15; $i++) {
+                if ($cache['db' . $i] ?? '') {
+                    $data['db' . $i] = $cache['db' . $i]; //redis数据库i
+                }
+            }
         } elseif ($cache_config['default'] === 'memcache') {
             $Cache = $cache_class->cache()::handler();
             $cache = $Cache->getstats();
-
-            $cache['time']           = date('Y-m-d H:i:s', $cache['time']);
-            $cache['uptime']         = $cache['uptime'] / (24 * 60 * 60) . '天';
-            $cache['bytes_read']     = Utils::formatBytes($cache['bytes_read']);
-            $cache['bytes_written']  = Utils::formatBytes($cache['bytes_written']);
-            $cache['limit_maxbytes'] = Utils::formatBytes($cache['limit_maxbytes']);
+            $data['version']           = $cache['version']; //memcache版本
+            $data['time']              = date('Y-m-d H:i:s', $cache['time']); //memcache当前服务器时间
+            $data['uptime']            = round($cache['uptime'] / (24 * 60 * 60), 2) . '天'; //memcache运行时长
+            $data['bytes_read']        = Utils::formatBytes($cache['bytes_read']); //memcache读取字节总数
+            $data['bytes_written']     = Utils::formatBytes($cache['bytes_written']); //memcache写入字节总数
+            $data['limit_maxbytes']    = Utils::formatBytes($cache['limit_maxbytes']); //memcache分配的内存数
+            $data['curr_connections']  = $cache['curr_connections']; //memcache当前打开链接数
+            $data['total_connections'] = $cache['total_connections']; //memcache曾打开连接总数
+            $data['cmd_get']           = $cache['cmd_get']; //memcache执行get命令总数
+            $data['cmd_set']           = $cache['cmd_set']; //memcache执行set命令总数
+            $data['cmd_flush']         = $cache['cmd_flush']; //memcache执行flush_all命令总数
         } elseif ($cache_config['default'] === 'wincache') {
-            $Cache = $cache_class->cache()::handler();
-
-            $cache['wincache_info']['wincache_fcache_meminfo'] = wincache_fcache_meminfo();
-            $cache['wincache_info']['wincache_ucache_meminfo'] = wincache_ucache_meminfo();
-            $cache['wincache_info']['wincache_rplist_meminfo'] = wincache_rplist_meminfo();
+            $wincache_fcache_meminfo = wincache_fcache_meminfo();
+            $wincache_ucache_meminfo = wincache_ucache_meminfo();
+            $wincache_rplist_meminfo = wincache_rplist_meminfo();
+            $data['fcache_memory_total']    = Utils::formatBytes($wincache_fcache_meminfo['memory_total']); //文件缓存总内存
+            $data['fcache_memory_free']     = Utils::formatBytes($wincache_fcache_meminfo['memory_free']); //文件缓存可用内存
+            $data['fcache_memory_overhead'] = Utils::formatBytes($wincache_fcache_meminfo['memory_overhead']); //文件缓存额外内存
+            $data['fcache_num_used_blks']   = $wincache_fcache_meminfo['num_used_blks']; //文件缓存已用块数
+            $data['fcache_num_free_blks']   = $wincache_fcache_meminfo['num_free_blks']; //文件缓存可用块数
+            $data['ucache_memory_total']    = Utils::formatBytes($wincache_ucache_meminfo['memory_total']); //用户缓存总内存
+            $data['ucache_memory_free']     = Utils::formatBytes($wincache_ucache_meminfo['memory_free']); //用户缓存可用内存
+            $data['ucache_memory_overhead'] = Utils::formatBytes($wincache_ucache_meminfo['memory_overhead']); //用户缓存额外内存
+            $data['ucache_num_used_blks']   = $wincache_ucache_meminfo['num_used_blks']; //用户缓存已用块数
+            $data['ucache_num_free_blks']   = $wincache_ucache_meminfo['num_free_blks']; //用户缓存可用块数
+            $data['rplist_memory_total']    = Utils::formatBytes($wincache_rplist_meminfo['memory_total']); //列表缓存总内存
+            $data['rplist_memory_free']     = Utils::formatBytes($wincache_rplist_meminfo['memory_free']); //列表缓存可用内存
+            $data['rplist_memory_overhead'] = Utils::formatBytes($wincache_rplist_meminfo['memory_overhead']); //列表缓存额外内存
+            $data['rplist_num_used_blks']   = $wincache_rplist_meminfo['num_used_blks']; //列表缓存已用块数
+            $data['rplist_num_free_blks']   = $wincache_rplist_meminfo['num_free_blks']; //列表缓存可用块数
         }
-        $cache['cache_type'] = $cache_config['default'];
-
-        $data = array_merge($server, $cache);
 
         return $data;
     }
