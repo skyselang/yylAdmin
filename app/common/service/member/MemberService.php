@@ -1194,7 +1194,7 @@ class MemberService
                     $member_insert['nickname'] = $member_insert['username'] ?? $third_username;
                 }
                 if (isset($third_info['avatar_id'])) {
-                    $member_update['avatar_id'] = $third_info['avatar_id'];
+                    $member_insert['avatar_id'] = $third_info['avatar_id'];
                 }
                 if ($phone) {
                     $member_insert['phone'] = $phone;
@@ -1227,6 +1227,9 @@ class MemberService
             $third_save['login_region'] = $ip_info['region'];
             if ($unionid) {
                 $third_save['unionid'] = $unionid;
+            }
+            if (isset($third_info['avatar_id'])) {
+                $third_save['avatar_id'] = $third_info['avatar_id'];
             }
             if (isset($third_info['headimgurl'])) {
                 $third_save['headimgurl'] = $third_info['headimgurl'];

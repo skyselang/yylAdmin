@@ -15,6 +15,7 @@ use app\common\model\system\SettingModel as Model;
 use app\common\utils\Utils;
 use app\common\utils\CaptchaUtils;
 use app\common\utils\AjCaptchaUtils;
+use app\common\cache\Cache as comCache;
 
 /**
  * 系统设置
@@ -323,34 +324,34 @@ class SettingService
 
     /**
      * 系统缓存清除
+     * @description 如果5秒内连续5次请求或强制清除，则清空所有缓存
+     * @param bool $force 是否强制清除
      */
-    public static function cacheClear()
+    public static function cacheClear($force = false)
     {
-        $base  = '../app/common/cache/';
-        $paths = [$base . '*.php', $base . '*/*.php', $base . '*/*/*.php'];
-        $tags  = [];
-        foreach ($paths as $path) {
-            $classs = glob($path);
-            foreach ($classs as $class) {
-                $class = str_replace(['..', '/', '.php'], ['', '\\', ''], $class);
-                $Cache = new $class;
-                $tag   = '';
-                if (property_exists($Cache, 'allowClear')) {
-                    if ($Cache->allowClear) {
-                        $tag = $Cache->tag;
-                    }
-                } else {
-                    $tag = $Cache->tag;
-                }
-                if ($tag) {
-                    $tags[] = $tag;
-                }
-            }
+        $cache    = self::cache();
+        $key      = 'cacheClear' . user_id();
+        $comCache = new comCache(false);
+        $count    = $comCache->get($key, 0);
+        $expire   = 5;
+        $number   = 5;
+        if ($count) {
+            $comCache->inc($key);
+            $count++;
+        } else {
+            $comCache->set($key, 1, $expire);
+            $count = 1;
         }
-        $cache = self::cache();
-        $clear = $cache->cache()::tag($tags)->clear();
+        if ($count >= $number || $force) {
+            $clear = $cache->clearAll();
+            $comCache->del($key);
+            $type = 'all';
+        } else {
+            $clear = $cache->clearAllow();
+            $type = 'allow';
+        }
 
-        return ['clear' => $clear];
+        return ['clear' => $clear, 'count' => $count, 'type' => $type];
     }
 
     /**

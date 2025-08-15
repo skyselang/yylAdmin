@@ -364,7 +364,7 @@ class Member extends BaseController
         $redirect_uri = $param['redirect_uri'] ?: (string) url('api/member.Login/redirectUri', [], false, true);
         $state        = md5(uniqid('offiacc' . $member_id, true));
 
-        $cache = new Cache();
+        $cache = new Cache(false);
         $cache_key = SettingService::OFFIACC_WEBSITE_KEY . $state;
         $cache_val['type']         = 'offiacc';
         $cache_val['app']          = $app;
@@ -422,7 +422,7 @@ class Member extends BaseController
         $redirect_uri = $param['redirect_uri'] ?: (string) url('api/member.Login/redirectUri', [], false, true);
         $state        = md5(uniqid('website' . $member_id, true));
 
-        $cache = new Cache();
+        $cache = new Cache(false);
         $cache_key = SettingService::OFFIACC_WEBSITE_KEY . $state;
         $cache_val['type']         = 'website';
         $cache_val['app']          = $app;

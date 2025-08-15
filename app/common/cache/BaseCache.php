@@ -41,12 +41,22 @@ class BaseCache
     public $allowClear = true;
 
     /**
+     * 允许清除缓存标签
+     * @var string
+     */
+    protected $allowClearTag = 'yyladmin_allow_clear';
+
+    /**
      * 设置缓存标签
      * @param string $tag
      */
     protected function tag($tag)
     {
-        $this->tag = $tag;
+        if ($this->allowClear) {
+            $this->tag = [$this->allowClearTag, $tag];
+        } else {
+            $this->tag = $tag;
+        }
     }
 
     /**
@@ -182,6 +192,22 @@ class BaseCache
     public function clear()
     {
         return Cache::tag($this->tag)->clear();
+    }
+
+    /**
+     * 清空缓存（允许清除的缓存）
+     */
+    public function clearAllow()
+    {
+        return Cache::tag($this->allowClearTag)->clear();
+    }
+
+    /**
+     * 清空缓存（所有缓存）
+     */
+    public function clearAll()
+    {
+        return Cache::clear();
     }
 
     /**

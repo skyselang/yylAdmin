@@ -272,6 +272,9 @@ class Login extends BaseController
             'nickname/s'   => '',
             'avatar_id/d'  => 0,
         ]);
+        if ($param['avatar_id']) {
+            unset($param['headimgurl']);
+        }
 
         validate(['app' => 'require', 'code' => 'require'])->check($param);
 
@@ -342,7 +345,7 @@ class Login extends BaseController
         $redirect_uri = $param['redirect_uri'] ?: (string) url('redirectUri', [], false, true);
         $state        = md5(uniqid('offiacc', true));
 
-        $cache = new Cache();
+        $cache = new Cache(false);
         $cache_key = SettingService::OFFIACC_WEBSITE_KEY . $state;
         $cache_val['type']         = 'offiacc';
         $cache_val['app']          = $app;
@@ -391,7 +394,7 @@ class Login extends BaseController
         $redirect_uri = $param['redirect_uri'] ?: (string) url('redirectUri', [], false, true);
         $state        = md5(uniqid('website', true));
 
-        $cache = new Cache();
+        $cache = new Cache(false);
         $cache_key = SettingService::OFFIACC_WEBSITE_KEY . $state;
         $cache_val['type']         = 'website';
         $cache_val['app']          = $app;
@@ -416,7 +419,7 @@ class Login extends BaseController
             return;
         }
 
-        $cache = new Cache();
+        $cache = new Cache(false);
         $cache_key = SettingService::OFFIACC_WEBSITE_KEY . $param['state'];
         $cache_val = $cache->get($cache_key);
         $type         = $cache_val['type'];
@@ -506,6 +509,9 @@ class Login extends BaseController
             'nickname/s'     => '',
             'avatar_id/d'    => 0,
         ]);
+        if ($param['avatar_id']) {
+            unset($param['headimgurl']);
+        }
         $rule = ['app' => 'require'];
         if ($param['app'] == 'wx') {
             $rule['code'] = 'require';

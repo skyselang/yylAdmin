@@ -11,6 +11,7 @@ namespace app\common\model\member;
 
 use think\Model;
 use hg\apidoc\annotation as Apidoc;
+use app\common\model\file\FileModel;
 use app\common\service\member\SettingService;
 
 /**
@@ -38,6 +39,23 @@ class ThirdModel extends Model
     public function getIsDisableNameAttr($value, $data)
     {
         return ($data['is_disable'] ?? 0) ? '是' : '否';
+    }
+
+    /**
+     * 关联头像
+     * @return \think\model\relation\HasOne
+     */
+    public function avatar()
+    {
+        return $this->hasOne(FileModel::class, 'file_id', 'avatar_id')->append(['file_url'])->where(where_disdel());
+    }
+    // 获取头像
+    public function getHeadimgurlAttr($value, $data)
+    {
+        if ($data['headimgurl'] ?? '') {
+            return $data['headimgurl'];
+        }
+        return $this['avatar']['file_url'] ?? '';
     }
 
     /**

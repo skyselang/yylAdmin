@@ -47,6 +47,7 @@ class ThirdService
         'application/s' => '',
         'unionid/s'     => '',
         'openid/s'      => '',
+        'avatar_id/d'   => 0,
         'headimgurl/s'  => '',
         'nickname/s'    => '',
         'remark/s'      => '',
@@ -109,7 +110,7 @@ class ThirdService
             $order = [$pk => 'desc'];
         }
         if (empty($field)) {
-            $field = $pk . ',member_id,platform,application,headimgurl,nickname,is_disable,login_num,login_ip,login_region,login_time,create_time,update_time';
+            $field = $pk . ',member_id,platform,application,avatar_id,headimgurl,nickname,is_disable,login_num,login_ip,login_region,login_time,create_time,update_time';
         } else {
             $field = $pk . ',' . $field;
         }
@@ -200,6 +201,9 @@ class ThirdService
         $pk    = $model->getPk();
 
         unset($param[$pk]);
+        if (isset($param['avatar_id']) && $param['avatar_id']) {
+            $param['headimgurl'] = '';
+        }
         $param['platform']    = SettingService::platform($param['application']);
         $param['create_uid']  = user_id();
         $param['create_time'] = datetime();
@@ -227,6 +231,9 @@ class ThirdService
         $pk    = $model->getPk();
 
         unset($param[$pk], $param['ids']);
+        if (isset($param['avatar_id']) && $param['avatar_id']) {
+            $param['headimgurl'] = '';
+        }
         if (isset($param['application'])) {
             $param['platform'] = SettingService::platform($param['application']);
         }
@@ -357,7 +364,7 @@ class ThirdService
         $export_info['is_tree'] = 0;
         $export_info['type']    = FileSettingService::EXPIMP_TYPE_MEMBER_THIRD;
 
-        $field = 'member_id,platform,application,headimgurl,nickname,is_disable,login_num,login_ip,login_region,login_time,create_time,update_time,unionid,openid,remark,sort';
+        $field = 'member_id,platform,application,avatar_id,headimgurl,nickname,is_disable,login_num,login_ip,login_region,login_time,create_time,update_time,unionid,openid,remark,sort';
         $limit = 10000;
         $data  = ExportService::exports(__CLASS__, $export_info, $field, $limit);
 

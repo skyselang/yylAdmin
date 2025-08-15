@@ -42,10 +42,12 @@ class Cache extends BaseCache
 
     /**
      * 构造函数
+     * @param bool $allowClear 是否允许清除缓存
      * @return void
      */
-    function __construct()
+    function __construct($allowClear = true)
     {
+        $this->allowClear = $allowClear;
         $this->tag($this->tag);
         $this->prefix($this->prefix);
         $this->expire($this->expire);
