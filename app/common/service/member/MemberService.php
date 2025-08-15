@@ -53,6 +53,7 @@ class MemberService
         'member_id'     => '',
         'unique/s'      => '',
         'avatar_id/d'   => 0,
+        'headimgurl/s'  => '',
         'nickname/s'    => '',
         'username/s'    => '',
         'phone/s'       => '',
