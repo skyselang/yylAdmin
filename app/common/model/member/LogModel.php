@@ -133,6 +133,9 @@ class LogModel extends Model
      */
     public function getRequestParamAttr($value)
     {
+        if (empty($value)) {
+            $value = '{}';
+        }
         return json_decode($value, true);
     }
 }

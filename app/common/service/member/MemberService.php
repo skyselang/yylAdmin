@@ -1164,9 +1164,6 @@ class MemberService
                 $member_update['login_time']   = $datetime;
                 $member_update['login_region'] = $ip_info['region'];
                 $MemberModel->where($MemberPk, $member_id)->update($member_update);
-                // 登录日志
-                $member_log[$MemberPk] = $member_id;
-                LogService::add($member_log, SettingService::LOG_TYPE_LOGIN);
             } else {
                 $third_username = md5(uniqid('third', true));
                 if ($application == SettingService::APP_WX_MINIAPP) {
@@ -1208,9 +1205,6 @@ class MemberService
                 $member_insert['login_region'] = $ip_info['region'];
                 $member_add = self::add($member_insert);
                 $member_id  = $member_add[$MemberPk];
-                // 注册日志
-                $member_log[$MemberPk] = $member_id;
-                LogService::add($member_log, SettingService::LOG_TYPE_REGISTER);
             }
 
             if ($phone) {

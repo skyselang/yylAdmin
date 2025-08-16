@@ -45,7 +45,7 @@ class MemberLogMiddleware
                 } else {
                     if (api_is_exist($api_url)) {
                         $api_info = ApiService::info($api_url);
-                        if ($api_info['log_type'] === SettingService::LOG_TYPE_LOGIN) {
+                        if (in_array($api_info['log_type'], [SettingService::LOG_TYPE_LOGIN, SettingService::LOG_TYPE_REGISTER])) {
                             $log_unlogin = true;
                         }
                     }
