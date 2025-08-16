@@ -207,8 +207,3 @@ pnpm run build:stage
 ## 交流
 
 - QQ 交流群：679883097
-
-## 安全
-
-- yylAdmin ：[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdmin.svg?size=small)](https://www.murphysec.com/dr/jOuP7HsHeZORjqNlDm)
-- yylAdminWeb ：[![OSCS Status](https://www.oscs1024.com/platform/badge/skyselang/yylAdminWeb.svg?size=small)](https://www.murphysec.com/dr/xygSZedOQLyj4uxyB8)
