@@ -374,7 +374,6 @@ class FileService
      * 文件修改
      * @param int|array $ids   文件id
      * @param array     $param 文件信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, field="file_id,file_name,group_id,file_type,domain,remark,sort")
      * @Apidoc\Param(ref={Model::class,"getTagIdsAttr"}, field="tag_ids")
      */
@@ -530,11 +529,11 @@ class FileService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $storage = $exp_imp == 'export' ? 'storage_name' : 'storage';
-        $file_type = $exp_imp == 'export' ? 'file_type_name' : 'file_type';
-        $file_size = $exp_imp == 'export' ? 'file_size_name' : 'file_size';
-        $group_id = $exp_imp == 'export' ? 'group_name' : 'group_id';
-        $tag_ids = $exp_imp == 'export' ? 'tag_names' : 'tag_ids';
+        $storage    = $exp_imp == 'export' ? 'storage_name' : 'storage';
+        $file_type  = $exp_imp == 'export' ? 'file_type_name' : 'file_type';
+        $file_size  = $exp_imp == 'export' ? 'file_size_name' : 'file_size';
+        $group_id   = $exp_imp == 'export' ? 'group_name' : 'group_id';
+        $tag_ids    = $exp_imp == 'export' ? 'tag_names' : 'tag_ids';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 10],

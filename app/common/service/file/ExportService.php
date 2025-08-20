@@ -353,14 +353,15 @@ class ExportService
     {
         $model = self::model();
         $pk    = $model->getPk();
-        $type = $exp_imp == 'export' ? 'type_name' : 'type';
+        $type      = $exp_imp == 'export' ? 'type_name' : 'type';
         $file_size = $exp_imp == 'export' ? 'file_size_name' : 'file_size';
-        $status = $exp_imp == 'export' ? 'status_name' : 'status';
+        $status    = $exp_imp == 'export' ? 'status_name' : 'status';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],
-            ['field' =>  $type, 'name' => lang('类型'), 'width' => 20],
-            ['field' =>  'file_name', 'name' => lang('名称'), 'width' => 50],
+            ['field' => $type, 'name' => lang('类型'), 'width' => 20],
+            ['field' => 'file_name', 'name' => lang('名称'), 'width' => 36],
+            ['field' => 'file_url', 'name' => lang('文件'), 'width' => 26],
             ['field' => $file_size, 'name' => lang('大小'), 'width' => 10],
             ['field' => 'export_num', 'name' => lang('数量'), 'width' => 10],
             ['field' => $status, 'name' => lang('状态'), 'width' => 10],

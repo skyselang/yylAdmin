@@ -205,11 +205,19 @@ class SettingService
 
     /**
      * 请求方法
+     * @param bool $val_lab 是否返回带value、label下标的数组
      * @return array
      */
-    public static function methods()
+    public static function methods($val_lab = false)
     {
-        return ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'];
+        $methods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'];
+        if ($val_lab) {
+            $val_labs = [];
+            foreach ($methods as $key => $label) {
+                $val_labs[] = ['value' => $label, 'label' => $label];
+            }
+            return $val_labs;
+        }
     }
 
     /**

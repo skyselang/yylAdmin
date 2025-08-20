@@ -201,7 +201,6 @@ class TagService
      * 文件标签修改
      * @param int|array $ids   标签id
      * @param array     $param 标签信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, withoutField="is_disable,is_delete,create_uid,update_uid,delete_uid,create_time,update_time,delete_time")
      */
     public static function edit($ids, $param = [])

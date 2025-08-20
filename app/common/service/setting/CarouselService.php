@@ -232,7 +232,6 @@ class CarouselService
      * 轮播修改
      * @param int|array $ids   轮播id
      * @param array     $param 轮播信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, field="carousel_id,unique,file_id,title,link,position,desc,sort")
      * @Apidoc\Param("file_list", ref="filesParam", type="array", desc="文件列表")
      */
@@ -379,8 +378,8 @@ class CarouselService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $file_id = $exp_imp == 'export' ? 'file_url' : 'file_id';
-        $file_type = $exp_imp == 'export' ? 'file_type_name' : 'file_type';
+        $file_id    = $exp_imp == 'export' ? 'file_url' : 'file_id';
+        $file_type  = $exp_imp == 'export' ? 'file_type_name' : 'file_type';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],

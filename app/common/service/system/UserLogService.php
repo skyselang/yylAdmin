@@ -76,7 +76,7 @@ class UserLogService
     {
         $exps      = $exp ? where_exps() : [];
         $log_types = SettingService::logTypes('', true);
-        $methods   = SettingService::methods();
+        $methods   = SettingService::methods(true);
         $users     = UserService::list([where_delete()], 0, 0, [], 'nickname,username', false)['list'] ?? [];
         $menus     = MenuService::list('tree', [where_delete()], [], 'menu_name');
 
@@ -97,7 +97,7 @@ class UserLogService
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="列表", children={
      *   @Apidoc\Returned(ref={Model::class}, field="log_id,user_id,menu_id,menu_name,request_url,request_method,request_ip,request_region,request_isp,response_code,response_msg,create_time"),
-     *   @Apidoc\Returned(ref={UserService::class,"info"}, field="nickname,username"),
+     *   @Apidoc\Returned(ref={Model::class,"user"}, field="user_nickname,user_username"),
      *   @Apidoc\Returned(ref={MenuService::class,"info"}, field="menu_name,menu_url"),
      * })
      */
@@ -132,7 +132,7 @@ class UserLogService
         }
         if (strpos($field, 'user_id')) {
             $with[] = $hidden[] = 'user';
-            $append = array_merge($append, ['nickname', 'username']);
+            $append = array_merge($append, ['user_nickname', 'user_username']);
         }
         if (strpos($field, 'menu_id')) {
             $with[] = $hidden[] = 'menu';
@@ -171,8 +171,8 @@ class UserLogService
      * @return array
      * @Apidoc\Query(ref={Model::class}, field="log_id")
      * @Apidoc\Returned(ref={Model::class})
-     * @Apidoc\Returned(ref={UserService::class,"info"}, field="nickname,username")
-     * @Apidoc\Returned(ref={MenuService::class,"info"}, field="menu_name,menu_url")
+     * @Apidoc\Returned(ref={Model::class,"user"}, field="user_nickname,user_username"),
+     * @Apidoc\Returned(ref={Model::class,"menu"}, field="menu_name,menu_url")
      */
     public static function info($id, $exce = true)
     {
@@ -203,6 +203,7 @@ class UserLogService
      * 用户日志添加
      * @param array $param 日志数据
      * @param bool  $auto  自动记录
+     * @Apidoc\Param(ref={Model::class}, withoutField="log_id,is_disable,is_delete,create_uid,update_uid,delete_uid,update_time,delete_time")
      */
     public static function add($param = [], $auto = true)
     {
@@ -265,6 +266,7 @@ class UserLogService
      * 用户日志修改
      * @param int|array $ids 日志id
      * @param array $param   日志信息
+     * @Apidoc\Param(ref={Model::class}, withoutField="is_disable,is_delete,create_uid,update_uid,delete_uid,update_time,delete_time")
      */
     public static function edit($ids, $param = [])
     {
@@ -383,8 +385,8 @@ class UserLogService
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],
             ['field' => 'user_id', 'name' => lang('用户ID'), 'width' => 12],
-            ['field' => 'nickname', 'name' => lang('用户昵称'), 'width' => 14, 'color' => ''],
-            ['field' => 'username', 'name' => lang('用户账号'), 'width' => 14],
+            ['field' => 'user_nickname', 'name' => lang('用户昵称'), 'width' => 14, 'color' => ''],
+            ['field' => 'user_username', 'name' => lang('用户账号'), 'width' => 14],
             ['field' => 'menu_id', 'name' => lang('菜单ID'), 'width' => 12],
             ['field' => 'menu_name', 'name' => lang('菜单名称'), 'width' => 20],
             ['field' => 'menu_url', 'name' => lang('菜单链接'), 'width' => 28],

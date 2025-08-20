@@ -182,7 +182,7 @@ class ThirdService
                 }
                 return [];
             }
-            $info = $info->append(['platform_name', 'application_name', 'is_disable_name'])->toArray();
+            $info = $info->append(['platform_name', 'application_name', 'member_nickname', 'member_username', 'is_disable_name'])->toArray();
 
             $cache->set($id, $info);
         }

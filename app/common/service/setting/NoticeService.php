@@ -210,7 +210,6 @@ class NoticeService
      * 通告修改
      * @param int|array $ids   通告id
      * @param array     $param 通告信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, withoutField="is_disable,is_delete,create_uid,update_uid,delete_uid,create_time,update_time,delete_time")
      */
     public static function edit($ids, $param = [])
@@ -308,8 +307,8 @@ class NoticeService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $type = $exp_imp == 'export' ? 'type_name' : 'type';
-         $image_id = $exp_imp == 'export' ? 'image_url' : 'image_id';
+        $type       = $exp_imp == 'export' ? 'type_name' : 'type';
+        $image_id   = $exp_imp == 'export' ? 'image_url' : 'image_id';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],

@@ -361,7 +361,6 @@ class ContentService
      * 内容修改 
      * @param int|array $ids   内容id
      * @param array     $param 内容信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, withoutField="hits,is_disable,is_delete,create_uid,update_uid,delete_uid,create_time,update_time,delete_time")
      * @Apidoc\Param(ref={Model::class,"getCategoryIdsAttr"}, field="category_ids")
      * @Apidoc\Param(ref={Model::class,"getTagIdsAttr"}, field="tag_ids")
@@ -548,14 +547,14 @@ class ContentService
     {
         $model = self::model();
         $pk    = $model->getPk();
-        $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $image_id = $exp_imp == 'export' ? 'image_url' : 'image_id';
+        $is_disable   = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
+        $image_id     = $exp_imp == 'export' ? 'image_url' : 'image_id';
         $category_ids = $exp_imp == 'export' ? 'category_full_names' : 'category_ids';
-        $tag_ids = $exp_imp == 'export' ? 'tag_names' : 'tag_ids';
-        $is_top = $exp_imp == 'export' ? 'is_top_name' : 'is_top';
-        $is_hot = $exp_imp == 'export' ? 'is_hot_name' : 'is_hot';
-        $is_rec = $exp_imp == 'export' ? 'is_rec_name' : 'is_rec';
-        $hits = $exp_imp == 'export' ? 'hits_show' : 'hits';
+        $tag_ids      = $exp_imp == 'export' ? 'tag_names' : 'tag_ids';
+        $is_top       = $exp_imp == 'export' ? 'is_top_name' : 'is_top';
+        $is_hot       = $exp_imp == 'export' ? 'is_hot_name' : 'is_hot';
+        $is_rec       = $exp_imp == 'export' ? 'is_rec_name' : 'is_rec';
+        $hits         = $exp_imp == 'export' ? 'hits_show' : 'hits';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],

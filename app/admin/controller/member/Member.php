@@ -53,7 +53,7 @@ class Member extends BaseController
         $where = $this->where(where_delete());
 
         $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
-        $data['basedata'] = $this->service::basedata(true);
+        $data['basedata'] = $this->param('basedata/d', 1) ? $this->service::basedata(true) : [];
 
         return success($data);
     }
@@ -119,7 +119,7 @@ class Member extends BaseController
     public function edit()
     {
         $pk = $this->model()->getPk();
-        
+
         if ($this->request->isGet()) {
             $param = $this->params([$pk => '']);
 

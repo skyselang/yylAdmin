@@ -248,7 +248,6 @@ class TagService
      * 内容标签修改
      * @param int|array $ids   标签id
      * @param array     $param 标签信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, withoutField="is_disable,is_delete,create_uid,update_uid,delete_uid,create_time,update_time,delete_time")
      * @Apidoc\Param(ref="imagesParam")
      */
@@ -372,19 +371,19 @@ class TagService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $image_id = $exp_imp == 'export' ? 'image_url' : 'image_id';
+        $image_id   = $exp_imp == 'export' ? 'image_url' : 'image_id';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],
             ['field' => 'tag_unique', 'name' => lang('编号'), 'width' => 22],
             ['field' => $image_id, 'name' => lang('图片(id或url)'), 'width' => 16],
             ['field' => 'tag_name', 'name' => lang('名称'), 'width' => 22, 'color' => 'FF0000'],
-            ['field' => 'title', 'name' => lang('标题'), 'width' => 22],
             ['field' => 'remark', 'name' => lang('备注'), 'width' => 20],
             ['field' => $is_disable, 'name' => lang('禁用'), 'width' => 10],
             ['field' => 'sort', 'name' => lang('排序'), 'width' => 10],
             ['field' => 'create_time', 'name' => lang('添加时间'), 'width' => 22, 'type' => 'time'],
             ['field' => 'update_time', 'name' => lang('修改时间'), 'width' => 22, 'type' => 'time'],
+            ['field' => 'title', 'name' => lang('标题'), 'width' => 22],
             ['field' => 'keywords', 'name' => lang('关键词'), 'width' => 22],
             ['field' => 'description', 'name' => lang('描述'), 'width' => 30],
         ];

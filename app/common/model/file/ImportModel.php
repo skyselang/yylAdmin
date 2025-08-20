@@ -95,14 +95,23 @@ class ImportModel extends Model
      */
     public function getFileUrlAttr($value, $data)
     {
+        if (empty($data['import_num'])) {
+            return '';
+        }
         return file_url($data['file_path']);
     }
     public function getFileUrlSuccessAttr($value, $data)
     {
+        if (empty($data['success_num'])) {
+            return '';
+        }
         return file_url($this->getFilePathSuccessAttr($value, $data));
     }
     public function getFileUrlFailAttr($value, $data)
     {
+        if (empty($data['fail_num'])) {
+            return '';
+        }
         return file_url($this->getFilePathFailAttr($value, $data));
     }
 

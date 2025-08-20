@@ -53,6 +53,7 @@ class LogService
         'response_code/s'  => '',
         'response_msg/s'   => '',
         'user_agent/s'     => '',
+        'application/d'    => 0,
         'is_disable/d'     => 0,
         'create_time'      => null,
     ];
@@ -77,7 +78,7 @@ class LogService
     {
         $exps         = $exp ? where_exps() : [];
         $log_types    = SettingService::logTypes('', true);
-        $methods      = SystemSettingService::methods();
+        $methods      = SystemSettingService::methods(true);
         $platforms    = SettingService::platforms('', true);
         $applications = SettingService::applications('', true);
         $apis         = ApiService::list('tree', [where_delete()], [], 'api_name');
@@ -106,7 +107,7 @@ class LogService
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="列表", children={
      *   @Apidoc\Returned(ref={Model::class}, field="log_id,member_id,api_id,api_name,request_ip,request_region,request_isp,request_url,response_code,response_msg,application,create_time"),
-     *   @Apidoc\Returned(ref={Model::class,"member"}, field="nickname,username"),
+     *   @Apidoc\Returned(ref={Model::class,"member"}, field="member_nickname,member_username"),
      *   @Apidoc\Returned(ref={Model::class,"api"}, field="api_name,api_url"),
      *   @Apidoc\Returned(ref={Model::class,"getPlatformNameAttr"}, field="platform_name"),
      *   @Apidoc\Returned(ref={Model::class,"getApplicationNameAttr"}, field="application_name"),
@@ -132,7 +133,7 @@ class LogService
         $with = $append = $hidden = $field_no = [];
         if (strpos($field, 'member_id')) {
             $with[] = $hidden[] = 'member';
-            $append = array_merge($append, ['nickname', 'username']);
+            $append = array_merge($append, ['member_nickname', 'member_username']);
         }
         if (strpos($field, 'api_id')) {
             $with[] = $hidden[] = 'api';
@@ -177,7 +178,7 @@ class LogService
      * @return array
      * @Apidoc\Query(ref={Model::class}, field="log_id")
      * @Apidoc\Returned(ref={Model::class})
-     * @Apidoc\Returned(ref={Model::class,"member"}, field="nickname,username")
+     * @Apidoc\Returned(ref={Model::class,"member"}, field="member_nickname,member_username")
      * @Apidoc\Returned(ref={Model::class,"api"}, field="api_name,api_url")
      * @Apidoc\Returned(ref={Model::class,"getPlatformNameAttr"}, field="platform_name")
      * @Apidoc\Returned(ref={Model::class,"getApplicationNameAttr"}, field="application_name")
@@ -197,7 +198,7 @@ class LogService
                 return [];
             }
             $info = $info
-                ->append(['nickname', 'username', 'api_url', 'api_name', 'platform_name', 'application_name'])
+                ->append(['member_nickname', 'member_username', 'api_url', 'api_name', 'platform_name', 'application_name'])
                 ->hidden(['member', 'api'])
                 ->toArray();
 
@@ -263,6 +264,7 @@ class LogService
         $param['request_area']     = $ip_info['area'];
         $param['response_msg']     = mb_substr($param['response_msg'] ?? '', 0, 1024);
         $param['user_agent']       = mb_substr($param['user_agent'] ?? '', 0, 1024);
+        $param['platform']         = SettingService::platform($param['application'] ?? 0);
 
         $model->save($param);
 
@@ -275,7 +277,6 @@ class LogService
      * 会员日志修改
      * @param int|array $ids   日志id
      * @param array     $param 日志信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, withoutField="is_disable,is_delete,create_uid,update_uid,delete_uid,update_time,delete_time")
      */
     public static function edit($ids, $param = [])
@@ -296,6 +297,7 @@ class LogService
         $param['request_city']     = $ip_info['city'];
         $param['request_area']     = $ip_info['area'];
         $param['user_agent']       = substr($param['user_agent'] ?? '', 0, 1024);
+        $param['platform']         = SettingService::platform($param['application'] ?? 0);
         $param['create_time']      = empty($param['create_time']) ? NULL : $param['create_time'];
         $param['update_uid']       = user_id();
         $param['update_time']      = datetime();
@@ -389,8 +391,8 @@ class LogService
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],
             ['field' => 'member_id', 'name' => lang('会员ID'), 'width' => 12],
-            ['field' => 'nickname', 'name' => lang('会员昵称'), 'width' => 28, 'color' => ''],
-            ['field' => 'username', 'name' => lang('会员用户名'), 'width' => 28],
+            ['field' => 'member_nickname', 'name' => lang('会员昵称'), 'width' => 28, 'color' => ''],
+            ['field' => 'member_username', 'name' => lang('会员用户名'), 'width' => 28],
             ['field' => 'api_id', 'name' => lang('接口ID'), 'width' => 12],
             ['field' => 'api_name', 'name' => lang('接口名称'), 'width' => 20],
             ['field' => 'api_url', 'name' => lang('接口链接'), 'width' => 30],

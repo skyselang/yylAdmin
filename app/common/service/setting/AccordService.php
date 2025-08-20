@@ -196,7 +196,6 @@ class AccordService
      * 协议修改
      * @param int|array $ids   协议id
      * @param array     $param 协议信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, withoutField="is_disable,is_delete,create_uid,update_uid,delete_uid,create_time,update_time,delete_time")
      */
     public static function edit($ids, $param = [])

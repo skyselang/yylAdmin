@@ -32,8 +32,8 @@ class LogModel extends Model
     /**
      * 关联会员
      * @Apidoc\Field("")
-     * @Apidoc\AddField("nickname", type="string", desc="会员昵称")
-     * @Apidoc\AddField("username", type="string", desc="会员用户名")
+     * @Apidoc\AddField("member_nickname", type="string", desc="会员昵称")
+     * @Apidoc\AddField("member_username", type="string", desc="会员用户名")
      * @return \think\model\relation\HasOne
      */
     public function member()
@@ -42,10 +42,11 @@ class LogModel extends Model
     }
     /**
      * 获取会员昵称
+     * 
      * @param mixed $value 数据
      * @return string
      */
-    public function getNicknameAttr($value)
+    public function getMemberNicknameAttr($value)
     {
         return $this['member']['nickname'] ?? '';
     }
@@ -54,7 +55,7 @@ class LogModel extends Model
      * @param mixed $value 数据
      * @return string
      */
-    public function getUsernameAttr($value)
+    public function getMemberUsernameAttr($value)
     {
         return $this['member']['username'] ?? '';
     }

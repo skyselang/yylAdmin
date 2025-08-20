@@ -51,7 +51,7 @@ class MessageModel extends Model
     /**
      * 获取用户id
      * @Apidoc\Field("")
-     * @Apidoc\AddField("user_ids", type="array", desc="用户id")
+     * @Apidoc\AddField("user_ids", type="array", desc="用户id", mock="@range(1,4)")
      */
     public function getUserIdsAttr($value, $data)
     {

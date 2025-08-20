@@ -53,6 +53,9 @@ class UserLogModel extends Model
 
     /**
      * 关联用户
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("user_nickname", type="string", desc="用户昵称")
+     * @Apidoc\AddField("user_username", type="string", desc="用户账号")
      * @return \think\model\relation\HasOne
      */
     public function user()
@@ -62,26 +65,29 @@ class UserLogModel extends Model
     /**
      * 获取用户昵称
      * @Apidoc\Field("")
-     * @Apidoc\AddField("nickname", type="string", desc="用户昵称")
+     * @Apidoc\AddField("user_nickname", type="string", desc="用户昵称")
      * @return string
      */
-    public function getNicknameAttr()
+    public function getUserNicknameAttr()
     {
         return $this['user']['nickname'] ?? '';
     }
     /**
      * 获取用户账号
      * @Apidoc\Field("")
-     * @Apidoc\AddField("username", type="string", desc="用户账号")
+     * @Apidoc\AddField("user_username", type="string", desc="用户账号")
      * @return string
      */
-    public function getUsernameAttr()
+    public function getUserUsernameAttr()
     {
         return $this['user']['username'] ?? '';
     }
 
     /**
      * 关联菜单
+     * @Apidoc\Field("")
+     * @Apidoc\AddField("menu_name", type="string", desc="菜单名称")
+     * @Apidoc\AddField("menu_url", type="string", desc="菜单链接")
      * @return \think\model\relation\HasOne
      */
     public function menu()

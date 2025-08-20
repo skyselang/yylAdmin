@@ -252,7 +252,6 @@ class FeedbackService
      * 反馈修改 
      * @param int|array $ids   反馈id
      * @param array     $param 反馈信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, field="feedback_id,member_id,unique,type,title,phone,email,content,reply,remark")
      * @Apidoc\Param(ref="imagesParam")
      */
@@ -399,8 +398,8 @@ class FeedbackService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $type = $exp_imp == 'export' ? 'type_name' : 'type';
-        $status = $exp_imp == 'export' ? 'status_name' : 'status';
+        $type       = $exp_imp == 'export' ? 'type_name' : 'type';
+        $status     = $exp_imp == 'export' ? 'status_name' : 'status';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],

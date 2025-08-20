@@ -395,7 +395,6 @@ class MemberService
      * 会员修改
      * @param int|array $ids   会员id
      * @param array     $param 会员信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, field="member_id,avatar_id,nickname,username,password,phone,email,name,gender,birthday,hometown_id,region_id,remark,sort")
      * @Apidoc\Param(ref={Model::class,"getTagIdsAttr"}, field="tag_ids")
      * @Apidoc\Param(ref={Model::class,"getGroupIdsAttr"}, field="group_ids")
@@ -595,10 +594,10 @@ class MemberService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $avatar_id = $exp_imp == 'export' ? 'avatar_url' : 'avatar_id';
-        $group_ids = $exp_imp == 'export' ? 'group_names' : 'group_ids';
-        $tag_ids = $exp_imp == 'export' ? 'tag_names' : 'tag_ids';
-        $is_super = $exp_imp == 'export' ? 'is_super_name' : 'is_super';
+        $avatar_id  = $exp_imp == 'export' ? 'avatar_url' : 'avatar_id';
+        $group_ids  = $exp_imp == 'export' ? 'group_names' : 'group_ids';
+        $tag_ids    = $exp_imp == 'export' ? 'tag_names' : 'tag_ids';
+        $is_super   = $exp_imp == 'export' ? 'is_super_name' : 'is_super';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => 'ID', 'width' => 12],

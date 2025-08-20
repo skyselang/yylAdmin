@@ -202,7 +202,6 @@ class GroupService
      * 文件分组修改
      * @param int|array $ids   分组id
      * @param array     $param 分组信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, withoutField="is_disable,is_delete,create_uid,update_uid,delete_uid,create_time,update_time,delete_time")
      */
     public static function edit($ids, $param = [])

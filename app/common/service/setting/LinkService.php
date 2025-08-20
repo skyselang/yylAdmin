@@ -219,7 +219,6 @@ class LinkService
      * 友链修改
      * @param int|array $ids   友链id
      * @param array     $param 友链信息
-     * @Apidoc\Query(ref={Model::class})
      * @Apidoc\Param(ref={Model::class}, field="link_id,unique,image_id,name,name_color,url,underline,start_time,end_time,desc,remark,sort")
      */
     public static function edit($ids, $param = [])
@@ -336,8 +335,8 @@ class LinkService
         $model = self::model();
         $pk    = $model->getPk();
         $is_disable = $exp_imp == 'export' ? 'is_disable_name' : 'is_disable';
-        $image_id = $exp_imp == 'export' ? 'image_url' : 'image_id';
-        $underline = $exp_imp == 'export' ? 'underline_name' : 'underline';
+        $image_id   = $exp_imp == 'export' ? 'image_url' : 'image_id';
+        $underline  = $exp_imp == 'export' ? 'underline_name' : 'underline';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],

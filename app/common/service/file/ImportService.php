@@ -365,9 +365,9 @@ class ImportService
     {
         $model = self::model();
         $pk    = $model->getPk();
-        $type = $exp_imp == 'export' ? 'type_name' : 'type';
+        $type      = $exp_imp == 'export' ? 'type_name' : 'type';
         $file_size = $exp_imp == 'export' ? 'file_size_name' : 'file_size';
-        $status = $exp_imp == 'export' ? 'status_name' : 'status';
+        $status    = $exp_imp == 'export' ? 'status_name' : 'status';
         // index下标，field字段，name名称，width宽度，color颜色，type类型
         $header = [
             ['field' => $pk, 'name' => lang('ID'), 'width' => 12],
@@ -382,6 +382,9 @@ class ImportService
             ['field' => 'remark', 'name' => lang('备注'), 'width' => 20],
             ['field' => 'create_time', 'name' => lang('添加时间'), 'width' => 22, 'type' => 'time'],
             ['field' => 'update_time', 'name' => lang('修改时间'), 'width' => 22, 'type' => 'time'],
+            ['field' => 'file_url', 'name' => lang('导入文件'), 'width' => 20],
+            ['field' => 'file_url_success', 'name' => lang('成功文件'), 'width' => 20],
+            ['field' => 'file_url_fail', 'name' => lang('失败文件'), 'width' => 20],
         ];
         // 生成下标
         foreach ($header as $index => &$value) {
