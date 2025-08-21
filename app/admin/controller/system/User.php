@@ -49,8 +49,9 @@ class User extends BaseController
     public function list()
     {
         $where = $this->where(where_delete());
+        $param = $this->param();
 
-        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order());
+        $data = $this->service::list($where, $this->page(), $this->limit(), $this->order(), '', true, $param);
         $data['basedata'] = $this->service::basedata(true);
 
         return success($data);
@@ -120,8 +121,9 @@ class User extends BaseController
 
             validate($this->validate)->scene('info')->check($param);
 
-            $data = $this->service::info($param[$pk]);
+            $data = $this->service::info($param[$pk], true, true);
             $data['basedata'] = $this->service::basedata();
+            unset($data['password']);
 
             return success($data);
         }

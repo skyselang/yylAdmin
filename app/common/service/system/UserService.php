@@ -51,7 +51,7 @@ class UserService
         'phone/s'     => '',
         'email/s'     => '',
         'gender/d'    => 0,
-        'birthday/s'  => '',
+        'birthday'    => NULL,
         'remark/s'    => '',
         'sort/d'      => 250,
         'dept_ids/a'  => [],
@@ -102,9 +102,13 @@ class UserService
      * @param array  $order 排序
      * @param string $field 字段
      * @param bool   $total 总数
+     * @param array  $param 参数
      * @Apidoc\Query(ref="pagingQuery")
      * @Apidoc\Query(ref="sortQuery")
      * @Apidoc\Query(ref="searchQuery")
+     * @Apidoc\Query(ref={Model::class,"getDeptIdsAttr"}, field="dept_ids")
+     * @Apidoc\Query(ref={Model::class,"getPostIdsAttr"}, field="post_ids")
+     * @Apidoc\Query(ref={Model::class,"getRoleIdsAttr"}, field="role_ids")
      * @Apidoc\Returned(ref="pagingReturn")
      * @Apidoc\Returned("list", type="array", desc="列表", children={
      *   @Apidoc\Returned(ref={Model::class}, field="user_id,unique,avatar_id,nickname,username,sort,is_super,is_disable,login_time,create_time,update_time"),
@@ -116,7 +120,7 @@ class UserService
      *   @Apidoc\Returned(ref={Model::class,"getRoleNamesAttr"}, field="role_names"),
      * })
      */
-    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true)
+    public static function list($where = [], $page = 1, $limit = 10,  $order = [], $field = '', $total = true, $param = [])
     {
         $model = self::model();
         $pk    = $model->getPk();
@@ -132,6 +136,16 @@ class UserService
             $field = $group . ',unique,avatar_id,nickname,username,sort,is_super,is_disable,login_time,create_time,update_time';
         } else {
             $field = $group . ',' . $field;
+        }
+
+        if ($param['dept_ids'] ?? []) {
+            $where[] = ['dept_ids', 'in', $param['dept_ids']];
+        }
+        if ($param['post_ids'] ?? []) {
+            $where[] = ['post_ids', 'in', $param['post_ids']];
+        }
+        if ($param['role_ids'] ?? []) {
+            $where[] = ['role_ids', 'in', $param['role_ids']];
         }
 
         $wt = 'system_user_attributes ';
