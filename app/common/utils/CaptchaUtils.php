@@ -296,6 +296,8 @@ class CaptchaUtils
             return true;
         }
 
+        $captcha_code = mb_strtolower($captcha_code, 'UTF-8');
+
         $cache   = new Cache();
         $captcha = $cache->get($captcha_id);
         if ($captcha && ($captcha == $captcha_code)) {
