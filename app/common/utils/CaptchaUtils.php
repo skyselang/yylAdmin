@@ -58,6 +58,8 @@ class CaptchaUtils
     protected static $math_type = [1, 2, 3, 4];
     // 字体图片资源路径
     protected static $assets_path = '';
+    // 是否使用透明背景
+    protected static $transparent = true;
 
     /**
      * 验证码配置
@@ -129,11 +131,27 @@ class CaptchaUtils
         // 图片高(px)
         self::$imageH || self::$imageH = self::$fontSize * 2.5;
         // 建立一幅 self::$imageW x self::$imageH 的图像
-        self::$im = imagecreate(self::$imageW, self::$imageH);
-        // 设置背景
-        imagecolorallocate(self::$im, self::$bg[0], self::$bg[1], self::$bg[2]);
+        if (self::$transparent) {
+            // 创建真彩色图像以支持透明度
+            self::$im = imagecreatetruecolor(self::$imageW, self::$imageH);
+            // 启用 alpha 通道
+            imagesavealpha(self::$im, true);
+            // 设置透明背景
+            $transparent = imagecolorallocatealpha(self::$im, 0, 0, 0, 127);
+            imagefill(self::$im, 0, 0, $transparent);
+        } else {
+            // 创建普通图像
+            self::$im = imagecreate(self::$imageW, self::$imageH);
+            // 设置背景颜色
+            imagecolorallocate(self::$im, self::$bg[0], self::$bg[1], self::$bg[2]);
+        }
         // 验证码字体随机颜色
-        self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
+        if (self::$transparent) {
+            // 透明背景时使用不透明的颜色
+            self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
+        } else {
+            self::$color = imagecolorallocate(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150));
+        }
         // 验证码使用随机字体
         $ttfPath = self::$assets_path . (self::$useZh ? 'zhttfs' : 'ttfs') . '/';
 
@@ -151,8 +169,8 @@ class CaptchaUtils
 
         $fontttf = $ttfPath . self::$fontttf;
 
-        if (self::$useImgBg) {
-            // 绘背景图片
+        if (self::$useImgBg && !self::$transparent) {
+            // 绘背景图片（透明背景时不使用背景图片）
             self::background();
         }
 
@@ -319,7 +337,13 @@ class CaptchaUtils
                 $i  = (int) (self::$fontSize / 5);
                 while ($i > 0) {
                     // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
-                    imagesetpixel(self::$im, $px + $i, $py + $i, self::$color);
+                    if (self::$transparent) {
+                        // 透明背景时使用半透明干扰线
+                        $curveColor = imagecolorallocatealpha(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150), mt_rand(30, 80));
+                        imagesetpixel(self::$im, $px + $i, $py + $i, $curveColor);
+                    } else {
+                        imagesetpixel(self::$im, $px + $i, $py + $i, self::$color);
+                    }
                     $i--;
                 }
             }
@@ -338,10 +362,16 @@ class CaptchaUtils
             if (0 != $w) {
                 $py = $A * sin($w * $px + $f) + $b + self::$imageH / 2; // y = Asin(ωx+φ) + b
                 $i  = (int) (self::$fontSize / 5);
-                while ($i > 0) {
+                            while ($i > 0) {
+                if (self::$transparent) {
+                    // 透明背景时使用半透明干扰线
+                    $curveColor = imagecolorallocatealpha(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150), mt_rand(30, 80));
+                    imagesetpixel(self::$im, $px + $i, $py + $i, $curveColor);
+                } else {
                     imagesetpixel(self::$im, $px + $i, $py + $i, self::$color);
-                    $i--;
                 }
+                $i--;
+            }
             }
         }
     }
@@ -357,7 +387,12 @@ class CaptchaUtils
 
         for ($i = 0; $i < 10; $i++) {
             // 杂点颜色
-            $noiseColor = imagecolorallocate(self::$im, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225));
+            if (self::$transparent) {
+                // 透明背景时使用半透明杂点
+                $noiseColor = imagecolorallocatealpha(self::$im, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225), mt_rand(50, 100));
+            } else {
+                $noiseColor = imagecolorallocate(self::$im, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225));
+            }
             for ($j = 0; $j < 5; $j++) {
                 // 绘杂点
                 imagestring(self::$im, 5, mt_rand(-10, self::$imageW), mt_rand(-10, self::$imageH), $codeSet[mt_rand(0, $length)], $noiseColor);

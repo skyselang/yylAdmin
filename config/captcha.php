@@ -41,4 +41,6 @@ return [
     'imageH'   => 0,
     // 验证码图片宽度
     'imageW'   => 0,
+    // 是否使用透明背景
+    'transparent' => true,
 ];
