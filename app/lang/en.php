@@ -722,4 +722,6 @@ return [
   '消息' => 'Message',
   '消息不存在：' => 'Message does not exist:',
   '用户消息' => 'User message',
+  '成功文件' => 'Success file',
+  '失败文件' => 'Fail file',
 ];

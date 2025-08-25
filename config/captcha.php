@@ -17,18 +17,16 @@ return [
     'math_type' => [1, 2, 3, 4],
     // 验证码位数：2-6
     'length'   => 5,
+    // 验证码字符大小
+    'fontSize' => 26,
     // 验证码字符集合
     'codeSet'  => '0123456789',
     // 验证码过期时间（秒)
     'expire'   => 180,
-    // 是否使用中文验证码
-    'useZh'    => false,
-    // 是否使用算术验证码
-    'math'     => false,
     // 是否使用背景图
     'useImgBg' => false,
-    // 验证码字符大小
-    'fontSize' => 26,
+    // 是否使用透明背景
+    'transparent' => true,
     // 是否使用混淆曲线
     'useCurve' => false,
     // 是否添加杂点
@@ -41,6 +39,4 @@ return [
     'imageH'   => 0,
     // 验证码图片宽度
     'imageW'   => 0,
-    // 是否使用透明背景
-    'transparent' => true,
 ];

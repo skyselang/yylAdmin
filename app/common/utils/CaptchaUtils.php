@@ -27,7 +27,7 @@ class CaptchaUtils
     // 验证码字体颜色
     private static $color = null;
     // 验证码字符集合
-    protected static $codeSet = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY';
+    protected static $codeSet = '0123456789';
     // 验证码过期时间（s）
     protected static $expire = 180;
     // 使用中文验证码
@@ -387,7 +387,7 @@ class CaptchaUtils
         $codeSet = self::$codeSet;
         $length  = strlen($codeSet) - 1;
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 15; $i++) {
             // 杂点颜色
             if (self::$transparent) {
                 // 透明背景时使用半透明杂点
