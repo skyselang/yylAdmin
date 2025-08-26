@@ -193,11 +193,24 @@ function http_post($url, $param = [], $header = [])
 
 /**
  * 获取当前日期时间
- * @param string $format 格式，默认Y-m-d H:i:s
+ * @param string $format    格式，默认Y-m-d H:i:s
+ * @param bool   $microtime 是否包含毫秒，默认false
  * @return string
  */
-function datetime($format = 'Y-m-d H:i:s')
+function datetime($format = '', $microtime = false)
 {
+	if (empty($format)) {
+		$format = 'Y-m-d H:i:s';
+	}
+
+	if ($microtime) {
+		$microtime    = microtime(true);
+		$seconds      = floor($microtime);
+		$milliseconds = round(($microtime - $seconds) * 1000);
+
+		return date($format, $seconds) . '.' . sprintf('%03d', $milliseconds);
+	}
+
 	return date($format);
 }
 

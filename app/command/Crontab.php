@@ -17,26 +17,26 @@ use think\console\input\Argument;
 use think\console\input\Option;
 use think\console\Output;
 use Workerman\Worker;
-use Workerman\Timer as WTimer;
+use Workerman\Crontab\Crontab as WCrontab;
 
 /**
- * 定时任务Timer：按间隔执行任务
- * 调试模式启动：php think timer
- * 守护进程启动：php think timer -m d
+ * 定时任务Crontab：按cron执行任务
+ * 调试模式启动：php think crontab
+ * 守护进程启动：php think crontab -m d
  */
-class Timer extends Command
+class Crontab extends Command
 {
-    protected $type = 'timer';
+    protected $type = 'crontab';
 
-    protected $timer;
+    protected $crontab;
 
     protected function configure()
     {
         // 指令配置
-        $this->setName('timer')
+        $this->setName('crontab')
             ->addArgument('action', Argument::OPTIONAL, 'start|stop|restart|reload|status|connections', 'start')
             ->addOption('mode', 'm', Option::VALUE_OPTIONAL, '守护进程方式启动（-m d）')
-            ->setDescription('定时任务 Timer');
+            ->setDescription('定时任务 Crontab');
     }
 
     protected function execute(Input $input, Output $output)
@@ -58,14 +58,17 @@ class Timer extends Command
         $output->writeln(__CLASS__ . '：' . implode(' ', $argv));
         Worker::$logFile = runtime_path() . '/log/workerman.log';
 
+        // 设置时区，避免运行结果与预期不一致
+        date_default_timezone_set('PRC');
+
         $worker1 = new Worker();
         $worker1->onWorkerStart = function () {
-            $timer_name     = 'log-clear'; // 名称，用于调试输出显示
-            $timer_interval = 5; // 多长时间执行一次，单位秒
-            $timer_msg      = $timer_interval . ' ' . $timer_name;
-            $this->output($timer_msg, 'start');
-            $this->timer[] = WTimer::add($timer_interval, function () use ($timer_msg) {
-                $this->output($timer_msg, 'run');
+            $crontab_name = 'log-clear'; // 名称，用于调试输出显示
+            $crontab_rule = '* * * * *'; // cron表达式：每分钟执行
+            $crontab_msg  =  $crontab_rule . ' ' . $crontab_name;
+            $this->output($crontab_msg, 'start');
+            $this->crontab[] = new WCrontab($crontab_rule, function () use ($crontab_msg) {
+                $this->output($crontab_msg, 'run');
                 // 这里执行具体的任务
                 event('LogClear'); // 日志清除
             });
@@ -73,12 +76,12 @@ class Timer extends Command
 
         $worker2 = new Worker();
         $worker2->onWorkerStart = function () {
-            $timer_name     = ''; // 名称，用于调试输出显示
-            $timer_interval = 10; // 多长时间执行一次，单位秒
-            $timer_msg      = $timer_interval . ' ' . $timer_name;
-            $this->output($timer_msg, 'start');
-            $this->timer[] = WTimer::add($timer_interval, function () use ($timer_msg) {
-                $this->output($timer_msg, 'run');
+            $crontab_name = ''; // 名称，用于调试输出显示
+            $crontab_rule = '0 1 * * *'; // cron表达式：每天凌晨1点整执行
+            $crontab_msg  = $crontab_rule . ' ' . $crontab_name;
+            $this->output($crontab_msg, 'start');
+            $this->crontab[] = new WCrontab($crontab_rule, function () use ($crontab_msg) {
+                $this->output($crontab_msg, 'run');
                 // 这里执行具体的任务
             });
         };
@@ -88,8 +91,8 @@ class Timer extends Command
 
     public function stop()
     {
-        foreach ($this->timer as $id) {
-            WTimer::del($id);
+        foreach ($this->crontab as $id) {
+            WCrontab::remove($id);
         }
         global $argv;
         $this->log(implode(' ', $argv));

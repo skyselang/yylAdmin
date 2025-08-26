@@ -46,7 +46,8 @@
     "aws/aws-sdk-php": "^3.333",
     "guzzlehttp/guzzle": "^7.0",
     "openspout/openspout": "^4.28",
-    "workerman/workerman": "^5.0"
+    "workerman/workerman": "^5.0",
+    "workerman/crontab": "^1.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^6.0"

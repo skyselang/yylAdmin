@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "125a2a6e113695b3564ef204d39a201b",
+    "content-hash": "b636baf15371fc433ed07e6084887787",
     "packages": [
         {
             "name": "alapi/upyun-sdk",
@@ -3618,16 +3618,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v4.0.49",
+            "version": "v4.0.50",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "b04d227fefc7dbfd611f4b5e66975eee4791bba4"
+                "reference": "ddae72d5ff4d953d3d8cc526fd9c50e8862ce2cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/b04d227fefc7dbfd611f4b5e66975eee4791bba4",
-                "reference": "b04d227fefc7dbfd611f4b5e66975eee4791bba4",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/ddae72d5ff4d953d3d8cc526fd9c50e8862ce2cc",
+                "reference": "ddae72d5ff4d953d3d8cc526fd9c50e8862ce2cc",
                 "shasum": ""
             },
             "require": {
@@ -3672,9 +3672,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v4.0.49"
+                "source": "https://github.com/top-think/think-orm/tree/v4.0.50"
             },
-            "time": "2025-08-10T14:08:31+00:00"
+            "time": "2025-08-26T05:32:22+00:00"
         },
         {
             "name": "topthink/think-queue",
@@ -3872,6 +3872,56 @@
                 "source": "https://github.com/workerman-php/coroutine/tree/v1.1.3"
             },
             "time": "2025-02-17T03:34:21+00:00"
+        },
+        {
+            "name": "workerman/crontab",
+            "version": "v1.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/walkor/crontab.git",
+                "reference": "74f51ca8204e8eb628e57bc0e640561d570da2cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/walkor/crontab/zipball/74f51ca8204e8eb628e57bc0e640561d570da2cb",
+                "reference": "74f51ca8204e8eb628e57bc0e640561d570da2cb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0",
+                "workerman/workerman": ">=4.0.20"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Workerman\\Crontab\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "walkor",
+                    "email": "walkor@workerman.net",
+                    "homepage": "http://www.workerman.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A crontab written in PHP based on workerman",
+            "homepage": "http://www.workerman.net",
+            "keywords": [
+                "crontab"
+            ],
+            "support": {
+                "email": "walkor@workerman.net",
+                "forum": "http://wenda.workerman.net/",
+                "issues": "https://github.com/walkor/workerman/issues",
+                "source": "https://github.com/walkor/crontab",
+                "wiki": "http://doc.workerman.net/"
+            },
+            "time": "2025-01-15T07:20:50+00:00"
         },
         {
             "name": "workerman/workerman",
