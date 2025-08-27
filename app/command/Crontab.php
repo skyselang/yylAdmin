@@ -64,7 +64,7 @@ class Crontab extends Command
         $worker1 = new Worker();
         $worker1->onWorkerStart = function () {
             $crontab_name = 'log-clear'; // 名称，用于调试输出显示
-            $crontab_rule = '0 0/5 1 * * ?'; // cron表达式：每天凌晨1点至2点之间，每隔5分钟执行一次
+            $crontab_rule = '*/5 1 * * *'; // cron表达式：每天凌晨1点至2点之间，每隔5分钟执行一次
             $crontab_msg  =  $crontab_rule . ' ' . $crontab_name;
             $this->output($crontab_msg, 'start');
             $this->crontab[] = new WCrontab($crontab_rule, function () use ($crontab_msg) {
