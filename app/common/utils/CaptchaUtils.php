@@ -62,10 +62,27 @@ class CaptchaUtils
     protected static $transparent = true;
 
     /**
+     * 验证码类型
+     */
+    public static function types()
+    {
+        $types = [
+            ['value' => 1, 'label' => lang('数字')],
+            ['value' => 2, 'label' => lang('字母')],
+            ['value' => 3, 'label' => lang('数字字母')],
+            ['value' => 4, 'label' => lang('算术')],
+            ['value' => 5, 'label' => lang('中文')],
+        ];
+
+        return $types;
+    }
+
+    /**
      * 验证码配置
      * @param int $type 验证码类型：1数字，2字母，3数字字母，4算术，5中文
+     * @param int $transparent 是否使用透明背景
      */
-    protected static function configure($type = 1)
+    protected static function configure($type = 1, $transparent = 1)
     {
         $config = config('captcha', []);
         foreach ($config as $key => $val) {
@@ -73,6 +90,9 @@ class CaptchaUtils
                 self::${$key} = $val;
             }
         }
+
+        self::$type = $type;
+        self::$transparent = $transparent;
 
         if ($type == 1) {
             self::$codeSet = '0123456789';
@@ -92,28 +112,13 @@ class CaptchaUtils
     }
 
     /**
-     * 验证码类型
-     */
-    public static function types()
-    {
-        $types = [
-            ['value' => 1, 'label' => lang('数字')],
-            ['value' => 2, 'label' => lang('字母')],
-            ['value' => 3, 'label' => lang('数字字母')],
-            ['value' => 4, 'label' => lang('算术')],
-            ['value' => 5, 'label' => lang('中文')],
-        ];
-
-        return $types;
-    }
-
-    /**
      * 验证码生成
      * @param int $type 验证码类型：1数字，2字母，3数字字母，4算术，5中文
+     * @param int $transparent 是否使用透明背景
      */
-    public static function create($type = 1)
+    public static function create($type = 1, $transparent = 1)
     {
-        self::configure($type);
+        self::configure($type, $transparent);
 
         $switch = self::$switch;
         if (empty($switch)) {
@@ -364,16 +369,16 @@ class CaptchaUtils
             if (0 != $w) {
                 $py = $A * sin($w * $px + $f) + $b + self::$imageH / 2; // y = Asin(ωx+φ) + b
                 $i  = (int) (self::$fontSize / 5);
-                            while ($i > 0) {
-                if (self::$transparent) {
-                    // 透明背景时使用半透明干扰线
-                    $curveColor = imagecolorallocatealpha(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150), mt_rand(30, 80));
-                    imagesetpixel(self::$im, $px + $i, $py + $i, $curveColor);
-                } else {
-                    imagesetpixel(self::$im, $px + $i, $py + $i, self::$color);
+                while ($i > 0) {
+                    if (self::$transparent) {
+                        // 透明背景时使用半透明干扰线
+                        $curveColor = imagecolorallocatealpha(self::$im, mt_rand(1, 150), mt_rand(1, 150), mt_rand(1, 150), mt_rand(30, 80));
+                        imagesetpixel(self::$im, $px + $i, $py + $i, $curveColor);
+                    } else {
+                        imagesetpixel(self::$im, $px + $i, $py + $i, self::$color);
+                    }
+                    $i--;
                 }
-                $i--;
-            }
             }
         }
     }

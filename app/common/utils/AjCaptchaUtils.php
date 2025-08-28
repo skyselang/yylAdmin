@@ -25,6 +25,7 @@ class AjCaptchaUtils
      */
     public function __construct()
     {
+        ini_set('memory_limit', '512M');
         $this->config = config('ajcaptcha');
     }
 

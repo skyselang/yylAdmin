@@ -38,21 +38,23 @@ class Login extends BaseController
      * @Apidoc\Param("captchaType", type="string", require=true, desc="行为，验证码方式：blockPuzzle、clickWord")
      * @Apidoc\Param("pointJson", type="string", default="", desc="行为，pointJson")
      * @Apidoc\Param("token", type="string", default="", desc="行为，token")
+     * @Apidoc\Returned(ref={SettingService::class,"info"}, field="captcha_switch,captcha_mode,captcha_type")
      * @Apidoc\Returned(ref="captchaReturn")
      */
     public function captcha()
     {
-        $data = SettingService::info('is_captcha_login,captcha_mode,captcha_type');
+        $data = SettingService::info('is_captcha_login,captcha_mode,captcha_type,captcha_transparent');
 
         $data['captcha_switch'] = $data['is_captcha_login'];
         if ($this->request->isGet()) {
+            $data['captcha_img'] = '';
             if ($data['captcha_switch']) {
                 if ($data['captcha_mode'] == 2) {
                     $AjCaptchaUtils = new AjCaptchaUtils();
                     $captcha = $AjCaptchaUtils->get($data['captcha_type']);
                     $data = array_merge($data, $captcha);
                 } else {
-                    $captcha = CaptchaUtils::create($data['captcha_type']);
+                    $captcha = CaptchaUtils::create($data['captcha_type'], $data['captcha_transparent']);
                     $data = array_merge($data, $captcha);
                 }
             }

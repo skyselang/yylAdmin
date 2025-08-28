@@ -29,19 +29,19 @@ class Login extends BaseController
      * @Apidoc\Desc("系统信息")
      * @Apidoc\Method("GET")
      * @Apidoc\Returned(ref={SettingService::class,"info"}, field="system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type")
-     * @Apidoc\Returned(ref="captchaReturn")
+     * @Apidoc\Returned(ref="captchaReturn", field="captcha_id,captcha_img")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()
      * @Apidoc\NotParams()
      */
     public function setting()
     {
-        $data = SettingService::info('system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type,login_msg_switch,login_msg_type,login_msg_time,login_msg_text');
+        $data = SettingService::info('system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type,captcha_transparent,login_msg_switch,login_msg_type,login_msg_time,login_msg_text');
 
         $data['captcha_img'] = '';
         if ($data['captcha_switch']) {
             if ($data['captcha_mode'] == 1) {
-                $captcha = CaptchaUtils::create($data['captcha_type']);
+                $captcha = CaptchaUtils::create($data['captcha_type'], $data['captcha_transparent']);
                 $data    = array_merge($data, $captcha);
             }
         }
@@ -64,18 +64,17 @@ class Login extends BaseController
      */
     public function captcha()
     {
-        $data = SettingService::info('captcha_switch,captcha_mode,captcha_type');
+        $data = SettingService::info('captcha_switch,captcha_mode,captcha_type,captcha_transparent');
 
         if ($this->request->isGet()) {
             $data['captcha_img'] = '';
             if ($data['captcha_switch']) {
                 if ($data['captcha_mode'] == 2) {
-                    ini_set('memory_limit', '512M');
                     $AjCaptchaUtils = new AjCaptchaUtils();
                     $captcha = $AjCaptchaUtils->get($data['captcha_type']);
                     $data = array_merge($data, $captcha);
                 } else {
-                    $captcha = CaptchaUtils::create($data['captcha_type']);
+                    $captcha = CaptchaUtils::create($data['captcha_type'], $data['captcha_transparent']);
                     $data = array_merge($data, $captcha);
                 }
             }
@@ -117,11 +116,14 @@ class Login extends BaseController
         if ($setting['captcha_switch']) {
             if ($setting['captcha_mode'] == 2) {
                 $AjCaptchaUtils = new AjCaptchaUtils();
-                $captcha_check = $AjCaptchaUtils->checkTwo($setting['captcha_type'], $param['ajcaptcha']);
+                $captcha_check  = $AjCaptchaUtils->checkTwo($setting['captcha_type'], $param['ajcaptcha']);
                 if ($captcha_check['error']) {
                     return error(lang('验证码错误'));
                 }
             } else {
+                if (empty($param['captcha_id'])) {
+                    return error(lang('captcha_id必须'));
+                }
                 if (empty($param['captcha_code'])) {
                     return error(lang('请输入验证码'));
                 }

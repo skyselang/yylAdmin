@@ -184,12 +184,12 @@ class Setting extends BaseController
 
     /**
      * @Apidoc\Title("lang(验证码设置信息)")
-     * @Apidoc\Returned(ref={Service::class,"info"}, field="captcha_mode,captcha_type")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="captcha_mode,captcha_type,captcha_transparent")
      * @Apidoc\Returned(ref={Service::class,"basedata"})
      */
     public function captchaInfo()
     {
-        $data = $this->service::info('captcha_mode,captcha_type');
+        $data = $this->service::info('captcha_mode,captcha_type,captcha_transparent');
         $data['basedata'] = $this->service::basedata();
 
         return success($data);
@@ -198,11 +198,11 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("lang(验证码设置修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref={Service::class,"info"}, field="captcha_mode,captcha_type")
+     * @Apidoc\Param(ref={Service::class,"info"}, field="captcha_mode,captcha_type,captcha_transparent")
      */
     public function captchaEdit()
     {
-        $param = $this->params(['captcha_mode/d' => 1, 'captcha_type/d' => 1]);
+        $param = $this->params(['captcha_mode/d' => 1, 'captcha_type/d' => 1, 'captcha_transparent/d' => 1]);
 
         $data = $this->service::edit($param);
 

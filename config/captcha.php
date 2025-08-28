@@ -25,8 +25,6 @@ return [
     'expire'   => 180,
     // 是否使用背景图
     'useImgBg' => false,
-    // 是否使用透明背景
-    'transparent' => true,
     // 是否使用混淆曲线
     'useCurve' => false,
     // 是否添加杂点

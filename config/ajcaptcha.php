@@ -7,7 +7,7 @@
 // | Gitee: https://gitee.com/skyselang/yylAdmin
 // +----------------------------------------------------------------------
 
-// 行为验证码配置：https://gitee.com/anji-plus/captcha
+// 行为验证码配置：https://gitee.com/fastknife/aj-captcha
 return [
     'font_file' => '',   //自定义字体包路径，不填使用默认值
     //文字验证码
