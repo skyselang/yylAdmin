@@ -21,6 +21,12 @@ class Http
     protected $platform = '';
 
     /**
+     * 头部
+     * @var array
+     */
+    protected $header = ['Content-type:application/json', 'Accept:application/json'];
+
+    /**
      * 构造函数
      * @param string $platform 平台
      */
@@ -37,20 +43,7 @@ class Http
      */
     public function get($url, $header = [])
     {
-        $header = array_merge($header, ['Content-type:application/json', 'Accept:application/json']);
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
-        $res = curl_exec($curl);
-        curl_close($curl);
-        $res = json_decode($res, true);
-        $this->response($res);
-
-        return $res;
+        return $this->request('get', $url, [], $header);
     }
 
     /**
@@ -62,17 +55,34 @@ class Http
      */
     public function post($url, $param = [], $header = [])
     {
+        return $this->request('post', $url, $param, $header);
+    }
+
+    /**
+     * 请求
+     * @param string $method 请求方法
+     * @param string $url    请求地址
+     * @param array  $param  请求参数
+     * @param array  $header 请求头部
+     * @return array
+     * @throws \think\Exception
+     */
+    public function request($method, $url, $param = [], $header = [])
+    {
+        $method = strtolower($method);
         $param  = json_encode($param);
-        $header = array_merge($header, ['Content-type:application/json;charset=utf-8', 'Accept:application/json']);
+        $header = array_merge($header, $this->header);
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $param);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        if ($method === 'post') {
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $param);
+            curl_setopt($curl, CURLOPT_POST, 1);
+        }
         $res = curl_exec($curl);
         curl_close($curl);
         $res = json_decode($res, true);
@@ -84,7 +94,7 @@ class Http
     /**
      * 响应拦截
      * @param array $res
-     * @return \think\Exception|void
+     * @throws \think\Exception
      */
     public function response($res)
     {
