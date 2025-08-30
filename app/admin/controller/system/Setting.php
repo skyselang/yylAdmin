@@ -280,4 +280,18 @@ class Setting extends BaseController
 
         return success($data);
     }
+
+    /**
+     * @Apidoc\Title("lang(开发工具)")
+     * @Apidoc\Method("POST")
+     * @Apidoc\Query(ref={Service::class,"develop"})
+     */
+    public function develop()
+    {
+        $param = $this->param();
+
+        $data = $this->service::develop($param);
+
+        return success($data);
+    }
 }

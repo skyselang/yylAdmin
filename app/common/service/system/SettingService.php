@@ -384,4 +384,62 @@ class SettingService
 
         return $data;
     }
+
+    /**
+     * 开发工具
+     * @Apidoc\Query("clear_all_cache", type="bool", default=false, desc="是否清除所有缓存")
+     * @Apidoc\Query("delete_runtime", type="bool", default=false, desc="是否删除runtime目录")
+     */
+    public static function develop($param = [])
+    {
+        $clear_all_cache = $param['clear_all_cache'] ?? false;
+        $delete_runtime  = $param['delete_runtime'] ?? false;
+
+        $res = [];
+        if ($clear_all_cache) {
+            $cache = self::cache();
+            $res['clear_all_cache'] = $cache->clearAll();
+        }
+
+        if ($delete_runtime) {
+            if ($delete_runtime) {
+                $runtimePath = root_path() . 'runtime';
+                $iterator = new \FilesystemIterator($runtimePath);
+                foreach ($iterator as $fileinfo) {
+                    if ($fileinfo->getFilename() === '.gitignore') {
+                        continue;
+                    }
+                    if ($fileinfo->isDir()) {
+                        self::deleteDir($fileinfo->getPathname());
+                    } else {
+                        @unlink($fileinfo->getPathname());
+                    }
+                }
+                $res['delete_runtime'] = true;
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * 递归删除目录
+     * @param string $dir
+     */
+    protected static function deleteDir($dir)
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($path)) {
+                self::deleteDir($path);
+            } else {
+                @unlink($path);
+            }
+        }
+        @rmdir($dir);
+    }
 }
