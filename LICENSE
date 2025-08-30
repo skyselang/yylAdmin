@@ -186,9 +186,9 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   name yylAdmin
-   version v5
-   Copyright skyselang https://github.com/skyselang
+   Name yylAdmin
+   Version v5
+   Copyright https://gitee.com/skyselang
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
