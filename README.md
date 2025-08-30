@@ -18,13 +18,14 @@ yylAdmin 是一个基于 ThinkPHP 和 Vue 极简后台管理系统，只有登�
 - 会员管理
 - 内容管理
 - 文件管理
+- 日志管理
 - 设置管理
-- 系统管理：权限管理...
+- 系统管理：权限管理、组织架构...
 - 导出导入
 - 代码生成器
 - 接口文档与调试...
-- 前台基础功能：登录注册、微信登录、Token 认证、接口管理...
-- 国际化
+- 前台基础功能：注册登录、微信登录、Token 认证...
+- 国际化：中英文
 - 暗黑模式
 - 更多功能请安装后体验
 
@@ -49,7 +50,7 @@ yylAdmin 是一个基于 ThinkPHP 和 Vue 极简后台管理系统，只有登�
 - PHP >= 8.2  
   安装 fileinfo、redis 扩展  
   开启 putenv、proc_open 函数
-- Composer >= 2.3
+- Composer >= 2.5
 - MySQL >= 5.5
 - Redis >= 5.0
 - Node >= 20.0
@@ -202,7 +203,7 @@ pnpm run build:stage
 ## 提示
 
 - 项目不定时更新，前后端最新代码保持一致
-- 拉取代码后请更新前后端依赖（composer install、pnpm install）、同步数据库表结构、清除缓存
+- 拉取代码后请更新前后端依赖（composer install、pnpm install）、同步数据库表结构、清除所有缓存
 
 ## 交流
 
