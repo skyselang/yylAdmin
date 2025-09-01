@@ -1,2 +1,3 @@
+# runtime文件夹必须要有读写权限
 *
 !.gitignore
