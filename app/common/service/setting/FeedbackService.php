@@ -110,7 +110,7 @@ class FeedbackService
             $order = [$pk => 'desc'];
         }
         if (empty($field)) {
-            $field = $pk . ',member_id,unique,type,title,phone,email,status,sort,remark,is_disable,create_time,update_time';
+            $field = $pk . ',member_id,unique,type,title,status,sort,remark,is_disable,create_time,update_time';
         } else {
             $field = $pk . ',' . $field;
         }
