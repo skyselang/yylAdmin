@@ -40,4 +40,8 @@ return [
     'error_message'    => '页面错误！请稍后再试～',
     // 显示错误信息
     'show_error_msg'   => false,
+    // 代理服务器IP
+    'proxy_server_ip'  => env('app.proxy_server_ip', ''),
+    // 代理接口地址
+    'proxy_api_url'    => env('app.proxy_api_url', ''),
 ];

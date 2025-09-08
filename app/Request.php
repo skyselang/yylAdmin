@@ -16,4 +16,15 @@ class Request extends \think\Request
 {
     // 全局过滤规则
     protected $filter = [];
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // 代理服务器IP
+        $proxyServerIp = config('app.proxy_server_ip');
+        if (!empty($proxyServerIp)) {
+            $this->proxyServerIp = explode(',', $proxyServerIp);
+        }
+    }
 }

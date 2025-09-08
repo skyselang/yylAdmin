@@ -97,6 +97,10 @@ function exception($msg = '', $code = ReturnCodeUtils::ERROR)
  */
 function server_url()
 {
+	$proxy_api_url = config('app.proxy_api_url');
+	if ($proxy_api_url) {
+		return $proxy_api_url;
+	}
 	return Request::domain();
 }
 
