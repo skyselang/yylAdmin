@@ -145,13 +145,7 @@ class LogService
         if (strpos($field, 'application')) {
             $append[] = 'application_name';
         }
-        $fields = explode(',', $field);
-        foreach ($fields as $k => $v) {
-            if (in_array($v, $field_no)) {
-                unset($fields[$k]);
-            }
-        }
-        $field = implode(',', $fields);
+        $field = select_field($field, $field_no);
 
         $count = $pages = 0;
         if ($total) {

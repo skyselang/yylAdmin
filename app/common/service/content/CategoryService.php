@@ -135,13 +135,7 @@ class CategoryService
                 $with[]   = $hidden[]   = 'files';
                 $append[] = $field_no[] = 'image_urls';
             }
-            $fields = explode(',', $field);
-            foreach ($fields as $k => $v) {
-                if (in_array($v, $field_no)) {
-                    unset($fields[$k]);
-                }
-            }
-            $field = implode(',', $fields);
+            $field = select_field($field, $field_no);
 
             if ($page > 0) {
                 $model = $model->page($page);

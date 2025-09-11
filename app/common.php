@@ -1048,6 +1048,42 @@ function where_cache_key($type, $where, $order, $field, $page, $limit, $param = 
 }
 
 /**
+ * 查询字段列表中排除指定字段
+ * @param string       $field    字段列表，逗号分隔
+ * @param array|string $field_no 需要排除的字段列表
+ * @return string 处理后的字段列表
+ */
+function select_field($field, $field_no)
+{
+	// 参数验证
+	if (empty($field)) {
+		return '';
+	}
+	
+	if (empty($field_no)) {
+		return $field;
+	}
+	
+	// 确保 $field_no 是数组
+	if (!is_array($field_no)) {
+		$field_no = explode(',', $field_no);
+	}
+	
+	// 处理字段列表
+	$fields = array_map('trim', explode(',', $field));
+	foreach ($fields as $k => $v) {
+		if (in_array(trim($v), array_map('trim', $field_no))) {
+			unset($fields[$k]);
+		}
+	}
+	
+	// 重新组合字段
+	$field = implode(',', array_filter($fields));
+	
+	return $field;
+}
+
+/**
  * 软删除更新数据
  * @param array  $data  其它数据
  * @param string $field 排除字段
