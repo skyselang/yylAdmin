@@ -110,6 +110,7 @@ class UserMessageService
             $field = $pk . ',' . $field;
         }
 
+        $where_scope = [];
         foreach ($where as $wk => $wv) {
             if ($wv[0] === 'message_title') {
                 $message_where = [['title', $wv[1], $wv[2]], ['is_delete', '=', 0]];
@@ -117,6 +118,9 @@ class UserMessageService
                 $message_ids = array_column($message_list, 'message_id');
                 $where[$wk] = ['message_id', 'in', $message_ids];
             }
+        }
+        if (user_hide_where()) {
+            $where_scope[] = user_hide_where('user_id');
         }
 
         $with = $append = $hidden = $field_no = [];
@@ -142,7 +146,7 @@ class UserMessageService
 
         $count = $pages = 0;
         if ($total) {
-            $count = model_where($model->clone(), $where)->count();
+            $count = model_where($model->clone(), $where, $where_scope)->count();
         }
         if ($page > 0) {
             $model = $model->page($page);
@@ -152,7 +156,7 @@ class UserMessageService
             $pages = ceil($count / $limit);
         }
         $model = $model->field($field);
-        $model = model_where($model, $where);
+        $model = model_where($model, $where, $where_scope);
         $list  = $model->with($with)->append($append)->hidden($hidden)->order($order)->select()->toArray();
 
         return ['count' => $count, 'pages' => $pages, 'page' => $page, 'limit' => $limit, 'list' => $list];
