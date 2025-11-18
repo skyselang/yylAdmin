@@ -47,7 +47,7 @@ class Index extends BaseController
 
         $order = ['sort' => 'desc', 'start_time' => 'desc', 'notice_id' => 'desc'];
 
-        $field = 'image_id,title,title_color,start_time,end_time,desc';
+        $field = 'image_id,title,title_color,start_time,end_time';
 
         $data = NoticeService::list($where, $this->page(), $this->limit(), $this->order($order), $field);
 

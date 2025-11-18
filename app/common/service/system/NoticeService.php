@@ -106,7 +106,7 @@ class NoticeService
             $order = ['sort' => 'desc', $pk => 'desc'];
         }
         if (empty($field)) {
-            $field = $pk . ',unique,image_id,type,title,title_color,start_time,end_time,desc,is_disable,sort,create_time,update_time';
+            $field = $pk . ',unique,image_id,type,title,title_color,start_time,end_time,is_disable,sort,create_time,update_time';
         } else {
             $field = $pk . ',' . $field;
         }
