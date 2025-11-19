@@ -106,11 +106,11 @@ abstract class BaseController
             if ($field && $exp && $value !== '') {
                 $exp_name = where_exp_name($exp);
                 if (!in_array($exp, $exps)) {
-                    exception(lang('查询方式错误：') . $index . '：' . $exp_name);
+                    exception(lang('查询方式错误：') . '#' . $index . '，' . $exp_name);
                 }
 
-                if (in_array($exp, ['like', 'not like', '=', '<>', '>=', '<', '<=']) && is_array($value)) {
-                    exception(lang('查询方式错误：') . $index . '：' . $exp_name . '；' . lang('请选择其它方式'));
+                if (in_array($exp, ['like', 'not like', '=', '<>', '>', '<', '>=', '<=']) && is_array($value)) {
+                    exception(lang('查询方式错误：') . '#' . $index . '，' . $exp_name . '；' . lang('请选择其它方式'));
                 }
 
                 if ($exp === 'like' || $exp === 'not like') {
