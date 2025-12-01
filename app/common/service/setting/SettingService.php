@@ -135,8 +135,8 @@ class SettingService
     public static function noticeTypes($notice_type = '', $val_lab = false)
     {
         $notice_types = [
-            self::NOTICE_TYPE_NOTIFY => '通知',
-            self::NOTICE_TYPE_NOTICE => '公告',
+            self::NOTICE_TYPE_NOTIFY => lang('通知'),
+            self::NOTICE_TYPE_NOTICE => lang('公告'),
         ];
         if ($notice_type !== '') {
             return $notice_types[$notice_type] ?? '';

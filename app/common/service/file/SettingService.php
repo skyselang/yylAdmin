@@ -632,6 +632,10 @@ class SettingService
         } else {
             $exp_imp_name = lang('导出');
         }
+        $lang = lang_get();
+        if ($lang != 'zh-cn') {
+            $exp_imp_name = ' ' . $exp_imp_name;
+        }
         foreach ($types as &$val) {
             $val .= $exp_imp_name;
         }

@@ -212,4 +212,72 @@ class Utils
 
         return $data;
     }
+
+    /**
+     * 敏感数据脱敏
+     * @param string $input 输入字符串
+     * @return string 脱敏后字符串
+     */
+    public static function dataMasking($input)
+    {
+        // 掩码字符
+        $maskChar = '*';
+
+        // 分段比例设置
+        $ratios = [
+            ['max_len' => 2, 'ratio' => 0.5],           // 1-2字符：50% （特殊处理）
+            ['max_len' => 5, 'ratio' => 0.2],           // 3-5字符：20%
+            ['max_len' => 11, 'ratio' => 0.3],          // 6-11字符：30%  
+            ['max_len' => 20, 'ratio' => 0.4],          // 12-20字符：40%
+            ['max_len' => PHP_INT_MAX, 'ratio' => 0.5]  // 21+字符：50%
+        ];
+
+        // 处理空字符串
+        if (empty($input)) {
+            return $input;
+        }
+
+        $strLength = mb_strlen($input, 'UTF-8');
+
+        // 特殊处理：1-2字符
+        if ($strLength == 1) {
+            return $maskChar;
+        }
+        if ($strLength == 2) {
+            return mb_substr($input, 0, 1, 'UTF-8') . $maskChar;
+        }
+
+        // 根据字符串长度选择合适比例
+        $selectedRatio = 0.3; // 默认值
+        foreach ($ratios as $range) {
+            if ($strLength <= $range['max_len']) {
+                $selectedRatio = $range['ratio'];
+                break;
+            }
+        }
+
+        // 计算掩码长度（至少1个字符）
+        $maskLength = max(1, floor($strLength * $selectedRatio));
+
+        // 剩余长度平均分配给前后部分
+        $remainingLength = $strLength - $maskLength;
+
+        // 确保前后都有保留字符（除非字符串太短）
+        if ($remainingLength >= 2) {
+            $frontLength = floor($remainingLength / 2);
+            $backLength = $remainingLength - $frontLength;
+        } else {
+            // 如果剩余长度不足，优先显示前面
+            $frontLength = 1;
+            $backLength = 0;
+            $maskLength = $strLength - 1;
+        }
+
+        // 提取各部分
+        $frontPart = mb_substr($input, 0, $frontLength, 'UTF-8');
+        $backPart = $backLength > 0 ? mb_substr($input, $strLength - $backLength, $backLength, 'UTF-8') : '';
+        $maskPart = str_repeat($maskChar, $maskLength);
+
+        return $frontPart . $maskPart . $backPart;
+    }
 }

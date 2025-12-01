@@ -377,7 +377,7 @@ class SettingService
             $info = $model->find($id);
             if (empty($info)) {
                 $info[$pk]           = $id;
-                $info['token_key']   = uniqids();
+                $info['token_key']   = random_string(32);
                 $info['create_uid']  = user_id();
                 $info['create_time'] = datetime();
                 $model->save($info);

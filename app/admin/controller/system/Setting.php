@@ -33,11 +33,11 @@ class Setting extends BaseController
 
     /**
      * @Apidoc\Title("lang(系统设置信息)")
-     * @Apidoc\Returned(ref={Service::class,"info"}, field="system_name,page_title,favicon_id,logo_id,login_bg_id,login_bg_color,is_watermark,favicon_url,logo_url,login_bg_url")
+     * @Apidoc\Returned(ref={Service::class,"info"}, field="system_name,page_title,favicon_id,logo_id,login_bg_id,login_bg_color,login_sn_color,is_watermark,favicon_url,logo_url,login_bg_url")
      */
     public function systemInfo()
     {
-        $data = $this->service::info('system_name,page_title,favicon_id,logo_id,login_bg_id,login_bg_color,is_watermark,favicon_url,logo_url,login_bg_url');
+        $data = $this->service::info('system_name,page_title,favicon_id,logo_id,login_bg_id,login_bg_color,login_sn_color,is_watermark,favicon_url,logo_url,login_bg_url');
 
         return success($data);
     }
@@ -45,7 +45,7 @@ class Setting extends BaseController
     /**
      * @Apidoc\Title("lang(系统设置修改)")
      * @Apidoc\Method("POST")
-     * @Apidoc\Param(ref={Service::class,"edit"}, field="system_name,page_title,favicon_id,logo_id,login_bg_id,login_bg_color,is_watermark")
+     * @Apidoc\Param(ref={Service::class,"edit"}, field="system_name,page_title,favicon_id,logo_id,login_bg_id,login_bg_color,login_sn_color,is_watermark")
      */
     public function systemEdit()
     {
@@ -56,6 +56,7 @@ class Setting extends BaseController
             'logo_id/d'        => 0,
             'login_bg_id/d'    => 0,
             'login_bg_color/s' => '',
+            'login_sn_color/s' => '',
             'is_watermark/d'   => 0,
         ]);
 

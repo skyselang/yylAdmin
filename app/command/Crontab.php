@@ -68,7 +68,7 @@ class Crontab extends Command
             $crontab_msg  =  $crontab_rule . ' ' . $crontab_name;
             $this->output($crontab_msg, 'start');
             $this->crontab[] = new WCrontab($crontab_rule, function () use ($crontab_msg) {
-                $this->output($crontab_msg, 'run');
+                $this->output($crontab_msg, 'runing');
                 // 这里执行具体的任务
                 event('LogClear'); // 日志清除
             });
@@ -81,7 +81,7 @@ class Crontab extends Command
             $crontab_msg  = $crontab_rule . ' ' . $crontab_name;
             $this->output($crontab_msg, 'start');
             $this->crontab[] = new WCrontab($crontab_rule, function () use ($crontab_msg) {
-                $this->output($crontab_msg, 'run');
+                $this->output($crontab_msg, 'runing');
                 // 这里执行具体的任务
             });
         };

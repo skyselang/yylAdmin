@@ -1059,16 +1059,16 @@ function select_field($field, $field_no)
 	if (empty($field)) {
 		return '';
 	}
-	
+
 	if (empty($field_no)) {
 		return $field;
 	}
-	
+
 	// 确保 $field_no 是数组
 	if (!is_array($field_no)) {
 		$field_no = explode(',', $field_no);
 	}
-	
+
 	// 处理字段列表
 	$fields = array_map('trim', explode(',', $field));
 	foreach ($fields as $k => $v) {
@@ -1076,10 +1076,10 @@ function select_field($field, $field_no)
 			unset($fields[$k]);
 		}
 	}
-	
+
 	// 重新组合字段
 	$field = implode(',', array_filter($fields));
-	
+
 	return $field;
 }
 
@@ -1112,9 +1112,10 @@ function update_softdele($data = [], $field = '')
  * @param string       $field   编号字段：unique
  * @param string       $value   编号值(前缀,起始数)：SN,001
  * @param Service      $service 服务
+ * @param int          $batch   分批大小，0不分批
  * @return array 编号数组：[1 => 'SN001', 2 => 'SN002', 3 => 'SN003']
  */
-function update_unique($model, $ids, $field, $value, $service)
+function update_unique($model, $ids, $field, $value, $service, $batch = 0)
 {
 	$table = $model->getTable();
 	$pk    = $model->getPk();
@@ -1126,13 +1127,43 @@ function update_unique($model, $ids, $field, $value, $service)
 		exception(lang('编号已存在：') . implode(',', $select));
 	}
 
-	$update_sql = 'UPDATE `' . $table . '` SET `' . $field . '` = CASE `' . $pk . '`';
-	foreach ($uniques as $id => $val) {
-		$update_sql .= ' WHEN ' . $id . " THEN '" . $val . "'";
-	}
-	$update_sql .= ' END WHERE ' . $pk . ' IN (' . implode(',', $ids) . ')';
+	// 准备 ids 和 uniques，并支持分批执行（$batch > 0）以避免单条 SQL 过长
+	$ids = array_map('intval', (array)$ids);
+	$ids = array_filter($ids, function ($v) {
+		return $v > 0;
+	});
 
-	Db::query($update_sql);
+	if (empty($ids) || empty($uniques)) {
+		return $uniques;
+	}
+
+	$chunks = $batch > 0 ? array_chunk($ids, $batch) : [$ids];
+
+	foreach ($chunks as $chunk) {
+		$caseParts = [];
+		$binds     = [];
+
+		foreach ($chunk as $id) {
+			if (!isset($uniques[$id])) {
+				continue;
+			}
+			$caseParts[] = ' WHEN ? THEN ? ';
+			$binds[]     = (int)$id;
+			$binds[]     = $uniques[$id];
+		}
+
+		if (empty($caseParts)) {
+			continue;
+		}
+
+		$inPlaceholders = implode(',', array_fill(0, count($chunk), '?'));
+		foreach ($chunk as $id) {
+			$binds[] = (int)$id;
+		}
+
+		$sql = 'UPDATE `' . $table . '` SET `' . $field . '` = CASE `' . $pk . '` ' . implode('', $caseParts) . ' END WHERE `' . $pk . '` IN (' . $inPlaceholders . ')';
+		Db::execute($sql, $binds);
+	}
 
 	$service::edit($ids);
 
@@ -1146,9 +1177,10 @@ function update_unique($model, $ids, $field, $value, $service)
  * @param string        $field   排序字段：sort
  * @param string        $value   排序值(排序,步长)：250,1
  * @param Service       $service 服务
+ * @param int           $batch   分批大小，0不分批
  * @return int|array 250 | [1 => 250, 2 => 251, 3 => 252]
  */
-function update_sort($model, $ids, $field, $value, $service)
+function update_sort($model, $ids, $field, $value, $service, $batch = 0)
 {
 	$table = $model->getTable();
 	$pk    = $model->getPk();
@@ -1158,12 +1190,39 @@ function update_sort($model, $ids, $field, $value, $service)
 	if (is_numeric($sorts)) {
 		$param = [$field => $sorts];
 	} else {
-		$update_sql = 'UPDATE `' . $table . '` SET `' . $field . '` = CASE `' . $pk . '`';
-		foreach ($sorts as $id => $val) {
-			$update_sql .= ' WHEN ' . $id . " THEN '" . $val . "'";
+		// 使用参数化 CASE 批量更新以提高性能，并支持分批执行
+		$ids = array_map('intval', (array)$ids);
+		$ids = array_filter($ids, function ($v) {
+			return $v > 0;
+		});
+
+		$chunks = $batch > 0 ? array_chunk($ids, $batch) : [$ids];
+
+		foreach ($chunks as $chunk) {
+			$caseParts = [];
+			$binds     = [];
+
+			foreach ($chunk as $id) {
+				if (!isset($sorts[$id])) {
+					continue;
+				}
+				$caseParts[] = ' WHEN ? THEN ? ';
+				$binds[]     = (int)$id;
+				$binds[]     = $sorts[$id];
+			}
+
+			if (empty($caseParts)) {
+				continue;
+			}
+
+			$inPlaceholders = implode(',', array_fill(0, count($chunk), '?'));
+			foreach ($chunk as $id) {
+				$binds[] = (int)$id;
+			}
+
+			$sql = 'UPDATE `' . $table . '` SET `' . $field . '` = CASE `' . $pk . '` ' . implode('', $caseParts) . ' END WHERE `' . $pk . '` IN (' . $inPlaceholders . ')';
+			Db::execute($sql, $binds);
 		}
-		$update_sql .= ' END WHERE ' . $pk . ' IN (' . implode(',', $ids) . ')';
-		Db::query($update_sql);
 	}
 
 	$service::edit($ids, $param);
@@ -1176,8 +1235,9 @@ function update_sort($model, $ids, $field, $value, $service)
  * @param \think\Model $model   模型
  * @param array        $fields  字段 [['index'=>0,'field'=>'id]...]
  * @param array        $updates 数据
+ * @param int          $batch   分批大小，0不分批
  */
-function batch_update($model, $fields, $updates)
+function batch_update($model, $fields, $updates, $batch = 0)
 {
 	if (empty($updates)) {
 		return;
@@ -1186,26 +1246,45 @@ function batch_update($model, $fields, $updates)
 	$table = $model->getTable();
 	$pk    = $model->getPk();
 
-	foreach ($fields as $field) {
-		if ($field['index'] > 0) {
-			$update_sql = 'UPDATE `' . $table . '` SET `' . $field['field'] . '` = CASE `' . $pk . '`';
-			$update_ids = [];
-			foreach ($updates as $update) {
-				$update_val = $update[$field['field']];
-				if ($update_val) {
-					$update_val = str_replace("'", "''", $update_val);
+	// 支持分批：当 $batch > 0 时，将 $updates 按 $batch 大小切分后逐块执行
+	$chunks = [];
+	if ($batch > 0) {
+		$chunks = array_chunk($updates, $batch);
+	} else {
+		$chunks = [$updates];
+	}
+
+	foreach ($chunks as $chunk) {
+		foreach ($fields as $field) {
+			if ($field['index'] > 0) {
+				$update_ids = [];
+				$caseParts  = [];
+				$binds      = [];
+
+				foreach ($chunk as $update) {
+					if (!isset($update[$pk])) {
+						continue;
+					}
+					$id = (int) $update[$pk];
+					$update_ids[] = $id;
+
+					// 统一使用绑定参数（允许 NULL）
+					$caseParts[] = ' WHEN ? THEN ? ';
+					$binds[]     = $id;
+					$binds[]     = array_key_exists($field['field'], $update) ? $update[$field['field']] : null;
 				}
-				if ($update_val === null) {
-					$update_sql .= ' WHEN ' . $update[$pk] . " THEN NULL";
-				} else {
-					$update_sql .= ' WHEN ' . $update[$pk] . " THEN '" . $update_val . "'";
+
+				if ($update_ids) {
+					$inPlaceholders = implode(',', array_fill(0, count($update_ids), '?'));
+					// 把 IN 列表的 id 追加到绑定数组
+					foreach ($update_ids as $uid) {
+						$binds[] = $uid;
+					}
+
+					$sql = 'UPDATE `' . $table . '` SET `' . $field['field'] . '` = CASE `' . $pk . '` ' . implode('', $caseParts) . ' END WHERE `' . $pk . '` IN (' . $inPlaceholders . ')';
+					Db::execute($sql, $binds);
 				}
-				$update_ids[] = $update[$pk];
 			}
-			if ($update_ids) {
-				$update_sql .= ' END WHERE ' . $pk . ' IN (' . implode(',', $update_ids) . ')';
-			}
-			Db::query($update_sql);
 		}
 	}
 }
@@ -1215,8 +1294,9 @@ function batch_update($model, $fields, $updates)
  * @param \think\Model $model   模型
  * @param array        $fields  字段 ['index','field']
  * @param array        $inserts 数据
+ * @param int          $batch   分批大小，0不分批
  */
-function batch_insert($model, $fields, $inserts)
+function batch_insert($model, $fields, $inserts, $batch = 0)
 {
 	if (empty($inserts)) {
 		return;
@@ -1232,25 +1312,25 @@ function batch_insert($model, $fields, $inserts)
 		}
 	}
 
-	$insert_sql = 'INSERT INTO ' . $table . ' (' . rtrim($insert_fields_sql, ',') . ') VALUES ';
+	// 使用框架批量插入，避免手工拼接 VALUES
+	$rows = [];
 	foreach ($inserts as $insert) {
-		$insert_sql_tmp = [];
+		$row = [];
 		foreach ($insert_fields as $insert_field) {
-			$insert_val = $insert[$insert_field];
-			if ($insert_val) {
-				$insert_val = str_replace("'", "''", $insert_val);
-			}
-			if ($insert_val === null) {
-				$insert_sql_tmp[] = 'NULL';
-			} else {
-				$insert_sql_tmp[] = "'" . $insert_val . "'";
-			}
+			$row[$insert_field] = array_key_exists($insert_field, $insert) ? $insert[$insert_field] : null;
 		}
-		$insert_sql .= '(' . implode(',', $insert_sql_tmp) . '),';
+		$rows[] = $row;
 	}
-	$insert_sql = rtrim($insert_sql, ',');
-
-	Db::query($insert_sql);
+	if ($rows) {
+		if ($batch > 0) {
+			$chunks = array_chunk($rows, $batch);
+			foreach ($chunks as $chunk) {
+				Db::table($table)->insertAll($chunk);
+			}
+		} else {
+			Db::table($table)->insertAll($rows);
+		}
+	}
 }
 
 /**

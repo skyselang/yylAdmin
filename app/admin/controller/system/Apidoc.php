@@ -14,14 +14,14 @@ use app\common\controller\BaseController;
 use app\common\service\system\ApidocService;
 
 /**
- * @Apidocs\Title("接口文档")
+ * @Apidocs\Title("lang(接口文档)")
  * @Apidocs\Group("system")
  * @Apidocs\Sort("550")
  */
 class Apidoc extends BaseController
 {
     /**
-     * @Apidocs\Title("接口文档")
+     * @Apidocs\Title("lang(接口文档)")
      * @Apidocs\Returned(ref={ApidocService::class,"apidoc"})
      */
     public function apidoc()

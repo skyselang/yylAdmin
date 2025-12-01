@@ -45,6 +45,7 @@ class EmailLogService
         'recipient/s' => '',
         'theme/s'     => '',
         'content/s'   => '',
+        'error/s'     => '',
         'create_time' => null,
     ];
 

@@ -62,10 +62,10 @@ class Timer extends Command
         $worker1->onWorkerStart = function () {
             $timer_name     = 'log-clear'; // 名称，用于调试输出显示
             $timer_interval = 5; // 多长时间执行一次，单位秒
-            $timer_msg      = $timer_interval . ' ' . $timer_name;
+            $timer_msg      = $timer_interval . 's ' . $timer_name;
             $this->output($timer_msg, 'start');
             $this->timer[] = WTimer::add($timer_interval, function () use ($timer_msg) {
-                $this->output($timer_msg, 'run');
+                $this->output($timer_msg, 'runing');
                 // 这里执行具体的任务
                 event('LogClear'); // 日志清除
             });
@@ -75,10 +75,10 @@ class Timer extends Command
         $worker2->onWorkerStart = function () {
             $timer_name     = ''; // 名称，用于调试输出显示
             $timer_interval = 10; // 多长时间执行一次，单位秒
-            $timer_msg      = $timer_interval . ' ' . $timer_name;
+            $timer_msg      = $timer_interval . 's ' . $timer_name;
             $this->output($timer_msg, 'start');
             $this->timer[] = WTimer::add($timer_interval, function () use ($timer_msg) {
-                $this->output($timer_msg, 'run');
+                $this->output($timer_msg, 'runing');
                 // 这里执行具体的任务
             });
         };

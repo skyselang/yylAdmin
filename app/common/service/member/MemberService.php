@@ -633,7 +633,7 @@ class MemberService
         $export_info['is_tree'] = 0;
         $export_info['type']    = FileSettingService::EXPIMP_TYPE_MEMBER;
 
-        $field = '';
+        $field = 'avatar_id,nickname,username,phone,email,sort,is_super,is_disable,create_time,update_time';
         $limit = 10000;
         $data  = ExportService::exports(__CLASS__, $export_info, $field, $limit);
 

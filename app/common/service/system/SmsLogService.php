@@ -46,6 +46,7 @@ class SmsLogService
         'template/s'  => '',
         'data',
         'content/s'   => '',
+        'error/s'     => '',
         'create_time' => null,
     ];
 

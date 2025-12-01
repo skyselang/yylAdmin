@@ -42,7 +42,7 @@ class MenuModel extends Model
      */
     public function getIsDisableNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -64,7 +64,7 @@ class MenuModel extends Model
      */
     public function getIsUnloginNameAttr($value, $data)
     {
-        return ($data['is_unlogin'] ?? 0) ? '是' : '否';
+        return ($data['is_unlogin'] ?? 0) ? lang('是') : lang('否');
     }
     
     /**
@@ -75,7 +75,7 @@ class MenuModel extends Model
      */
     public function getIsUnauthNameAttr($value, $data)
     {
-        return ($data['is_unauth'] ?? 0) ? '是' : '否';
+        return ($data['is_unauth'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -86,7 +86,7 @@ class MenuModel extends Model
      */
     public function getIsUnrateNameAttr($value, $data)
     {
-        return ($data['is_unrate'] ?? 0) ? '是' : '否';
+        return ($data['is_unrate'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -97,6 +97,6 @@ class MenuModel extends Model
      */
     public function getHiddenNameAttr($value, $data)
     {
-        return ($data['hidden'] ?? 0) ? '是' : '否';
+        return ($data['hidden'] ?? 0) ? lang('是') : lang('否');
     }
 }

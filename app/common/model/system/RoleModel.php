@@ -36,7 +36,7 @@ class RoleModel extends Model
      */
     public function getIsDisableNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**

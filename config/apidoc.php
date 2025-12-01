@@ -14,7 +14,7 @@
 $tableFieldTypes = ['int', 'tinyint', 'integer', 'float', 'decimal', 'char', 'varchar', 'blob', 'text', 'point', 'datetime'];
 // 表字段可选的验证规则
 $tableFieldCheckOptions = [
-    ['label' => lang('必填'), 'value' => 'require', 'message' =>  lang('缺少必要参数') . '{$item.field}'],
+    ['label' => lang('必填'), 'value' => 'require', 'message' => lang('缺少必要参数') . '{$item.field}'],
     ['label' => lang('数字'), 'value' => 'number', 'message' => '{$item.field}' . lang('为数字类型')],
     ['label' => lang('整数'), 'value' => 'integer', 'message' => '{$item.field}' . lang('为整数类型')],
     ['label' => lang('布尔'), 'value' => 'boolean', 'message' => '{$item.field}' . lang('为布尔值类型')],
@@ -247,9 +247,9 @@ return [
     // 文档目录名称
     'dir_name' => env('apidoc.dir_name', 'apidoc'),
     // （选配）文档标题，显示在左上角与首页
-    'title' => env('apidoc.title', 'yylAdmin-' . lang('接口文档')),
+    'title' => env('apidoc.title', 'lang(yylAdmin-接口文档)'),
     // （选配）文档描述，显示在首页
-    'desc' => env('apidoc.desc', 'yylAdmin-' . lang('接口文档与调试')),
+    'desc' => env('apidoc.desc', 'lang(yylAdmin-接口文档与调试)'),
     // （必须）设置文档的应用/版本
     'apps' => [
         [
@@ -262,7 +262,7 @@ return [
             // （选配）当前应用全局参数
             'params' => [
                 // （选配）当前应用全局的请求Header
-                'header' => [['name' => env('admin.token_name', 'AdminToken'), 'type' => 'string', 'require' => true, 'desc' => lang('token，也可以放在请求参数')]],
+                'header' => [['name' => env('admin.token_name', 'AdminToken'), 'type' => 'string', 'require' => true, 'desc' => 'lang(token，也可以放在请求参数)']],
                 // （选配）当前应用全局的请求Query
                 'query' => [],
                 // （选配）当前应用全局的请求Body
@@ -270,14 +270,14 @@ return [
             ],
             // （选配）当前应用控制器分组
             'groups' => [
-                ['title' => lang('登录'), 'name' => 'logout'],
-                ['title' => lang('首页'), 'name' => 'home'],
-                ['title' => lang('会员管理'), 'name' => 'member'],
-                ['title' => lang('内容管理'), 'name' => 'content'],
-                ['title' => lang('文件管理'), 'name' => 'file'],
-                ['title' => lang('日志管理'), 'name' => 'log'],
-                ['title' => lang('设置管理'), 'name' => 'setting'],
-                ['title' => lang('系统管理'), 'name' => 'system'],
+                ['title' => 'lang(登录)', 'name' => 'logout'],
+                ['title' => 'lang(首页)', 'name' => 'home'],
+                ['title' => 'lang(会员管理)', 'name' => 'member'],
+                ['title' => 'lang(内容管理)', 'name' => 'content'],
+                ['title' => 'lang(文件管理)', 'name' => 'file'],
+                ['title' => 'lang(日志管理)', 'name' => 'log'],
+                ['title' => 'lang(设置管理)', 'name' => 'setting'],
+                ['title' => 'lang(系统管理)', 'name' => 'system'],
             ],
         ],
         [
@@ -286,18 +286,18 @@ return [
             'key' => 'api',
             'params' => [
                 'header' => [
-                    ['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => lang('token，也可以放在请求参数')],
-                    ['name' => 'application', 'type' => 'int', 'require' => true, 'default' => 0, 'desc' => lang('应用代码，也可以放在请求参数')],
+                    ['name' => env('api.token_name', 'ApiToken'), 'type' => 'string', 'require' => true, 'desc' => 'lang(token，也可以放在请求参数)'],
+                    ['name' => 'application', 'type' => 'int', 'require' => true, 'default' => 0, 'desc' => 'lang(应用代码，也可以放在请求参数)'],
                 ],
                 'query' => [],
                 'body' => [],
             ],
             'groups' => [
-                ['title' => lang('首页'), 'name' => 'index'],
-                ['title' => lang('设置'), 'name' => 'setting'],
-                ['title' => lang('内容'), 'name' => 'content'],
-                ['title' => lang('文件'), 'name' => 'file'],
-                ['title' => lang('会员'), 'name' => 'member'],
+                ['title' => 'lang(首页)', 'name' => 'index'],
+                ['title' => 'lang(设置)', 'name' => 'setting'],
+                ['title' => 'lang(内容)', 'name' => 'content'],
+                ['title' => 'lang(文件)', 'name' => 'file'],
+                ['title' => 'lang(会员)', 'name' => 'member'],
             ],
         ]
     ],
@@ -358,16 +358,16 @@ return [
     'responses' => [
         // 成功响应体
         'success' => [
-            ['name' => 'code', 'desc' => lang('返回码，200成功，401登录失效，其它失败'), 'type' => 'int', 'require' => 1, 'default' => 200],
-            ['name' => 'msg', 'desc' => lang('返回描述'), 'type' => 'string', 'require' => 1],
+            ['name' => 'code', 'desc' => 'lang(返回码，200成功，401登录失效，其它失败)', 'type' => 'int', 'require' => 1, 'default' => 200],
+            ['name' => 'msg', 'desc' => 'lang(返回描述)', 'type' => 'string', 'require' => 1],
             //参数同上 headers；main=true来指定接口Returned参数挂载节点
-            ['name' => 'data', 'desc' => lang('返回数据'), 'main' => true, 'type' => 'object', 'require' => 1],
+            ['name' => 'data', 'desc' => 'lang(返回数据)', 'main' => true, 'type' => 'object', 'require' => 1],
         ],
         // 异常响应体
         'error' => [
-            ['name' => 'code', 'desc' => lang('返回码，200成功，401登录失效，其它失败'), 'type' => 'int', 'require' => 1, 'md' => ''],
-            ['name' => 'msg', 'desc' => lang('返回描述'), 'type' => 'string', 'require' => 1],
-            ['name' => 'data', 'desc' => lang('返回数据'), 'main' => true, 'type' => 'object', 'require' => 1],
+            ['name' => 'code', 'desc' => 'lang(返回码，200成功，401登录失效，其它失败)', 'type' => 'int', 'require' => 1, 'md' => ''],
+            ['name' => 'msg', 'desc' => 'lang(返回描述)', 'type' => 'string', 'require' => 1],
+            ['name' => 'data', 'desc' => 'lang(返回数据)', 'main' => true, 'type' => 'object', 'require' => 1],
         ]
     ],
     // （选配）默认请求类型
@@ -386,12 +386,12 @@ return [
     // （选配）Markdown文档
     'docs' => [
         // title=文档标题，path=.md文件地址，appKey=指定应用/版本，多级分组使用children嵌套
-        ['title' => lang('接口文档说明'), 'path' => './private/apidoc/docs/apidocs'],
+        ['title' => 'lang(接口文档说明)', 'path' => './private/apidoc/docs/apidocs'],
     ],
     // （选配）代码生成器配置 注意：是一个二维数组
     'generator' => [
         [
-            'title' => lang('创建Crud'),
+            'title' => 'lang(创建Crud)',
             'enable' => env('apidoc.generator_enable', false),
             'middleware' => [\app\common\middleware\ApidocCrudMiddleware::class],
             'form' => [

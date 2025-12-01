@@ -28,7 +28,7 @@ class Login extends BaseController
      * @Apidoc\Title("lang(设置信息)")
      * @Apidoc\Desc("系统信息")
      * @Apidoc\Method("GET")
-     * @Apidoc\Returned(ref={SettingService::class,"info"}, field="system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type")
+     * @Apidoc\Returned(ref={SettingService::class,"info"}, field="system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,login_sn_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type")
      * @Apidoc\Returned(ref="captchaReturn", field="captcha_id,captcha_img")
      * @Apidoc\NotHeaders()
      * @Apidoc\NotQuerys()
@@ -36,7 +36,7 @@ class Login extends BaseController
      */
     public function setting()
     {
-        $data = SettingService::info('system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type,captcha_transparent,login_msg_switch,login_msg_type,login_msg_time,login_msg_text');
+        $data = SettingService::info('system_name,page_title,favicon_url,logo_url,login_bg_url,login_bg_color,login_sn_color,system_name_color,page_limit,is_watermark,api_timeout,token_type,token_name,captcha_switch,captcha_mode,captcha_type,captcha_transparent,login_msg_switch,login_msg_type,login_msg_time,login_msg_text');
 
         $data['captcha_img'] = '';
         if ($data['captcha_switch']) {

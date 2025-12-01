@@ -76,7 +76,7 @@ class UserMessageModel extends Pivot
      */
     public function getIsReadNameAttr($value, $data)
     {
-        return ($data['is_read'] ?? 0) ? '是' : '否';
+        return ($data['is_read'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -87,6 +87,6 @@ class UserMessageModel extends Pivot
      */
     public function getIsDisableNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
     }
 }

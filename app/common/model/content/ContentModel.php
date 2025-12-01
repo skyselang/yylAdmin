@@ -39,7 +39,7 @@ class ContentModel extends Model
      */
     public function getIsDisableNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -345,7 +345,7 @@ class ContentModel extends Model
      */
     public function getIsTopNameAttr($value, $data)
     {
-        return $data['is_top'] ? '是' : '否';
+        return ($data['is_top'] ?? 0) ? lang('是') : lang('否');
     }
     /**
      * 获取是否热门名称
@@ -355,7 +355,7 @@ class ContentModel extends Model
      */
     public function getIsHotNameAttr($value, $data)
     {
-        return $data['is_hot'] ? '是' : '否';
+        return ($data['is_hot'] ?? 0) ? lang('是') : lang('否');
     }
     /**
      * 获取是否推荐名称
@@ -365,6 +365,6 @@ class ContentModel extends Model
      */
     public function getIsRecNameAttr($value, $data)
     {
-        return $data['is_rec'] ? '是' : '否';
+        return ($data['is_rec'] ?? 0) ? lang('是') : lang('否');
     }
 }

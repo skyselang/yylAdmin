@@ -37,7 +37,7 @@ class LinkModel extends Model
      */
     public function getIsDisableNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -67,6 +67,6 @@ class LinkModel extends Model
      */
     public function getUnderlineNameAttr($value, $data)
     {
-        return ($data['underline'] ?? 0) ? '是' : '否';
+        return ($data['underline'] ?? 0) ? lang('是') : lang('否');
     }
 }

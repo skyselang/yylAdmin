@@ -14,6 +14,7 @@ use hg\apidoc\annotation as Apidoc;
 use app\common\model\file\FileModel;
 use app\common\service\member\SettingService;
 use app\common\service\setting\RegionService;
+use think\Lang;
 
 /**
  * 会员管理模型
@@ -39,7 +40,7 @@ class MemberModel extends Model
      */
     public function getIsDisableNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -235,6 +236,6 @@ class MemberModel extends Model
      */
     public function getIsSuperNameAttr($value, $data)
     {
-        return ($data['is_super'] ?? 0) ? '是' : '否';
+        return ($data['is_super'] ?? 0) ? lang('是') : lang('否');
     }
 }

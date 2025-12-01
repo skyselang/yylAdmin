@@ -38,7 +38,7 @@ class UserModel extends Model
      */
     public function getIsDisableNameAttr($value, $data)
     {
-        return ($data['is_disable'] ?? 0) ? '是' : '否';
+        return ($data['is_disable'] ?? 0) ? lang('是') : lang('否');
     }
 
     /**
@@ -180,6 +180,6 @@ class UserModel extends Model
      */
     public function getIsSuperNameAttr($value, $data)
     {
-        return ($data['is_super'] ?? 0) ? '是' : '否';
+        return ($data['is_super'] ?? 0) ? lang('是') : lang('否');
     }
 }
