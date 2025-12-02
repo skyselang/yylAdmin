@@ -40,6 +40,12 @@ class UserLogMiddleware
             // 未登录是否记录免登日志
             $log_unlogin = false;
             if (empty($user_id)) {
+                // 尝试从应用容器获取登录失败时设置的 user_id
+                if (app()->has('login_fail_user_id')) {
+                    $user_id = app()->get('login_fail_user_id');
+                    // 清理应用容器中的登录失败 user_id，避免影响后续请求
+                    app()->delete('login_fail_user_id');
+                }
                 if ($setting['log_unlogin']) {
                     $log_unlogin = true;
                 } else {

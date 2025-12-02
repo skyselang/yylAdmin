@@ -903,12 +903,14 @@ class MemberService
         }
         if ($password) {
             if (!password_verify($password, $member['password'])) {
+                app()->instance('login_fail_member_id', $member[$pk]);
                 exception(lang('账号或密码错误'));
             }
         }
 
         $member = $member->toArray();
         if ($member['is_disable'] == 1) {
+            app()->instance('login_fail_member_id', $member[$pk]);
             exception(lang('账号已被禁用'));
         }
 

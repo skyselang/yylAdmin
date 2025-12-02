@@ -679,15 +679,20 @@ class UserService
         }
 
         $user = $user->toArray();
+        $user_id = $user[$pk];
+        
         $password_verify = password_verify($param['password'], $user['password']);
         if (!$password_verify) {
+            // 设置 user_id 到应用容器，以便中间件记录登录失败日志
+            app()->instance('login_fail_user_id', $user_id);
             exception(lang('账号或密码错误'));
         }
         if ($user['is_disable'] == 1) {
+            // 设置 user_id 到应用容器，以便中间件记录登录失败日志
+            app()->instance('login_fail_user_id', $user_id);
             exception(lang('账号已被禁用'));
         }
 
-        $user_id = $user[$pk];
         $ip_info = Utils::ipInfo();
 
         $update['login_num']    = $user['login_num'] + 1;

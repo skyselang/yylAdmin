@@ -40,6 +40,10 @@ class MemberLogMiddleware
             // 未登录是否记录免登日志
             $log_unlogin = false;
             if (empty($member_id)) {
+                if (app()->has('login_fail_member_id')) {
+                    $member_id = app()->get('login_fail_member_id');
+                    app()->delete('login_fail_member_id');
+                }
                 if ($setting['log_unlogin']) {
                     $log_unlogin = true;
                 } else {
