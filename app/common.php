@@ -955,7 +955,7 @@ function where_disdel($where = [], $disable = 0, $delete = 0)
  * @param bool   $null 是否包含null
  * @return array [['exp'=>'=','name'=>'包含']...]
  */
-function where_exps($exp = '', $null = false)
+function where_exps($exp = '', $null = true)
 {
 	$exps = [
 		['exp' => 'like', 'name' => lang('包含')],
@@ -1006,7 +1006,7 @@ function where_exps($exp = '', $null = false)
  */
 function where_exp_name($exp)
 {
-	$exps = where_exps('', true);
+	$exps = where_exps();
 	$name = '';
 
 	foreach ($exps as $val) {

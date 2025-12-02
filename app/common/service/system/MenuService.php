@@ -80,7 +80,7 @@ class MenuService
      */
     public static function basedata($exp = false)
     {
-        $exps       = $exp ? where_exps('', true) : [];
+        $exps       = $exp ? where_exps() : [];
         $trees      = self::list('tree', [where_delete()], [], 'menu_name');
         $menu_types = SettingService::menuTypes('', true);
         $log_types  = SettingService::logTypes('', true);
