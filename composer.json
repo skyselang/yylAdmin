@@ -32,7 +32,7 @@
     "topthink/think-throttle": "^2.0",
     "topthink/think-filesystem": "^3.0",
     "topthink/think-queue": "^3.0",
-    "firebase/php-jwt": "^6.1",
+    "firebase/php-jwt": "^7.0",
     "overtrue/pinyin": "^5.3",
     "overtrue/easy-sms": "^3.0",
     "phpmailer/phpmailer": "^6.9",
