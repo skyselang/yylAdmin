@@ -856,7 +856,7 @@ class ContentService
         $where[] = where_disable();
         $where[] = where_delete();
 
-        $field = 'unique,image_id,title';
+        $field = 'unique,image_id,name,title';
 
         $info = self::list($where, 0, 1, $order, $field)['list'];
 
