@@ -1,13 +1,5 @@
 # yylAdmin
 
-## 🎉 正在参加 Gitee 2025 年度开源项目评选
-
-[![🗳️ 立即投票 - 支持本项目](https://img.shields.io/badge/%F0%9F%97%B3%EF%B8%8F_%E7%AB%8B%E5%8D%B3%E6%8A%95%E7%A5%A8-%E6%94%AF%E6%8C%81%E6%9C%AC%E9%A1%B9%E7%9B%AE-ff6b35?style=for-the-badge&logo=gitee)](https://gitee.com/activity/2025opensource?ident=IZQ0KG)
-
-**一票就够，不用每天投 🙏 您的支持是我们持续更新的最大动力！**
-
-**👉 [点击徽章或这里投票](https://gitee.com/activity/2025opensource?ident=IZQ0KG)**
-
 - [码云](https://gitee.com/skyselang/yylAdmin) | [Github](https://github.com/skyselang/yylAdmin)
 
 ## 文档
